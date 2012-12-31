@@ -222,6 +222,7 @@ private:
 		bool rtl = _current_text_dir == TD_RTL;
 
 		/* draw group name */
+		int longer_name = 0;
 		StringID str;
 		if (IsAllGroupID(g_id)) {
 			str = STR_GROUP_ALL_TRAINS + this->vli.vtype;
@@ -230,9 +231,13 @@ private:
 		} else {
 			SetDParam(0, g_id);
 			str = STR_GROUP_NAME;
+			if (!protection) {
+				longer_name += this->column_size[VGC_PROTECT].width + 2;
+				if (!stats.autoreplace_defined) longer_name += this->column_size[VGC_AUTOREPLACE].width + 2;
+			}
 		}
-		int x = rtl ? right - WD_FRAMERECT_RIGHT - 8 - this->column_size[VGC_NAME].width + 1 : left + WD_FRAMERECT_LEFT + 8;
-		DrawString(x, x + this->column_size[VGC_NAME].width - 1, y + (this->tiny_step_height - this->column_size[VGC_NAME].height) / 2, str, colour);
+		int x = rtl ? right - WD_FRAMERECT_RIGHT - 8 - this->column_size[VGC_NAME].width - longer_name + 1 : left + WD_FRAMERECT_LEFT + 8;
+		DrawString(x, x + this->column_size[VGC_NAME].width + longer_name - 1, y + (this->tiny_step_height - this->column_size[VGC_NAME].height) / 2, str, colour);
 
 		/* draw autoreplace protection */
 		x = rtl ? x - 2 - this->column_size[VGC_PROTECT].width : x + 2 + this->column_size[VGC_NAME].width;
