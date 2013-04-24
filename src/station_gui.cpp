@@ -100,44 +100,90 @@ void CheckRedrawStationCoverage(const Window *w)
  * @param type   Cargo type
  * @param amount Cargo amount
  * @param rating ratings data for that particular cargo
- *
- * @note Each cargo-bar is 16 pixels wide and 6 pixels high
- * @note Each rating 14 pixels wide and 1 pixel high and is 1 pixel below the cargo-bar
  */
 static void StationsWndShowStationRating(int left, int right, int y, CargoID type, uint amount, byte rating)
 {
-	static const uint units_full  = 576; ///< number of units to show station as 'full'
-	static const uint rating_full = 224; ///< rating needed so it is shown as 'full'
+	static const uint units_full  = 1 << 9;     ///< Number of units to show station as full.
+	static const uint rating_full = 224;        ///< Rating needed so it is shown as full.
 
 	const CargoSpec *cs = CargoSpec::Get(type);
 	if (!cs->IsValid()) return;
 
+	y++;                                        ///< Make boxes 1 pixel shorter.
+	int left_start = left;
+	int right_start = right;
+	int height = GetCharacterHeight(FS_SMALL) - 2;
 	int colour = cs->rating_colour;
-	TextColour tc = GetContrastColour(colour);
-	uint w = (minu(amount, units_full) + 5) / 36;
 
-	int height = GetCharacterHeight(FS_SMALL);
+	/* Get width of the box to draw. */
+	uint width = minu(amount, units_full) * (right - left) / units_full;
 
-	/* Draw total cargo (limited) on station (fits into 16 pixels) */
-	if (w != 0) GfxFillRect(left, y, left + w - 1, y + height, colour);
+	/* Update the end margin, adding the width of the box not to be drawn... */
+	if (width != 0) UpdateMarginsWidth(right - left - width, left_start, right_start, true);
+	/* ... or prepare margins in case width == 0 and amount > 0 (just one pixel bar). */
+	else left_start = right_start = _current_text_dir ? right : left;
 
-	/* Draw a one pixel-wide bar of additional cargo meter, useful
-	 * for stations with only a small amount (<=30) */
-	if (w == 0) {
-		uint rest = amount / 5;
-		if (rest != 0) {
-			w += left;
-			GfxFillRect(w, y + height - rest, w, y + height, colour);
+	/* Draw total cargo (limited) on station */
+	if (amount > 0) GfxFillRect(left_start, y, right_start, y + height, colour);
+
+	DrawString(left, right, y, cs->abbrev, GetContrastColour(colour), SA_CENTER);
+
+	/* Draw green/red ratings bar*/
+	y += height + 2;
+	left_start = left + 1;
+	right_start = right - 1;
+	if (rating != 0) {
+		GfxFillRect(left_start, y, right_start, y, PC_GREEN);
+		width = minu(rating, rating_full) * (right_start - left_start) / rating_full;
+		UpdateMarginsWidth(width, left_start, right_start, false);
+	}
+	GfxFillRect(left_start, y, right_start, y, PC_RED);
+}
+
+/**
+ * Draw small boxes of cargo accepted.
+ * @param left Left most coordinate to draw the box at.
+ * @param right Right most coordinate to draw the box at.
+ * @param y Coordinate to draw the box at.
+ * @param type Cargo type.
+ * @param acceptance_pickup_byte Acceptance byte.
+ */
+static void StationsWndShowAcceptance(int left, int right, int y, CargoID type)
+{
+	const CargoSpec *cs = CargoSpec::Get(type);
+	if (!cs->IsValid()) return;
+	y++;
+	GfxFillRect(left, y, right, y + GetCharacterHeight(FS_SMALL), cs->rating_colour, FILLRECT_CHECKER);
+	DrawString(left, right, y, cs->abbrev, TC_BLACK, SA_CENTER);
+}
+
+/**
+ * Draw small boxes showing cargo waiting, ratings... for a given station.
+ * @param st Station to draw statistics of.
+ * @param x Position to start drawing at.
+ * @param width Width for each box.
+ * @param y Height position to draw the box at.
+ */
+void StationsWndShowStationRating(const Station *st, int left, int right, int x, int width, int y)
+{
+	bool rtl = _current_text_dir == TD_RTL;
+	AddSpace(5, x, false);
+
+	/* For RTL we work in exactly the opposite direction. So
+	 * decrement the space needed first, then draw to the left
+	 * instead of drawing to the left and then incrementing
+	 * the space. */
+	if (rtl) x -= width + 4;
+	for (uint j = 0; j < _sorted_standard_cargo_specs_size && ( x > left && x + width < right ); j++) {
+		CargoID cid = _sorted_cargo_specs[j]->Index();
+		if (st->goods[cid].IsSourceStationForCargo()) {
+			StationsWndShowStationRating(x, x + width, y, cid, st->goods[cid].cargo.TotalCount(), st->goods[cid].rating);
+			AddSpace(width + 4, x, false);
+		} else if (HasBit(st->goods[cid].acceptance_pickup, GoodsEntry::GES_EVER_ACCEPTED)) {
+			StationsWndShowAcceptance(x, x + width, y, cid);
+			AddSpace(width + 4, x, false);
 		}
 	}
-
-	DrawString(left + 1, right, y, cs->abbrev, tc);
-
-	/* Draw green/red ratings bar (fits into 14 pixels) */
-	y += height + 2;
-	GfxFillRect(left + 1, y, left + 14, y, PC_RED);
-	rating = minu(rating, rating_full) / 16;
-	if (rating != 0) GfxFillRect(left + 1, y, left + rating, y, PC_GREEN);
 }
 
 typedef GUIList<const Station*> GUIStationList;
@@ -404,7 +450,6 @@ public:
 				break;
 
 			case WID_STL_LIST: {
-				bool rtl = _current_text_dir == TD_RTL;
 				int max = min(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), this->stations.Length());
 				int y = r.top + WD_FRAMERECT_TOP;
 				for (int i = this->vscroll->GetPosition(); i < max; ++i) { // do until max number of stations of owner
@@ -418,27 +463,9 @@ public:
 					SetDParam(0, st->index);
 					SetDParam(1, st->facilities);
 					int x = DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_STATION_LIST_STATION);
-					x += rtl ? -5 : 5;
 
-					/* show cargo waiting and station ratings */
-					for (uint j = 0; j < _sorted_standard_cargo_specs_size; j++) {
-						CargoID cid = _sorted_cargo_specs[j]->Index();
-						if (st->goods[cid].cargo.TotalCount() > 0) {
-							/* For RTL we work in exactly the opposite direction. So
-							 * decrement the space needed first, then draw to the left
-							 * instead of drawing to the left and then incrementing
-							 * the space. */
-							if (rtl) {
-								x -= 20;
-								if (x < r.left + WD_FRAMERECT_LEFT) break;
-							}
-							StationsWndShowStationRating(x, x + 16, y, cid, st->goods[cid].cargo.TotalCount(), st->goods[cid].rating);
-							if (!rtl) {
-								x += 20;
-								if (x > r.right - WD_FRAMERECT_RIGHT) break;
-							}
-						}
-					}
+					StationsWndShowStationRating(st, r.left, r.right, x, FONT_HEIGHT_NORMAL + 2, y);
+
 					y += FONT_HEIGHT_NORMAL;
 				}
 
