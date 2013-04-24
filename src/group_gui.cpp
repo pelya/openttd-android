@@ -165,7 +165,8 @@ private:
 	uint ComputeGroupInfoSize()
 	{
 		this->column_size[VGC_NAME] = maxdim(GetStringBoundingBox(STR_GROUP_DEFAULT_TRAINS + this->vli.vtype), GetStringBoundingBox(STR_GROUP_ALL_TRAINS + this->vli.vtype));
-		this->column_size[VGC_NAME].width = max(170u, this->column_size[VGC_NAME].width);
+/* We consider the max average length of characters to be the one of "a" */
+		this->column_size[VGC_NAME].width = max(GetCharacterWidth(FS_NORMAL, 97) * (MAX_LENGTH_GROUP_NAME_CHARS - 4), this->column_size[VGC_NAME].width);
 		this->tiny_step_height = this->column_size[VGC_NAME].height;
 
 		this->column_size[VGC_PROTECT] = GetSpriteSize(SPR_GROUP_REPLACE_PROTECT);
