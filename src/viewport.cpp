@@ -2264,7 +2264,9 @@ void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDrag
 	}
 
 	HighLightStyle others = _thd.place_mode & ~(HT_DRAG_MASK | HT_DIR_MASK);
-	if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT) {
+	if (method == VPM_SINGLE_TILE) {
+		/* Nothing to do. */
+	} else if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT) {
 		_thd.place_mode = HT_SPECIAL | others;
 		_thd.next_drawstyle = HT_RECT | others;
 	} else if (_thd.place_mode & (HT_RAIL | HT_LINE)) {
@@ -2743,6 +2745,11 @@ void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method)
 	int limit = 0;
 
 	switch (method) {
+		case VPM_SINGLE_TILE:
+			_thd.selstart.x = x;
+			_thd.selstart.y = y;
+			break;
+
 		case VPM_X_OR_Y: // drag in X or Y direction
 			if (abs(sy - y) < abs(sx - x)) {
 				y = sy;
@@ -2901,7 +2908,9 @@ EventState VpHandlePlaceSizingDrag()
 	 * keep the selected tool, but reset it to the original mode. */
 	_special_mouse_mode = WSM_NONE;
 	HighLightStyle others = _thd.place_mode & ~(HT_DRAG_MASK | HT_DIR_MASK);
-	if ((_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT) {
+	if (_thd.select_method == VPM_SINGLE_TILE) {
+		goto place_mouseup;
+	} else if ((_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT) {
 		_thd.place_mode = HT_RECT | others;
 	} else if (_thd.select_method & VPM_SIGNALDIRS) {
 		_thd.place_mode = HT_RECT | others;
@@ -2912,6 +2921,7 @@ EventState VpHandlePlaceSizingDrag()
 	}
 	SetTileSelectSize(1, 1);
 
+place_mouseup:
 	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 
 	return ES_HANDLED;
