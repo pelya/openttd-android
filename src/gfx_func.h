@@ -182,6 +182,18 @@ void UpdateMarginsWidth(int width, int &left, int &right, bool to_end_line);
 void DrawString2(int left, int right, int top, int &margin, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false);
 void DrawSprite2(int width, int left, int right, int top, int &margin, SpriteID img, PaletteID pal, bool to_end_line = false, SubSprite *sub = NULL);
 
+/**
+ * Return where to start drawing a centered object inside a widget.
+ * @param top The top coordinate (or the left coordinate) of the widget.
+ * @param height The height (or width) of the widget.
+ * @param size The height (or width) of the object to draw.
+ * @return The coordinate where to start drawing the centered object.
+ */
+static inline int Center(int top, int height, uint size = FONT_HEIGHT_NORMAL)
+{
+	return top + (height - size) / 2;
+}
+
 extern DrawPixelInfo *_cur_dpi;
 
 TextColour GetContrastColour(uint8 background);
