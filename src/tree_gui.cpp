@@ -18,6 +18,7 @@
 #include "command_func.h"
 #include "sound_func.h"
 #include "tree_map.h"
+#include "window_func.h"
 
 #include "widgets/tree_widget.h"
 
@@ -56,6 +57,11 @@ public:
 	{
 		this->InitNested(window_number);
 		ResetObjectToPlace();
+	}
+
+	~BuildTreesWindow()
+	{
+		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 	}
 
 	/**
@@ -171,6 +177,8 @@ public:
 	virtual void OnPlaceObjectAbort()
 	{
 		this->RaiseButtons();
+
+		ResetObjectToPlace();
 	}
 };
 

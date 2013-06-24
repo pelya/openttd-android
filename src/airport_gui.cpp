@@ -77,6 +77,7 @@ struct BuildAirToolbarWindow : Window {
 
 	~BuildAirToolbarWindow()
 	{
+		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
 	}
 
@@ -141,6 +142,8 @@ struct BuildAirToolbarWindow : Window {
 
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
 		DeleteWindowById(WC_SELECT_STATION, 0);
+
+		ResetObjectToPlace();
 	}
 
 	static HotkeyList hotkeys;

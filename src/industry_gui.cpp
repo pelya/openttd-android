@@ -279,6 +279,10 @@ public:
 		this->SetButtons();
 	}
 
+	~BuildIndustryWindow() {
+		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
+	}
+
 	virtual void OnInit()
 	{
 		this->SetupArrays();
