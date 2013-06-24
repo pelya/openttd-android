@@ -1951,6 +1951,8 @@ static void PlaceObject()
 
 bool HandleViewportClicked(const ViewPort *vp, int x, int y)
 {
+	if (_move_pressed) return false;
+
 	const Vehicle *v = CheckClickOnVehicle(vp, x, y);
 
 	if (_thd.place_mode & HT_VEHICLE) {
@@ -2923,7 +2925,6 @@ EventState VpHandlePlaceSizingDrag()
 
 place_mouseup:
 	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
-
 	return ES_HANDLED;
 }
 
