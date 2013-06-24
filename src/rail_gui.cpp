@@ -252,22 +252,6 @@ static void GenericPlaceSignals(TileIndex tile)
 	}
 }
 
-/**
- * Start placing a rail bridge.
- * @param tile Position of the first tile of the bridge.
- * @param w    Rail toolbar window.
- */
-static void PlaceRail_Bridge(TileIndex tile, Window *w)
-{
-	if (IsBridgeTile(tile)) {
-		TileIndex other_tile = GetOtherTunnelBridgeEnd(tile);
-		Point pt = {0, 0};
-		w->OnPlaceMouseUp(VPM_X_OR_Y, DDSP_BUILD_BRIDGE, pt, other_tile, tile);
-	} else {
-		VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_BUILD_BRIDGE);
-	}
-}
-
 /** Command callback for building a tunnel */
 void CcBuildRailTunnel(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 {
@@ -632,9 +616,7 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_BUILD_DEPOT:
-				DoCommandP(tile, _cur_railtype, _build_depot_direction,
-						CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
-						CcRailDepot);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
 				break;
 
 			case WID_RAT_BUILD_WAYPOINT:
@@ -650,11 +632,11 @@ struct BuildRailToolbarWindow : Window {
 				break;
 
 			case WID_RAT_BUILD_BRIDGE:
-				PlaceRail_Bridge(tile, this);
+				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_BUILD_BRIDGE);
 				break;
 
 			case WID_RAT_BUILD_TUNNEL:
-				DoCommandP(tile, _cur_railtype | (TRANSPORT_RAIL << 8), 0, CMD_BUILD_TUNNEL | CMD_MSG(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE), CcBuildRailTunnel);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_BRIDGE);
 				break;
 
 			case WID_RAT_CONVERT_RAIL:
@@ -670,6 +652,14 @@ struct BuildRailToolbarWindow : Window {
 		/* no dragging if you have pressed the convert button */
 		if (FindWindowById(WC_BUILD_SIGNAL, 0) != NULL && _convert_signal_button && this->IsWidgetLowered(WID_RAT_BUILD_SIGNALS)) return;
 
+		switch (this->last_user_action) {
+			case WID_RAT_BUILD_TUNNEL:
+				this->OnPlacePresize(pt, TileVirtXY(pt.x, pt.y));
+				return;
+			default:
+				break;
+		}
+
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
@@ -678,9 +668,21 @@ struct BuildRailToolbarWindow : Window {
 		if (pt.x != -1) {
 			switch (select_proc) {
 				default: NOT_REACHED();
+				case DDSP_PLACE_AUTOROAD:
+					assert(this->last_user_action == WID_RAT_BUILD_BRIDGE);
 				case DDSP_BUILD_BRIDGE:
-					if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
-					ShowBuildBridgeWindow(start_tile, end_tile, TRANSPORT_RAIL, _cur_railtype);
+					switch (this->last_user_action) {
+						case WID_RAT_BUILD_TUNNEL:
+							if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
+							else VpStartPreSizing();
+							DoCommandP(end_tile, _cur_railtype | (TRANSPORT_RAIL << 8), 0, CMD_BUILD_TUNNEL | CMD_MSG(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE), CcBuildRailTunnel);
+							break;
+						case WID_RAT_BUILD_BRIDGE:
+							if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
+							ShowBuildBridgeWindow(start_tile, end_tile, TRANSPORT_RAIL, _cur_railtype);
+							break;
+						default: NOT_REACHED();
+					}
 					break;
 
 				case DDSP_PLACE_RAIL:
@@ -722,6 +724,14 @@ struct BuildRailToolbarWindow : Window {
 						}
 					}
 					break;
+
+				case DDSP_SINGLE_TILE:
+					assert(end_tile == start_tile);
+					assert(last_user_action == WID_RAT_BUILD_DEPOT);
+					DoCommandP(end_tile, _cur_railtype, _build_depot_direction,
+							CMD_BUILD_TRAIN_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT),
+							CcRailDepot);
+					break;
 			}
 		}
 	}
@@ -740,10 +750,19 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
-	virtual void OnPlacePresize(Point pt, TileIndex tile)
+	virtual void OnPlacePresize(Point pt, TileIndex tile_from)
 	{
-		DoCommand(tile, _cur_railtype | (TRANSPORT_RAIL << 8), 0, DC_AUTO, CMD_BUILD_TUNNEL);
-		VpSetPresizeRange(tile, _build_tunnel_endtile == 0 ? tile : _build_tunnel_endtile);
+		TileIndex tile_to = tile_from;
+
+		if (this->last_user_action == WID_RAT_BUILD_BRIDGE) {
+			tile_to = IsBridgeTile(tile_from) ? GetOtherBridgeEnd(tile_from) : TileVirtXY(pt.x, pt.y);
+		} else {
+			assert(this->last_user_action == WID_RAT_BUILD_TUNNEL);
+			DoCommand(tile_from, _cur_railtype | (TRANSPORT_RAIL << 8), 0, DC_AUTO, CMD_BUILD_TUNNEL);
+			tile_to = _build_tunnel_endtile == 0 ? tile_from : _build_tunnel_endtile;
+		}
+
+		VpSetPresizeRange(tile_from, tile_to);
 	}
 
 	virtual EventState OnCTRLStateChange()

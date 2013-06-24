@@ -26,6 +26,7 @@
 #include "company_base.h"
 #include "hotkeys.h"
 #include "gui.h"
+#include "bridge_map.h"
 
 #include "widgets/dock_widget.h"
 
@@ -172,33 +173,21 @@ struct BuildDocksToolbarWindow : Window {
 				break;
 
 			case WID_DT_LOCK: // Build lock button
-				DoCommandP(tile, 0, 0, CMD_BUILD_LOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_LOCKS), CcBuildDocks);
+				/* Reuse DDSP_REMOVE_TRUCKSTOP. */
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_REMOVE_TRUCKSTOP);
 				break;
 
 			case WID_DT_DEMOLISH: // Demolish aka dynamite button
 				PlaceProc_DemolishArea(tile);
 				break;
 
+			case WID_DT_STATION: // Build station button
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_STATION);
+				break;
+
 			case WID_DT_DEPOT: // Build depot button
-				DoCommandP(tile, _ship_depot_direction, 0, CMD_BUILD_SHIP_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_SHIP_DEPOT), CcBuildDocks);
-				break;
-
-			case WID_DT_STATION: { // Build station button
-				uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
-
-				/* tile is always the land tile, so need to evaluate _thd.pos */
-				CommandContainer cmdcont = { tile, _ctrl_pressed, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
-
-				/* Determine the watery part of the dock. */
-				DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
-				TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(dir)) : tile);
-
-				ShowSelectStationIfNeeded(cmdcont, TileArea(tile, tile_to));
-				break;
-			}
-
 			case WID_DT_BUOY: // Build buoy button
-				DoCommandP(tile, 0, 0, CMD_BUILD_BUOY | CMD_MSG(STR_ERROR_CAN_T_POSITION_BUOY_HERE), CcBuildDocks);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
 				break;
 
 			case WID_DT_RIVER: // Build river button (in scenario editor)
@@ -206,7 +195,7 @@ struct BuildDocksToolbarWindow : Window {
 				break;
 
 			case WID_DT_BUILD_AQUEDUCT: // Build aqueduct button
-				DoCommandP(tile, GetOtherAqueductEnd(tile), TRANSPORT_WATER << 15, CMD_BUILD_BRIDGE | CMD_MSG(STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE), CcBuildBridge);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_BRIDGE);
 				break;
 
 			default: NOT_REACHED();
@@ -215,7 +204,16 @@ struct BuildDocksToolbarWindow : Window {
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
 	{
-		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
+		switch (last_clicked_widget) {
+			case WID_DT_BUILD_AQUEDUCT:
+			case WID_DT_LOCK:
+			case WID_DT_STATION:
+				this->OnPlacePresize(pt, TileVirtXY(pt.x, pt.y));
+				break;
+			default:
+				VpSelectTilesWithMethod(pt.x, pt.y, select_method);
+				break;
+		}
 	}
 
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
@@ -231,6 +229,42 @@ struct BuildDocksToolbarWindow : Window {
 				case DDSP_CREATE_RIVER:
 					DoCommandP(end_tile, start_tile, WATER_CLASS_RIVER, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_PLACE_RIVERS), CcBuildCanal);
 					break;
+				case DDSP_BUILD_STATION: {
+					uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
+
+					/* Tile is always the land tile, so need to evaluate _thd.pos. */
+					CommandContainer cmdcont = { start_tile, _ctrl_pressed, p2, CMD_BUILD_DOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_DOCK_HERE), CcBuildDocks, "" };
+
+					//SetObjectToPlace(SPR_CURSOR_DOCK, PAL_NONE, HT_SPECIAL, this->window_class, this->window_number);
+					ShowSelectStationIfNeeded(cmdcont, TileArea(start_tile, end_tile));
+					VpStartPreSizing();
+					break;
+				}
+
+				case DDSP_BUILD_BRIDGE:
+					DoCommandP(start_tile, GetOtherAqueductEnd(start_tile), TRANSPORT_WATER << 15, CMD_BUILD_BRIDGE | CMD_MSG(STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE), CcBuildBridge);
+					VpStartPreSizing();
+					break;
+
+				case DDSP_REMOVE_TRUCKSTOP: { // Reusing for locks.
+					TileIndex middle_tile = start_tile;
+					if (start_tile != end_tile) middle_tile = TileAddByDiagDir(start_tile, DiagdirBetweenTiles(start_tile, end_tile));
+					DoCommandP(middle_tile, 0, 0, CMD_BUILD_LOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_LOCKS), CcBuildDocks);
+					VpStartPreSizing();
+					break;
+				}
+
+				case DDSP_SINGLE_TILE:
+					assert(start_tile == end_tile);
+					switch (last_clicked_widget) {
+						case WID_DT_BUOY:
+							DoCommandP(end_tile, 0, 0, CMD_BUILD_BUOY | CMD_MSG(STR_ERROR_CAN_T_POSITION_BUOY_HERE), CcBuildDocks);
+							break;
+						case WID_DT_DEPOT: // Build depot button
+							DoCommandP(end_tile, _ship_depot_direction, 0, CMD_BUILD_SHIP_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_SHIP_DEPOT), CcBuildDocks);
+							break;
+						default: NOT_REACHED();
+					}
 
 				default: break;
 			}
@@ -249,6 +283,7 @@ struct BuildDocksToolbarWindow : Window {
 
 	virtual void OnPlacePresize(Point pt, TileIndex tile_from)
 	{
+		if (!IsValidTile(tile_from)) return;
 		TileIndex tile_to = tile_from;
 
 		if (this->last_clicked_widget == WID_DT_BUILD_AQUEDUCT) {

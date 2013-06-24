@@ -1164,7 +1164,18 @@ public:
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
-		this->ExecuteFoundTownCommand(tile, false, STR_ERROR_CAN_T_FOUND_TOWN_HERE, CcFoundTown);
+		VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
+	}
+
+	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	{
+		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
+	}
+
+	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
+	{
+		assert(start_tile == end_tile);
+		this->ExecuteFoundTownCommand(end_tile, false, STR_ERROR_CAN_T_FOUND_TOWN_HERE, CcFoundTown);
 	}
 
 	virtual void OnPlaceObjectAbort()

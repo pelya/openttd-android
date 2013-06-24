@@ -544,6 +544,19 @@ public:
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
+	}
+
+	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	{
+		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
+	}
+
+	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
+	{
+		if (pt.x == -1) return;
+		assert(end_tile == start_tile);
+
 		bool success = true;
 		/* We do not need to protect ourselves against "Random Many Industries" in this mode */
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
@@ -561,14 +574,14 @@ public:
 			_generating_world = true;
 			_ignore_restrictions = true;
 
-			DoCommandP(tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed,
+			DoCommandP(end_tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed,
 					CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY), &CcBuildIndustry);
 
 			cur_company.Restore();
 			_ignore_restrictions = false;
 			_generating_world = false;
 		} else {
-			success = DoCommandP(tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed, CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
+			success = DoCommandP(end_tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed, CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
 		}
 
 		/* If an industry has been built, just reset the cursor and the system */

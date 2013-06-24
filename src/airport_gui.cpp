@@ -99,13 +99,13 @@ struct BuildAirToolbarWindow : Window {
 		}
 	}
 
-
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
 		switch (this->last_user_action) {
-			case WID_AT_AIRPORT:
-				PlaceAirport(tile);
+			case WID_AT_AIRPORT: {
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_STATION);
 				break;
+			}
 
 			case WID_AT_DEMOLISH:
 				PlaceProc_DemolishArea(tile);
@@ -122,8 +122,16 @@ struct BuildAirToolbarWindow : Window {
 
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
 	{
-		if (pt.x != -1 && select_proc == DDSP_DEMOLISH_AREA) {
-			GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
+		if (pt.x == -1) return;
+		switch (select_proc) {
+			case DDSP_BUILD_STATION:
+				assert(start_tile == end_tile);
+				PlaceAirport(end_tile);
+				break;
+			case DDSP_DEMOLISH_AREA:
+				GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
+				break;
+			default: NOT_REACHED();
 		}
 	}
 

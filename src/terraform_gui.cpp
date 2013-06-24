@@ -239,15 +239,9 @@ struct TerraformToolbarWindow : Window {
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
-				DoCommandP(tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound1E);
-				break;
-
 			case WID_TT_PLACE_SIGN: // Place sign button
-				PlaceProc_Sign(tile);
-				break;
-
 			case WID_TT_PLACE_OBJECT: // Place object button
-				PlaceProc_Object(tile);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
 				break;
 
 			default: NOT_REACHED();
@@ -270,6 +264,21 @@ struct TerraformToolbarWindow : Window {
 				case DDSP_LEVEL_AREA:
 					GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
 					break;
+
+				case DDSP_SINGLE_TILE:
+					assert(start_tile == end_tile);
+					switch (this->last_user_action) {
+						case WID_TT_BUY_LAND:
+							DoCommandP(end_tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound1E);
+							break;
+						case WID_TT_PLACE_SIGN:
+							PlaceProc_Sign(end_tile);
+							break;
+						case WID_TT_PLACE_OBJECT:
+							PlaceProc_Object(end_tile);
+							break;
+						default: NOT_REACHED();
+					}
 			}
 		}
 	}
