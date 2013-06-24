@@ -75,4 +75,13 @@ enum ToolbarEditorWidgets {
 	WID_TE_SWITCH_BAR  = WID_TN_SWITCH_BAR,  ///< Only available when toolbar has been split to switch between different subsets.
 };
 
+/** Widgets of the TabletToolbar class. */
+enum ToolbarTabletWidgets {
+	WID_TT_X,           ///< Press X (toggle transparency).
+	WID_TT_DELETE,      ///< Press DELETE.
+	WID_TT_SHIFT,       ///< Press SHIFT.
+	WID_TT_CTRL,        ///< Press CTRL.
+	WID_TT_MOVE,        ///< Click for moving around viewports.
+};
+
 #endif /* WIDGETS_TOOLBAR_WIDGET_H */

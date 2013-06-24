@@ -16,4 +16,6 @@ void AllocateToolbar();
 void ToggleBoundingBoxes();
 void ToggleDirtyBlocks();
 
+void ResetTabletWindow();
+
 #endif /* TOOLBAR_GUI_H */

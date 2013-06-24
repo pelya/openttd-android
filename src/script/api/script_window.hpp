@@ -142,6 +142,12 @@ public:
 		WC_STATUS_BAR                                = ::WC_STATUS_BAR,
 
 		/**
+		 * Tablet bar; %Window numbers:
+		 *   - 0 = #StatusbarWidgets
+		 */
+		WC_TABLET_BAR                                = ::WC_TABLET_BAR,
+
+		/**
 		 * Build toolbar; %Window numbers:
 		 *   - #TRANSPORT_RAIL = #RailToolbarWidgets
 		 *   - #TRANSPORT_AIR = #AirportToolbarWidgets
@@ -2397,6 +2403,15 @@ public:
 		WID_TE_MUSIC_SOUND                           = ::WID_TE_MUSIC_SOUND,                           ///< Music/sound configuration menu.
 		WID_TE_HELP                                  = ::WID_TE_HELP,                                  ///< Help menu.
 		WID_TE_SWITCH_BAR                            = ::WID_TE_SWITCH_BAR,                            ///< Only available when toolbar has been split to switch between different subsets.
+	};
+
+	/** Widgets of the TabletToolbar class. */
+	enum ToolbarTabletWidgets {
+		WID_TT_X                                     = ::WID_TT_X,                                     ///< Press X (toggle transparency).
+		WID_TT_DELETE                                = ::WID_TT_DELETE,                                ///< Press DELETE.
+		WID_TT_SHIFT                                 = ::WID_TT_SHIFT,                                 ///< Press SHIFT.
+		WID_TT_CTRL                                  = ::WID_TT_CTRL,                                  ///< Press CTRL.
+		WID_TT_MOVE                                  = ::WID_TT_MOVE,                                  ///< Click for moving around viewports.
 	};
 
 	/* automatically generated from ../../widgets/town_widget.h */

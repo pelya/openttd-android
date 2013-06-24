@@ -40,6 +40,7 @@ void SQGSWindow_Register(Squirrel *engine)
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_MAIN_WINDOW,                            "WC_MAIN_WINDOW");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_MAIN_TOOLBAR,                           "WC_MAIN_TOOLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_STATUS_BAR,                             "WC_STATUS_BAR");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_TABLET_BAR,                             "WC_TABLET_BAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_BUILD_TOOLBAR,                          "WC_BUILD_TOOLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_SCEN_BUILD_TOOLBAR,                     "WC_SCEN_BUILD_TOOLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_BUILD_TREES,                            "WC_BUILD_TREES");
@@ -1202,6 +1203,11 @@ void SQGSWindow_Register(Squirrel *engine)
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TE_MUSIC_SOUND,                        "WID_TE_MUSIC_SOUND");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TE_HELP,                               "WID_TE_HELP");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TE_SWITCH_BAR,                         "WID_TE_SWITCH_BAR");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TT_X,                                  "WID_TT_X");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TT_DELETE,                             "WID_TT_DELETE");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TT_SHIFT,                              "WID_TT_SHIFT");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TT_CTRL,                               "WID_TT_CTRL");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TT_MOVE,                               "WID_TT_MOVE");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TD_SORT_ORDER,                         "WID_TD_SORT_ORDER");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TD_SORT_CRITERIA,                      "WID_TD_SORT_CRITERIA");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TD_LIST,                               "WID_TD_LIST");

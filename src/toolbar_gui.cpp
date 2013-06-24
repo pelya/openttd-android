@@ -2216,6 +2216,111 @@ static WindowDesc _toolb_scen_desc(
 	&ScenarioEditorToolbarWindow::hotkeys
 );
 
+
+/** Tablet toolbar. */
+struct TabletToolbar : Window {
+
+	TabletToolbar(WindowDesc *desc) : Window(desc)
+	{
+		this->InitNested(0);
+		this->flags |= WF_STICKY;
+		ResetObjectToPlace();
+		this->OnInvalidateData(1 << 2); // Disable widgets.
+		if (_current_text_dir == TD_RTL) { this->left = _screen.width - this->width; }
+	}
+
+	~TabletToolbar() {
+		_shift_pressed = false;
+		_move_pressed = false;
+
+		if (_ctrl_pressed) {
+			_ctrl_pressed = false;
+			HandleCtrlChanged();
+		}
+	}
+
+	virtual void OnClick(Point pt, int widget, int click_count)
+	{
+		switch (widget) {
+			case WID_TT_X:
+				extern void ResetRestoreAllTransparency();
+				ResetRestoreAllTransparency();
+				break;
+			case WID_TT_DELETE:
+				DeleteNonVitalWindows();
+				break;
+			case WID_TT_SHIFT:
+				_shift_pressed = !_shift_pressed;
+				this->ToggleWidgetLoweredState(WID_TT_SHIFT);
+				this->SetWidgetDirty(WID_TT_SHIFT);
+				break;
+			case WID_TT_CTRL:
+				_ctrl_pressed = !_ctrl_pressed;
+				this->ToggleWidgetLoweredState(WID_TT_CTRL);
+				HandleCtrlChanged();
+				this->SetWidgetDirty(WID_TT_CTRL);
+				break;
+			case WID_TT_MOVE:
+				_move_pressed = !_move_pressed;
+				this->ToggleWidgetLoweredState(WID_TT_MOVE);
+				this->SetWidgetDirty(WID_TT_MOVE);
+				break;
+			default:
+				NOT_REACHED();
+		}
+	}
+
+	/**
+	 * Some data on this window has become invalid.
+	 * @param data Information about the changed data.
+	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
+	 * @note    bit 2 -> Update tile selection.
+	 *          bit 3 -> Set window dirty.
+	 */
+	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	{
+		/* Selection has changed. */
+		if (HasBit(data, 2)) { UpdateTileSelection(); }
+
+		/* This window is dirty. */
+		if (HasBit(data, 3)) { this->SetDirty(); }
+	}
+};
+
+static const NWidgetPart _nested_tablet_simple_widgets[] = {
+	NWidget(NWID_VERTICAL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP),
+		EndContainer(),
+};
+
+static WindowDesc _toolbar_tablet_simple_desc(
+	WDP_AUTO, NULL, 0, 0,
+	WC_TABLET_BAR, WC_NONE,
+	WDF_NO_FOCUS,
+	_nested_tablet_simple_widgets, lengthof(_nested_tablet_simple_widgets)
+);
+
+void ResetTabletWindow()
+{
+	if (_game_mode == GM_MENU) return;
+
+	DeleteWindowByClass(WC_TABLET_BAR);
+
+	switch (_settings_client.gui.touchscreen_mode) {
+		case TSC_NONE:
+			break;
+		case TSC_SIMPLE:
+			new TabletToolbar(&_toolbar_tablet_simple_desc);
+			break;
+		default: NOT_REACHED();
+
+	}
+}
+
 /** Allocate the toolbar. */
 void AllocateToolbar()
 {
@@ -2227,4 +2332,6 @@ void AllocateToolbar()
 	} else {
 		new MainToolbarWindow(&_toolb_normal_desc);
 	}
+
+	ResetTabletWindow();
 }

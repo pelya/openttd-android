@@ -223,6 +223,8 @@ namespace SQConvert {
 	template <> inline int Return<ScriptWindow::ToolbarNormalWidgets>(HSQUIRRELVM vm, ScriptWindow::ToolbarNormalWidgets res) { sq_pushinteger(vm, (int32)res); return 1; }
 	template <> inline ScriptWindow::ToolbarEditorWidgets GetParam(ForceType<ScriptWindow::ToolbarEditorWidgets>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQInteger tmp; sq_getinteger(vm, index, &tmp); return (ScriptWindow::ToolbarEditorWidgets)tmp; }
 	template <> inline int Return<ScriptWindow::ToolbarEditorWidgets>(HSQUIRRELVM vm, ScriptWindow::ToolbarEditorWidgets res) { sq_pushinteger(vm, (int32)res); return 1; }
+	template <> inline ScriptWindow::ToolbarTabletWidgets GetParam(ForceType<ScriptWindow::ToolbarTabletWidgets>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQInteger tmp; sq_getinteger(vm, index, &tmp); return (ScriptWindow::ToolbarTabletWidgets)tmp; }
+	template <> inline int Return<ScriptWindow::ToolbarTabletWidgets>(HSQUIRRELVM vm, ScriptWindow::ToolbarTabletWidgets res) { sq_pushinteger(vm, (int32)res); return 1; }
 	template <> inline ScriptWindow::TownDirectoryWidgets GetParam(ForceType<ScriptWindow::TownDirectoryWidgets>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQInteger tmp; sq_getinteger(vm, index, &tmp); return (ScriptWindow::TownDirectoryWidgets)tmp; }
 	template <> inline int Return<ScriptWindow::TownDirectoryWidgets>(HSQUIRRELVM vm, ScriptWindow::TownDirectoryWidgets res) { sq_pushinteger(vm, (int32)res); return 1; }
 	template <> inline ScriptWindow::TownAuthorityWidgets GetParam(ForceType<ScriptWindow::TownAuthorityWidgets>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQInteger tmp; sq_getinteger(vm, index, &tmp); return (ScriptWindow::TownAuthorityWidgets)tmp; }
