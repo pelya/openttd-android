@@ -2301,7 +2301,7 @@ void VpSetPresizeRange(TileIndex from, TileIndex to)
 	if (distance > 1) ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance, TCC_HOVER);
 }
 
-static void VpStartPreSizing()
+void VpStartPreSizing()
 {
 	_thd.selend.x = -1;
 	_special_mouse_mode = WSM_PRESIZE;
