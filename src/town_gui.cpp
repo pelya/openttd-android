@@ -202,7 +202,7 @@ public:
 
 				if (--pos < 0) {
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_LOCAL_AUTHORITY_ACTIONS_TITLE);
-					y += FONT_HEIGHT_NORMAL;
+					y += this->resize.step_height;
 				}
 
 				for (int i = 0; buttons; i++, buttons >>= 1) {
@@ -211,7 +211,7 @@ public:
 					if ((buttons & 1) && --pos < 0) {
 						DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y,
 								STR_LOCAL_AUTHORITY_ACTION_SMALL_ADVERTISING_CAMPAIGN + i, this->sel_index == i ? TC_WHITE : TC_ORANGE);
-						y += FONT_HEIGHT_NORMAL;
+						y += this->resize.step_height;
 					}
 				}
 				break;
