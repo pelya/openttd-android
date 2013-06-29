@@ -364,7 +364,7 @@ public:
 					SetDParam(0, STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED);
 				}
 
-				DrawString(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, r.top + WD_FRAMERECT_TOP, STR_BLACK_STRING, TC_FROMSTRING, SA_HOR_CENTER);
+				DrawString(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, Center(r.top, r.bottom - r.top), STR_BLACK_STRING, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}
 

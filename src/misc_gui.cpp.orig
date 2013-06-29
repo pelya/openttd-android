@@ -631,8 +631,6 @@ static WindowDesc _tool_tips_desc(
 	_nested_tooltips_widgets, lengthof(_nested_tooltips_widgets)
 );
 
-uint _tooltip_width = 194;
-
 /** Window for displaying a tooltip. */
 struct TooltipsWindow : public Window
 {
@@ -681,7 +679,7 @@ struct TooltipsWindow : public Window
 		/* There is only one widget. */
 		for (uint i = 0; i != this->paramcount; i++) SetDParam(i, this->params[i]);
 
-		size->width  = min(GetStringBoundingBox(this->string_id).width, _tooltip_width);
+		size->width  = min(GetStringBoundingBox(this->string_id).width, 194);
 		size->height = GetStringHeight(this->string_id, size->width);
 
 		/* Increase slightly to have some space around the box. */
@@ -788,12 +786,11 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 	/* If we have a marked area, draw a background highlight. */
 	if (tb->marklength != 0) GfxFillRect(delta + tb->markxoffs, 0, delta + tb->markxoffs + tb->marklength - 1, bottom - top, PC_GREY);
 
-	DrawString(delta, tb->pixels, Center(0, bottom - top), tb->buf, TC_YELLOW);
-
+	DrawString(delta, tb->pixels, 0, tb->buf, TC_YELLOW);
 	bool focussed = w->IsWidgetGloballyFocused(wid) || IsOSKOpenedFor(w, wid);
 	if (focussed && tb->caret) {
 		int caret_width = GetStringBoundingBox("_").width;
-		DrawString(tb->caretxoffs + delta, tb->caretxoffs + delta + caret_width, Center(0, bottom - top), "_", TC_WHITE);
+		DrawString(tb->caretxoffs + delta, tb->caretxoffs + delta + caret_width, 0, "_", TC_WHITE);
 	}
 
 	_cur_dpi = old_dpi;
@@ -1103,7 +1100,6 @@ struct QueryWindow : public Window {
 	{
 		if (widget != WID_Q_TEXT) return;
 
-		size->width = GetMinSizing(NWST_WINDOW_LENGTH, size->width);
 		Dimension d = GetStringMultiLineBoundingBox(this->message, *size);
 		d.width += WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;

@@ -1151,7 +1151,7 @@ uint SettingEntry::Draw(GameSettings *settings_ptr, int left, int right, int bas
 		case SEF_SUBTREE_KIND:
 			if (cur_row >= first_row) {
 				DrawSprite((this->d.sub.folded ? SPR_CIRCLE_FOLDED : SPR_CIRCLE_UNFOLDED), PAL_NONE, rtl ? x - 8 : x, y + (SETTING_HEIGHT - 11) / 2);
-				DrawString(rtl ? left : x + 12, rtl ? x - 12 : right, y, this->d.sub.title);
+				DrawString(rtl ? left : x + 12, rtl ? x - 12 : right, Center(y, SETTING_HEIGHT), this->d.sub.title);
 			}
 			cur_row++;
 			if (!this->d.sub.folded) {
@@ -1243,7 +1243,7 @@ void SettingEntry::DrawSetting(GameSettings *settings_ptr, int left, int right, 
 				editable && value != (sdb->flags & SGF_0ISDISABLED ? 0 : sdb->min), editable && (uint32)value != sdb->max);
 	}
 	this->SetValueDParams(1, value);
-	DrawString(text_left, text_right, y, sdb->str, highlight ? TC_WHITE : TC_LIGHT_BLUE);
+	DrawString(text_left, text_right, Center(y, SETTING_HEIGHT), sdb->str, highlight ? TC_WHITE : TC_LIGHT_BLUE);
 }
 
 

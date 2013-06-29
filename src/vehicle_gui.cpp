@@ -318,7 +318,7 @@ typedef SmallVector<RefitOption, 32> SubtypeList; ///< List of refit subtypes as
  */
 static void DrawVehicleRefitWindow(const SubtypeList list[NUM_CARGO], const int sel[2], uint pos, uint rows, uint delta, const Rect &r)
 {
-	uint y = r.top + WD_MATRIX_TOP;
+	uint y = Center(r.top, delta);
 	uint current = 0;
 
 	bool rtl = _current_text_dir == TD_RTL;
@@ -2632,7 +2632,7 @@ public:
 		int image = ((v->vehstatus & VS_STOPPED) != 0) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING;
 		int lowered = this->IsWidgetLowered(WID_VV_START_STOP) ? 1 : 0;
 		DrawSprite(image, PAL_NONE, image_left + lowered, r.top + WD_IMGBTN_TOP + lowered);
-		DrawString(text_left + lowered, text_right + lowered, r.top + WD_FRAMERECT_TOP + lowered, str, TC_FROMSTRING, SA_HOR_CENTER);
+		DrawString(text_left + lowered, text_right + lowered, Center(r.top + lowered, r.bottom - r.top), str, TC_FROMSTRING, SA_HOR_CENTER);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)

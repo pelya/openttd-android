@@ -38,7 +38,7 @@ uint DropDownListStringItem::Width() const
 
 void DropDownListStringItem::Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const
 {
-	DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top, this->String(), sel ? TC_WHITE : TC_BLACK);
+	DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, Center(top, bottom - top), this->String(), sel ? TC_WHITE : TC_BLACK);
 }
 
 /**
