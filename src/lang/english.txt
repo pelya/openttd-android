@@ -1184,6 +1184,10 @@ STR_CONFIG_SETTING_SIGNALSIDE_HELPTEXT                          :Select on which
 STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :On the left
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :On the driving side
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :On the right
+STR_CONFIG_SETTING_TOUCHSCREEN_MODE                             :Control mode for touchscreen devices: {STRING2}
+STR_CONFIG_SETTING_TOUCHSCREEN_MODE_HELPTEXT                    :If playing with a mouse, choose no adaptation. Other modes are for touchscreen devices. Associated hotkey: N
+STR_CONFIG_SETTING_TOUCHSCREEN_NONE                             :no adaptation
+STR_CONFIG_SETTING_TOUCHSCREEN_SIMPLE                           :simple
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}

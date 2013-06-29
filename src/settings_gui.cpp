@@ -1487,6 +1487,7 @@ static SettingEntry _settings_ui[] = {
 	SettingEntry(&_settings_ui_interaction_page, STR_CONFIG_SETTING_INTERACTION),
 	SettingEntry(&_settings_ui_sound_page, STR_CONFIG_SETTING_SOUND),
 	SettingEntry(&_settings_ui_news_page, STR_CONFIG_SETTING_NEWS),
+	SettingEntry("gui.touchscreen_mode"),
 	SettingEntry("gui.show_finances"),
 	SettingEntry("gui.errmsg_duration"),
 	SettingEntry("gui.hover_delay"),

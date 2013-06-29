@@ -64,6 +64,7 @@
 #include "roadveh.h"
 #include "fios.h"
 #include "strings_func.h"
+#include "toolbar_gui.h"
 
 #include "void_map.h"
 #include "station_base.h"
@@ -1066,6 +1067,12 @@ static bool ZoomMinMaxChanged(int32 p1)
 	extern void ConstrainAllViewportsZoom();
 	ConstrainAllViewportsZoom();
 	GfxClearSpriteCache();
+	return true;
+}
+
+static bool TouchscreenModeChanged(int32 p1)
+{
+	//ResetTabletWindow();
 	return true;
 }
 

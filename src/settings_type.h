@@ -21,6 +21,7 @@
 #include "linkgraph/linkgraph_type.h"
 #include "zoom_type.h"
 #include "openttd.h"
+#include "toolbar_type.h"
 
 
 /** Settings profiles and highscore tables. */
@@ -77,6 +78,7 @@ struct GUISettings {
 	bool   lost_vehicle_warn;                ///< if a vehicle can't find its destination, show a warning
 	uint8  order_review_system;              ///< perform order reviews on vehicles
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
+	TouchscreenModeByte touchscreen_mode;    ///< touchscreen mode for toolbars
 	uint   min_button;                       ///< min size of most button widgets
 	uint   min_step;                         ///< min size of scrollbar/dropdown elements
 	bool   manage_min_sizing;                ///< automatically set min_button and min_step
