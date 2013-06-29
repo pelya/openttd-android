@@ -1764,6 +1764,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\toolbar_type.h"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\toolbar_gui.h"
 				>
 			</File>

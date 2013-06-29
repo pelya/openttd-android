@@ -358,6 +358,7 @@ tilehighlight_func.h
 tilehighlight_type.h
 tilematrix_type.hpp
 timetable.h
+toolbar_type.h
 toolbar_gui.h
 town.h
 town_type.h
