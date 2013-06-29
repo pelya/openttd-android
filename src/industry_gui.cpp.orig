@@ -1260,7 +1260,7 @@ public:
 
 			case WID_ID_INDUSTRY_LIST: {
 				int n = 0;
-				int y = r.top + WD_FRAMERECT_TOP;
+				int y = Center(r.top, this->resize.step_height);
 				if (this->industries.Length() == 0) {
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_DIRECTORY_NONE);
 					break;

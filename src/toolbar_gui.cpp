@@ -133,7 +133,7 @@ public:
 
 	uint Height(uint width) const
 	{
-		return max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
+		return GetMinSizing(NWST_STEP, max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL));
 	}
 
 	void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const

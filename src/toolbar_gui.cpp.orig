@@ -133,7 +133,7 @@ public:
 
 	uint Height(uint width) const
 	{
-		return GetMinSizing(NWST_STEP, max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL));
+		return max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
 	}
 
 	void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const
@@ -958,7 +958,7 @@ static CallBackFunction MenuClickBuildAir(int index)
 
 static CallBackFunction ToolbarForestClick(Window *w)
 {
-	PopupMainToolbMenu(w, WID_TN_LANDSCAPE, STR_LANDSCAPING_MENU_LANDSCAPING, 1);
+	PopupMainToolbMenu(w, WID_TN_LANDSCAPE, STR_LANDSCAPING_MENU_LANDSCAPING, 3);
 	return CBF_NONE;
 }
 
@@ -972,6 +972,8 @@ static CallBackFunction MenuClickForest(int index)
 {
 	switch (index) {
 		case 0: ShowTerraformToolbar();  break;
+		case 1: ShowBuildTreesToolbar(); break;
+		case 2: return SelectSignTool();
 	}
 	return CBF_NONE;
 }

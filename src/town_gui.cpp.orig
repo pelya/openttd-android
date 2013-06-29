@@ -197,7 +197,7 @@ public:
 			case WID_TA_COMMAND_LIST: {
 				int numact;
 				uint buttons = GetMaskOfTownActions(&numact, _local_company, this->town);
-				int y = r.top + WD_FRAMERECT_TOP;
+				int y = Center(r.top, this->resize.step_height);
 				int pos = this->vscroll->GetPosition();
 
 				if (--pos < 0) {

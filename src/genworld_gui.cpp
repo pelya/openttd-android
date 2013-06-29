@@ -451,6 +451,7 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_MAPSIZE_Y_PULLDOWN:
 				SetDParamMaxValue(0, MAX_MAP_SIZE);
 				*size = GetStringBoundingBox(STR_JUST_INT);
+				size->width = size->width + GetMinSizing(NWST_BUTTON);
 				break;
 
 			case WID_GL_SNOW_LEVEL_TEXT:
@@ -508,7 +509,7 @@ struct GenerateLandscapeWindow : public Window {
 			}
 		}
 		size->width += padding.width;
-		size->height = FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM;
+		size->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM);
 	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const

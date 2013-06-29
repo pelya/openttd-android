@@ -35,6 +35,7 @@
 #include "road_func.h"
 #include "water.h"
 #include "station_func.h"
+#include "widget_type.h"
 
 #include "widgets/company_widget.h"
 
@@ -526,7 +527,7 @@ public:
 
 	uint Height(uint width) const
 	{
-		return max(FONT_HEIGHT_NORMAL, 14);
+		return GetMinSizing(NWST_STEP, max(FONT_HEIGHT_NORMAL, 14));
 	}
 
 	bool Selectable() const

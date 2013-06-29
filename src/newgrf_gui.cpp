@@ -681,14 +681,14 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 			case WID_NS_FILE_LIST:
 			{
 				Dimension d = maxdim(GetSpriteSize(SPR_SQUARE), GetSpriteSize(SPR_WARNING_SIGN));
-				resize->height = max(d.height + 2U, FONT_HEIGHT_NORMAL + 2U);
-				size->height = max(size->height, WD_FRAMERECT_TOP + 6 * resize->height + WD_FRAMERECT_BOTTOM);
+				resize->height = GetMinSizing(NWST_STEP, max(d.height + 2U, FONT_HEIGHT_NORMAL + 2U));
+				size->height = max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
 				break;
 			}
 
 			case WID_NS_AVAIL_LIST:
-				resize->height = max(12, FONT_HEIGHT_NORMAL + 2);
-				size->height = max(size->height, WD_FRAMERECT_TOP + 8 * resize->height + WD_FRAMERECT_BOTTOM);
+				resize->height = GetMinSizing(NWST_STEP, max(12, FONT_HEIGHT_NORMAL + 2));
+				size->height = max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
 				break;
 
 			case WID_NS_NEWGRF_INFO_TITLE: {
@@ -711,6 +711,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 					}
 				}
 				d.width += padding.width;
+				d.height = GetMinSizing(NWST_BUTTON, d.height);
 				*size = maxdim(d, *size);
 				break;
 			}
@@ -721,6 +722,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 				*size = maxdim(d, GetStringBoundingBox(STR_INTRO_ONLINE_CONTENT));
 				size->width  += padding.width;
 				size->height += padding.height;
+				size->height = GetMinSizing(NWST_BUTTON, size->height);
 				break;
 			}
 		}

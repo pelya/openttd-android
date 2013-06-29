@@ -648,7 +648,7 @@ struct RefitWindow : public Window {
 	{
 		switch (widget) {
 			case WID_VR_MATRIX:
-				resize->height = WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM;
+				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
 				size->height = resize->height * 8;
 				break;
 
@@ -1329,7 +1329,7 @@ void DrawVehicleImage(const Vehicle *v, int left, int right, int y, int height, 
 uint GetVehicleListHeight(VehicleType type, uint divisor)
 {
 	/* Name + vehicle + profit */
-	uint base = GetVehicleHeight(type) + 2 * FONT_HEIGHT_SMALL;
+	uint base = GetMinSizing(NWST_STEP, GetVehicleHeight(type) + 2 * FONT_HEIGHT_SMALL);
 	/* Drawing of the 4 small orders + profit*/
 	if (type >= VEH_SHIP) base = max(base, 5U * FONT_HEIGHT_SMALL);
 

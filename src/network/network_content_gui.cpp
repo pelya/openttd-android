@@ -524,7 +524,7 @@ public:
 			}
 
 			case WID_NCL_MATRIX:
-				resize->height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
+				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 				size->height = 10 * resize->height;
 				break;
 		}
