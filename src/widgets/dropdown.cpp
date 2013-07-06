@@ -334,10 +334,10 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 {
 	DeleteWindowById(WC_DROPDOWN_MENU, 0);
 
-	/* The preferred position is just below the dropdown calling widget */
+	/* The preferred position is just below the dropdown calling widget. */
 	int top = w->top + wi_rect.bottom + 1;
 
-	/* The preferred width equals the calling widget */
+	/* The preferred width equals the calling widget. */
 	uint width = wi_rect.right - wi_rect.left + 1;
 
 	uint max_item_width = 0;
@@ -350,7 +350,7 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 		}
 	}
 
-	/* Total length of list */
+	/* Total length of list. */
 	int list_height = 0;
 
 	for (const DropDownListItem * const *it = list->Begin(); it != list->End(); ++it) {
@@ -358,28 +358,47 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 		list_height += item->Height(width);
 	}
 
-	/* Height of window visible */
+	/* Height of the dropdown window; by default, the total length of the list. */
 	int height = list_height;
 
 	/* Check if the status bar is visible, as we don't want to draw over it */
 	int screen_bottom = GetMainViewBottom();
 	bool scroll = false;
 
-	/* Check if the dropdown will fully fit below the widget */
+	/* Check if the dropdown will fully fit below the widget. */
 	if (top + height + 4 >= screen_bottom) {
-		/* If not, check if it will fit above the widget */
-		if (w->top + wi_rect.top - height > GetMainViewTop()) {
+		/* If not, check if it will fit above the widget. */
+		int screen_top = GetMainViewTop();
+		if (w->top + wi_rect.top > screen_top + height) {
 			top = w->top + wi_rect.top - height - 4;
 		} else {
-			/* ... and lastly if it won't, enable the scroll bar and fit the
-			 * list in below the widget */
+			/* If it doesn't fit above the widget, we need to enable a scrollbar... */
 			int avg_height = list_height / (int)list->Length();
-			int rows = (screen_bottom - 4 - top) / avg_height;
-			height = rows * avg_height;
 			scroll = true;
-			/* Add space for the scroll bar if we automatically determined
-			 * the width of the list. */
+
+			/* ... and choose whether to put the list above or below the widget. */
+			bool put_above = false;
+			int available_height = screen_bottom - w->top - wi_rect.bottom;
+			if (w->top + wi_rect.top - screen_top > available_height) {
+				// Put it above.
+				available_height = w->top + wi_rect.top - screen_top;
+				put_above = true;
+			}
+
+			/* Check at least there is space for one item. */
+			assert(available_height >= avg_height);
+
+			/* And lastly, fit the list,... */
+			int rows = available_height / avg_height;
+			height = rows * avg_height;
+
+			/* ... add space for the scrollbar,... */
 			max_item_width += NWidgetScrollbar::GetVerticalDimension().width;
+
+			/* ... and set the top position if needed. */
+			if (put_above) {
+				top = w->top + wi_rect.top - height - 4;
+			}
 		}
 	}
 
