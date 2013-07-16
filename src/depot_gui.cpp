@@ -272,7 +272,7 @@ struct DepotWindow : Window {
 	void DrawVehicleInDepot(const Vehicle *v, int left, int right, int y) const
 	{
 		bool free_wagon = false;
-		int sprite_y = y + (this->resize.step_height - GetVehicleHeight(v->type)) / 2;
+		int sprite_y = Center(y, this->resize.step_height, GetVehicleHeight(v->type));
 
 		bool rtl = _current_text_dir == TD_RTL;
 		int image_left  = rtl ? left  + this->count_width  : left  + this->header_width;
@@ -284,13 +284,13 @@ struct DepotWindow : Window {
 				free_wagon = u->IsFreeWagon();
 
 				uint x_space = free_wagon ? TRAININFO_DEFAULT_VEHICLE_WIDTH : 0;
-				DrawTrainImage(u, image_left + (rtl ? 0 : x_space), image_right - (rtl ? x_space : 0), sprite_y - 1,
+				DrawTrainImage(u, image_left + (rtl ? 0 : x_space), image_right - (rtl ? x_space : 0), sprite_y,
 						this->sel, EIT_IN_DEPOT, free_wagon ? 0 : this->hscroll->GetPosition(), this->vehicle_over);
 
 				/* Length of consist in tiles with 1 fractional digit (rounded up) */
 				SetDParam(0, CeilDiv(u->gcache.cached_total_length * 10, TILE_SIZE));
 				SetDParam(1, 1);
-				DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
+				DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, Center(y, this->resize.step_height, FONT_HEIGHT_SMALL), STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
 				break;
 			}
 
@@ -299,33 +299,35 @@ struct DepotWindow : Window {
 			case VEH_AIRCRAFT: {
 				const Sprite *spr = GetSprite(v->GetImage(DIR_W, EIT_IN_DEPOT), ST_NORMAL);
 				DrawAircraftImage(v, image_left, image_right,
-									y + max(UnScaleByZoom(spr->height, ZOOM_LVL_GUI) + UnScaleByZoom(spr->y_offs, ZOOM_LVL_GUI) - 14, 0), // tall sprites needs an y offset
+									Center(y, this->resize.step_height, UnScaleByZoom(spr->height, ZOOM_LVL_GUI) + UnScaleByZoom(spr->y_offs, ZOOM_LVL_GUI)), // tall sprites needs an y offset
 									this->sel, EIT_IN_DEPOT);
 				break;
 			}
 			default: NOT_REACHED();
 		}
 
-		uint diff_x, diff_y;
+		uint diff_x, y_sprite, y_num;
 		if (v->IsGroundVehicle()) {
 			/* Arrange unitnumber and flag horizontally */
 			diff_x = this->flag_width + WD_FRAMERECT_LEFT;
-			diff_y = (this->resize.step_height - this->flag_height) / 2 - 2;
+			y_sprite = Center(y, this->resize.step_height, this->flag_height);
+			y_num = Center(y, this->resize.step_height);
 		} else {
 			/* Arrange unitnumber and flag vertically */
 			diff_x = WD_FRAMERECT_LEFT;
-			diff_y = FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
+			y_num = Center(y, this->resize.step_height, FONT_HEIGHT_NORMAL + this->flag_height + 2);
+			y_sprite = y_num + FONT_HEIGHT_NORMAL;
 		}
 		int text_left  = rtl ? right - this->header_width - 1 : left + diff_x;
 		int text_right = rtl ? right - diff_x : left + this->header_width - 1;
 
 		if (free_wagon) {
-			DrawString(text_left, text_right, y + 2, STR_DEPOT_NO_ENGINE);
+			DrawString(text_left, text_right, Center(y, this->resize.step_height), STR_DEPOT_NO_ENGINE);
 		} else {
-			DrawSprite((v->vehstatus & VS_STOPPED) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING, PAL_NONE, rtl ? right - this->flag_width : left + WD_FRAMERECT_LEFT, y + diff_y);
+			DrawSprite((v->vehstatus & VS_STOPPED) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING, PAL_NONE, rtl ? right - this->flag_width : left + WD_FRAMERECT_LEFT, y_sprite);
 
 			SetDParam(0, v->unitnumber);
-			DrawString(text_left, text_right, y + 2, (uint16)(v->max_age - DAYS_IN_LEAP_YEAR) >= v->age ? STR_BLACK_COMMA : STR_RED_COMMA);
+			DrawString(text_left, text_right, y_num, (uint16)(v->max_age - DAYS_IN_LEAP_YEAR) >= v->age ? STR_BLACK_COMMA : STR_RED_COMMA);
 		}
 	}
 
@@ -342,7 +344,7 @@ struct DepotWindow : Window {
 		uint16 num = this->vscroll->GetPosition() * this->num_columns;
 		int maxval = min(this->vehicle_list.Length(), num + (rows_in_display * this->num_columns));
 		int y;
-		for (y = r.top + 1; num < maxval; y += this->resize.step_height) { // Draw the rows
+		for (y = r.top; num < maxval; y += this->resize.step_height) { // Draw the rows
 			for (byte i = 0; i < this->num_columns && num < maxval; i++, num++) {
 				/* Draw all vehicles in the current row */
 				const Vehicle *v = this->vehicle_list[num];
@@ -623,6 +625,7 @@ struct DepotWindow : Window {
 				int base_width = this->count_width + this->header_width;
 
 				resize->height = max<uint>(GetVehicleImageCellSize(this->type, EIT_IN_DEPOT).height, min_height);
+				resize->height = GetMinSizing(NWST_STEP, resize->height);
 				if (this->type == VEH_TRAIN) {
 					resize->width = 1;
 					size->width = base_width + 2 * 29; // about 2 parts
