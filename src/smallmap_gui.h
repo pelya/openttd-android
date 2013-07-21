@@ -72,6 +72,7 @@ protected:
 	uint min_number_of_columns;    ///< Minimal number of columns in legends.
 	uint min_number_of_fixed_rows; ///< Minimal number of rows in the legends for the fixed layouts only (all except #SMT_INDUSTRY).
 	uint column_width;             ///< Width of a column in the #WID_SM_LEGEND widget.
+	const uint row_height;         ///< Heigth of each row in the #WID_SM_LEGEND widget.
 
 	int32 scroll_x;  ///< Horizontal world coordinate of the base tile left of the top-left corner of the smallmap display.
 	int32 scroll_y;  ///< Vertical world coordinate of the base tile left of the top-left corner of the smallmap display.
@@ -133,7 +134,7 @@ protected:
 	inline uint GetLegendHeight(uint num_columns) const
 	{
 		return WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
-				this->GetNumberRowsLegend(num_columns) * FONT_HEIGHT_SMALL;
+				this->GetNumberRowsLegend(num_columns) * this->row_height;
 	}
 
 	/**
