@@ -222,7 +222,8 @@ static inline void DrawImageButtons(const Rect &r, WidgetType type, Colours colo
 	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
 
 	if ((type & WWT_MASK) == WWT_IMGBTN_2 && clicked) img++; // Show different image when clicked for #WWT_IMGBTN_2.
-	DrawSprite(img, PAL_NONE, r.left + WD_IMGBTN_LEFT + clicked, r.top + WD_IMGBTN_TOP + clicked);
+	Dimension d2 = GetSpriteSize(img);
+	DrawSprite(img, PAL_NONE, Center(r.left + clicked, r.right - r.left, d2.width), Center(r.top + clicked, r.bottom - r.top, d2.height));
 }
 
 /**
@@ -453,54 +454,6 @@ static inline void DrawFrame(const Rect &r, Colours colour, StringID str)
 }
 
 /**
- * Draw a shade box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the shade box.
- * @param clicked Box is lowered.
- */
-static inline void DrawShadeBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite((clicked) ? SPR_WINDOW_SHADE : SPR_WINDOW_UNSHADE, PAL_NONE, r.left + WD_SHADEBOX_LEFT + clicked, r.top + WD_SHADEBOX_TOP + clicked);
-}
-
-/**
- * Draw a sticky box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the sticky box.
- * @param clicked Box is lowered.
- */
-static inline void DrawStickyBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite((clicked) ? SPR_PIN_UP : SPR_PIN_DOWN, PAL_NONE, r.left + WD_STICKYBOX_LEFT + clicked, r.top + WD_STICKYBOX_TOP + clicked);
-}
-
-/**
- * Draw a defsize box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the defsize box.
- * @param clicked Box is lowered.
- */
-static inline void DrawDefSizeBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_WINDOW_DEFSIZE, PAL_NONE, r.left + WD_DEFSIZEBOX_LEFT + clicked, r.top + WD_DEFSIZEBOX_TOP + clicked);
-}
-
-/**
- * Draw a NewGRF debug box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the debug box.
- * @param clicked Box is lowered.
- */
-static inline void DrawDebugBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_WINDOW_DEBUG, PAL_NONE, r.left + WD_DEBUGBOX_LEFT + clicked, r.top + WD_DEBUGBOX_TOP + clicked);
-}
-
-/**
  * Draw a resize box.
  * @param r       Rectangle of the box.
  * @param colour  Colour of the resize box.
@@ -510,12 +463,13 @@ static inline void DrawDebugBox(const Rect &r, Colours colour, bool clicked)
 static inline void DrawResizeBox(const Rect &r, Colours colour, bool at_left, bool clicked)
 {
 	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
+	Dimension d = GetSpriteSize(at_left ? SPR_WINDOW_RESIZE_LEFT : SPR_WINDOW_RESIZE_RIGHT);
 	if (at_left) {
-		DrawSprite(SPR_WINDOW_RESIZE_LEFT, PAL_NONE, r.left + WD_RESIZEBOX_RIGHT + clicked,
-				 r.bottom - WD_RESIZEBOX_BOTTOM - GetSpriteSize(SPR_WINDOW_RESIZE_LEFT).height + clicked);
+		DrawSprite(SPR_WINDOW_RESIZE_LEFT, PAL_NONE, r.left + WD_RESIZEBOX_LEFT + clicked,
+				 r.bottom - WD_RESIZEBOX_BOTTOM - d.height + clicked);
 	} else {
-		DrawSprite(SPR_WINDOW_RESIZE_RIGHT, PAL_NONE, r.left + WD_RESIZEBOX_LEFT + clicked,
-				 r.bottom - WD_RESIZEBOX_BOTTOM - GetSpriteSize(SPR_WINDOW_RESIZE_RIGHT).height + clicked);
+		DrawSprite(SPR_WINDOW_RESIZE_RIGHT, PAL_NONE, r.right - WD_RESIZEBOX_RIGHT - d.width + clicked,
+				 r.bottom - WD_RESIZEBOX_BOTTOM - d.height + clicked);
 	}
 }
 
@@ -2451,21 +2405,23 @@ void NWidgetLeaf::Draw(const Window *w)
 
 		case WWT_SHADEBOX:
 			assert(this->widget_data == 0);
-			DrawShadeBox(r, this->colour, w->IsShaded());
+			DrawImageButtons(r, WWT_SHADEBOX, this->colour, w->IsShaded(), w->IsShaded() ? SPR_WINDOW_SHADE : SPR_WINDOW_UNSHADE);
 			break;
 
 		case WWT_DEBUGBOX:
-			DrawDebugBox(r, this->colour, clicked);
+			DrawImageButtons(r, WWT_DEBUGBOX, this->colour, clicked, SPR_WINDOW_DEBUG);
 			break;
 
-		case WWT_STICKYBOX:
+		case WWT_STICKYBOX: {
 			assert(this->widget_data == 0);
-			DrawStickyBox(r, this->colour, !!(w->flags & WF_STICKY));
+			bool clicked = !!(w->flags & WF_STICKY);
+			DrawImageButtons(r, WWT_STICKYBOX, this->colour, clicked, clicked ? SPR_PIN_DOWN : SPR_PIN_UP);
 			break;
+		}
 
 		case WWT_DEFSIZEBOX:
 			assert(this->widget_data == 0);
-			DrawDefSizeBox(r, this->colour, clicked);
+			DrawImageButtons(r, WWT_DEFSIZEBOX, this->colour, clicked, SPR_WINDOW_DEFSIZE);
 			break;
 
 		case WWT_RESIZEBOX:
