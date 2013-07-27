@@ -287,7 +287,7 @@ struct CheatWindow : Window {
 	{
 		const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_C_PANEL);
 
-		if ((pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) % this->line_height > SETTING_BUTTON_HEIGHT) return;
+		if ((pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) % this->line_height > (uint)SETTING_BUTTON_HEIGHT) return;
 
 		uint btn = (pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) / this->line_height;
 		uint x = pt.x - wid->pos_x;
@@ -300,7 +300,7 @@ struct CheatWindow : Window {
 		int value = (int32)ReadValue(ce->variable, ce->type);
 		int oldvalue = value;
 
-		if (btn == CHT_CHANGE_DATE && x >= 20 + SETTING_BUTTON_WIDTH) {
+		if (btn == CHT_CHANGE_DATE && x >= (20 + (uint)SETTING_BUTTON_WIDTH)) {
 			/* Click at the date text directly. */
 			SetDParam(0, value);
 			ShowQueryString(STR_JUST_INT, STR_CHEAT_CHANGE_DATE_QUERY_CAPT, 8, this, CS_NUMERAL, QSF_ACCEPT_UNCHANGED);
@@ -320,10 +320,11 @@ struct CheatWindow : Window {
 
 			default:
 				/* Take whatever the function returns */
-				value = ce->proc(value + ((x >= 20 + SETTING_BUTTON_WIDTH / 2) ? 1 : -1), (x >= 20 + SETTING_BUTTON_WIDTH / 2) ? 1 : -1);
+				bool clicked_right = x >= 20 + (uint)(SETTING_BUTTON_WIDTH / 2);
+				value = ce->proc(value + (clicked_right ? 1 : -1), clicked_right ? 1 : -1);
 
 				/* The first cheat (money), doesn't return a different value. */
-				if (value != oldvalue || btn == CHT_MONEY) this->clicked = btn * 2 + 1 + ((x >= 20 + SETTING_BUTTON_WIDTH / 2) != rtl ? 1 : 0);
+				if (value != oldvalue || btn == CHT_MONEY) this->clicked = btn * 2 + 1 + (clicked_right != rtl ? 1 : 0);
 				break;
 		}
 

@@ -840,7 +840,7 @@ public:
 
 					case EA_RATE:
 						if (pt.y >= this->production_offset_y) {
-							if ((pt.y - this->production_offset_y) % GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) > SETTING_BUTTON_HEIGHT) break;;
+							if ((pt.y - this->production_offset_y) % GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) > (uint)SETTING_BUTTON_HEIGHT) break;;
 
 							int row = (pt.y - this->production_offset_y) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 							for (uint j = 0; j < lengthof(i->produced_cargo); j++) {

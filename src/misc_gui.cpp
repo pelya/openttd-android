@@ -631,6 +631,8 @@ static WindowDesc _tool_tips_desc(
 	_nested_tooltips_widgets, lengthof(_nested_tooltips_widgets)
 );
 
+uint _tooltip_width = 194;
+
 /** Window for displaying a tooltip. */
 struct TooltipsWindow : public Window
 {
@@ -679,7 +681,7 @@ struct TooltipsWindow : public Window
 		/* There is only one widget. */
 		for (uint i = 0; i != this->paramcount; i++) SetDParam(i, this->params[i]);
 
-		size->width  = min(GetStringBoundingBox(this->string_id).width, 194);
+		size->width  = min(GetStringBoundingBox(this->string_id).width, _tooltip_width);
 		size->height = GetStringHeight(this->string_id, size->width);
 
 		/* Increase slightly to have some space around the box. */

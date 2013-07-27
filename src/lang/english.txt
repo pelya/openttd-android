@@ -972,6 +972,8 @@ STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} corr
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Additional information about the base music set
 
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}Fullscreen mode failed
+STR_ERROR_RESET_WINDOWS                                         :{WHITE}All windows have been reseted...
+STR_ERROR_AUTOMATIC_SIZING                                      :{WHITE}Sizes of buttons and fonts have changed
 
 # Custom currency window
 
