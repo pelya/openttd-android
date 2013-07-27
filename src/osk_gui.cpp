@@ -230,7 +230,8 @@ static const int INTER_KEY_SPACE = 2; // Number of pixels between two keys.
  */
 static void AddKey(NWidgetHorizontal *hor, int height, int num_half, WidgetType widtype, int widnum, uint16 widdata, int *biggest_index)
 {
-	int key_width = HALF_KEY_WIDTH + (INTER_KEY_SPACE + HALF_KEY_WIDTH) * (num_half - 1);
+	int min_half_key = max<int>(GetMinSizing(NWST_BUTTON) / 2, HALF_KEY_WIDTH);
+	int key_width = min_half_key + (INTER_KEY_SPACE + min_half_key) * (num_half - 1);
 
 	if (widtype == NWID_SPACER) {
 		if (!hor->IsEmpty()) key_width += INTER_KEY_SPACE;
@@ -330,7 +331,7 @@ static NWidgetBase *MakeSpacebarKeys(int *biggest_index)
 
 
 static const NWidgetPart _nested_osk_widgets[] = {
-	NWidget(WWT_CAPTION, COLOUR_GREY, WID_OSK_CAPTION), SetDataTip(STR_WHITE_STRING, STR_NULL),
+	NWidget(WWT_CAPTION, COLOUR_GREY, WID_OSK_CAPTION), SetSizingType(NWST_BUTTON), SetDataTip(STR_WHITE_STRING, STR_NULL),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_OSK_TEXT), SetMinimalSize(252, 12), SetPadding(2, 2, 2, 2),
 	EndContainer(),

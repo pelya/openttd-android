@@ -120,16 +120,16 @@ struct AIListWindow : public Window {
 		switch (widget) {
 			case WID_AIL_LIST: {
 				/* Draw a list of all available AIs. */
-				int y = this->GetWidget<NWidgetBase>(WID_AIL_LIST)->pos_y;
+				int y = Center(r.top, this->line_height);
 				/* First AI in the list is hardcoded to random */
 				if (this->vscroll->IsVisible(0)) {
-					DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_LEFT, y + WD_MATRIX_TOP, this->slot == OWNER_DEITY ? STR_AI_CONFIG_NONE : STR_AI_CONFIG_RANDOM_AI, this->selected == -1 ? TC_WHITE : TC_ORANGE);
+					DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_LEFT, y, this->slot == OWNER_DEITY ? STR_AI_CONFIG_NONE : STR_AI_CONFIG_RANDOM_AI, this->selected == -1 ? TC_WHITE : TC_ORANGE);
 					y += this->line_height;
 				}
 				ScriptInfoList::const_iterator it = this->info_list->begin();
 				for (int i = 1; it != this->info_list->end(); i++, it++) {
 					if (this->vscroll->IsVisible(i)) {
-						DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT, y + WD_MATRIX_TOP, (*it).second->GetName(), (this->selected == i - 1) ? TC_WHITE : TC_ORANGE);
+						DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT, y, (*it).second->GetName(), (this->selected == i - 1) ? TC_WHITE : TC_ORANGE);
 						y += this->line_height;
 					}
 				}
@@ -367,7 +367,6 @@ struct AISettingsWindow : public Window {
 		uint text_left    = r.left + (rtl ? WD_FRAMERECT_LEFT : SETTING_BUTTON_WIDTH + 8);
 		uint text_right   = r.right - (rtl ? SETTING_BUTTON_WIDTH + 8 : WD_FRAMERECT_RIGHT);
 
-
 		int y = r.top;
 		int button_y_offset = (this->line_height - SETTING_BUTTON_HEIGHT) / 2;
 		for (; this->vscroll->IsVisible(i) && it != visible_settings.end(); i++, it++) {
@@ -411,7 +410,7 @@ struct AISettingsWindow : public Window {
 				}
 			}
 
-			DrawString(text_left, text_right, y + WD_MATRIX_TOP, str, colour);
+			DrawString(text_left, text_right, Center(y, this->line_height), str, colour);
 			y += this->line_height;
 		}
 	}
@@ -679,7 +678,7 @@ static const NWidgetPart _nested_ai_config_widgets[] = {
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 9),
 		NWidget(WWT_FRAME, COLOUR_MAUVE), SetDataTip(STR_AI_CONFIG_GAMESCRIPT, STR_NULL), SetPadding(0, 5, 4, 5),
-			NWidget(WWT_MATRIX, COLOUR_MAUVE, WID_AIC_GAMELIST), SetMinimalSize(288, 14), SetFill(1, 0), SetMatrixDataTip(1, 1, STR_AI_CONFIG_GAMELIST_TOOLTIP),
+			NWidget(WWT_MATRIX, COLOUR_MAUVE, WID_AIC_GAMELIST), SetSizingType(NWST_STEP), SetMinimalSize(288, 14), SetFill(1, 0), SetMatrixDataTip(1, 1, STR_AI_CONFIG_GAMELIST_TOOLTIP),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_AIC_CHANGE), SetFill(1, 0), SetMinimalSize(93, 12), SetDataTip(STR_AI_CONFIG_CHANGE, STR_AI_CONFIG_CHANGE_TOOLTIP),
@@ -756,8 +755,8 @@ struct AIConfigWindow : public Window {
 	{
 		switch (widget) {
 			case WID_AIC_GAMELIST:
-				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				size->height = 1 * this->line_height;
+				this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				size->height = this->line_height;
 				break;
 
 			case WID_AIC_LIST:
@@ -799,14 +798,14 @@ struct AIConfigWindow : public Window {
 					text = STR_JUST_RAW_STRING;
 				}
 
-				DrawString(r.left + 10, r.right - 10, r.top + WD_MATRIX_TOP, text,
+				DrawString(r.left + 10, r.right - 10, Center(r.top, this->line_height), text,
 						(this->selected_slot == OWNER_DEITY) ? TC_WHITE : (IsEditable(OWNER_DEITY) ? TC_ORANGE : TC_SILVER));
 
 				break;
 			}
 
 			case WID_AIC_LIST: {
-				int y = r.top;
+				int y = Center(r.top, this->line_height);
 				for (int i = this->vscroll->GetPosition(); this->vscroll->IsVisible(i) && i < MAX_COMPANIES; i++) {
 					StringID text;
 
@@ -818,7 +817,7 @@ struct AIConfigWindow : public Window {
 					} else {
 						text = STR_AI_CONFIG_RANDOM_AI;
 					}
-					DrawString(r.left + 10, r.right - 10, y + WD_MATRIX_TOP, text,
+					DrawString(r.left + 10, r.right - 10, y, text,
 							(this->selected_slot == i) ? TC_WHITE : (IsEditable((CompanyID)i) ? TC_ORANGE : TC_SILVER));
 					y += this->line_height;
 				}
@@ -1088,6 +1087,8 @@ struct AIDebugWindow : public Window {
 
 		bool dirty = false;
 
+		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
+		uint offset_y = Center(0, GetMinSizing(NWST_STEP, d.height + WD_MATRIX_TOP + WD_MATRIX_BOTTOM + 1), d.height);
 		/* Paint the company icons */
 		for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
 			NWidgetCore *button = this->GetWidget<NWidgetCore>(i + WID_AID_COMPANY_BUTTON_START);
@@ -1108,7 +1109,7 @@ struct AIDebugWindow : public Window {
 			if (!valid) continue;
 
 			byte offset = (i == ai_debug_company) ? 1 : 0;
-			DrawCompanyIcon(i, button->pos_x + button->current_x / 2 - 7 + offset, this->GetWidget<NWidgetBase>(WID_AID_COMPANY_BUTTON_START + i)->pos_y + 2 + offset);
+			DrawCompanyIcon(i, Center(button->pos_x + offset, button->current_x, d.width), button->pos_y + offset + offset_y);
 		}
 
 		/* Set button colour for Game Script. */
@@ -1187,7 +1188,7 @@ struct AIDebugWindow : public Window {
 				ScriptLog::LogData *log = this->GetLogPointer();
 				if (log == NULL) return;
 
-				int y = this->top_offset;
+				int y = Center(this->top_offset, this->resize.step_height);
 				for (int i = this->vscroll->GetPosition(); this->vscroll->IsVisible(i) && i < log->used; i++) {
 					int pos = (i + log->pos + 1 - log->used + log->count) % log->count;
 					if (log->lines[pos] == NULL) break;

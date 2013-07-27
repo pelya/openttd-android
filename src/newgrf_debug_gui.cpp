@@ -840,7 +840,7 @@ struct SpriteAlignerWindow : Window {
 	{
 		if (widget != WID_SA_LIST) return;
 
-		resize->height = max(11, FONT_HEIGHT_NORMAL + 1);
+		resize->height = GetMinSizing(NWST_STEP, max(11, FONT_HEIGHT_NORMAL + 1));
 		resize->width  = 1;
 
 		/* Resize to about 200 pixels (for the preview) */
@@ -877,10 +877,10 @@ struct SpriteAlignerWindow : Window {
 				SmallVector<SpriteID, 256> &list = _newgrf_debug_sprite_picker.sprites;
 				int max = min<int>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), list.Length());
 
-				int y = r.top + WD_FRAMERECT_TOP;
+				int y = Center(r.top + WD_FRAMERECT_TOP, step_size, FONT_HEIGHT_NORMAL);
 				for (int i = this->vscroll->GetPosition(); i < max; i++) {
 					SetDParam(0, list[i]);
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_BLACK_COMMA, TC_FROMSTRING, SA_RIGHT | SA_FORCE);
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_BLACK_COMMA, TC_FROMSTRING, SA_CENTER | SA_FORCE);
 					y += step_size;
 				}
 				break;

@@ -172,9 +172,11 @@ static const NWidgetPart _nested_cheat_widgets[] = {
 struct CheatWindow : Window {
 	int clicked;
 	int header_height;
+	int line_height;
 
 	CheatWindow(WindowDesc *desc) : Window(desc)
 	{
+		this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL);
 		this->InitNested();
 	}
 
@@ -190,11 +192,12 @@ struct CheatWindow : Window {
 		uint button_left = rtl ? r.right - 20 - SETTING_BUTTON_WIDTH : r.left + 20;
 		uint text_left   = r.left + (rtl ? WD_FRAMERECT_LEFT : 30 + SETTING_BUTTON_WIDTH);
 		uint text_right  = r.right - (rtl ? 30 + SETTING_BUTTON_WIDTH : WD_FRAMERECT_RIGHT);
+		uint box_height = GetSpriteSize(SPR_BOX_EMPTY).height;
 
 		for (int i = 0; i != lengthof(_cheats_ui); i++) {
 			const CheatEntry *ce = &_cheats_ui[i];
 
-			DrawSprite((*ce->been_used) ? SPR_BOX_CHECKED : SPR_BOX_EMPTY, PAL_NONE, box_left, y + 2);
+			DrawSprite((*ce->been_used) ? SPR_BOX_CHECKED : SPR_BOX_EMPTY, PAL_NONE, box_left, Center(y, SETTING_BUTTON_HEIGHT, box_height));
 
 			switch (ce->type) {
 				case SLE_BOOL: {
@@ -233,7 +236,7 @@ struct CheatWindow : Window {
 
 			DrawString(text_left, text_right, y + 1, ce->str);
 
-			y += FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
+			y += this->line_height;
 		}
 	}
 
@@ -275,15 +278,18 @@ struct CheatWindow : Window {
 			}
 		}
 
-		size->width = width + 50 /* stuff on the left */ + 10 /* extra spacing on right */;
+		size->width = width + 30 + SETTING_BUTTON_WIDTH /* stuff on the left */ + 10 /* extra spacing on right */;
 		this->header_height = GetStringHeight(STR_CHEATS_WARNING, size->width - WD_FRAMERECT_LEFT - WD_FRAMERECT_RIGHT) + WD_PAR_VSEP_WIDE;
-		size->height = this->header_height + WD_FRAMERECT_TOP + WD_PAR_VSEP_NORMAL + WD_FRAMERECT_BOTTOM + (FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL) * lengthof(_cheats_ui);
+		size->height = this->header_height + WD_FRAMERECT_TOP + WD_PAR_VSEP_NORMAL + WD_FRAMERECT_BOTTOM + this->line_height * lengthof(_cheats_ui);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_C_PANEL);
-		uint btn = (pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) / (FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL);
+
+		if ((pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) % this->line_height > SETTING_BUTTON_HEIGHT) return;
+
+		uint btn = (pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) / this->line_height;
 		uint x = pt.x - wid->pos_x;
 		bool rtl = _current_text_dir == TD_RTL;
 		if (rtl) x = wid->current_x - x;

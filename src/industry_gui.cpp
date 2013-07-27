@@ -206,9 +206,6 @@ class BuildIndustryWindow : public Window {
 	bool enabled[NUM_INDUSTRYTYPES + 1];        ///< availability state, coming from CBID_INDUSTRY_PROBABILITY (if ever)
 	Scrollbar *vscroll;
 
-	/** The offset for the text in the matrix. */
-	static const int MATRIX_TEXT_OFFSET = 17;
-
 	void SetupArrays()
 	{
 		this->count = 0;
@@ -297,7 +294,7 @@ public:
 					d = maxdim(d, GetStringBoundingBox(GetIndustrySpec(this->index[i])->name));
 				}
 				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
-				d.width += MATRIX_TEXT_OFFSET + padding.width;
+				d.width += FONT_HEIGHT_NORMAL * 5 / 4 + padding.width;
 				d.height = 5 * resize->height;
 				*size = maxdim(*size, d);
 				break;
@@ -381,20 +378,22 @@ public:
 		switch (widget) {
 			case WID_DPI_MATRIX_WIDGET: {
 				uint text_left, text_right, icon_left, icon_right;
+				uint square_size = FONT_HEIGHT_NORMAL - 2;
+				uint text_offset = FONT_HEIGHT_NORMAL * 5 / 4;
 				if (_current_text_dir == TD_RTL) {
 					icon_right = r.right    - WD_MATRIX_RIGHT;
-					icon_left  = icon_right - 10;
-					text_right = icon_right - BuildIndustryWindow::MATRIX_TEXT_OFFSET;
+					icon_left  = icon_right - square_size;
+					text_right = icon_right - text_offset;
 					text_left  = r.left     + WD_MATRIX_LEFT;
 				} else {
 					icon_left  = r.left     + WD_MATRIX_LEFT;
-					icon_right = icon_left  + 10;
-					text_left  = icon_left  + BuildIndustryWindow::MATRIX_TEXT_OFFSET;
+					icon_right = icon_left  + square_size;
+					text_left  = icon_left  + text_offset;
 					text_right = r.right    - WD_MATRIX_RIGHT;
 				}
 
-				for (byte i = 0; i < this->vscroll->GetCapacity() && i + this->vscroll->GetPosition() < this->count; i++) {
-					int y = r.top + WD_MATRIX_TOP + i * this->resize.step_height;
+				int y = Center(r.top, this->resize.step_height);
+				for (byte i = 0; i < this->vscroll->GetCapacity() && i + this->vscroll->GetPosition() < this->count; i++, y += this->resize.step_height) {
 					bool selected = this->selected_index == i + this->vscroll->GetPosition();
 
 					if (this->index[i + this->vscroll->GetPosition()] == INVALID_INDUSTRYTYPE) {
@@ -405,8 +404,8 @@ public:
 
 					/* Draw the name of the industry in white is selected, otherwise, in orange */
 					DrawString(text_left, text_right, y, indsp->name, selected ? TC_WHITE : TC_ORANGE);
-					GfxFillRect(icon_left,     y + 1, icon_right,     y + 7, selected ? PC_WHITE : PC_BLACK);
-					GfxFillRect(icon_left + 1, y + 2, icon_right - 1, y + 6, indsp->map_colour);
+					GfxFillRect(icon_left,     y + 1, icon_right,     y + square_size, selected ? PC_WHITE : PC_BLACK);
+					GfxFillRect(icon_left + 1, y + 2, icon_right - 1, y + square_size - 1, indsp->map_colour);
 				}
 				break;
 			}
@@ -758,7 +757,7 @@ public:
 			if (first) {
 				if (has_accept) y += WD_PAR_VSEP_WIDE;
 				DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE);
-				y += FONT_HEIGHT_NORMAL;
+				y += this->editable == EA_RATE ? GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) : FONT_HEIGHT_NORMAL;
 				if (this->editable == EA_RATE) this->production_offset_y = y;
 				first = false;
 			}
@@ -773,8 +772,10 @@ public:
 			if (this->editable == EA_RATE) {
 				DrawArrowButtons(left + WD_FRAMETEXT_LEFT, y, COLOUR_YELLOW, (this->clicked_line == IL_RATE1 + j) ? this->clicked_button : 0,
 						i->production_rate[j] > 0, i->production_rate[j] < 255);
+				y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+			} else {
+				y += FONT_HEIGHT_NORMAL;
 			}
-			y += FONT_HEIGHT_NORMAL;
 		}
 
 		/* Display production multiplier if editable */
@@ -786,7 +787,7 @@ public:
 			DrawString(x, right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_VIEW_PRODUCTION_LEVEL);
 			DrawArrowButtons(left + WD_FRAMETEXT_LEFT, y, COLOUR_YELLOW, (this->clicked_line == IL_MULTIPLIER) ? this->clicked_button : 0,
 					i->prod_level > PRODLEVEL_MINIMUM, i->prod_level < PRODLEVEL_MAXIMUM);
-			y += FONT_HEIGHT_NORMAL;
+			y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 		}
 
 		/* Get the extra message for the GUI */
@@ -834,12 +835,14 @@ public:
 					case EA_NONE: break;
 
 					case EA_MULTIPLIER:
-						if (IsInsideBS(pt.y, this->production_offset_y, FONT_HEIGHT_NORMAL)) line = IL_MULTIPLIER;
+						if (IsInsideBS(pt.y, this->production_offset_y, SETTING_BUTTON_HEIGHT)) line = IL_MULTIPLIER;
 						break;
 
 					case EA_RATE:
 						if (pt.y >= this->production_offset_y) {
-							int row = (pt.y - this->production_offset_y) / FONT_HEIGHT_NORMAL;
+							if ((pt.y - this->production_offset_y) % GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) > SETTING_BUTTON_HEIGHT) break;;
+
+							int row = (pt.y - this->production_offset_y) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 							for (uint j = 0; j < lengthof(i->produced_cargo); j++) {
 								if (i->produced_cargo[j] == CT_INVALID) continue;
 								row--;
@@ -1055,7 +1058,7 @@ static const NWidgetPart _nested_industry_directory_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_VERTICAL),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
+				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetSizingType(NWST_STEP), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_CRITERIA), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
 				NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0), EndContainer(),
 			EndContainer(),

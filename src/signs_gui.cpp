@@ -195,7 +195,7 @@ struct SignListWindow : Window, SignList {
 	{
 		switch (widget) {
 			case WID_SIL_LIST: {
-				uint y = r.top + WD_FRAMERECT_TOP; // Offset from top of widget.
+				uint y = Center(r.top + WD_FRAMERECT_TOP, this->resize.step_height); // Offset from top of widget.
 				/* No signs? */
 				if (this->vscroll->GetCount() == 0) {
 					DrawString(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, y, STR_STATION_LIST_NONE);
