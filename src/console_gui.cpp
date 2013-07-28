@@ -22,6 +22,7 @@
 #include "console_func.h"
 #include "rev.h"
 #include "video/video_driver.hpp"
+#include "textbuf_gui.h"
 
 #include "widgets/console_widget.h"
 
@@ -225,6 +226,24 @@ struct IConsoleWindow : Window
 		if (_focused_window == this && _iconsole_cmdline.caret) {
 			DrawString(this->line_offset + delta + _iconsole_cmdline.caretxoffs, right, this->height - this->line_height, "_", TC_WHITE, SA_LEFT | SA_FORCE);
 		}
+	}
+
+	virtual void OnClick(Point pt, int widget, int click_count)
+	{
+		if (_settings_client.gui.touchscreen_mode == 0) return;
+
+		ShowQueryString(STR_EMPTY, STR_CONSOLE_QUERY_STRING, ICON_CMDLN_SIZE,
+			this, CS_ALPHANUMERAL, QSF_NONE);
+	}
+
+	virtual void OnQueryTextFinished(char *str)
+	{
+		_focused_window = this;
+
+		if (str == NULL) return;
+
+		_iconsole_cmdline.Assign(str);
+		this->OnKeyPress(0, WKC_RETURN);
 	}
 
 	virtual void OnHundredthTick()
