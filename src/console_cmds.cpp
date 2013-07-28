@@ -423,6 +423,20 @@ DEF_CONSOLE_CMD(ConListFiles)
 	return true;
 }
 
+/* Open the cheat window. */
+DEF_CONSOLE_CMD(ConOpenCheats)
+{
+	if (argc == 0) {
+		IConsoleHelp("Open the cheat window. Usage: 'open_cheats'");
+		return true;
+	}
+
+	extern void ShowCheatWindow();
+	ShowCheatWindow();
+
+	return true;
+}
+
 /* Change the dir via console */
 DEF_CONSOLE_CMD(ConChangeDirectory)
 {
@@ -1926,6 +1940,7 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("save",         ConSave);
 	IConsoleCmdRegister("saveconfig",   ConSaveConfig);
 	IConsoleCmdRegister("ls",           ConListFiles);
+	IConsoleCmdRegister("open_cheats",  ConOpenCheats);
 	IConsoleCmdRegister("cd",           ConChangeDirectory);
 	IConsoleCmdRegister("pwd",          ConPrintWorkingDirectory);
 	IConsoleCmdRegister("clear",        ConClearBuffer);
