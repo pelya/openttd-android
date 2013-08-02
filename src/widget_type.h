@@ -47,6 +47,7 @@ enum NWidSizingType {
 				///< Later, they are automatically set to NWST_BUTTON or NWST_STEP.
 	NWST_BUTTON,   ///< Size will be set at least _settings_client.gui.min_button.
 	NWST_STEP,     ///< Size will be set at least _settings_client.gui.min_step (scrollbars and dropdowns).
+	NWST_KEYBOARD, ///< Size for keyboard keys.
 	NWST_OVERRIDE, ///< Avoid widgets to use automatic minimal sizing.
 	NWST_END
 };
