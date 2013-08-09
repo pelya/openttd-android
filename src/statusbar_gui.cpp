@@ -103,19 +103,29 @@ struct StatusBarWindow : Window {
 	{
 		Dimension d;
 		switch (widget) {
+			/* Left and right should have same sizing. */
 			case WID_S_LEFT:
+			case WID_S_RIGHT: {
 				SetDParamMaxValue(0, MAX_YEAR * DAYS_IN_YEAR);
 				d = GetStringBoundingBox(STR_WHITE_DATE_LONG);
-				break;
 
-			case WID_S_RIGHT: {
 				int64 max_money = UINT32_MAX;
 				const Company *c;
 				FOR_ALL_COMPANIES(c) max_money = max<int64>(c->money, max_money);
 				SetDParam(0, 100LL * max_money);
-				d = GetStringBoundingBox(STR_COMPANY_MONEY);
+				d = maxdim(d, GetStringBoundingBox(STR_COMPANY_MONEY));
 				break;
 			}
+
+			case WID_S_MIDDLE:
+				d = GetStringBoundingBox(STR_STATUSBAR_AUTOSAVE);
+				d = maxdim(d,    GetStringBoundingBox(STR_STATUSBAR_PAUSED));
+
+				if (Company::IsValidID(_local_company)) {
+					SetDParam(0, _local_company);
+					d = maxdim(d, GetStringBoundingBox(STR_STATUSBAR_COMPANY_NAME));
+				}
+				break;
 
 			default:
 				return;
