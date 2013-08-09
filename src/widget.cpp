@@ -2925,6 +2925,9 @@ uint GetMinSizing(NWidSizingType type, uint min_1)
 		case NWST_KEYBOARD:
 			min_sizing = 2 * _settings_client.gui.min_button;
 			break;
+		case NWST_WINDOW_LENGTH:
+			min_sizing = 8 * _settings_client.gui.min_button;
+			break;
 		default: NOT_REACHED();
 	}
 

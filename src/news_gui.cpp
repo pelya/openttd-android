@@ -315,6 +315,7 @@ struct NewsWindow : Window {
 		StringID str = STR_NULL;
 		switch (widget) {
 			case WID_N_MESSAGE:
+				size->width = GetMinSizing(NWST_WINDOW_LENGTH, size->width);
 				CopyInDParam(0, this->ni->params, lengthof(this->ni->params));
 				str = this->ni->string_id;
 				break;
