@@ -49,6 +49,7 @@ enum NWidSizingType {
 	NWST_STEP,		///< Size will be set at least _settings_client.gui.min_step (scrollbars and dropdowns).
 	NWST_KEYBOARD,		///< Size for keyboard keys.
 	NWST_WINDOW_LENGTH,	///< Width for command errors, message windows and statusbar middle part.
+	NWST_VIEWPORT,		///< Sizing type for viewports.
 	NWST_OVERRIDE,		///< Avoid widgets to use automatic minimal sizing.
 	NWST_END
 };

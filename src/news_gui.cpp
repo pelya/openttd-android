@@ -166,7 +166,7 @@ static const NWidgetPart _nested_thin_news_widgets[] = {
 			EndContainer(),
 		EndContainer(),
 		NWidget(WWT_EMPTY, COLOUR_WHITE, WID_N_MESSAGE), SetMinimalSize(428, 48), SetFill(1, 0), SetPadding(0, 5, 0, 5),
-		NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_N_VIEWPORT), SetMinimalSize(426, 70), SetPadding(1, 2, 2, 2),
+		NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_N_VIEWPORT), SetSizingType(NWST_VIEWPORT), SetMinimalSize(426, 70), SetPadding(1, 2, 2, 2),
 	EndContainer(),
 };
 
@@ -188,7 +188,7 @@ static const NWidgetPart _nested_small_news_widgets[] = {
 	/* Main part */
 	NWidget(WWT_PANEL, COLOUR_LIGHT_BLUE, WID_N_HEADLINE),
 		NWidget(WWT_INSET, COLOUR_LIGHT_BLUE, WID_N_INSET), SetPadding(2, 2, 2, 2),
-			NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_N_VIEWPORT), SetPadding(1, 1, 1, 1), SetMinimalSize(274, 47), SetFill(1, 0),
+			NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_N_VIEWPORT), SetSizingType(NWST_VIEWPORT), SetPadding(1, 1, 1, 1), SetMinimalSize(274, 47), SetFill(1, 0),
 		EndContainer(),
 		NWidget(WWT_EMPTY, COLOUR_WHITE, WID_N_MESSAGE), SetMinimalSize(275, 20), SetFill(1, 0), SetPadding(0, 5, 0, 5),
 	EndContainer(),

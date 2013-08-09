@@ -770,6 +770,9 @@ void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
 		case NWST_STEP:
 			min_size = _settings_client.gui.min_step;
 			break;
+		case NWST_VIEWPORT:
+			min_size = 3 * _settings_client.gui.min_button;
+			break;
 		default: NOT_REACHED();
 	}
 
