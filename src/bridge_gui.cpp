@@ -231,7 +231,8 @@ public:
 					SetDParam(1, b->speed);
 					SetDParam(0, b->material);
 
-					DrawSprite(b->sprite, b->pal, r.left + WD_MATRIX_LEFT, y + this->resize.step_height - 1 - GetSpriteSize(b->sprite).height);
+					uint y_sprite = Center(y, this->resize.step_height, GetSpriteSize(b->sprite).height);
+					DrawSprite(b->sprite, b->pal, r.left + WD_MATRIX_LEFT, y_sprite);
 					DrawStringMultiLine(r.left + this->bridgetext_offset, r.right, y + 2, y + this->resize.step_height,
 							_game_mode == GM_EDITOR ? STR_SELECT_BRIDGE_SCENEDIT_INFO : STR_SELECT_BRIDGE_INFO);
 					y += this->resize.step_height;
