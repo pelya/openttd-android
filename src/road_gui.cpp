@@ -992,8 +992,12 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 	{
 		if (!IsInsideMM(widget, WID_BROS_STATION_NE, WID_BROS_STATION_Y + 1)) return;
 
+		int x = Center(r.left + TILE_PIXELS, r.right - r.left, 2 * TILE_PIXELS);
+		/* Height of bus/truck sprite in OpenGFX is TILE_PIXELS + 11. */
+		int y = Center(r.top + WD_FRAMERECT_TOP - WD_MATRIX_BOTTOM + IsWidgetLowered(widget) + 11, r.bottom - r.top, TILE_PIXELS + 11);
+
 		StationType st = (this->window_class == WC_BUS_STATION) ? STATION_BUS : STATION_TRUCK;
-		StationPickerDrawSprite(r.left + TILE_PIXELS, r.bottom - TILE_PIXELS, st, INVALID_RAILTYPE, widget < WID_BROS_STATION_X ? ROADTYPE_ROAD : _cur_roadtype, widget - WID_BROS_STATION_NE);
+		StationPickerDrawSprite(x, y, st, INVALID_RAILTYPE, widget < WID_BROS_STATION_X ? ROADTYPE_ROAD : _cur_roadtype, widget - WID_BROS_STATION_NE);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
