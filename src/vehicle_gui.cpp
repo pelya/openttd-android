@@ -653,7 +653,7 @@ struct RefitWindow : public Window {
 				break;
 
 			case WID_VR_VEHICLE_PANEL_DISPLAY:
-				size->height = GetVehicleHeight(Vehicle::Get(this->window_number)->type);
+				size->height = max(GetMinSizing(NWST_STEP), GetVehicleHeight(Vehicle::Get(this->window_number)->type));
 				break;
 
 			case WID_VR_INFO:
@@ -713,11 +713,12 @@ struct RefitWindow : public Window {
 			case WID_VR_VEHICLE_PANEL_DISPLAY: {
 				Vehicle *v = Vehicle::Get(this->window_number);
 				DrawVehicleImage(v, this->sprite_left + WD_FRAMERECT_LEFT, this->sprite_right - WD_FRAMERECT_RIGHT,
-					r.top, r.bottom - r.top, INVALID_VEHICLE, EIT_IN_DETAILS, this->hscroll != NULL ? this->hscroll->GetPosition() : 0);
+					r.top, r.bottom - r.top + 1, INVALID_VEHICLE, EIT_IN_DETAILS, this->hscroll != NULL ? this->hscroll->GetPosition() : 0);
 
 				/* Highlight selected vehicles. */
 				if (this->order != INVALID_VEH_ORDER_ID) break;
 				int x = 0;
+				int y_offset_frame = Center(0, r.bottom - r.top + 1, 14);
 				switch (v->type) {
 					case VEH_TRAIN: {
 						VehicleSet vehicles_to_refit;
@@ -750,7 +751,7 @@ struct RefitWindow : public Window {
 								}
 
 								if (left != right) {
-									DrawFrameRect(left, r.top + WD_FRAMERECT_TOP, right, r.top + WD_FRAMERECT_TOP + 13, COLOUR_WHITE, FR_BORDERONLY);
+									DrawFrameRect(left, r.top + y_offset_frame, right, r.top + y_offset_frame + 13, COLOUR_WHITE, FR_BORDERONLY);
 								}
 
 								left = INT32_MIN;
