@@ -2135,7 +2135,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint16 data, 
 
 		case WWT_EDITBOX: {
 			Dimension sprite_size = GetSpriteSize(_current_text_dir == TD_RTL ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
-			this->SetMinimalSize(30 + sprite_size.width, sprite_size.height);
+			this->SetMinimalSize(30 + GetMinSizing(NWST_BUTTON, sprite_size.width), sprite_size.height);
 			this->SetFill(0, 0);
 			break;
 		}

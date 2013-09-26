@@ -754,7 +754,7 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 
 	bool rtl = _current_text_dir == TD_RTL;
 	Dimension sprite_size = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
-	int clearbtn_width = sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT;
+	int clearbtn_width = GetMinSizing(NWST_BUTTON, sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT);
 
 	int clearbtn_left  = wi->pos_x + (rtl ? 0 : wi->current_x - clearbtn_width);
 	int clearbtn_right = wi->pos_x + (rtl ? clearbtn_width : wi->current_x) - 1;
@@ -765,7 +765,7 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 	int bottom = wi->pos_y + wi->current_y - 1;
 
 	DrawFrameRect(clearbtn_left, top, clearbtn_right, bottom, wi->colour, wi->IsLowered() ? FR_LOWERED : FR_NONE);
-	DrawSprite(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT, PAL_NONE, clearbtn_left + WD_IMGBTN_LEFT + (wi->IsLowered() ? 1 : 0), (top + bottom - sprite_size.height) / 2 + (wi->IsLowered() ? 1 : 0));
+	DrawSprite(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT, PAL_NONE, Center(clearbtn_left + wi->IsLowered(), clearbtn_width, sprite_size.width), Center(top + wi->IsLowered(), bottom - top, sprite_size.height));
 	if (this->text.bytes == 1) GfxFillRect(clearbtn_left + 1, top + 1, clearbtn_right - 1, bottom - 1, _colour_gradient[wi->colour & 0xF][2], FILLRECT_CHECKER);
 
 	DrawFrameRect(left, top, right, bottom, wi->colour, FR_LOWERED | FR_DARKENED);
