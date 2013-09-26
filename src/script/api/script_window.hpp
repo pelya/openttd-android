@@ -1567,9 +1567,11 @@ public:
 	/* automatically generated from ../../widgets/music_widget.h */
 	/** Widgets of the #MusicTrackSelectionWindow class. */
 	enum MusicTrackSelectionWidgets {
-		WID_MTS_LIST_LEFT                            = ::WID_MTS_LIST_LEFT,                            ///< Left button.
-		WID_MTS_PLAYLIST                             = ::WID_MTS_PLAYLIST,                             ///< Playlist.
-		WID_MTS_LIST_RIGHT                           = ::WID_MTS_LIST_RIGHT,                           ///< Right button.
+		WID_MTS_LIST_LEFT                            = ::WID_MTS_LIST_LEFT,                            ///< Left list.
+		WID_MTS_LEFT_SCROLLBAR                       = ::WID_MTS_LEFT_SCROLLBAR,                       ///< Scrollbar of left list.
+		WID_MTS_PLAYLIST                             = ::WID_MTS_PLAYLIST,                             ///< Playlist name.
+		WID_MTS_LIST_RIGHT                           = ::WID_MTS_LIST_RIGHT,                           ///< Right list.
+		WID_MTS_RIGHT_SCROLLBAR                      = ::WID_MTS_RIGHT_SCROLLBAR,                      ///< Scrollbar of right list.
 		WID_MTS_ALL                                  = ::WID_MTS_ALL,                                  ///< All button.
 		WID_MTS_OLD                                  = ::WID_MTS_OLD,                                  ///< Old button.
 		WID_MTS_NEW                                  = ::WID_MTS_NEW,                                  ///< New button.
