@@ -2627,13 +2627,14 @@ public:
 
 		/* Draw the flag plus orders. */
 		bool rtl = (_current_text_dir == TD_RTL);
-		uint text_offset = max(GetSpriteSize(SPR_FLAG_VEH_STOPPED).width, GetSpriteSize(SPR_FLAG_VEH_RUNNING).width) + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT;
+		int image = ((v->vehstatus & VS_STOPPED) != 0) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING;
+		Dimension d = GetSpriteSize(image);
+		uint text_offset = d.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT;
 		int text_left = r.left + (rtl ? (uint)WD_FRAMERECT_LEFT : text_offset);
 		int text_right = r.right - (rtl ? text_offset : (uint)WD_FRAMERECT_RIGHT);
 		int image_left = (rtl ? text_right + 1 : r.left) + WD_IMGBTN_LEFT;
-		int image = ((v->vehstatus & VS_STOPPED) != 0) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING;
 		int lowered = this->IsWidgetLowered(WID_VV_START_STOP) ? 1 : 0;
-		DrawSprite(image, PAL_NONE, image_left + lowered, r.top + WD_IMGBTN_TOP + lowered);
+		DrawSprite(image, PAL_NONE, image_left + lowered, Center(r.top + WD_IMGBTN_TOP + lowered, r.bottom - r.top, d.height));
 		DrawString(text_left + lowered, text_right + lowered, Center(r.top + lowered, r.bottom - r.top), str, TC_FROMSTRING, SA_HOR_CENTER);
 	}
 
