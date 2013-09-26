@@ -1670,6 +1670,7 @@ public:
 	virtual void OnResize()
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_VL_LIST);
+		this->GetWidget<NWidgetCore>(WID_VL_LIST)->widget_data = (this->vscroll->GetCapacity() << MAT_ROW_START) + (1 << MAT_COL_START);
 	}
 
 	/**
