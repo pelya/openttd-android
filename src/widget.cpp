@@ -2347,7 +2347,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			padding = &extra;
 			if (this->index >= 0) w->SetStringParameters(this->index);
 			Dimension d2 = GetStringBoundingBox(this->widget_data);
-			d2.width += extra.width;
+			d2.width += extra.width + GetMinSizing(NWST_STEP, 11U);
 			d2.height += extra.height;
 			size = maxdim(size, d2);
 			break;

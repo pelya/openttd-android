@@ -494,7 +494,7 @@ public:
 		switch (widget) {
 			case WID_NG_CONN_BTN:
 				*size = maxdim(GetStringBoundingBox(_lan_internet_types_dropdown[0]), GetStringBoundingBox(_lan_internet_types_dropdown[1]));
-				size->width += padding.width;
+				size->width += padding.width + GetMinSizing(NWST_STEP, 11U);
 				size->height += padding.height;
 				break;
 

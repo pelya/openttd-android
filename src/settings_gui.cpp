@@ -1150,8 +1150,9 @@ uint SettingEntry::Draw(GameSettings *settings_ptr, int left, int right, int bas
 			break;
 		case SEF_SUBTREE_KIND:
 			if (cur_row >= first_row) {
-				DrawSprite((this->d.sub.folded ? SPR_CIRCLE_FOLDED : SPR_CIRCLE_UNFOLDED), PAL_NONE, rtl ? x - 8 : x, y + (SETTING_HEIGHT - 11) / 2);
-				DrawString(rtl ? left : x + 12, rtl ? x - 12 : right, Center(y, SETTING_HEIGHT), this->d.sub.title);
+				Dimension d = GetSpriteSize(SPR_CIRCLE_UNFOLDED);
+				DrawSprite((this->d.sub.folded ? SPR_CIRCLE_FOLDED : SPR_CIRCLE_UNFOLDED), PAL_NONE, rtl ? x - d.width : x, Center(y, SETTING_HEIGHT, d.height));
+				DrawString(rtl ? left : x + d.width + 2, rtl ? x - (d.width + 2) : right, Center(y, SETTING_HEIGHT), this->d.sub.title);
 			}
 			cur_row++;
 			if (!this->d.sub.folded) {
