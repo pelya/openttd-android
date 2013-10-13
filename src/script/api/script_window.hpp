@@ -2412,6 +2412,7 @@ public:
 		WID_TT_SHIFT                                 = ::WID_TT_SHIFT,                                 ///< Press SHIFT.
 		WID_TT_CTRL                                  = ::WID_TT_CTRL,                                  ///< Press CTRL.
 		WID_TT_MOVE                                  = ::WID_TT_MOVE,                                  ///< Click for moving around viewports.
+		WID_TT_CONFIRM                               = ::WID_TT_CONFIRM,                               ///< Confirm action.
 	};
 
 	/* automatically generated from ../../widgets/town_widget.h */

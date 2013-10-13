@@ -2265,6 +2265,9 @@ struct TabletToolbar : Window {
 				this->ToggleWidgetLoweredState(WID_TT_MOVE);
 				this->SetWidgetDirty(WID_TT_MOVE);
 				break;
+			case WID_TT_CONFIRM:
+				DoQueuedTouchCommand();
+				break;
 			default:
 				NOT_REACHED();
 		}
@@ -2283,7 +2286,10 @@ struct TabletToolbar : Window {
 		if (HasBit(data, 2)) { UpdateTileSelection(); }
 
 		/* This window is dirty. */
-		if (HasBit(data, 3)) { this->SetDirty(); }
+		if (HasBit(data, 3)) {
+			SetWidgetDisabledState(WID_TT_CONFIRM, !IsQueuedTouchCommand());
+			this->SetWidgetDirty(WID_TT_CONFIRM);
+		}
 	}
 };
 
@@ -2297,6 +2303,17 @@ static const NWidgetPart _nested_tablet_simple_widgets[] = {
 		EndContainer(),
 };
 
+static const NWidgetPart _nested_tablet_confirm_widgets[] = {
+	NWidget(NWID_VERTICAL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_CONFIRM), SetDataTip(STR_TABLET_CONFIRM, STR_TABLET_CONFIRM_TOOLTIP),
+		EndContainer(),
+};
+
 static WindowDesc _toolbar_tablet_simple_desc(
 	WDP_AUTO, NULL, 0, 0,
 	WC_TABLET_BAR, WC_NONE,
@@ -2304,11 +2321,19 @@ static WindowDesc _toolbar_tablet_simple_desc(
 	_nested_tablet_simple_widgets, lengthof(_nested_tablet_simple_widgets)
 );
 
+static WindowDesc _toolbar_tablet_confirm_desc(
+	WDP_AUTO, NULL, 0, 0,
+	WC_TABLET_BAR, WC_NONE,
+	WDF_NO_FOCUS,
+	_nested_tablet_confirm_widgets, lengthof(_nested_tablet_confirm_widgets)
+);
+
 void ResetTabletWindow()
 {
 	if (_game_mode == GM_MENU) return;
 
 	DeleteWindowByClass(WC_TABLET_BAR);
+	EraseQueuedTouchCommand();
 
 	switch (_settings_client.gui.touchscreen_mode) {
 		case TSC_NONE:
@@ -2316,9 +2341,14 @@ void ResetTabletWindow()
 		case TSC_SIMPLE:
 			new TabletToolbar(&_toolbar_tablet_simple_desc);
 			break;
+		case TSC_CONFIRM:
+			new TabletToolbar(&_toolbar_tablet_confirm_desc);
+			InvalidateWindowData(WC_TABLET_BAR, 0, 1 << 3);
+			break;
 		default: NOT_REACHED();
-
 	}
+
+	MarkWholeScreenDirty();
 }
 
 /** Allocate the toolbar. */
@@ -2334,4 +2364,9 @@ void AllocateToolbar()
 	}
 
 	ResetTabletWindow();
+}
+
+void UpdateTouchscreenBar()
+{
+	InvalidateWindowData(WC_TABLET_BAR, 0, 1 << 3);
 }

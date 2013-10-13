@@ -1188,6 +1188,7 @@ STR_CONFIG_SETTING_TOUCHSCREEN_MODE                             :Control mode fo
 STR_CONFIG_SETTING_TOUCHSCREEN_MODE_HELPTEXT                    :If playing with a mouse, choose no adaptation. Other modes are for touchscreen devices. Associated hotkey: N
 STR_CONFIG_SETTING_TOUCHSCREEN_NONE                             :no adaptation
 STR_CONFIG_SETTING_TOUCHSCREEN_SIMPLE                           :simple
+STR_CONFIG_SETTING_TOUCHSCREEN_CONFIRM                          :confirm
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}
@@ -2455,6 +2456,8 @@ STR_TABLET_CTRL                                                 :{BLACK}Ctrl
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Use it for actions that use the "CTRL" key
 STR_TABLET_MOVE                                                 :{BLACK}Move
 STR_TABLET_MOVE_TOOLTIP                                         :{BLACK}Press it to move around viewports. No action will be executed on viewports while this is active
+STR_TABLET_CONFIRM                                              :{BLACK}Do
+STR_TABLET_CONFIRM_TOOLTIP                                      :{BLACK}Press it to confirm an action
 
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Object Selection

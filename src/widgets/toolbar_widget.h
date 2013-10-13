@@ -82,6 +82,7 @@ enum ToolbarTabletWidgets {
 	WID_TT_SHIFT,       ///< Press SHIFT.
 	WID_TT_CTRL,        ///< Press CTRL.
 	WID_TT_MOVE,        ///< Click for moving around viewports.
+	WID_TT_CONFIRM,     ///< Confirm action.
 };
 
 #endif /* WIDGETS_TOOLBAR_WIDGET_H */

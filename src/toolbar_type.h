@@ -16,8 +16,9 @@
 enum TouchscreenMode {
 	TSC_NONE = 0,
 	TSC_SIMPLE,
+	TSC_CONFIRM,
 };
-DECLARE_CYCLE(TouchscreenMode, TSC_NONE, TSC_SIMPLE)
+DECLARE_CYCLE(TouchscreenMode, TSC_NONE, TSC_CONFIRM)
 typedef SimpleTinyEnumT<TouchscreenMode, byte> TouchscreenModeByte;
 
 #endif /* TOOLBAR_TYPE_H */

@@ -26,6 +26,7 @@
 #include "signal_func.h"
 #include "core/backup_type.hpp"
 #include "object_base.h"
+#include "string_func.h"
 
 #include "table/strings.h"
 
@@ -523,6 +524,79 @@ Money GetAvailableMoneyForCommand()
 bool DoCommandP(const CommandContainer *container, bool my_cmd)
 {
 	return DoCommandP(container->tile, container->p1, container->p2, container->cmd, container->callback, container->text, my_cmd);
+}
+
+/* Stored data for a command that is waiting for user confirmation. */
+bool _is_queued_command;
+bool _my_cmd;
+CommandContainer _queued_command;
+
+/**
+ * Store a command that needs user confirmation.
+ * If current mode doesn't need confirmation, execute it immediately via DoCommandP.
+ * @param tile The tile to perform a command on (see #CommandProc)
+ * @param p1 Additional data for the command (see #CommandProc)
+ * @param p2 Additional data for the command (see #CommandProc)
+ * @param cmd The command to execute (a CMD_* value)
+ * @param callback A callback function to call after the command is finished
+ * @param text The text to pass
+ * @param my_cmd indicator if the command is from a company or server (to display error messages for a user)
+ * @return \c true if the command succeeded or is stored, else \c false.
+ */
+bool TouchCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallback *callback, const char *text, bool my_cmd)
+{
+	if (_settings_client.gui.touchscreen_mode == TSC_CONFIRM && !_shift_pressed) {
+		_queued_command.tile = tile;
+		_queued_command.p1 = p1;
+		_queued_command.p2 = p2;
+		_queued_command.cmd = cmd;
+		_queued_command.callback = callback;
+		if (text != NULL) ttd_strlcpy(_queued_command.text, text, 32 * MAX_CHAR_LENGTH);
+		_my_cmd = my_cmd;
+		_is_queued_command = true;
+		extern void UpdateTouchscreenBar();
+		UpdateTouchscreenBar();
+		return true;
+	} else {
+		return DoCommandP(tile, p1, p2, cmd, callback, text, my_cmd);
+	}
+}
+
+/**
+ * Shortcut for the long TouchCommandP when having a container with the data.
+ * Store a command that needs user confirmation.
+ * If current mode doesn't need confirmation, execute it immediately via DoCommandP.
+ * @param container the container with information.
+ * @param my_cmd indicator if the command is from a company or server (to display error messages for a user)
+ * @return true if the command succeeded or when it is stored, else false
+ */
+bool TouchCommandP(const CommandContainer *container, bool my_cmd)
+{
+	return TouchCommandP(container->tile, container->p1, container->p2, container->cmd, container->callback, container->text, my_cmd);
+}
+
+/** Return whether there is a command stored waiting for confirmation. */
+bool IsQueuedTouchCommand()
+{
+	return _is_queued_command;
+}
+
+/** Execute a stored command. Keep it when asking for estimated cost. */
+bool DoQueuedTouchCommand()
+{
+	bool result = DoCommandP(&_queued_command, _my_cmd);
+	if (!_shift_pressed && result) EraseQueuedTouchCommand();
+	return result;
+}
+
+/** Erase a stored command and update viewport and touchscreen bar. */
+void EraseQueuedTouchCommand()
+{
+	if (!IsQueuedTouchCommand()) return;
+	_is_queued_command = false;
+	extern void UpdateTouchscreenBar();
+	UpdateTouchscreenBar();
+	//reset selection of tiles
 }
 
 /*!
