@@ -179,6 +179,7 @@ public:
 		this->RaiseButtons();
 
 		ResetObjectToPlace();
+		EraseQueuedTouchCommand();
 	}
 };
 

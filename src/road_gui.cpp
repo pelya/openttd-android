@@ -309,6 +309,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	~BuildRoadToolbarWindow()
 	{
+		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
 	}
 
@@ -531,6 +532,7 @@ struct BuildRoadToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
+		EraseQueuedTouchCommand();
 	}
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
@@ -1016,6 +1018,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
 				DeleteWindowById(WC_SELECT_STATION, 0);
+				EraseQueuedTouchCommand();
 				break;
 
 			case WID_BROS_LT_OFF:
