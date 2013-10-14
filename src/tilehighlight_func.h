@@ -30,6 +30,7 @@ void VpSetPresizeRange(TileIndex from, TileIndex to);
 void VpSetPlaceSizingLimit(int limit);
 
 void UpdateTileSelection();
+void SetSelectionTilesDirty();
 
 extern TileHighlightData _thd;
 

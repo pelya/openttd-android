@@ -27,6 +27,7 @@
 #include "core/backup_type.hpp"
 #include "object_base.h"
 #include "string_func.h"
+#include "tilehighlight_func.h"
 
 #include "table/strings.h"
 
@@ -596,7 +597,8 @@ void EraseQueuedTouchCommand()
 	_is_queued_command = false;
 	extern void UpdateTouchscreenBar();
 	UpdateTouchscreenBar();
-	//reset selection of tiles
+	SetSelectionTilesDirty();
+	_thd.Reset();
 }
 
 /*!
