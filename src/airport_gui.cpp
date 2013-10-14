@@ -423,6 +423,8 @@ public:
 
 	void UpdateSelectSize()
 	{
+		EraseQueuedTouchCommand();
+
 		if (_selected_airport_index == -1) {
 			SetTileSelectSize(1, 1);
 			this->DisableWidget(WID_AP_LAYOUT_DECREASE);
