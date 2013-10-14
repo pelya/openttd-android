@@ -168,6 +168,7 @@ struct BuildDocksToolbarWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		EraseQueuedTouchCommand();
 		switch (this->last_clicked_widget) {
 			case WID_DT_CANAL: // Build canal button
 				VpStartPlaceSizing(tile, (_game_mode == GM_EDITOR) ? VPM_X_AND_Y : VPM_X_OR_Y, DDSP_CREATE_WATER);

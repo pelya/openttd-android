@@ -467,6 +467,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		EraseQueuedTouchCommand();
 		_remove_button_clicked = this->IsWidgetLowered(WID_ROT_REMOVE);
 		_one_way_button_clicked = this->IsWidgetLowered(WID_ROT_ONE_WAY);
 		switch (this->last_started_action) {

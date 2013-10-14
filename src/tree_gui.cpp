@@ -149,6 +149,7 @@ public:
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		EraseQueuedTouchCommand();
 		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_PLANT_TREES);
 	}
 

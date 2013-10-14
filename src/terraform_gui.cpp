@@ -655,6 +655,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		EraseQueuedTouchCommand();
 		switch (this->last_user_action) {
 			case WID_ETT_DEMOLISH: // Demolish aka dynamite button
 				PlaceProc_DemolishArea(tile);
