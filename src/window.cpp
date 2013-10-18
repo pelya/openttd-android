@@ -1684,14 +1684,19 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 	int16 default_width  = max(desc->GetDefaultWidth(),  sm_width);
 	int16 default_height = max(desc->GetDefaultHeight(), sm_height);
 
-	if (desc->parent_cls != 0 /* WC_MAIN_WINDOW */ &&
+	if (desc->parent_cls != WC_NONE &&
 			(w = FindWindowById(desc->parent_cls, window_number)) != NULL &&
 			w->left < _screen.width - 20 && w->left > -60 && w->top < _screen.height - 20) {
 
-		pt.x = w->left + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? 0 : 10);
-		if (pt.x > _screen.width + 10 - default_width) {
-			pt.x = (_screen.width + 10 - default_width) - 20;
+		if (_settings_client.gui.touchscreen_mode != TSC_NONE) {
+			pt.x = _current_text_dir == TD_RTL ? 0 : (_screen.width - default_width);
+		} else {
+			pt.x = w->left + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? 0 : 10);
+			if (pt.x > _screen.width + 10 - default_width) {
+				pt.x = (_screen.width + 10 - default_width) - 20;
+			}
 		}
+
 		pt.y = w->top + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? w->height : 10);
 		return pt;
 	}
@@ -1716,6 +1721,8 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 		default:
 			NOT_REACHED();
 	}
+
+	// try to put it to
 
 	return pt;
 }
