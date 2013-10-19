@@ -189,7 +189,7 @@ static const NWidgetPart _nested_build_industry_widgets[] = {
 
 /** Window definition of the dynamic place industries gui */
 static WindowDesc _build_industry_desc(
-	WDP_AUTO, "build_industry", 170, 212,
+	WDP_ALIGN_TOOLBAR, "build_industry", 170, 212,
 	WC_BUILD_INDUSTRY, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_build_industry_widgets, lengthof(_nested_build_industry_widgets)

@@ -402,7 +402,7 @@ static const NWidgetPart _nested_build_docks_scen_toolbar_widgets[] = {
 
 /** Window definition for the build docks in scenario editor window. */
 static WindowDesc _build_docks_scen_toolbar_desc(
-	WDP_AUTO, "toolbar_water_scen", 0, 0,
+	WDP_ALIGN_TOOLBAR, "toolbar_water_scen", 0, 0,
 	WC_SCEN_BUILD_TOOLBAR, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_build_docks_scen_toolbar_widgets, lengthof(_nested_build_docks_scen_toolbar_widgets)

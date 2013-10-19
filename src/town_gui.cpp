@@ -1201,7 +1201,7 @@ public:
 };
 
 static WindowDesc _found_town_desc(
-	WDP_AUTO, "build_town", 160, 162,
+	WDP_ALIGN_TOOLBAR, "build_town", 160, 162,
 	WC_FOUND_TOWN, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_found_town_widgets, lengthof(_nested_found_town_widgets)

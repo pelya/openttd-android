@@ -833,7 +833,7 @@ static const NWidgetPart _nested_build_road_scen_widgets[] = {
 };
 
 static WindowDesc _build_road_scen_desc(
-	WDP_AUTO, "toolbar_road_scen", 0, 0,
+	WDP_ALIGN_TOOLBAR, "toolbar_road_scen", 0, 0,
 	WC_SCEN_BUILD_TOOLBAR, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_build_road_scen_widgets, lengthof(_nested_build_road_scen_widgets),

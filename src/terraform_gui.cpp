@@ -748,7 +748,7 @@ static Hotkey terraform_editor_hotkeys[] = {
 HotkeyList ScenarioEditorLandscapeGenerationWindow::hotkeys("terraform_editor", terraform_editor_hotkeys, TerraformToolbarEditorGlobalHotkeys);
 
 static WindowDesc _scen_edit_land_gen_desc(
-	WDP_AUTO, "toolbar_landscape_scen", 0, 0,
+	WDP_ALIGN_TOOLBAR, "toolbar_landscape_scen", 0, 0,
 	WC_SCEN_LAND_GEN, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_scen_edit_land_gen_widgets, lengthof(_nested_scen_edit_land_gen_widgets),
