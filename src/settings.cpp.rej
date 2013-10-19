@@ -1,0 +1,11 @@
+--- src/settings.cpp
++++ src/settings.cpp
+@@ -1092,7 +1092,7 @@
+ 
+ static bool TouchscreenModeChanged(int32 p1)
+ {
+-	//ResetTabletWindow();
++	ResetTabletWindow();
+ 	return true;
+ }
+ 
