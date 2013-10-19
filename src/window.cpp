@@ -1655,7 +1655,13 @@ Point GetToolbarAlignedWindowPosition(int window_width)
 {
 	const Window *w = FindWindowById(WC_MAIN_TOOLBAR, 0);
 	assert(w != NULL);
-	Point pt = { _current_text_dir == TD_RTL ? w->left : (w->left + w->width) - window_width, w->top + w->height };
+	Point pt;
+	pt.y = w->top + w->height;
+	if (_settings_client.gui.touchscreen_mode != TSC_NONE) {
+		pt.x = _current_text_dir == TD_RTL ? 0 : (_screen.width - window_width);
+	} else {
+		pt.x = _current_text_dir == TD_RTL ? w->left : (w->left + w->width) - window_width;
+	}
 	return pt;
 }
 
