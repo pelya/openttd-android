@@ -801,7 +801,7 @@ Window *ShowBuildRoadToolbar(RoadType roadtype)
 	if (!Company::IsValidID(_local_company)) return NULL;
 	_cur_roadtype = roadtype;
 
-	DeleteWindowByClass(WC_BUILD_TOOLBAR);
+	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(roadtype == ROADTYPE_ROAD ? &_build_road_desc : &_build_tramway_desc, TRANSPORT_ROAD);
 }
 
@@ -846,6 +846,7 @@ static WindowDesc _build_road_scen_desc(
  */
 Window *ShowBuildRoadScenToolbar()
 {
+	DeleteToolbarLinkedWindows();
 	_cur_roadtype = ROADTYPE_ROAD;
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(&_build_road_scen_desc, TRANSPORT_ROAD);
 }

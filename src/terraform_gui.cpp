@@ -371,6 +371,7 @@ Window *ShowTerraformToolbar(Window *link)
 
 	Window *w;
 	if (link == NULL) {
+		DeleteToolbarLinkedWindows();
 		w = AllocateWindowDescFront<TerraformToolbarWindow>(&_terraform_desc, 0);
 		return w;
 	}
@@ -761,5 +762,6 @@ static WindowDesc _scen_edit_land_gen_desc(
  */
 Window *ShowEditorTerraformToolbar()
 {
+	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<ScenarioEditorLandscapeGenerationWindow>(&_scen_edit_land_gen_desc, 0);
 }

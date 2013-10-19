@@ -645,7 +645,7 @@ public:
 void ShowBuildIndustryWindow()
 {
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
-	if (BringWindowToFrontById(WC_BUILD_INDUSTRY, 0)) return;
+	DeleteToolbarLinkedWindows();
 	new BuildIndustryWindow();
 }
 

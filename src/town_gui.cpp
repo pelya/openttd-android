@@ -1210,5 +1210,6 @@ static WindowDesc _found_town_desc(
 void ShowFoundTownWindow()
 {
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
+	DeleteToolbarLinkedWindows();
 	AllocateWindowDescFront<FoundTownWindow>(&_found_town_desc, 0);
 }

@@ -882,7 +882,7 @@ Window *ShowBuildRailToolbar(RailType railtype)
 	if (!Company::IsValidID(_local_company)) return NULL;
 	if (!ValParamRailtype(railtype)) return NULL;
 
-	DeleteWindowByClass(WC_BUILD_TOOLBAR);
+	DeleteToolbarLinkedWindows();
 	_cur_railtype = railtype;
 	_remove_button_clicked = false;
 	return new BuildRailToolbarWindow(&_build_rail_desc, railtype);

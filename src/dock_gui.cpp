@@ -376,7 +376,7 @@ Window *ShowBuildDocksToolbar()
 {
 	if (!Company::IsValidID(_local_company)) return NULL;
 
-	DeleteWindowByClass(WC_BUILD_TOOLBAR);
+	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildDocksToolbarWindow>(&_build_docks_toolbar_desc, TRANSPORT_WATER);
 }
 
@@ -415,6 +415,7 @@ static WindowDesc _build_docks_scen_toolbar_desc(
  */
 Window *ShowBuildDocksScenToolbar()
 {
+	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildDocksToolbarWindow>(&_build_docks_scen_toolbar_desc, TRANSPORT_WATER);
 }
 

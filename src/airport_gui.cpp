@@ -203,7 +203,7 @@ Window *ShowBuildAirToolbar()
 {
 	if (!Company::IsValidID(_local_company)) return NULL;
 
-	DeleteWindowByClass(WC_BUILD_TOOLBAR);
+	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildAirToolbarWindow>(&_air_toolbar_desc, TRANSPORT_AIR);
 }
 
