@@ -3344,6 +3344,28 @@ restart_search:
 	FOR_ALL_WINDOWS_FROM_BACK(w) w->SetDirty();
 }
 
+/**
+ * Delete all windows that are linked to the main toolbar.
+ * Once done with that, refresh other windows too.
+ */
+void DeleteToolbarLinkedWindows()
+{
+	Window *w;
+
+restart_search:
+	/* When we find the window to delete, we need to restart the search
+	 * as deleting this window could cascade in deleting (many) others
+	 * anywhere in the z-array */
+	FOR_ALL_WINDOWS_FROM_BACK(w) {
+		if (w->window_desc->default_pos == WDP_ALIGN_TOOLBAR) {
+			delete w;
+			goto restart_search;
+		}
+	}
+
+	FOR_ALL_WINDOWS_FROM_BACK(w) w->SetDirty();
+}
+
 /** Delete all always on-top windows to get an empty screen */
 void HideVitalWindows()
 {
