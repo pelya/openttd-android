@@ -936,7 +936,9 @@ struct CreateScenarioWindow : public Window
 		}
 		*size = GetStringBoundingBox(str);
 		size->width += padding.width;
+		size->width = GetMinSizing(NWST_BUTTON, size->width);
 		size->height += padding.height;
+		size->height = GetMinSizing(NWST_BUTTON, size->height);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1055,11 +1057,16 @@ static const NWidgetPart _nested_create_scenario_widgets[] = {
 		NWidget(NWID_SPACER), SetMinimalSize(0, 10),
 		/* Landscape style selection. */
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 3, 10),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
-		EndContainer(),
+			NWidget(NWID_SPACER), SetFill(1, 1),
+			EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 8, 10),
 			/* Green generation type buttons: 'Flat land' and 'Random land'. */
 			NWidget(NWID_VERTICAL), SetPIP(10, 6, 10),
