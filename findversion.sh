@@ -134,6 +134,7 @@ else
 	REV_NR=""
 fi
 
+MODIFIED="0" # This prevents Andorid build from connecting to a public servers
 if [ "$MODIFIED" -eq "2" ]; then
 	REV="${REV}M"
 fi

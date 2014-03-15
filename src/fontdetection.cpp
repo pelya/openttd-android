@@ -639,6 +639,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 	if (fs != NULL) {
 		int best_weight = -1;
 		const char *best_font = NULL;
+		int best_missing_glypths = 65536;
 
 		for (int i = 0; i < fs->nfont; i++) {
 			FcPattern *font = fs->fonts[i];
@@ -664,12 +665,13 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 
 			callback->SetFontNames(settings, (const char*)file);
 
-			bool missing = callback->FindMissingGlyphs(NULL);
-			DEBUG(freetype, 1, "Font \"%s\" misses%s glyphs", file, missing ? "" : " no");
+			int missing = callback->FindMissingGlyphs(NULL);
+			DEBUG(freetype, 1, "Font \"%s\" misses %d glyphs for lang %s", file, missing, lang);
 
-			if (!missing) {
+			if (missing < best_missing_glypths) {
 				best_weight = value;
 				best_font   = (const char *)file;
+				best_missing_glypths = missing;
 			}
 		}
 
@@ -677,6 +679,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			ret = true;
 			callback->SetFontNames(settings, best_font);
 			InitFreeType(callback->Monospace());
+			DEBUG(freetype, 1, "Selected font %s for lang %s", best_font, lang);
 		}
 
 		/* Clean up the list of filenames. */

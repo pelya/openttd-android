@@ -323,17 +323,17 @@ struct GameOptionsWindow : Window {
 		switch (widget) {
 			case WID_GO_BASE_GRF_DESCRIPTION:
 				SetDParamStr(0, BaseGraphics::GetUsedSet()->GetDescription(GetCurrentLanguageIsoCode()));
-				DrawStringMultiLine(r.left, r.right, r.top, UINT16_MAX, STR_BLACK_RAW_STRING);
+				DrawString(r.left, r.right, r.top, STR_BLACK_RAW_STRING);
 				break;
 
 			case WID_GO_BASE_SFX_DESCRIPTION:
 				SetDParamStr(0, BaseSounds::GetUsedSet()->GetDescription(GetCurrentLanguageIsoCode()));
-				DrawStringMultiLine(r.left, r.right, r.top, UINT16_MAX, STR_BLACK_RAW_STRING);
+				DrawString(r.left, r.right, r.top, STR_BLACK_RAW_STRING);
 				break;
 
 			case WID_GO_BASE_MUSIC_DESCRIPTION:
 				SetDParamStr(0, BaseMusic::GetUsedSet()->GetDescription(GetCurrentLanguageIsoCode()));
-				DrawStringMultiLine(r.left, r.right, r.top, UINT16_MAX, STR_BLACK_RAW_STRING);
+				DrawString(r.left, r.right, r.top, STR_BLACK_RAW_STRING);
 				break;
 		}
 	}
@@ -344,7 +344,7 @@ struct GameOptionsWindow : Window {
 			case WID_GO_BASE_GRF_DESCRIPTION:
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseGraphics::GetNumSets(); i++) {
-					SetDParamStr(0, BaseGraphics::GetSet(i)->GetDescription(GetCurrentLanguageIsoCode()));
+					SetDParamStr(0, "123");
 					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
@@ -363,7 +363,7 @@ struct GameOptionsWindow : Window {
 			case WID_GO_BASE_SFX_DESCRIPTION:
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseSounds::GetNumSets(); i++) {
-					SetDParamStr(0, BaseSounds::GetSet(i)->GetDescription(GetCurrentLanguageIsoCode()));
+					SetDParamStr(0, "123");
 					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
@@ -371,7 +371,7 @@ struct GameOptionsWindow : Window {
 			case WID_GO_BASE_MUSIC_DESCRIPTION:
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseMusic::GetNumSets(); i++) {
-					SetDParamStr(0, BaseMusic::GetSet(i)->GetDescription(GetCurrentLanguageIsoCode()));
+					SetDParamStr(0, "123");
 					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;

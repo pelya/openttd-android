@@ -25,7 +25,7 @@
 
 #ifdef __APPLE__
 	#include <sys/mount.h>
-#elif (defined(_POSIX_VERSION) && _POSIX_VERSION >= 200112L) || defined(__GLIBC__)
+#elif ((defined(_POSIX_VERSION) && _POSIX_VERSION >= 200112L) || defined(__GLIBC__)) && !defined(__ANDROID__)
 	#define HAS_STATVFS
 #endif
 
@@ -252,6 +252,11 @@ void ShowOSErrorBox(const char *buf, bool system)
 #ifdef WITH_COCOA
 void cocoaSetupAutoreleasePool();
 void cocoaReleaseAutoreleasePool();
+#endif
+
+#ifdef __ANDROID__
+#define main SDL_main
+extern "C" int CDECL main(int, char *[]);
 #endif
 
 int CDECL main(int argc, char *argv[])

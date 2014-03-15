@@ -22,6 +22,9 @@
 
 #include "table/sprites.h"
 #include "table/strings.h"
+#ifdef __ANDROID__
+#include <SDL_screenkeyboard.h>
+#endif
 
 char _keyboard_opt[2][OSK_KEYBOARD_ENTRIES * 4 + 1];
 static WChar _keyboard[2][OSK_KEYBOARD_ENTRIES];
@@ -413,6 +416,16 @@ void ShowOnScreenKeyboard(Window *parent, int button)
 
 	GetKeyboardLayout();
 	new OskWindow(&_osk_desc, parent, button);
+#ifdef __ANDROID__
+	char text[256];
+	SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); /* Invoke Android built-in screen keyboard */
+	OskWindow *osk = dynamic_cast<OskWindow *>(FindWindowById(WC_OSK, 0));
+	osk->qs->text.Assign(text);
+	free(osk->orig_str_buf);
+	osk->orig_str_buf = strdup(osk->qs->text.buf);
+
+	osk->SetDirty();
+#endif
 }
 
 /**
