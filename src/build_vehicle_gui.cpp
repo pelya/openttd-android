@@ -908,8 +908,8 @@ void DrawEngineList(VehicleType type, int l, int r, int y, const GUIEngineList *
 		const uint num_engines = GetGroupNumEngines(_local_company, selected_group, engine);
 
 		SetDParam(0, engine);
-		DrawString(text_left, text_right, Center(y, step_size), STR_ENGINE_NAME, text_colour);
-		DrawVehicleEngine(l, r, sprite_x, Center(y, step_size, sprite_y_offsets[type]), engine, palette_crash ? PALETTE_CRASH : GetEnginePalette(engine, _local_company), EIT_PURCHASE);
+		DrawString(text_left, text_right, Center(y, step_size), STR_ENGINE_NAME, engine == selected_id ? TC_WHITE : TC_BLACK);
+		DrawVehicleEngine(l, r, sprite_x, Center(y, step_size, sprite_y_offsets[type]), engine, (show_count && num_engines == 0) ? PALETTE_CRASH : GetEnginePalette(engine, _local_company), EIT_PURCHASE);
 		if (show_count) {
 			SetDParam(0, num_engines);
 			DrawString(count_left, count_right, Center(y, step_size, FONT_HEIGHT_SMALL), STR_TINY_BLACK_COMA, TC_FROMSTRING, SA_RIGHT | SA_FORCE);
