@@ -353,15 +353,6 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	 * surface, for example). */
 	_requested_hwpalette = want_hwpalette;
 
-#ifdef __ANDROID__
-	SDL_Rect r;
-	r.h = SDL_ListModes(NULL, 0)[0]->h / 10;
-	r.w = r.h;
-	r.x = SDL_ListModes(NULL, 0)[0]->w - r.w;
-	r.y = SDL_ListModes(NULL, 0)[0]->h - r.h;
-	SDL_ANDROID_SetScreenKeyboardButtonPos(SDL_ANDROID_SCREENKEYBOARD_BUTTON_TEXT, &r);
-#endif
-
 	/* DO NOT CHANGE TO HWSURFACE, IT DOES NOT WORK */
 	newscreen = SDL_CALL SDL_SetVideoMode(w, h, bpp, SDL_SWSURFACE | (want_hwpalette ? SDL_HWPALETTE : 0) | (_fullscreen ? SDL_FULLSCREEN : SDL_RESIZABLE));
 	if (newscreen == NULL) {
