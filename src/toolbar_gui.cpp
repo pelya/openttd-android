@@ -1459,7 +1459,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
 	{
 		static const uint SMALLEST_ARRANGEMENT = 14;
-		static const uint BIGGEST_ARRANGEMENT  = 20;
+		static const uint BIGGEST_ARRANGEMENT  = 21;
 		static const byte arrange14[] = {
 			0,  1, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 29,
 			2,  3,  4,  5,  6,  7,  8,  9, 12, 14, 26, 27, 28, 29,
@@ -1488,6 +1488,10 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			0,  1,  2,  4,  5,  6, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 11, 19, 20, 29,
 			0,  1,  3,  4,  7,  8,  9, 12, 14, 27, 21, 22, 23, 24, 25, 10, 28, 19, 20, 29,
 		};
+		static const byte arrange21[] = {
+			0,  1,  2,  3,  4,  5,  6, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 11, 19, 20, 29,
+			0,  1,  2,  3,  4,  7,  8,  9, 12, 14, 27, 21, 22, 23, 24, 25, 10, 28, 19, 20, 29,
+		};
 		static const byte arrange_all[] = {
 			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28
 		};
@@ -1495,7 +1499,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 		/* If at least BIGGEST_ARRANGEMENT fit, just spread all the buttons nicely */
 		uint full_buttons = max(CeilDiv(width, this->smallest_x), SMALLEST_ARRANGEMENT);
 #ifdef __ANDROID__
-		full_buttons = SMALLEST_ARRANGEMENT + 2; // On Andorid there are lot of pixels, but the screen is still small
+		full_buttons = BIGGEST_ARRANGEMENT; // On Android there are lot of pixels, but the screen is still small
 #endif
 
 		if (full_buttons > BIGGEST_ARRANGEMENT) {
@@ -1505,7 +1509,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 		}
 
 		/* Introduce the split toolbar */
-		static const byte * const arrangements[] = { arrange14, arrange15, arrange16, arrange17, arrange18, arrange19, arrange20 };
+		static const byte * const arrangements[] = { arrange14, arrange15, arrange16, arrange17, arrange18, arrange19, arrange20, arrange21 };
 
 		button_count = arrangable_count = full_buttons;
 		spacer_count = this->spacers;
@@ -1888,7 +1892,7 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 	NWidgetMainToolbarContainer *hor = new NWidgetMainToolbarContainer();
 	for (uint i = 0; i < WID_TN_END; i++) {
 		switch (i) {
-			case 4: case 8: case 15: case 19: case 21: case 26: hor->Add(new NWidgetSpacer(0, 0)); break;
+			case 4: case 8: case 15: case 19: case 21: /*case 26:*/ hor->Add(new NWidgetSpacer(0, 0)); break;
 		}
 		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
@@ -2170,37 +2174,37 @@ static Hotkey scenedit_maintoolbar_hotkeys[] = {
 HotkeyList ScenarioEditorToolbarWindow::hotkeys("scenedit_maintoolbar", scenedit_maintoolbar_hotkeys);
 
 static const NWidgetPart _nested_toolb_scen_inner_widgets[] = {
-	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_PAUSE), SetDataTip(SPR_IMG_PAUSE, STR_TOOLBAR_TOOLTIP_PAUSE_GAME), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_FAST_FORWARD), SetDataTip(SPR_IMG_FASTFORWARD, STR_TOOLBAR_TOOLTIP_FORWARD), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_SETTINGS), SetDataTip(SPR_IMG_SETTINGS, STR_TOOLBAR_TOOLTIP_OPTIONS), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_IMGBTN_2, COLOUR_GREY, WID_TE_SAVE), SetDataTip(SPR_IMG_SAVE, STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_PAUSE), SetDataTip(SPR_IMG_PAUSE, STR_TOOLBAR_TOOLTIP_PAUSE_GAME),
+	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_FAST_FORWARD), SetDataTip(SPR_IMG_FASTFORWARD, STR_TOOLBAR_TOOLTIP_FORWARD),
+	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_SETTINGS), SetDataTip(SPR_IMG_SETTINGS, STR_TOOLBAR_TOOLTIP_OPTIONS),
+	NWidget(WWT_IMGBTN_2, COLOUR_GREY, WID_TE_SAVE), SetDataTip(SPR_IMG_SAVE, STR_SCENEDIT_TOOLBAR_TOOLTIP_SAVE_SCENARIO_LOAD_SCENARIO),
 	NWidget(NWID_SPACER),
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_TE_SPACER), EndContainer(),
 	NWidget(NWID_SPACER),
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_TE_DATE_PANEL),
 		NWidget(NWID_HORIZONTAL), SetPIP(3, 2, 3),
-			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_DATE_BACKWARD), SetDataTip(SPR_ARROW_DOWN, STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-			NWidget(WWT_EMPTY, COLOUR_GREY, WID_TE_DATE), SetDataTip(STR_NULL, STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_DATE_FORWARD), SetDataTip(SPR_ARROW_UP, STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_DATE_BACKWARD), SetDataTip(SPR_ARROW_DOWN, STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_BACKWARD),
+			NWidget(WWT_EMPTY, COLOUR_GREY, WID_TE_DATE), SetDataTip(STR_NULL, STR_SCENEDIT_TOOLBAR_TOOLTIP_SET_DATE),
+			NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_DATE_FORWARD), SetDataTip(SPR_ARROW_UP, STR_SCENEDIT_TOOLBAR_TOOLTIP_MOVE_THE_STARTING_DATE_FORWARD),
 		EndContainer(),
 	EndContainer(),
 	NWidget(NWID_SPACER),
-	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_SMALL_MAP), SetDataTip(SPR_IMG_SMALLMAP, STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_SMALL_MAP), SetDataTip(SPR_IMG_SMALLMAP, STR_SCENEDIT_TOOLBAR_TOOLTIP_DISPLAY_MAP_TOWN_DIRECTORY),
 	NWidget(NWID_SPACER),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_ZOOM_IN), SetDataTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_ZOOM_OUT), SetDataTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_ZOOM_IN), SetDataTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_ZOOM_OUT), SetDataTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT),
 	NWidget(NWID_SPACER),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_LAND_GENERATE), SetDataTip(SPR_IMG_LANDSCAPING, STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_TOWN_GENERATE), SetDataTip(SPR_IMG_TOWN, STR_SCENEDIT_TOOLBAR_TOWN_GENERATION), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_INDUSTRY), SetDataTip(SPR_IMG_INDUSTRY, STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_ROADS), SetDataTip(SPR_IMG_BUILDROAD, STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_WATER), SetDataTip(SPR_IMG_BUILDWATER, STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_TREES), SetDataTip(SPR_IMG_PLANTTREES, STR_SCENEDIT_TOOLBAR_PLANT_TREES), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_SIGNS), SetDataTip(SPR_IMG_SIGN, STR_SCENEDIT_TOOLBAR_PLACE_SIGN), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_LAND_GENERATE), SetDataTip(SPR_IMG_LANDSCAPING, STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_TOWN_GENERATE), SetDataTip(SPR_IMG_TOWN, STR_SCENEDIT_TOOLBAR_TOWN_GENERATION),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_INDUSTRY), SetDataTip(SPR_IMG_INDUSTRY, STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_ROADS), SetDataTip(SPR_IMG_BUILDROAD, STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_WATER), SetDataTip(SPR_IMG_BUILDWATER, STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_TREES), SetDataTip(SPR_IMG_PLANTTREES, STR_SCENEDIT_TOOLBAR_PLANT_TREES),
+	NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_TE_SIGNS), SetDataTip(SPR_IMG_SIGN, STR_SCENEDIT_TOOLBAR_PLACE_SIGN),
 	NWidget(NWID_SPACER),
-	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_MUSIC_SOUND), SetDataTip(SPR_IMG_MUSIC, STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_HELP), SetDataTip(SPR_IMG_QUERY, STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_SWITCH_BAR), SetDataTip(SPR_IMG_SWITCH_TOOLBAR, STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_MUSIC_SOUND), SetDataTip(SPR_IMG_MUSIC, STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW),
+	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_HELP), SetDataTip(SPR_IMG_QUERY, STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION),
+	NWidget(WWT_IMGBTN, COLOUR_GREY, WID_TE_SWITCH_BAR), SetDataTip(SPR_IMG_SWITCH_TOOLBAR, STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR),
 };
 
 static NWidgetBase *MakeScenarioToolbar(int *biggest_index)
@@ -2300,22 +2304,22 @@ struct TabletToolbar : Window {
 
 static const NWidgetPart _nested_tablet_simple_widgets[] = {
 	NWidget(NWID_VERTICAL),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		//NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP),
+		//NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP),
 		EndContainer(),
 };
 
 static const NWidgetPart _nested_tablet_confirm_widgets[] = {
 	NWidget(NWID_VERTICAL),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_CONFIRM), SetDataTip(STR_TABLET_CONFIRM, STR_TABLET_CONFIRM_TOOLTIP), SetMinimalSize(_settings_client.gui.min_game_toolbar, _settings_client.gui.min_game_toolbar),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_CONFIRM), SetDataTip(STR_TABLET_CONFIRM, STR_TABLET_CONFIRM_TOOLTIP),
 		EndContainer(),
 };
 
