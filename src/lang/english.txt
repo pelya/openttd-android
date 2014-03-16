@@ -2446,9 +2446,9 @@ STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Level an
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Purchase land for future use. Shift toggles building/showing cost estimate
 
 # Tablet toolbar
-STR_TABLET_X                                                    :{BLACK}X
+STR_TABLET_X                                                    :{BLACK}Trans
 STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP                          :{BLACK}Toggle transparency
-STR_TABLET_CLOSE                                                :{BLACK}Supr
+STR_TABLET_CLOSE                                                :{BLACK}X
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Close all opened windows (except pinned ones)
 STR_TABLET_SHIFT                                                :{BLACK}Shift
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Press it for getting an estimated cost of executing an action
