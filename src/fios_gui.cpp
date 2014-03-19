@@ -474,7 +474,7 @@ public:
 
 			case WID_SL_DRIVES_DIRECTORIES_LIST:
 				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
-				size->height = resize->height * 10 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+				size->height = resize->height * 5 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				break;
 			case WID_SL_SORT_BYNAME:
 			case WID_SL_SORT_BYDATE: {
