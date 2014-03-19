@@ -30,6 +30,10 @@
 
 #include "table/strings.h"
 
+#ifdef __ANDROID__
+#include <SDL_screenkeyboard.h>
+#endif
+
 /** Method to open the OSK. */
 enum OskActivation {
 	OSKA_DISABLED,           ///< The OSK shall not be activated at all.
@@ -924,6 +928,15 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 		/* Open the OSK window */
 		ShowOnScreenKeyboard(w, wid);
 	}
+#ifdef __ANDROID__
+	char text[512];
+	strncpy(text, this->text.buf, sizeof(text) - 1);
+	text[sizeof(text) - 1] = 0;
+	this->text.DeleteAll();
+	SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); /* Invoke Android built-in screen keyboard */
+	this->text.Assign(text);
+	w->OnEditboxChanged(wid);
+#endif
 }
 
 /** Class for the string query window. */
