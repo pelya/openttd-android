@@ -555,8 +555,6 @@ bool TouchCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCall
 		if (text != NULL) ttd_strlcpy(_queued_command.text, text, 32 * MAX_CHAR_LENGTH);
 		_my_cmd = my_cmd;
 		_is_queued_command = true;
-		extern void UpdateTouchscreenBar();
-		UpdateTouchscreenBar();
 		return true;
 	} else {
 		return DoCommandP(tile, p1, p2, cmd, callback, text, my_cmd);
@@ -595,8 +593,6 @@ void EraseQueuedTouchCommand()
 {
 	if (!IsQueuedTouchCommand()) return;
 	_is_queued_command = false;
-	extern void UpdateTouchscreenBar();
-	UpdateTouchscreenBar();
 	SetSelectionTilesDirty();
 	_thd.Reset();
 }

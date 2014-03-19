@@ -45,6 +45,9 @@ enum ToolbarNormalWidgets {
 	WID_TN_MESSAGES,      ///< Messages menu.
 	WID_TN_HELP,          ///< Help menu.
 	WID_TN_SWITCH_BAR,    ///< Only available when toolbar has been split to switch between different subsets.
+	WID_TN_CTRL,          ///< Press CTRL.
+	WID_TN_SHIFT,         ///< Press SHIFT.
+	WID_TN_DELETE,        ///< Press DELETE.
 	WID_TN_END,           ///< Helper for knowing the amount of widgets.
 };
 
@@ -73,16 +76,6 @@ enum ToolbarEditorWidgets {
 	WID_TE_MUSIC_SOUND = WID_TN_MUSIC_SOUND, ///< Music/sound configuration menu.
 	WID_TE_HELP        = WID_TN_HELP,        ///< Help menu.
 	WID_TE_SWITCH_BAR  = WID_TN_SWITCH_BAR,  ///< Only available when toolbar has been split to switch between different subsets.
-};
-
-/** Widgets of the TabletToolbar class. */
-enum ToolbarTabletWidgets {
-	WID_TT_X,           ///< Press X (toggle transparency).
-	WID_TT_DELETE,      ///< Press DELETE.
-	WID_TT_SHIFT,       ///< Press SHIFT.
-	WID_TT_CTRL,        ///< Press CTRL.
-	WID_TT_MOVE,        ///< Click for moving around viewports.
-	WID_TT_CONFIRM,     ///< Confirm action.
 };
 
 #endif /* WIDGETS_TOOLBAR_WIDGET_H */

@@ -1162,6 +1162,30 @@ static CallBackFunction ToolbarSwitchClick(Window *w)
 	return CBF_NONE;
 }
 
+static CallBackFunction ToolbarCtrlClick(Window *w)
+{
+	_ctrl_pressed = !_ctrl_pressed;
+	w->ToggleWidgetLoweredState(WID_TN_CTRL);
+	HandleCtrlChanged();
+	w->SetWidgetDirty(WID_TN_CTRL);
+	EraseQueuedTouchCommand();
+	return CBF_NONE;
+}
+
+static CallBackFunction ToolbarShiftClick(Window *w)
+{
+	_shift_pressed = !_shift_pressed;
+	w->ToggleWidgetLoweredState(WID_TN_SHIFT);
+	w->SetWidgetDirty(WID_TN_SHIFT);
+	return CBF_NONE;
+}
+
+static CallBackFunction ToolbarDeleteClick(Window *w)
+{
+	DeleteNonVitalWindows();
+	return CBF_NONE;
+}
+
 /* --- Scenario editor specific handlers. */
 
 /**
@@ -1459,7 +1483,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
 	{
 		static const uint SMALLEST_ARRANGEMENT = 14;
-		static const uint BIGGEST_ARRANGEMENT  = 21;
+		static const uint BIGGEST_ARRANGEMENT  = 20;
 		static const byte arrange14[] = {
 			0,  1, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 29,
 			2,  3,  4,  5,  6,  7,  8,  9, 12, 14, 26, 27, 28, 29,
@@ -1488,19 +1512,23 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			0,  1,  2,  4,  5,  6, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 11, 19, 20, 29,
 			0,  1,  3,  4,  7,  8,  9, 12, 14, 27, 21, 22, 23, 24, 25, 10, 28, 19, 20, 29,
 		};
-		static const byte arrange21[] = {
-			0,  1,  2,  3,  4,  5,  6, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 11, 19, 20, 29,
-			0,  1,  2,  3,  4,  7,  8,  9, 12, 14, 27, 21, 22, 23, 24, 25, 10, 28, 19, 20, 29,
-		};
 		static const byte arrange_all[] = {
 			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28
 		};
 
+#ifdef __ANDROID__
+		static const byte arrange_android[] = {
+			0,  1,  2,  4,  5,  6,  7,  8,  9, 14, 21, 22, 23, 24, 25, 19, 20, 29, 30, 31, 32,
+			0,  1,  3,  4,  5,  6,  7, 12, 15, 16, 17, 18, 26, 27, 28, 19, 20, 29, 30, 31, 32,
+		};
+
+		button_count = arrangable_count = lengthof(arrange_android) / 2;
+		spacer_count = this->spacers;
+		return arrange_android;
+#else
+
 		/* If at least BIGGEST_ARRANGEMENT fit, just spread all the buttons nicely */
 		uint full_buttons = max(CeilDiv(width, this->smallest_x), SMALLEST_ARRANGEMENT);
-#ifdef __ANDROID__
-		full_buttons = BIGGEST_ARRANGEMENT; // On Android there are lot of pixels, but the screen is still small
-#endif
 
 		if (full_buttons > BIGGEST_ARRANGEMENT) {
 			button_count = arrangable_count = lengthof(arrange_all);
@@ -1509,11 +1537,12 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 		}
 
 		/* Introduce the split toolbar */
-		static const byte * const arrangements[] = { arrange14, arrange15, arrange16, arrange17, arrange18, arrange19, arrange20, arrange21 };
+		static const byte * const arrangements[] = { arrange14, arrange15, arrange16, arrange17, arrange18, arrange19, arrange20 };
 
 		button_count = arrangable_count = full_buttons;
 		spacer_count = this->spacers;
 		return arrangements[full_buttons - SMALLEST_ARRANGEMENT] + ((_toolbar_mode == TB_LOWER) ? full_buttons : 0);
+#endif
 	}
 };
 
@@ -1613,6 +1642,9 @@ static ToolbarButtonProc * const _toolbar_button_procs[] = {
 	ToolbarNewspaperClick,
 	ToolbarHelpClick,
 	ToolbarSwitchClick,
+	ToolbarCtrlClick,
+	ToolbarShiftClick,
+	ToolbarDeleteClick,
 };
 
 enum MainToolbarHotkeys {
@@ -1890,14 +1922,19 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 	};
 
 	NWidgetMainToolbarContainer *hor = new NWidgetMainToolbarContainer();
-	for (uint i = 0; i < WID_TN_END; i++) {
+	for (uint i = 0; i <= SPR_IMG_SWITCH_TOOLBAR; i++) {
 		switch (i) {
 			case 4: case 8: case 15: case 19: case 21: /*case 26:*/ hor->Add(new NWidgetSpacer(0, 0)); break;
 		}
 		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
 
-	*biggest_index = max<int>(*biggest_index, WID_TN_SWITCH_BAR);
+	hor->Add(new NWidgetSpacer(0, 0));
+	hor->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));
+	hor->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
+	hor->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
 	return hor;
 }
 
@@ -2224,142 +2261,6 @@ static WindowDesc _toolb_scen_desc(
 	&ScenarioEditorToolbarWindow::hotkeys
 );
 
-
-/** Tablet toolbar. */
-struct TabletToolbar : Window {
-
-	TabletToolbar(WindowDesc *desc) : Window(desc)
-	{
-		this->InitNested(0);
-		this->flags |= WF_STICKY;
-		ResetObjectToPlace();
-		this->OnInvalidateData(1 << 2); // Disable widgets.
-		if (_current_text_dir == TD_RTL) { this->left = _screen.width - this->width; }
-	}
-
-	~TabletToolbar() {
-		_shift_pressed = false;
-		_move_pressed = false;
-
-		if (_ctrl_pressed) {
-			_ctrl_pressed = false;
-			HandleCtrlChanged();
-		}
-	}
-
-	virtual void OnClick(Point pt, int widget, int click_count)
-	{
-		switch (widget) {
-			case WID_TT_X:
-				extern void ResetRestoreAllTransparency();
-				ResetRestoreAllTransparency();
-				break;
-			case WID_TT_DELETE:
-				DeleteNonVitalWindows();
-				break;
-			case WID_TT_SHIFT:
-				_shift_pressed = !_shift_pressed;
-				this->ToggleWidgetLoweredState(WID_TT_SHIFT);
-				this->SetWidgetDirty(WID_TT_SHIFT);
-				break;
-			case WID_TT_CTRL:
-				_ctrl_pressed = !_ctrl_pressed;
-				this->ToggleWidgetLoweredState(WID_TT_CTRL);
-				HandleCtrlChanged();
-				this->SetWidgetDirty(WID_TT_CTRL);
-				EraseQueuedTouchCommand();
-				break;
-			case WID_TT_MOVE:
-				_move_pressed = !_move_pressed;
-				this->ToggleWidgetLoweredState(WID_TT_MOVE);
-				this->SetWidgetDirty(WID_TT_MOVE);
-				break;
-			case WID_TT_CONFIRM:
-				DoQueuedTouchCommand();
-				break;
-			default:
-				NOT_REACHED();
-		}
-	}
-
-	/**
-	 * Some data on this window has become invalid.
-	 * @param data Information about the changed data.
-	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
-	 * @note    bit 2 -> Update tile selection.
-	 *          bit 3 -> Set window dirty.
-	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
-	{
-		/* Selection has changed. */
-		if (HasBit(data, 2)) { UpdateTileSelection(); }
-
-		/* This window is dirty. */
-		if (HasBit(data, 3)) {
-			SetWidgetDisabledState(WID_TT_CONFIRM, !IsQueuedTouchCommand());
-			this->SetWidgetDirty(WID_TT_CONFIRM);
-		}
-	}
-};
-
-static const NWidgetPart _nested_tablet_simple_widgets[] = {
-	NWidget(NWID_VERTICAL),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP),
-		//NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP),
-		EndContainer(),
-};
-
-static const NWidgetPart _nested_tablet_confirm_widgets[] = {
-	NWidget(NWID_VERTICAL),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_X), SetDataTip(STR_TABLET_X, STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_DELETE), SetDataTip(STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_SHIFT), SetDataTip(STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_CTRL), SetDataTip(STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP),
-		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_TT_MOVE), SetDataTip(STR_TABLET_MOVE, STR_TABLET_MOVE_TOOLTIP),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TT_CONFIRM), SetDataTip(STR_TABLET_CONFIRM, STR_TABLET_CONFIRM_TOOLTIP),
-		EndContainer(),
-};
-
-static WindowDesc _toolbar_tablet_simple_desc(
-	WDP_AUTO, NULL, 0, 0,
-	WC_TABLET_BAR, WC_NONE,
-	WDF_NO_FOCUS,
-	_nested_tablet_simple_widgets, lengthof(_nested_tablet_simple_widgets)
-);
-
-static WindowDesc _toolbar_tablet_confirm_desc(
-	WDP_AUTO, NULL, 0, 0,
-	WC_TABLET_BAR, WC_NONE,
-	WDF_NO_FOCUS,
-	_nested_tablet_confirm_widgets, lengthof(_nested_tablet_confirm_widgets)
-);
-
-void ResetTabletWindow()
-{
-	if (_game_mode == GM_MENU) return;
-
-	DeleteWindowByClass(WC_TABLET_BAR);
-	EraseQueuedTouchCommand();
-
-	switch (_settings_client.gui.touchscreen_mode) {
-		case TSC_NONE:
-			break;
-		case TSC_SIMPLE:
-			new TabletToolbar(&_toolbar_tablet_simple_desc);
-			break;
-		case TSC_CONFIRM:
-			new TabletToolbar(&_toolbar_tablet_confirm_desc);
-			InvalidateWindowData(WC_TABLET_BAR, 0, 1 << 3);
-			break;
-		default: NOT_REACHED();
-	}
-
-	MarkWholeScreenDirty();
-}
-
 /** Allocate the toolbar. */
 void AllocateToolbar()
 {
@@ -2371,11 +2272,4 @@ void AllocateToolbar()
 	} else {
 		new MainToolbarWindow(&_toolb_normal_desc);
 	}
-
-	ResetTabletWindow();
-}
-
-void UpdateTouchscreenBar()
-{
-	InvalidateWindowData(WC_TABLET_BAR, 0, 1 << 3);
 }

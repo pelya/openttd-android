@@ -2375,6 +2375,9 @@ public:
 		WID_TN_MESSAGES                              = ::WID_TN_MESSAGES,                              ///< Messages menu.
 		WID_TN_HELP                                  = ::WID_TN_HELP,                                  ///< Help menu.
 		WID_TN_SWITCH_BAR                            = ::WID_TN_SWITCH_BAR,                            ///< Only available when toolbar has been split to switch between different subsets.
+		WID_TN_CTRL                                  = ::WID_TN_CTRL,                                  ///< On-screen Ctrl key
+		WID_TN_SHIFT                                 = ::WID_TN_SHIFT,                                 ///< On-screen Sgift key
+		WID_TN_DELETE                                = ::WID_TN_DELETE,                                ///< Close all windows
 		WID_TN_END                                   = ::WID_TN_END,                                   ///< Helper for knowing the amount of widgets.
 	};
 
@@ -2403,16 +2406,6 @@ public:
 		WID_TE_MUSIC_SOUND                           = ::WID_TE_MUSIC_SOUND,                           ///< Music/sound configuration menu.
 		WID_TE_HELP                                  = ::WID_TE_HELP,                                  ///< Help menu.
 		WID_TE_SWITCH_BAR                            = ::WID_TE_SWITCH_BAR,                            ///< Only available when toolbar has been split to switch between different subsets.
-	};
-
-	/** Widgets of the TabletToolbar class. */
-	enum ToolbarTabletWidgets {
-		WID_TT_X                                     = ::WID_TT_X,                                     ///< Press X (toggle transparency).
-		WID_TT_DELETE                                = ::WID_TT_DELETE,                                ///< Press DELETE.
-		WID_TT_SHIFT                                 = ::WID_TT_SHIFT,                                 ///< Press SHIFT.
-		WID_TT_CTRL                                  = ::WID_TT_CTRL,                                  ///< Press CTRL.
-		WID_TT_MOVE                                  = ::WID_TT_MOVE,                                  ///< Click for moving around viewports.
-		WID_TT_CONFIRM                               = ::WID_TT_CONFIRM,                               ///< Confirm action.
 	};
 
 	/* automatically generated from ../../widgets/town_widget.h */
