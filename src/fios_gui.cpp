@@ -355,7 +355,7 @@ public:
 			case WID_SL_DRIVES_DIRECTORIES_LIST: {
 				GfxFillRect(r.left + 1, r.top + 1, r.right, r.bottom, PC_BLACK);
 
-				uint y = r.top + WD_FRAMERECT_TOP;
+				uint y = r.top + WD_FRAMERECT_TOP + this->resize.step_height / 2;
 				for (uint pos = this->vscroll->GetPosition(); pos < _fios_items.Length(); pos++) {
 					const FiosItem *item = _fios_items.Get(pos);
 
