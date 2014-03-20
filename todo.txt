@@ -1,4 +1,3 @@
-- Move 'mobile' toolbar buttons to the main toolbar
 - Fix NewGRF dialog
 - Fix Advanced Settings dialog
 - Fix Online Content dialog
