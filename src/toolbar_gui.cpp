@@ -1165,7 +1165,7 @@ static CallBackFunction ToolbarSwitchClick(Window *w)
 static CallBackFunction ToolbarCtrlClick(Window *w)
 {
 	_ctrl_pressed = !_ctrl_pressed;
-	w->ToggleWidgetLoweredState(WID_TN_CTRL);
+	w->SetWidgetLoweredState(WID_TN_CTRL, _ctrl_pressed);
 	HandleCtrlChanged();
 	w->SetWidgetDirty(WID_TN_CTRL);
 	EraseQueuedTouchCommand();
@@ -1175,7 +1175,7 @@ static CallBackFunction ToolbarCtrlClick(Window *w)
 static CallBackFunction ToolbarShiftClick(Window *w)
 {
 	_shift_pressed = !_shift_pressed;
-	w->ToggleWidgetLoweredState(WID_TN_SHIFT);
+	w->SetWidgetLoweredState(WID_TN_SHIFT, _shift_pressed);
 	w->SetWidgetDirty(WID_TN_SHIFT);
 	return CBF_NONE;
 }
@@ -1524,7 +1524,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 
 		button_count = arrangable_count = lengthof(arrange_android) / 2;
 		spacer_count = this->spacers;
-		return arrange_android;
+		return &arrange_android[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
 #else
 
 		/* If at least BIGGEST_ARRANGEMENT fit, just spread all the buttons nicely */
@@ -1543,6 +1543,14 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 		spacer_count = this->spacers;
 		return arrangements[full_buttons - SMALLEST_ARRANGEMENT] + ((_toolbar_mode == TB_LOWER) ? full_buttons : 0);
 #endif
+	}
+	public:
+	int getWidgetCount() const
+	{
+		int count = 0;
+		for (NWidgetBase *child_wid = this->head; child_wid != NULL; child_wid = child_wid->next)
+			count++;
+		return count;
 	}
 };
 
@@ -1922,9 +1930,9 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 	};
 
 	NWidgetMainToolbarContainer *hor = new NWidgetMainToolbarContainer();
-	for (uint i = 0; i <= SPR_IMG_SWITCH_TOOLBAR; i++) {
+	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
 		switch (i) {
-			case 4: case 8: case 15: case 19: case 21: /*case 26:*/ hor->Add(new NWidgetSpacer(0, 0)); break;
+			case 4: case 8: case 15: case 19: case 21: case 26: hor->Add(new NWidgetSpacer(0, 0)); break;
 		}
 		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
