@@ -3,3 +3,4 @@
 - Fix Online Content dialog
 - Fix AI dialog
 - Fix Multiplayer dialog
+- Scrollbar slider may become too narrow
