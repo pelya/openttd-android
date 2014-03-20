@@ -3,4 +3,3 @@
 - Fix Online Content dialog
 - Fix AI dialog
 - Fix Multiplayer dialog
-- Fix missing sprites error
