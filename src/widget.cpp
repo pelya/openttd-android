@@ -48,6 +48,8 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
 	}
 	top += button_size;    // top    points to just below the up-button
 	bottom -= button_size; // bottom points to top of the down-button
+	if (bottom > top + button_size)
+		bottom -= button_size; // Slider should be no smaller than a regular button, reserve some size from bottom
 
 	int height = (bottom - top);
 	int pos = sb->GetPosition();
@@ -57,11 +59,11 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
 	if (count != 0) top += height * pos / count;
 
 	if (cap > count) cap = count;
-	if (count != 0) bottom -= (count - pos - cap) * height / count;
+	if (count != 0) bottom -= (count - pos - cap) * height / count - button_size;
 
 	Point pt;
 	if (horizontal && _current_text_dir == TD_RTL) {
-		pt.x = rev_base - bottom;
+		pt.x = rev_base - bottom - button_size;
 		pt.y = rev_base - top;
 	} else {
 		pt.x = top;
@@ -119,7 +121,9 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 			sb->UpdatePosition(rtl ? -1 : 1, Scrollbar::SS_BIG);
 		} else {
 			_scrollbar_start_pos = pt.x - mi - button_size;
-			_scrollbar_size = ma - mi - button_size * 2;
+			_scrollbar_size = ma - mi - button_size * 3;
+			if (_scrollbar_size <= 0)
+				_scrollbar_size = 1;
 			w->scrolling_scrollbar = sb->index;
 			_cursorpos_drag_start = _cursor.pos;
 		}
@@ -378,12 +382,13 @@ static inline void DrawHorizontalScrollbar(const Rect &r, Colours colour, bool l
 {
 	int centre = (r.bottom - r.top) / 2;
 	int width = NWidgetScrollbar::GetHorizontalDimension().width;
+	int height = NWidgetScrollbar::GetVerticalDimension().height;
 
 	DrawFrameRect(r.left, r.top, r.left + width - 1, r.bottom, colour, left_clicked ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_LEFT, PAL_NONE, r.left + 1 + left_clicked, r.top + 1 + left_clicked);
+	DrawSprite(SPR_ARROW_LEFT, PAL_NONE, r.left + 1 + left_clicked, r.top + height / 2 + 1 + left_clicked);
 
 	DrawFrameRect(r.right - (width - 1), r.top, r.right, r.bottom, colour, right_clicked ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_RIGHT, PAL_NONE, r.right - (width - 2) + right_clicked, r.top + 1 + right_clicked);
+	DrawSprite(SPR_ARROW_RIGHT, PAL_NONE, r.right - (width - 2) + right_clicked, r.top + height / 2 + 1 + right_clicked);
 
 	int c1 = _colour_gradient[colour & 0xF][3];
 	int c2 = _colour_gradient[colour & 0xF][7];
@@ -598,7 +603,7 @@ void Window::DrawSortButtonState(int widget, SortButtonState state) const
 	int base = offset + nwid->pos_x + (_current_text_dir == TD_LTR ? nwid->current_x - WD_SORTBUTTON_ARROW_WIDTH : 0);
 	int top = nwid->pos_y;
 
-	DrawString(base, base + WD_SORTBUTTON_ARROW_WIDTH, top + 1 + offset, state == SBS_DOWN ? DOWNARROW : UPARROW, TC_BLACK, SA_HOR_CENTER);
+	DrawString(base, base + WD_SORTBUTTON_ARROW_WIDTH, top + nwid->current_y / 2 + 1 + offset, state == SBS_DOWN ? DOWNARROW : UPARROW, TC_BLACK, SA_HOR_CENTER);
 }
 
 
