@@ -23,6 +23,7 @@
 #include "../querystring_gui.h"
 #include "../core/geometry_func.hpp"
 #include "../textfile_gui.h"
+#include "../settings_type.h"
 #include "network_content_gui.h"
 
 
@@ -524,8 +525,8 @@ public:
 			}
 
 			case WID_NCL_MATRIX:
-				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
-				size->height = 10 * resize->height;
+				resize->height = GetMinSizing(NWST_STEP, _settings_client.gui.min_step + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				size->height = 6 * resize->height;
 				break;
 		}
 	}
@@ -966,14 +967,7 @@ static const NWidgetPart _nested_network_content_list_widgets[] = {
 		NWidget(WWT_DEFSIZEBOX, COLOUR_LIGHT_BLUE),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_LIGHT_BLUE, WID_NCL_BACKGROUND),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 7), SetResize(1, 0),
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(8, 8, 8),
-			/* Top */
-			NWidget(WWT_EMPTY, COLOUR_LIGHT_BLUE, WID_NCL_FILTER_CAPT), SetFill(1, 0), SetResize(1, 0),
-			NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NCL_FILTER), SetFill(1, 0), SetResize(1, 0),
-						SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 7), SetResize(1, 0),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 3), SetResize(1, 0),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(8, 8, 8),
 			/* Left side. */
 			NWidget(NWID_VERTICAL), SetPIP(0, 4, 0),
@@ -1003,6 +997,13 @@ static const NWidgetPart _nested_network_content_list_widgets[] = {
 			EndContainer(),
 			/* Right side. */
 			NWidget(NWID_VERTICAL), SetPIP(0, 4, 0),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(8, 8, 8),
+					/* Top */
+					NWidget(WWT_EMPTY, COLOUR_LIGHT_BLUE, WID_NCL_FILTER_CAPT), SetFill(1, 0), SetResize(1, 0),
+					NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NCL_FILTER), SetFill(1, 0), SetResize(1, 0),
+								SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
+				EndContainer(),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 3), SetResize(1, 0),
 				NWidget(WWT_PANEL, COLOUR_LIGHT_BLUE, WID_NCL_DETAILS), SetResize(1, 1), SetFill(1, 1), EndContainer(),
 				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, 8, 0),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL),
