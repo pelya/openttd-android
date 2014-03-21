@@ -1,5 +1,5 @@
 - Fix NewGRF dialog
 - Fix Advanced Settings dialog
-- Fix Online Content dialog
-- Fix AI dialog
 - Fix Multiplayer dialog
+- Add Load button to Play Heightmap dialog
+- Fix heightmaps not loading
