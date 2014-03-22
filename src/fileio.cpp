@@ -1304,6 +1304,18 @@ void DeterminePaths(const char *exe)
 		_searchpaths[SP_AUTODOWNLOAD_DIR] = NULL;
 	}
 #endif /* ENABLE_NETWORK */
+
+#ifdef __ANDROID__
+	// Copy savegames from "full" OpenTTD to "lite" save directory
+	char curdir[PATH_MAX];
+	if (getcwd(curdir, sizeof(BUF)) && strstr(curdir, "org.openttd.sdl.lowmem")) {
+		// No, I won't implement file copying in C, shell script is just fine for this job
+		system("cd ../../org.openttd.sdl/files/.openttd/save && "
+				"for F in *.sav ; do ls \"../../../../org.openttd.sdl/files/.openttd/save/$F\" || "
+				"cat \"$F\" > \"../../../../org.openttd.sdl/files/.openttd/save/$F\" ; done");
+		chdir(curdir);
+	}
+#endif
 }
 
 /**
