@@ -500,7 +500,7 @@ public:
 
 			case WID_NG_MATRIX:
 				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
-				size->height = 10 * resize->height;
+				size->height = 5 * resize->height;
 				break;
 
 			case WID_NG_LASTJOINED:
@@ -539,7 +539,7 @@ public:
 				break;
 
 			case WID_NG_DETAILS_SPACER:
-				size->height = 20 + 12 * FONT_HEIGHT_NORMAL;
+				size->height = 20 + 10 * FONT_HEIGHT_NORMAL;
 				break;
 		}
 	}
@@ -934,9 +934,6 @@ static const NWidgetPart _nested_network_game_widgets[] = {
 						NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NG_CONNECTION), SetSizingType(NWST_STEP), SetDataTip(STR_NETWORK_SERVER_LIST_ADVERTISED, STR_NULL),
 						NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NG_CONN_BTN),
 											SetDataTip(STR_BLACK_STRING, STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP),
-						NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-					EndContainer(),
-					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
 						NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NG_FILTER_LABEL), SetDataTip(STR_LIST_FILTER_TITLE, STR_NULL),
 						NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NG_FILTER), SetMinimalSize(251, 12), SetFill(1, 0), SetResize(1, 0),
 											SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
