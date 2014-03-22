@@ -1,4 +1,2 @@
 - Fix NewGRF dialog
-- Fix Advanced Settings dialog
 - Add Load button to Play Heightmap dialog
-- Fix heightmaps failing to load
