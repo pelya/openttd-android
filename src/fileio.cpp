@@ -1310,9 +1310,12 @@ void DeterminePaths(const char *exe)
 	char curdir[PATH_MAX];
 	if (getcwd(curdir, sizeof(curdir)) && strstr(curdir, "org.openttd.sdl.lowmem")) {
 		// No, I won't implement file copying in C, shell script is just fine for this job
+		DEBUG(misc, 1, "Copying savegames from ../../org.openttd.sdl/files/.openttd/save to %s", curdir);
 		system("cd ../../org.openttd.sdl/files/.openttd/save && "
-				"for F in *.sav ; do ls \"../../../../org.openttd.sdl/files/.openttd/save/$F\" || "
-				"cat \"$F\" > \"../../../../org.openttd.sdl/files/.openttd/save/$F\" ; done");
+				"for F in *.sav ; do "
+				"ls \"../../../../org.openttd.sdl.lowmem/files/.openttd/save/$F\" || "
+				"cat \"$F\" > \"../../../../org.openttd.sdl.lowmem/files/.openttd/save/$F\" ; "
+				"done");
 		chdir(curdir);
 	}
 #endif
