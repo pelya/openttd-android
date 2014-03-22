@@ -1,2 +1,1 @@
-- Fix NewGRF dialog
 - Add Load button to Play Heightmap dialog
