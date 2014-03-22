@@ -211,7 +211,7 @@ struct NewGRFParametersWindow : public Window {
 			}
 
 			case WID_NP_BACKGROUND:
-				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
+				this->line_height = _settings_client.gui.min_step + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
 
 				resize->width = 1;
 				resize->height = this->line_height;
@@ -299,7 +299,7 @@ struct NewGRFParametersWindow : public Window {
 				SetDParam(1, i + 1);
 			}
 
-			DrawString(text_left, text_right, y + WD_MATRIX_TOP, STR_NEWGRF_PARAMETERS_SETTING, selected ? TC_WHITE : TC_LIGHT_BLUE);
+			DrawString(text_left, text_right, Center(y + WD_MATRIX_TOP, this->line_height), STR_NEWGRF_PARAMETERS_SETTING, selected ? TC_WHITE : TC_LIGHT_BLUE);
 			y += this->line_height;
 		}
 	}
@@ -1566,8 +1566,8 @@ public:
 		uint min_inf_height = this->inf->smallest_y + this->inf->padding_top + this->inf->padding_bottom;
 
 		/* Smallest window is in two column mode. */
-		this->smallest_x = max(min_avs_width, min_acs_width) + INTER_COLUMN_SPACING + min_inf_width;
-		this->smallest_y = max(min_inf_height, min_acs_height + INTER_LIST_SPACING + min_avs_height);
+		this->smallest_x = min_avs_width + min_acs_width + min_inf_width + INTER_COLUMN_SPACING * 2;
+		this->smallest_y = max(max(min_inf_height, min_acs_height), min_avs_height);
 
 		/* Filling. */
 		this->fill_x = LeastCommonMultiple(this->avs->fill_x, this->acs->fill_x);
@@ -1605,6 +1605,9 @@ public:
 		uint min_three_columns = min_avs_width + min_acs_width + min_inf_width + 2 * INTER_COLUMN_SPACING;
 		uint min_two_columns   = min_list_width + min_inf_width + INTER_COLUMN_SPACING;
 		bool use_three_columns = this->editable && (min_three_columns + MIN_EXTRA_FOR_3_COLUMNS <= given_width);
+#ifdef __ANDROID__
+		use_three_columns = true;
+#endif
 
 		/* Info panel is a separate column in both modes. Compute its width first. */
 		uint extra_width, inf_width;
