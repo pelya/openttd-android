@@ -1474,11 +1474,11 @@ public:
 				switch (this->vli.vtype) {
 					case VEH_TRAIN:
 					case VEH_ROAD:
-						size->height = 6 * resize->height;
+						size->height = 7 * resize->height;
 						break;
 					case VEH_SHIP:
 					case VEH_AIRCRAFT:
-						size->height = 4 * resize->height;
+						size->height = 3 * resize->height;
 						break;
 					default: NOT_REACHED();
 				}

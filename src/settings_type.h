@@ -81,7 +81,6 @@ struct GUISettings {
 	TouchscreenModeByte touchscreen_mode;    ///< touchscreen mode for toolbars
 	uint   min_button;                       ///< min size of most button widgets
 	uint   min_step;                         ///< min size of scrollbar/dropdown elements
-	bool   manage_min_sizing;                ///< automatically set min_button and min_step
 	bool   show_finances;                    ///< show finances at end of year
 	bool   sg_new_nonstop;                   ///< ttdpatch compatible nonstop handling read from pre v93 savegames
 	bool   new_nonstop;                      ///< ttdpatch compatible nonstop handling

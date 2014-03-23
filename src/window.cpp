@@ -1818,57 +1818,11 @@ int SETTING_BUTTON_HEIGHT = 10;
  */
 void CheckWindowMinSizings()
 {
-	if (_settings_client.gui.manage_min_sizing) {
-		/* Fill the min sizing values for the current resolution. */
-		uint swap_x = 32; // in longest border, let main toolbar to have 30 buttons.
-		uint swap_y = 16; // if short border, let main toolbar have 16/18/20 buttons..)
-		if (_cur_resolution.width < _cur_resolution.height) Swap(swap_x, swap_y);
-		_settings_client.gui.min_button = min(_cur_resolution.width / swap_x, _cur_resolution.height / swap_y);
-		_settings_client.gui.min_step = _settings_client.gui.min_button * 3 / 4;
-	}
-
 	SETTING_BUTTON_HEIGHT = max<int>(GetMinSizing(NWST_STEP) - 10, 10);
 	SETTING_BUTTON_WIDTH  = 2 * SETTING_BUTTON_HEIGHT;
 
 	extern uint _tooltip_width;
 	_tooltip_width = max<uint>(194, 10 * _settings_client.gui.min_button);
-
-	if (!_settings_client.gui.manage_min_sizing) return;
-
-	_freetype.large.size = _settings_client.gui.min_button;
-	_freetype.medium.size = max(_settings_client.gui.min_step * 2 / 3, 10U);
-	_freetype.mono.size = _freetype.medium.size;
-	_freetype.small.size = max(_freetype.medium.size * 2 / 3, 8U);
-
-	InitFreeType(true);
-	CheckForMissingGlyphs();
-
-	if (_z_front_window == NULL) return;
-
-	DeleteAllNonVitalWindows();
-
-	switch (_game_mode) {
-		default: break;
-		case GM_MENU:
-			DeleteWindowById(WC_SELECT_GAME, 0);
-			extern void ShowSelectGameWindow();
-			ShowSelectGameWindow();
-			break;
-
-		case GM_NORMAL:
-		case GM_EDITOR: {
-			Station *st;
-			FOR_ALL_STATIONS(st) { st->UpdateVirtCoord(); }
-			Waypoint *wp;
-			FOR_ALL_WAYPOINTS(wp) { wp->UpdateVirtCoord(); }
-
-			HideVitalWindows();
-			ShowVitalWindows();
-			break;
-		}
-	}
-
-	ShowErrorMessage(STR_ERROR_RESET_WINDOWS, STR_ERROR_AUTOMATIC_SIZING, WL_WARNING);
 }
 
 /**
