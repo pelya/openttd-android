@@ -1,5 +1,1 @@
-- Resize Aircraft window
-- Resize Ship window
-- Resize Music Program Selection window
-- Resize all buttons and fonts when screen resolution changes
 - Add Load button to Play Heightmap dialog

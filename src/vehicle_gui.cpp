@@ -649,7 +649,7 @@ struct RefitWindow : public Window {
 		switch (widget) {
 			case WID_VR_MATRIX:
 				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
-				size->height = resize->height * 8;
+				size->height = resize->height * 6;
 				break;
 
 			case WID_VR_VEHICLE_PANEL_DISPLAY:
@@ -1474,7 +1474,7 @@ public:
 				switch (this->vli.vtype) {
 					case VEH_TRAIN:
 					case VEH_ROAD:
-						size->height = 7 * resize->height;
+						size->height = 6 * resize->height;
 						break;
 					case VEH_SHIP:
 					case VEH_AIRCRAFT:

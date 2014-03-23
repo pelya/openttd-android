@@ -342,7 +342,7 @@ public:
 				resize->height = this->tiny_step_height;
 
 				/* Minimum height is the height of the list widget minus all and default vehicles... */
-				size->height =  4 * GetVehicleListHeight(this->vli.vtype, this->tiny_step_height) - 2 * this->tiny_step_height;
+				size->height = (this->vli.vtype >= VEH_SHIP ? 3 : 6) * GetVehicleListHeight(this->vli.vtype, this->tiny_step_height) - 2 * this->tiny_step_height;
 
 				/* Get a multiple of tiny_step_height of that amount */
 				size->height = Ceil(size->height, tiny_step_height);
@@ -366,7 +366,7 @@ public:
 			case WID_GL_LIST_VEHICLE:
 				this->ComputeGroupInfoSize();
 				resize->height = GetVehicleListHeight(this->vli.vtype, this->tiny_step_height);
-				size->height = 4 * resize->height;
+				size->height = (this->vli.vtype >= VEH_SHIP ? 3 : 6) * resize->height;
 				break;
 
 			case WID_GL_MANAGE_VEHICLES_DROPDOWN: {

@@ -374,7 +374,7 @@ struct MusicTrackSelectionWindow : public Window {
 				}
 				resize->height = GetMinSizing(NWST_STEP, d.height);
 				d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-				d.height = 10 * resize->height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+				d.height = 7 * resize->height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				*size = maxdim(*size, d);
 				break;
 			}
