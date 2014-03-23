@@ -211,7 +211,7 @@ struct NewGRFParametersWindow : public Window {
 			}
 
 			case WID_NP_BACKGROUND:
-				this->line_height = _settings_client.gui.min_step + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
+				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
 
 				resize->width = 1;
 				resize->height = this->line_height;

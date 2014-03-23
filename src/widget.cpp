@@ -784,6 +784,7 @@ void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
 			break;
 		default: NOT_REACHED();
 	}
+	min_size = RescaleFrom854x480(min_size);
 
 	this->min_x = max(min_x, min_size);
 	this->min_y = max(min_y, min_size);
@@ -2942,6 +2943,7 @@ uint GetMinSizing(NWidSizingType type, uint min_1)
 			break;
 		default: NOT_REACHED();
 	}
+	min_sizing = RescaleFrom854x480(min_sizing);
 
 	return max(min_sizing, min_1);
 }

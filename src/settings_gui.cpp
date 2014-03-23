@@ -37,6 +37,7 @@
 #include "textfile_gui.h"
 #include "stringfilter_type.h"
 #include "querystring_gui.h"
+#include "fontcache.h"
 
 
 static const StringID _driveside_dropdown[] = {
@@ -506,6 +507,29 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_RESOLUTION_DROPDOWN: // Change resolution
 				if (index < _num_resolutions && ChangeResInGame(_resolutions[index].width, _resolutions[index].height)) {
+					// Reinit all GUI elements and fonts, so they will rescale
+					InitFreeType(true);
+					CheckForMissingGlyphs();
+
+					DeleteAllNonVitalWindows();
+
+					switch (_game_mode) {
+						case GM_MENU:
+							DeleteWindowById(WC_SELECT_GAME, 0);
+							extern void ShowSelectGameWindow();
+							ShowSelectGameWindow();
+							break;
+
+						case GM_NORMAL:
+						case GM_EDITOR:
+							HideVitalWindows();
+							ShowVitalWindows();
+							break;
+
+						default:
+							break;
+					}
+
 					this->SetDirty();
 				}
 				break;

@@ -374,7 +374,7 @@ static void LoadFreeTypeFont(FontSize fs)
 	return;
 
 found_face:
-	new FreeTypeFontCache(fs, face, settings->size);
+	new FreeTypeFontCache(fs, face, RescaleFrom854x480(settings->size));
 }
 
 

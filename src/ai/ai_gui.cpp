@@ -757,12 +757,12 @@ struct AIConfigWindow : public Window {
 	{
 		switch (widget) {
 			case WID_AIC_GAMELIST:
-				this->line_height = GetMinSizing(NWST_STEP, _settings_client.gui.min_step + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 				size->height = this->line_height;
 				break;
 
 			case WID_AIC_LIST:
-				this->line_height = GetMinSizing(NWST_STEP, _settings_client.gui.min_step + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 				size->height = 8 * this->line_height;
 				break;
 		}
