@@ -48,8 +48,11 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
 	}
 	top += button_size;    // top    points to just below the up-button
 	bottom -= button_size; // bottom points to top of the down-button
-	if (bottom > top + button_size)
+	bool wide_enough = false;
+	if (bottom > top + button_size * 2) {
 		bottom -= button_size; // Slider should be no smaller than a regular button, reserve some size from bottom
+		wide_enough = true;
+	}
 
 	int height = (bottom - top);
 	int pos = sb->GetPosition();
@@ -59,7 +62,8 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
 	if (count != 0) top += height * pos / count;
 
 	if (cap > count) cap = count;
-	if (count != 0) bottom -= (count - pos - cap) * height / count - button_size;
+	if (count != 0) bottom -= (count - pos - cap) * height / count;
+	if (wide_enough) bottom += button_size;
 
 	Point pt;
 	if (horizontal && _current_text_dir == TD_RTL) {
@@ -121,9 +125,9 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 			sb->UpdatePosition(rtl ? -1 : 1, Scrollbar::SS_BIG);
 		} else {
 			_scrollbar_start_pos = pt.x - mi - button_size;
-			_scrollbar_size = ma - mi - button_size * 3;
-			if (_scrollbar_size <= 0)
-				_scrollbar_size = 1;
+			_scrollbar_size = ma - mi - button_size * 2;
+			if (_scrollbar_size > button_size * 2)
+				_scrollbar_size -= button_size;
 			w->scrolling_scrollbar = sb->index;
 			_cursorpos_drag_start = _cursor.pos;
 		}
