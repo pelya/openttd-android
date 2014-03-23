@@ -761,10 +761,12 @@ void VideoDriver_SDL::MainLoop()
 
 			bool old_ctrl_pressed = _ctrl_pressed;
 
+#ifndef __ANDROID__
 			if (_settings_client.gui.touchscreen_mode == TSC_NONE) {
 				_ctrl_pressed  = !!(mod & KMOD_CTRL);
 				_shift_pressed = !!(mod & KMOD_SHIFT);
 			}
+#endif
 
 			/* determine which directional keys are down */
 			_dirkeys =

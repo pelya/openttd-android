@@ -1165,24 +1165,35 @@ static CallBackFunction ToolbarSwitchClick(Window *w)
 static CallBackFunction ToolbarCtrlClick(Window *w)
 {
 	_ctrl_pressed = !_ctrl_pressed;
+	//DEBUG(misc, 1, "ToolbarCtrlClick: pressed %d", _ctrl_pressed);
 	w->SetWidgetLoweredState(WID_TN_CTRL, _ctrl_pressed);
-	HandleCtrlChanged();
 	w->SetWidgetDirty(WID_TN_CTRL);
+	HandleCtrlChanged();
 	EraseQueuedTouchCommand();
+	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
 
 static CallBackFunction ToolbarShiftClick(Window *w)
 {
 	_shift_pressed = !_shift_pressed;
+	//DEBUG(misc, 1, "ToolbarShiftClick: pressed %d", _shift_pressed);
 	w->SetWidgetLoweredState(WID_TN_SHIFT, _shift_pressed);
 	w->SetWidgetDirty(WID_TN_SHIFT);
+	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
 
 static CallBackFunction ToolbarDeleteClick(Window *w)
 {
 	DeleteNonVitalWindows();
+	_ctrl_pressed = false;
+	w->SetWidgetLoweredState(WID_TN_CTRL, _ctrl_pressed);
+	w->SetWidgetDirty(WID_TN_CTRL);
+	_shift_pressed = false;
+	w->SetWidgetLoweredState(WID_TN_SHIFT, _shift_pressed);
+	w->SetWidgetDirty(WID_TN_SHIFT);
+	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
 
