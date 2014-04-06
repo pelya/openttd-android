@@ -58,6 +58,12 @@ EOF
 exit 1;
 fi
 
+# Override version number, to allow OpenTTD with Android modifications to connect to official servers
+if [ -e version-override ]; then
+	cat version-override
+	exit
+fi
+
 # Allow awk to be provided by the caller.
 if [ -z "$AWK" ]; then
 	AWK=awk
