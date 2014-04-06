@@ -2695,12 +2695,14 @@ static int _input_events_this_tick = 0;
  */
 static void HandleAutoscroll()
 {
+	_move_pressed = false;
 	if (_game_mode == GM_MENU || HasModalProgress()) return;
 	if (_settings_client.gui.auto_scrolling == VA_DISABLED) return;
 	if (_settings_client.gui.auto_scrolling == VA_MAIN_VIEWPORT_FULLSCREEN && !_fullscreen) return;
 
 	int x = _cursor.pos.x;
 	int y = _cursor.pos.y;
+	int border = RescaleFrom854x480(_settings_client.gui.min_button);
 	Window *w = FindWindowFromPt(x, y);
 	if (w == NULL || w->flags & WF_DISABLE_VP_SCROLL) return;
 	if (_settings_client.gui.auto_scrolling != VA_EVERY_VIEWPORT && w->window_class != WC_MAIN_WINDOW) return;
@@ -2712,16 +2714,20 @@ static void HandleAutoscroll()
 	y -= vp->top;
 
 	/* here allows scrolling in both x and y axis */
-#define scrollspeed 3
-	if (x - 15 < 0) {
-		w->viewport->dest_scrollpos_x += ScaleByZoom((x - 15) * scrollspeed, vp->zoom);
-	} else if (15 - (vp->width - x) > 0) {
-		w->viewport->dest_scrollpos_x += ScaleByZoom((15 - (vp->width - x)) * scrollspeed, vp->zoom);
+#define scrollspeed 15
+	if (x - border < 0) {
+		_move_pressed = true;
+		w->viewport->dest_scrollpos_x += ScaleByZoom(-scrollspeed, vp->zoom);
+	} else if (border - (vp->width - x) > 0) {
+		_move_pressed = true;
+		w->viewport->dest_scrollpos_x += ScaleByZoom(scrollspeed, vp->zoom);
 	}
-	if (y - 15 < 0) {
-		w->viewport->dest_scrollpos_y += ScaleByZoom((y - 15) * scrollspeed, vp->zoom);
-	} else if (15 - (vp->height - y) > 0) {
-		w->viewport->dest_scrollpos_y += ScaleByZoom((15 - (vp->height - y)) * scrollspeed, vp->zoom);
+	if (y - border * 2 < 0) { // Border twice thicker, to accomodate top toolbar
+		_move_pressed = true;
+		w->viewport->dest_scrollpos_y += ScaleByZoom(-scrollspeed, vp->zoom);
+	} else if (border - (vp->height - y) > 0) { // Same thickness, because bottom toolbar does not cover whole screen width
+		_move_pressed = true;
+		w->viewport->dest_scrollpos_y += ScaleByZoom(scrollspeed, vp->zoom);
 	}
 #undef scrollspeed
 }
