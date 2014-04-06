@@ -58,12 +58,6 @@ EOF
 exit 1;
 fi
 
-# Override version number, to allow OpenTTD with Android modifications to connect to official servers
-if [ -e version-override ]; then
-	cat version-override
-	exit
-fi
-
 # Allow awk to be provided by the caller.
 if [ -z "$AWK" ]; then
 	AWK=awk
@@ -72,6 +66,12 @@ fi
 # Find out some dirs
 cd `dirname "$0"`
 ROOT_DIR=`pwd`
+
+# Override version number, to allow OpenTTD with Android modifications to connect to official servers
+if [ -e $ROOT_DIR/version-override ]; then
+	cat $ROOT_DIR/version-override
+	exit
+fi
 
 # Determine if we are using a modified version
 # Assume the dir is not modified
