@@ -39,6 +39,7 @@
 #include "querystring_gui.h"
 #include "fontcache.h"
 
+enum { MIN_BUTTON_SIZE = 10, MAX_BUTTON_SIZE = 40 };
 
 static const StringID _driveside_dropdown[] = {
 	STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT,
@@ -101,6 +102,8 @@ static int GetCurRes()
 }
 
 static void ShowCustCurrency();
+
+static void ReconstructUserInterface();
 
 template <class T>
 static DropDownList *BuiltSetDropDownList(int *selected_index)
@@ -282,6 +285,19 @@ struct GameOptionsWindow : Window {
 				}
 				break;
 
+			case WID_GO_BUTTON_SIZE_DROPDOWN: // Setup screenshot format dropdown
+			case WID_GO_TEXT_SIZE_DROPDOWN: // Setup screenshot format dropdown
+				list = new DropDownList();
+				*selected_index = (widget == WID_GO_BUTTON_SIZE_DROPDOWN) ?
+									_settings_client.gui.min_button :
+									_freetype.medium.size;
+				for (uint i = MIN_BUTTON_SIZE; i <= MAX_BUTTON_SIZE; i++) {
+					DropDownListParamStringItem *item = new DropDownListParamStringItem(STR_JUST_INT, i, false);
+					item->SetParam(0, i);
+					*list->Append() = item;
+				}
+				break;
+
 			case WID_GO_BASE_GRF_DROPDOWN:
 				list = BuiltSetDropDownList<BaseGraphics>(selected_index);
 				break;
@@ -311,6 +327,8 @@ struct GameOptionsWindow : Window {
 			case WID_GO_LANG_DROPDOWN:       SetDParamStr(0, _current_language->own_name); break;
 			case WID_GO_RESOLUTION_DROPDOWN: SetDParam(0, GetCurRes() == _num_resolutions ? STR_GAME_OPTIONS_RESOLUTION_OTHER : SPECSTR_RESOLUTION_START + GetCurRes()); break;
 			case WID_GO_SCREENSHOT_DROPDOWN: SetDParam(0, SPECSTR_SCREENSHOT_START + _cur_screenshot_format); break;
+			case WID_GO_BUTTON_SIZE_DROPDOWN:SetDParam(0, _settings_client.gui.min_button); break;
+			case WID_GO_TEXT_SIZE_DROPDOWN:  SetDParam(0, _freetype.medium.size); break;
 			case WID_GO_BASE_GRF_DROPDOWN:   SetDParamStr(0, BaseGraphics::GetUsedSet()->name); break;
 			case WID_GO_BASE_GRF_STATUS:     SetDParam(0, BaseGraphics::GetUsedSet()->GetNumInvalid()); break;
 			case WID_GO_BASE_SFX_DROPDOWN:   SetDParamStr(0, BaseSounds::GetUsedSet()->name); break;
@@ -507,29 +525,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_RESOLUTION_DROPDOWN: // Change resolution
 				if (index < _num_resolutions && ChangeResInGame(_resolutions[index].width, _resolutions[index].height)) {
-					// Reinit all GUI elements and fonts, so they will rescale
-					InitFreeType(true);
-					CheckForMissingGlyphs();
-
-					DeleteAllNonVitalWindows();
-
-					switch (_game_mode) {
-						case GM_MENU:
-							DeleteWindowById(WC_SELECT_GAME, 0);
-							extern void ShowSelectGameWindow();
-							ShowSelectGameWindow();
-							break;
-
-						case GM_NORMAL:
-						case GM_EDITOR:
-							HideVitalWindows();
-							ShowVitalWindows();
-							break;
-
-						default:
-							break;
-					}
-
+					ReconstructUserInterface();
 					this->SetDirty();
 				}
 				break;
@@ -537,6 +533,20 @@ struct GameOptionsWindow : Window {
 			case WID_GO_SCREENSHOT_DROPDOWN: // Change screenshot format
 				SetScreenshotFormat(index);
 				this->SetDirty();
+				break;
+
+			case WID_GO_BUTTON_SIZE_DROPDOWN: // Setup screenshot format dropdown
+				_settings_client.gui.min_button = index;
+				_settings_client.gui.min_step = index;
+				ReconstructUserInterface();
+				break;
+
+			case WID_GO_TEXT_SIZE_DROPDOWN: // Setup screenshot format dropdown
+				_freetype.medium.size = index;
+				_freetype.small.size = _freetype.medium.size * 10 / 12;
+				_freetype.large.size = _freetype.medium.size * 16 / 12;
+				_freetype.mono.size = _freetype.medium.size;
+				ReconstructUserInterface();
 				break;
 
 			case WID_GO_BASE_GRF_DROPDOWN:
@@ -610,8 +620,11 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_LANGUAGE, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_LANG_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_RAW_STRING, STR_GAME_OPTIONS_LANGUAGE_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_SCREENSHOT_FORMAT, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_SCREENSHOT_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_SCREENSHOT_FORMAT_TOOLTIP), SetFill(1, 0),
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_BUTTON_SIZE, STR_NULL),
+					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_BUTTON_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP), SetFill(1, 0),
+				EndContainer(),
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_FONT_SIZE, STR_NULL),
+					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_TEXT_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetFill(0, 1),
 			EndContainer(),
@@ -2676,4 +2689,33 @@ static void ShowCustCurrency()
 {
 	DeleteWindowById(WC_CUSTOM_CURRENCY, 0);
 	new CustomCurrencyWindow(&_cust_currency_desc);
+}
+
+void ReconstructUserInterface()
+{
+	// Reinit all GUI elements and fonts, so they will rescale
+	InitFreeType(true);
+	CheckForMissingGlyphs();
+
+	DeleteAllNonVitalWindows();
+
+	switch (_game_mode) {
+		case GM_MENU:
+			DeleteWindowById(WC_SELECT_GAME, 0);
+			extern void ShowSelectGameWindow();
+			ShowSelectGameWindow();
+			break;
+
+		case GM_NORMAL:
+		case GM_EDITOR:
+			HideVitalWindows();
+			ShowVitalWindows();
+			break;
+
+		default:
+			break;
+	}
+
+	ReInitAllWindows();
+	ShowGameOptions();
 }

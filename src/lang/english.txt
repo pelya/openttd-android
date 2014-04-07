@@ -1189,6 +1189,10 @@ STR_CONFIG_SETTING_TOUCHSCREEN_MODE_HELPTEXT                    :If playing with
 STR_CONFIG_SETTING_TOUCHSCREEN_NONE                             :no adaptation
 STR_CONFIG_SETTING_TOUCHSCREEN_SIMPLE                           :simple
 STR_CONFIG_SETTING_TOUCHSCREEN_CONFIRM                          :confirm
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Button size
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Size of all user interface elements
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Font size
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Size of all game fonts
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}
