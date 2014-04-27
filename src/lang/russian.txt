@@ -1222,7 +1222,7 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Настрой�
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Категория:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Тип:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Отображать в списке только изменённые настройки
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Отображать в списке только настройки, соответствующие выбранной категории
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Основные настройки
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Расширенные настройки
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Специальные настройки / все настройки
@@ -1960,6 +1960,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Грузово�
 STR_FACE_CAPTION                                                :{WHITE}Внешний вид
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Не менять внешность
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Применить новую внешность
+STR_MAPGEN_RANDOM                                               :{BLACK}Случайное
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Мужское
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Выбор мужских лиц
@@ -2344,7 +2345,7 @@ STR_CONTENT_DETAIL_FILESIZE                                     :{SILVER}Раз�
 STR_CONTENT_DETAIL_SELECTED_BECAUSE_OF                          :{SILVER}Выбрано вместе с {WHITE}{STRING}
 STR_CONTENT_DETAIL_DEPENDENCIES                                 :{SILVER}Зависимости: {WHITE}{STRING}
 STR_CONTENT_DETAIL_TAGS                                         :{SILVER}Теги: {WHITE}{STRING}
-STR_CONTENT_NO_ZLIB                                             :{WHITE}OpenTTD собрана без поддержки библиотеки «zlib»...
+STR_CONTENT_NO_ZLIB                                             :{WHITE}OpenTTD скомпилирован без поддержки библиотеки «zlib»...
 STR_CONTENT_NO_ZLIB_SUB                                         :{WHITE}... загрузка контента невозможна!
 
 # Order of these is important!
@@ -2869,7 +2870,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Подн
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Опустить снеговую линию
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Начальное число:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Ландшафт генерируется псевдослучайно, число - опорная точка в последовательности случайных чисел.
-STR_MAPGEN_RANDOM                                               :{BLACK}Случайное
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Изменить случайный номер, используемый генератором ландшафта
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Генератор ландшафта:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Генератор лесов:

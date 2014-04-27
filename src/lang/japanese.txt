@@ -1808,6 +1808,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :貨物用路面
 STR_FACE_CAPTION                                                :{WHITE}顔の変更
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}顔の変更をキャンセルします
 STR_FACE_OK_TOOLTIP                                             :{BLACK}顔の変更を適用します
+STR_MAPGEN_RANDOM                                               :{BLACK}ランダム
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}男性
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}男性顔を表示します
@@ -2689,7 +2690,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}雪線�
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}雪線を下げる
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}乱数種(シード):
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}乱数種を入力するにはクリックします
-STR_MAPGEN_RANDOM                                               :{BLACK}ランダム
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}地形作成の乱数種を変更します
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}地形作成:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}植林アルゴリズム:

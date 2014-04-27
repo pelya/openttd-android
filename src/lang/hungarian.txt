@@ -1186,7 +1186,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Támogatott kap
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Építkezési költségek: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Építkezések és beszerzésk költségeinek szintje
 STR_CONFIG_SETTING_RECESSIONS                                   :Gazdasági válságok: {STRING}
-STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Ha bekapcsolod, gazdasági válság fog kitörni néhány évente. A válság alatt az összes ipar jelentősen kevesebbet termel. (A válság végével a termelés vissza áll az eredeti szintre.)
+STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Ha bekapcsolod, gazdasági válság fog kitörni néhány évente. A válság alatt az összes ipar jelentősen kevesebbet termel. (A válság végével a termelés visszaáll az eredeti szintre.)
 STR_CONFIG_SETTING_TRAIN_REVERSING                              :Vonatok állomáson történő megfordulásának tiltása: {STRING}
 STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :Ha engedélyezve van, a vonatok nem fordulnak vissza egy (nem vég-) állomáson, még ha lenne egy rövidebb út is visszafordulva
 STR_CONFIG_SETTING_DISASTERS                                    :Katasztrófák: {STRING}
@@ -1872,6 +1872,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Teherszállít�
 STR_FACE_CAPTION                                                :{WHITE}Arcválasztás
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Új arc elvetése
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Új arc elfogadása
+STR_MAPGEN_RANDOM                                               :{BLACK}Új véletlen alapszám
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Férfi
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Férfi arcok kiválasztása
@@ -2503,7 +2504,7 @@ STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Talaj a 
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Földterület megvétele későbbi használatra. Shift lenyomásával megmutatja a várható költséget
 
 # Object construction window
-STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Objektum kiválaszás
+STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Objektum kiválasztása
 STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Építendő objektum kiválasztása. Shift lenyomásával megmutatja a várható költséget
 STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}Építendő objektum típusának kiválasztása
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}Objektum előnézete
@@ -2753,7 +2754,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}A hóhat
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}A hóhatár csökkentése eggyel
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Véletlen alapszám:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Kattints ide a véletlen alapszám beírásához
-STR_MAPGEN_RANDOM                                               :{BLACK}Új véletlen alapszám
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Megváltoztatja a térképgenerálásnál használt véletlen alapszámot
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Térkép generátor:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Fa algoritmus:
@@ -4396,7 +4396,7 @@ STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Nem vál
 STR_ERROR_VEHICLE_IS_DESTROYED                                  :{WHITE}... jármű megsemmisült
 
 STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Egyáltalán nincsenek elérhető járművek
-STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}NewGRF konfigurációd megváltoztatása
+STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Változtasd meg a NewGRF konfigurációdat!
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :{WHITE}Még nincsenek elérhető járművek
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :{WHITE}Indíts új játékot {DATE_SHORT} után, vagy használj olyan NewGRF-et, ami tartalmaz megfelelően korai járműveket!
 

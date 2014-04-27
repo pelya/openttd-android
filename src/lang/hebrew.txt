@@ -1813,6 +1813,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :חשמלית מ
 STR_FACE_CAPTION                                                :{WHITE}בחירת תווי פנים
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}בטל פנים חדשות
 STR_FACE_OK_TOOLTIP                                             :{BLACK}אישור תווי פנים
+STR_MAPGEN_RANDOM                                               :{BLACK}אקראית
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}גבר
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}בחר תווי פנים של גברים
@@ -2678,7 +2679,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}הגבה
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}הנמך את קו השלג
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK} :מספר אקראי
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}הכנס מספר אקראי כלשהוא
-STR_MAPGEN_RANDOM                                               :{BLACK}אקראית
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}בחר מספר אקראי שישמש בסיס ליצירת הקרקע
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK} :יצירת קרקע
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}אלגוריתם העצים:

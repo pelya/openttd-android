@@ -1809,6 +1809,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Bonde de Carga
 STR_FACE_CAPTION                                                :{WHITE}Seleção de Rosto
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Cancelar seleção da novo rosto
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Aceitar seleção do novo rosto
+STR_MAPGEN_RANDOM                                               :{BLACK}Randomizar
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Masculino
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Rostos masculinos
@@ -2690,7 +2691,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Aumentar
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Diminuir a linha da neve em um ponto
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Semente:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Clique para digitar uma semente
-STR_MAPGEN_RANDOM                                               :{BLACK}Randomizar
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Muda a semente randômica da Geração de Terreno
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Gerador de terra
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Algorítimo de árvores

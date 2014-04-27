@@ -1876,6 +1876,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Nákladná elek
 STR_FACE_CAPTION                                                :{WHITE}Výber tváre
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Zrušiť výber novej tváre
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Potvrdiť výber tváre
+STR_MAPGEN_RANDOM                                               :{BLACK}Nový kód
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Muž
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Výber mužských tvárí
@@ -2757,7 +2758,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Zvýši�
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Znížiť výšku snehovej čiary
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Náhodný kód:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Klikni pre zadanie náhodného kódu
-STR_MAPGEN_RANDOM                                               :{BLACK}Nový kód
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Zmeniť náhodný kód pre generovanie terénu
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Generátor krajiny:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Generátor stromov:

@@ -1452,7 +1452,7 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Ustawienie firm
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategoria:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Typ:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Ogranicza poniższą listę tylko do modyfikowanych ustawień
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Ogranicza poniższą listę używając zdefiniowanych filtrów
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Ustawienia podstawowe
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Ustawienia zaawansowane
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Ustawienia eksperta / wszystkie ustawienia
@@ -1462,10 +1462,10 @@ STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_NEW                 :Ustawienia z wa
 STR_CONFIG_SETTING_TYPE_DROPDOWN_HELPTEXT                       :{BLACK}Ogranicza poniższą listę do pewnych typów ustawień
 STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL                            :Wszystkie typy ustawień
 STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT                         :Ustawienia klienta (nie przechowywane w plikach zapisu; wpływa na wszystkie gry)
-STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Ustawienia gry (przechowywane w pliku zapisu; wpływa tylko na nowe gry)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Ustawienia gry (przechowywane w pliku zapisu; wpływa tylko na nowo rozpoczęte gry)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Ustawienia gry (przechowywane w pliku zapisu; wpływa tylko na aktualną grę)
-STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Ustawienia firmy (przechowywane w pliku zapisu; mają wpływ tylko w nowo rozpoczętych grach)
-STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Ustawienia firmy (przechowywane w pliku zapisu; mają wpływ tylko na aktualnie aktywną firmę)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Ustawienia firmy (przechowywane w pliku zapisu; wpływa tylko na nowo rozpoczęte gry)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Ustawienia firmy (przechowywane w pliku zapisu; wpływa tylko na aktualną firmę)
 STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Pokaż wszystkie wyniki wyszukiwania według ustawień{}{SILVER}Kategoria {BLACK}do {WHITE}{STRING}
 STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Pokaż wszystkie wyniki wyszukiwania według ustawień{}{SILVER}Typ {BLACK}do {WHITE}Wszystkie typy ustawień
 STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Pokaż wszystkie wyniki według ustawień{}{SILVER}Kategorii {BLACK} {WHITE}{STRING} {BLACK}i {SILVER} Typu {BLACK} {WHITE}Wszystkie typy ustawień
@@ -1900,7 +1900,7 @@ STR_CONFIG_SETTING_ALLOW_TOWN_ROADS_HELPTEXT                    :Pozwalaj miasto
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS                   :Miasta, które mogą budować przejazdy kolejowe: {STRING}
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS_HELPTEXT          :Aktywacja tej opcji pozwala miastom budować przejazdy kolejowe
 STR_CONFIG_SETTING_NOISE_LEVEL                                  :Pozwól miastom kontrolować poziom hałasu dla lotnisk: {STRING}
-STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :Kiedy ta opcja jest wyłączona, w miastach można zbudować 2 lotniska. Kiedy opcja jest włączona, dopuszczalna liczba lotnisk jest określana przez tolerancję hałasu w mieście, która zależy od populacji oraz rozmiaru i odległości od lotniska
+STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :Kiedy ta opcja jest wyłączona, w miastach można zbudować 2 lotniska. Kiedy ta opcja jest włączona, liczba lotnisk jest ograniczona przez tolerancję hałasu tego miasta, która zależna jest od populacji oraz rozmiaru lotniska i jego odległości
 STR_CONFIG_SETTING_TOWN_FOUNDING                                :Zakładanie miast w grze: {STRING}
 STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Aktywacja tej opcji umożliwia graczom zakładanie nowych miast w grze
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Zabronione
@@ -2188,6 +2188,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Tramwaj towarow
 STR_FACE_CAPTION                                                :{WHITE}Wybór twarzy
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Anuluj wybór nowej twarzy
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Zatwierdź wybór nowej twarzy
+STR_MAPGEN_RANDOM                                               :{BLACK}Losuj
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Mężczyzna
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Wybierz męską twarz
@@ -3069,7 +3070,6 @@ STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Podnieś
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Obniż wysokość śniegu o jeden w dół
 STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Losowy numer:
 STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Kliknij aby wpisać losowy numer
-STR_MAPGEN_RANDOM                                               :{BLACK}Losuj
 STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Zmień losowy numer używany przy tworzeniu terenu
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Generator terenu:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}Algorytm drzew:
