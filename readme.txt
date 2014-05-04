@@ -1,5 +1,5 @@
-Last updated:    2014-02-25
-Release version: 1.4.0-beta5
+Last updated:    2014-05-04
+Release version: 1.4.1-RC1
 ------------------------------------------------------------------------
 
 
@@ -722,6 +722,7 @@ Thanks to:
   George                          - Canal graphics
   Andrew Parkhouse (andythenorth) - River graphics
   David Dallaston (Pikka)         - Tram tracks
+  Fleashosio                      - Titlegame
   All Translators                 - For their support to make OpenTTD a truly international game
   Bug Reporters                   - Thanks for all bug reports
   Chris Sawyer                    - For an amazing game!

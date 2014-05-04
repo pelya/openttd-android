@@ -34,8 +34,8 @@
  * \li GSGoal::SetProgress
  * \li GSGoal::SetText
  * \li GSStation::HasCargoRating
- * \li AIStation::GetCargoWaitingFrom
- * \li AIStation::GetCargoWaitingVia
+ * \li GSStation::GetCargoWaitingFrom
+ * \li GSStation::GetCargoWaitingVia
  * \li GSStoryPage
  * \li GSStoryPageList
  * \li GSStoryPageElementList
