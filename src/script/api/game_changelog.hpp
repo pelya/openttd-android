@@ -15,13 +15,11 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
- * \b 1.5.0
+ * \b 1.4.1
  *
- * 1.5.0 is not yet released. The following changes are not set in stone yet.
+ * No changes
  *
  * \b 1.4.0
- *
- * 1.4.0 is not yet released. The following changes are not set in stone yet.
  *
  * API additions:
  * \li AICargo::GetDistributionType
