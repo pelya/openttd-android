@@ -1,1 +1,0 @@
-- Add Load button to Play Heightmap dialog
