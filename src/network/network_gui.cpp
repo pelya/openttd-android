@@ -548,7 +548,7 @@ public:
 	{
 		switch (widget) {
 			case WID_NG_MATRIX: {
-				uint16 y = r.top + WD_MATRIX_TOP;
+				uint16 y = r.top + WD_MATRIX_TOP + this->resize.step_height / 4;
 
 				const int max = min(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), (int)this->servers.Length());
 
@@ -1373,7 +1373,7 @@ struct NetworkLobbyWindow : public Window {
 
 			case WID_NL_MATRIX:
 				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
-				size->height = 10 * resize->height;
+				size->height = 6 * resize->height;
 				break;
 
 			case WID_NL_DETAILS:
@@ -1440,7 +1440,7 @@ struct NetworkLobbyWindow : public Window {
 		uint profit_left = rtl ? left : right - profit_width;
 		uint lock_left   = rtl ? left + profit_width + 2 : right - profit_width - lock_width - 2;
 
-		int y = r.top + WD_MATRIX_TOP;
+		int y = r.top + WD_MATRIX_TOP + this->resize.step_height / 4;
 		/* Draw company list */
 		int pos = this->vscroll->GetPosition();
 		while (pos < this->server->info.companies_on) {
