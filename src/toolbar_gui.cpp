@@ -1495,14 +1495,31 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 	{
 #ifdef __ANDROID__
 
-		static const byte arrange_android[] = {
-			0,  1,  2,  4,  5,  6,  7,  8,  9, 14, 21, 22, 23, 24, 25, 19, 20, 29, 30, 31, 32,
-			0,  1,  3,  4,  5,  6,  7, 12, 15, 16, 17, 18, 26, 27, 28, 19, 20, 29, 30, 31, 32,
+		static const uint BIGGEST_ARRANGEMENT = 28;
+		static const uint ARRANGEMENT_30 = 24;
+		static const byte arrange_android_28[] = {
+			0,  1,  3,  4,  5,  6,  7,  8,  9, 14, 21, 22, 23, 24, 25, 19, 20, 29, 30, 31, 32,
+			0,  1,  2,  4,  5, 10, 11, 12, 15, 16, 17, 18, 26, 27, 28, 19, 20, 29, 30, 31, 32,
+		};
+		static const byte arrange_android_30[] = {
+			0,  1,  3,  4,  5,  6,  7, 12, 8,  9, 14, 21, 22, 23, 24, 25, 19, 20, 29, 30, 31, 32,
+			0,  1,  2,  4,  5, 10, 11, 12, 13, 15, 16, 17, 18, 26, 27, 28, 19, 20, 29, 30, 31, 32,
+		};
+		static const byte arrange_android_all[] = {
+			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32
 		};
 
-		button_count = arrangable_count = lengthof(arrange_android) / 2;
 		spacer_count = this->spacers;
-		return &arrange_android[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
+		if (width > BIGGEST_ARRANGEMENT * this->smallest_x) {
+			button_count = arrangable_count = lengthof(arrange_android_all);
+			return arrange_android_all;
+		}
+		if (width > ARRANGEMENT_30 * this->smallest_x) {
+			button_count = arrangable_count = lengthof(arrange_android_30) / 2;
+			return &arrange_android_30[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
+		}
+		button_count = arrangable_count = lengthof(arrange_android_28) / 2;
+		return &arrange_android_28[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
 
 #else
 

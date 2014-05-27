@@ -2450,17 +2450,17 @@ STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Level an
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Purchase land for future use. Shift toggles building/showing cost estimate
 
 # Tablet toolbar
-STR_TABLET_X                                                    :{BLACK}Trans
+STR_TABLET_X                                                    :{BLACK}{TINY_FONT}Trans
 STR_TABLET_TOGGLE_TRANSPARENCY_TOOLTIP                          :{BLACK}Toggle transparency
 STR_TABLET_CLOSE                                                :{BLACK}X
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Close all opened windows (except pinned ones)
-STR_TABLET_SHIFT                                                :{BLACK}Shift
+STR_TABLET_SHIFT                                                :{BLACK}{TINY_FONT}Shft
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Press it for getting an estimated cost of executing an action
-STR_TABLET_CTRL                                                 :{BLACK}Ctrl
+STR_TABLET_CTRL                                                 :{BLACK}{TINY_FONT}Ctrl
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Use it for actions that use the "CTRL" key
-STR_TABLET_MOVE                                                 :{BLACK}Move
+STR_TABLET_MOVE                                                 :{BLACK}{TINY_FONT}Move
 STR_TABLET_MOVE_TOOLTIP                                         :{BLACK}Press it to move around viewports. No action will be executed on viewports while this is active
-STR_TABLET_CONFIRM                                              :{BLACK}Do
+STR_TABLET_CONFIRM                                              :{BLACK}{TINY_FONT}Do
 STR_TABLET_CONFIRM_TOOLTIP                                      :{BLACK}Press it to confirm an action
 
 # Object construction window
