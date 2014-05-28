@@ -695,28 +695,26 @@ struct BuildRailToolbarWindow : Window {
 					TouchCommandP(end_tile, start_tile, _cur_railtype | (_ctrl_pressed ? 0x10 : 0), CMD_CONVERT_RAIL | CMD_MSG(STR_ERROR_CAN_T_CONVERT_RAIL), CcPlaySound10);
 					break;
 
-				case DDSP_BUILD_STATION:
-					if (!_remove_button_clicked && !_settings_client.gui.station_dragdrop) {
-						uint32 p1 = _cur_railtype | _railstation.orientation << 4 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | _ctrl_pressed << 24;
-						uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
-
-						int w = _settings_client.gui.station_numtracks;
-						int h = _settings_client.gui.station_platlength;
-						if (!_railstation.orientation) Swap(w, h);
-
-						CommandContainer cmdcont = { end_tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
-						ShowSelectStationIfNeeded(cmdcont, TileArea(end_tile, w, h));
-						break;
-					}
-					/* Fall through. */
-
 				case DDSP_REMOVE_STATION:
+				case DDSP_BUILD_STATION:
 					if (this->IsWidgetLowered(WID_RAT_BUILD_STATION)) {
 						/* Station */
 						if (_remove_button_clicked) {
 							TouchCommandP(end_tile, start_tile, _ctrl_pressed ? 0 : 1, CMD_REMOVE_FROM_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_REMOVE_PART_OF_STATION), CcPlaySound1E);
 						} else {
-							HandleStationPlacement(start_tile, end_tile);
+							if (!_settings_client.gui.station_dragdrop) {
+								uint32 p1 = _cur_railtype | _railstation.orientation << 4 | _settings_client.gui.station_numtracks << 8 | _settings_client.gui.station_platlength << 16 | _ctrl_pressed << 24;
+								uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
+
+								int w = _settings_client.gui.station_numtracks;
+								int h = _settings_client.gui.station_platlength;
+								if (!_railstation.orientation) Swap(w, h);
+
+								CommandContainer cmdcont = { end_tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
+								ShowSelectStationIfNeeded(cmdcont, TileArea(end_tile, w, h));
+							} else {
+								HandleStationPlacement(start_tile, end_tile);
+							}
 						}
 					} else {
 						/* Waypoint */
