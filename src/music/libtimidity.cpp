@@ -62,7 +62,7 @@ void Android_MidiMixMusic(Sint16 *stream, int len)
 		while( len > 0 )
 		{
 			int minlen = min(sizeof(buf), len);
-			mid_song_read_wave(_midi.song, stream, min(sizeof(buf), len*2));
+			mid_song_read_wave(_midi.song, buf, min(sizeof(buf), len*2));
 			for( Uint16 i = 0; i < minlen; i++ )
 				stream[i] += buf[i];
 			stream += minlen;
@@ -79,6 +79,7 @@ const char *MusicDriver_LibTimidity::Start(const char * const *param)
 {
 	_midi.status = MIDI_STOPPED;
 	_midi.song = NULL;
+	volume = 99; // Avoid clipping
 
 	if (mid_init(param == NULL ? NULL : const_cast<char *>(param[0])) < 0) {
 		/* If init fails, it can be because no configuration was found.
@@ -133,6 +134,7 @@ void MusicDriver_LibTimidity::PlaySong(const char *filename)
 		return;
 	}
 
+	mid_song_set_volume(_midi.song, volume);
 	mid_song_start(_midi.song);
 	_midi.status = MIDI_PLAYING;
 }
@@ -160,5 +162,6 @@ bool MusicDriver_LibTimidity::IsSongPlaying()
 
 void MusicDriver_LibTimidity::SetVolume(byte vol)
 {
+	volume = vol * 99 / 127; // I'm not sure about that value
 	if (_midi.song != NULL) mid_song_set_volume(_midi.song, vol);
 }

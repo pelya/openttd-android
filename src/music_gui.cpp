@@ -689,7 +689,7 @@ struct MusicWindow : public Window {
 				if (_current_text_dir == TD_RTL) new_vol = 127 - new_vol;
 				if (new_vol != *vol) {
 					*vol = new_vol;
-					if (widget == WID_M_MUSIC_VOL) MusicVolumeChanged(new_vol);
+					if (widget == WID_M_MUSIC_VOL) MusicVolumeChanged((new_vol * new_vol) / 127); // Kinda logarithmic scale
 					this->SetDirty();
 				}
 
