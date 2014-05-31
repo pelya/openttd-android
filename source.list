@@ -906,8 +906,8 @@ script/api/script_window.cpp
 #else
 blitter/16bpp_base.cpp
 blitter/16bpp_base.hpp
-# blitter/16bpp_anim.cpp
-# blitter/16bpp_anim.hpp
+blitter/16bpp_anim.cpp
+blitter/16bpp_anim.hpp
 blitter/16bpp_simple.cpp
 blitter/16bpp_simple.hpp
 blitter/32bpp_anim.cpp

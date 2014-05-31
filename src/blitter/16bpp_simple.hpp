@@ -21,6 +21,7 @@ public:
 	/* virtual */ void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom);
 	/* virtual */ void DrawColourMappingRect(void *dst, int width, int height, PaletteID pal);
 	/* virtual */ Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator);
+	template <BlitterMode mode> void Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom);
 
 	/* virtual */ const char *GetName() { return "16bpp-simple"; }
 };
@@ -32,4 +33,4 @@ public:
 	/* virtual */ Blitter *CreateInstance() { return new Blitter_16bppSimple(); }
 };
 
-#endif /* BLITTER_32BPP_SIMPLE_HPP */
+#endif /* BLITTER_16BPP_SIMPLE_HPP */

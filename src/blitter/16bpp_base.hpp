@@ -26,7 +26,7 @@ public:
 		unsigned b : 5 __attribute__((packed));  ///< Blue-channel, packed 5 bits
 		unsigned g : 6 __attribute__((packed));  ///< Green-channel, packed 6 bits
 		unsigned r : 5 __attribute__((packed));  ///< Red-channel, packed 5 bits
-		Colour16(uint8 r, uint8 g, uint8 b):
+		Colour16(uint8 r = 0, uint8 g = 0, uint8 b = 0):
 			b(b), g(g), r(r)
 		{
 		}

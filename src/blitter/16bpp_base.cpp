@@ -74,12 +74,12 @@ void Blitter_16bppBase::CopyImageToBuffer(const void *video, void *dst, int widt
 
 void Blitter_16bppBase::ScrollBuffer(void *video, int &left, int &top, int &width, int &height, int scroll_x, int scroll_y)
 {
-	const uint16 *src;
-	uint16 *dst;
+	const Colour16 *src;
+	Colour16 *dst;
 
 	if (scroll_y > 0) {
 		/* Calculate pointers */
-		dst = (uint16 *)video + left + (top + height - 1) * _screen.pitch;
+		dst = (Colour16 *)video + left + (top + height - 1) * _screen.pitch;
 		src = dst - scroll_y * _screen.pitch;
 
 		/* Decrease height and increase top */
@@ -98,13 +98,13 @@ void Blitter_16bppBase::ScrollBuffer(void *video, int &left, int &top, int &widt
 		}
 
 		for (int h = height; h > 0; h--) {
-			memcpy(dst, src, width * sizeof(uint16));
+			memcpy(dst, src, width * sizeof(Colour16));
 			src -= _screen.pitch;
 			dst -= _screen.pitch;
 		}
 	} else {
 		/* Calculate pointers */
-		dst = (uint16 *)video + left + top * _screen.pitch;
+		dst = (Colour16 *)video + left + top * _screen.pitch;
 		src = dst - scroll_y * _screen.pitch;
 
 		/* Decrease height. (scroll_y is <=0). */
@@ -124,7 +124,7 @@ void Blitter_16bppBase::ScrollBuffer(void *video, int &left, int &top, int &widt
 		/* the y-displacement may be 0 therefore we have to use memmove,
 		 * because source and destination may overlap */
 		for (int h = height; h > 0; h--) {
-			memmove(dst, src, width * sizeof(uint16));
+			memmove(dst, src, width * sizeof(Colour16));
 			src += _screen.pitch;
 			dst += _screen.pitch;
 		}
@@ -133,7 +133,7 @@ void Blitter_16bppBase::ScrollBuffer(void *video, int &left, int &top, int &widt
 
 int Blitter_16bppBase::BufferSize(int width, int height)
 {
-	return width * height * sizeof(uint16);
+	return width * height * sizeof(Colour16);
 }
 
 void Blitter_16bppBase::PaletteAnimate(const Palette &palette)

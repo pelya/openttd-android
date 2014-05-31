@@ -12,16 +12,14 @@
 #include "../stdafx.h"
 #include "../zoom_func.h"
 #include "16bpp_simple.hpp"
-#include "32bpp_base.hpp"
 
 #include "../table/sprites.h"
-
-#include <SDL_video.h>
 
 /** Instantiation of the simple 16bpp blitter factory. */
 static FBlitter_16bppSimple iFBlitter_16bppSimple;
 
-void Blitter_16bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom)
+template <BlitterMode mode>
+void Blitter_16bppSimple::Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom)
 {
 	const Pixel *src, *src_line;
 	Colour16 *dst, *dst_line;
@@ -44,7 +42,7 @@ void Blitter_16bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 					if (src->m == 0) {
 						if (src->a != 0) *dst = ComposeColourPA(src->c, src->a, *dst);
 					} else {
-						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(this->AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
+						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(AdjustBrightness(LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
 					}
 					break;
 
@@ -64,6 +62,16 @@ void Blitter_16bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 			dst++;
 			src += ScaleByZoom(1, zoom);
 		}
+	}
+}
+
+void Blitter_16bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom)
+{
+	switch (mode) {
+		default: NOT_REACHED();
+		case BM_NORMAL:       Draw<BM_NORMAL>      (bp, zoom); return;
+		case BM_COLOUR_REMAP: Draw<BM_COLOUR_REMAP>(bp, zoom); return;
+		case BM_TRANSPARENT:  Draw<BM_TRANSPARENT> (bp, zoom); return;
 	}
 }
 
@@ -122,18 +130,18 @@ Sprite *Blitter_16bppSimple::Encode(const SpriteLoader::Sprite *sprite, Allocato
 			   use 32bpp AdjustBrightness() variant for better colors,
 			   because this function is not called each frame */
 			if (rgb_max == 0) rgb_max = Blitter_32bppBase::DEFAULT_BRIGHTNESS;
-			dst[i].c = To16(Blitter_32bppBase::AdjustBrightness(this->LookupColourInPalette32(src->m), rgb_max));
+			dst[i].c = To16(Blitter_32bppBase::AdjustBrightness(LookupColourInPalette32(src->m), rgb_max));
 			dst[i].v = rgb_max / 16;
 #endif
 			rgb_max /= 16;
 
-			/* Black pixel (8bpp or old 16bpp image), so use default value */
+			/* Black pixel (8bpp or old 32bpp image), so use default value */
 			if (rgb_max == 0) rgb_max = DEFAULT_BRIGHTNESS;
 
 			/* Pre-convert the mapping channel to a RGB value,
 			   use 32bpp AdjustBrightness() variant for better colors,
 			   because this function is not called each frame */
-			dst[i].c = AdjustBrightness(this->LookupColourInPalette(src->m), rgb_max);
+			dst[i].c = AdjustBrightness(LookupColourInPalette(src->m), rgb_max);
 			dst[i].v = rgb_max;
 
 			dst[i].a = src->a / 16;
