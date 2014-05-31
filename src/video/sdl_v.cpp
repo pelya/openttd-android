@@ -549,7 +549,12 @@ int VideoDriver_SDL::PollEvent()
 
 	switch (ev.type) {
 		case SDL_MOUSEMOTION:
+#ifdef __ANDROID__
+			// No mouse warping on Android, mouse strictly follows finger
+			if (false) {
+#else
 			if (_cursor.fix_at) {
+#endif
 				int dx = ev.motion.x - _cursor.pos.x;
 				int dy = ev.motion.y - _cursor.pos.y;
 				if (dx != 0 || dy != 0) {
