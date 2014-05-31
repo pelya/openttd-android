@@ -1594,7 +1594,7 @@ static Point GetAutoPlacePosition(int width, int height)
 
 	/* First attempt, try top-left of the screen */
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
-	if (IsGoodAutoPlace1(0, main_toolbar != NULL ? main_toolbar->height + 2 : 2, width, height, pt)) return pt;
+	if (IsGoodAutoPlace1(0, main_toolbar != NULL ? main_toolbar->height : 0, width, height, pt)) return pt;
 
 	/* Second attempt, try around all existing windows with a distance of 2 pixels.
 	 * The new window must be entirely on-screen, and not overlap with an existing window.
