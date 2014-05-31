@@ -80,6 +80,7 @@ byte _scroller_click_timeout = 0;
 
 bool _scrolling_viewport;  ///< A viewport is being scrolled with the mouse.
 bool _mouse_hovering;      ///< The mouse is hovering over the same point.
+static bool _left_button_dragged;
 
 SpecialMouseMode _special_mouse_mode; ///< Mode of the mouse.
 
@@ -2397,6 +2398,21 @@ static EventState HandleViewportScroll()
 {
 	bool scrollwheel_scrolling = _settings_client.gui.scrollwheel_scrolling == 1 && (_cursor.v_wheel != 0 || _cursor.h_wheel != 0);
 
+	if (_settings_client.gui.left_mouse_btn_scrolling) {
+		// Do not open vehicle/town info window while scrolling with left mouse button
+		static int oldDx = 0, oldDy = 0;
+		if (_left_button_down) {
+			oldDx += _cursor.delta.x;
+			oldDy += _cursor.delta.y;
+			if (!_left_button_dragged && abs(oldDx) + abs(oldDy) > 20) {
+				_left_button_dragged = true;
+			}
+		} else {
+			oldDx = 0;
+			oldDy = 0;
+		}
+	}
+
 	if (!_scrolling_viewport) return ES_NOT_HANDLED;
 
 	/* When we don't have a last scroll window we are starting to scroll.
@@ -2735,6 +2751,7 @@ static void HandleAutoscroll()
 enum MouseClick {
 	MC_NONE = 0,
 	MC_LEFT,
+	MC_LEFT_UP,
 	MC_RIGHT,
 	MC_DOUBLE_LEFT,
 	MC_HOVER,
@@ -2857,6 +2874,13 @@ static void MouseLoop(MouseClick click, int mousewheel)
 				}
 				break;
 
+			case MC_LEFT_UP:
+				if (!_left_button_dragged) {
+					HandleViewportMouseUp(vp, x, y);
+				}
+				_left_button_dragged = false;
+				break;
+
 			case MC_RIGHT:
 				if (!(w->flags & WF_DISABLE_VP_SCROLL)) {
 					_scrolling_viewport = true;
@@ -2873,6 +2897,9 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		}
 	} else {
 		switch (click) {
+			case MC_LEFT_UP:
+				break;
+
 			case MC_LEFT:
 			case MC_DOUBLE_LEFT:
 				DispatchLeftClickEvent(w, x - w->left, y - w->top, click == MC_DOUBLE_LEFT ? 2 : 1);
@@ -2902,6 +2929,7 @@ void HandleMouseEvents()
 
 	static int double_click_time = 0;
 	static Point double_click_pos = {0, 0};
+	static bool left_button_released = false;
 
 	/* Mouse event? */
 	MouseClick click = MC_NONE;
@@ -2915,10 +2943,16 @@ void HandleMouseEvents()
 		double_click_time = _realtime_tick;
 		double_click_pos = _cursor.pos;
 		_left_button_clicked = true;
+		left_button_released = false;
 		_input_events_this_tick++;
 	} else if (_right_button_clicked) {
 		_right_button_clicked = false;
 		click = MC_RIGHT;
+		_input_events_this_tick++;
+	} else if(!_left_button_down && !left_button_released) {
+		click = MC_LEFT_UP;
+		left_button_released = true;
+		_left_button_clicked = false;
 		_input_events_this_tick++;
 	}
 

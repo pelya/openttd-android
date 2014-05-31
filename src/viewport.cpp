@@ -1953,16 +1953,22 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y)
 {
 	if (_move_pressed) return false;
 
+	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
+		PlaceObject();
+		return true;
+	}
+
+	return false;
+}
+
+bool HandleViewportMouseUp(const ViewPort *vp, int x, int y)
+{
+	if (_move_pressed) return false;
+
 	const Vehicle *v = CheckClickOnVehicle(vp, x, y);
 
 	if (_thd.place_mode & HT_VEHICLE) {
 		if (v != NULL && VehicleClicked(v)) return true;
-	}
-
-	/* Vehicle placement mode already handled above. */
-	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
-		PlaceObject();
-		return true;
 	}
 
 	if (CheckClickOnTown(vp, x, y)) return true;
