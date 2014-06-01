@@ -1470,7 +1470,7 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 		const Window *wt = FindWindowById(WC_STATUS_BAR, 0);
 		if (wt != NULL) free_height -= wt->height;
 		wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
-		if (wt != NULL) free_height -= wt->height;
+		if (wt != NULL && !_settings_client.gui.vertical_toolbar) free_height -= wt->height;
 
 		int enlarge_x = max(min(def_width  - this->width,  _screen.width - this->width),  0);
 		int enlarge_y = max(min(def_height - this->height, free_height   - this->height), 0);
@@ -1661,11 +1661,16 @@ Point GetToolbarAlignedWindowPosition(int window_width)
 	const Window *w = FindWindowById(WC_MAIN_TOOLBAR, 0);
 	assert(w != NULL);
 	Point pt;
-	pt.y = w->top + w->height;
-	if (_settings_client.gui.touchscreen_mode != TSC_NONE) {
-		pt.x = _current_text_dir == TD_RTL ? 0 : (_screen.width - window_width);
+	if (_settings_client.gui.vertical_toolbar) {
+		pt.x = _current_text_dir == TD_RTL ? w->left + w->width : _screen.width - window_width - w->width;
+		pt.y = w->top;
 	} else {
-		pt.x = _current_text_dir == TD_RTL ? w->left : (w->left + w->width) - window_width;
+		pt.y = w->top + w->height;
+		if (_settings_client.gui.touchscreen_mode != TSC_NONE) {
+			pt.x = _current_text_dir == TD_RTL ? 0 : (_screen.width - window_width);
+		} else {
+			pt.x = _current_text_dir == TD_RTL ? w->left : (w->left + w->width) - window_width;
+		}
 	}
 	return pt;
 }
@@ -3423,6 +3428,7 @@ static int PositionWindow(Window *w, WindowClass clss, int setting)
  */
 int PositionMainToolbar(Window *w)
 {
+	if (_settings_client.gui.vertical_toolbar) return 0;
 	DEBUG(misc, 5, "Repositioning Main Toolbar...");
 	return PositionWindow(w, WC_MAIN_TOOLBAR, _settings_client.gui.toolbar_pos);
 }

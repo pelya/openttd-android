@@ -1339,7 +1339,7 @@ protected:
 	uint spacers;          ///< Number of spacer widgets in this toolbar
 
 public:
-	NWidgetToolbarContainer(enum widgetType = NWID_HORIZONTAL) : NWidgetContainer(widgetType)
+	NWidgetToolbarContainer(WidgetType widgetType = NWID_HORIZONTAL) : NWidgetContainer(widgetType)
 	{
 	}
 
@@ -1357,20 +1357,28 @@ public:
 	{
 		this->smallest_x = 0; // Biggest child
 		this->smallest_y = 0; // Biggest child
-		this->fill_x = 1;
-		this->fill_y = 0;
-		this->resize_x = 1; // We only resize in this direction
-		this->resize_y = 0; // We never resize in this direction
+		this->fill_x = (type == NWID_HORIZONTAL);
+		this->fill_y = (type == NWID_VERTICAL);
+		this->resize_x = (type == NWID_HORIZONTAL); // We only resize in this direction
+		this->resize_y = (type == NWID_VERTICAL); // We never resize in this direction
 		this->spacers = 0;
 
 		uint nbuttons = 0;
 		/* First initialise some variables... */
 		for (NWidgetBase *child_wid = this->head; child_wid != NULL; child_wid = child_wid->next) {
 			child_wid->SetupSmallestSize(w, init_array);
-			this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+			if (type == NWID_HORIZONTAL) {
+				this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+			} else {
+				this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+			}
 			if (this->IsButton(child_wid->type)) {
 				nbuttons++;
-				this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+				if (type == NWID_HORIZONTAL) {
+					this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+				} else {
+					this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+				}
 			} else if (child_wid->type == NWID_SPACER) {
 				this->spacers++;
 			}
@@ -1378,12 +1386,23 @@ public:
 
 		/* ... then in a second pass make sure the 'current' heights are set. Won't change ever. */
 		for (NWidgetBase *child_wid = this->head; child_wid != NULL; child_wid = child_wid->next) {
-			child_wid->current_y = this->smallest_y;
-			if (!this->IsButton(child_wid->type)) {
-				child_wid->current_x = child_wid->smallest_x;
+			if (type == NWID_HORIZONTAL) {
+				child_wid->current_y = this->smallest_y;
+				if (!this->IsButton(child_wid->type)) {
+					child_wid->current_x = child_wid->smallest_x;
+				}
+			} else {
+				child_wid->current_x = this->smallest_x;
+				if (!this->IsButton(child_wid->type)) {
+					child_wid->current_y = child_wid->smallest_y;
+				}
 			}
 		}
-		w->window_desc->default_width = nbuttons * this->smallest_x;
+		if (type == NWID_HORIZONTAL) {
+			w->window_desc->default_width = nbuttons * this->smallest_x;
+		} else {
+			w->window_desc->default_height = nbuttons * this->smallest_y;
+		}
 	}
 
 	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl)
@@ -1414,6 +1433,10 @@ public:
 		uint position = 0; // Place to put next child relative to origin of the container.
 		uint spacer_space = max(0, (int)given_width - (int)(button_count * this->smallest_x)); // Remaining spacing for 'spacer' widgets
 		uint button_space = given_width - spacer_space; // Remaining spacing for the buttons
+		if (type == NWID_VERTICAL) {
+			spacer_space = max(0, (int)given_height - (int)(button_count * this->smallest_y));
+			button_space = given_height - spacer_space;
+		}
 		uint spacer_i = 0;
 		uint button_i = 0;
 
@@ -1434,12 +1457,22 @@ public:
 
 			/* Buttons can be scaled, the others not. */
 			if (this->IsButton(child_wid->type)) {
-				child_wid->current_x = button_space / (button_count - button_i);
-				button_space -= child_wid->current_x;
+				if (type == NWID_HORIZONTAL) {
+					child_wid->current_x = button_space / (button_count - button_i);
+					button_space -= child_wid->current_x;
+				} else {
+					child_wid->current_y = button_space / (button_count - button_i);
+					button_space -= child_wid->current_y;
+				}
 				button_i++;
 			}
-			child_wid->AssignSizePosition(sizing, x + position, y, child_wid->current_x, this->current_y, rtl);
-			position += child_wid->current_x;
+			if (type == NWID_HORIZONTAL) {
+				child_wid->AssignSizePosition(sizing, x + position, y, child_wid->current_x, this->current_y, rtl);
+				position += child_wid->current_x;
+			} else {
+				child_wid->AssignSizePosition(sizing, x, y + position, this->current_x, child_wid->current_y, rtl);
+				position += child_wid->current_y;
+			}
 
 			if (rtl) {
 				cur_wid--;
@@ -1575,6 +1608,47 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 
 #endif
 	}
+};
+
+/** Container for the 'normal' main toolbar */
+class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
+	int side;
+
+	public:
+	NWidgetVerticalToolbarContainer(int side) : NWidgetToolbarContainer(NWID_VERTICAL), side(side)
+	{
+	}
+
+	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
+	{
+		static const byte arrange_left[] = {
+			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,
+		};
+		// Some rather artistic button arrangement, I'm proud of myself
+		static const byte arrange_right[] = {
+			29, 21, 22, 23, 24, 25,  7,  8,  9, 12, 14, 28,
+			29, 15, 16, 17, 18, 13,  7, 10, 11, 26, 27, 28,
+		};
+
+		spacer_count = 0;
+
+		if (side == 0) {
+			button_count = arrangable_count = lengthof(arrange_left);
+			return arrange_left;
+		}
+		button_count = arrangable_count = lengthof(arrange_right) / 2;
+		return &arrange_right[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
+	}
+
+	/*
+	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl)
+	{
+		if (side == 0) x = 0;
+		else x = _screen.width - this->smallest_x;
+		y = 0;
+		NWidgetToolbarContainer::AssignSizePosition(sizing, x, y, given_width, given_height, rtl);
+	}
+	*/
 };
 
 /** Container for the scenario editor's toolbar */
@@ -1996,17 +2070,6 @@ static NWidgetBase *MakeVerticalLeftToolbar(int *biggest_index)
 	return tb;
 }
 
-static NWidgetBase *MakeVerticalRigthToolbar(int *biggest_index)
-{
-	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(1);
-	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
-		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
-	}
-
-	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
-	return tb;
-}
-
 static const NWidgetPart _nested_toolbar_vertical_left_widgets[] = {
 	NWidgetFunction(MakeVerticalLeftToolbar),
 };
@@ -2015,9 +2078,20 @@ static WindowDesc _toolb_vertical_left_desc(
 	WDP_MANUAL, NULL, 22, 480,
 	WC_MAIN_TOOLBAR, WC_NONE,
 	WDF_NO_FOCUS,
-	_nested_toolbar_vertical1_widgets, lengthof(_nested_toolbar_vertical_left_widgets),
+	_nested_toolbar_vertical_left_widgets, lengthof(_nested_toolbar_vertical_left_widgets),
 	&MainToolbarWindow::hotkeys
 );
+
+static NWidgetBase *MakeVerticalRightToolbar(int *biggest_index)
+{
+	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(1);
+	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
+		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+	}
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_SWITCH_BAR);
+	return tb;
+}
 
 static const NWidgetPart _nested_toolbar_vertical_right_widgets[] = {
 	NWidgetFunction(MakeVerticalRightToolbar),
@@ -2351,8 +2425,11 @@ void AllocateToolbar()
 		new ScenarioEditorToolbarWindow(&_toolb_scen_desc);
 	} else {
 		if (_settings_client.gui.vertical_toolbar) {
-			new MainToolbarWindow(&_toolb_vertical_left_desc);
-			new MainToolbarWindow(&_toolb_vertical_right_desc);
+			MainToolbarWindow *w = new MainToolbarWindow(&_toolb_vertical_left_desc);
+			w->left = 0;
+			w = new MainToolbarWindow(&_toolb_vertical_right_desc);
+			w->left = _screen.width - w->width;
+			SetDirtyBlocks(0, w->top, _screen.width, w->top + w->height);
 		} else {
 			new MainToolbarWindow(&_toolb_normal_desc);
 		}
