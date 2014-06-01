@@ -1897,7 +1897,7 @@ struct MainToolbarWindow : Window {
 				ShowLandInfo(tile);
 				break;
 
-			default: NOT_REACHED();
+			default: return; //NOT_REACHED();
 		}
 	}
 
@@ -2099,7 +2099,7 @@ static const NWidgetPart _nested_toolbar_vertical_right_widgets[] = {
 
 static WindowDesc _toolb_vertical_right_desc(
 	WDP_MANUAL, NULL, 22, 480,
-	WC_MAIN_TOOLBAR, WC_NONE,
+	WC_MAIN_TOOLBAR_RIGHT, WC_NONE,
 	WDF_NO_FOCUS,
 	_nested_toolbar_vertical_right_widgets, lengthof(_nested_toolbar_vertical_right_widgets),
 	&MainToolbarWindow::hotkeys

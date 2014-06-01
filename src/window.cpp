@@ -1222,6 +1222,7 @@ static inline bool IsVitalWindow(const Window *w)
 {
 	switch (w->window_class) {
 		case WC_MAIN_TOOLBAR:
+		case WC_MAIN_TOOLBAR_RIGHT:
 		case WC_STATUS_BAR:
 		case WC_NEWS_WINDOW:
 		case WC_SEND_NETWORK_MSG:
@@ -3373,6 +3374,7 @@ restart_search:
 void HideVitalWindows()
 {
 	DeleteWindowById(WC_MAIN_TOOLBAR, 0);
+	DeleteWindowById(WC_MAIN_TOOLBAR_RIGHT, 0);
 	DeleteWindowById(WC_STATUS_BAR, 0);
 }
 
