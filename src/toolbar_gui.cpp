@@ -1339,7 +1339,7 @@ protected:
 	uint spacers;          ///< Number of spacer widgets in this toolbar
 
 public:
-	NWidgetToolbarContainer() : NWidgetContainer(NWID_HORIZONTAL)
+	NWidgetToolbarContainer(enum widgetType = NWID_HORIZONTAL) : NWidgetContainer(widgetType)
 	{
 	}
 
@@ -1916,48 +1916,48 @@ static Hotkey maintoolbar_hotkeys[] = {
 };
 HotkeyList MainToolbarWindow::hotkeys("maintoolbar", maintoolbar_hotkeys);
 
+/** Sprites to use for the different toolbar buttons */
+static const SpriteID _toolbar_button_sprites[] = {
+	SPR_IMG_PAUSE,           // WID_TN_PAUSE
+	SPR_IMG_FASTFORWARD,     // WID_TN_FAST_FORWARD
+	SPR_IMG_SETTINGS,        // WID_TN_SETTINGS
+	SPR_IMG_SAVE,            // WID_TN_SAVE
+	SPR_IMG_SMALLMAP,        // WID_TN_SMALL_MAP
+	SPR_IMG_TOWN,            // WID_TN_TOWNS
+	SPR_IMG_SUBSIDIES,       // WID_TN_SUBSIDIES
+	SPR_IMG_COMPANY_LIST,    // WID_TN_STATIONS
+	SPR_IMG_COMPANY_FINANCE, // WID_TN_FINANCES
+	SPR_IMG_COMPANY_GENERAL, // WID_TN_COMPANIES
+	SPR_IMG_STORY_BOOK,      // WID_TN_STORY
+	SPR_IMG_GOAL,            // WID_TN_GOAL
+	SPR_IMG_GRAPHS,          // WID_TN_GRAPHS
+	SPR_IMG_COMPANY_LEAGUE,  // WID_TN_LEAGUE
+	SPR_IMG_INDUSTRY,        // WID_TN_INDUSTRIES
+	SPR_IMG_TRAINLIST,       // WID_TN_TRAINS
+	SPR_IMG_TRUCKLIST,       // WID_TN_ROADVEHS
+	SPR_IMG_SHIPLIST,        // WID_TN_SHIPS
+	SPR_IMG_AIRPLANESLIST,   // WID_TN_AIRCRAFT
+	SPR_IMG_ZOOMIN,          // WID_TN_ZOOMIN
+	SPR_IMG_ZOOMOUT,         // WID_TN_ZOOMOUT
+	SPR_IMG_BUILDRAIL,       // WID_TN_RAILS
+	SPR_IMG_BUILDROAD,       // WID_TN_ROADS
+	SPR_IMG_BUILDWATER,      // WID_TN_WATER
+	SPR_IMG_BUILDAIR,        // WID_TN_AIR
+	SPR_IMG_LANDSCAPING,     // WID_TN_LANDSCAPE
+	SPR_IMG_MUSIC,           // WID_TN_MUSIC_SOUND
+	SPR_IMG_MESSAGES,        // WID_TN_MESSAGES
+	SPR_IMG_QUERY,           // WID_TN_HELP
+	SPR_IMG_SWITCH_TOOLBAR,  // WID_TN_SWITCH_BAR
+};
+
 static NWidgetBase *MakeMainToolbar(int *biggest_index)
 {
-	/** Sprites to use for the different toolbar buttons */
-	static const SpriteID toolbar_button_sprites[] = {
-		SPR_IMG_PAUSE,           // WID_TN_PAUSE
-		SPR_IMG_FASTFORWARD,     // WID_TN_FAST_FORWARD
-		SPR_IMG_SETTINGS,        // WID_TN_SETTINGS
-		SPR_IMG_SAVE,            // WID_TN_SAVE
-		SPR_IMG_SMALLMAP,        // WID_TN_SMALL_MAP
-		SPR_IMG_TOWN,            // WID_TN_TOWNS
-		SPR_IMG_SUBSIDIES,       // WID_TN_SUBSIDIES
-		SPR_IMG_COMPANY_LIST,    // WID_TN_STATIONS
-		SPR_IMG_COMPANY_FINANCE, // WID_TN_FINANCES
-		SPR_IMG_COMPANY_GENERAL, // WID_TN_COMPANIES
-		SPR_IMG_STORY_BOOK,      // WID_TN_STORY
-		SPR_IMG_GOAL,            // WID_TN_GOAL
-		SPR_IMG_GRAPHS,          // WID_TN_GRAPHS
-		SPR_IMG_COMPANY_LEAGUE,  // WID_TN_LEAGUE
-		SPR_IMG_INDUSTRY,        // WID_TN_INDUSTRIES
-		SPR_IMG_TRAINLIST,       // WID_TN_TRAINS
-		SPR_IMG_TRUCKLIST,       // WID_TN_ROADVEHS
-		SPR_IMG_SHIPLIST,        // WID_TN_SHIPS
-		SPR_IMG_AIRPLANESLIST,   // WID_TN_AIRCRAFT
-		SPR_IMG_ZOOMIN,          // WID_TN_ZOOMIN
-		SPR_IMG_ZOOMOUT,         // WID_TN_ZOOMOUT
-		SPR_IMG_BUILDRAIL,       // WID_TN_RAILS
-		SPR_IMG_BUILDROAD,       // WID_TN_ROADS
-		SPR_IMG_BUILDWATER,      // WID_TN_WATER
-		SPR_IMG_BUILDAIR,        // WID_TN_AIR
-		SPR_IMG_LANDSCAPING,     // WID_TN_LANDSCAPE
-		SPR_IMG_MUSIC,           // WID_TN_MUSIC_SOUND
-		SPR_IMG_MESSAGES,        // WID_TN_MESSAGES
-		SPR_IMG_QUERY,           // WID_TN_HELP
-		SPR_IMG_SWITCH_TOOLBAR,  // WID_TN_SWITCH_BAR
-	};
-
 	NWidgetMainToolbarContainer *hor = new NWidgetMainToolbarContainer();
 	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
 		switch (i) {
 			case 4: case 8: case 15: case 19: case 21: case 26: hor->Add(new NWidgetSpacer(0, 0)); break;
 		}
-		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
 
 	hor->Add(new NWidgetSpacer(0, 0));
@@ -1981,6 +1981,55 @@ static WindowDesc _toolb_normal_desc(
 	&MainToolbarWindow::hotkeys
 );
 
+static NWidgetBase *MakeVerticalLeftToolbar(int *biggest_index)
+{
+	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(0);
+	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
+		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+	}
+
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
+	return tb;
+}
+
+static NWidgetBase *MakeVerticalRigthToolbar(int *biggest_index)
+{
+	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(1);
+	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
+		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+	}
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
+	return tb;
+}
+
+static const NWidgetPart _nested_toolbar_vertical_left_widgets[] = {
+	NWidgetFunction(MakeVerticalLeftToolbar),
+};
+
+static WindowDesc _toolb_vertical_left_desc(
+	WDP_MANUAL, NULL, 22, 480,
+	WC_MAIN_TOOLBAR, WC_NONE,
+	WDF_NO_FOCUS,
+	_nested_toolbar_vertical1_widgets, lengthof(_nested_toolbar_vertical_left_widgets),
+	&MainToolbarWindow::hotkeys
+);
+
+static const NWidgetPart _nested_toolbar_vertical_right_widgets[] = {
+	NWidgetFunction(MakeVerticalRightToolbar),
+};
+
+static WindowDesc _toolb_vertical_right_desc(
+	WDP_MANUAL, NULL, 22, 480,
+	WC_MAIN_TOOLBAR, WC_NONE,
+	WDF_NO_FOCUS,
+	_nested_toolbar_vertical_right_widgets, lengthof(_nested_toolbar_vertical_right_widgets),
+	&MainToolbarWindow::hotkeys
+);
 
 /* --- Toolbar handling for the scenario editor */
 
@@ -2301,6 +2350,11 @@ void AllocateToolbar()
 	if (_game_mode == GM_EDITOR) {
 		new ScenarioEditorToolbarWindow(&_toolb_scen_desc);
 	} else {
-		new MainToolbarWindow(&_toolb_normal_desc);
+		if (_settings_client.gui.vertical_toolbar) {
+			new MainToolbarWindow(&_toolb_vertical_left_desc);
+			new MainToolbarWindow(&_toolb_vertical_right_desc);
+		} else {
+			new MainToolbarWindow(&_toolb_normal_desc);
+		}
 	}
 }

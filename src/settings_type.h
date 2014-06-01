@@ -78,6 +78,7 @@ struct GUISettings {
 	bool   lost_vehicle_warn;                ///< if a vehicle can't find its destination, show a warning
 	uint8  order_review_system;              ///< perform order reviews on vehicles
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
+	bool   vertical_toolbar;                 ///< main toolbar is split into two vertical toolbars
 	TouchscreenModeByte touchscreen_mode;    ///< touchscreen mode for toolbars
 	uint   min_button;                       ///< min size of most button widgets
 	uint   min_step;                         ///< min size of scrollbar/dropdown elements
