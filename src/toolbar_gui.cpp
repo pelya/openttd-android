@@ -58,6 +58,7 @@ RailType _last_built_railtype;
 RoadType _last_built_roadtype;
 
 static ScreenshotType _confirmed_screenshot_type; ///< Screenshot type the current query is about to confirm.
+int _last_clicked_toolbar_idx = 0;
 
 /** Toobar modes */
 enum ToolbarMode {
@@ -170,7 +171,17 @@ public:
  */
 static void PopupMainToolbMenu(Window *w, int widget, DropDownList *list, int def)
 {
-	ShowDropDownList(w, list, def, widget, 0, true, true);
+	if (!_settings_client.gui.vertical_toolbar) {
+		ShowDropDownList(w, list, def, widget, 0, true, true);
+	} else {
+		Rect wi_rect;
+		NWidgetCore *nwi = w->GetWidget<NWidgetCore>(widget);
+		wi_rect.left   = ((int)nwi->pos_x < _screen.width / 2) ? nwi->pos_x + nwi->current_x - 1 : nwi->pos_x - nwi->current_x;
+		wi_rect.right  = ((int)nwi->pos_x < _screen.width / 2) ? nwi->pos_x + nwi->current_x * 2 : nwi->pos_x - 1;
+		wi_rect.top    = nwi->pos_y;
+		wi_rect.bottom = nwi->pos_y + nwi->current_y - 1;
+		ShowDropDownListAt(w, list, def, widget, wi_rect, nwi->colour, true, true);
+	}
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 }
 
@@ -1796,8 +1807,10 @@ enum MainToolbarHotkeys {
 /** Main toolbar. */
 struct MainToolbarWindow : Window {
 	CallBackFunction last_started_action; ///< Last started user action.
+	int *clickedFlag;
+	int clickedValue;
 
-	MainToolbarWindow(WindowDesc *desc) : Window(desc)
+	MainToolbarWindow(WindowDesc *desc, int *clickedFlag = NULL, int clickedValue = 0) : Window(desc), clickedFlag(clickedFlag), clickedValue(clickedValue)
 	{
 		this->InitNested(0);
 
@@ -1829,11 +1842,15 @@ struct MainToolbarWindow : Window {
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
+		if (clickedFlag)
+			*clickedFlag = clickedValue;
 		if (_game_mode != GM_MENU && !this->IsWidgetDisabled(widget)) _toolbar_button_procs[widget](this);
 	}
 
 	virtual void OnDropdownSelect(int widget, int index)
 	{
+		if (clickedFlag)
+			*clickedFlag = clickedValue;
 		CallBackFunction cbf = _menu_clicked_procs[widget](index);
 		if (cbf != CBF_NONE) this->last_started_action = cbf;
 	}
@@ -2425,9 +2442,9 @@ void AllocateToolbar()
 		new ScenarioEditorToolbarWindow(&_toolb_scen_desc);
 	} else {
 		if (_settings_client.gui.vertical_toolbar) {
-			MainToolbarWindow *w = new MainToolbarWindow(&_toolb_vertical_left_desc);
+			MainToolbarWindow *w = new MainToolbarWindow(&_toolb_vertical_left_desc, &_last_clicked_toolbar_idx, 0);
 			w->left = 0;
-			w = new MainToolbarWindow(&_toolb_vertical_right_desc);
+			w = new MainToolbarWindow(&_toolb_vertical_right_desc, &_last_clicked_toolbar_idx, 1);
 			w->left = _screen.width - w->width;
 			SetDirtyBlocks(0, w->top, _screen.width, w->top + w->height);
 		} else {

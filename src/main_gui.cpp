@@ -461,6 +461,7 @@ struct MainWindow : Window
 		if (!gui_scope) return;
 		/* Forward the message to the appropriate toolbar (ingame or scenario editor) */
 		InvalidateWindowData(WC_MAIN_TOOLBAR, 0, data, true);
+		InvalidateWindowData(WC_MAIN_TOOLBAR_RIGHT, 0, data, true);
 	}
 
 	static HotkeyList hotkeys;

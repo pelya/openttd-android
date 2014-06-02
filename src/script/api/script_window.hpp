@@ -136,6 +136,13 @@ public:
 		WC_MAIN_TOOLBAR                              = ::WC_MAIN_TOOLBAR,
 
 		/**
+		 * Main toolbar (the long bar at the top); %Window numbers:
+		 *   - 0 = #ToolbarNormalWidgets
+		 *   - 0 = #ToolbarEditorWidgets
+		 */
+		WC_MAIN_TOOLBAR_RIGHT                        = ::WC_MAIN_TOOLBAR_RIGHT,
+
+		/**
 		 * Statusbar (at the bottom of your screen); %Window numbers:
 		 *   - 0 = #StatusbarWidgets
 		 */

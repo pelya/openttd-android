@@ -1261,6 +1261,7 @@ static uint GetWindowZPriority(const Window *w)
 			++z_priority;
 
 		case WC_MAIN_TOOLBAR:
+		case WC_MAIN_TOOLBAR_RIGHT:
 		case WC_STATUS_BAR:
 			++z_priority;
 
@@ -1475,6 +1476,10 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 
 		int enlarge_x = max(min(def_width  - this->width,  _screen.width - this->width),  0);
 		int enlarge_y = max(min(def_height - this->height, free_height   - this->height), 0);
+		if (wt && _settings_client.gui.vertical_toolbar &&
+			enlarge_x > _screen.width - wt->width * 2) {
+			//enlarge_x = _screen.width - wt->width * 2;
+		}
 
 		/* X and Y has to go by step.. calculate it.
 		 * The cast to int is necessary else x/y are implicitly casted to
@@ -1525,7 +1530,11 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
 	int bottom = height + top;
 
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
-	if (left < 0 || (main_toolbar != NULL && top < main_toolbar->height) || right > _screen.width || bottom > _screen.height) return false;
+	if (!_settings_client.gui.vertical_toolbar || !main_toolbar) {
+		if (left < 0 || (main_toolbar != NULL && top < main_toolbar->height) || right > _screen.width || bottom > _screen.height) return false;
+	} else {
+		if (left < main_toolbar->width || top < 0 || right > _screen.width - main_toolbar->width * 2 || bottom > _screen.height) return false;
+	}
 
 	/* Make sure it is not obscured by any window. */
 	const Window *w;
@@ -1636,6 +1645,10 @@ static Point GetAutoPlacePosition(int width, int height)
 	 * of (+5, +5)
 	 */
 	int left = 0, top = 24;
+	if (_settings_client.gui.vertical_toolbar) {
+		left = main_toolbar != NULL ? main_toolbar->width : 0;
+		top = 0;
+	}
 
 restart:
 	FOR_ALL_WINDOWS_FROM_BACK(w) {
@@ -1663,15 +1676,12 @@ Point GetToolbarAlignedWindowPosition(int window_width)
 	assert(w != NULL);
 	Point pt;
 	if (_settings_client.gui.vertical_toolbar) {
-		pt.x = _current_text_dir == TD_RTL ? w->left + w->width : _screen.width - window_width - w->width;
+		// Retermine if the window was opened from the left or the right toolbar
+		pt.x = (_last_clicked_toolbar_idx == 0) ? w->left + w->width : _screen.width - w->width - window_width - 1;
 		pt.y = w->top;
 	} else {
+		pt.x = _current_text_dir == TD_RTL ? w->left : (w->left + w->width) - window_width;
 		pt.y = w->top + w->height;
-		if (_settings_client.gui.touchscreen_mode != TSC_NONE) {
-			pt.x = _current_text_dir == TD_RTL ? 0 : (_screen.width - window_width);
-		} else {
-			pt.x = _current_text_dir == TD_RTL ? w->left : (w->left + w->width) - window_width;
-		}
 	}
 	return pt;
 }
@@ -1705,13 +1715,9 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 			(w = FindWindowById(desc->parent_cls, window_number)) != NULL &&
 			w->left < _screen.width - 20 && w->left > -60 && w->top < _screen.height - 20) {
 
-		if (_settings_client.gui.touchscreen_mode != TSC_NONE) {
-			pt.x = _current_text_dir == TD_RTL ? 0 : (_screen.width - default_width);
-		} else {
-			pt.x = w->left + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? 0 : 10);
-			if (pt.x > _screen.width + 10 - default_width) {
-				pt.x = (_screen.width + 10 - default_width) - 20;
-			}
+		pt.x = w->left + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? 0 : 10);
+		if (pt.x > _screen.width + 10 - default_width) {
+			pt.x = (_screen.width + 10 - default_width) - 20;
 		}
 
 		pt.y = w->top + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? w->height : 10);
@@ -2064,6 +2070,7 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 
 		/* Make sure the title bar isn't hidden behind the main tool bar or the status bar. */
 		PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_MAIN_TOOLBAR, 0), w->left, PHD_DOWN);
+		PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0), w->left, PHD_DOWN);
 		PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_STATUS_BAR,   0), w->left, PHD_UP);
 	}
 
@@ -2124,6 +2131,7 @@ void ResizeWindow(Window *w, int delta_x, int delta_y, bool clamp_to_screen)
  */
 int GetMainViewTop()
 {
+	if (_settings_client.gui.vertical_toolbar) return 0;
 	Window *w = FindWindowById(WC_MAIN_TOOLBAR, 0);
 	return (w == NULL) ? 0 : w->top + w->height;
 }
@@ -3290,6 +3298,7 @@ restart_search:
 		if (w->window_class != WC_MAIN_WINDOW &&
 				w->window_class != WC_SELECT_GAME &&
 				w->window_class != WC_MAIN_TOOLBAR &&
+				w->window_class != WC_MAIN_TOOLBAR_RIGHT &&
 				w->window_class != WC_STATUS_BAR &&
 				w->window_class != WC_TOOLTIPS &&
 				(w->flags & WF_STICKY) == 0) { // do not delete windows which are 'pinned'
@@ -3506,6 +3515,7 @@ void RelocateAllWindows(int neww, int newh)
 				continue;
 
 			case WC_MAIN_TOOLBAR:
+			case WC_MAIN_TOOLBAR_RIGHT:
 				ResizeWindow(w, min(neww, w->window_desc->default_width) - w->width, 0, false);
 
 				top = w->top;
