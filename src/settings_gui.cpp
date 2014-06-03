@@ -454,6 +454,13 @@ struct GameOptionsWindow : Window {
 				this->SetDirty();
 				break;
 
+			case WID_GO_VERTICAL_TOOLBAR:
+				_settings_client.gui.vertical_toolbar = !_settings_client.gui.vertical_toolbar;
+				this->SetWidgetLoweredState(WID_GO_VERTICAL_TOOLBAR, _settings_client.gui.vertical_toolbar);
+				this->SetDirty();
+				ReconstructUserInterface();
+				break;
+
 			default: {
 				int selected;
 				DropDownList *list = this->BuildDropDownList(widget, &selected);
@@ -572,6 +579,7 @@ struct GameOptionsWindow : Window {
 	{
 		if (!gui_scope) return;
 		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
+		this->SetWidgetLoweredState(WID_GO_VERTICAL_TOOLBAR, _settings_client.gui.vertical_toolbar);
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);
@@ -625,6 +633,12 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_FONT_SIZE, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_TEXT_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP), SetFill(1, 0),
+				EndContainer(),
+				NWidget(WWT_FRAME, COLOUR_GREY),
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_VERTICAL_TOOLBAR, STR_NULL),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VERTICAL_TOOLBAR), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT),
+					EndContainer(),
 				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetFill(0, 1),
 			EndContainer(),
@@ -1526,7 +1540,7 @@ static SettingEntry _settings_ui[] = {
 	SettingEntry(&_settings_ui_interaction_page, STR_CONFIG_SETTING_INTERACTION),
 	SettingEntry(&_settings_ui_sound_page, STR_CONFIG_SETTING_SOUND),
 	SettingEntry(&_settings_ui_news_page, STR_CONFIG_SETTING_NEWS),
-	SettingEntry("gui.touchscreen_mode"),
+	SettingEntry("gui.vertical_toolbar"),
 	SettingEntry("gui.show_finances"),
 	SettingEntry("gui.errmsg_duration"),
 	SettingEntry("gui.hover_delay"),

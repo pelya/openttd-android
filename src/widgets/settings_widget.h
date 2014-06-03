@@ -26,6 +26,7 @@ enum GameOptionsWidgets {
 	WID_GO_SCREENSHOT_DROPDOWN,    ///< Select the screenshot type... please use PNG!.
 	WID_GO_BUTTON_SIZE_DROPDOWN,   ///< Size of in-game UI elements, such as buttons.
 	WID_GO_TEXT_SIZE_DROPDOWN,     ///< Size of medium font, sizes of other fonts are derived from it.
+	WID_GO_VERTICAL_TOOLBAR,       ///< Enable vertical toolbar.
 	WID_GO_BASE_GRF_DROPDOWN,      ///< Use to select a base GRF.
 	WID_GO_BASE_GRF_STATUS,        ///< Info about missing files etc.
 	WID_GO_BASE_GRF_TEXTFILE,      ///< Open base GRF readme, changelog (+1) or license (+2).
