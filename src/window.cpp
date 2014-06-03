@@ -2837,6 +2837,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	 * But there is no company related window open anyway, so _current_company is not used. */
 	assert(HasModalProgress() || IsLocalCompany());
 
+	static bool mouse_down_on_viewport = false;
 	int x = _cursor.pos.x;
 	int y = _cursor.pos.y;
 	Window *w = FindWindowFromPt(x, y);
@@ -2889,13 +2890,15 @@ static void MouseLoop(MouseClick click, int mousewheel)
 					_scrolling_viewport = true;
 					_cursor.fix_at = false;
 				}
+				mouse_down_on_viewport = true;
 				break;
 
 			case MC_LEFT_UP:
-				if (!_left_button_dragged) {
+				if (!_left_button_dragged && mouse_down_on_viewport) {
 					HandleViewportMouseUp(vp, x, y);
 				}
 				_left_button_dragged = false;
+				mouse_down_on_viewport = false;
 				break;
 
 			case MC_RIGHT:
