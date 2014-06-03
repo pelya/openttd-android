@@ -25,6 +25,7 @@
 #include "window_func.h"
 #include "tile_map.h"
 #include "landscape.h"
+#include "blitter/16bpp_base.hpp"
 
 #include "table/strings.h"
 
@@ -34,7 +35,7 @@ static const char * const HEIGHTMAP_NAME  = "heightmap";  ///< Default filename 
 char _screenshot_format_name[8];      ///< Extension of the current screenshot format (corresponds with #_cur_screenshot_format).
 uint _num_screenshot_formats;         ///< Number of available screenshot formats.
 uint _cur_screenshot_format;          ///< Index of the currently selected screenshot format in #_screenshot_formats.
-static char _screenshot_name[128];    ///< Filename of the screenshot file.
+static char _screenshot_name[256];    ///< Filename of the screenshot file.
 char _full_screenshot_name[MAX_PATH]; ///< Pathname of the screenshot file.
 
 /**
@@ -272,7 +273,8 @@ static bool MakePNGImage(const char *name, ScreenshotCallback *callb, void *user
 	png_infop info_ptr;
 
 	/* only implemented for 8bit and 32bit images so far. */
-	if (pixelformat != 8 && pixelformat != 32) return false;
+	if (pixelformat != 8 && pixelformat != 32 && pixelformat != 16) return false;
+	if (pixelformat == 16) bpp = 3;
 
 	f = fopen(name, "wb");
 	if (f == NULL) return false;
@@ -386,6 +388,17 @@ static bool MakePNGImage(const char *name, ScreenshotCallback *callb, void *user
 		/* render the pixels into the buffer */
 		callb(userdata, buff, y, w, n);
 		y += n;
+		if (pixelformat == 16) {
+			// Convert to 24bpp
+			Blitter_16bppBase::Colour16 *inp = (Blitter_16bppBase::Colour16 *)buff;
+			uint8 *outp = (uint8 *)buff;
+			for (i = 1; i <= w * n; i++) {
+				outp[(w * n - i) * 3    ] = inp[w * n - i].r << 3;
+				outp[(w * n - i) * 3 + 1] = inp[w * n - i].g << 2;
+				outp[(w * n - i) * 3 + 2] = inp[w * n - i].b << 3;
+				//outp[(w * n - i) * 3] = 0xff;
+			}
+		}
 
 		/* write them to png */
 		for (i = 0; i != n; i++) {

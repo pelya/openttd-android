@@ -290,7 +290,11 @@ static const char * const _subdirs[] = {
 	"ai" PATHSEP "library" PATHSEP,
 	"game" PATHSEP,
 	"game" PATHSEP "library" PATHSEP,
+#ifdef __ANDROID__
+	"../../../../../../Pictures/",
+#else
 	"screenshot" PATHSEP,
+#endif
 };
 assert_compile(lengthof(_subdirs) == NUM_SUBDIRS);
 
