@@ -1040,7 +1040,7 @@ static CallBackFunction PlaceLandBlockInfo()
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, _settings_client.gui.vertical_toolbar ? WC_MAIN_TOOLBAR_RIGHT : WC_MAIN_TOOLBAR, 0);
 		return CBF_PLACE_LANDINFO;
 	}
 }

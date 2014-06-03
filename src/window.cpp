@@ -1723,9 +1723,9 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 		if (pt.x > _screen.width + 10 - default_width) {
 			pt.x = (_screen.width + 10 - default_width) - 20;
 		}
-		const Window *w = FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0);
-		if (w && pt.x + default_width > _screen.width - w->width ) {
-			pt.x = _screen.width - w->width - default_width;
+		const Window *wt = FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0);
+		if (wt && pt.x + default_width > _screen.width - wt->width) {
+			pt.x = _screen.width - wt->width - default_width;
 		}
 
 		pt.y = w->top + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? w->height : 10);
@@ -2897,6 +2897,8 @@ static void MouseLoop(MouseClick click, int mousewheel)
 						(_settings_client.gui.left_mouse_btn_scrolling || _move_pressed)) {
 					_scrolling_viewport = true;
 					_cursor.fix_at = false;
+				} else {
+					_left_button_dragged = true;
 				}
 				mouse_down_on_viewport = true;
 				break;
