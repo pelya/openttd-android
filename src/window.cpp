@@ -3449,7 +3449,7 @@ static int PositionWindow(Window *w, WindowClass clss, int setting)
  */
 int PositionMainToolbar(Window *w)
 {
-	if (_settings_client.gui.vertical_toolbar) return 0;
+	if (_settings_client.gui.vertical_toolbar) return 0; /* Always at the left */
 	DEBUG(misc, 5, "Repositioning Main Toolbar...");
 	return PositionWindow(w, WC_MAIN_TOOLBAR, _settings_client.gui.toolbar_pos);
 }
@@ -3525,11 +3525,17 @@ void RelocateAllWindows(int neww, int newh)
 				continue;
 
 			case WC_MAIN_TOOLBAR:
-			case WC_MAIN_TOOLBAR_RIGHT:
 				ResizeWindow(w, min(neww, w->window_desc->default_width) - w->width, 0, false);
 
 				top = w->top;
 				left = PositionMainToolbar(w); // changes toolbar orientation
+				break;
+
+			case WC_MAIN_TOOLBAR_RIGHT:
+				ResizeWindow(w, min(neww, w->window_desc->default_width) - w->width, 0, false);
+
+				top = w->top;
+				left = neww - w->width;
 				break;
 
 			case WC_NEWS_WINDOW:

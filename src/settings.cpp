@@ -1081,12 +1081,6 @@ static bool VerticalToolbarChanged(int32 p1)
 	return true;
 }
 
-static bool TouchscreenModeChanged(int32 p1)
-{
-	//ResetTabletWindow();
-	return true;
-}
-
 /**
  * Update any possible saveload window and delete any newgrf dialogue as
  * its widget parts might change. Reinit all windows as it allows access to the

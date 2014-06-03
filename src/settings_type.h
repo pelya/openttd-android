@@ -21,7 +21,6 @@
 #include "linkgraph/linkgraph_type.h"
 #include "zoom_type.h"
 #include "openttd.h"
-#include "toolbar_type.h"
 
 
 /** Settings profiles and highscore tables. */
