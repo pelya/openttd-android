@@ -882,7 +882,6 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 				_road_depot_orientation = (DiagDirection)(widget - WID_BROD_DEPOT_NE);
 				this->LowerWidget(_road_depot_orientation + WID_BROD_DEPOT_NE);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
-				EraseQueuedTouchCommand();
 				this->SetDirty();
 				break;
 
@@ -1029,7 +1028,6 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 				_settings_client.gui.station_show_coverage = (widget != WID_BROS_LT_OFF);
 				this->LowerWidget(_settings_client.gui.station_show_coverage + WID_BROS_LT_OFF);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
-				EraseQueuedTouchCommand();
 				this->SetDirty();
 				break;
 
