@@ -1514,8 +1514,6 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 	this->left = nx;
 	this->top = ny;
 
-	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, this->left, this->top, this->width, this->height);
-
 	this->SetDirty();
 }
 
@@ -1534,7 +1532,6 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
 {
 	int right  = width + left;
 	int bottom = height + top;
-	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, left, top, width, height);
 
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
 	if (!_settings_client.gui.vertical_toolbar || !main_toolbar) {
@@ -1558,7 +1555,6 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
 
 	pos.x = left;
 	pos.y = top;
-	DEBUG(misc, 0, "%s: pos %d:%d", __func__, pos.x, pos.y);
 	return true;
 }
 
@@ -1575,8 +1571,6 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
  */
 static bool IsGoodAutoPlace2(int left, int top, int width, int height, Point &pos)
 {
-	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, left, top, width, height);
-
 	/* Left part of the rectangle may be at most 1/4 off-screen,
 	 * right part of the rectangle may be at most 1/2 off-screen
 	 */
@@ -1599,7 +1593,6 @@ static bool IsGoodAutoPlace2(int left, int top, int width, int height, Point &po
 
 	pos.x = left;
 	pos.y = top;
-	DEBUG(misc, 0, "%s: pos %d:%d", __func__, pos.x, pos.y);
 	return true;
 }
 
@@ -1612,7 +1605,6 @@ static bool IsGoodAutoPlace2(int left, int top, int width, int height, Point &po
 static Point GetAutoPlacePosition(int width, int height)
 {
 	Point pt;
-	DEBUG(misc, 0, "%s: +%d+%d", __func__, width, height);
 
 	/* First attempt, try top-left of the screen */
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
@@ -1673,7 +1665,6 @@ restart:
 
 	pt.x = left;
 	pt.y = top;
-	DEBUG(misc, 0, "%s: pos %d:%d", __func__, pt.x, pt.y);
 	return pt;
 }
 
@@ -1769,9 +1760,7 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 
 /* virtual */ Point Window::OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
 {
-	Point pt = LocalGetWindowPlacement(this->window_desc, sm_width, sm_height, window_number);
-	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, pt.x, pt.y, sm_width, sm_height);
-	return pt;
+	return LocalGetWindowPlacement(this->window_desc, sm_width, sm_height, window_number);
 }
 
 /**
@@ -2902,7 +2891,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		switch (click) {
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
-				DEBUG(misc, 2, "Cursor: 0x%X (%d)", _cursor.sprite, _cursor.sprite);
+				//DEBUG(misc, 2, "Cursor: 0x%X (%d)", _cursor.sprite, _cursor.sprite);
 				if (!HandleViewportClicked(vp, x, y) &&
 						!(w->flags & WF_DISABLE_VP_SCROLL) &&
 						(_settings_client.gui.left_mouse_btn_scrolling || _move_pressed)) {
