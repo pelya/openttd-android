@@ -1187,8 +1187,6 @@ void UndrawMouseCursor()
 
 void DrawMouseCursor()
 {
-	if (_settings_client.gui.touchscreen_mode != 0) return;
-
 	/* Don't draw the mouse cursor if the screen is not ready */
 	if (_screen.dst_ptr == NULL) return;
 

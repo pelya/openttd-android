@@ -288,7 +288,6 @@ struct TerraformToolbarWindow : Window {
 	{
 		DeleteWindowById(WC_BUILD_OBJECT, 0);
 		this->RaiseButtons();
-		EraseQueuedTouchCommand();
 		ResetObjectToPlace();
 	}
 

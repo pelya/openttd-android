@@ -1184,13 +1184,8 @@ STR_CONFIG_SETTING_SIGNALSIDE_HELPTEXT                          :Select on which
 STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :On the left
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :On the driving side
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :On the right
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Vertical toolbar
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Main toolbar is split into two vertical toolbars on the sides of the screen
-STR_CONFIG_SETTING_TOUCHSCREEN_MODE                             :Control mode for touchscreen devices: {STRING2}
-STR_CONFIG_SETTING_TOUCHSCREEN_MODE_HELPTEXT                    :If playing with a mouse, choose no adaptation. Other modes are for touchscreen devices. Associated hotkey: N
-STR_CONFIG_SETTING_TOUCHSCREEN_NONE                             :no adaptation
-STR_CONFIG_SETTING_TOUCHSCREEN_SIMPLE                           :simple
-STR_CONFIG_SETTING_TOUCHSCREEN_CONFIRM                          :confirm
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Vertical toolbar
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}Main toolbar is split into two vertical toolbars on the sides of the screen
 STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Button size
 STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Size of all user interface elements
 STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Font size

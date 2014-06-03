@@ -2842,13 +2842,12 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	Window *w = FindWindowFromPt(x, y);
 	if (w == NULL) return;
 	ViewPort *vp = IsPtInWindowViewport(w, x, y);
-	bool confirm = (_settings_client.gui.touchscreen_mode == TSC_CONFIRM);
 
 	/* Don't allow any action in a viewport if either in menu or when having a modal progress window */
 	if (vp != NULL && (_game_mode == GM_MENU || HasModalProgress())) return;
 
 	/* On confirm mode do not update tile selection unless we are clicking on a viewport. */
-	if (!confirm || (vp != NULL && _left_button_down && !_move_pressed)) {
+	if (vp != NULL && _left_button_down && !_move_pressed) {
 		HandlePlacePresize();
 		UpdateTileSelection();
 	} else {

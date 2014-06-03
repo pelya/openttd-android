@@ -753,7 +753,6 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
-		EraseQueuedTouchCommand();
 	}
 
 	virtual void OnPlacePresize(Point pt, TileIndex tile_from)

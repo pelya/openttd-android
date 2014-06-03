@@ -143,7 +143,6 @@ struct BuildAirToolbarWindow : Window {
 
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
 		DeleteWindowById(WC_SELECT_STATION, 0);
-		EraseQueuedTouchCommand();
 		ResetObjectToPlace();
 	}
 
@@ -244,7 +243,6 @@ public:
 
 	virtual ~BuildAirportWindow()
 	{
-		EraseQueuedTouchCommand();
 		DeleteWindowById(WC_SELECT_STATION, 0);
 	}
 

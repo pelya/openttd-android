@@ -1180,7 +1180,6 @@ static CallBackFunction ToolbarCtrlClick(Window *w)
 	w->SetWidgetLoweredState(WID_TN_CTRL, _ctrl_pressed);
 	w->SetWidgetDirty(WID_TN_CTRL);
 	HandleCtrlChanged();
-	EraseQueuedTouchCommand();
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }

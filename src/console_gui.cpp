@@ -232,14 +232,6 @@ struct IConsoleWindow : Window
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
-	{
-		if (_settings_client.gui.touchscreen_mode == 0) return;
-
-		ShowQueryString(STR_EMPTY, STR_CONSOLE_QUERY_STRING, ICON_CMDLN_SIZE,
-			this, CS_ALPHANUMERAL, QSF_NONE);
-	}
-
 	virtual void OnQueryTextFinished(char *str)
 	{
 		_focused_window = this;
