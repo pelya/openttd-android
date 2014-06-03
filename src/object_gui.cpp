@@ -499,5 +499,5 @@ void InitializeObjectGui()
  */
 void PlaceProc_Object(TileIndex tile)
 {
-	TouchCommandP(tile, ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index)->Index(), _selected_object_view, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_OBJECT), CcTerraform);
+	DoCommandP(tile, ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index)->Index(), _selected_object_view, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_OBJECT), CcTerraform);
 }

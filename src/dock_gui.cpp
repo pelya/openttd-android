@@ -226,10 +226,10 @@ struct BuildDocksToolbarWindow : Window {
 					GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
 					break;
 				case DDSP_CREATE_WATER:
-					TouchCommandP(end_tile, start_tile, (_game_mode == GM_EDITOR && _ctrl_pressed) ? WATER_CLASS_SEA : WATER_CLASS_CANAL, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_BUILD_CANALS), CcBuildCanal);
+					DoCommandP(end_tile, start_tile, (_game_mode == GM_EDITOR && _ctrl_pressed) ? WATER_CLASS_SEA : WATER_CLASS_CANAL, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_BUILD_CANALS), CcBuildCanal);
 					break;
 				case DDSP_CREATE_RIVER:
-					TouchCommandP(end_tile, start_tile, WATER_CLASS_RIVER, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_PLACE_RIVERS), CcBuildCanal);
+					DoCommandP(end_tile, start_tile, WATER_CLASS_RIVER, CMD_BUILD_CANAL | CMD_MSG(STR_ERROR_CAN_T_PLACE_RIVERS), CcBuildCanal);
 					break;
 				case DDSP_BUILD_STATION: {
 					uint32 p2 = (uint32)INVALID_STATION << 16; // no station to join
@@ -244,14 +244,14 @@ struct BuildDocksToolbarWindow : Window {
 				}
 
 				case DDSP_BUILD_BRIDGE:
-					TouchCommandP(start_tile, GetOtherAqueductEnd(start_tile), TRANSPORT_WATER << 15, CMD_BUILD_BRIDGE | CMD_MSG(STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE), CcBuildBridge);
+					DoCommandP(start_tile, GetOtherAqueductEnd(start_tile), TRANSPORT_WATER << 15, CMD_BUILD_BRIDGE | CMD_MSG(STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE), CcBuildBridge);
 					VpStartPreSizing();
 					break;
 
 				case DDSP_REMOVE_TRUCKSTOP: { // Reusing for locks.
 					TileIndex middle_tile = start_tile;
 					if (start_tile != end_tile) middle_tile = TileAddByDiagDir(start_tile, DiagdirBetweenTiles(start_tile, end_tile));
-					TouchCommandP(middle_tile, 0, 0, CMD_BUILD_LOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_LOCKS), CcBuildDocks);
+					DoCommandP(middle_tile, 0, 0, CMD_BUILD_LOCK | CMD_MSG(STR_ERROR_CAN_T_BUILD_LOCKS), CcBuildDocks);
 					VpStartPreSizing();
 					break;
 				}
@@ -260,10 +260,10 @@ struct BuildDocksToolbarWindow : Window {
 					assert(start_tile == end_tile);
 					switch (last_clicked_widget) {
 						case WID_DT_BUOY:
-							TouchCommandP(end_tile, 0, 0, CMD_BUILD_BUOY | CMD_MSG(STR_ERROR_CAN_T_POSITION_BUOY_HERE), CcBuildDocks);
+							DoCommandP(end_tile, 0, 0, CMD_BUILD_BUOY | CMD_MSG(STR_ERROR_CAN_T_POSITION_BUOY_HERE), CcBuildDocks);
 							break;
 						case WID_DT_DEPOT: // Build depot button
-							TouchCommandP(end_tile, _ship_depot_direction, 0, CMD_BUILD_SHIP_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_SHIP_DEPOT), CcBuildDocks);
+							DoCommandP(end_tile, _ship_depot_direction, 0, CMD_BUILD_SHIP_DEPOT | CMD_MSG(STR_ERROR_CAN_T_BUILD_SHIP_DEPOT), CcBuildDocks);
 							break;
 						default: NOT_REACHED();
 					}

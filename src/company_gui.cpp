@@ -2366,7 +2366,7 @@ struct CompanyWindow : Window
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
-		if (TouchCommandP(tile, OBJECT_HQ, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS))) {
+		if (DoCommandP(tile, OBJECT_HQ, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS))) {
 			ResetObjectToPlace();
 			this->RaiseButtons();
 		}

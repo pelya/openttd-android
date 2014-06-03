@@ -588,7 +588,7 @@ struct BuildRoadToolbarWindow : Window {
 						case WID_ROT_BUILD_TUNNEL:
 							if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 							else VpStartPreSizing();
-							TouchCommandP(end_tile, RoadTypeToRoadTypes(_cur_roadtype) | (TRANSPORT_ROAD << 8), 0,
+							DoCommandP(end_tile, RoadTypeToRoadTypes(_cur_roadtype) | (TRANSPORT_ROAD << 8), 0,
 									CMD_BUILD_TUNNEL | CMD_MSG(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE), CcBuildRoadTunnel);
 							break;
 						case WID_ROT_BUILD_BRIDGE:
@@ -612,7 +612,7 @@ struct BuildRoadToolbarWindow : Window {
 					 * not the 3rd bit set) */
 					_place_road_flag = (RoadFlags)((_place_road_flag & RF_DIR_Y) ? (_place_road_flag & 0x07) : (_place_road_flag >> 3));
 
-					TouchCommandP(start_tile, end_tile, _place_road_flag | (_cur_roadtype << 3) | (_one_way_button_clicked << 5),
+					DoCommandP(start_tile, end_tile, _place_road_flag | (_cur_roadtype << 3) | (_one_way_button_clicked << 5),
 							_remove_button_clicked ?
 							CMD_REMOVE_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_road) :
 							CMD_BUILD_LONG_ROAD | CMD_MSG(_road_type_infos[_cur_roadtype].err_build_road), CcPlaySound1D);
@@ -628,13 +628,13 @@ struct BuildRoadToolbarWindow : Window {
 
 				case DDSP_REMOVE_BUSSTOP: {
 					TileArea ta(start_tile, end_tile);
-					TouchCommandP(ta.tile, ta.w | ta.h << 8, ROADSTOP_BUS, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_BUS]), CcPlaySound1D);
+					DoCommandP(ta.tile, ta.w | ta.h << 8, ROADSTOP_BUS, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_BUS]), CcPlaySound1D);
 					break;
 				}
 
 				case DDSP_REMOVE_TRUCKSTOP: {
 					TileArea ta(start_tile, end_tile);
-					TouchCommandP(ta.tile, ta.w | ta.h << 8, ROADSTOP_TRUCK, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_TRUCK]), CcPlaySound1D);
+					DoCommandP(ta.tile, ta.w | ta.h << 8, ROADSTOP_TRUCK, CMD_REMOVE_ROAD_STOP | CMD_MSG(_road_type_infos[_cur_roadtype].err_remove_station[ROADSTOP_TRUCK]), CcPlaySound1D);
 					break;
 				}
 
@@ -642,7 +642,7 @@ struct BuildRoadToolbarWindow : Window {
 					/* Build depot. */
 					assert(start_tile == end_tile);
 					assert(last_started_action == WID_ROT_DEPOT);
-					TouchCommandP(start_tile, _cur_roadtype << 2 | _road_depot_orientation, 0,
+					DoCommandP(start_tile, _cur_roadtype << 2 | _road_depot_orientation, 0,
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(_road_type_infos[_cur_roadtype].err_depot), CcRoadDepot);
 				break;
 			}
