@@ -583,7 +583,6 @@ struct BuildRailToolbarWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
-		EraseQueuedTouchCommand();
 		switch (this->last_user_action) {
 			case WID_RAT_BUILD_NS:
 				VpStartPlaceSizing(tile, VPM_FIX_VERTICAL | VPM_RAILDIRS, DDSP_PLACE_RAIL);

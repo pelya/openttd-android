@@ -103,7 +103,6 @@ struct BuildAirToolbarWindow : Window {
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
-		EraseQueuedTouchCommand();
 		switch (this->last_user_action) {
 			case WID_AT_AIRPORT: {
 				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_STATION);
