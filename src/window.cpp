@@ -1476,9 +1476,8 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 
 		int enlarge_x = max(min(def_width  - this->width,  _screen.width - this->width),  0);
 		int enlarge_y = max(min(def_height - this->height, free_height   - this->height), 0);
-		if (wt && _settings_client.gui.vertical_toolbar &&
-			enlarge_x > _screen.width - wt->width * 2) {
-			//enlarge_x = _screen.width - wt->width * 2;
+		if (wt && _settings_client.gui.vertical_toolbar && enlarge_x > _screen.width - wt->width * 2) {
+			enlarge_x = _screen.width - wt->width * 2;
 		}
 
 		/* X and Y has to go by step.. calculate it.
@@ -1500,8 +1499,13 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 	if (nx + this->width > _screen.width) nx -= (nx + this->width - _screen.width);
 
 	const Window *wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
-	ny = max(ny, (wt == NULL || this == wt || this->top == 0) ? 0 : wt->height);
-	nx = max(nx, 0);
+	if (!_settings_client.gui.vertical_toolbar) {
+		ny = max(ny, (wt == NULL || this == wt || this->top == 0) ? 0 : wt->height);
+		nx = max(nx, 0);
+	} else {
+		nx = max(nx, (wt == NULL || this == wt || this == FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0) || this->left == 0) ? 0 : wt->width);
+		ny = max(ny, 0);
+	}
 
 	if (this->viewport != NULL) {
 		this->viewport->left += nx - this->left;
@@ -1509,6 +1513,8 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 	}
 	this->left = nx;
 	this->top = ny;
+
+	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, this->left, this->top, this->width, this->height);
 
 	this->SetDirty();
 }
@@ -1528,6 +1534,7 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
 {
 	int right  = width + left;
 	int bottom = height + top;
+	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, left, top, width, height);
 
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
 	if (!_settings_client.gui.vertical_toolbar || !main_toolbar) {
@@ -1551,6 +1558,7 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
 
 	pos.x = left;
 	pos.y = top;
+	DEBUG(misc, 0, "%s: pos %d:%d", __func__, pos.x, pos.y);
 	return true;
 }
 
@@ -1567,6 +1575,8 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
  */
 static bool IsGoodAutoPlace2(int left, int top, int width, int height, Point &pos)
 {
+	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, left, top, width, height);
+
 	/* Left part of the rectangle may be at most 1/4 off-screen,
 	 * right part of the rectangle may be at most 1/2 off-screen
 	 */
@@ -1589,6 +1599,7 @@ static bool IsGoodAutoPlace2(int left, int top, int width, int height, Point &po
 
 	pos.x = left;
 	pos.y = top;
+	DEBUG(misc, 0, "%s: pos %d:%d", __func__, pos.x, pos.y);
 	return true;
 }
 
@@ -1601,6 +1612,7 @@ static bool IsGoodAutoPlace2(int left, int top, int width, int height, Point &po
 static Point GetAutoPlacePosition(int width, int height)
 {
 	Point pt;
+	DEBUG(misc, 0, "%s: +%d+%d", __func__, width, height);
 
 	/* First attempt, try top-left of the screen */
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
@@ -1661,6 +1673,7 @@ restart:
 
 	pt.x = left;
 	pt.y = top;
+	DEBUG(misc, 0, "%s: pos %d:%d", __func__, pt.x, pt.y);
 	return pt;
 }
 
@@ -1719,6 +1732,10 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 		if (pt.x > _screen.width + 10 - default_width) {
 			pt.x = (_screen.width + 10 - default_width) - 20;
 		}
+		const Window *w = FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0);
+		if (w && pt.x + default_width > _screen.width - w->width ) {
+			pt.x = _screen.width - w->width - default_width;
+		}
 
 		pt.y = w->top + ((desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN) ? w->height : 10);
 		return pt;
@@ -1752,7 +1769,9 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 
 /* virtual */ Point Window::OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
 {
-	return LocalGetWindowPlacement(this->window_desc, sm_width, sm_height, window_number);
+	Point pt = LocalGetWindowPlacement(this->window_desc, sm_width, sm_height, window_number);
+	DEBUG(misc, 0, "%s: %d:%d+%d+%d", __func__, pt.x, pt.y, sm_width, sm_height);
+	return pt;
 }
 
 /**

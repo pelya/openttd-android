@@ -365,12 +365,14 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 	int screen_bottom = GetMainViewBottom();
 	bool scroll = false;
 
+	enum { DISPLAY_BORDER = 20 };
+
 	/* Check if the dropdown will fully fit below the widget. */
-	if (top + height + 4 >= screen_bottom) {
+	if (top + height + DISPLAY_BORDER >= screen_bottom) {
 		/* If not, check if it will fit above the widget. */
 		int screen_top = GetMainViewTop();
 		if (w->top + wi_rect.top > screen_top + height) {
-			top = w->top + wi_rect.top - height - 4;
+			top = w->top + wi_rect.top - height;
 		} else {
 			/* If it doesn't fit above the widget, we need to enable a scrollbar... */
 			int avg_height = list_height / (int)list->Length();
@@ -378,10 +380,10 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 
 			/* ... and choose whether to put the list above or below the widget. */
 			bool put_above = false;
-			int available_height = screen_bottom - w->top - wi_rect.bottom;
+			int available_height = screen_bottom - w->top - wi_rect.bottom - DISPLAY_BORDER;
 			if (w->top + wi_rect.top - screen_top > available_height) {
 				// Put it above.
-				available_height = w->top + wi_rect.top - screen_top;
+				available_height = w->top + wi_rect.top - screen_top - DISPLAY_BORDER;
 				put_above = true;
 			}
 
@@ -397,7 +399,7 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 
 			/* ... and set the top position if needed. */
 			if (put_above) {
-				top = w->top + wi_rect.top - height - 4;
+				top = w->top + wi_rect.top - height;
 			}
 		}
 	}

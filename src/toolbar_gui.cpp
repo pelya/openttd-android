@@ -176,10 +176,10 @@ static void PopupMainToolbMenu(Window *w, int widget, DropDownList *list, int de
 	} else {
 		Rect wi_rect;
 		NWidgetCore *nwi = w->GetWidget<NWidgetCore>(widget);
-		wi_rect.left   = ((int)nwi->pos_x < _screen.width / 2) ? nwi->pos_x + nwi->current_x - 1 : nwi->pos_x - nwi->current_x;
-		wi_rect.right  = ((int)nwi->pos_x < _screen.width / 2) ? nwi->pos_x + nwi->current_x * 2 : nwi->pos_x - 1;
+		wi_rect.left   = nwi->pos_x;
+		wi_rect.right  = nwi->pos_x + nwi->current_x;
 		wi_rect.top    = nwi->pos_y;
-		wi_rect.bottom = nwi->pos_y + nwi->current_y - 1;
+		wi_rect.bottom = nwi->pos_y + nwi->current_y;
 		ShowDropDownListAt(w, list, def, widget, wi_rect, nwi->colour, true, true);
 	}
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
