@@ -13,6 +13,8 @@
 #include "../zoom_func.h"
 #include "8bpp_simple.hpp"
 
+#include "../safeguards.h"
+
 /** Instantiation of the simple 8bpp blitter factory. */
 static FBlitter_8bppSimple iFBlitter_8bppSimple;
 
@@ -37,6 +39,7 @@ void Blitter_8bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoom
 
 			switch (mode) {
 				case BM_COLOUR_REMAP:
+				case BM_CRASH_REMAP:
 					colour = bp->remap[*src];
 					break;
 

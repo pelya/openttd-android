@@ -55,6 +55,8 @@
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 #define GEN_HASH(x, y) ((GB((y), 6 + ZOOM_LVL_SHIFT, 6) << 6) + GB((x), 7 + ZOOM_LVL_SHIFT, 6))
 
 VehicleID _new_vehicle_id;
@@ -1401,21 +1403,19 @@ void VehicleEnterDepot(Vehicle *v)
 		SetWindowDirty(WC_VEHICLE_VIEW, v->index);
 
 		const Order *real_order = v->GetOrder(v->cur_real_order_index);
-		Order t = v->current_order;
-		v->current_order.MakeDummy();
 
 		/* Test whether we are heading for this depot. If not, do nothing.
 		 * Note: The target depot for nearest-/manual-depot-orders is only updated on junctions, but we want to accept every depot. */
-		if ((t.GetDepotOrderType() & ODTFB_PART_OF_ORDERS) &&
+		if ((v->current_order.GetDepotOrderType() & ODTFB_PART_OF_ORDERS) &&
 				real_order != NULL && !(real_order->GetDepotActionType() & ODATFB_NEAREST_DEPOT) &&
-				(v->type == VEH_AIRCRAFT ? t.GetDestination() != GetStationIndex(v->tile) : v->dest_tile != v->tile)) {
+				(v->type == VEH_AIRCRAFT ? v->current_order.GetDestination() != GetStationIndex(v->tile) : v->dest_tile != v->tile)) {
 			/* We are heading for another depot, keep driving. */
 			return;
 		}
 
-		if (t.IsRefit()) {
+		if (v->current_order.IsRefit()) {
 			Backup<CompanyByte> cur_company(_current_company, v->owner, FILE_LINE);
-			CommandCost cost = DoCommand(v->tile, v->index, t.GetRefitCargo() | 0xFF << 8, DC_EXEC, GetCmdRefitVeh(v));
+			CommandCost cost = DoCommand(v->tile, v->index, v->current_order.GetRefitCargo() | 0xFF << 8, DC_EXEC, GetCmdRefitVeh(v));
 			cur_company.Restore();
 
 			if (cost.Failed()) {
@@ -1433,13 +1433,13 @@ void VehicleEnterDepot(Vehicle *v)
 			}
 		}
 
-		if (t.GetDepotOrderType() & ODTFB_PART_OF_ORDERS) {
+		if (v->current_order.GetDepotOrderType() & ODTFB_PART_OF_ORDERS) {
 			/* Part of orders */
 			v->DeleteUnreachedImplicitOrders();
 			UpdateVehicleTimetable(v, true);
 			v->IncrementImplicitOrderIndex();
 		}
-		if (t.GetDepotActionType() & ODATFB_HALT) {
+		if (v->current_order.GetDepotActionType() & ODATFB_HALT) {
 			/* Vehicles are always stopped on entering depots. Do not restart this one. */
 			_vehicles_to_autoreplace[v] = false;
 			/* Invalidate last_loading_station. As the link from the station
@@ -1452,6 +1452,7 @@ void VehicleEnterDepot(Vehicle *v)
 			}
 			AI::NewEvent(v->owner, new ScriptEventVehicleWaitingInDepot(v->index));
 		}
+		v->current_order.MakeDummy();
 	}
 }
 
@@ -2135,7 +2136,7 @@ void Vehicle::HandleLoading(bool mode)
 {
 	switch (this->current_order.GetType()) {
 		case OT_LOADING: {
-			uint wait_time = max(this->current_order.wait_time - this->lateness_counter, 0);
+			uint wait_time = max(this->current_order.GetTimetabledWait() - this->lateness_counter, 0);
 
 			/* Not the first call for this tick, or still loading */
 			if (mode || !HasBit(this->vehicle_flags, VF_LOADING_FINISHED) || this->current_order_time < wait_time) return;
@@ -2373,9 +2374,9 @@ void Vehicle::ShowVisualEffect() const
 		}
 
 		max_speed = min(max_speed, t->gcache.cached_max_track_speed);
-		max_speed = min(max_speed, this->current_order.max_speed);
+		max_speed = min(max_speed, this->current_order.GetMaxSpeed());
 	}
-	if (this->type == VEH_ROAD || this->type == VEH_SHIP) max_speed = min(max_speed, this->current_order.max_speed * 2);
+	if (this->type == VEH_ROAD || this->type == VEH_SHIP) max_speed = min(max_speed, this->current_order.GetMaxSpeed() * 2);
 
 	const Vehicle *v = this;
 

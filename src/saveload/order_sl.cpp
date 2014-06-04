@@ -16,6 +16,8 @@
 
 #include "saveload_internal.h"
 
+#include "../safeguards.h"
+
 /**
  * Converts this order from an old savegame's version;
  * it moves all bits to the new location.
@@ -184,6 +186,10 @@ static void Load_ORDR()
 		while ((index = SlIterateArray()) != -1) {
 			Order *order = new (index) Order();
 			SlObject(order, GetOrderDescription());
+			if (IsSavegameVersionBefore(190)) {
+				order->SetTravelTimetabled(order->GetTravelTime() > 0);
+				order->SetWaitTimetabled(order->GetWaitTime() > 0);
+			}
 		}
 	}
 }

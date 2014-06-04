@@ -791,13 +791,11 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} பணிமனையில் காத்துக்கொண்டிருக்கிறது
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} பணிமனையில் காத்துக்கொண்டிருக்கிறது
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} அட்டவனையில் மிக குறைவாக கட்டளைகளைக் கொண்டுள்ளது
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} பிழையான கட்டளையைக் கொண்டுள்ளது
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} இரட்டடிப்பு கட்டளைகளைக் கொண்டுள்ளது
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} பிழையான நிலையத்தினை கட்டளைகளில் கொண்டுள்ளது
-# end of order system
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} பழையதாகிறது
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} பழையதாகிறது
@@ -921,8 +919,6 @@ STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}மு�
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}திரையின் அளவு
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}திரை அளவினைத் தேர்ந்தெடுக்கவும்
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :மற்றவை
-
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}திரைப்பிடிப்பு ஃபார்மேட்
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}அடிப்படை அசைவூட்டம்
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}பயன்படுத்தப்போகும் அடிப்படை அசைவூட்டத்தினை தேர்ந்தெடுக்கவும்
@@ -1086,7 +1082,6 @@ STR_CONFIG_SETTING_TRAIN_REVERSING                              :நிலைய
 STR_CONFIG_SETTING_DISASTERS                                    :பேரழிவுகள்: {STRING}
 STR_CONFIG_SETTING_CITY_APPROVAL                                :நகர மறு அமைப்பின் மீது நகராட்சியின் நிலை: {STRING}
 
-STR_CONFIG_SETTING_BUILDONSLOPES                                :கரைகளிலும் சரிவுகளிலும் கட்ட அனுமதி: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :நகரத்தின் சாலைகள், பாலங்கள் மற்றும் சுரங்கங்களை நீக்க அனுமதிக்கவும்: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :நகராட்சியின் கட்டடங்கள் நீக்குவதை எளிதாக்கவும்
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :இரயில்களின் அதிகபட்ச நீளம்: {STRING}
@@ -1101,11 +1096,8 @@ STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA}%
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :சாலை வாகங்களின் மலையேறுதல் வேகத்தடை: {STRING}
 STR_CONFIG_SETTING_FORBID_90_DEG                                :இரயில் மற்றும் கப்பல்களை 90° வளைவுகள் எடுப்பதை அனுமதிக்காதே: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :நேரடியாக இணைக்கப்படாத நிலையங்களை இணைக்க அனுமதி: {STRING}
-STR_CONFIG_SETTING_IMPROVEDLOAD                                 :புதிய சீரமைக்கப்பட்ட சரக்கேற்றுதலினைப் பயன்படுத்தவும்: {STRING}
-STR_CONFIG_SETTING_GRADUAL_LOADING                              :பொறுமையாக வாகனங்களை ஏற்று: {STRING}
 STR_CONFIG_SETTING_INFLATION                                    :விலைவாசி ஏற்றம்: {STRING}
 STR_CONFIG_SETTING_INFLATION_HELPTEXT                           :பண வீக்கத்தினை செயல்படுத்து, இதனால் செலவுகள் வளர்ச்சி வரவுகளின் வளர்ச்சியைவிட அதிகமாகும்
-STR_CONFIG_SETTING_SELECTGOODS                                  :தேவை இருந்தால் மட்டுமே அச்சரக்குகளை நிலையத்தில் இறக்கு: {STRING}
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH                            :அதிகபட்ச பால நீளம்: {STRING}
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH_HELPTEXT                   :கட்டப்படும் பாலங்களின் அதிகபட்ச நீளம்
 STR_CONFIG_SETTING_MAX_TUNNEL_LENGTH                            :அதிகபட்ச சுரங்க நீளம்: {STRING}
@@ -1127,7 +1119,6 @@ STR_CONFIG_SETTING_STOP_LOCATION                                :பிளாட
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :அருகே உள்ள முடிவில்
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :நடு
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :தொலைவில் உள்ள முடிவில்
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING                        :சாலை வாகன வரிசைப்படுத்துதல் (with quantum effects): {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL                                   :ஒட்டில் எலி இருக்கும்பொழுது திரையினை நகர்த்தவும் : {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :செயலிழக்க செய்யப்பட்டது
 STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT_FULLSCREEN          :முக்கிய திரைபார்வை, முழுத்திரையில் மட்டும்
@@ -1148,9 +1139,6 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :ஒன்று
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :குறைக்கப்பட்ட
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :இயல்பான
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :வழிசெல்லக்கூடிய சாலை நிறுத்தங்களை நகராட்சியின் சாலைகளில் அமைக்க அனுமதி: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS                            :நிலையங்களை ஒட்டி கட்ட அனுமதி: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS_HELPTEXT                   :வெவ்வேறு நிலையங்கள் ஒட்டி கட்டுவதற்கு அனுமதிக்கவும்
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :பல்வேறு NewGRF பொறிகளை செயற்படுத்தவும்: {STRING}
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}வாகனங்கள் இருக்கும் பொது இந்த அமைப்பினை மாற்ற இயலாது
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :கட்டட பராமரிப்பு: {STRING}
 
@@ -1197,8 +1185,6 @@ STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :உயர்ப
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :வலமிருந்து இடமாக செல்
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :இடமிலிருந்து வலஞ்செல்
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :சமமான சித்திரக்காட்சியின் உயர அளவு: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES                        :வரைபட எல்லைகளில் நில மாற்றங்களை செயற்படுத்தவும்: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES_HELPTEXT               :முடக்கப்பட்டால், வரைபடத்தின் எல்லைகள் கடலாகவே இருக்கும்
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}வடதுருவத்தில் ஒன்று அல்லது அதற்கு மேற்பட்ட கட்டங்கள் காலியாக இல்லை
 
 STR_CONFIG_SETTING_STATION_SPREAD                               :அதிக. நிலைய விரிப்பு: {STRING}
@@ -1235,7 +1221,6 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :பதிவு
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :நீளமான (31 திசம்பர் 2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :சுருக்கமான (31-12-2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31)
-
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :புதிய ஆட்டத்தினை தொடங்கும்போது தானாக நிறுத்தவும்: {STRING}
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL                          :ஆட்டம் நிருத்தபட்டிருக்கம்போது அனுமதிக்கவும்: {STRING}
@@ -1426,26 +1411,16 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :இம்பீ
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :மெட்ரிக் (மீ)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (மீ)
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}Interface
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}கட்டுமானம்
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}வாகனங்கள்
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}நிலையங்கள்
-STR_CONFIG_SETTING_ECONOMY                                      :{ORANGE}பொருளாதாரம்
-STR_CONFIG_SETTING_LINKGRAPH                                    :{ORANGE}சரக்கு பரிமாற்றம்
-STR_CONFIG_SETTING_AI                                           :{ORANGE}போட்டியாளர்கள்
-STR_CONFIG_SETTING_DISPLAY_OPTIONS                              :{ORANGE}திரை அமைப்புகள்
-STR_CONFIG_SETTING_INTERACTION                                  :{ORANGE}Interaction
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}ஒலிகள்
-STR_CONFIG_SETTING_NEWS                                         :{ORANGE}செய்திகள் மற்றும் தகவல்கள்
-STR_CONFIG_SETTING_CONSTRUCTION_SIGNALS                         :{ORANGE}சிக்னல்கள்
-STR_CONFIG_SETTING_STATIONS_CARGOHANDLING                       :{ORANGE}சரக்கு பரிமாற்றம்
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}கணினி வீரர்கள்
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE}தானியங்கி புதுப்பித்தல்
-STR_CONFIG_SETTING_VEHICLES_SERVICING                           :{ORANGE}பராமரிப்பு
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Interface
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}கட்டுமானம்
+STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}வாகனங்கள்
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}வழி மாற்றல்
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{ORANGE}இரயில் வண்டிகள்
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE}நகரங்கள்
-STR_CONFIG_SETTING_ECONOMY_INDUSTRIES                           :{ORANGE}தொழிற்சாலைகள்
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}நகரங்கள்
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}தொழிற்சாலைகள்
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}சரக்கு பரிமாற்றம்
+STR_CONFIG_SETTING_AI                                           :{ORANGE}போட்டியாளர்கள்
+STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}கணினி வீரர்கள்
 
 STR_CONFIG_SETTING_PATHFINDER_OPF                               :அசல்
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
@@ -1583,6 +1558,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :சரக்க
 STR_FACE_CAPTION                                                :{WHITE}முகம் தேர்ந்தெடுத்தல்
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}புதிய முக தேர்ந்தெடுத்தலை இரத்து செய்
 STR_FACE_OK_TOOLTIP                                             :{BLACK}புதிய முக தேந்தெடுத்தலை ஏற்றுக்கொள்
+STR_FACE_RANDOM                                                 :{BLACK}ஏதோவொன்று
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}ஆண்
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}ஆண் முகங்களை தேர்ந்தெடு
@@ -2386,8 +2362,6 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}தொ�
 STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}பனிக் கோடின் உயரம்:
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}பனி கோடின் உயரத்தை ஒரு அடி உயர்த்து
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}பனி கோடின் உயரத்தை ஒரு அடி இறக்கு
-STR_MAPGEN_RANDOM_SEED                                          :{BLACK}ஏதோவொன்று:
-STR_MAPGEN_RANDOM                                               :{BLACK}ஏதோவொன்று
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}பூமி உருவாக்குனர்:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}மரம் நடுதல்:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}நிலவகை:
@@ -2941,6 +2915,7 @@ STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}கு�
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}ஓர் குழுவினை உருவாக்க சொடுக்கவும்
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}தேர்ந்தெடுக்கப்பட்ட குழுவின் பெயரினை நீக்கவும்
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}தேர்ந்தெடுக்கப்பட்ட குழுவின் பெயரினை மாற்றவும்
+
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :பகிர்ந்த வாகனங்களை சேர்க்கவும்
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :அனைத்து வாகனங்களையும் நீக்கு

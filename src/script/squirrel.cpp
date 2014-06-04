@@ -19,15 +19,19 @@
 #include <../squirrel/sqpcheader.h>
 #include <../squirrel/sqvm.h>
 
+/* Due to the different characters for Squirrel, the scsnprintf might be a simple
+ * snprint which triggers the safeguard. But it isn't always a simple snprintf.
+ * Likewise for scvsnprintf and scstrcat. */
+#include "../safeguards.h"
+#undef snprintf
+#undef vsnprintf
+#undef strcat
+
 void Squirrel::CompileError(HSQUIRRELVM vm, const SQChar *desc, const SQChar *source, SQInteger line, SQInteger column)
 {
 	SQChar buf[1024];
 
-#ifdef _SQ64
-	scsnprintf(buf, lengthof(buf), _SC("Error %s:%ld/%ld: %s"), source, line, column, desc);
-#else
-	scsnprintf(buf, lengthof(buf), _SC("Error %s:%d/%d: %s"), source, line, column, desc);
-#endif
+	scsnprintf(buf, lengthof(buf), _SC("Error %s:") SQ_PRINTF64 _SC("/") SQ_PRINTF64 _SC(": %s"), source, line, column, desc);
 
 	/* Check if we have a custom print function */
 	Squirrel *engine = (Squirrel *)sq_getforeignptr(vm);
@@ -252,7 +256,7 @@ bool Squirrel::CallStringMethodStrdup(HSQOBJECT instance, const char *method_nam
 	HSQOBJECT ret;
 	if (!this->CallMethod(instance, method_name, &ret, suspend)) return false;
 	if (ret._type != OT_STRING) return false;
-	*res = strdup(ObjectToString(&ret));
+	*res = stredup(ObjectToString(&ret));
 	ValidateString(*res);
 	return true;
 }
@@ -285,8 +289,9 @@ bool Squirrel::CallBoolMethod(HSQOBJECT instance, const char *method_name, bool 
 	sq_pushroottable(vm);
 
 	if (prepend_API_name) {
-		char *class_name2 = (char *)alloca(strlen(class_name) + strlen(engine->GetAPIName()) + 1);
-		sprintf(class_name2, "%s%s", engine->GetAPIName(), class_name);
+		size_t len = strlen(class_name) + strlen(engine->GetAPIName()) + 1;
+		char *class_name2 = (char *)alloca(len);
+		seprintf(class_name2, class_name2 + len - 1, "%s%s", engine->GetAPIName(), class_name);
 
 		sq_pushstring(vm, OTTD2SQ(class_name2), -1);
 	} else {
@@ -330,12 +335,17 @@ bool Squirrel::CreateClassInstance(const char *class_name, void *real_instance, 
 }
 
 Squirrel::Squirrel(const char *APIName) :
-	global_pointer(NULL),
-	print_func(NULL),
-	crashed(false),
-	overdrawn_ops(0),
 	APIName(APIName)
 {
+	this->Initialize();
+}
+
+void Squirrel::Initialize()
+{
+	this->global_pointer = NULL;
+	this->print_func = NULL;
+	this->crashed = false;
+	this->overdrawn_ops = 0;
 	this->vm = sq_open(1024);
 
 	/* Handle compile-errors ourself, so we can display it nicely */
@@ -544,9 +554,20 @@ bool Squirrel::LoadScript(const char *script)
 
 Squirrel::~Squirrel()
 {
+	this->Uninitialize();
+}
+
+void Squirrel::Uninitialize()
+{
 	/* Clean up the stuff */
 	sq_pop(this->vm, 1);
 	sq_close(this->vm);
+}
+
+void Squirrel::Reset()
+{
+	this->Uninitialize();
+	this->Initialize();
 }
 
 void Squirrel::InsertResult(bool result)
@@ -580,11 +601,6 @@ bool Squirrel::IsSuspended()
 bool Squirrel::HasScriptCrashed()
 {
 	return this->crashed;
-}
-
-void Squirrel::ResetCrashed()
-{
-	this->crashed = false;
 }
 
 void Squirrel::CrashOccurred()

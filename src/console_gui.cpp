@@ -28,6 +28,8 @@
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 #ifdef __ANDROID__
 #include <SDL_screenkeyboard.h>
 #endif
@@ -190,7 +192,7 @@ struct IConsoleWindow : Window
 	~IConsoleWindow()
 	{
 		_iconsole_mode = ICONSOLE_CLOSED;
-		_video_driver->EditBoxLostFocus();
+		VideoDriver::GetInstance()->EditBoxLostFocus();
 	}
 
 	/**
@@ -389,7 +391,7 @@ struct IConsoleWindow : Window
 
 	virtual void OnFocusLost()
 	{
-		_video_driver->EditBoxLostFocus();
+		VideoDriver::GetInstance()->EditBoxLostFocus();
 	}
 };
 
@@ -448,11 +450,11 @@ void IConsoleSwitch()
 				char buf[1024] = "";
 				for (const IConsoleLine *print = IConsoleLine::Get(0); print != NULL; print = print->previous) {
 					if (print->buffer && print->buffer[0]) {
-						strncat(buf, print->buffer, sizeof(buf)-strlen(buf)-1);
-						strncat(buf, "\n", sizeof(buf)-strlen(buf)-1);
+						strecat(buf, print->buffer, lastof(buf));
+						strecat(buf, "\n", lastof(buf));
 					}
 				}
-				strncat(buf, "\n\n\n\n\n\n\n\n", sizeof(buf)-strlen(buf)-1); // Move all text to top
+				strecat(buf, "\n\n\n\n\n\n\n\n", lastof(buf)); // Move all text to top
 				SDL_ANDROID_SetScreenKeyboardHintMesage(buf);
 				char text[512] = "";
 				SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); /* Invoke Android built-in screen keyboard */
@@ -494,7 +496,7 @@ static const char *IConsoleHistoryAdd(const char *cmd)
 	if (_iconsole_history[0] == NULL || strcmp(_iconsole_history[0], cmd) != 0) {
 		free(_iconsole_history[ICON_HISTORY_SIZE - 1]);
 		memmove(&_iconsole_history[1], &_iconsole_history[0], sizeof(_iconsole_history[0]) * (ICON_HISTORY_SIZE - 1));
-		_iconsole_history[0] = strdup(cmd);
+		_iconsole_history[0] = stredup(cmd);
 	}
 
 	/* Reset the history position */

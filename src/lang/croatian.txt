@@ -906,13 +906,12 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} čeka u brodogradilištu
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} čeka u zrakoplovnom hangaru
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} ima premalo naredbi u rasporedu
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} ima nevažeće naredbe
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} ima duplicirane naredbe
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} ima neispravnu postaju u svojim naredbama
-# end of order system
+STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE} ima u naredbama aerodrom sa prekratkom sletnom stazom
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} postaje star
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} postaje vrlo star
@@ -1034,11 +1033,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Katalonski
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Automatsko spremanje
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Odaberi interval između automatskih spremanja igre
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Isključeno
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Svaki mjesec
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Svaka 3 mjeseca
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Svakih 6 mjeseci
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Svakih 12 mjeseci
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Jezik
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Izaberi jezično sučelje
@@ -1049,9 +1050,6 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Označi 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Razlučivost ekrana
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Izaberi razlučivost ekrana
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :ostalo
-
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}Format za sliku ekrana
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT_TOOLTIP                      :{BLACK}Izaberi format za sliku ekrana
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Osnovni set grafike
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Odaberi osnovni grafički set za igru
@@ -1168,7 +1166,7 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Postavke kompan
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorija:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tip:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Sužava doljnju listu prikazom samo izmijenjenih postavki
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Sužava doljnju listu koristeći samo predpostavljene filtere
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Osnovne postavke
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Napredne postavke
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Postavke za napredne korisnike / sve postavke
@@ -1226,9 +1224,7 @@ STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Uključivanje n
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Stav gradske uprave prema restrukturiranju područja: {STRING}
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :Odaberi koliko buka i ekološka šteta utječu na gradsku ocjenu pojedine kompanije i na daljnja građevinska djelovanja u njihovim područjima
 
-STR_CONFIG_SETTING_BUILDONSLOPES                                :Dopusti izgradnju na kosinama i obalama: {STRING}
-STR_CONFIG_SETTING_BUILDONSLOPES_HELPTEXT                       :Ukoliko je uključenom, tračnice i stanice se mogu graditi na većini nagiba. Ukoliko je isključeni, dozvoljava se njihova gradnja samo na nagibima koji se podudaraju smjerom tračnica i tada ne trebaju temelje
-STR_CONFIG_SETTING_AUTOSLOPE                                    :Dopusti modeliranje zemlje ispod građevina, tračnica, itd (autonagib): {STRING}
+STR_CONFIG_SETTING_AUTOSLOPE                                    :Dopusti modeliranje zemlje ispod građevina, tračnica, itd.: {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Dozvoli uređivanje terena ispod građevina i pruga bez njihovog uklanjanja
 STR_CONFIG_SETTING_CATCHMENT                                    :Dopusti realističnije veličine područja zahvaćanja: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :Različiti dohvati za različite vrste stanica i zračnih luka
@@ -1252,14 +1248,8 @@ STR_CONFIG_SETTING_FORBID_90_DEG                                :Zabrani vlakovi
 STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :Okreti za 90 stupnjeva se događaju kada vodoravni dio pruge odmah nastavlja okomiti dio pruge na sljedećoj pločici, dakle čineći zaokret vlaka od 90 stupnjeva prelaskom ruba pločice umjesto uobičajenih 45 stupnjeva kod drugih kombinacija pruge. Ovo se primjenjuje i na radijus okretanja brodova
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Dopusti spajanje postaja koje nisu izravno jedna do druge {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Dozvoli dodavanje dijelova stanice bez direktog dodira s postojećim dijelovima. Potrebno pritisnuti Ctrl+Klik dok se dodaju novi dijelovi
-STR_CONFIG_SETTING_IMPROVEDLOAD                                 :Koristi unaprijeđeni utovarni algoritam: {STRING}
-STR_CONFIG_SETTING_IMPROVEDLOAD_HELPTEXT                        :Ukoliko je uključeno, vozila koja čekaju na stanici se utovaruju jedno po jedno. Utovarivanje sljedećeg vozila započinje tek kada ima dovoljno tereta da se napuni prethodno vozilo.
-STR_CONFIG_SETTING_GRADUAL_LOADING                              :Postupno utovaruj u vozila: {STRING}
-STR_CONFIG_SETTING_GRADUAL_LOADING_HELPTEXT                     :Postupno utovarivanje vozila koristeći specifično trajanje utovara, umjesto utovarivanja odjednom sa stalnim vremenom ovisnom jedino o količini utovarenog tereta
 STR_CONFIG_SETTING_INFLATION                                    :Inflacija: {STRING}
 STR_CONFIG_SETTING_INFLATION_HELPTEXT                           :Uključi inflaciju u ekonomiji, gdje troškovi rastu malo brže od plaćanja
-STR_CONFIG_SETTING_SELECTGOODS                                  :Dostavi teret na postaju samo ako na njoj postoji potražnja: {STRING}
-STR_CONFIG_SETTING_SELECTGOODS_HELPTEXT                         :Isporuči teret jedino na stanicu gdje je zatražen od strane vozila koje se utovaruje. Ovo sprečava loše ocjene za terete koji nisu servisirani na stanici
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH                            :Najveća dužina mostova: {STRING}
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH_HELPTEXT                   :Najveća dužina za izgradnju mostova
 STR_CONFIG_SETTING_MAX_TUNNEL_LENGTH                            :Najveća dužina tunela: {STRING}
@@ -1287,8 +1277,6 @@ STR_CONFIG_SETTING_STOP_LOCATION_HELPTEXT                       :Mjesto gdje će
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :početka
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :sredine
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :kraja
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING                        :Nizanje cestovnih vozila (s kvantnim učincima): {STRING}
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING_HELPTEXT               :Cestovna vozila moraju čekati ispred zauzetih raskrižja dok se ne rasčiste
 STR_CONFIG_SETTING_AUTOSCROLL                                   :Pomakni prozor kada je miš na rubu: {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL_HELPTEXT                          :Kada je uključeno, prikazna polja će se početi pomicati kada se miš nalazi blizu ruba prozora
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :Isključeno
@@ -1319,10 +1307,6 @@ STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Dopusti prolazn
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :Dozvoli izgradnju prolaznih stanica za cestama u vlasništvu grada
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Dopusti prolazne postaje na cestama koje su u vlasništvu konkurencije: {STRING}
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :Dozvoli izgradnju prolaznih stanica na cestama u vlasništvu drugih kompanija
-STR_CONFIG_SETTING_ADJACENT_STATIONS                            :Dopusti izgradnju pridruženih postaja: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS_HELPTEXT                   :Dozvoli dodirivanje različitih stanica
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :Omogući više setova NewGRF strojeva: {STRING}
-STR_CONFIG_SETTING_DYNAMIC_ENGINES_HELPTEXT                     :Opcija za kompatibilnost starih NewGRF-ova. Ne isključujte osim ako točno znate što radite!
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Mijenjanje ovih postavki nije moguće kada postoje vozila
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Održavanje infrastrukture: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :Kada je omogućeno, infrastruktura uzrokuje troškove održavanja. Cijena raste više nego proporcionalno s veličinom mreže, čime utječe veće tvrtke više od manjih
@@ -1361,27 +1345,41 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Prikaži popula
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Debljina linija u grafikonima: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Debljina linije u grafikonima. Tanja linija je preciznija za čitanje, deblja linija je lakša za vidjeti i boje su lakše za razabrati
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :Teren: {STRING}
+STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Tereni definiraju osnovne scenarije za igru sa različitim teretima i preduvjetima za rast gradova. NewGRF-ovi i Skripte Igre dozvoljavaju detaljnije kontrole i postavke.
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Generator zemlje: {STRING}
+STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :Originalni generator ovisi o baznom grafičkom setu i stvara fiksne oblike u terenu. TerraGenesis je generator baziran na Perlinu sa detaljnijim kontrolama i postavkama.
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Izvorni
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Najveća udaljenost Rafinerija Nafte od rubova: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Vrsta terena: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(Samo TerraGenesis) Brdovitost terena
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Gustoća industrija: {STRING}
+STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Odredite koliko će industrija biti stvoreno i kolika će količina biti održavana tijekom igre.
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Najveća udaljenost rafinerija nafte od rubova mape: {STRING}
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Rafinerije nafte se grade samo uz rubove mape odnosno na obali za otočne mape
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Visina linije snijega: {STRING}
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Grubost terena (samo TerraGenesis) : {STRING}
+STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Upravljajte na kojoj visini počinje snijeg u subarktičkoj klimi. Snijeg također utječe na stvaranje industrija i preduvjeta za rast gradova.
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Grubost terena: {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(Samo TerraGenesis) Odaberite učestalost brda: Blaži tereni imaju rjeđa ali raširenija brda. Teži tereni imaju više brda koja bi mogla izgledati kao da se ponavljaju.
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Vrlo glatko
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Glatko
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Grubo
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Vrlo grubo
+STR_CONFIG_SETTING_VARIETY                                      :Raspodjela raznolikosti: {STRING}
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :(Samo TerraGenesis) Upravljajte da li će mapa sadržati i planinska i ravna područja. Pošto ovo samo radi mapu ravnijom, druge postavke bi trebali biti podešene na planinske.
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :Količina rijeka: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Odaberite koliko rijeka želite stvoriti
 STR_CONFIG_SETTING_TREE_PLACER                                  :Algoritam za sađenje drveća: {STRING}
+STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :Odaberite raspored drveća na mapi: 'Original' sadi drveće ravnomjerno raspoređeno, 'Napredno' ih sadi u skupinama.
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :Nijedan
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Izvorni
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Unaprijeđen
+STR_CONFIG_SETTING_ROAD_SIDE                                    :Cestovna vozila: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Odaberite stranu vožnje
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Rotacija visinske karte: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Obrnuto od smjera kazaljke na satu
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :U smjeru kazaljke na satu
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :Visinski nivo koji ravna mapa u scenariju dobiva: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES                        :Omogući teraformiranje polja na rubovima karte: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES_HELPTEXT               :Ako je isključeno, rubovi mape će uvijek biti ocean
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}Jedna ili više pločica na sjevernom rubu nisu prazne
 STR_CONFIG_SETTING_EDGES_NOT_WATER                              :{WHITE}Jedna ili više pločica na jednom od rubova nije voda
 
@@ -1402,7 +1400,7 @@ STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Glatko klizanje
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Kontroliraj kako se glavni prikaz pomiče na neku lokaciju kada se klikne na malu mapu ili kada se izda naredba za pomicanje na određeni objekt na mapi. Ako je uključeno, prikaz se pomiče glatko, ako je isključeno, prikaz odmah preskoči na ciljnu lokaciju
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Pokaži mjerni naputak prilikom korištenja raznih alata za izgradnju: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Prikaži udaljenosu u pločicama i visinsku razliku kod povlačenja prilikom operacija gradnje
-STR_CONFIG_SETTING_LIVERIES                                     :Pokaži tvrtkine boje: {STRING}
+STR_CONFIG_SETTING_LIVERIES                                     :Pokaži specifične livreje prema tipu vozila: {STRING}
 STR_CONFIG_SETTING_LIVERIES_HELPTEXT                            :Kontroliraj korištenje shema boja tipa vozila za određena vozila (u suprotnosti sa shemama boja kompanija)
 STR_CONFIG_SETTING_LIVERIES_NONE                                :Nijedna
 STR_CONFIG_SETTING_LIVERIES_OWN                                 :Vlastita tvrtka
@@ -1432,16 +1430,14 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Isključeno
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Skrolanje lijevim klikom: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Uključi pomicanje mape povlačenjem sa lijevom tipkom miša. Ovo je posebno korisno kada se koristi ekran na dodir za pomicanje
 
+STR_CONFIG_SETTING_AUTOSAVE                                     :Automatsko snimanje: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Odaberite interval između automatskog snimanja igre
+
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Koristi {STRING} format datuma za ime snimljene pozicije
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Format datuma u imenima datoteka sa snimljenom igrom
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :dugo (31st Dec 2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :kratko (31-12-2008)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31)
-
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Osnovna paleta će biti postavljena za NewGRFove koji ne odrede paletu: {STRING}
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Osnovna paleta koju će koristiti NewGRF-ovi koji nemaju specificirano koju paletu trebaju
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Osnovna (D) paleta boja
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Legacy (W) paleta boja
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatski pauziraj prilikom pokretanja nove igre: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Kada je uključeno, igra će se automatski pauzirati priliko pokretanja nove igre, dozvoljavajući bolje proučavanje mape
@@ -1451,7 +1447,7 @@ STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_NO_ACTIONS               :Nijedna akcija
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_CONSTRUCTION     :Sve ne-konstrukcijske akcije
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_LANDSCAPING      :Sve osim akcija za izmjenu krajolika
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_ACTIONS              :Sve akcije
-STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :Koristi napredni popis vozila: {STRING}
+STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :Koristi grupe u listi vozila: {STRING}
 STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Uključi korištenje naprednih lista vozila za grupiranje vozila
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :Koristi pokazatelje utovara: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :Odaberi da li će prikazivači utovara biti prikazani iznad vozila koja se utovaruju ili iznad vozila koja se istovaruju
@@ -1492,13 +1488,13 @@ STR_CONFIG_SETTING_SOUND_AMBIENT_HELPTEXT                       :Sviraj zvučne 
 
 STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING                  :Isključi gradnju infrastrukture kada odgovarajuća vozila nisu dostupna: {STRING}
 STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING_HELPTEXT         :Kada je uključeno, infrastruktura je dostupna samo ako su dostupna i vozila za nju, sprečavajući trošenje vremena i novca na neupotrebljivu infrastrukturu
-STR_CONFIG_SETTING_MAX_TRAINS                                   :Maksimalan broj vlakova po kompaniji: {STRING}
+STR_CONFIG_SETTING_MAX_TRAINS                                   :Maksimalni broj vlakova po kompaniji: {STRING}
 STR_CONFIG_SETTING_MAX_TRAINS_HELPTEXT                          :Najveći broj vlakova koje može imati kompanija
-STR_CONFIG_SETTING_MAX_ROAD_VEHICLES                            :Maksimalan broj cestovnih vozila po kompaniji: {STRING}
+STR_CONFIG_SETTING_MAX_ROAD_VEHICLES                            :Maksimalni broj cestovnih vozila po kompaniji: {STRING}
 STR_CONFIG_SETTING_MAX_ROAD_VEHICLES_HELPTEXT                   :Najveći broj cestovnih vozila koje može imati kompanija
-STR_CONFIG_SETTING_MAX_AIRCRAFT                                 :Maksimalan broj zrakoplova po kompaniji: {STRING}
+STR_CONFIG_SETTING_MAX_AIRCRAFT                                 :Maksimalni broj zrakoplova po kompaniji: {STRING}
 STR_CONFIG_SETTING_MAX_AIRCRAFT_HELPTEXT                        :Najveći broj zrakoplova koje može imati kompanija
-STR_CONFIG_SETTING_MAX_SHIPS                                    :Maksimalan broj brodova po kompaniji: {STRING}
+STR_CONFIG_SETTING_MAX_SHIPS                                    :Maksimalni broj brodova po kompaniji: {STRING}
 STR_CONFIG_SETTING_MAX_SHIPS_HELPTEXT                           :Najveći broj brodova koje može imati kompanija
 
 STR_CONFIG_SETTING_AI_BUILDS_TRAINS                             :Isključi vlakove za računalo: {STRING}
@@ -1616,7 +1612,7 @@ STR_CONFIG_SETTING_ALLOW_TOWN_ROADS_HELPTEXT                    :Dozvoli gradovi
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS                   :Gradovi smiju graditi pružne prijelaze: {STRING}
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS_HELPTEXT          :Uključivanje ove postavke dozvoljava se gradovima da grade cestovno-pružne prijelaze
 STR_CONFIG_SETTING_NOISE_LEVEL                                  :Omogući određivanje razine buke za zračne luke od strane gradova: {STRING}
-STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :Kada je ova postavka isključena, mogu postojati dve zračne luke u svakom gradu. Kada je ova postavka uključena, broj zračnih luka u nekom gradu je limitirana količinom dozvoljene buke u gradu, koja ovisi o populaciji i udaljenosti i veličini zračnih luka
+STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :Kada je ova postavka isključena, mogu postojati dva aerodroma u svakom gradu. Kada je ova postavka uključena, broj aerodroma u nekom gradu je limitirana količinom dozvoljene buke u gradu, koja ovisi o populaciji i udaljenosti i veličini aerodroma
 STR_CONFIG_SETTING_TOWN_FOUNDING                                :Osnivanje gradova tijekom igre: {STRING}
 STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Uklučivanje ove postavke dozvoljava igračima osnivanje novih gradova tijekom igre
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Zabranjeno
@@ -1664,8 +1660,6 @@ STR_CONFIG_SETTING_LARGER_TOWNS_VALUE                           :1 od {COMMA}
 STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Nijedan
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Početni množitelj veličine grada: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Prosječna veličina gradova u donosu na naselja kod početka igre
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :Ukloni besmislene cestovne elemente tijekom izgradnje prometnica: {STRING}
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD_HELPTEXT               :Uklanjanje slijepih ulica kod financirane rekonstrukcije cesta
 
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Ažuriraj povezni grafikon svakih {STRING} dan{P 0:2 a a a}
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Vrijeme između slijedećih rekalkulacija poveznog grafikona. Svaka rekalkulacija izračunava planove za jednu komponentu grafikona. To znači da vrijednost X za ovu postavku ne mora značiti i ažuriranje kompletnog grafikona unutar X dana. Samo neke komponente će biti ažurirane. Čim kraće vrijeme odredite, više će biti potrebno resursa CPU-a za izračun. Čim duže vrijeme odredite, trebati će više vremena za pokretanje distribucije po novim rutama.
@@ -1727,27 +1721,29 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Imperijalni (ft
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Metrički (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}Sučelje
 STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Lokalizacija
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}Izgradnja
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Vozila
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}Postaje
-STR_CONFIG_SETTING_ECONOMY                                      :{ORANGE}Ekonomija
-STR_CONFIG_SETTING_LINKGRAPH                                    :{ORANGE}Distribucija tereta
-STR_CONFIG_SETTING_AI                                           :{ORANGE}Suparnici
-STR_CONFIG_SETTING_DISPLAY_OPTIONS                              :{ORANGE}Postavke prikaza
-STR_CONFIG_SETTING_INTERACTION                                  :{ORANGE}Interakcija
+STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}Grafika
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Zvučni efekti
-STR_CONFIG_SETTING_NEWS                                         :{ORANGE}Novosti i poruke
-STR_CONFIG_SETTING_CONSTRUCTION_SIGNALS                         :{ORANGE}Signali
-STR_CONFIG_SETTING_STATIONS_CARGOHANDLING                       :{ORANGE}Tretiranje tereta
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Računalni igrači
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE}Auto-obnavljanje
-STR_CONFIG_SETTING_VEHICLES_SERVICING                           :{ORANGE}Servisiranje
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Sučelje
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}Opće
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Pogledi
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Izgradnja
+STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}Novosti / savjetnici
+STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Kompanija
+STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}Računovodstvo
+STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Vozila
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Fizika
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Rutanje
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{ORANGE}Vlakovi
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE}Gradovi
-STR_CONFIG_SETTING_ECONOMY_INDUSTRIES                           :{ORANGE}Industrije
+STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}Ograničenja
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Katastrofe / nesreće
+STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Generacija svijeta
+STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Okoliš
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Vlasti
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Gradovi
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industrije
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distribucija tereta
+STR_CONFIG_SETTING_AI                                           :{ORANGE}Suparnici
+STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Računalni igrači
 
 STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
@@ -1904,6 +1900,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Teretni tramvaj
 STR_FACE_CAPTION                                                :{WHITE}Izbor lica
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Odustani od izbora novog lica
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Prihvati izbor novog lica
+STR_FACE_RANDOM                                                 :{BLACK}Nasumično
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}Muško
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}Odaberi muška lica
@@ -2024,13 +2021,13 @@ STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Zaštiti
 STR_NETWORK_START_SERVER_UNADVERTISED                           :Ne
 STR_NETWORK_START_SERVER_ADVERTISED                             :Da
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} klijen{P t ta ata}
-STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Maks klijenata:
+STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Maksimalni broj klijenata:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Izaberi maksimalan broj klijenata. Ne moraju sva mjesta biti popunjena.
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} tvrtk{P a e i}
-STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Maks tvrtki:
+STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Maksimalni broj tvrtki:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Ograniči poslužitelj na određeni broj tvrtki
 STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} gledatelj{P "" a a}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Maks promatrača:
+STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Maksimalni broj promatrača:
 STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Ograniči poslužitelj na određeni broj gledatelja
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Jezik kojim se govori:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Drugi igrači znat će kojim se jezikom govori na poslužitelju
@@ -2783,10 +2780,6 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Broj ind
 STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Visina linije snijega
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Pomakni visinu linije snijega za jedan gore
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Pomakni visinu linije snijega za jedan dolje
-STR_MAPGEN_RANDOM_SEED                                          :{BLACK}Nasumični slijed:
-STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}Klikni za unos nasumičnog slijeda
-STR_MAPGEN_RANDOM                                               :{BLACK}Nasumično
-STR_MAPGEN_RANDOM_HELP                                          :{BLACK}Promijeni slučajni slijed koji se koristi za kreiranje terena
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Izrađivač zemljišta:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK} Algoritam za drveće:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Vrsta terena:
@@ -2813,7 +2806,6 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Ime visi
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}Veličina:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
-STR_MAPGEN_RANDOM_SEED_OSKTITLE                                 :{BLACK}Upiši nasumično sjeme
 STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}Promijeni visinu linije snijega
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}Promijeni početnu godinu
 
@@ -2868,6 +2860,8 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}Pomakni 
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}Pomakni odabranu NewGRF datoteku gore na listi
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK} Pomakni dolje
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}Pomakni odabranu NewGRF datoteku dolje na listi
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Nadogradnja
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Nadogradite NewGRF datoteke za koje već imate instalirane novije verzije
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}Popis instaliranih NewGRF datoteka
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Postavi parametre
@@ -2891,6 +2885,16 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}Nema dos
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Nije pronađena odgovarajuća datoteka
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Onemogućeno
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Nije kompatibilno sa ovom verzijom OpenTTD-a
+
+# NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{WHITE}Snimiti predpostavke
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Popis dostupnih predpostavki, odaberite jednu za kopiranje pod imenom ispod
+STR_SAVE_PRESET_TITLE                                           :{BLACK}Unesite ime za predpostavke
+STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Trenutno odabrano ime za snimanje predpostavki
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Odustani
+STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Ne mijenjati predpostavke
+STR_SAVE_PRESET_SAVE                                            :{BLACK}Snimanje
+STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Snimite predpostavke u trenutno odabrano ime
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Promijeni NewGRF parametre
@@ -3244,7 +3248,7 @@ STR_FINANCES_POSITIVE_INCOME                                    :{BLACK}+{CURREN
 STR_FINANCES_TOTAL_CAPTION                                      :{WHITE}Ukupno:
 STR_FINANCES_BANK_BALANCE_TITLE                                 :{WHITE}Bankovna bilanca
 STR_FINANCES_LOAN_TITLE                                         :{WHITE}Zajam
-STR_FINANCES_MAX_LOAN                                           :{WHITE}Maks zajam: {BLACK}{CURRENCY_LONG}
+STR_FINANCES_MAX_LOAN                                           :{WHITE}Maksimalni kredit: {BLACK}{CURRENCY_LONG}
 STR_FINANCES_TOTAL_CURRENCY                                     :{BLACK}{CURRENCY_LONG}
 STR_FINANCES_BORROW_BUTTON                                      :{BLACK}Pozajmi {CURRENCY_LONG}
 STR_FINANCES_BORROW_TOOLTIP                                     :{BLACK}Povećaj iznos zajma. Ctrl+klik posuđuje najveći mogući iznos
@@ -3393,11 +3397,14 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Negrupirana ces
 STR_GROUP_DEFAULT_SHIPS                                         :Negrupirani brodovi
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Negrupirani zrakoplovi
 
-STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Groupe - klikni na grupu kako bi izlistao sva vozila ove grupe
+STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupe - kliknite na grupu kako bi izlistali sva vozila ove grupe. Povucite i prenesite grupe za postavljanje hijerarhije.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klikni za kreiranje grupe
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Obriši odabranu grupu
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}Preimenuj odabranu grupu
 STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Klikni kako bi zaštitio ovu grupu od globalne automatske zamjene
+
+STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Izbriši grupu
+STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}Da li ste sigurni da želite izbrisati ovu grupu i sve njene podgrupe?
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :Dodaj dijeljena vozila
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :Ukloni sva vozila
@@ -3787,7 +3794,7 @@ STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}Promijen
 
 STR_ORDER_REFIT                                                 :{BLACK}Prenamijeni
 STR_ORDER_REFIT_TOOLTIP                                         :{BLACK}Odaberi vrstu tereta za prenamijenu u ovoj naredbi. Ctrl+klik kako bi uklonio naputak za prenamjenu
-STR_ORDER_REFIT_AUTO                                            :{BLACK}Auto-remont
+STR_ORDER_REFIT_AUTO                                            :{BLACK}Auto-remont na stanici
 STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}Odaberi za koji tip tereta odraditi auto-remont. Ctrl+Click za micanje remontnih uputa. Auto-remont će se odraditi samo ako ga vozilo dopušta.
 STR_ORDER_DROP_REFIT_AUTO                                       :Popravljen teret
 STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Dostupni teret
@@ -3880,8 +3887,8 @@ STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :(Čekaj bilo ko
 STR_ORDER_NO_UNLOAD_NO_LOAD                                     :(Bez iskrcaja i bez ukrcaja)
 
 STR_ORDER_AUTO_REFIT                                            :(Auto-remont u {STRING})
-STR_ORDER_FULL_LOAD_REFIT                                       :(Puni teret sa auto-remontom u {STRING})
-STR_ORDER_FULL_LOAD_ANY_REFIT                                   :(Bilo koji puni teret sa auto-remontom u {STRING})
+STR_ORDER_FULL_LOAD_REFIT                                       :(Preuzimanje punog tereta sa auto-remontom u {STRING})
+STR_ORDER_FULL_LOAD_ANY_REFIT                                   :(Preuzimanje bilo kojeg punog tereta sa auto-remontom u {STRING})
 STR_ORDER_UNLOAD_REFIT                                          :(Iskrcaj i preuzimanje tereta sa auto-remontom u {STRING})
 STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :(Iskrcaj i čekanje punog tereta sa auto-remontom u {STRING})
 STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :(Iskrcaj i čekanje bilo kojeg punog tereta sa auto-remontom u {STRING})
@@ -3916,9 +3923,13 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Vozni re
 STR_TIMETABLE_NO_TRAVEL                                         :Nema putovanja
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Putovanje (automatsko; prema rasporedu sljedeće ručno određene naredbe)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Putovanje (izvan voznog reda)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Putuj uz najviše {2:VELOCITY} (not timetabled)
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Putovanje (nije mjereno) uz najviše {2:VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR                                        :Putovanje za {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Putuj prema {STRING} uz najviše {VELOCITY}
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Putovanje (za {STRING}, nije mjereno)
+STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :Putovanje (za {STRING}, nije mjereno) sa najviše {VELOCITY}
+STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(stajanje za {STRING}, nije mjereno)
+STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(putovanje za {STRING}, nije mjereno)
 STR_TIMETABLE_STAY_FOR                                          :i boravak za {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :i putovanje za {STRING}
 STR_TIMETABLE_DAYS                                              :{COMMA} dan{P "" a a}
@@ -4372,6 +4383,7 @@ STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}... već
 STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Nije moguće kreirati grupu...
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}Nije moguće obrisati ovu grupu...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}Nije moguće preimenovati ovu grupu...
+STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}Ne može se postaviti matična grupa...
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}Nije moguće ukloniti sva vozila iz ove grupe...
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}Nije moguće dodati vozila u ovu grupu
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Nije moguće dodati dijeljena vozila u grupu...

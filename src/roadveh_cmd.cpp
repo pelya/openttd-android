@@ -38,6 +38,8 @@
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 static const uint16 _roadveh_images[] = {
 	0xCD4, 0xCDC, 0xCE4, 0xCEC, 0xCF4, 0xCFC, 0xD0C, 0xD14,
 	0xD24, 0xD1C, 0xD2C, 0xD04, 0xD1C, 0xD24, 0xD6C, 0xD74,
@@ -458,7 +460,7 @@ inline int RoadVehicle::GetCurrentMaxSpeed() const
 		}
 	}
 
-	return min(max_speed, this->current_order.max_speed * 2);
+	return min(max_speed, this->current_order.GetMaxSpeed() * 2);
 }
 
 /**

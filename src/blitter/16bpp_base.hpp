@@ -163,9 +163,9 @@ public:
 	 */
 	static inline Colour16 MakeGrey(Colour16 colour)
 	{
-		uint r = colour.r;
-		uint g = colour.g;
-		uint b = colour.b;
+		uint8 r = colour.r;
+		uint8 g = colour.g;
+		uint8 b = colour.b;
 
 		/* To avoid doubles and stuff, multiple it with a total of 65536 (16bits), then
 		 *  divide by it to normalize the value to a byte again. See heightmap.cpp for
@@ -173,6 +173,23 @@ public:
 		uint grey = (((r << 3) * 19595) + ((g << 2) * 38470) + ((b << 3) * 7471)) / 65536;
 
 		return To16(grey, grey, grey);
+	}
+
+	/**
+	 * Make a colour dark grey, for specialized 32bpp remapping.
+	 * @param r red component
+	 * @param g green component
+	 * @param b blue component
+	 * @return the brightness value of the new colour, now dark grey.
+	 */
+	static inline uint8 MakeDark(Colour16 colour)
+	{
+		uint8 r = colour.r;
+		uint8 g = colour.g;
+		uint8 b = colour.b;
+
+		/* Magic-numbers are ~66% of those used in MakeGrey() */
+		return (((r << 3) * 13063) + ((g << 2) * 25647) + ((b << 3) * 4981)) / 65536;
 	}
 
 	enum { DEFAULT_BRIGHTNESS = 8 };

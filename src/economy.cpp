@@ -19,6 +19,7 @@
 #include "network/network_func.h"
 #include "ai/ai.hpp"
 #include "aircraft.h"
+#include "train.h"
 #include "newgrf_engine.h"
 #include "engine_base.h"
 #include "ground_vehicle.hpp"
@@ -52,6 +53,8 @@
 
 #include "table/strings.h"
 #include "table/pricebase.h"
+
+#include "safeguards.h"
 
 
 /* Initialize the cargo payment-pool */
@@ -1066,9 +1069,9 @@ static Money DeliverGoods(int num_pieces, CargoID cargo_type, StationID dest, Ti
 
 	/* Update station statistics */
 	if (accepted > 0) {
-		SetBit(st->goods[cargo_type].acceptance_pickup, GoodsEntry::GES_EVER_ACCEPTED);
-		SetBit(st->goods[cargo_type].acceptance_pickup, GoodsEntry::GES_CURRENT_MONTH);
-		SetBit(st->goods[cargo_type].acceptance_pickup, GoodsEntry::GES_ACCEPTED_BIGTICK);
+		SetBit(st->goods[cargo_type].status, GoodsEntry::GES_EVER_ACCEPTED);
+		SetBit(st->goods[cargo_type].status, GoodsEntry::GES_CURRENT_MONTH);
+		SetBit(st->goods[cargo_type].status, GoodsEntry::GES_ACCEPTED_BIGTICK);
 	}
 
 	/* Update company statistics */
@@ -1240,7 +1243,7 @@ void PrepareUnload(Vehicle *front_v)
 			const GoodsEntry *ge = &st->goods[v->cargo_type];
 			if (v->cargo_cap > 0 && v->cargo.TotalCount() > 0) {
 				v->cargo.Stage(
-						HasBit(ge->acceptance_pickup, GoodsEntry::GES_ACCEPTANCE),
+						HasBit(ge->status, GoodsEntry::GES_ACCEPTANCE),
 						front_v->last_station_visited, next_station,
 						front_v->current_order.GetUnloadType(), ge,
 						front_v->cargo_payment);
@@ -1338,20 +1341,134 @@ static void ReserveConsist(Station *st, Vehicle *u, CargoArray *consist_capleft,
 }
 
 /**
- * Checks whether an articulated vehicle is empty.
- * @param v Vehicle
- * @return true if all parts are empty.
+ * Iterate the articulated parts of a vehicle, also considering the special cases of "normal"
+ * aircraft and double headed trains. Apply an action to each vehicle and immediately return false
+ * if that action does so. Otherwise return true.
+ * @tparam Taction Class of action to be applied. Must implement bool operator()([const] Vehicle *).
+ * @param v First articulated part.
+ * @param action Instance of Taction.
+ * @return false if any of the action invocations returned false, true otherwise.
  */
-static bool IsArticulatedVehicleEmpty(Vehicle *v)
+template<class Taction>
+bool IterateVehicleParts(Vehicle *v, Taction action)
 {
-	v = v->GetFirstEnginePart();
-
-	for (; v != NULL; v = v->HasArticulatedPart() ? v->GetNextArticulatedPart() : NULL) {
-		if (v->cargo.StoredCount() != 0) return false;
+	for (Vehicle *w = v; w != NULL;
+			w = w->HasArticulatedPart() ? w->GetNextArticulatedPart() : NULL) {
+		if (!action(w)) return false;
+		if (w->type == VEH_TRAIN) {
+			Train *train = Train::From(w);
+			if (train->IsMultiheaded() && !action(train->other_multiheaded_part)) return false;
+		}
 	}
-
+	if (v->type == VEH_AIRCRAFT && Aircraft::From(v)->IsNormalAircraft()) return action(v->Next());
 	return true;
 }
+
+/**
+ * Action to check if a vehicle has no stored cargo.
+ */
+struct IsEmptyAction
+{
+	/**
+	 * Checks if the vehicle has stored cargo.
+	 * @param v Vehicle to be checked.
+	 * @return true if v is either empty or has only reserved cargo, false otherwise.
+	 */
+	bool operator()(const Vehicle *v)
+	{
+		return v->cargo.StoredCount() == 0;
+	}
+};
+
+/**
+ * Refit preparation action.
+ */
+struct PrepareRefitAction
+{
+	CargoArray &consist_capleft; ///< Capacities left in the consist.
+	uint32 &refit_mask;          ///< Bitmask of possible refit cargoes.
+
+	/**
+	 * Create a refit preparation action.
+	 * @param consist_capleft Capacities left in consist, to be updated here.
+	 * @param refit_mask Refit mask to be constructed from refit information of vehicles.
+	 */
+	PrepareRefitAction(CargoArray &consist_capleft, uint32 &refit_mask) :
+		consist_capleft(consist_capleft), refit_mask(refit_mask) {}
+
+	/**
+	 * Prepares for refitting of a vehicle, subtracting its free capacity from consist_capleft and
+	 * adding the cargoes it can refit to to the refit mask.
+	 * @param v The vehicle to be refitted.
+	 * @return true.
+	 */
+	bool operator()(const Vehicle *v)
+	{
+		this->consist_capleft[v->cargo_type] -= v->cargo_cap - v->cargo.ReservedCount();
+		this->refit_mask |= EngInfo(v->engine_type)->refit_mask;
+		return true;
+	}
+};
+
+/**
+ * Action for returning reserved cargo.
+ */
+struct ReturnCargoAction
+{
+	Station *st;        ///< Station to give the returned cargo to.
+	StationID next_hop; ///< Next hop the cargo should be assigned to.
+
+	/**
+	 * Construct a cargo return action.
+	 * @param st Station to give the returned cargo to.
+	 * @param next_one Next hop the cargo should be assigned to.
+	 */
+	ReturnCargoAction(Station *st, StationID next_one) : st(st), next_hop(next_one) {}
+
+	/**
+	 * Return all reserved cargo from a vehicle.
+	 * @param v Vehicle to return cargo from.
+	 * @return true.
+	 */
+	bool operator()(Vehicle *v)
+	{
+		v->cargo.Return(UINT_MAX, &this->st->goods[v->cargo_type].cargo, this->next_hop);
+		return true;
+	}
+};
+
+/**
+ * Action for finalizing a refit.
+ */
+struct FinalizeRefitAction
+{
+	CargoArray &consist_capleft;  ///< Capacities left in the consist.
+	Station *st;                  ///< Station to reserve cargo from.
+	StationIDStack &next_station; ///< Next hops to reserve cargo for.
+
+	/**
+	 * Create a finalizing action.
+	 * @param consist_capleft Capacities left in the consist.
+	 * @param st Station to reserve cargo from.
+	 * @param next_station Next hops to reserve cargo for.
+	 */
+	FinalizeRefitAction(CargoArray &consist_capleft, Station *st, StationIDStack &next_station) :
+		consist_capleft(consist_capleft), st(st), next_station(next_station) {}
+
+	/**
+	 * Reserve cargo from the station and update the remaining consist capacities with the
+	 * vehicle's remaining free capacity.
+	 * @param v Vehicle to be finalized.
+	 * @return true.
+	 */
+	bool operator()(Vehicle *v)
+	{
+		this->st->goods[v->cargo_type].cargo.Reserve(v->cargo_cap - v->cargo.RemainingCount(),
+				&v->cargo, st->xy, next_station);
+		this->consist_capleft[v->cargo_type] += v->cargo_cap - v->cargo.RemainingCount();
+		return true;
+	}
+};
 
 /**
  * Refit a vehicle in a station.
@@ -1363,32 +1480,15 @@ static bool IsArticulatedVehicleEmpty(Vehicle *v)
  */
 static void HandleStationRefit(Vehicle *v, CargoArray &consist_capleft, Station *st, StationIDStack next_station, CargoID new_cid)
 {
-	if (v->type == VEH_AIRCRAFT && (!Aircraft::From(v)->IsNormalAircraft() || v->Next()->cargo.StoredCount() > 0)) {
-		return;
-	}
-
-	bool is_normal_aircraft = (v->type == VEH_AIRCRAFT && Aircraft::From(v)->IsNormalAircraft());
 	Vehicle *v_start = v->GetFirstEnginePart();
-
-	/* Remove old capacity from consist capacity */
-	consist_capleft[v_start->cargo_type] -= (v_start->cargo_cap - v_start->cargo.ReservedCount());
-	for (Vehicle *w = v_start; w->HasArticulatedPart(); ) {
-		w = w->GetNextArticulatedPart();
-		consist_capleft[w->cargo_type] -= (w->cargo_cap - w->cargo.ReservedCount());
-	}
-	if (is_normal_aircraft) {
-		consist_capleft[v->Next()->cargo_type] -= (v->Next()->cargo_cap - v->Next()->cargo.ReservedCount());
-	}
+	if (!IterateVehicleParts(v_start, IsEmptyAction())) return;
 
 	Backup<CompanyByte> cur_company(_current_company, v->owner, FILE_LINE);
 
-	/* Check if all articulated parts are empty and collect refit mask. */
 	uint32 refit_mask = v->GetEngine()->info.refit_mask;
-	Vehicle *w = v_start;
-	while (w->HasArticulatedPart()) {
-		w = w->GetNextArticulatedPart();
-		refit_mask |= EngInfo(w->engine_type)->refit_mask;
-	}
+
+	/* Remove old capacity from consist capacity and collect refit mask. */
+	IterateVehicleParts(v_start, PrepareRefitAction(consist_capleft, refit_mask));
 
 	if (new_cid == CT_AUTO_REFIT) {
 		/* Get a refittable cargo type with waiting cargo for next_station or INVALID_STATION. */
@@ -1401,8 +1501,13 @@ static void HandleStationRefit(Vehicle *v, CargoArray &consist_capleft, Station 
 				DoCommand(v_start->tile, v_start->index, cid | 1U << 6 | 0xFF << 8 | 1U << 16, DC_QUERY_COST, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
 				/* Try to balance different loadable cargoes between parts of the consist, so that
 				 * all of them can be loaded. Avoid a situation where all vehicles suddenly switch
-				 * to the first loadable cargo for which there is only one packet. */
-				if (_returned_refit_capacity > 0 && consist_capleft[cid] < consist_capleft[new_cid]) {
+				 * to the first loadable cargo for which there is only one packet. If the capacities
+				 * are equal refit to the cargo of which most is available. This is important for
+				 * consists of only a single vehicle as those will generally have a consist_capleft
+				 * of 0 for all cargoes. */
+				if (_returned_refit_capacity > 0 && (consist_capleft[cid] < consist_capleft[new_cid] ||
+						(consist_capleft[cid] == consist_capleft[new_cid] &&
+						st->goods[cid].cargo.AvailableCount() > st->goods[new_cid].cargo.AvailableCount()))) {
 					new_cid = cid;
 				}
 			}
@@ -1411,33 +1516,36 @@ static void HandleStationRefit(Vehicle *v, CargoArray &consist_capleft, Station 
 
 	/* Refit if given a valid cargo. */
 	if (new_cid < NUM_CARGO && new_cid != v_start->cargo_type) {
-		StationID next_one = StationIDStack(next_station).Pop();
-		v_start->cargo.Return(UINT_MAX, &st->goods[v_start->cargo_type].cargo, next_one);
-		for (w = v_start; w->HasArticulatedPart();) {
-			w = w->GetNextArticulatedPart();
-			w->cargo.Return(UINT_MAX, &st->goods[w->cargo_type].cargo, next_one);
-		}
-		if (is_normal_aircraft) {
-			v->Next()->cargo.Return(UINT_MAX, &st->goods[v->Next()->cargo_type].cargo, next_one);
-		}
+		IterateVehicleParts(v_start, ReturnCargoAction(st, StationIDStack(next_station).Pop()));
 		CommandCost cost = DoCommand(v_start->tile, v_start->index, new_cid | 1U << 6 | 0xFF << 8 | 1U << 16, DC_EXEC, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
 		if (cost.Succeeded()) v->First()->profit_this_year -= cost.GetCost() << 8;
 	}
 
 	/* Add new capacity to consist capacity and reserve cargo */
-	w = v_start;
-	do {
-		st->goods[w->cargo_type].cargo.Reserve(w->cargo_cap - w->cargo.RemainingCount(), &w->cargo, st->xy, next_station);
-		consist_capleft[w->cargo_type] += w->cargo_cap - w->cargo.RemainingCount();
-		w = w->HasArticulatedPart() ? w->GetNextArticulatedPart() : NULL;
-	} while (w != NULL);
-	if (is_normal_aircraft) {
-		w = v->Next();
-		st->goods[w->cargo_type].cargo.Reserve(w->cargo_cap - w->cargo.RemainingCount(), &w->cargo, st->xy, next_station);
-		consist_capleft[w->cargo_type] += w->cargo_cap - w->cargo.RemainingCount();
-	}
+	IterateVehicleParts(v_start, FinalizeRefitAction(consist_capleft, st, next_station));
 
 	cur_company.Restore();
+}
+
+/**
+ * Update the vehicle's load_unload_ticks, the time it will wait until it tries to load or unload
+ * again. Adjust for overhang of trains and set it at least to 1.
+ * @param front The vehicle to be updated.
+ * @param st The station the vehicle is loading at.
+ * @param ticks The time it would normally wait, based on cargo loaded and unloaded.
+ */
+static void UpdateLoadUnloadTicks(Vehicle *front, const Station *st, int ticks)
+{
+	if (front->type == VEH_TRAIN) {
+		/* Each platform tile is worth 2 rail vehicles. */
+		int overhang = front->GetGroundVehicleCache()->cached_total_length - st->GetPlatformLength(front->tile) * TILE_SIZE;
+		if (overhang > 0) {
+			ticks <<= 1;
+			ticks += (overhang * ticks) / 8;
+		}
+	}
+	/* Always wait at least 1, otherwise we'll wait 'infinitively' long. */
+	front->load_unload_ticks = max(1, ticks);
 }
 
 /**
@@ -1472,7 +1580,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 		return;
 	}
 
-	int unloading_time = 0;
+	int new_load_unload_ticks = 0;
 	bool dirty_vehicle = false;
 	bool dirty_station = false;
 
@@ -1505,7 +1613,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 
 			payment->SetCargo(v->cargo_type);
 
-			if (!HasBit(ge->acceptance_pickup, GoodsEntry::GES_ACCEPTANCE) && v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER) > 0) {
+			if (!HasBit(ge->status, GoodsEntry::GES_ACCEPTANCE) && v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER) > 0) {
 				/* The station does not accept our goods anymore. */
 				if (front->current_order.GetUnloadType() & (OUFB_TRANSFER | OUFB_UNLOAD)) {
 					/* Transfer instead of delivering. */
@@ -1530,14 +1638,24 @@ static void LoadUnloadVehicle(Vehicle *front)
 				}
 			}
 
-			/* Mark the station dirty if we transfer, but not if we only deliver. */
-			dirty_station = v->cargo.ActionCount(VehicleCargoList::MTA_TRANSFER) > 0;
+			if (v->cargo.ActionCount(VehicleCargoList::MTA_TRANSFER) > 0) {
+				/* Mark the station dirty if we transfer, but not if we only deliver. */
+				dirty_station = true;
+
+				if (!ge->HasRating()) {
+					/* Upon transfering cargo, make sure the station has a rating. Fake a pickup for the
+					 * first unload to prevent the cargo from quickly decaying after the initial drop. */
+					ge->time_since_pickup = 0;
+					SetBit(ge->status, GoodsEntry::GES_RATING);
+				}
+			}
+
 			amount_unloaded = v->cargo.Unload(amount_unloaded, &ge->cargo, payment);
 			remaining = v->cargo.UnloadCount() > 0;
 			if (amount_unloaded > 0) {
 				dirty_vehicle = true;
 				anything_unloaded = true;
-				unloading_time += amount_unloaded;
+				new_load_unload_ticks += amount_unloaded;
 
 				/* Deliver goods to the station */
 				st->time_since_unload = 0;
@@ -1557,7 +1675,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 		if (front->current_order.GetLoadType() & OLFB_NO_LOAD || HasBit(front->vehicle_flags, VF_STOP_LOADING)) continue;
 
 		/* This order has a refit, if this is the first vehicle part carrying cargo and the whole vehicle is empty, try refitting. */
-		if (front->current_order.IsRefit() && artic_part == 1 && IsArticulatedVehicleEmpty(v)) {
+		if (front->current_order.IsRefit() && artic_part == 1) {
 			HandleStationRefit(v, consist_capleft, st, next_station, front->current_order.GetRefitCargo());
 			ge = &st->goods[v->cargo_type];
 		}
@@ -1631,7 +1749,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 					AirportAnimationTrigger(st, AAT_STATION_CARGO_TAKEN, v->cargo_type);
 				}
 
-				unloading_time += loaded;
+				new_load_unload_ticks += loaded;
 
 				dirty_vehicle = dirty_station = true;
 			}
@@ -1663,15 +1781,18 @@ static void LoadUnloadVehicle(Vehicle *front)
 			 * on the vehicle type - the values here are those found in TTDPatch */
 			const uint gradual_loading_wait_time[] = { 40, 20, 10, 20 };
 
-			unloading_time = gradual_loading_wait_time[front->type];
+			new_load_unload_ticks = gradual_loading_wait_time[front->type];
 		}
 		/* We loaded less cargo than possible for all cargo types and it's not full
 		 * load and we're not supposed to wait any longer: stop loading. */
 		if (!anything_unloaded && full_load_amount == 0 && reservation_left == 0 && !(front->current_order.GetLoadType() & OLFB_FULL_LOAD) &&
-				front->current_order_time >= (uint)max(front->current_order.wait_time - front->lateness_counter, 0)) {
+				front->current_order_time >= (uint)max(front->current_order.GetTimetabledWait() - front->lateness_counter, 0)) {
 			SetBit(front->vehicle_flags, VF_STOP_LOADING);
 		}
+
+		UpdateLoadUnloadTicks(front, st, new_load_unload_ticks);
 	} else {
+		UpdateLoadUnloadTicks(front, st, 20); // We need the ticks for link refreshing.
 		bool finished_loading = true;
 		if (front->current_order.GetLoadType() & OLFB_FULL_LOAD) {
 			if (front->current_order.GetLoadType() == OLF_FULL_LOAD_ANY) {
@@ -1690,20 +1811,10 @@ static void LoadUnloadVehicle(Vehicle *front)
 			 * along them. Otherwise the vehicle could wait for cargo
 			 * indefinitely if it hasn't visited the other links yet, or if the
 			 * links die while it's loading. */
-			if (!finished_loading) LinkRefresher::Run(front);
+			if (!finished_loading) LinkRefresher::Run(front, true, true);
 		}
-		unloading_time = 20;
 
 		SB(front->vehicle_flags, VF_LOADING_FINISHED, 1, finished_loading);
-	}
-
-	if (front->type == VEH_TRAIN) {
-		/* Each platform tile is worth 2 rail vehicles. */
-		int overhang = front->GetGroundVehicleCache()->cached_total_length - st->GetPlatformLength(front->tile) * TILE_SIZE;
-		if (overhang > 0) {
-			unloading_time <<= 1;
-			unloading_time += (overhang * unloading_time) / 8;
-		}
 	}
 
 	/* Calculate the loading indicator fill percent and display
@@ -1722,9 +1833,6 @@ static void LoadUnloadVehicle(Vehicle *front)
 		}
 	}
 
-	/* Always wait at least 1, otherwise we'll wait 'infinitively' long. */
-	front->load_unload_ticks = max(1, unloading_time);
-
 	if (completely_emptied) {
 		/* Make sure the vehicle is marked dirty, since we need to update the NewGRF
 		 * properties such as weight, power and TE whenever the trigger runs. */
@@ -1740,6 +1848,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 	if (dirty_station) {
 		st->MarkTilesDirty(true);
 		SetWindowDirty(WC_STATION_VIEW, last_visited);
+		InvalidateWindowData(WC_STATION_LIST, last_visited);
 	}
 }
 

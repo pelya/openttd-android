@@ -17,7 +17,10 @@
 #include "../../settings_type.h"
 #include "../../engine_base.h"
 #include "../../articulated_vehicles.h"
+#include "../../string_func.h"
 #include "table/strings.h"
+
+#include "../../safeguards.h"
 
 bool ScriptEventEnginePreview::IsEngineValid() const
 {
@@ -115,6 +118,17 @@ bool ScriptEventEnginePreview::AcceptPreview()
 bool ScriptEventCompanyAskMerger::AcceptMerger()
 {
 	return ScriptObject::DoCommand(0, this->owner, 0, CMD_BUY_COMPANY);
+}
+
+ScriptEventAdminPort::ScriptEventAdminPort(const char *json) :
+		ScriptEvent(ET_ADMIN_PORT),
+		json(stredup(json))
+{
+}
+
+ScriptEventAdminPort::~ScriptEventAdminPort()
+{
+	free(this->json);
 }
 
 #define SKIP_EMPTY(p) while (*(p) == ' ' || *(p) == '\n' || *(p) == '\r') (p)++;

@@ -658,9 +658,7 @@ STR_PRESIDENT_NAME_MANAGER                                      :{BLACK}{PRESIDE
 
 
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
-# end of order system
+# Order review system / warnings
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} जुनी होत आहे
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} खूप जुनी होत आहे
@@ -744,7 +742,6 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :अन्य
 
 
 
-
 # Custom currency window
 
 
@@ -783,7 +780,6 @@ STR_CONFIG_SETTING_SMOKE_AMOUNT                                 :वाहना
 
 
 STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            : वाहन हरवल्यास सूचित करा: {STRING}
-
 
 
 
@@ -1283,6 +1279,7 @@ STR_VEHICLE_LIST_AVAILABLE_AIRCRAFT                             :उपलब्
 STR_GROUP_ALL_ROAD_VEHICLES                                     :सर्व रस्त्यावरचे वाहन
 STR_GROUP_ALL_SHIPS                                             :सर्व जहाज
 STR_GROUP_ALL_AIRCRAFTS                                         :सर्व विमान
+
 
 
 

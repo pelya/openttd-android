@@ -232,7 +232,6 @@
 	#define WARN_FORMAT(string, args)
 	#define FINAL sealed
 
-	int CDECL snprintf(char *str, size_t size, const char *format, ...) WARN_FORMAT(3, 4);
 	#if defined(WINCE)
 		int CDECL vsnprintf(char *str, size_t size, const char *format, va_list ap);
 	#endif
@@ -282,7 +281,7 @@
 #endif
 
 #if defined(WINCE)
-	#define strdup _strdup
+	#define stredup _stredup
 #endif /* WINCE */
 
 /* NOTE: the string returned by these functions is only valid until the next

@@ -39,6 +39,8 @@
 #include <set>
 #include <vector>
 
+#include "safeguards.h"
+
 /**
  * Calculates and draws the accepted or supplied cargo around the selected tile(s)
  * @param left x position where the string is to be drawn
@@ -138,52 +140,6 @@ static void StationsWndShowStationRating(int left, int right, int y, CargoID typ
 		UpdateMarginsWidth(width, left_start, right_start, false);
 	}
 	GfxFillRect(left_start, y, right_start, y, PC_RED);
-}
-
-/**
- * Draw small boxes of cargo accepted.
- * @param left Left most coordinate to draw the box at.
- * @param right Right most coordinate to draw the box at.
- * @param y Coordinate to draw the box at.
- * @param type Cargo type.
- * @param acceptance_pickup_byte Acceptance byte.
- */
-static void StationsWndShowAcceptance(int left, int right, int y, CargoID type)
-{
-	const CargoSpec *cs = CargoSpec::Get(type);
-	if (!cs->IsValid()) return;
-	y++;
-	GfxFillRect(left, y, right, y + GetCharacterHeight(FS_SMALL), cs->rating_colour, FILLRECT_CHECKER);
-	DrawString(left, right, y, cs->abbrev, TC_BLACK, SA_CENTER);
-}
-
-/**
- * Draw small boxes showing cargo waiting, ratings... for a given station.
- * @param st Station to draw statistics of.
- * @param x Position to start drawing at.
- * @param width Width for each box.
- * @param y Height position to draw the box at.
- */
-void StationsWndShowStationRating(const Station *st, int left, int right, int x, int width, int y)
-{
-	bool rtl = _current_text_dir == TD_RTL;
-	AddSpace(5, x, false);
-
-	/* For RTL we work in exactly the opposite direction. So
-	 * decrement the space needed first, then draw to the left
-	 * instead of drawing to the left and then incrementing
-	 * the space. */
-	if (rtl) x -= width + 4;
-	for (uint j = 0; j < _sorted_standard_cargo_specs_size && ( x > left && x + width < right ); j++) {
-		CargoID cid = _sorted_cargo_specs[j]->Index();
-		if (st->goods[cid].IsSourceStationForCargo()) {
-			StationsWndShowStationRating(x, x + width, y, cid, st->goods[cid].cargo.TotalCount(), st->goods[cid].rating);
-			AddSpace(width + 4, x, false);
-		} else if (HasBit(st->goods[cid].acceptance_pickup, GoodsEntry::GES_EVER_ACCEPTED)) {
-			StationsWndShowAcceptance(x, x + width, y, cid);
-			AddSpace(width + 4, x, false);
-		}
-	}
 }
 
 typedef GUIList<const Station*> GUIStationList;
@@ -450,6 +406,7 @@ public:
 				break;
 
 			case WID_STL_LIST: {
+				bool rtl = _current_text_dir == TD_RTL;
 				int max = min(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), this->stations.Length());
 				uint line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 				int y = Center(r.top + WD_FRAMERECT_TOP, line_height);
@@ -465,7 +422,27 @@ public:
 					SetDParam(1, st->facilities);
 					int x = DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_STATION_LIST_STATION);
 
-					StationsWndShowStationRating(st, r.left, r.right, x, line_height + 2, y);
+					x += rtl ? -5 : 5;
+
+					/* show cargo waiting and station ratings */
+					for (uint j = 0; j < _sorted_standard_cargo_specs_size; j++) {
+						CargoID cid = _sorted_cargo_specs[j]->Index();
+						if (st->goods[cid].cargo.TotalCount() > 0) {
+							/* For RTL we work in exactly the opposite direction. So
+							 * decrement the space needed first, then draw to the left
+							 * instead of drawing to the left and then incrementing
+							 * the space. */
+							if (rtl) {
+								x -= 20;
+								if (x < r.left + WD_FRAMERECT_LEFT) break;
+							}
+							StationsWndShowStationRating(x, x + 16, y, cid, st->goods[cid].cargo.TotalCount(), st->goods[cid].rating);
+							if (!rtl) {
+								x += 20;
+								if (x > r.right - WD_FRAMERECT_RIGHT) break;
+							}
+						}
+					}
 
 					y += line_height;
 				}
@@ -1832,7 +1809,7 @@ struct StationViewWindow : public Window {
 
 		uint32 cargo_mask = 0;
 		for (CargoID i = 0; i < NUM_CARGO; i++) {
-			if (HasBit(st->goods[i].acceptance_pickup, GoodsEntry::GES_ACCEPTANCE)) SetBit(cargo_mask, i);
+			if (HasBit(st->goods[i].status, GoodsEntry::GES_ACCEPTANCE)) SetBit(cargo_mask, i);
 		}
 		SetDParam(0, cargo_mask);
 		int bottom = DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, INT32_MAX, STR_STATION_VIEW_ACCEPTS_CARGO);

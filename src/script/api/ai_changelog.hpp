@@ -19,9 +19,10 @@
  *
  * 1.5.0 is not yet released. The following changes are not set in stone yet.
  *
- * \b 1.4.0
+ * API additions:
+ * \li AIStation::GetCargoWaitingFromVia
  *
- * 1.4.0 is not yet released. The following changes are not set in stone yet.
+ * \b 1.4.0
  *
  * API additions:
  * \li AICargo::GetDistributionType

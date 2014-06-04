@@ -56,6 +56,8 @@
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 /**
  * Check whether the given tile is a hangar.
  * @param t the tile to of whether it is a hangar.
@@ -436,7 +438,7 @@ static uint GetAcceptanceMask(const Station *st)
 	uint mask = 0;
 
 	for (CargoID i = 0; i < NUM_CARGO; i++) {
-		if (HasBit(st->goods[i].acceptance_pickup, GoodsEntry::GES_ACCEPTANCE)) mask |= 1 << i;
+		if (HasBit(st->goods[i].status, GoodsEntry::GES_ACCEPTANCE)) mask |= 1 << i;
 	}
 	return mask;
 }
@@ -579,7 +581,7 @@ void UpdateStationAcceptance(Station *st, bool show_msg)
 		}
 
 		GoodsEntry &ge = st->goods[i];
-		SB(ge.acceptance_pickup, GoodsEntry::GES_ACCEPTANCE, 1, amt >= 8);
+		SB(ge.status, GoodsEntry::GES_ACCEPTANCE, 1, amt >= 8);
 		if (LinkGraph::IsValidID(ge.link_graph)) {
 			(*LinkGraph::Get(ge.link_graph))[ge.node].SetDemand(amt / 8);
 		}
@@ -658,7 +660,7 @@ static void UpdateStationSignCoord(BaseStation *st)
  * @param reuse Whether to try to reuse a deleted station (gray sign) if possible
  * @param area Area occupied by the new part
  * @param name_class Station naming class to use to generate the new station's name
- * @return Command error that occured, if any
+ * @return Command error that occurred, if any
  */
 static CommandCost BuildStationPart(Station **st, DoCommandFlag flags, bool reuse, TileArea area, StationNaming name_class)
 {
@@ -3189,7 +3191,7 @@ void TriggerWatchedCargoCallbacks(Station *st)
 	/* Collect cargoes accepted since the last big tick. */
 	uint cargoes = 0;
 	for (CargoID cid = 0; cid < NUM_CARGO; cid++) {
-		if (HasBit(st->goods[cid].acceptance_pickup, GoodsEntry::GES_ACCEPTED_BIGTICK)) SetBit(cargoes, cid);
+		if (HasBit(st->goods[cid].status, GoodsEntry::GES_ACCEPTED_BIGTICK)) SetBit(cargoes, cid);
 	}
 
 	/* Anything to do? */
@@ -3222,7 +3224,7 @@ static bool StationHandleBigTick(BaseStation *st)
 		TriggerWatchedCargoCallbacks(Station::From(st));
 
 		for (CargoID i = 0; i < NUM_CARGO; i++) {
-			ClrBit(Station::From(st)->goods[i].acceptance_pickup, GoodsEntry::GES_ACCEPTED_BIGTICK);
+			ClrBit(Station::From(st)->goods[i].status, GoodsEntry::GES_ACCEPTED_BIGTICK);
 		}
 	}
 
@@ -3236,6 +3238,28 @@ static inline void byte_inc_sat(byte *p)
 {
 	byte b = *p + 1;
 	if (b != 0) *p = b;
+}
+
+/**
+ * Truncate the cargo by a specific amount.
+ * @param cs The type of cargo to perform the truncation for.
+ * @param ge The goods entry, of the station, to truncate.
+ * @param amount The amount to truncate the cargo by.
+ */
+static void TruncateCargo(const CargoSpec *cs, GoodsEntry *ge, uint amount = UINT_MAX)
+{
+	/* If truncating also punish the source stations' ratings to
+	 * decrease the flow of incoming cargo. */
+
+	StationCargoAmountMap waiting_per_source;
+	ge->cargo.Truncate(amount, &waiting_per_source);
+	for (StationCargoAmountMap::iterator i(waiting_per_source.begin()); i != waiting_per_source.end(); ++i) {
+		Station *source_station = Station::GetIfValid(i->first);
+		if (source_station == NULL) continue;
+
+		GoodsEntry &source_ge = source_station->goods[cs->Index()];
+		source_ge.max_waiting_cargo = max(source_ge.max_waiting_cargo, i->second);
+	}
 }
 
 static void UpdateStationRating(Station *st)
@@ -3258,6 +3282,13 @@ static void UpdateStationRating(Station *st)
 		/* Only change the rating if we are moving this cargo */
 		if (ge->HasRating()) {
 			byte_inc_sat(&ge->time_since_pickup);
+			if (ge->time_since_pickup == 255 && _settings_game.order.selectgoods) {
+				ClrBit(ge->status, GoodsEntry::GES_RATING);
+				ge->last_speed = 0;
+				TruncateCargo(cs, ge);
+				waiting_changed = true;
+				continue;
+			}
 
 			bool skip = false;
 			int rating = 0;
@@ -3371,18 +3402,7 @@ static void UpdateStationRating(Station *st)
 					 * next rating calculation. */
 					ge->max_waiting_cargo = 0;
 
-					/* If truncating also punish the source stations' ratings to
-					 * decrease the flow of incoming cargo. */
-
-					StationCargoAmountMap waiting_per_source;
-					ge->cargo.Truncate(ge->cargo.AvailableCount() - waiting, &waiting_per_source);
-					for (StationCargoAmountMap::iterator i(waiting_per_source.begin()); i != waiting_per_source.end(); ++i) {
-						Station *source_station = Station::GetIfValid(i->first);
-						if (source_station == NULL) continue;
-
-						GoodsEntry &source_ge = source_station->goods[cs->Index()];
-						source_ge.max_waiting_cargo = max(source_ge.max_waiting_cargo, i->second);
-					}
+					TruncateCargo(cs, ge, ge->cargo.AvailableCount() - waiting);
 				} else {
 					/* If the average number per next hop is low, be more forgiving. */
 					ge->max_waiting_cargo = waiting_avg;
@@ -3503,9 +3523,10 @@ void DeleteStaleLinks(Station *from)
  * @param cargo Cargo to increase stat for.
  * @param next_station_id Station the consist will be travelling to next.
  * @param capacity Capacity to add to link stat.
- * @param usage Usage to add to link stat. If UINT_MAX refresh the link instead of increasing.
+ * @param usage Usage to add to link stat.
+ * @param mode Update mode to be applied.
  */
-void IncreaseStats(Station *st, CargoID cargo, StationID next_station_id, uint capacity, uint usage)
+void IncreaseStats(Station *st, CargoID cargo, StationID next_station_id, uint capacity, uint usage, EdgeUpdateMode mode)
 {
 	GoodsEntry &ge1 = st->goods[cargo];
 	Station *st2 = Station::Get(next_station_id);
@@ -3547,7 +3568,7 @@ void IncreaseStats(Station *st, CargoID cargo, StationID next_station_id, uint c
 		}
 	}
 	if (lg != NULL) {
-		(*lg)[ge1.node].UpdateEdge(ge2.node, capacity, usage);
+		(*lg)[ge1.node].UpdateEdge(ge2.node, capacity, usage, mode);
 	}
 }
 
@@ -3568,7 +3589,7 @@ void IncreaseStats(Station *st, const Vehicle *front, StationID next_station_id)
 			 * As usage is not such an important figure anyway we just
 			 * ignore the additional cargo then.*/
 			IncreaseStats(st, v->cargo_type, next_station_id, v->refit_cap,
-				min(v->refit_cap, v->cargo.StoredCount()));
+				min(v->refit_cap, v->cargo.StoredCount()), EUM_INCREASE);
 		}
 	}
 }
@@ -3618,8 +3639,8 @@ void StationMonthlyLoop()
 	FOR_ALL_STATIONS(st) {
 		for (CargoID i = 0; i < NUM_CARGO; i++) {
 			GoodsEntry *ge = &st->goods[i];
-			SB(ge->acceptance_pickup, GoodsEntry::GES_LAST_MONTH, 1, GB(ge->acceptance_pickup, GoodsEntry::GES_CURRENT_MONTH, 1));
-			ClrBit(ge->acceptance_pickup, GoodsEntry::GES_CURRENT_MONTH);
+			SB(ge->status, GoodsEntry::GES_LAST_MONTH, 1, GB(ge->status, GoodsEntry::GES_CURRENT_MONTH, 1));
+			ClrBit(ge->status, GoodsEntry::GES_CURRENT_MONTH);
 		}
 	}
 }
@@ -3635,7 +3656,7 @@ void ModifyStationRatingAround(TileIndex tile, Owner owner, int amount, uint rad
 			for (CargoID i = 0; i < NUM_CARGO; i++) {
 				GoodsEntry *ge = &st->goods[i];
 
-				if (ge->acceptance_pickup != 0) {
+				if (ge->status != 0) {
 					ge->rating = Clamp(ge->rating + amount, 0, 255);
 				}
 			}
@@ -3676,7 +3697,7 @@ static uint UpdateStationWaiting(Station *st, CargoID type, uint amount, SourceT
 
 	if (!ge.HasRating()) {
 		InvalidateWindowData(WC_STATION_LIST, st->index);
-		SetBit(ge.acceptance_pickup, GoodsEntry::GES_PICKUP);
+		SetBit(ge.status, GoodsEntry::GES_RATING);
 	}
 
 	TriggerStationRandomisation(st, st->xy, SRT_NEW_CARGO, type);
@@ -3725,7 +3746,7 @@ CommandCost CmdRenameStation(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 
 	if (flags & DC_EXEC) {
 		free(st->name);
-		st->name = reset ? NULL : strdup(text);
+		st->name = reset ? NULL : stredup(text);
 
 		st->UpdateVirtCoord();
 		InvalidateWindowData(WC_STATION_LIST, st->owner, 1);
@@ -4314,9 +4335,11 @@ void FlowStat::ReleaseShare(StationID st)
 /**
  * Scale all shares from link graph's runtime to monthly values.
  * @param runtime Time the link graph has been running without compression.
+ * @pre runtime must be greater than 0 as we don't want infinite flow values.
  */
 void FlowStat::ScaleToMonthly(uint runtime)
 {
+	assert(runtime > 0);
 	SharesMap new_shares;
 	uint share = 0;
 	for (SharesMap::iterator i = this->shares.begin(); i != this->shares.end(); ++i) {

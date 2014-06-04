@@ -32,6 +32,8 @@
 
 #include "widgets/order_widget.h"
 
+#include "safeguards.h"
+
 
 /** Order load types that could be given to station orders. */
 static const StringID _station_load_types[][5][5] = {
@@ -264,9 +266,9 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
 			if (timetable) {
 				SetDParam(3, STR_EMPTY);
 
-				if (order->wait_time > 0) {
-					SetDParam(5, STR_TIMETABLE_STAY_FOR);
-					SetTimetableParams(6, 7, order->wait_time);
+				if (order->GetWaitTime() > 0) {
+					SetDParam(5, order->IsWaitTimetabled() ? STR_TIMETABLE_STAY_FOR : STR_TIMETABLE_STAY_FOR_ESTIMATED);
+					SetTimetableParams(6, 7, order->GetWaitTime());
 				}
 			} else {
 				SetDParam(3, (order->GetNonStopType() & ONSF_NO_STOP_AT_DESTINATION_STATION) ? STR_EMPTY : _station_load_types[order->IsRefit()][unload][load]);
@@ -332,9 +334,9 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
 				SetDParam(4, value);
 			}
 
-			if (timetable && order->wait_time > 0) {
-				SetDParam(5, STR_TIMETABLE_AND_TRAVEL_FOR);
-				SetTimetableParams(6, 7, order->wait_time);
+			if (timetable && order->GetWaitTime() > 0) {
+				SetDParam(5, order->IsWaitTimetabled() ? STR_TIMETABLE_AND_TRAVEL_FOR : STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED);
+				SetTimetableParams(6, 7, order->GetWaitTime());
 			} else {
 				SetDParam(5, STR_EMPTY);
 			}

@@ -49,6 +49,8 @@
 #include "saveload_internal.h"
 #include "saveload_filter.h"
 
+#include "../safeguards.h"
+
 /*
  * Previous savegame versions, the trunk revision where they were
  * introduced and the released version that had that particular
@@ -254,8 +256,10 @@
  *  186   25833
  *  187   25899
  *  188   26169   1.4.x
+ *  189   26450
+ *  190   26547
  */
-extern const uint16 SAVEGAME_VERSION = 188; ///< Current savegame version of OpenTTD.
+extern const uint16 SAVEGAME_VERSION = 190; ///< Current savegame version of OpenTTD.
 
 SavegameType _savegame_type; ///< type of savegame we are loading
 
@@ -524,11 +528,11 @@ void NORETURN SlError(StringID string, const char *extra_msg)
 	if (_sl.action == SLA_LOAD_CHECK) {
 		_load_check_data.error = string;
 		free(_load_check_data.error_data);
-		_load_check_data.error_data = (extra_msg == NULL) ? NULL : strdup(extra_msg);
+		_load_check_data.error_data = (extra_msg == NULL) ? NULL : stredup(extra_msg);
 	} else {
 		_sl.error_str = string;
 		free(_sl.extra_msg);
-		_sl.extra_msg = (extra_msg == NULL) ? NULL : strdup(extra_msg);
+		_sl.extra_msg = (extra_msg == NULL) ? NULL : stredup(extra_msg);
 	}
 
 	/* We have to NULL all pointers here; we might be in a state where
@@ -1460,9 +1464,50 @@ size_t SlCalcObjMemberLength(const void *object, const SaveLoad *sld)
 	return 0;
 }
 
+/**
+ * Check whether the variable size of the variable in the saveload configuration
+ * matches with the actual variable size.
+ * @param sld The saveload configuration to test.
+ */
+static bool IsVariableSizeRight(const SaveLoad *sld)
+{
+	switch (sld->cmd) {
+		case SL_VAR:
+			switch (GetVarMemType(sld->conv)) {
+				case SLE_VAR_BL:
+					return sld->size == sizeof(bool);
+				case SLE_VAR_I8:
+				case SLE_VAR_U8:
+					return sld->size == sizeof(int8);
+				case SLE_VAR_I16:
+				case SLE_VAR_U16:
+					return sld->size == sizeof(int16);
+				case SLE_VAR_I32:
+				case SLE_VAR_U32:
+					return sld->size == sizeof(int32);
+				case SLE_VAR_I64:
+				case SLE_VAR_U64:
+					return sld->size == sizeof(int64);
+				default:
+					return sld->size == sizeof(void *);
+			}
+		case SL_REF:
+			/* These should all be pointer sized. */
+			return sld->size == sizeof(void *);
+
+		case SL_STR:
+			/* These should be pointer sized, or fixed array. */
+			return sld->size == sizeof(void *) || sld->size == sld->length;
+
+		default:
+			return true;
+	}
+}
 
 bool SlObjectMember(void *ptr, const SaveLoad *sld)
 {
+	assert(IsVariableSizeRight(sld));
+
 	VarType conv = GB(sld->conv, 0, 8);
 	switch (sld->cmd) {
 		case SL_VAR:
@@ -2611,7 +2656,7 @@ static SaveOrLoadResult DoLoad(LoadFilter *reader, bool load_check)
 	/* loader for this savegame type is not implemented? */
 	if (fmt->init_load == NULL) {
 		char err_str[64];
-		snprintf(err_str, lengthof(err_str), "Loader for '%s' is not available.", fmt->name);
+		seprintf(err_str, lastof(err_str), "Loader for '%s' is not available.", fmt->name);
 		SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, err_str);
 	}
 

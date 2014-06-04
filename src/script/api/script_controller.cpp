@@ -24,6 +24,8 @@
 #include "../../settings_type.h"
 #include "../../network/network.h"
 
+#include "../../safeguards.h"
+
 /* static */ void ScriptController::SetCommandDelay(int ticks)
 {
 	if (ticks <= 0) return;
@@ -51,7 +53,7 @@
 	ScriptObject::GetActiveInstance()->Pause();
 
 	char log_message[1024];
-	snprintf(log_message, sizeof(log_message), "Break: %s", message);
+	seprintf(log_message, lastof(log_message), "Break: %s", message);
 	ScriptLog::Log(ScriptLog::LOG_SQ_ERROR, log_message);
 
 	/* Inform script developer that his script has been paused and
@@ -113,13 +115,13 @@ ScriptController::~ScriptController()
 
 	/* Internally we store libraries as 'library.version' */
 	char library_name[1024];
-	snprintf(library_name, sizeof(library_name), "%s.%d", library, version);
+	seprintf(library_name, lastof(library_name), "%s.%d", library, version);
 	strtolower(library_name);
 
 	ScriptInfo *lib = ScriptObject::GetActiveInstance()->FindLibrary(library, version);
 	if (lib == NULL) {
 		char error[1024];
-		snprintf(error, sizeof(error), "couldn't find library '%s' with version %d", library, version);
+		seprintf(error, lastof(error), "couldn't find library '%s' with version %d", library, version);
 		throw sq_throwerror(vm, OTTD2SQ(error));
 	}
 
@@ -131,12 +133,12 @@ ScriptController::~ScriptController()
 
 	LoadedLibraryList::iterator iter = controller->loaded_library.find(library_name);
 	if (iter != controller->loaded_library.end()) {
-		ttd_strlcpy(fake_class, (*iter).second, sizeof(fake_class));
+		strecpy(fake_class, (*iter).second, lastof(fake_class));
 	} else {
 		int next_number = ++controller->loaded_library_count;
 
 		/* Create a new fake internal name */
-		snprintf(fake_class, sizeof(fake_class), "_internalNA%d", next_number);
+		seprintf(fake_class, lastof(fake_class), "_internalNA%d", next_number);
 
 		/* Load the library in a 'fake' namespace, so we can link it to the name the user requested */
 		sq_pushroottable(vm);
@@ -145,14 +147,14 @@ ScriptController::~ScriptController()
 		/* Load the library */
 		if (!engine->LoadScript(vm, lib->GetMainScript(), false)) {
 			char error[1024];
-			snprintf(error, sizeof(error), "there was a compile error when importing '%s' version %d", library, version);
+			seprintf(error, lastof(error), "there was a compile error when importing '%s' version %d", library, version);
 			throw sq_throwerror(vm, OTTD2SQ(error));
 		}
 		/* Create the fake class */
 		sq_newslot(vm, -3, SQFalse);
 		sq_pop(vm, 1);
 
-		controller->loaded_library[strdup(library_name)] = strdup(fake_class);
+		controller->loaded_library[stredup(library_name)] = stredup(fake_class);
 	}
 
 	/* Find the real class inside the fake class (like 'sets.Vector') */
@@ -164,7 +166,7 @@ ScriptController::~ScriptController()
 	sq_pushstring(vm, OTTD2SQ(lib->GetInstanceName()), -1);
 	if (SQ_FAILED(sq_get(vm, -2))) {
 		char error[1024];
-		snprintf(error, sizeof(error), "unable to find class '%s' in the library '%s' version %d", lib->GetInstanceName(), library, version);
+		seprintf(error, lastof(error), "unable to find class '%s' in the library '%s' version %d", lib->GetInstanceName(), library, version);
 		throw sq_throwerror(vm, OTTD2SQ(error));
 	}
 	HSQOBJECT obj;

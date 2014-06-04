@@ -440,9 +440,7 @@ STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Пӗлт
 
 
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
-# end of order system
+# Order review system / warnings
 
 
 
@@ -496,8 +494,6 @@ STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Тулл
 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Экрана сӑнарлама пултарни
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :расна
-
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}Формат экран сӑнӗ
 
 
 
@@ -583,7 +579,6 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 
 
-
 STR_CONFIG_SETTING_NEWS_SUBSIDIES                               :Грантсем: {STRING}
 
 STR_CONFIG_SETTING_NEWS_MESSAGES_OFF                            :Сӳнтер
@@ -611,14 +606,11 @@ STR_CONFIG_SETTING_TOWN_GROWTH_VERY_FAST                        :Питӗ хӑв
 
 
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}Интерфейс
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}Лартӑм
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Интерфейс
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Лартӑм
 STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Ҫул-йӗр:
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}Станцисем:
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Хуласем
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Ӑмӑртуҫӑсем
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE}Автоҫӗнет
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{ORANGE}Пуйӑссем
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE}Хуласем
 
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 
@@ -1109,6 +1101,7 @@ STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ҫу�
 
 
 # Group window
+
 
 
 

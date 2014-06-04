@@ -27,6 +27,8 @@
 #include "allegro_v.h"
 #include <allegro.h>
 
+#include "../safeguards.h"
+
 #ifdef _DEBUG
 /* Allegro replaces SEGV/ABRT signals meaning that the debugger will never
  * be triggered, so rereplace the signals and make the debugger useful. */
@@ -222,7 +224,7 @@ static bool CreateMainSurface(uint w, uint h)
 	InitPalette();
 
 	char caption[32];
-	snprintf(caption, sizeof(caption), "OpenTTD %s", _openttd_revision);
+	seprintf(caption, lastof(caption), "OpenTTD %s", _openttd_revision);
 	set_window_title(caption);
 
 	enable_hardware_cursor();

@@ -17,6 +17,8 @@
 #include "script_info.hpp"
 #include "script_scanner.hpp"
 
+#include "../safeguards.h"
+
 ScriptInfo::~ScriptInfo()
 {
 	/* Free all allocated strings */
@@ -48,7 +50,7 @@ bool ScriptInfo::CheckMethod(const char *name) const
 {
 	if (!this->engine->MethodExists(*this->SQ_instance, name)) {
 		char error[1024];
-		snprintf(error, sizeof(error), "your info.nut/library.nut doesn't have the method '%s'", name);
+		seprintf(error, lastof(error), "your info.nut/library.nut doesn't have the method '%s'", name);
 		this->engine->ThrowError(error);
 		return false;
 	}
@@ -81,9 +83,9 @@ bool ScriptInfo::CheckMethod(const char *name) const
 	}
 
 	/* Get location information of the scanner */
-	info->main_script = strdup(info->scanner->GetMainScript());
+	info->main_script = stredup(info->scanner->GetMainScript());
 	const char *tar_name = info->scanner->GetTarFile();
-	if (tar_name != NULL) info->tar_file = strdup(tar_name);
+	if (tar_name != NULL) info->tar_file = stredup(tar_name);
 
 	/* Cache the data the info file gives us. */
 	if (!info->engine->CallStringMethodStrdup(*info->SQ_instance, "GetAuthor", &info->author, MAX_GET_OPS)) return SQ_ERROR;
@@ -131,7 +133,7 @@ SQInteger ScriptInfo::AddSetting(HSQUIRRELVM vm)
 		if (strcmp(key, "name") == 0) {
 			const SQChar *sqvalue;
 			if (SQ_FAILED(sq_getstring(vm, -1, &sqvalue))) return SQ_ERROR;
-			char *name = strdup(SQ2OTTD(sqvalue));
+			char *name = stredup(SQ2OTTD(sqvalue));
 			char *s;
 			ValidateString(name);
 
@@ -144,7 +146,7 @@ SQInteger ScriptInfo::AddSetting(HSQUIRRELVM vm)
 		} else if (strcmp(key, "description") == 0) {
 			const SQChar *sqdescription;
 			if (SQ_FAILED(sq_getstring(vm, -1, &sqdescription))) return SQ_ERROR;
-			config.description = strdup(SQ2OTTD(sqdescription));
+			config.description = stredup(SQ2OTTD(sqdescription));
 			ValidateString(config.description);
 			items |= 0x002;
 		} else if (strcmp(key, "min_value") == 0) {
@@ -193,7 +195,7 @@ SQInteger ScriptInfo::AddSetting(HSQUIRRELVM vm)
 			items |= 0x100;
 		} else {
 			char error[1024];
-			snprintf(error, sizeof(error), "unknown setting property '%s'", key);
+			seprintf(error, lastof(error), "unknown setting property '%s'", key);
 			this->engine->ThrowError(error);
 			return SQ_ERROR;
 		}
@@ -206,7 +208,7 @@ SQInteger ScriptInfo::AddSetting(HSQUIRRELVM vm)
 	 * be set for the same config item. */
 	if ((items & 0x200) != 0 && (config.flags & SCRIPTCONFIG_RANDOM) != 0) {
 		char error[1024];
-		snprintf(error, sizeof(error), "Setting both random_deviation and SCRIPTCONFIG_RANDOM is not allowed");
+		seprintf(error, lastof(error), "Setting both random_deviation and SCRIPTCONFIG_RANDOM is not allowed");
 		this->engine->ThrowError(error);
 		return SQ_ERROR;
 	}
@@ -217,7 +219,7 @@ SQInteger ScriptInfo::AddSetting(HSQUIRRELVM vm)
 	uint mask = (config.flags & SCRIPTCONFIG_BOOLEAN) ? 0x1F3 : 0x1FF;
 	if (items != mask) {
 		char error[1024];
-		snprintf(error, sizeof(error), "please define all properties of a setting (min/max not allowed for booleans)");
+		seprintf(error, lastof(error), "please define all properties of a setting (min/max not allowed for booleans)");
 		this->engine->ThrowError(error);
 		return SQ_ERROR;
 	}
@@ -240,7 +242,7 @@ SQInteger ScriptInfo::AddLabels(HSQUIRRELVM vm)
 
 	if (config == NULL) {
 		char error[1024];
-		snprintf(error, sizeof(error), "Trying to add labels for non-defined setting '%s'", setting_name);
+		seprintf(error, lastof(error), "Trying to add labels for non-defined setting '%s'", setting_name);
 		this->engine->ThrowError(error);
 		return SQ_ERROR;
 	}
@@ -262,8 +264,8 @@ SQInteger ScriptInfo::AddLabels(HSQUIRRELVM vm)
 		const char *label = SQ2OTTD(sq_label);
 		ValidateString(label);
 
-		/* !Contains() prevents strdup from leaking. */
-		if (!config->labels->Contains(key)) config->labels->Insert(key, strdup(label));
+		/* !Contains() prevents stredup from leaking. */
+		if (!config->labels->Contains(key)) config->labels->Insert(key, stredup(label));
 
 		sq_pop(vm, 2);
 	}

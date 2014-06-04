@@ -32,6 +32,11 @@
 #include "gfx_func.h"
 #endif /* WITH_ICU */
 
+/* The function vsnprintf is used internally to perform the required formatting
+ * tasks. As such this one must be allowed, and makes sure it's terminated. */
+#include "safeguards.h"
+#undef vsnprintf
+
 /**
  * Safer implementation of vsnprintf; same as vsnprintf except:
  * - last instead of size, i.e. replace sizeof with lastof.
@@ -42,62 +47,12 @@
  * @param ap     the list of arguments for the format
  * @return the number of added characters
  */
-static int CDECL vseprintf(char *str, const char *last, const char *format, va_list ap)
+int CDECL vseprintf(char *str, const char *last, const char *format, va_list ap)
 {
 	ptrdiff_t diff = last - str;
 	if (diff < 0) return 0;
 	return min((int)diff, vsnprintf(str, diff + 1, format, ap));
 }
-
-/**
- * Appends characters from one string to another.
- *
- * Appends the source string to the destination string with respect of the
- * terminating null-character and the maximum size of the destination
- * buffer.
- *
- * @note usage ttd_strlcat(dst, src, lengthof(dst));
- * @note lengthof() applies only to fixed size arrays
- *
- * @param dst The buffer containing the target string
- * @param src The buffer containing the string to append
- * @param size The maximum size of the destination buffer
- */
-void ttd_strlcat(char *dst, const char *src, size_t size)
-{
-	assert(size > 0);
-	while (size > 0 && *dst != '\0') {
-		size--;
-		dst++;
-	}
-
-	ttd_strlcpy(dst, src, size);
-}
-
-
-/**
- * Copies characters from one buffer to another.
- *
- * Copies the source string to the destination buffer with respect of the
- * terminating null-character and the maximum size of the destination
- * buffer.
- *
- * @note usage ttd_strlcpy(dst, src, lengthof(dst));
- * @note lengthof() applies only to fixed size arrays
- *
- * @param dst The destination buffer
- * @param src The buffer containing the string to copy
- * @param size The maximum size of the destination buffer
- */
-void ttd_strlcpy(char *dst, const char *src, size_t size)
-{
-	assert(size > 0);
-	while (--size > 0 && *src != '\0') {
-		*dst++ = *src++;
-	}
-	*dst = '\0';
-}
-
 
 /**
  * Appends characters from one string to another.
@@ -159,6 +114,21 @@ char *strecpy(char *dst, const char *src, const char *last)
 #endif /* STRGEN || SETTINGSGEN */
 	}
 	return dst;
+}
+
+/**
+ * Create a duplicate of the given string.
+ * @param s    The string to duplicate.
+ * @param last The last character that is safe to duplicate. If NULL, the whole string is duplicated.
+ * @note The maximum length of the resulting string might therefore be last - s + 1.
+ * @return The duplicate of the string.
+ */
+char *stredup(const char *s, const char *last)
+{
+	size_t len = last == NULL ? strlen(s) : ttd_strnlen(s, last - s + 1);
+	char *tmp = CallocT<char>(len + 1);
+	memcpy(tmp, s, len);
+	return tmp;
 }
 
 /**
@@ -379,20 +349,6 @@ bool IsValidChar(WChar key, CharSetFilter afilter)
 }
 
 #ifdef WIN32
-/* Since version 3.14, MinGW Runtime has snprintf() and vsnprintf() conform to C99 but it's not the case for older versions */
-#if (__MINGW32_MAJOR_VERSION < 3) || ((__MINGW32_MAJOR_VERSION == 3) && (__MINGW32_MINOR_VERSION < 14))
-int CDECL snprintf(char *str, size_t size, const char *format, ...)
-{
-	va_list ap;
-	int ret;
-
-	va_start(ap, format);
-	ret = vsnprintf(str, size, format, ap);
-	va_end(ap);
-	return ret;
-}
-#endif /* MinGW Runtime < 3.14 */
-
 #ifdef _MSC_VER
 /**
  * Almost POSIX compliant implementation of \c vsnprintf for VC compiler.
@@ -572,16 +528,6 @@ size_t Utf8TrimString(char *s, size_t maxlen)
 	return length;
 }
 
-#ifdef DEFINE_STRNDUP
-char *strndup(const char *s, size_t len)
-{
-	len = ttd_strnlen(s, len);
-	char *tmp = CallocT<char>(len + 1);
-	memcpy(tmp, s, len);
-	return tmp;
-}
-#endif /* DEFINE_STRNDUP */
-
 #ifdef DEFINE_STRCASESTR
 char *strcasestr(const char *haystack, const char *needle)
 {
@@ -662,7 +608,6 @@ class IcuStringIterator : public StringIterator
 {
 	icu::BreakIterator *char_itr; ///< ICU iterator for characters.
 	icu::BreakIterator *word_itr; ///< ICU iterator for words.
-	const char *string;           ///< Iteration string in UTF-8.
 
 	SmallVector<UChar, 32> utf16_str;      ///< UTF-16 copy of the string.
 	SmallVector<size_t, 32> utf16_to_utf8; ///< Mapping from UTF-16 code point position to index in the UTF-8 source string.
@@ -686,7 +631,7 @@ public:
 
 	virtual void SetString(const char *s)
 	{
-		this->string = s;
+		const char *string_base = s;
 
 		/* Unfortunately current ICU versions only provide rudimentary support
 		 * for word break iterators (especially for CJK languages) in combination
@@ -696,7 +641,7 @@ public:
 		this->utf16_to_utf8.Clear();
 
 		while (*s != '\0') {
-			size_t idx = s - this->string;
+			size_t idx = s - string_base;
 
 			WChar c = Utf8Consume(&s);
 			if (c <	0x10000) {
@@ -710,7 +655,7 @@ public:
 			*this->utf16_to_utf8.Append() = idx;
 		}
 		*this->utf16_str.Append() = '\0';
-		*this->utf16_to_utf8.Append() = s - this->string;
+		*this->utf16_to_utf8.Append() = s - string_base;
 
 		UText text = UTEXT_INITIALIZER;
 		UErrorCode status = U_ZERO_ERROR;

@@ -35,6 +35,8 @@
 #include "table/strings.h"
 #include "table/engines.h"
 
+#include "safeguards.h"
+
 EnginePool _engine_pool("Engine");
 INSTANTIATE_POOL_METHODS(Engine)
 
@@ -1025,7 +1027,7 @@ CommandCost CmdRenameEngine(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 		if (reset) {
 			e->name = NULL;
 		} else {
-			e->name = strdup(text);
+			e->name = stredup(text);
 		}
 
 		MarkWholeScreenDirty();

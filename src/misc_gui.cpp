@@ -30,6 +30,8 @@
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 #ifdef __ANDROID__
 #include <SDL_screenkeyboard.h>
 #endif
@@ -213,7 +215,7 @@ public:
 
 		/* Location */
 		char tmp[16];
-		snprintf(tmp, lengthof(tmp), "0x%.4X", tile);
+		seprintf(tmp, lastof(tmp), "0x%.4X", tile);
 		SetDParam(0, TileX(tile));
 		SetDParam(1, TileY(tile));
 		SetDParam(2, GetTileZ(tile));
@@ -930,8 +932,7 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 	}
 #ifdef __ANDROID__
 	char text[512];
-	strncpy(text, this->text.buf, sizeof(text) - 1);
-	text[sizeof(text) - 1] = 0;
+	strecpy(text, this->text.buf, lastof(text));
 	this->text.DeleteAll();
 	SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); /* Invoke Android built-in screen keyboard */
 	this->text.Assign(text);
@@ -960,7 +961,7 @@ struct QueryStringWindow : public Window
 
 		this->editbox.text.UpdateSize();
 
-		if ((flags & QSF_ACCEPT_UNCHANGED) == 0) this->editbox.orig = strdup(this->editbox.text.buf);
+		if ((flags & QSF_ACCEPT_UNCHANGED) == 0) this->editbox.orig = stredup(this->editbox.text.buf);
 
 		this->querystrings[WID_QS_TEXT] = &this->editbox;
 		this->editbox.caption = caption;

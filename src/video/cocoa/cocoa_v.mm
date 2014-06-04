@@ -597,16 +597,16 @@ void CocoaDialog(const char *title, const char *message, const char *buttonLabel
 	_cocoa_video_dialog = true;
 
 	bool wasstarted = _cocoa_video_started;
-	if (_video_driver == NULL) {
+	if (VideoDriver::GetInstance() == NULL) {
 		setupApplication(); // Setup application before showing dialog
-	} else if (!_cocoa_video_started && _video_driver->Start(NULL) != NULL) {
+	} else if (!_cocoa_video_started && VideoDriver::GetInstance()->Start(NULL) != NULL) {
 		fprintf(stderr, "%s: %s\n", title, message);
 		return;
 	}
 
 	NSRunAlertPanel([ NSString stringWithUTF8String:title ], [ NSString stringWithUTF8String:message ], [ NSString stringWithUTF8String:buttonLabel ], nil, nil);
 
-	if (!wasstarted && _video_driver != NULL) _video_driver->Stop();
+	if (!wasstarted && VideoDriver::GetInstance() != NULL) VideoDriver::GetInstance()->Stop();
 
 	_cocoa_video_dialog = false;
 }
@@ -621,8 +621,8 @@ void cocoaSetApplicationBundleDir()
 	char tmp[MAXPATHLEN];
 	CFURLRef url = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
 	if (CFURLGetFileSystemRepresentation(url, true, (unsigned char*)tmp, MAXPATHLEN)) {
-		AppendPathSeparator(tmp, lengthof(tmp));
-		_searchpaths[SP_APPLICATION_BUNDLE_DIR] = strdup(tmp);
+		AppendPathSeparator(tmp, lastof(tmp));
+		_searchpaths[SP_APPLICATION_BUNDLE_DIR] = stredup(tmp);
 	} else {
 		_searchpaths[SP_APPLICATION_BUNDLE_DIR] = NULL;
 	}

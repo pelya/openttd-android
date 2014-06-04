@@ -29,6 +29,8 @@
 #include "../company_func.h"
 #include "../fileio_func.h"
 
+#include "../safeguards.h"
+
 ScriptStorage::~ScriptStorage()
 {
 	/* Free our pointers */
@@ -114,8 +116,8 @@ bool ScriptInstance::LoadCompatibilityScripts(const char *api_version, Subdirect
 	char buf[MAX_PATH];
 	Searchpath sp;
 	FOR_ALL_SEARCHPATHS(sp) {
-		FioAppendDirectory(buf, MAX_PATH, sp, dir);
-		ttd_strlcat(buf, script_name, MAX_PATH);
+		FioAppendDirectory(buf, lastof(buf), sp, dir);
+		strecat(buf, script_name, lastof(buf));
 		if (!FileExists(buf)) continue;
 
 		if (this->engine->LoadScript(buf)) return true;

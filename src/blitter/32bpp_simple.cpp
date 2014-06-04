@@ -15,6 +15,8 @@
 
 #include "../table/sprites.h"
 
+#include "../safeguards.h"
+
 /** Instantiation of the simple 32bpp blitter factory. */
 static FBlitter_32bppSimple iFBlitter_32bppSimple;
 
@@ -40,6 +42,17 @@ void Blitter_32bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 					/* In case the m-channel is zero, do not remap this pixel in any way */
 					if (src->m == 0) {
 						if (src->a != 0) *dst = ComposeColourRGBA(src->r, src->g, src->b, src->a, *dst);
+					} else {
+						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(this->AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
+					}
+					break;
+
+				case BM_CRASH_REMAP:
+					if (src->m == 0) {
+						if (src->a != 0) {
+							uint8 g = MakeDark(src->r, src->g, src->b);
+							*dst = ComposeColourRGBA(g, g, g, src->a, *dst);
+						}
 					} else {
 						if (bp->remap[src->m] != 0) *dst = ComposeColourPA(this->AdjustBrightness(this->LookupColourInPalette(bp->remap[src->m]), src->v), src->a, *dst);
 					}

@@ -15,6 +15,8 @@
 #include "../core/math_func.hpp"
 #include "8bpp_optimized.hpp"
 
+#include "../safeguards.h"
+
 /** Instantiation of the 8bpp optimised blitter factory. */
 static FBlitter_8bppOptimized iFBlitter_8bppOptimized;
 
@@ -83,7 +85,8 @@ void Blitter_8bppOptimized::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Z
 			width -= pixels;
 
 			switch (mode) {
-				case BM_COLOUR_REMAP: {
+				case BM_COLOUR_REMAP:
+				case BM_CRASH_REMAP: {
 					const uint8 *remap = bp->remap;
 					do {
 						uint m = remap[*src];

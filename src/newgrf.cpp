@@ -52,6 +52,8 @@
 #include "table/strings.h"
 #include "table/build_industry.h"
 
+#include "safeguards.h"
+
 /* TTDPatch extended GRF format codec
  * (c) Petr Baudis 2004 (GPL'd)
  * Changes by Florian octo Forster are (c) by the OpenTTD development team.
@@ -375,7 +377,7 @@ void CDECL grfmsg(int severity, const char *str, ...)
 	va_list va;
 
 	va_start(va, str);
-	vsnprintf(buf, sizeof(buf), str, va);
+	vseprintf(buf, lastof(buf), str, va);
 	va_end(va);
 
 	DEBUG(grf, severity, "[%s:%d] %s", _cur.grfconfig->filename, _cur.nfo_line, buf);
@@ -6004,7 +6006,7 @@ static void CfgApply(ByteReader *buf)
 static void DisableStaticNewGRFInfluencingNonStaticNewGRFs(GRFConfig *c)
 {
 	GRFError *error = DisableGrf(STR_NEWGRF_ERROR_STATIC_GRF_CAUSES_DESYNC, c);
-	error->data = strdup(_cur.grfconfig->GetName());
+	error->data = stredup(_cur.grfconfig->GetName());
 }
 
 /* Action 0x07
@@ -6367,7 +6369,7 @@ static void GRFLoadError(ByteReader *buf)
 			error->custom_message = TranslateTTDPatchCodes(_cur.grffile->grfid, lang, true, message, NULL, SCC_RAW_STRING_POINTER);
 		} else {
 			grfmsg(7, "GRFLoadError: No custom message supplied.");
-			error->custom_message = strdup("");
+			error->custom_message = stredup("");
 		}
 	} else {
 		error->message = msgstr[message_id];
@@ -6379,7 +6381,7 @@ static void GRFLoadError(ByteReader *buf)
 		error->data = TranslateTTDPatchCodes(_cur.grffile->grfid, lang, true, data);
 	} else {
 		grfmsg(7, "GRFLoadError: No message data supplied.");
-		error->data = strdup("");
+		error->data = stredup("");
 	}
 
 	/* Only two parameter numbers can be used in the string. */
@@ -6736,7 +6738,7 @@ static void ParamSet(ByteReader *buf)
 			if ((int32)src2 < 0) {
 				res = src1 >> -(int32)src2;
 			} else {
-				res = src1 << src2;
+				res = src1 << (src2 & 0x1F); // Same behaviour as in EvalAdjustT, mask 'value' to 5 bits, which should behave the same on all architectures.
 			}
 			break;
 
@@ -6744,7 +6746,7 @@ static void ParamSet(ByteReader *buf)
 			if ((int32)src2 < 0) {
 				res = (int32)src1 >> -(int32)src2;
 			} else {
-				res = (int32)src1 << src2;
+				res = (int32)src1 << (src2 & 0x1F); // Same behaviour as in EvalAdjustT, mask 'value' to 5 bits, which should behave the same on all architectures.
 			}
 			break;
 
@@ -6888,7 +6890,7 @@ static void GRFInhibit(ByteReader *buf)
 		if (file != NULL && file != _cur.grfconfig) {
 			grfmsg(2, "GRFInhibit: Deactivating file '%s'", file->filename);
 			GRFError *error = DisableGrf(STR_NEWGRF_ERROR_FORCEFULLY_DISABLED, file);
-			error->data = strdup(_cur.grfconfig->GetName());
+			error->data = stredup(_cur.grfconfig->GetName());
 		}
 	}
 }
@@ -7239,7 +7241,7 @@ static void TranslateGRFStrings(ByteReader *buf)
 
 		char tmp[256];
 		GetString(tmp, STR_NEWGRF_ERROR_AFTER_TRANSLATED_FILE, lastof(tmp));
-		error->data = strdup(tmp);
+		error->data = stredup(tmp);
 
 		return;
 	}
@@ -7659,7 +7661,7 @@ AllowedSubtags _tags_root[] = {
  * Try to skip the current node and all subnodes (if it's a branch node).
  * @param buf Buffer.
  * @param type The node type to skip.
- * @return True if we could skip the node, false if an error occured.
+ * @return True if we could skip the node, false if an error occurred.
  */
 static bool SkipUnknownInfo(ByteReader *buf, byte type)
 {
@@ -8180,7 +8182,7 @@ static void InitNewGRFFile(const GRFConfig *config)
  */
 GRFFile::GRFFile(const GRFConfig *config)
 {
-	this->filename = strdup(config->filename);
+	this->filename = stredup(config->filename);
 	this->grfid = config->ident.grfid;
 
 	/* Initialise local settings to defaults */

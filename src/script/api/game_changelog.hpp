@@ -19,9 +19,10 @@
  *
  * 1.5.0 is not yet released. The following changes are not set in stone yet.
  *
- * \b 1.4.0
+ * API additions:
+ * \li GSStation::GetCargoWaitingFromVia
  *
- * 1.4.0 is not yet released. The following changes are not set in stone yet.
+ * \b 1.4.0
  *
  * API additions:
  * \li AICargo::GetDistributionType
@@ -34,8 +35,8 @@
  * \li GSGoal::SetProgress
  * \li GSGoal::SetText
  * \li GSStation::HasCargoRating
- * \li AIStation::GetCargoWaitingFrom
- * \li AIStation::GetCargoWaitingVia
+ * \li GSStation::GetCargoWaitingFrom
+ * \li GSStation::GetCargoWaitingVia
  * \li GSStoryPage
  * \li GSStoryPageList
  * \li GSStoryPageElementList

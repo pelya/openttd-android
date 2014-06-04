@@ -33,6 +33,8 @@
 #include "table/strings.h"
 #include "table/control_codes.h"
 
+#include "safeguards.h"
+
 #define GRFTAB  28
 #define TABSIZE 11
 
@@ -229,7 +231,7 @@ struct UnmappedChoiceList : ZeroedMemoryAllocator {
 			/* In case of a (broken) NewGRF without a default,
 			 * assume an empty string. */
 			grfmsg(1, "choice list misses default value");
-			this->strings[0] = strdup("");
+			this->strings[0] = stredup("");
 		}
 
 		char *d = old_d;

@@ -30,6 +30,8 @@
 	#include <dos.h>
 #endif
 
+#include "../../safeguards.h"
+
 #define INCL_WIN
 #define INCL_WINCLIPBOARD
 
@@ -175,7 +177,7 @@ int CDECL main(int argc, char *argv[])
 	return openttd_main(argc, argv);
 }
 
-bool GetClipboardContents(char *buffer, size_t buff_len)
+bool GetClipboardContents(char *buffer, const char *last)
 {
 /* XXX -- Currently no clipboard support implemented with GCC */
 #ifndef __INNOTEK_LIBC__
@@ -187,7 +189,7 @@ bool GetClipboardContents(char *buffer, size_t buff_len)
 
 		if (text != NULL)
 		{
-			ttd_strlcpy(buffer, text, buff_len);
+			strecpy(buffer, text, last);
 			WinCloseClipbrd(hab);
 			return true;
 		}

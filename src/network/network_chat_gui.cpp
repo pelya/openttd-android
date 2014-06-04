@@ -30,6 +30,8 @@
 
 #include "table/strings.h"
 
+#include "../safeguards.h"
+
 /** The draw buffer must be able to contain the chat message, client name and the "[All]" message,
  * some spaces and possible translations of [All] to other languages. */
 assert_compile((int)DRAW_STRING_BUFFER >= (int)NETWORK_CHAT_LENGTH + NETWORK_NAME_LENGTH + 40);
@@ -84,7 +86,7 @@ void CDECL NetworkAddChatMessage(TextColour colour, uint duration, const char *m
 	va_list va;
 
 	va_start(va, message);
-	vsnprintf(buf, lengthof(buf), message, va);
+	vseprintf(buf, lastof(buf), message, va);
 	va_end(va);
 
 	Utf8TrimString(buf, DRAW_STRING_BUFFER);
@@ -167,7 +169,7 @@ void NetworkUndrawChatMessage()
 		/* Put our 'shot' back to the screen */
 		blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, x, y), _chatmessage_backup, width, height);
 		/* And make sure it is updated next time */
-		_video_driver->MakeDirty(x, y, width, height);
+		VideoDriver::GetInstance()->MakeDirty(x, y, width, height);
 
 		_chatmessage_dirty = true;
 	}
@@ -254,7 +256,7 @@ void NetworkDrawChatMessage()
 	}
 
 	/* Make sure the data is updated next flush */
-	_video_driver->MakeDirty(x, y, width, height);
+	VideoDriver::GetInstance()->MakeDirty(x, y, width, height);
 
 	_chatmessage_visible = true;
 	_chatmessage_dirty = false;
@@ -389,7 +391,7 @@ struct NetworkChatWindow : public Window {
 		item = 0;
 
 		/* Copy the buffer so we can modify it without damaging the real data */
-		pre_buf = (_chat_tab_completion_active) ? strdup(_chat_tab_completion_buf) : strdup(tb->buf);
+		pre_buf = (_chat_tab_completion_active) ? stredup(_chat_tab_completion_buf) : stredup(tb->buf);
 
 		tb_buf  = ChatTabCompletionFindText(pre_buf);
 		tb_len  = strlen(tb_buf);
@@ -426,7 +428,7 @@ struct NetworkChatWindow : public Window {
 			len = strlen(cur_name);
 			if (tb_len < len && strncasecmp(cur_name, tb_buf, tb_len) == 0) {
 				/* Save the data it was before completion */
-				if (!second_scan) snprintf(_chat_tab_completion_buf, lengthof(_chat_tab_completion_buf), "%s", tb->buf);
+				if (!second_scan) seprintf(_chat_tab_completion_buf, lastof(_chat_tab_completion_buf), "%s", tb->buf);
 				_chat_tab_completion_active = true;
 
 				/* Change to the found name. Add ': ' if we are at the start of the line (pretty) */

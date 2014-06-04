@@ -441,9 +441,7 @@ STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Sendajo
 
 
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
-# end of order system
+# Order review system / warnings
 
 
 
@@ -473,7 +471,6 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Ludo Sel
 
 
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altra
-
 
 
 
@@ -534,7 +531,6 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :normala
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Verda
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Obskur-verda
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
-
 
 
 
@@ -956,6 +952,7 @@ STR_GROUP_DEFAULT_TRAINS                                        :Negrupigita tre
 STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Negrupigita voy-vehili
 STR_GROUP_DEFAULT_SHIPS                                         :Negrupigita navi
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Negrupigita aeronavi
+
 
 
 

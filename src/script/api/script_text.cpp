@@ -17,6 +17,18 @@
 
 #include "table/strings.h"
 
+#include "../../safeguards.h"
+
+RawText::RawText(const char *text) : text(stredup(text))
+{
+}
+
+RawText::~RawText()
+{
+	free(this->text);
+}
+
+
 ScriptText::ScriptText(HSQUIRRELVM vm) :
 	ZeroedMemoryAllocator()
 {
@@ -71,7 +83,7 @@ SQInteger ScriptText::_SetParam(int parameter, HSQUIRRELVM vm)
 			const SQChar *value;
 			sq_getstring(vm, -1, &value);
 
-			this->params[parameter] = strdup(SQ2OTTD(value));
+			this->params[parameter] = stredup(SQ2OTTD(value));
 			ValidateString(this->params[parameter]);
 			break;
 		}

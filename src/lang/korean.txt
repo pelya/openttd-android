@@ -598,10 +598,10 @@ STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}종합:
 STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP                         :{BLACK}작년에 수익을 낸 차량의 수를 나타냅니다. 자동차/전차, 열차, 선박, 항공기를 포함합니다.
 STR_PERFORMANCE_DETAIL_STATIONS_TOOLTIP                         :{BLACK}현재 영업 중인 역사의 수를 나타냅니다. 기차역, 버스 정류장, 공항 등은 같은 역으로 묶여있어도 따로 집계됩니다.
 STR_PERFORMANCE_DETAIL_MIN_PROFIT_TOOLTIP                       :{BLACK}가장 낮은 수입을 가진 차량의 이익입니다. (2년 이상된 차량만 계산)
-STR_PERFORMANCE_DETAIL_MIN_INCOME_TOOLTIP                       :{BLACK}지난 12분기동안 최소 이익을 달성한 차량이 번 돈의 양입니다.
-STR_PERFORMANCE_DETAIL_MAX_INCOME_TOOLTIP                       :{BLACK}지난 12분기동안 최대 이익을 달성한 차량이 번 돈의 양입니다.
-STR_PERFORMANCE_DETAIL_DELIVERED_TOOLTIP                        :{BLACK}지난 4분기동안 수송한 화물량입니다.
-STR_PERFORMANCE_DETAIL_CARGO_TOOLTIP                            :{BLACK}지난 1분기에 수송한 화물의 종류 수입니다.
+STR_PERFORMANCE_DETAIL_MIN_INCOME_TOOLTIP                       :{BLACK}지난 12분기 동안 최소 이익을 달성한 차량이 벌어들인 돈의 양입니다.
+STR_PERFORMANCE_DETAIL_MAX_INCOME_TOOLTIP                       :{BLACK}지난 12분기 동안 최대 이익을 달성한 차량이 벌어들인 돈의 양입니다.
+STR_PERFORMANCE_DETAIL_DELIVERED_TOOLTIP                        :{BLACK}지난 4분기 동안 수송한 화물량입니다.
+STR_PERFORMANCE_DETAIL_CARGO_TOOLTIP                            :{BLACK}지난 1분기 동안 수송한 화물의 종류 수입니다.
 STR_PERFORMANCE_DETAIL_MONEY_TOOLTIP                            :{BLACK}회사가 소지한 재정입니다.
 STR_PERFORMANCE_DETAIL_LOAN_TOOLTIP                             :{BLACK}회사가 대출해간 재정의 양입니다.
 STR_PERFORMANCE_DETAIL_TOTAL_TOOLTIP                            :{BLACK}위 항목들의 총 합계 점수입니다.
@@ -811,13 +811,12 @@ STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE
 STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} : 정박소 안에서 대기 중입니다.
 STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} : 격납고 안에서 대기 중입니다.
 
-# Start of order review system
-# DON'T ADD OR REMOVE LINES HERE
+# Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE}에 경로를 하나 이상 지정해주십시오
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE}에 빈 경로가 지정되어 있습니다
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE}에 중복된 경로가 지정되어 있습니다
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE}에 잘못된 경로가 지정되어 있습니다
-# end of order system
+STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE}의 경로 중에 활주로가 너무 짧은 공항이 있습니다.
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} : 차량이 낡았습니다.
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} : 차량이 매우 낡았습니다.
@@ -939,11 +938,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :카탈로니아
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}자동 저장
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}게임 자동 저장 간격을 선택
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :사용 안함
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :매달
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :3개월마다
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :6개월마다
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :12개월마다
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}언어
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}사용하실 언어를 선택하세요.
@@ -954,9 +955,6 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}OpenTTD�
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}화면 해상도
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}사용하실 화면 해상도를 선택하세요.
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :{G=f}기타
-
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT                              :{BLACK}스크린 샷 파일 형식
-STR_GAME_OPTIONS_SCREENSHOT_FORMAT_TOOLTIP                      :{BLACK}사용하실 스크린 샷의 파일 형식을 선택하세요.
 
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}기본 그래픽 세트
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}사용하실 기본 그래픽을 선택하세요.
@@ -1073,7 +1071,7 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :회사 설정 (
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}분류:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}종류:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}설정 값이 변경된 설정만 목록에 표시하도록 할 수 있습니다.
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}미리 지정한 검색어에 해당하는 설정 목록에 표시하도록 할 수 있습니다.
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :기본 설정
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :고급 설정
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :전문가 설정 / 모든 설정
@@ -1128,12 +1126,10 @@ STR_CONFIG_SETTING_TRAIN_REVERSING                              :열차가 역 �
 STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :이 옵션을 켜면 회차했을 때 다음 목적지까지 가는 더 짧은 경로가 있어도 열차가 비두단식 역에서 회차할 수 없게 됩니다.
 STR_CONFIG_SETTING_DISASTERS                                    :재앙: {STRING}
 STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :블록이나 차량, 기반시설을 간혹 파괴할 수도 있는 재앙 옵션을 켜거나 끕니다.
-STR_CONFIG_SETTING_CITY_APPROVAL                                :지역 개발에 대한 도시 의회의 태도: {STRING}
+STR_CONFIG_SETTING_CITY_APPROVAL                                :지역 개발에 대한 도시의 태도: {STRING}
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :회사가 유발하는 소음과 환경 파괴가 회사에 대한 도시의 평가치와 향후 해당 지역에서의 건설 행동에 얼마나 영향을 미칠지 선택하십시오.
 
-STR_CONFIG_SETTING_BUILDONSLOPES                                :경사/해안가 위의 건설을 허용: {STRING}
-STR_CONFIG_SETTING_BUILDONSLOPES_HELPTEXT                       :이 옵션을 켜면 도로, 철도, 역 등을 대부분의 경사에 설치할 수 있게 됩니다. 이 옵션을 끄면 오직 트랙의 방향과 일치하는 경사에만 설치가 가능하기 때문에 기반 지형을 만들 필요가 없습니다.
-STR_CONFIG_SETTING_AUTOSLOPE                                    :건물, 트랙 등의 하부 지형 편집 허용 (자동 슬로프): {STRING}
+STR_CONFIG_SETTING_AUTOSLOPE                                    :건물, 트랙 등의 하부 지형 편집 허용: {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :건물이나 도로/선로 등을 제거하지 않고도 하부의 지형을 편집할 수 있게 허용합니다.
 STR_CONFIG_SETTING_CATCHMENT                                    :더 현실적인 역세권 지정: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :역과 공항의 종류에 따라 다른 크기의 역세권을 가지도록 만듭니다.
@@ -1157,14 +1153,8 @@ STR_CONFIG_SETTING_FORBID_90_DEG                                :열차/선박�
 STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :─ 모양의 수평 선로와 │ 모양의 수직 선로가 바로 이어져 만날 때 90도 회전이 발생합니다. 이 옵션을 켜면 열차가 칸 가장자리를 통과할 때 90도로 회전할 수 있도록 허용합니다. 이 옵션은 선박의 회전 반경에도 적용됩니다.
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :역이 같은 방향으로 붙어있지 않아도 같은 이름의 역 짓기 허용: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :이미 존재하는 역을 직접 건드리지 않고도 역의 일부분을 새로 추가/확장하는 것을 허용합니다. 인접한 칸에 기존과 다른 새로운 역을 놓을 때에는 CTRL+클릭해야 합니다.
-STR_CONFIG_SETTING_IMPROVEDLOAD                                 :향상된 수송 알고리즘 사용: {STRING}
-STR_CONFIG_SETTING_IMPROVEDLOAD_HELPTEXT                        :이 옵션을 켜면 역에서 차량이 여러 대가 기다리고 있으면 먼저 도착한 순서대로 화물을 싣게 됩니다. 다음에 도착하는 차량은, 이미 화물을 싣고 있는 차량이 화물을 모두 싣고 난 다음에서야 적재를 시작하게 됩니다.
-STR_CONFIG_SETTING_GRADUAL_LOADING                              :화물을 차량에 단계적으로 싣기: {STRING}
-STR_CONFIG_SETTING_GRADUAL_LOADING_HELPTEXT                     :적재된 화물의 양에 따라 고정된 시간이 지나면 한 번에 모두 적재하는 대신, 차량의 적재 상황을 시간이 지남에 따라 단계별로 표시합니다.
 STR_CONFIG_SETTING_INFLATION                                    :인플레이션(화폐 가치 하락) 사용: {STRING}
 STR_CONFIG_SETTING_INFLATION_HELPTEXT                           :비용이 지불하는 것보다 약간 더 빠르게 성장하고 있는 경제가 되면 인플레이션을 활성화합니다.
-STR_CONFIG_SETTING_SELECTGOODS                                  :수요가 있을 때만 화물을 역에 옮겨놓음: {STRING}
-STR_CONFIG_SETTING_SELECTGOODS_HELPTEXT                         :역으로 수송되는 화물만 차량에 적재가 가능해집니다. 이 옵션을 켜면 역에서 수송되지 않는 화물이 낮은 수송등급을 받는 것을 막아줍니다.
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH                            :다리의 최대 건설 길이: {STRING}
 STR_CONFIG_SETTING_MAX_BRIDGE_LENGTH_HELPTEXT                   :다리의 최대 길이를 제한할 수 있습니다.
 STR_CONFIG_SETTING_MAX_TUNNEL_LENGTH                            :터널의 최대 길이: {STRING}
@@ -1192,8 +1182,6 @@ STR_CONFIG_SETTING_STOP_LOCATION_HELPTEXT                       :열차가 기�
 STR_CONFIG_SETTING_STOP_LOCATION_NEAR_END                       :가까운쪽
 STR_CONFIG_SETTING_STOP_LOCATION_MIDDLE                         :중간
 STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :먼쪽
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING                        :정류장/적치장이 빌 때까지 앞에서 차량을 대기시킴: {STRING}
-STR_CONFIG_SETTING_ROAD_VEHICLE_QUEUEING_HELPTEXT               :자동차가 정류장이나 적치장이 빌 때까지 그 앞쪽에서 기다리도록 합니다.
 STR_CONFIG_SETTING_AUTOSCROLL                                   :가장자리에 마우스를 가져가면 화면 움직이기: {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL_HELPTEXT                          :이 옵션을 켜면, 마우스를 게임 및 외부 화면 창의 가장자리에 가까이 가져가면 화면을 이동시킵니다.
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :사용 안 함
@@ -1203,7 +1191,7 @@ STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :모든 화면�
 STR_CONFIG_SETTING_BRIBE                                        :지역 당국에 뇌물을 주는 행위 허용: {STRING}
 STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :회사가 지역 도시 당국에 뇌물을 주는 것을 허용합니다. 뇌물 행위가 적발되는 경우, 회사는 해당 도시에서 6개월간 아무 행동도 할 수 없습니다.
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :독점 운송권 구입 허용: {STRING}
-STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :한 회사가 어떤 도시의 독점수송권을 구매하면, 그 도시에 있는 상대편의 역에서는 그 해동안 (승객을 포함한) 그 어떠한 화물도 받을 수 없습니다.
+STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :한 회사가 어떤 도시의 독점수송권을 구매하면, 그 도시에 있는 상대편의 역에서는 그 해 동안 (승객을 포함한) 그 어떠한 화물도 받을 수 없습니다.
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :도시 상업 건물 건설에 투자하는 행위 허용: {STRING}
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS_HELPTEXT                :회사가 도시가 새로운 건물에 투자할 수 있도록 자금을 주는 것을 허용합니다.
 STR_CONFIG_SETTING_ALLOW_FUND_ROAD                              :도시 도로 보수공사 시행을 허용: {STRING}
@@ -1224,15 +1212,11 @@ STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :도시 소유�
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD_HELPTEXT                   :도시 소유의 도로 위에 버스 정류장 건설을 허용합니다.
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :경쟁자 소유의 도로 위에 버스 정류장 건설 허용: {STRING}
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :다른 회사 소유의 도로 위에 버스 정류장을 건설하는 것을 허용합니다.
-STR_CONFIG_SETTING_ADJACENT_STATIONS                            :역 바로 옆에 다른 이름의 역 건설 허용: {STRING}
-STR_CONFIG_SETTING_ADJACENT_STATIONS_HELPTEXT                   :기존에 존재하는 역 바로 옆에 새로운 역을 붙여서 건설할 수 있도록 허용합니다.
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :여러 개의 NewGRF 엔진 세트 허용: {STRING}
-STR_CONFIG_SETTING_DYNAMIC_ENGINES_HELPTEXT                     :오래된 NewGRF에 대한 적합 옵션입니다. 정확히 어떤 기능을 하는지 알지 못한다면 절대 이 옵션을 끄지 마십시오!
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}이미 차량이 존재하면 이 설정을 변경하실 수 없습니다.
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :기반시설 유지비: {STRING}
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE_HELPTEXT          :이 옵션을 활성화하면 기반시설 유지비가 발생합니다. 유지비는 교통망의 규모에 비례하며 대형 회사는 소형 회사보다 많은 유지비가 들어갑니다.
 
-STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :옛날 공항이 사라지지 않고 계속 만들 수 있게 함: {STRING}
+STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS                        :옛날 공항을 사라지지 않고 계속 만들 수 있게 함: {STRING}
 STR_CONFIG_SETTING_NEVER_EXPIRE_AIRPORTS_HELPTEXT               :이 옵션을 켜면 소형 공항을 포함한 모든 공항 종류를 도입 이후 계속 사용할 수 있게 됩니다.
 
 STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            :차량이 길을 잃으면 경고: {STRING}
@@ -1266,27 +1250,41 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :도시 이름 �
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :그래프 선의 두께: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :그래프의 선 두께를 설정합니다. 얇으면 자세히 볼 수 있고, 두꺼우면 눈에 확 들어오며 색상을 분간하기가 편해집니다.
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :지형: {STRING}
+STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :지형에 따라 화물과 도시 성장 요구 조건이 다른 게임 플레이 시나리오가 만들어집니다. NewGRF과 게임 스크립트를 통해 세밀한 조절이 가능합니다.
 STR_CONFIG_SETTING_LAND_GENERATOR                               :지형 만들기: {STRING}
+STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :오리지널 모드는 기본 그래픽 세트에 따라 다른 지형을 생성하며, 단조로운 지형을 구성합니다. 천지창조는 개선된 제어 설정을 가진 생성기로 만들어진 임의 지형(펄린 노이즈)을 구성합니다.
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :오리지널
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :천지창조
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :지형 종류: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(천지창조 전용) 지형의 언덕 모양을 결정합니다.
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :산업시설 수: {STRING}
+STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :게임을 플레이하는 동안 얼마나 많은 산업시설이 생성되고 유지되어야 할 지를 설정합니다.
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :정유 공장의 최대 건설 범위: 지도 맨 끝에서부터 {STRING} 이내
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :정유 공장은 지도의 동서남북 끝 경계 근처에만 건설할 수 있습니다.
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :설선 고도: {STRING}
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :지형의 거친 정도 ('천지창조' 전용): {STRING}
+STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :아한대 기후의 설선 고도를 조절합니다. 눈은 산업시설의 생성과 도시 성장에 영향을 미칩니다.
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :지형의 거친 정도: {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(천지창조 전용) 언덕의 빈도수를 선택합니다. 평탄한 지형은 개수가 적고 넓게 퍼진 언덕을 만듭니다. 거친 지형은 똑같아 보일 수 있는 많은 언덕이 생기게 됩니다.
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :매우 부드럽게
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :부드럽게
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :거칠게
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :매우 거칠게
+STR_CONFIG_SETTING_VARIETY                                      :산세 험준도: {STRING}
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :(천지창조 전용) 지도가 산지와 평지를 모두 갖도록 만들 것인 지를 결정합니다. 이 옵션은 지형을 더 평평하게 만드므로, 다른 옵션은 '산'으로 설정하시기 바랍니다.
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :강의 양: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :강을 얼마나 만들지 선택하십시오.
 STR_CONFIG_SETTING_TREE_PLACER                                  :나무 배치 알고리즘: {STRING}
+STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :지도의 나무 분포 형식을 선택하십시오. '오리지널'을 선택하면 나무가 고르게 분포되고, '향상됨'을 선택하면 나무가 군락을 이루게 됩니다.
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :없음
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :오리지널
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :향상됨
+STR_CONFIG_SETTING_ROAD_SIDE                                    :자동차/전차: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :통행방향을 선택하세요.
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :높이맵 회전: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :반시계방향
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :시계방향
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :평지 시나리오의 평지 높이: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES                        :지도 가장자리의 지형 변경을 허용: {STRING}
-STR_CONFIG_SETTING_ENABLE_FREEFORM_EDGES_HELPTEXT               :이 옵션을 끄면, 지도의 동서남북 끝이 반드시 모두 물이어야 합니다.
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}지도 북쪽 맨 가장자리에 있는 지형의 칸 한 개 이상이 비어있지 않습니다.
 STR_CONFIG_SETTING_EDGES_NOT_WATER                              :{WHITE}지도 맨 가장자리에 있는 칸 한 개 이상이 물이 아닙니다.
 
@@ -1337,16 +1335,14 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :끄기
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :마우스 왼쪽 버튼으로 스크롤: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :왼쪽 마우스 버튼을 드래그하여 지도를 스크롤 할 수 있도록 합니다. 터치 스크린 환경에서 이 옵션을 켜면 매우 유용합니다.
 
+STR_CONFIG_SETTING_AUTOSAVE                                     :자동 저장: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :게임을 자동으로 저장할 간격을 선택하십시오.
+
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :저장 파일의 이름으로 {STRING} 날짜 형식을 사용합니다.
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :게임 저장 파일 이름에 사용할 날짜 형식을 선택합니다.
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :긴 (2012년 1월 1일)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_SHORT              :짧은 (2012.01.01)
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :국제표준규격 (2012-01-01)
-
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :기본으로 설정할 NewGRF 색상표: {STRING}
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :어떤 색상표를 사용할지 지정하지 않은 NewGRF에 사용할 기본 색상표를 선택합니다.
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :기본(DOS) 색상표
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :기존 (Windows) 색상표
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :게임 시작 시 자동으로 일시정지: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :이 옵션을 켜면, 새로은 게임을 시작할 때 지도를 더욱 살펴볼 수 있도록 게임을 자동으로 일시정시시킵니다.
@@ -1356,7 +1352,7 @@ STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_NO_ACTIONS               :아무 것도 �
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_CONSTRUCTION     :모든 비건설적인 행동
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_LANDSCAPING      :지형 편집을 제외한 모든 행동
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_ACTIONS              :모든 행동
-STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :고급화된 차량 목록 사용: {STRING}
+STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :차량 목록에서 그룹 기능 사용: {STRING}
 STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :고급화된 차량 목록의 사용 여부를 설정합니다.
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :적재율 표시: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :적재나 하차하는 차량 위에 적재/하차율을 표시할지 말지를 선택합니다.
@@ -1364,8 +1360,8 @@ STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :열차 시간�
 STR_CONFIG_SETTING_TIMETABLE_IN_TICKS_HELPTEXT                  :열차 시간표에서 열차의 운행 시간을 '일'보다 자세한 '틱'으로 표시합니다. 1일은 74틱과 같습니다.
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :시간표에서 출발일과 도착일 표시: {STRING}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :열차 시간표에서 예상 출발 & 도착 시간을 표시합니다.
-STR_CONFIG_SETTING_QUICKGOTO                                    :행선지 설정 후 계속해서 행선지 지정: {STRING}
-STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :경로 창을 열었을 때, 자동으로 '행선지' 버튼을 눌러 창을 열면 바로 행선지를 지정할 수 있도록 합니다.
+STR_CONFIG_SETTING_QUICKGOTO                                    :빠른 행선지 설정: {STRING}
+STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :경로 창을 열면 자동으로 '행선지' 버튼을 선택하여 곧바로 행선지를 지정할 수 있도록 합니다.
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE                            :철도 형식 기본값 설정 (게임 시작/불러온 후): {STRING}
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_HELPTEXT                   :게임을 새로 시작하거나 불러온 뒤에 사용할 철도의 종류를 선택합니다. '처음 사용 가능한 것'은 가장 오래된 철도 종류를 선택하고, '최신 기술의 철도'는 가장 최신에 나온 철도 종류를 선택하며 '가장 많이 사용한 것'은 플레이어가 가장 많이 사용한 철도 타입을 선택합니다.
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_FIRST                      :처음 사용 가능한 것
@@ -1397,13 +1393,13 @@ STR_CONFIG_SETTING_SOUND_AMBIENT_HELPTEXT                       :주변 풍경�
 
 STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING                  :사용 가능한 차량이 없을 경우 해당 기반시설 비활성화: {STRING}
 STR_CONFIG_SETTING_DISABLE_UNSUITABLE_BUILDING_HELPTEXT         :이 옵션을 켜면, 불필요하게 시간과 돈을 낭비하지 않도록 차량이 존재하지 않는 기반시설을 설치할 수 없게 됩니다.
-STR_CONFIG_SETTING_MAX_TRAINS                                   :최대 열차 수: {STRING}
+STR_CONFIG_SETTING_MAX_TRAINS                                   :회사당 최대 열차 수: {STRING}
 STR_CONFIG_SETTING_MAX_TRAINS_HELPTEXT                          :한 회사가 소유할 수 있는 열차의 최대 수를 제한합니다.
-STR_CONFIG_SETTING_MAX_ROAD_VEHICLES                            :최대 자동차/전차 수: {STRING}
+STR_CONFIG_SETTING_MAX_ROAD_VEHICLES                            :회사당 최대 자동차/전차 수: {STRING}
 STR_CONFIG_SETTING_MAX_ROAD_VEHICLES_HELPTEXT                   :한 회사가 소유할 수 있는 자동차/전차의 최대 수를 제한합니다.
-STR_CONFIG_SETTING_MAX_AIRCRAFT                                 :최대 항공기 수: {STRING}
+STR_CONFIG_SETTING_MAX_AIRCRAFT                                 :회사당 최대 항공기 수: {STRING}
 STR_CONFIG_SETTING_MAX_AIRCRAFT_HELPTEXT                        :한 회사가 소유할 수 있는 항공기의 최대 수를 제한합니다.
-STR_CONFIG_SETTING_MAX_SHIPS                                    :최대 선박 수: {STRING}
+STR_CONFIG_SETTING_MAX_SHIPS                                    :회사당 최대 선박 수: {STRING}
 STR_CONFIG_SETTING_MAX_SHIPS_HELPTEXT                           :한 회사가 소유할 수 있는 선박의 최대 수를 제한합니다.
 
 STR_CONFIG_SETTING_AI_BUILDS_TRAINS                             :컴퓨터의 철도 사용을 허가하지 않음: {STRING}
@@ -1477,8 +1473,8 @@ STR_CONFIG_SETTING_NEWS_GENERAL_INFORMATION                     :일반 정보: 
 STR_CONFIG_SETTING_NEWS_GENERAL_INFORMATION_HELPTEXT            :도로 재건축 투자나 수송 독점권의 구입 등과 같은 일반적인 사건에 대한 소식을 메시지로 알려줍니다.
 
 STR_CONFIG_SETTING_NEWS_MESSAGES_OFF                            :끄기
-STR_CONFIG_SETTING_NEWS_MESSAGES_SUMMARY                        :요약
-STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :전체
+STR_CONFIG_SETTING_NEWS_MESSAGES_SUMMARY                        :상태 표시줄로 알림
+STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :전체 메시지로 알림
 
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR                           :컬러로 된 뉴스가 시작되는 해: {STRING}년
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :신문이 컬러로 나오게 되는 연도를 설정합니다. 이 연도 이전까지는 신문이 흑백으로 나옵니다.
@@ -1569,8 +1565,6 @@ STR_CONFIG_SETTING_LARGER_TOWNS_VALUE                           :{COMMA}개 중�
 STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :없음
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :초기 대도시 크기 비율: 일반 도시보다 {STRING}배 크게 시작
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :게임을 시작했을 때 일반 도시에 대한 대도시의 평균 크기를 설정합니다.
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :도로 재건설 중 불필요한 도로 요소를 제거: {STRING}
-STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD_HELPTEXT               :도로 재건설에 투자하였을 때, 재건설 도중에 불필요한 도로를 제거합니다.
 
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :분배 상태를 매 {STRING}일 마다 갱신
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :다음 연결 상태를 재계산하기까지의 시간입니다. 한 번의 재계산할 때마다 그래프의 한 요소를 위한 계획을 계산합니다. 이는 이 설정의 X값에 따라 모든 그래프가 매 X일마다 갱신되는 것이 아니라는 것을 뜻합니다. 일부 요소만 재계산된다는 뜻입니다. 값이 작으면 작을 수록 CPU가 계산해야 할 횟수가 늘어납니다. 값을 크게 설정할 수록 화물 분배 상태가 새롭게 지정되는 데 더 오랜 시간이 걸립니다.
@@ -1584,7 +1578,7 @@ STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"균형"은 A�
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL                            :우편에 대한 분배 형식: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :"균형"은 A역에서 B역으로 가려는 우편물의 수가 B에서 A로 가려는 우편물의 수와 비슷하다는 뜻입니다. "불균형"은 우편물이 아무 방향이나 임의의 양만큼 가게 됨을 뜻합니다. "수동"은 자동적인 우편물 분배가 일어나지 않고 기존 방식을 사용하겠음을 뜻합니다.
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :장갑 화물에 대한 분배 형식: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :장갑 화물은 온대 기후의 귀금속, 아열대 기후의 다이아몬드 또는 냉대 기후의 금을 말합니다. NewGRF을 사용하면 달라질 수 있습니다. "균형"은 A역에서 B역으로 가려는 화물의 수가 B에서 A로 가려는 화물의 수와 비슷하다는 뜻입니다. "불균형"은 화물이 아무 방향이나 임의의 양만큼 가게 됨을 뜻합니다. "수동"은 자동적인 화물 분배가 일어나지 않고 기존 방식을 사용하겠음을 뜻합니다. 냉대 기후에서는 균형으로 설정하면 은행이 금광으로 금을 보내지 않으려 하기 때문에 불균형이나 수동으로 설정하는 것을 추천합니다. 온대 기후나 아열대 기후에서는 은행이 일부 적재한 귀금속을 원래 은행으로 보내려고 하기 때문에 균형을 선택해도 됩니다.
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :장갑 화물은 온대 기후의 귀금속, 아열대 기후의 다이아몬드 또는 아한대 기후의 금을 말합니다. NewGRF을 사용하면 달라질 수 있습니다. "균형"은 A역에서 B역으로 가려는 화물의 수가 B에서 A로 가려는 화물의 수와 비슷하다는 뜻입니다. "불균형"은 화물이 아무 방향이나 임의의 양만큼 가게 됨을 뜻합니다. "수동"은 자동적인 화물 분배가 일어나지 않고 기존 방식을 사용하겠음을 뜻합니다. 아한대 기후에서는 균형으로 설정하면 은행이 금광으로 금을 보내지 않으려 하기 때문에 불균형이나 수동으로 설정하는 것을 추천합니다. 온대 기후나 아열대 기후에서는 은행이 일부 적재한 귀금속을 원래 은행으로 보내려고 하기 때문에 균형을 선택해도 됩니다.
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :다른 화물에 대한 분배 형식: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"불균형"은 화물이 아무 방향이나 임의의 양만큼 가게 됨을 뜻합니다. "수동"은 자동적인 화물 분배가 일어나지 않고 기존 방식을 사용하겠음을 뜻합니다. 특별한 이유가 없는 한, "불균형"이나 "수동"으로 설정하십시오.
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :분배 정확도: {STRING}
@@ -1632,27 +1626,29 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :임페리얼법
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :미터법 (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :국제표준규격 (m)
 
-STR_CONFIG_SETTING_GUI                                          :{ORANGE}인터페이스
 STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}단위 설정
-STR_CONFIG_SETTING_CONSTRUCTION                                 :{ORANGE}건설
-STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}차량
-STR_CONFIG_SETTING_STATIONS                                     :{ORANGE}역
-STR_CONFIG_SETTING_ECONOMY                                      :{ORANGE}경제
-STR_CONFIG_SETTING_LINKGRAPH                                    :{ORANGE}화물 분배
-STR_CONFIG_SETTING_AI                                           :{ORANGE}경쟁자
-STR_CONFIG_SETTING_DISPLAY_OPTIONS                              :{ORANGE}디스플레이 옵션
-STR_CONFIG_SETTING_INTERACTION                                  :{ORANGE}조작 옵션
+STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}그래픽
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}효과음
-STR_CONFIG_SETTING_NEWS                                         :{ORANGE}뉴스와 메시지
-STR_CONFIG_SETTING_CONSTRUCTION_SIGNALS                         :{ORANGE}신호기
-STR_CONFIG_SETTING_STATIONS_CARGOHANDLING                       :{ORANGE}화물
-STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}컴퓨터 플레이어
-STR_CONFIG_SETTING_VEHICLES_AUTORENEW                           :{ORANGE}자동 교체
-STR_CONFIG_SETTING_VEHICLES_SERVICING                           :{ORANGE}정비
+STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}인터페이스
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}일반
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}게임 화면
+STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}건설
+STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}뉴스 / 정보
+STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}회사
+STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}회계
+STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}차량
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}물리
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}경로
-STR_CONFIG_SETTING_VEHICLES_TRAINS                              :{G=f}{ORANGE}열차
-STR_CONFIG_SETTING_ECONOMY_TOWNS                                :{ORANGE}도시
-STR_CONFIG_SETTING_ECONOMY_INDUSTRIES                           :{ORANGE}산업시설
+STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}제한
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}재앙 / 사고
+STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}세계 제작
+STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}환경
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}지역 당국
+STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}도시
+STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}산업시설
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}화물 분배
+STR_CONFIG_SETTING_AI                                           :{ORANGE}경쟁자
+STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}컴퓨터 플레이어
 
 STR_CONFIG_SETTING_PATHFINDER_OPF                               :오리지널
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
@@ -1715,7 +1711,7 @@ STR_INTRO_TOOLTIP_SCENARIO_EDITOR                               :{BLACK}사용�
 STR_INTRO_TOOLTIP_MULTIPLAYER                                   :{BLACK}멀티 플레이 게임을 시작합니다
 
 STR_INTRO_TOOLTIP_TEMPERATE                                     :{BLACK}온대 기후 선택
-STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE                          :{BLACK}냉대 기후 선택
+STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE                          :{BLACK}아한대 기후 선택
 STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE                        :{BLACK}아열대 기후 선택
 STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}장난감나라 선택
 
@@ -1761,10 +1757,10 @@ STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}다음 
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}마법 불도저 (산업시설, 움직이지 못하는 건물 제거): {ORANGE}{STRING}
 STR_CHEAT_CROSSINGTUNNELS                                       :{LTBLUE}터널 교차 허용: {ORANGE}{STRING}
 STR_CHEAT_NO_JETCRASH                                           :{LTBLUE}대형 항공기가 소형 공항에서 (자주) 충돌하지 않게 함: {ORANGE}{STRING}
-STR_CHEAT_SWITCH_CLIMATE_TEMPERATE_LANDSCAPE                    :온대 기후
-STR_CHEAT_SWITCH_CLIMATE_SUB_ARCTIC_LANDSCAPE                   :냉대 기후
-STR_CHEAT_SWITCH_CLIMATE_SUB_TROPICAL_LANDSCAPE                 :아열대 기후
-STR_CHEAT_SWITCH_CLIMATE_TOYLAND_LANDSCAPE                      :장난감 나라
+STR_CHEAT_SWITCH_CLIMATE_TEMPERATE_LANDSCAPE                    :온대 기후 지형
+STR_CHEAT_SWITCH_CLIMATE_SUB_ARCTIC_LANDSCAPE                   :아한대 지형
+STR_CHEAT_SWITCH_CLIMATE_SUB_TROPICAL_LANDSCAPE                 :아열대 기후 지형
+STR_CHEAT_SWITCH_CLIMATE_TOYLAND_LANDSCAPE                      :장난감나라 지형
 STR_CHEAT_CHANGE_DATE                                           :{LTBLUE}날짜 변경: {ORANGE}{DATE_SHORT}
 STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}현재의 연도를 변경
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}1차 산업시설 생산량 조절 허용: {ORANGE}{STRING}
@@ -1809,6 +1805,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :화물 전차
 STR_FACE_CAPTION                                                :{WHITE}얼굴 선택
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}새 얼굴 선택을 취소합니다.
 STR_FACE_OK_TOOLTIP                                             :{BLACK}이 얼굴을 선택합니다.
+STR_FACE_RANDOM                                                 :{BLACK}무작위화
 
 STR_FACE_MALE_BUTTON                                            :{BLACK}남성
 STR_FACE_MALE_TOOLTIP                                           :{BLACK}남성 얼굴 선택
@@ -2678,7 +2675,7 @@ STR_SAVELOAD_DETAIL_GRFSTATUS                                   :{SILVER}NewGRF:
 STR_SAVELOAD_OSKTITLE                                           :{BLACK}게임을 저장할 파일명을 입력하세요
 
 # World generation
-STR_MAPGEN_WORLD_GENERATION_CAPTION                             :{WHITE}세계 창조
+STR_MAPGEN_WORLD_GENERATION_CAPTION                             :{WHITE}세계 제작
 STR_MAPGEN_MAPSIZE                                              :{BLACK}지도 크기:
 STR_MAPGEN_MAPSIZE_TOOLTIP                                      :{BLACK}지도의 크기를 칸 수 기준으로 선택하십시오. 사용 가능한 지도의 칸 수는 선택한 값보다 조금 적습니다.
 STR_MAPGEN_BY                                                   :{BLACK}x
@@ -2688,10 +2685,6 @@ STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}산업�
 STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}설선 고도:
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}설선 고도를 1칸 높입니다
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}설선 고도를 1칸 낮춥니다
-STR_MAPGEN_RANDOM_SEED                                          :{BLACK}무작위수치:
-STR_MAPGEN_RANDOM_SEED_HELP                                     :{BLACK}무작위수치를 입력하세요
-STR_MAPGEN_RANDOM                                               :{BLACK}무작위화
-STR_MAPGEN_RANDOM_HELP                                          :{BLACK}지형 만들기를 위한 무작위수치 변경
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}지형 만들기:
 STR_MAPGEN_TREE_PLACER                                          :{BLACK}나무 알고리즘:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}지형 종류:
@@ -2718,7 +2711,6 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}높이�
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}크기:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
-STR_MAPGEN_RANDOM_SEED_OSKTITLE                                 :{BLACK}임의 설정값 입력
 STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}설선 고도를 변경
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}시작 연도를 변경합니다.
 
@@ -2736,7 +2728,7 @@ STR_SE_MAPGEN_FLAT_WORLD_HEIGHT_QUERY_CAPT                      :{WHITE}평지�
 # Map generation progress
 STR_GENERATION_WORLD                                            :{WHITE}세계 만드는 중..
 STR_GENERATION_ABORT                                            :{BLACK}중지
-STR_GENERATION_ABORT_CAPTION                                    :{WHITE}세계 만들기 중지
+STR_GENERATION_ABORT_CAPTION                                    :{WHITE}세계 제작 중지
 STR_GENERATION_ABORT_MESSAGE                                    :{YELLOW}세계 만들기를 중지하시겠습니까?
 STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}% 완료
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
@@ -2773,6 +2765,8 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}위로
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}선택한 NewGRF 파일의 순서를 위로 올립니다.
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}아래로
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}선택한 NewGRF 파일의 순서를 아래로 내립니다.
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}업데이트
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}새 버전이 있는 NewGRF 파일을 업데이트합니다.
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}설치된 NewGRF의 목록입니다.
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}매개 변수 설정
@@ -2796,6 +2790,16 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}관련 �
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}일치하는 파일을 찾을 수 없습니다
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}사용 안 함
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}이 OpenTTD 버전과 맞지 않습니다...
+
+# NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{WHITE}프리셋 저장
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}사용 가능한 프리셋 목록입니다. 아래에 같은 이름을 복사하려면 선택하십시오.
+STR_SAVE_PRESET_TITLE                                           :{BLACK}프리셋의 이름을 입력하세요
+STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}저장할 프리셋에 지정할 이름입니다.
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}취소
+STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}프리셋을 바꾸지 않습니다.
+STR_SAVE_PRESET_SAVE                                            :{BLACK}저장
+STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}이 프리셋을 선택한 이름으로 저장합니다.
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}NewGRF 매개 변숫값 변경
@@ -3076,9 +3080,9 @@ STR_STATION_VIEW_WAITING_STATION                                :역: 대기
 STR_STATION_VIEW_WAITING_AMOUNT                                 :양: 대기
 STR_STATION_VIEW_PLANNED_STATION                                :역: 계획
 STR_STATION_VIEW_PLANNED_AMOUNT                                 :양: 계획
-STR_STATION_VIEW_FROM                                           :{YELLOW}{1:STATION} 출발 {0:CARGO_SHORT}
-STR_STATION_VIEW_VIA                                            :{YELLOW}{1:STATION} 경유 {0:CARGO_SHORT}
-STR_STATION_VIEW_TO                                             :{YELLOW}{1:STATION} 도착 {0:CARGO_SHORT}
+STR_STATION_VIEW_FROM                                           :{YELLOW}{1:STATION} 출발: {0:CARGO_SHORT}
+STR_STATION_VIEW_VIA                                            :{YELLOW}{1:STATION} 경유: {0:CARGO_SHORT}
+STR_STATION_VIEW_TO                                             :{YELLOW}{1:STATION} 도착: {0:CARGO_SHORT}
 STR_STATION_VIEW_FROM_ANY                                       :{RED}알 수 없는 역에서 출발한 {CARGO_SHORT}
 STR_STATION_VIEW_TO_ANY                                         :{RED}아무 역에나 도착하는 {CARGO_SHORT}
 STR_STATION_VIEW_VIA_ANY                                        :{RED}어디든 경유하는 {CARGO_SHORT}
@@ -3298,11 +3302,14 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :그룹에 속�
 STR_GROUP_DEFAULT_SHIPS                                         :그룹에 속하지 않은 선박
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :그룹에 속하지 않은 항공기
 
-STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}그룹 - 클릭해서 그룹에 속한 차량을 모두 나열합니다.
+STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}그룹 - 클릭해서 그룹에 속한 차량을 모두 나열합니다. 상하위 그룹을 바꾸려면 드래그 앤 드롭하십시오.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}그룹 만들기
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}선택한 그룹 삭제
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}선택한 그룹 이름 바꾸기
 STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}클릭하여 전체 자동 교체로부터 이 그룹을 보호합니다.
+
+STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}그룹 삭제
+STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}이 그룹과 하위 그룹을 정말 삭제하시겠습니까?
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :경로를 공유 중인 차량 추가
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :모든 차량 제거
@@ -3379,7 +3386,7 @@ STR_DEPOT_RENAME_DEPOT_CAPTION                                  :차량기지 �
 
 STR_DEPOT_NO_ENGINE                                             :{BLACK}-
 STR_DEPOT_VEHICLE_TOOLTIP                                       :{BLACK}{ENGINE}{STRING}
-STR_DEPOT_VEHICLE_TOOLTIP_CHAIN                                 :{BLACK}{NUM} 차량{STRING}
+STR_DEPOT_VEHICLE_TOOLTIP_CHAIN                                 :{BLACK}차량 {NUM}대{STRING}
 STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} ({CARGO_SHORT})
 
 STR_DEPOT_TRAIN_LIST_TOOLTIP                                    :{BLACK}열차 - 열차에 차량을 추가하거나 제거하려면 차량을 왼쪽 클릭으로 드래그하시고, 열차 정보를 보려면 오른쪽 클릭하십시오. 두 기능을 해당 차량 뒤에 딸려오는 차량에 적용하고 싶다면 CTRL 키를 누르고 계십시오.
@@ -3477,7 +3484,7 @@ STR_REPLACE_VEHICLES_START                                      :{BLACK}차량 �
 STR_REPLACE_VEHICLES_NOW                                        :모든 차량을 지금 교체
 STR_REPLACE_VEHICLES_WHEN_OLD                                   :오래된 차량만 교체
 STR_REPLACE_HELP_START_BUTTON                                   :{BLACK}왼쪽에서 선택한 기관차를 오른쪽의 새 기관차로 교체하려면 누르세요
-STR_REPLACE_NOT_REPLACING                                       :{BLACK}교체 안됨
+STR_REPLACE_NOT_REPLACING                                       :{BLACK}교체 안 됨
 STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED                      :{BLACK}차량이 선택되지 않았음
 STR_REPLACE_REPLACING_WHEN_OLD                                  :낡으면 {ENGINE}(으)로 교체
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}차량 교체 중지
@@ -3491,9 +3498,9 @@ STR_REPLACE_WAGONS                                              :화물차
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}교체할 기관차의 철도 종류를 고르세요
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}왼쪽의 선택한 기관차가 어떤 기관차로 교체되고 있는지 표시합니다.
 STR_REPLACE_RAIL_VEHICLES                                       :철도 차량
-STR_REPLACE_ELRAIL_VEHICLES                                     :전기철도
+STR_REPLACE_ELRAIL_VEHICLES                                     :전기철도 차량
 STR_REPLACE_MONORAIL_VEHICLES                                   :모노레일 차량
-STR_REPLACE_MAGLEV_VEHICLES                                     :자기부상
+STR_REPLACE_MAGLEV_VEHICLES                                     :자기부상 차량
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}화물차 제거: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}자동 교체시 열차의 길이가 교체 전보다 길어지면 앞쪽부터 화물칸를 제거하여 열차의 전체 길이가 달라지지 않도록 합니다.
@@ -3692,8 +3699,8 @@ STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}선택�
 
 STR_ORDER_REFIT                                                 :{BLACK}개조
 STR_ORDER_REFIT_TOOLTIP                                         :{BLACK}이 경로에서 열차를 어떤 화물을 받을 수 있게 개조할 것인지 선택하십시오. CTRL+클릭하면 개조 설정을 해제합니다.
-STR_ORDER_REFIT_AUTO                                            :{G=f}{BLACK}자동 개조
-STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}이 단계에서 자동으로 개조할 화물의 종류를 선택하세요. CTRL+클릭하면 개조 설정을 해제합니다. 자동 개조 기능은 개조 가능한 차량에서만 사용할 수 있습니다.
+STR_ORDER_REFIT_AUTO                                            :{BLACK}개조
+STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}이 경로에서 개조할 화물의 종류를 선택하세요. CTRL+클릭하면 개조 설정을 해제합니다. 개조 기능은 개조 가능한 차량에서만 사용할 수 있습니다.
 STR_ORDER_DROP_REFIT_AUTO                                       :화물 종류 고정
 STR_ORDER_DROP_REFIT_AUTO_ANY                                   :이용가능한 화물
 
@@ -3760,7 +3767,7 @@ STR_ORDER_SHIP_DEPOT                                            :정박소
 STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
-STR_ORDER_REFIT_ORDER                                           :({STRING}(으)로 개조)
+STR_ORDER_REFIT_ORDER                                           :({STRING}{G 0 "으" ""}로 개조)
 STR_ORDER_REFIT_STOP_ORDER                                      :({STRING}에서 수리 후 멈춤)
 STR_ORDER_STOP_ORDER                                            :(멈춤)
 
@@ -3768,36 +3775,36 @@ STR_ORDER_GO_TO_STATION                                         :{STRING} {STATI
 
 STR_ORDER_IMPLICIT                                              :(자동)
 
-STR_ORDER_FULL_LOAD                                             :(모든 화물을 가득 실음)
+STR_ORDER_FULL_LOAD                                             :(모든 화물을 가득 싣기)
 STR_ORDER_FULL_LOAD_ANY                                         :(아무 화물이나 가득 싣기)
 STR_ORDER_NO_LOAD                                               :(싣지 않기)
 STR_ORDER_UNLOAD                                                :(화물 하차 후 적재)
-STR_ORDER_UNLOAD_FULL_LOAD                                      :(화물 하차 후 모든 화물을 싣고 출발)
+STR_ORDER_UNLOAD_FULL_LOAD                                      :(화물 하차 후 모든 화물을 가득 싣기)
 STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :(화물 하차 후 아무 화물이나 가득 싣기)
 STR_ORDER_UNLOAD_NO_LOAD                                        :(화물 하차 후 빈 차로 출발)
-STR_ORDER_TRANSFER                                              :(환승 후 화물 받음)
-STR_ORDER_TRANSFER_FULL_LOAD                                    :(환승 후 모든 화물 적재)
+STR_ORDER_TRANSFER                                              :(환승 후 화물 적재)
+STR_ORDER_TRANSFER_FULL_LOAD                                    :(환승 후 모든 화물을 가득 싣기)
 STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :(환승 후 아무 화물이나 가득 싣기)
 STR_ORDER_TRANSFER_NO_LOAD                                      :(환승 후 빈 차로 출발)
-STR_ORDER_NO_UNLOAD                                             :(내리지 않고 화물을 받음)
-STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :(내리지 않고 가득 찰 때까지 기다림)
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :(내리지 않고 아무 화물이나 가득 찰 때까지 기다림)
+STR_ORDER_NO_UNLOAD                                             :(내리지 않고 화물 적재)
+STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :(내리지 않고 모든 화물을 가득 싣기)
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :(내리지 않고 아무 화물이나 가득 싣기)
 STR_ORDER_NO_UNLOAD_NO_LOAD                                     :(적재와 하차 없음)
 
-STR_ORDER_AUTO_REFIT                                            :({STRING}{G 0 "으" ""}로 자동 개조)
-STR_ORDER_FULL_LOAD_REFIT                                       :({STRING}{G 0 "으" ""}로 자동 개조하면서 모든 화물을 가득 싣기)
-STR_ORDER_FULL_LOAD_ANY_REFIT                                   :({STRING}{G 0 "으" ""}로 자동 개조하면서 아무 화물이나 가득 싣기)
-STR_ORDER_UNLOAD_REFIT                                          :({STRING}{G 0 "으" ""}로 자동 개조하면서 화물 하차 후 적재)
-STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :({STRING}{G 0 "으" ""}로 자동 개조하면서 화물 하차 후 모든 화물을 싣고 출발)
-STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :({STRING}{G 0 "으" ""}로 자동 개조하면서 화물 하차 후 아무 화물이나 가득 싣기)
-STR_ORDER_TRANSFER_REFIT                                        :({STRING}{G 0 "으" ""}로 자동 개조하면서 환승 후 화물 받음)
-STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :({STRING}{G 0 "으" ""}로 자동 개조하면서 환승 후 모든 화물 적재)
-STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :({STRING}{G 0 "으" ""}로 자동 개조하면서 환승 후 아무 화물이나 가득 싣기)
-STR_ORDER_NO_UNLOAD_REFIT                                       :({STRING}{G 0 "으" ""}로 자동 개조하면서 내리지 않고 화물을 받음)
-STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :({STRING}{G 0 "으" ""}로 자동 개조하면서 내리지 않고 가득 찰 때까지 기다림)
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :({STRING}{G 0 "으" ""}로 자동 개조하면서 내리지 않고 아무 화물이나 가득 찰 때까지 기다림)
+STR_ORDER_AUTO_REFIT                                            :({STRING}{G 0 "으" ""}로 개조)
+STR_ORDER_FULL_LOAD_REFIT                                       :({STRING}{G 0 "으" ""}로 개조하며 모든 화물을 가득 싣기)
+STR_ORDER_FULL_LOAD_ANY_REFIT                                   :({STRING}{G 0 "으" ""}로 개조하며 아무 화물이나 가득 싣기)
+STR_ORDER_UNLOAD_REFIT                                          :({STRING}{G 0 "으" ""}로 개조하며 화물 하차 후 적재)
+STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :({STRING}{G 0 "으" ""}로 개조하며 화물 하차 후 모든 화물을 가득 싣기)
+STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :({STRING}{G 0 "으" ""}로 개조하며 화물 하차 후 아무 화물이나 가득 싣기)
+STR_ORDER_TRANSFER_REFIT                                        :({STRING}{G 0 "으" ""}로 개조하며 환승 후 화물 적재)
+STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :({STRING}{G 0 "으" ""}로 개조하며 환승 후 모든 화물을 가득 싣기)
+STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :({STRING}{G 0 "으" ""}로 개조하며 환승 후 아무 화물이나 가득 싣기)
+STR_ORDER_NO_UNLOAD_REFIT                                       :({STRING}{G 0 "으" ""}로 개조하며 화물을 내리지 않고 적재)
+STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :({STRING}{G 0 "으" ""}로 개조하며 화물을 내리지 않고 모든 화물을 가득 싣기)
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :({STRING}{G 0 "으" ""}로 개조하며 화물을 내리지 않고 아무 화물이나 가득 싣기)
 
-STR_ORDER_AUTO_REFIT_ANY                                        :{G=m}이용가능한 화물
+STR_ORDER_AUTO_REFIT_ANY                                        :이용 가능한 화물
 
 STR_ORDER_STOP_LOCATION_NEAR_END                                :[가까운쪽]
 STR_ORDER_STOP_LOCATION_MIDDLE                                  :[중간]
@@ -3821,9 +3828,13 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}시간�
 STR_TIMETABLE_NO_TRAVEL                                         :운행정보 없음
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :이동 (자동; 다음 경로에 의해 시간표 작성)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :운행 (시간표가 작성되지 않음)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :최대 {2:VELOCITY}의 속력으로 운행 (시간표 작성 안됨)
+STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :최대 {2:VELOCITY}의 속력으로 운행 (시간표 작성 안 됨)
 STR_TIMETABLE_TRAVEL_FOR                                        :{STRING}에 걸쳐 운행
-STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :{0:STRING}동안 최대 {1:VELOCITY}의 속력으로 운행
+STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :{0:STRING} 동안 최대 {1:VELOCITY}의 속력으로 운행
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :운행 ({STRING} 동안, 시간표 작성 안 됨)
+STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :최대 {1:VELOCITY}의 속력으로 운행 ({0:STRING} 동안, 시간표 작성 안 됨)
+STR_TIMETABLE_STAY_FOR_ESTIMATED                                :({STRING} 동안 정차, 시간표 작성 안 됨)
+STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :({STRING} 동안 운행, 시간표 작성 안 됨)
 STR_TIMETABLE_STAY_FOR                                          :& {STRING} 동안 정차
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :& 다음 목적지({STRING})로 이동
 STR_TIMETABLE_DAYS                                              :{COMMA}일
@@ -4277,6 +4288,7 @@ STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}... 이�
 STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}그룹을 만들 수 없습니다...
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}이 그룹을 지울 수 없습니다...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}그룹의 이름을 바꿀 수 없습니다.
+STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}상위 그룹으로 설정할 수 없습니다...
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}이 그룹의 모든 차량을 제거할 수 없습니다.
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}이 그룹에 차량을 추가할 수 없습니다...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}이 그룹에 공유된 차량을 추가할 수 없습니다...

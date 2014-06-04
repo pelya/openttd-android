@@ -14,6 +14,9 @@
 #include "script_log.hpp"
 #include "../../network/network_admin.h"
 #include "../script_instance.hpp"
+#include "../../string_func.h"
+
+#include "../../safeguards.h"
 
 /* static */ bool ScriptAdmin::MakeJSON(HSQUIRRELVM vm, SQInteger index, int max_depth, std::string &data)
 {
@@ -28,7 +31,7 @@
 			sq_getinteger(vm, index, &res);
 
 			char buf[10];
-			snprintf(buf, sizeof(buf), "%d", (int32)res);
+			seprintf(buf, lastof(buf), "%d", (int32)res);
 			data = buf;
 			return true;
 		}

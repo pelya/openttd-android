@@ -50,6 +50,8 @@
 #include "table/strings.h"
 #include "table/town_land.h"
 
+#include "safeguards.h"
+
 TownID _new_town_id;
 uint32 _town_cargoes_accepted; ///< Bitmap of all cargoes accepted by houses.
 
@@ -1703,7 +1705,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 		old_generating_world.Restore();
 
 		if (t != NULL && !StrEmpty(text)) {
-			t->name = strdup(text);
+			t->name = stredup(text);
 			t->UpdateVirtCoord();
 		}
 
@@ -1714,7 +1716,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 			SetDParam(0, _current_company);
 			GetString(company_name, STR_COMPANY_NAME, lastof(company_name));
 
-			char *cn = strdup(company_name);
+			char *cn = stredup(company_name);
 			SetDParamStr(0, cn);
 			SetDParam(1, t->index);
 
@@ -2446,7 +2448,7 @@ CommandCost CmdRenameTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 
 	if (flags & DC_EXEC) {
 		free(t->name);
-		t->name = reset ? NULL : strdup(text);
+		t->name = reset ? NULL : stredup(text);
 
 		t->UpdateVirtCoord();
 		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, 1);
@@ -2523,7 +2525,7 @@ CommandCost CmdTownSetText(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 
 	if (flags & DC_EXEC) {
 		free(t->text);
-		t->text = StrEmpty(text) ? NULL : strdup(text);
+		t->text = StrEmpty(text) ? NULL : stredup(text);
 		InvalidateWindowData(WC_TOWN_VIEW, p1);
 	}
 
@@ -2740,7 +2742,7 @@ static CommandCost TownActionRoadRebuild(Town *t, DoCommandFlag flags)
 		SetDParam(0, _current_company);
 		GetString(company_name, STR_COMPANY_NAME, lastof(company_name));
 
-		char *cn = strdup(company_name);
+		char *cn = stredup(company_name);
 		SetDParam(0, t->index);
 		SetDParamStr(1, cn);
 

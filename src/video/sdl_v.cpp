@@ -31,6 +31,8 @@
 #include <SDL_screenkeyboard.h>
 #endif
 
+#include "../safeguards.h"
+
 static FVideoDriver_SDL iFVideoDriver_SDL;
 
 static SDL_Surface *_sdl_screen;
@@ -285,7 +287,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	if (bpp == 0) usererror("Can't use a blitter that blits 0 bpp for normal visuals");
 
 	char icon_path[MAX_PATH];
-	if (FioFindFullPath(icon_path, lengthof(icon_path), BASESET_DIR, "openttd.32.bmp") != NULL) {
+	if (FioFindFullPath(icon_path, lastof(icon_path), BASESET_DIR, "openttd.32.bmp") != NULL) {
 		/* Give the application an icon */
 		icon = SDL_CALL SDL_LoadBMP(icon_path);
 		if (icon != NULL) {
@@ -320,7 +322,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 		 * (which we can't force in 8bpp on 8bpp mode,
 		 * unfortunately).
 		 */
-		want_hwpalette = (bpp == 8 && _fullscreen);
+		want_hwpalette = bpp == 8 && _fullscreen && _support8bpp == S8BPP_HARDWARE;
 	} else {
 		/* User specified a value manually */
 		want_hwpalette = _use_hwpalette;
@@ -414,14 +416,14 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 			break;
 
 		case Blitter::PALETTE_ANIMATION_BLITTER:
-			if (_video_driver != NULL) blitter->PaletteAnimate(_local_palette);
+			if (VideoDriver::GetInstance() != NULL) blitter->PaletteAnimate(_local_palette);
 			break;
 
 		default:
 			NOT_REACHED();
 	}
 
-	snprintf(caption, sizeof(caption), "OpenTTD %s", _openttd_revision);
+	seprintf(caption, lastof(caption), "OpenTTD %s", _openttd_revision);
 	SDL_CALL SDL_WM_SetCaption(caption, caption);
 
 	GameSizeChanged();

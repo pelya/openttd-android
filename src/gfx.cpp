@@ -26,8 +26,11 @@
 #include "table/sprites.h"
 #include "table/control_codes.h"
 
+#include "safeguards.h"
+
 byte _dirkeys;        ///< 1 = left, 2 = up, 4 = right, 8 = down
 bool _fullscreen;
+byte _support8bpp;
 CursorVars _cursor;
 bool _ctrl_pressed;   ///< Is Ctrl pressed?
 bool _shift_pressed;  ///< Is Shift pressed?
@@ -88,7 +91,7 @@ void GfxScroll(int left, int top, int width, int height, int xo, int yo)
 
 	blitter->ScrollBuffer(_screen.dst_ptr, left, top, width, height, xo, yo);
 	/* This part of the screen is now dirty. */
-	_video_driver->MakeDirty(left, top, width, height);
+	VideoDriver::GetInstance()->MakeDirty(left, top, width, height);
 }
 
 
@@ -421,19 +424,21 @@ static int DrawLayoutLine(const ParagraphLayouter::Line *line, int y, int left, 
 			NOT_REACHED();
 	}
 
+	TextColour colour = TC_BLACK;
+	bool draw_shadow = false;
 	for (int run_index = 0; run_index < line->CountRuns(); run_index++) {
 		const ParagraphLayouter::VisualRun *run = line->GetVisualRun(run_index);
 		const Font *f = (const Font*)run->GetFont();
 
 		FontCache *fc = f->fc;
-		TextColour colour = f->colour;
+		colour = f->colour;
 		SetColourRemap(colour);
 
 		DrawPixelInfo *dpi = _cur_dpi;
 		int dpi_left  = dpi->left;
 		int dpi_right = dpi->left + dpi->width - 1;
 
-		bool draw_shadow = fc->GetDrawGlyphShadow() && colour != TC_BLACK;
+		draw_shadow = fc->GetDrawGlyphShadow() && colour != TC_BLACK;
 
 		for (int i = 0; i < run->GetGlyphCount(); i++) {
 			GlyphID glyph = run->GetGlyphs()[i];
@@ -464,6 +469,11 @@ static int DrawLayoutLine(const ParagraphLayouter::Line *line, int y, int left, 
 	if (truncation) {
 		int x = (_current_text_dir == TD_RTL) ? left : (right - 3 * dot_width);
 		for (int i = 0; i < 3; i++, x += dot_width) {
+			if (draw_shadow) {
+				SetColourRemap(TC_BLACK);
+				GfxMainBlitter(dot_sprite, x + 1, y + 1, BM_COLOUR_REMAP);
+				SetColourRemap(colour);
+			}
 			GfxMainBlitter(dot_sprite, x, y, BM_COLOUR_REMAP);
 		}
 	}
@@ -791,7 +801,7 @@ void DrawSpriteViewport(SpriteID img, PaletteID pal, int x, int y, const SubSpri
 		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, BM_TRANSPARENT, sub, real_sprite);
 	} else if (pal != PAL_NONE) {
 		_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
-		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, BM_COLOUR_REMAP, sub, real_sprite);
+		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, pal == PALETTE_CRASH ? BM_CRASH_REMAP : BM_COLOUR_REMAP, sub, real_sprite);
 	} else {
 		GfxMainBlitterViewport(GetSprite(real_sprite, ST_NORMAL), x, y, BM_NORMAL, sub, real_sprite);
 	}
@@ -814,7 +824,7 @@ void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub,
 		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, BM_TRANSPARENT, sub, real_sprite, zoom);
 	} else if (pal != PAL_NONE) {
 		_colour_remap_ptr = GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1;
-		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, BM_COLOUR_REMAP, sub, real_sprite, zoom);
+		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, pal == PALETTE_CRASH ? BM_CRASH_REMAP : BM_COLOUR_REMAP, sub, real_sprite, zoom);
 	} else {
 		GfxMainBlitter(GetSprite(real_sprite, ST_NORMAL), x, y, BM_NORMAL, sub, real_sprite, zoom);
 	}
@@ -1181,7 +1191,7 @@ void UndrawMouseCursor()
 		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 		_cursor.visible = false;
 		blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, _cursor.draw_pos.x, _cursor.draw_pos.y), _cursor_backup.GetBuffer(), _cursor.draw_size.x, _cursor.draw_size.y);
-		_video_driver->MakeDirty(_cursor.draw_pos.x, _cursor.draw_pos.y, _cursor.draw_size.x, _cursor.draw_size.y);
+		VideoDriver::GetInstance()->MakeDirty(_cursor.draw_pos.x, _cursor.draw_pos.y, _cursor.draw_size.x, _cursor.draw_size.y);
 	}
 }
 
@@ -1236,7 +1246,7 @@ void DrawMouseCursor()
 	_cur_dpi = &_screen;
 	DrawSprite(_cursor.sprite, _cursor.pal, _cursor.pos.x + _cursor.short_vehicle_offset, _cursor.pos.y);
 
-	_video_driver->MakeDirty(_cursor.draw_pos.x, _cursor.draw_pos.y, _cursor.draw_size.x, _cursor.draw_size.y);
+	VideoDriver::GetInstance()->MakeDirty(_cursor.draw_pos.x, _cursor.draw_pos.y, _cursor.draw_size.x, _cursor.draw_size.y);
 
 	_cursor.visible = true;
 	_cursor.dirty = false;
@@ -1260,7 +1270,7 @@ void RedrawScreenRect(int left, int top, int right, int bottom)
 
 	DrawOverlappedWindowForAll(left, top, right, bottom);
 
-	_video_driver->MakeDirty(left, top, right - left, bottom - top);
+	VideoDriver::GetInstance()->MakeDirty(left, top, right - left, bottom - top);
 }
 
 /**
@@ -1569,12 +1579,12 @@ void SetAnimatedMouseCursor(const AnimCursor *table)
 
 bool ChangeResInGame(int width, int height)
 {
-	return (_screen.width == width && _screen.height == height) || _video_driver->ChangeResolution(width, height);
+	return (_screen.width == width && _screen.height == height) || VideoDriver::GetInstance()->ChangeResolution(width, height);
 }
 
 bool ToggleFullScreen(bool fs)
 {
-	bool result = _video_driver->ToggleFullscreen(fs);
+	bool result = VideoDriver::GetInstance()->ToggleFullscreen(fs);
 	if (_fullscreen != fs && _num_resolutions == 0) {
 		DEBUG(driver, 0, "Could not find a suitable fullscreen resolution");
 	}

@@ -43,6 +43,8 @@
 
 #include "table/strings.h"
 
+#include "safeguards.h"
+
 /** The sprite picker. */
 NewGrfDebugSpritePicker _newgrf_debug_sprite_picker = { SPM_NONE, NULL, 0, SmallVector<SpriteID, 256>() };
 
@@ -398,7 +400,7 @@ struct NewGRFInspectWindow : Window {
 
 		va_list va;
 		va_start(va, format);
-		vsnprintf(buf, lengthof(buf), format, va);
+		vseprintf(buf, lastof(buf), format, va);
 		va_end(va);
 
 		offset -= this->vscroll->GetPosition();

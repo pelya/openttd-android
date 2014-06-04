@@ -766,10 +766,16 @@ public:
 		WC_SPRITE_ALIGNER                            = ::WC_SPRITE_ALIGNER,
 
 		/**
-		 * Linkgraph legend; Window numbers:
+		 * Linkgraph legend; %Window numbers:
 		 *   - 0 = #LinkGraphWidgets
 		 */
 		WC_LINKGRAPH_LEGEND                          = ::WC_LINKGRAPH_LEGEND,
+
+		/**
+		 * Save preset; %Window numbers:
+		 *   - 0 = #SavePresetWidgets
+		 */
+		WC_SAVE_PRESET                               = ::WC_SAVE_PRESET,
 
 		WC_INVALID                                   = ::WC_INVALID,                                   ///< Invalid window.
 	};
@@ -1290,9 +1296,6 @@ public:
 
 		WID_GL_TOWN_PULLDOWN                         = ::WID_GL_TOWN_PULLDOWN,                         ///< Dropdown 'No. of towns'.
 		WID_GL_INDUSTRY_PULLDOWN                     = ::WID_GL_INDUSTRY_PULLDOWN,                     ///< Dropdown 'No. of industries'.
-
-		WID_GL_RANDOM_EDITBOX                        = ::WID_GL_RANDOM_EDITBOX,                        ///< 'Random seed' editbox.
-		WID_GL_RANDOM_BUTTON                         = ::WID_GL_RANDOM_BUTTON,                         ///< 'Randomise' button.
 
 		WID_GL_GENERATE_BUTTON                       = ::WID_GL_GENERATE_BUTTON,                       ///< 'Generate' button.
 
@@ -1832,6 +1835,7 @@ public:
 		WID_NS_REMOVE                                = ::WID_NS_REMOVE,                                ///< Remove NewGRF from active list.
 		WID_NS_MOVE_UP                               = ::WID_NS_MOVE_UP,                               ///< Move NewGRF up in active list.
 		WID_NS_MOVE_DOWN                             = ::WID_NS_MOVE_DOWN,                             ///< Move NewGRF down in active list.
+		WID_NS_UPGRADE                               = ::WID_NS_UPGRADE,                               ///< Upgrade NewGRFs that have a newer version available.
 		WID_NS_FILTER                                = ::WID_NS_FILTER,                                ///< Filter list of available NewGRFs.
 		WID_NS_FILE_LIST                             = ::WID_NS_FILE_LIST,                             ///< List window of active NewGRFs.
 		WID_NS_SCROLLBAR                             = ::WID_NS_SCROLLBAR,                             ///< Scrollbar for active NewGRF list.
@@ -1851,6 +1855,15 @@ public:
 		WID_NS_CONTENT_DOWNLOAD2                     = ::WID_NS_CONTENT_DOWNLOAD2,                     ///< Open content download (active NewGRFs).
 		WID_NS_SHOW_REMOVE                           = ::WID_NS_SHOW_REMOVE,                           ///< Select active list buttons (0, 1 = simple layout).
 		WID_NS_SHOW_APPLY                            = ::WID_NS_SHOW_APPLY,                            ///< Select display of the buttons below the 'details'.
+	};
+
+	/** Widgets of the #SavePresetWindow class. */
+	enum SavePresetWidgets {
+		WID_SVP_PRESET_LIST                          = ::WID_SVP_PRESET_LIST,                          ///< List with available preset names.
+		WID_SVP_SCROLLBAR                            = ::WID_SVP_SCROLLBAR,                            ///< Scrollbar for the list available preset names.
+		WID_SVP_EDITBOX                              = ::WID_SVP_EDITBOX,                              ///< Edit box for changing the preset name.
+		WID_SVP_CANCEL                               = ::WID_SVP_CANCEL,                               ///< Button to cancel saving the preset.
+		WID_SVP_SAVE                                 = ::WID_SVP_SAVE,                                 ///< Button to save the preset.
 	};
 
 	/** Widgets of the #ScanProgressWindow class. */
@@ -2119,7 +2132,6 @@ public:
 		WID_GO_LANG_DROPDOWN                         = ::WID_GO_LANG_DROPDOWN,                         ///< Language dropdown.
 		WID_GO_RESOLUTION_DROPDOWN                   = ::WID_GO_RESOLUTION_DROPDOWN,                   ///< Dropdown for the resolution.
 		WID_GO_FULLSCREEN_BUTTON                     = ::WID_GO_FULLSCREEN_BUTTON,                     ///< Toggle fullscreen.
-		WID_GO_SCREENSHOT_DROPDOWN                   = ::WID_GO_SCREENSHOT_DROPDOWN,                   ///< Select the screenshot type... please use PNG!.
 		WID_GO_BASE_GRF_DROPDOWN                     = ::WID_GO_BASE_GRF_DROPDOWN,                     ///< Use to select a base GRF.
 		WID_GO_BASE_GRF_STATUS                       = ::WID_GO_BASE_GRF_STATUS,                       ///< Info about missing files etc.
 		WID_GO_BASE_GRF_TEXTFILE                     = ::WID_GO_BASE_GRF_TEXTFILE,                     ///< Open base GRF readme, changelog (+1) or license (+2).
