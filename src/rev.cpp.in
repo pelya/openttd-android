@@ -1,4 +1,4 @@
-/* $Id: rev.cpp.in 26440 2014-04-01 18:33:16Z frosch $ */
+/* $Id: rev.cpp.in 26627 2014-06-02 18:23:04Z frosch $ */
 
 /*
  * This file is part of OpenTTD.
@@ -70,7 +70,7 @@ const byte _openttd_revision_modified = !!MODIFIED!!;
  * final release will always have a lower version number than the released
  * version, thus making comparisons on specific revisions easy.
  */
-const uint32 _openttd_newgrf_version = 1 << 28 | 4 << 24 | 0 << 20 | 1 << 19 | (!!REVISION!! & ((1 << 19) - 1));
+const uint32 _openttd_newgrf_version = 1 << 28 | 4 << 24 | 1 << 20 | 1 << 19 | (!!REVISION!! & ((1 << 19) - 1));
 
 #ifdef __MORPHOS__
 /**
