@@ -67,12 +67,6 @@ fi
 cd `dirname "$0"`
 ROOT_DIR=`pwd`
 
-# Override version number, to allow OpenTTD with Android modifications to connect to official servers
-if [ -e $ROOT_DIR/version-override ]; then
-	cat $ROOT_DIR/version-override
-	exit
-fi
-
 # Determine if we are using a modified version
 # Assume the dir is not modified
 MODIFIED="0"
@@ -90,7 +84,7 @@ if [ -d "$ROOT_DIR/.svn" ] || [ -d "$ROOT_DIR/../.svn" ]; then
 	else
 		REV="r$REV_NR"
 	fi
-elif [ -e "$ROOT_DIR/.git" ]; then
+elif [ -d "$ROOT_DIR/.git" ]; then
 	# We are a git checkout
 	# Refresh the index to make sure file stat info is in sync, then look for modifications
 	git update-index --refresh >/dev/null
