@@ -77,11 +77,12 @@ void Android_MidiMixMusic(Sint16 *stream, int len)
 /** Factory for the libtimidity driver. */
 static FMusicDriver_LibTimidity iFMusicDriver_LibTimidity;
 
+enum { TIMIDITY_MAX_VOLUME = 50 };
 const char *MusicDriver_LibTimidity::Start(const char * const *param)
 {
 	_midi.status = MIDI_STOPPED;
 	_midi.song = NULL;
-	volume = 99; // Avoid clipping
+	volume = TIMIDITY_MAX_VOLUME; // Avoid clipping
 
 	if (mid_init(param == NULL ? NULL : const_cast<char *>(param[0])) < 0) {
 		/* If init fails, it can be because no configuration was found.
@@ -164,6 +165,6 @@ bool MusicDriver_LibTimidity::IsSongPlaying()
 
 void MusicDriver_LibTimidity::SetVolume(byte vol)
 {
-	volume = vol * 99 / 127; // I'm not sure about that value
+	volume = vol * TIMIDITY_MAX_VOLUME / 127; // I'm not sure about that value
 	if (_midi.song != NULL) mid_song_set_volume(_midi.song, vol);
 }
