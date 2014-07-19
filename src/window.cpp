@@ -2855,13 +2855,8 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	/* Don't allow any action in a viewport if either in menu or when having a modal progress window */
 	if (vp != NULL && (_game_mode == GM_MENU || HasModalProgress())) return;
 
-	/* On confirm mode do not update tile selection unless we are clicking on a viewport. */
-	if (vp != NULL && _left_button_down && !_move_pressed) {
-		HandlePlacePresize();
-		UpdateTileSelection();
-	} else {
-		//if presize, show tooltip if needed
-	}
+	HandlePlacePresize();
+	UpdateTileSelection();
 
 	if (VpHandlePlaceSizingDrag()  == ES_HANDLED) return;
 	if (HandleMouseDragDrop()      == ES_HANDLED) return;
