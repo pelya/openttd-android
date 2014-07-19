@@ -153,6 +153,16 @@ static void DrawSurfaceToScreen()
 {
 	int n = _num_dirty_rects;
 	if (n == 0) return;
+	static int frameskip = 0;
+
+#ifdef __ANDROID__
+	if (_fast_forward) {
+		frameskip++;
+		if (frameskip < 5)
+			return;
+		frameskip = 0;
+	}
+#endif
 
 	_num_dirty_rects = 0;
 	if (n > MAX_DIRTY_RECTS) {
