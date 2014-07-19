@@ -1943,6 +1943,7 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("saveconfig",   ConSaveConfig);
 	IConsoleCmdRegister("ls",           ConListFiles);
 	IConsoleCmdRegister("open_cheats",  ConOpenCheats);
+	IConsoleCmdRegister("cheats",       ConOpenCheats);
 	IConsoleCmdRegister("cd",           ConChangeDirectory);
 	IConsoleCmdRegister("pwd",          ConPrintWorkingDirectory);
 	IConsoleCmdRegister("clear",        ConClearBuffer);
