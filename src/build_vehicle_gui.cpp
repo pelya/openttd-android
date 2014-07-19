@@ -1311,7 +1311,7 @@ struct BuildVehicleWindow : Window {
 		switch (widget) {
 			case WID_BV_LIST:
 				resize->height = GetEngineListHeight(this->vehicle_type);
-				size->height = 3 * resize->height;
+				size->height = 4 * resize->height;
 				break;
 
 			case WID_BV_PANEL:
