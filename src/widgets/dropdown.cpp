@@ -256,8 +256,11 @@ struct DropdownWindow : Window {
 		if (this->scrolling != 0) {
 			int pos = this->vscroll->GetPosition();
 
-			this->vscroll->UpdatePosition(this->scrolling);
-			this->scrolling = 0;
+			if (_scroller_click_timeout <= 1) {
+				_scroller_click_timeout = SCROLLER_CLICK_DELAY;
+				this->vscroll->UpdatePosition(this->scrolling);
+				this->scrolling = 0;
+			}
 
 			if (pos != this->vscroll->GetPosition()) {
 				this->SetDirty();

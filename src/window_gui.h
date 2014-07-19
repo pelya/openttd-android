@@ -885,6 +885,9 @@ extern Point _cursorpos_drag_start;
 extern int _scrollbar_start_pos;
 extern int _scrollbar_size;
 extern byte _scroller_click_timeout;
+enum {
+	SCROLLER_CLICK_DELAY = 6 ///< Delay in video frames between scrollbar doing scroll, we don't want to get to the bottom of the list in an instant
+};
 
 extern bool _scrolling_viewport;
 extern bool _mouse_hovering;

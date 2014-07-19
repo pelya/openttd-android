@@ -103,7 +103,7 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		/* Pressing the upper button? */
 		SetBit(sb->disp_flags, NDB_SCROLLBAR_UP);
 		if (_scroller_click_timeout <= 1) {
-			_scroller_click_timeout = 3;
+			_scroller_click_timeout = SCROLLER_CLICK_DELAY;
 			sb->UpdatePosition(rtl ? 1 : -1);
 		}
 		w->scrolling_scrollbar = sb->index;
@@ -112,7 +112,7 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		SetBit(sb->disp_flags, NDB_SCROLLBAR_DOWN);
 
 		if (_scroller_click_timeout <= 1) {
-			_scroller_click_timeout = 3;
+			_scroller_click_timeout = SCROLLER_CLICK_DELAY;
 			sb->UpdatePosition(rtl ? -1 : 1);
 		}
 		w->scrolling_scrollbar = sb->index;
