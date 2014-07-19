@@ -243,7 +243,7 @@ public:
 			case WID_RV_LEFT_MATRIX:
 			case WID_RV_RIGHT_MATRIX:
 				resize->height = GetEngineListHeight((VehicleType)this->window_number);
-				size->height = (this->window_number <= VEH_ROAD ? 8 : 4) * resize->height;
+				size->height = 4 * resize->height;
 				break;
 
 			case WID_RV_LEFT_DETAILS:
