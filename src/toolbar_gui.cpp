@@ -1620,7 +1620,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 	}
 };
 
-/** Container for the 'normal' main toolbar */
+/** Container for the vertical main toolbar */
 class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 	int side;
 
@@ -1639,8 +1639,24 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			29, 21, 22, 23, 24, 25,  7,  8,  9, 12, 14, 28,
 			29, 15, 16, 17, 18, 13,  7, 10, 11, 26, 27, 28,
 		};
+		// Full-length toolbar without switch button, if enough space
+		static const byte arrange_left_all[] = {
+			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10,
+		};
+		static const byte arrange_right_all[] = {
+			11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28,
+		};
 
 		spacer_count = 0;
+
+		if (_screen.height / this->smallest_y >= lengthof(arrange_left_all))
+		{
+			button_count = arrangable_count = lengthof(arrange_left_all);
+			if (side == 0) {
+				return arrange_left_all;
+			}
+			return arrange_right_all;
+		}
 
 		if (side == 0) {
 			button_count = arrangable_count = lengthof(arrange_left);
@@ -1649,16 +1665,6 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 		button_count = arrangable_count = lengthof(arrange_right) / 2;
 		return &arrange_right[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
 	}
-
-	/*
-	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl)
-	{
-		if (side == 0) x = 0;
-		else x = _screen.width - this->smallest_x;
-		y = 0;
-		NWidgetToolbarContainer::AssignSizePosition(sizing, x, y, given_width, given_height, rtl);
-	}
-	*/
 };
 
 /** Container for the scenario editor's toolbar */
@@ -2105,7 +2111,11 @@ static NWidgetBase *MakeVerticalRightToolbar(int *biggest_index)
 		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
 
-	*biggest_index = max<int>(*biggest_index, WID_TN_SWITCH_BAR);
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
 	return tb;
 }
 
