@@ -2398,7 +2398,7 @@ static EventState HandleScrollbarScrolling()
 
 			if (sb->disp_flags & ND_SCROLLBAR_BTN) {
 				if (_scroller_click_timeout == 1) {
-					_scroller_click_timeout = 3;
+					_scroller_click_timeout = SCROLLER_CLICK_DELAY;
 					sb->UpdatePosition(rtl == HasBit(sb->disp_flags, NDB_SCROLLBAR_UP) ? 1 : -1);
 					w->SetDirty();
 				}
