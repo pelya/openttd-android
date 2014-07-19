@@ -1641,10 +1641,10 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 		};
 		// Full-length toolbar without switch button, if enough space
 		static const byte arrange_left_all[] = {
-			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10,
+			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 13,
 		};
 		static const byte arrange_right_all[] = {
-			11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28,
+			10, 11, 12, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28,
 		};
 
 		spacer_count = 0;
