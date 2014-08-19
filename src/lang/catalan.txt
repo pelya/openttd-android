@@ -96,30 +96,30 @@ STR_CARGO_SINGULAR_FIZZY_DRINK                                  :{G=Femenin}Begu
 
 # Quantity of cargo
 STR_QUANTITY_NOTHING                                            :
-STR_QUANTITY_PASSENGERS                                         :{G=Masculin}{COMMA} passatger{P "" s}
+STR_QUANTITY_PASSENGERS                                         :{G=Masculin}{COMMA}{NBSP}passatger{P "" s}
 STR_QUANTITY_COAL                                               :{WEIGHT_LONG} de carbó
-STR_QUANTITY_MAIL                                               :{COMMA} sac{P "" s} de correu
+STR_QUANTITY_MAIL                                               :{COMMA}{NBSP}sac{P "" s} de correu
 STR_QUANTITY_OIL                                                :{VOLUME_LONG} de petroli
-STR_QUANTITY_LIVESTOCK                                          :{COMMA} cap{P "" s} de bestiar
-STR_QUANTITY_GOODS                                              :{COMMA} palet{P "" s} de mercaderies
+STR_QUANTITY_LIVESTOCK                                          :{COMMA}{NBSP}cap{P "" s} de bestiar
+STR_QUANTITY_GOODS                                              :{COMMA}{NBSP}palet{P "" s} de mercaderies
 STR_QUANTITY_GRAIN                                              :{WEIGHT_LONG} de gra
 STR_QUANTITY_WOOD                                               :{WEIGHT_LONG} de fusta
 STR_QUANTITY_IRON_ORE                                           :{WEIGHT_LONG} de mineral de ferro
 STR_QUANTITY_STEEL                                              :{WEIGHT_LONG} d'acer
-STR_QUANTITY_VALUABLES                                          :{G=Masculin}{COMMA} sac{P "" s} de valors
+STR_QUANTITY_VALUABLES                                          :{G=Masculin}{COMMA}{NBSP}sac{P "" s} de valors
 STR_QUANTITY_COPPER_ORE                                         :{WEIGHT_LONG} de mineral de coure
 STR_QUANTITY_MAIZE                                              :{WEIGHT_LONG} de blat de moro
 STR_QUANTITY_FRUIT                                              :{WEIGHT_LONG} de fruita
-STR_QUANTITY_DIAMONDS                                           :{COMMA} boss{P a es} de diamants
+STR_QUANTITY_DIAMONDS                                           :{COMMA}{NBSP}boss{P a es} de diamants
 STR_QUANTITY_FOOD                                               :{WEIGHT_LONG} de queviures
 STR_QUANTITY_PAPER                                              :{WEIGHT_LONG} de paper
-STR_QUANTITY_GOLD                                               :{G=Femenin}{COMMA} sa{P ca ques} d'or
+STR_QUANTITY_GOLD                                               :{G=Femenin}{COMMA}{NBSP}sa{P ca ques} d'or
 STR_QUANTITY_WATER                                              :{VOLUME_LONG} d'aigua
 STR_QUANTITY_WHEAT                                              :{WEIGHT_LONG} de blat
 STR_QUANTITY_RUBBER                                             :{VOLUME_LONG} de cautxú
 STR_QUANTITY_SUGAR                                              :{WEIGHT_LONG} de sucre
-STR_QUANTITY_TOYS                                               :{COMMA} joguin{P a es}
-STR_QUANTITY_SWEETS                                             :{G=Femenin}{COMMA} boss{P a es} de dolços
+STR_QUANTITY_TOYS                                               :{COMMA}{NBSP}joguin{P a es}
+STR_QUANTITY_SWEETS                                             :{G=Femenin}{COMMA}{NBSP}boss{P a es} de dolços
 STR_QUANTITY_COLA                                               :{VOLUME_LONG} de refrescs
 STR_QUANTITY_CANDYFLOSS                                         :{WEIGHT_LONG} de cotó de sucre
 STR_QUANTITY_BUBBLES                                            :{COMMA} bomboll{P a es}
@@ -166,12 +166,12 @@ STR_ABBREV_NONE                                                 :{TINY_FONT}NO
 STR_ABBREV_ALL                                                  :{TINY_FONT}TOT
 
 # 'Mode' of transport for cargoes
-STR_PASSENGERS                                                  :{G=Masculin}{COMMA} passatger{P "" s}
-STR_BAGS                                                        :{G=Masculin}{COMMA} sac{P "" s}
-STR_TONS                                                        :{G=Femenin}{COMMA} ton{P a es}
-STR_LITERS                                                      :{G=Masculin}{COMMA} litre{P "" s}
-STR_ITEMS                                                       :{G=Masculin}{COMMA} cap{P "" s}
-STR_CRATES                                                      :{G=Masculin}{COMMA} palet{P "" s}
+STR_PASSENGERS                                                  :{G=Masculin}{COMMA}{NBSP}passatger{P "" s}
+STR_BAGS                                                        :{G=Masculin}{COMMA}{NBSP}sac{P "" s}
+STR_TONS                                                        :{G=Femenin}{COMMA}{NBSP}ton{P a es}
+STR_LITERS                                                      :{G=Masculin}{COMMA}{NBSP}litre{P "" s}
+STR_ITEMS                                                       :{G=Masculin}{COMMA}{NBSP}cap{P "" s}
+STR_CRATES                                                      :{G=Masculin}{COMMA}{NBSP}palet{P "" s}
 
 # Colours, do not shuffle
 STR_COLOUR_DARK_BLUE                                            :{G=Masculin}Blau Fosc
@@ -277,7 +277,7 @@ STR_SORT_BY_NUMBER                                              :Número
 STR_SORT_BY_PROFIT_LAST_YEAR                                    :Benefici darrer any
 STR_SORT_BY_PROFIT_THIS_YEAR                                    :Benefici aquest any
 STR_SORT_BY_AGE                                                 :Antiguitat
-STR_SORT_BY_RELIABILITY                                         :Rendibilitat
+STR_SORT_BY_RELIABILITY                                         :Fiabilitat
 STR_SORT_BY_TOTAL_CAPACITY_PER_CARGOTYPE                        :Capac. total per tipus de càrrega
 STR_SORT_BY_MAX_SPEED                                           :Velocitat màxima
 STR_SORT_BY_MODEL                                               :Model
@@ -412,7 +412,7 @@ STR_GRAPH_MENU_CARGO_PAYMENT_RATES                              :Tarifes de paga
 ############ range for company league menu starts
 STR_GRAPH_MENU_COMPANY_LEAGUE_TABLE                             :Taula de la lliga d'empreses
 STR_GRAPH_MENU_DETAILED_PERFORMANCE_RATING                      :Detall de ratis de rendiment
-STR_GRAPH_MENU_HIGHSCORE                                        :Taula de rècords
+STR_GRAPH_MENU_HIGHSCORE                                        :Taula de Puntuacions
 ############ range ends here
 
 ############ range for industry menu starts
@@ -471,7 +471,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Commuta les cai
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Commuta el colorejat dels blocs bruts
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1r
 STR_ORDINAL_NUMBER_2ND                                          :2n
 STR_ORDINAL_NUMBER_3RD                                          :3r
@@ -487,22 +487,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12è
 STR_ORDINAL_NUMBER_13TH                                         :13è
 STR_ORDINAL_NUMBER_14TH                                         :14è
 STR_ORDINAL_NUMBER_15TH                                         :15è
-STR_ORDINAL_NUMBER_16TH                                         :16è
-STR_ORDINAL_NUMBER_17TH                                         :17è
-STR_ORDINAL_NUMBER_18TH                                         :18è
-STR_ORDINAL_NUMBER_19TH                                         :19è
-STR_ORDINAL_NUMBER_20TH                                         :20è
-STR_ORDINAL_NUMBER_21ST                                         :21è
-STR_ORDINAL_NUMBER_22ND                                         :22è
-STR_ORDINAL_NUMBER_23RD                                         :23è
-STR_ORDINAL_NUMBER_24TH                                         :24è
-STR_ORDINAL_NUMBER_25TH                                         :25è
-STR_ORDINAL_NUMBER_26TH                                         :26è
-STR_ORDINAL_NUMBER_27TH                                         :27è
-STR_ORDINAL_NUMBER_28TH                                         :28è
-STR_ORDINAL_NUMBER_29TH                                         :29è
-STR_ORDINAL_NUMBER_30TH                                         :30è
-STR_ORDINAL_NUMBER_31ST                                         :31è
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1
+STR_DAY_NUMBER_2ND                                              :2
+STR_DAY_NUMBER_3RD                                              :3
+STR_DAY_NUMBER_4TH                                              :4
+STR_DAY_NUMBER_5TH                                              :5
+STR_DAY_NUMBER_6TH                                              :6
+STR_DAY_NUMBER_7TH                                              :7
+STR_DAY_NUMBER_8TH                                              :8
+STR_DAY_NUMBER_9TH                                              :9
+STR_DAY_NUMBER_10TH                                             :10
+STR_DAY_NUMBER_11TH                                             :11
+STR_DAY_NUMBER_12TH                                             :12
+STR_DAY_NUMBER_13TH                                             :13
+STR_DAY_NUMBER_14TH                                             :14
+STR_DAY_NUMBER_15TH                                             :15
+STR_DAY_NUMBER_16TH                                             :16
+STR_DAY_NUMBER_17TH                                             :17
+STR_DAY_NUMBER_18TH                                             :18
+STR_DAY_NUMBER_19TH                                             :19
+STR_DAY_NUMBER_20TH                                             :20
+STR_DAY_NUMBER_21ST                                             :21
+STR_DAY_NUMBER_22ND                                             :22
+STR_DAY_NUMBER_23RD                                             :23
+STR_DAY_NUMBER_24TH                                             :24
+STR_DAY_NUMBER_25TH                                             :25
+STR_DAY_NUMBER_26TH                                             :26
+STR_DAY_NUMBER_27TH                                             :27
+STR_DAY_NUMBER_28TH                                             :28
+STR_DAY_NUMBER_29TH                                             :29
+STR_DAY_NUMBER_30TH                                             :30
+STR_DAY_NUMBER_31ST                                             :31
 ############ range for days ends
 
 ############ range for months starts
@@ -1427,7 +1445,7 @@ STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Els intervals d
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Escull si les revisions dels vehicles depenen del temps passat des de la darrera revisió o de la caiguda d'un cert percentatge de la fiabilitat màxima
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Interval per defecte de servei per als trens: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Estableix l'interval de revisió predeterminat pels nous ferrocarrils, si no hi ha un interval de revisió explícit pel vehicle
-STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA} di{P 0 a es}/%
+STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA}{NBSP}di{P 0 a es}/%
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :Desactivat
 STR_CONFIG_SETTING_SERVINT_ROAD_VEHICLES                        :Interval per defecte de servei per als vehicles: {STRING}
 STR_CONFIG_SETTING_SERVINT_ROAD_VEHICLES_HELPTEXT               :Estableix l'interval de revisió predeterminat pels nous vehicles de caretera, si no hi ha un interval de revisió explícit pel vehicle
@@ -1567,9 +1585,9 @@ STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Cap
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Multiplicador de mida inicial de ciutats: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :La grandària mitjana de les ciutats en relació als pobles a l'inici de la partida
 
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Actualitza el graf de distribució cada {STRING} di{P 0 a es}
+STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Actualitza el graf de distribució cada {STRING}{NBSP}di{P 0 a es}
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Temps entre recàlculs successius del graf de distribució. Cada recàlcul calcula els plans per un component del graf. Això significa que un valor X per aquest paràmetre no implica que tot el graf serà actualitzat cada X dies. Només alguns components ho seran. Com més curt el valor, més temps de processador es requerirà per calcular-ho. Com més llarg, més temps passarà fins que la distribució de càrregues comenci en noves rutes.
-STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Empra {STRING} di{P 0 a es} per al recàlcul del graf de distribució
+STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Empra {STRING}{NBSP}di{P 0 a es} per al recàlcul del graf de distribució
 STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :Temps dedicat a cada recàlcul d'un component del graf de connexions. Quan un recàlcul s'inicia, el programa crea un fil que pot executar-se durant aquest nombre de dies. Com més curt el valor, més probable que el fil no hagi acabat quan s'espera. Aleshores el programa s'atura fins que el fil acaba ("ralentització"). Com més llarg el valor, més temps requereix l'actualització de la distribució quan les rutes canvien.
 STR_CONFIG_SETTING_DISTRIBUTION_MANUAL                          :manual
 STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :asimètric
@@ -1692,15 +1710,15 @@ STR_INTRO_CAPTION                                               :{WHITE}OpenTTD 
 STR_INTRO_NEW_GAME                                              :{BLACK}Nova Partida
 STR_INTRO_LOAD_GAME                                             :{BLACK}Carrega una Partida
 STR_INTRO_PLAY_SCENARIO                                         :{BLACK}Juga un Escenari
-STR_INTRO_PLAY_HEIGHTMAP                                        :{BLACK}Juga un mapa d'alçades
+STR_INTRO_PLAY_HEIGHTMAP                                        :{BLACK}Juga un Mapa d'Alçades
 STR_INTRO_SCENARIO_EDITOR                                       :{BLACK}Editor d'Escenaris
 STR_INTRO_MULTIPLAYER                                           :{BLACK}Multijugador
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Opcions del Joc
 STR_INTRO_HIGHSCORE                                             :{BLACK}Taula de rècords
-STR_INTRO_ADVANCED_SETTINGS                                     :{BLACK}Paràmetres avançats
+STR_INTRO_ADVANCED_SETTINGS                                     :{BLACK}Paràmetres Avançats
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Extensions NewGRF
-STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Contingut en línia
+STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Contingut en Línia
 STR_INTRO_SCRIPT_SETTINGS                                       :{BLACK}Paràmetres de les IA/Script de la Partida
 STR_INTRO_QUIT                                                  :{BLACK}Surt
 
@@ -2767,7 +2785,7 @@ STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}Mou amun
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}Mou avall
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}Mou avall l'arxiu NewGRF seleccionat de la llista
 STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Actualitza
-STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Empra les versions més noves dels NewGRF d'aquesta configuració preestablerta si prèviament se n'han actualitzat els NewGRF corresponents
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Utiliza les versions més noves dels NewGRF que disposin de diverses versions instal·lades
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}Una llista de fitxers NewGRF que estan instal·lats
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Establir paràmetres
@@ -2944,8 +2962,8 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} entregat
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (encara requerit)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (entregat)
-STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}La població creix cada {ORANGE}{COMMA}{BLACK} di{P a es}
-STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}La població creix cada {ORANGE}{COMMA}{BLACK} di{P a es} (finançat)
+STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}La població creix cada {ORANGE}{COMMA}{BLACK}{NBSP}di{P a es}
+STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}La població creix cada {ORANGE}{COMMA}{BLACK}{NBSP}di{P a es} (finançant edificis nous)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}La població {RED}no {BLACK} està creixent
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}Límit de soroll a la ciutat: {ORANGE}{COMMA}{BLACK}  màx: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centra la vista principal a la població. Ctrl+Clic obre una nova vista al lloc de la població
@@ -3336,7 +3354,7 @@ STR_PURCHASE_INFO_RUNNINGCOST                                   :{BLACK}Cost d'u
 STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}Capacitat: {GOLD}{CARGO_LONG} {STRING}
 STR_PURCHASE_INFO_REFITTABLE                                    :(remodelable)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Dissenyat: {GOLD}{NUM}{BLACK} Vida: {GOLD}{COMMA} any{P "" s}
-STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Màx. Rendiment: {GOLD}{COMMA}%
+STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Màx. Fiabilitat: {GOLD}{COMMA}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}Cost: {GOLD}{CURRENCY_LONG}
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Pes: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Cost: {GOLD}{CURRENCY_LONG}{BLACK} Velocitat: {GOLD}{VELOCITY}
@@ -3601,7 +3619,7 @@ STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Capacita
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Transferir Crèdits: {LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Interval de les revisions: {LTBLUE}{COMMA}dies{BLACK}   Darrera revisió: {LTBLUE}{DATE_LONG}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Interval de les revisions: {LTBLUE}{COMMA}{NBSP}dies{BLACK}   Darrera revisió: {LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}Interval de les revisions: {LTBLUE}{COMMA}%{BLACK}   Darrera revisió: {LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Augmenta l'interval de les revisions en 10. Ctrl+Clic augmenta l'interval de les revisions en 5
 STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Disminueix l'interval de les revisions en 10. Ctrl+Clic disminueix l'interval de les revisions en 5
@@ -3837,8 +3855,8 @@ STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(quedar-s'hi du
 STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(viatja durant {STRING}, sense horari)
 STR_TIMETABLE_STAY_FOR                                          :i estigues {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :i viatge per {STRING}
-STR_TIMETABLE_DAYS                                              :{COMMA} di{P a es}
-STR_TIMETABLE_TICKS                                             :{COMMA} mar{P ca ques}
+STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}di{P a es}
+STR_TIMETABLE_TICKS                                             :{COMMA}{NBSP}mar{P ca ques}
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}L'horari tardarà {STRING} a complir-se
 STR_TIMETABLE_TOTAL_TIME_INCOMPLETE                             :{BLACK}L'horari tardarà almenys {STRING} a complir-se (no tot està planificat)
@@ -4102,7 +4120,7 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... mass
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... massa prop d'una altra població
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... massa poblacions
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... no queda espai al mapa
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}La població no construirà carrers. Pots activar la construcció de carrers via Paràmetres avançats->Economia->Poblacions
+STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}La població no construirà carrers. Pots activar la construcció de carrers via Paràmetres avançats->Interacció amd l'entorn->Poblacions
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Obres en progrés
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}No es pot eliminar aquesta població...{}Hi ha una estació, un dipòsit o una cel·la pertanyent a la població que no pot ser eliminada
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... no hi ha un lloc adequat per situar l'estàtua al centre d'aquesta població
@@ -4125,6 +4143,9 @@ STR_ERROR_CAN_ONLY_BE_POSITIONED                                :{WHITE}... nom�
 STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}... els boscos només es poden plantar sota la cota de neu
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}... només es pot construir per sobre la cota de neu
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :{WHITE}... només es pot construir per sota la cota de neu
+
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES                     :{WHITE}No hi havia llocs adequats per a indústries '{STRING}'
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION         :{WHITE}Canvia els paràmetres de generació de mapa per a obtenir-ne un de millor
 
 # Station construction related errors
 STR_ERROR_CAN_T_BUILD_RAILROAD_STATION                          :{WHITE}Aquí no es pot construir una estació de tren...

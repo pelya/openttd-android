@@ -623,7 +623,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Vklop/izklop ok
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Preklop barvanja umazanih blokov
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1.
 STR_ORDINAL_NUMBER_2ND                                          :2.
 STR_ORDINAL_NUMBER_3RD                                          :3.
@@ -639,22 +639,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12.
 STR_ORDINAL_NUMBER_13TH                                         :13.
 STR_ORDINAL_NUMBER_14TH                                         :14.
 STR_ORDINAL_NUMBER_15TH                                         :15.
-STR_ORDINAL_NUMBER_16TH                                         :16.
-STR_ORDINAL_NUMBER_17TH                                         :17.
-STR_ORDINAL_NUMBER_18TH                                         :18.
-STR_ORDINAL_NUMBER_19TH                                         :19.
-STR_ORDINAL_NUMBER_20TH                                         :20.
-STR_ORDINAL_NUMBER_21ST                                         :21.
-STR_ORDINAL_NUMBER_22ND                                         :22.
-STR_ORDINAL_NUMBER_23RD                                         :23.
-STR_ORDINAL_NUMBER_24TH                                         :24.
-STR_ORDINAL_NUMBER_25TH                                         :25.
-STR_ORDINAL_NUMBER_26TH                                         :26.
-STR_ORDINAL_NUMBER_27TH                                         :27.
-STR_ORDINAL_NUMBER_28TH                                         :28.
-STR_ORDINAL_NUMBER_29TH                                         :29.
-STR_ORDINAL_NUMBER_30TH                                         :30.
-STR_ORDINAL_NUMBER_31ST                                         :31.
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1.
+STR_DAY_NUMBER_2ND                                              :2.
+STR_DAY_NUMBER_3RD                                              :3.
+STR_DAY_NUMBER_4TH                                              :4.
+STR_DAY_NUMBER_5TH                                              :5.
+STR_DAY_NUMBER_6TH                                              :6.
+STR_DAY_NUMBER_7TH                                              :7.
+STR_DAY_NUMBER_8TH                                              :8.
+STR_DAY_NUMBER_9TH                                              :9.
+STR_DAY_NUMBER_10TH                                             :10.
+STR_DAY_NUMBER_11TH                                             :11.
+STR_DAY_NUMBER_12TH                                             :12.
+STR_DAY_NUMBER_13TH                                             :13.
+STR_DAY_NUMBER_14TH                                             :14.
+STR_DAY_NUMBER_15TH                                             :15.
+STR_DAY_NUMBER_16TH                                             :16.
+STR_DAY_NUMBER_17TH                                             :17.
+STR_DAY_NUMBER_18TH                                             :18.
+STR_DAY_NUMBER_19TH                                             :19.
+STR_DAY_NUMBER_20TH                                             :20.
+STR_DAY_NUMBER_21ST                                             :21.
+STR_DAY_NUMBER_22ND                                             :22.
+STR_DAY_NUMBER_23RD                                             :23.
+STR_DAY_NUMBER_24TH                                             :24.
+STR_DAY_NUMBER_25TH                                             :25.
+STR_DAY_NUMBER_26TH                                             :26.
+STR_DAY_NUMBER_27TH                                             :27.
+STR_DAY_NUMBER_28TH                                             :28.
+STR_DAY_NUMBER_29TH                                             :29.
+STR_DAY_NUMBER_30TH                                             :30.
+STR_DAY_NUMBER_31ST                                             :31.
 ############ range for days ends
 
 ############ range for months starts
@@ -1086,14 +1104,16 @@ STR_GAME_OPTIONS_TOWN_NAME_ITALIAN                              :Italijanska
 STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Katalonska
 ############ end of townname region
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Samo-shrani
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Samodejno shrani
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Izberi časovni interval samodejnega shranjevanja igre
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Izključeno
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Vsak mesec
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Vsake 3 mesece
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Vsakih 6 mesecev
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Vsakih 12 mesecev
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Jezik
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Izberi jezik vmesnika
@@ -1218,6 +1238,7 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Nastavitve igre
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Nastavitve podjetja (shranjeno v igrah, vpliva samo na nove igre)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Nastavitve podjetja (shranjeno v igrah, vpliva samo na trenutno podjetje)
 
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorija:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Omeji seznam na prikaz le spremenjenih nastavitev
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Osnovne nastavitve
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Napredne nastavitve
@@ -1232,6 +1253,7 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Nastavitve igre
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Nastavitve igre (zapisane ob shranjevanju; vplivajo le na trenutno igro)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Nastavitve podjetja (zapisane ob shranjevanju; vplivajo le na nove igre)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Nastavitve podjetja (zapisane ob shranjevanju; vplivajo le na trenutno podjetje)
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Brez -
 
 STR_CONFIG_SETTING_OFF                                          :Izklopi
 STR_CONFIG_SETTING_ON                                           :Vklopi
@@ -1393,9 +1415,13 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Prikaz prebival
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Debelina črt grafov: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Debelina črte grafov. Tanjša je bolj natančna, debelejša bolj razločna.
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :Pokrajina: {STRING}
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Urejevalnik terena: {STRING}
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Original
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Tip terena: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(samo TerraGenesis) Hribovitost pokrajine
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Gostota industrij: {STRING}
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Največja oddaljenost rafinerij nafte od roba: {STRING}
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Naftne rafinerije se nahajajo le pri robu kater, to je ob obali na otoških kartah
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Nadmorska višina snežne odeje: {STRING}
@@ -1404,10 +1430,15 @@ STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Zelo zglajen
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Zglajen
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Valovit
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Zelo valovit
+STR_CONFIG_SETTING_VARIETY                                      :Raznolika distribucija: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :Število rek: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Izberi koliko rek generirati
 STR_CONFIG_SETTING_TREE_PLACER                                  :Algoritem postavljanja dreves: {STRING}
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :Brez
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Original
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Izboljšan
+STR_CONFIG_SETTING_ROAD_SIDE                                    :Cestna vozila: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Izberi stran vožnje
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Zasuk višinskega zemljevida: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Nasprotno urini smeri
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :Urina smer
@@ -1461,6 +1492,9 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Izklop
 
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Premik slike z levim klikom: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Omogoči pomik pogleda z levim klikom miške in vlečenjem. Primerno za dotične zaslone.
+
+STR_CONFIG_SETTING_AUTOSAVE                                     :Samodejno shrani: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Izberi časovni interval samodejnega shranjevanja igre
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Uporabi {STRING} format datuma za imena shranjevanja igre
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Format datuma v imenih shranjenih iger
@@ -1753,9 +1787,14 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
 STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Lokalno
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Zvočni učinki
 STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Vmesnik
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}Splošno
 STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Gradnja
+STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Podjetje
 STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Vozila
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Usmerjanje
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Katastrofe / Nesreče
+STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Ustvarjanje sveta
+STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Okolje
 STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Mesta
 STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industrije
 STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Razpored tovora
@@ -2778,6 +2817,7 @@ STR_SAVELOAD_SAVE_BUTTON                                        :{BLACK}Shrani
 STR_SAVELOAD_SAVE_TOOLTIP                                       :{BLACK}Shrani trenutno igro z izbranim imenom
 STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}Naloži
 STR_SAVELOAD_LOAD_TOOLTIP                                       :{BLACK}Naloži izbrano igro
+STR_SAVELOAD_LOAD_HEIGHTMAP_TOOLTIP                             :{BLACK}Naloži višinsko karto
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Podrobnosti igre
 STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}Ni informacij na voljo
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}: {WHITE}{STRING}
@@ -2876,6 +2916,7 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}Premakni
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}Premakne izbrano NewGRF gor po seznamu
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}Premakni dol
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}Premakne izbrano NewGRF dol po seznamu
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Nadgradi
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}Seznam nameščenih NewGRF datotek.
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Nastavi parametre
@@ -2899,6 +2940,12 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}Ni infor
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Ni ujemajoče datoteke
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Onemogočeno
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Nekompatibilno s to različico OpenTTD
+
+# NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{WHITE}Shrani prednastavitev
+STR_SAVE_PRESET_TITLE                                           :{BLACK}Vpiši ime za prednastavitev
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Prekliči
+STR_SAVE_PRESET_SAVE                                            :{BLACK}Shrani
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Spremeni NewGRF parametre
@@ -3405,6 +3452,7 @@ STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Izbriši
 STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}Preimenuj izbrano skupino
 STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Klikni za zaščito skupine pred splošno samoobnovo
 
+STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Izbriši skupino
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :Vsa izmenljiva vozila
 STR_GROUP_REMOVE_ALL_VEHICLES                                   :Odstrani vsa vozila

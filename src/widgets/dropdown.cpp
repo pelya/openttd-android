@@ -347,6 +347,7 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 	/* The preferred width equals the calling widget. */
 	uint width = wi_rect.right - wi_rect.left + 1;
 
+	/* Longest item in the list, if auto_width is enabled */
 	uint max_item_width = 0;
 
 	if (auto_width) {
@@ -357,16 +358,14 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 		}
 	}
 
-	/* Total length of list. */
-	int list_height = 0;
+	/* Total length of list */
+	int height = 0;
 
 	for (const DropDownListItem * const *it = list->Begin(); it != list->End(); ++it) {
 		const DropDownListItem *item = *it;
-		list_height += item->Height(width);
+		height += item->Height(width);
+		if (auto_width) max_item_width = max(max_item_width, item->Width() + 5);
 	}
-
-	/* Height of the dropdown window; by default, the total length of the list. */
-	int height = list_height;
 
 	/* Check if the status bar is visible, as we don't want to draw over it */
 	int screen_bottom = GetMainViewBottom();
@@ -381,8 +380,11 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 		if (w->top + wi_rect.top > screen_top + height) {
 			top = w->top + wi_rect.top - height;
 		} else {
-			/* If it doesn't fit above the widget, we need to enable a scrollbar... */
-			int avg_height = list_height / (int)list->Length();
+			/* ... and lastly if it won't, enable the scroll bar and fit the
+			 * list in below the widget */
+			int avg_height = height / (int)list->Length();
+			int rows = (screen_bottom - 4 - top) / avg_height;
+			height = rows * avg_height;
 			scroll = true;
 
 			/* ... and choose whether to put the list above or below the widget. */

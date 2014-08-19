@@ -470,7 +470,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Zeechen-Boxen u
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Knaschteg blocks fierwen un/aus
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1ten
 STR_ORDINAL_NUMBER_2ND                                          :2ten
 STR_ORDINAL_NUMBER_3RD                                          :3ten
@@ -486,22 +486,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12ten
 STR_ORDINAL_NUMBER_13TH                                         :13ten
 STR_ORDINAL_NUMBER_14TH                                         :14ten
 STR_ORDINAL_NUMBER_15TH                                         :15ten
-STR_ORDINAL_NUMBER_16TH                                         :16ten
-STR_ORDINAL_NUMBER_17TH                                         :17ten
-STR_ORDINAL_NUMBER_18TH                                         :18ten
-STR_ORDINAL_NUMBER_19TH                                         :19ten
-STR_ORDINAL_NUMBER_20TH                                         :20ten
-STR_ORDINAL_NUMBER_21ST                                         :21ten
-STR_ORDINAL_NUMBER_22ND                                         :22ten
-STR_ORDINAL_NUMBER_23RD                                         :23ten
-STR_ORDINAL_NUMBER_24TH                                         :24ten
-STR_ORDINAL_NUMBER_25TH                                         :25ten
-STR_ORDINAL_NUMBER_26TH                                         :26ten
-STR_ORDINAL_NUMBER_27TH                                         :27ten
-STR_ORDINAL_NUMBER_28TH                                         :28ten
-STR_ORDINAL_NUMBER_29TH                                         :29ten
-STR_ORDINAL_NUMBER_30TH                                         :30ten
-STR_ORDINAL_NUMBER_31ST                                         :31ten
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1ten
+STR_DAY_NUMBER_2ND                                              :2ten
+STR_DAY_NUMBER_3RD                                              :3ten
+STR_DAY_NUMBER_4TH                                              :4ten
+STR_DAY_NUMBER_5TH                                              :5ten
+STR_DAY_NUMBER_6TH                                              :6ten
+STR_DAY_NUMBER_7TH                                              :7ten
+STR_DAY_NUMBER_8TH                                              :8ten
+STR_DAY_NUMBER_9TH                                              :9ten
+STR_DAY_NUMBER_10TH                                             :10ten
+STR_DAY_NUMBER_11TH                                             :11ten
+STR_DAY_NUMBER_12TH                                             :12ten
+STR_DAY_NUMBER_13TH                                             :13ten
+STR_DAY_NUMBER_14TH                                             :14ten
+STR_DAY_NUMBER_15TH                                             :15ten
+STR_DAY_NUMBER_16TH                                             :16ten
+STR_DAY_NUMBER_17TH                                             :17ten
+STR_DAY_NUMBER_18TH                                             :18ten
+STR_DAY_NUMBER_19TH                                             :19ten
+STR_DAY_NUMBER_20TH                                             :20ten
+STR_DAY_NUMBER_21ST                                             :21ten
+STR_DAY_NUMBER_22ND                                             :22ten
+STR_DAY_NUMBER_23RD                                             :23ten
+STR_DAY_NUMBER_24TH                                             :24ten
+STR_DAY_NUMBER_25TH                                             :25ten
+STR_DAY_NUMBER_26TH                                             :26ten
+STR_DAY_NUMBER_27TH                                             :27ten
+STR_DAY_NUMBER_28TH                                             :28ten
+STR_DAY_NUMBER_29TH                                             :29ten
+STR_DAY_NUMBER_30TH                                             :30ten
+STR_DAY_NUMBER_31ST                                             :31ten
 ############ range for days ends
 
 ############ range for months starts
@@ -937,11 +955,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Katalanësch
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Autospäicheren
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Wiel den Intervall aus fir d'Autospäicherung
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Aus
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :All Mount
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :All 3 Méint
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :All 6 Méint
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :All 12 Méint
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Sprooch
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Wielt d'Interfacesprooch
@@ -967,6 +987,7 @@ STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Wiel de 
 STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} korrupt Datei{P "" en}
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Méi Informatiounen iwwer d'Basis Musik Set
 
+STR_ERROR_RESOLUTION_LIST_FAILED                                :{WHITE}Konnt keng Lësch vun net supportéiren Opléisungen fannen
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}Fehler beim Vollbild
 
 # Custom currency window
@@ -1247,21 +1268,37 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Weis d'Awunnerz
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Déckt vunn de Linnen vun den Graphen: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Breed vun den Linnen an den Grafiken. Eng dënn Linn kann méi präzis gelies ginn, eng méi déck kann besser gesinn ginn an d'Faarwen sinn besser ze ënnerscheeden
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :Landschaft: {STRING}
+STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Landschaften definéiren basis Spillszenarien mat verschiddenen Wueren an Stiedwuesstumviraussetzungen. NewGRF an Gamescripter erlaben méi fein Astellungen.
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Landgenerator: {STRING}
+STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :Den original Generator henkt vum basis grafikset of, an erstellt fixéiert Landschaftstypen. TerraGenesis ass en op Perlin noise baséierten Generator mat méi feinen Astellungen.
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Original
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Terraintyp: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(Nëmmen TerraGenesis) Hiwwelegkeet vun der Landschaft
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Industriedicht: {STRING}
+STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Definéiert wéivill Industrien generéiert sollen ginn an wéivill der während dem Spill sollen behalen ginn.
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Maximal Distanz vum Kaartenenn bis zu enger Uelegraffinerie: {STRING}
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Uelëgraffinerien ginn nëmmen um Rand gebaut, dat ass un der Küst fir Inselkaarten
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Schnéigrenz Héicht: {STRING}
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Knubbelegkeet vum terrain (nëmmen TerraGenesis) : {STRING}
+STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Kontrolléiert ab welcher Héigt den Schnéi ufenkt an der subarktëscher Landschaft. Schnéi affektéiert och Industriegeneratioun an de Wuesstum vun Stied.
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Knubbelegkeet vum Terrain (nëmmen TerraGenesis) : {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(Nëmmen TerraGenesis) Wiel d'Heefegkeet vun Hiwwelen: Mëll Landschafter hunn manner, breed verdeelten Hiwwelen. Rau Landschaften hunn méi Bierger déi repetitiv ausgesinn kënnen.
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Ganz Flaach
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Flaach
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Fielseg
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Ganz Fielseg
+STR_CONFIG_SETTING_VARIETY                                      :Vielfaltverdeelung: {STRING}
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :(Nëmmen TerraGenesis) Kontrolléiert op d'Kaart flaach Stécker an och Bierger huet. Wëll dëst d'Kaart méi flaach mescht, sollen aner Astellungen op Bierger gesat ginn
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :Unzuel Flëss: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Wiel wéivill Flëss generéiert ginn
 STR_CONFIG_SETTING_TREE_PLACER                                  :Baamplanzalgorithmus: {STRING}
+STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :Wiel d'Verdeelung vun den Beem op der Kaart: 'Orginal' setzt d'Beem uniform verspreet, 'Verbessert' setzt se an Gruppen
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :Keen
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Original
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Verbessert
+STR_CONFIG_SETTING_ROAD_SIDE                                    :Stroossegefierer: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Wiel d'Säit op där gefuer gëtt
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Héichtenkaartrotatioun: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Géint d'Auer
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :Matt der Auer
@@ -1315,6 +1352,9 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Aus
 
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Lénksklickscroll: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Schalt d'Scrollen vun der Kaart un, wann se mat der lénker Maustast gezunn gëtt
+
+STR_CONFIG_SETTING_AUTOSAVE                                     :Autospäichern: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Setz den Interval tëschend automateschen Späicherstänn
 
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Benotz {STRING} Datumsformat fir Späichernimm
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Format vum Datum am Numm vum Späicherstand
@@ -2743,6 +2783,8 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}Rop
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}Setzt d'NewGRF an der Lëscht erop
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}Rof
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}Setzt d'NewGRF an der Lëscht erof
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Upgrade
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Upgrade NewGRF Dateien fir déis du eng méi nei Versioun installéiert hues
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}Eng Lëscht vun NewGRF Dateien déi installéiert sinn.
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Set parameters
@@ -2766,6 +2808,16 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}Keng Inf
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Datei net fonnt.
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Ausgeschalt
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Onkompatibel mat dëser Versioun vun OpenTTD
+
+# NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{WHITE}Preset späichern
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Lëscht vun Presets, wiel een den op den Numm ënnendrënner kopéiert gëtt
+STR_SAVE_PRESET_TITLE                                           :{BLACK}Wiel en Numm fir den Preset
+STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Grad ausgewielten Numm fir den Preset den gespäichert soll ginn
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Ofbriechen
+STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Den Preset net änneren
+STR_SAVE_PRESET_SAVE                                            :{BLACK}Späichern
+STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Späicher den Preset op den grad ausgewielten Numm
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}NewGRF Parameter änneren

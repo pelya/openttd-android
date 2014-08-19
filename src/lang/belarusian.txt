@@ -408,30 +408,30 @@ STR_CARGO_SINGULAR_FIZZY_DRINK.pre                              :газіроў�
 
 # Quantity of cargo
 STR_QUANTITY_NOTHING                                            :
-STR_QUANTITY_PASSENGERS                                         :{COMMA} пасажыр{P "" а аў}
+STR_QUANTITY_PASSENGERS                                         :{COMMA}{NBSP}пасажыр{P "" а аў}
 STR_QUANTITY_COAL                                               :{WEIGHT_LONG} вугалю
-STR_QUANTITY_MAIL                                               :{COMMA} мяш{P ок кi коў} пошты
+STR_QUANTITY_MAIL                                               :{COMMA}{NBSP}мяш{P ок кi коў} пошты
 STR_QUANTITY_OIL                                                :{VOLUME_LONG} нафты
-STR_QUANTITY_LIVESTOCK                                          :{COMMA} гал{P ава авы оў} жывёлы
-STR_QUANTITY_GOODS                                              :{COMMA} скрын{P ка кi ак} тавараў
+STR_QUANTITY_LIVESTOCK                                          :{COMMA}{NBSP}гал{P ава авы оў} жывёлы
+STR_QUANTITY_GOODS                                              :{COMMA}{NBSP}скрын{P ка кi ак} тавараў
 STR_QUANTITY_GRAIN                                              :{WEIGHT_LONG} зерня
 STR_QUANTITY_WOOD                                               :{WEIGHT_LONG} драўнiны
 STR_QUANTITY_IRON_ORE                                           :{WEIGHT_LONG} жалезнай руды
 STR_QUANTITY_STEEL                                              :{WEIGHT_LONG} сталi
-STR_QUANTITY_VALUABLES                                          :{COMMA} мяш{P ок кi коў} каштоўнасьцяў
+STR_QUANTITY_VALUABLES                                          :{COMMA}{NBSP}мяш{P ок кi коў} каштоўнасьцяў
 STR_QUANTITY_COPPER_ORE                                         :{WEIGHT_LONG} меднай руды
 STR_QUANTITY_MAIZE                                              :{WEIGHT_LONG} кукурузы
 STR_QUANTITY_FRUIT                                              :{WEIGHT_LONG} садавiны
-STR_QUANTITY_DIAMONDS                                           :{COMMA} мяш{P ок кi коў} алмазаў
+STR_QUANTITY_DIAMONDS                                           :{COMMA}{NBSP}мяш{P ок кi коў} алмазаў
 STR_QUANTITY_FOOD                                               :{WEIGHT_LONG} ежы
 STR_QUANTITY_PAPER                                              :{WEIGHT_LONG} паперы
-STR_QUANTITY_GOLD                                               :{COMMA} мяш{P ок кi коў} золата
+STR_QUANTITY_GOLD                                               :{COMMA}{NBSP}мяш{P ок кi коў} золата
 STR_QUANTITY_WATER                                              :{VOLUME_LONG} вады
 STR_QUANTITY_WHEAT                                              :{WEIGHT_LONG} пшаніцы
 STR_QUANTITY_RUBBER                                             :{VOLUME_LONG} каўчуку
 STR_QUANTITY_SUGAR                                              :{WEIGHT_LONG} цукру
-STR_QUANTITY_TOYS                                               :{COMMA} цац{P ка кi ак}
-STR_QUANTITY_SWEETS                                             :{COMMA} скрын{P ка кi ак} цукерак
+STR_QUANTITY_TOYS                                               :{COMMA}{NBSP}цац{P ка кi ак}
+STR_QUANTITY_SWEETS                                             :{COMMA}{NBSP}скрын{P ка кi ак} цукерак
 STR_QUANTITY_COLA                                               :{VOLUME_LONG} колы
 STR_QUANTITY_CANDYFLOSS                                         :{WEIGHT_LONG} цукровай баўны
 STR_QUANTITY_BUBBLES                                            :{COMMA} бурбал{P ка кi ак}
@@ -478,12 +478,12 @@ STR_ABBREV_NONE                                                 :{TINY_FONT}НЯ
 STR_ABBREV_ALL                                                  :{TINY_FONT}Усё
 
 # 'Mode' of transport for cargoes
-STR_PASSENGERS                                                  :{COMMA} пасажыр{P "" ы аў}
-STR_BAGS                                                        :{COMMA} мя{P шок шкi шкоў}
-STR_TONS                                                        :{COMMA} тон{P а ы ""}
-STR_LITERS                                                      :{COMMA} лiтр{P "" ы аў}
-STR_ITEMS                                                       :{COMMA} штук{P а i ""}
-STR_CRATES                                                      :{COMMA} скрын{P я i яў}
+STR_PASSENGERS                                                  :{COMMA}{NBSP}пасажыр{P "" ы аў}
+STR_BAGS                                                        :{COMMA}{NBSP}мяш{P ок кi коў}
+STR_TONS                                                        :{COMMA}{NBSP}тон{P а ы ""}
+STR_LITERS                                                      :{COMMA}{NBSP}лiтр{P "" ы аў}
+STR_ITEMS                                                       :{COMMA}{NBSP}штук{P а i ""}
+STR_CRATES                                                      :{COMMA}{NBSP}скрын{P я i яў}
 
 # Colours, do not shuffle
 STR_COLOUR_DARK_BLUE                                            :Цёмна-сiнi
@@ -504,37 +504,37 @@ STR_COLOUR_GREY                                                 :Шэры
 STR_COLOUR_WHITE                                                :Белы
 
 # Units used in OpenTTD
-STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA} мiл{P я i яў}/г
-STR_UNITS_VELOCITY_METRIC                                       :{COMMA} км/г
-STR_UNITS_VELOCITY_SI                                           :{COMMA} м/с
+STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}мiл{P я i яў}/г
+STR_UNITS_VELOCITY_METRIC                                       :{COMMA}{NBSP}км/г
+STR_UNITS_VELOCITY_SI                                           :{COMMA}{NBSP}м/с
 
-STR_UNITS_POWER_IMPERIAL                                        :{COMMA} к.с.
-STR_UNITS_POWER_METRIC                                          :{COMMA} к.с.
-STR_UNITS_POWER_SI                                              :{COMMA} кВт
+STR_UNITS_POWER_IMPERIAL                                        :{COMMA}{NBSP}к.с.
+STR_UNITS_POWER_METRIC                                          :{COMMA}{NBSP}к.с.
+STR_UNITS_POWER_SI                                              :{COMMA}{NBSP}кВт
 
-STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{COMMA} т
-STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA} т
-STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA} кг
+STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{COMMA}{NBSP}т
+STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}{NBSP}т
+STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}{NBSP}кг
 
-STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{COMMA} тон{P а ы ""}
-STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA} тон{P а ы ""}
-STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA} кг
+STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{COMMA}{NBSP}тон{P а ы ""}
+STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA}{NBSP}тон{P а ы ""}
+STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA}{NBSP}кг
 
-STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{COMMA} гал.
-STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA} л
-STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA} м³
+STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{COMMA}{NBSP}гал.
+STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA}{NBSP}л
+STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}{NBSP}м³
 
-STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA} галон{P "" а аў}
-STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA} лiтр{P "" ы аў}
-STR_UNITS_VOLUME_LONG_SI                                        :{COMMA} м³
+STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA}{NBSP}галон{P "" а аў}
+STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA}{NBSP}лiтр{P "" ы аў}
+STR_UNITS_VOLUME_LONG_SI                                        :{COMMA}{NBSP}м³
 
-STR_UNITS_FORCE_IMPERIAL                                        :{COMMA} фунт{P "" а аў}-сілы
-STR_UNITS_FORCE_METRIC                                          :{COMMA} кгс
-STR_UNITS_FORCE_SI                                              :{COMMA} кН
+STR_UNITS_FORCE_IMPERIAL                                        :{COMMA}{NBSP}фунт{P "" а аў}-сілы
+STR_UNITS_FORCE_METRIC                                          :{COMMA}{NBSP}кгс
+STR_UNITS_FORCE_SI                                              :{COMMA}{NBSP}кН
 
-STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA} фут{P "" ы аў}
-STR_UNITS_HEIGHT_METRIC                                         :{COMMA} м
-STR_UNITS_HEIGHT_SI                                             :{COMMA} м
+STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA}{NBSP}фут{P "" ы аў}
+STR_UNITS_HEIGHT_METRIC                                         :{COMMA}{NBSP}м
+STR_UNITS_HEIGHT_SI                                             :{COMMA}{NBSP}м
 
 # Common window strings
 STR_LIST_FILTER_TITLE                                           :{BLACK}Фільтар:
@@ -783,7 +783,7 @@ STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Пераклю�
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Падфарбоўваць блёкі, якія патрабуюць перамалёўкі
 ############ range ends here
 
-############ range for days starts (also used for the place in the highscore window)
+############ range for ordinal numbers used for the place in the highscore window
 STR_ORDINAL_NUMBER_1ST                                          :1-е
 STR_ORDINAL_NUMBER_2ND                                          :2-е
 STR_ORDINAL_NUMBER_3RD                                          :3-е
@@ -799,22 +799,40 @@ STR_ORDINAL_NUMBER_12TH                                         :12-е
 STR_ORDINAL_NUMBER_13TH                                         :13-е
 STR_ORDINAL_NUMBER_14TH                                         :14-е
 STR_ORDINAL_NUMBER_15TH                                         :15-е
-STR_ORDINAL_NUMBER_16TH                                         :16-е
-STR_ORDINAL_NUMBER_17TH                                         :17-е
-STR_ORDINAL_NUMBER_18TH                                         :18-е
-STR_ORDINAL_NUMBER_19TH                                         :19-е
-STR_ORDINAL_NUMBER_20TH                                         :20-е
-STR_ORDINAL_NUMBER_21ST                                         :21-е
-STR_ORDINAL_NUMBER_22ND                                         :22-е
-STR_ORDINAL_NUMBER_23RD                                         :23-е
-STR_ORDINAL_NUMBER_24TH                                         :24-е
-STR_ORDINAL_NUMBER_25TH                                         :25-е
-STR_ORDINAL_NUMBER_26TH                                         :26-е
-STR_ORDINAL_NUMBER_27TH                                         :27-е
-STR_ORDINAL_NUMBER_28TH                                         :28-е
-STR_ORDINAL_NUMBER_29TH                                         :29-е
-STR_ORDINAL_NUMBER_30TH                                         :30-е
-STR_ORDINAL_NUMBER_31ST                                         :31-е
+############ range for ordinal numbers ends
+
+############ range for days starts
+STR_DAY_NUMBER_1ST                                              :1-е
+STR_DAY_NUMBER_2ND                                              :2-е
+STR_DAY_NUMBER_3RD                                              :3-е
+STR_DAY_NUMBER_4TH                                              :4-е
+STR_DAY_NUMBER_5TH                                              :5-е
+STR_DAY_NUMBER_6TH                                              :6-е
+STR_DAY_NUMBER_7TH                                              :7-е
+STR_DAY_NUMBER_8TH                                              :8-е
+STR_DAY_NUMBER_9TH                                              :9-е
+STR_DAY_NUMBER_10TH                                             :10-е
+STR_DAY_NUMBER_11TH                                             :11-е
+STR_DAY_NUMBER_12TH                                             :12-е
+STR_DAY_NUMBER_13TH                                             :13-е
+STR_DAY_NUMBER_14TH                                             :14-е
+STR_DAY_NUMBER_15TH                                             :15-е
+STR_DAY_NUMBER_16TH                                             :16-е
+STR_DAY_NUMBER_17TH                                             :17-е
+STR_DAY_NUMBER_18TH                                             :18-е
+STR_DAY_NUMBER_19TH                                             :19-е
+STR_DAY_NUMBER_20TH                                             :20-е
+STR_DAY_NUMBER_21ST                                             :21-е
+STR_DAY_NUMBER_22ND                                             :22-е
+STR_DAY_NUMBER_23RD                                             :23-е
+STR_DAY_NUMBER_24TH                                             :24-е
+STR_DAY_NUMBER_25TH                                             :25-е
+STR_DAY_NUMBER_26TH                                             :26-е
+STR_DAY_NUMBER_27TH                                             :27-е
+STR_DAY_NUMBER_28TH                                             :28-е
+STR_DAY_NUMBER_29TH                                             :29-е
+STR_DAY_NUMBER_30TH                                             :30-е
+STR_DAY_NUMBER_31ST                                             :31-е
 ############ range for days ends
 
 ############ range for months starts
@@ -1128,6 +1146,7 @@ STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}У ТС 
 STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} не мае заданьняў
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} мае дубляваныя заданьні
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} мае няісную станцыю ў заданьнях
+STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE} накіраван{G 0 ы а а ы} у аэрапорт з занадта кароткай паласой
 
 STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} састарэў
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} цалкам састарэў
@@ -1249,11 +1268,13 @@ STR_GAME_OPTIONS_TOWN_NAME_CATALAN                              :Каталён�
 STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Аўтазахаваньне
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Інтэрвал паміж аўтаматычнымі захаваньнямі гульні
 
+############ start of autosave dropdown
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Выключана
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Штомесяц
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_3_MONTHS               :Кожныя 3 месяцы
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_6_MONTHS               :Кожныя 6 месяцаў
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Кожныя 12 месяцаў
+############ end of autosave dropdown
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Мова
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Выбраць мову інтэрфэйсу
@@ -1279,6 +1300,7 @@ STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Выбе
 STR_GAME_OPTIONS_BASE_MUSIC_STATUS                              :{RED}{NUM} пашкоджан{P ы ых ых} файл{P 0 "" ы аў}
 STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Дадатковая інфармацыя аб базавым музычным наборы
 
+STR_ERROR_RESOLUTION_LIST_FAILED                                :{WHITE}Не атрымалася атрымаць сьпіс падтрымліваемых разрозненьняў экрана
 STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}Памылка поўнаэкраннага рэжыму
 
 # Custom currency window
@@ -1380,7 +1402,7 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Наладкі 
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Катэґорыя:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Тып:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Адлюстроўваць у сьпісе толькі зьмененыя наладкі
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Адлюстроўваць у спісе толькі наладкі, якія адпавядаюць абранай катэгорыі
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Базавыя наладкі
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Пашыраныя наладкі
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Спэцыяльныя наладкі / усе наладкі
@@ -1541,7 +1563,7 @@ STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :Транспа�
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :Калі ўключана, усе мадэлі транспартных сродкаў пасьля з'яўленьня застануцца даступнымі назаўжды.
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :Аўтазамена старых транспартных сродкаў: {STRING}
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE_HELPTEXT                   :Калі ўключана, транспарт напрыканцы свайго пэўнага тэрміна службы будзе аўтаматычна заменены, калі ўмовы замены будуць выкананыя.
-STR_CONFIG_SETTING_AUTORENEW_MONTHS                             :Аўтаабнаўленьне, калi транспарт дасягне {STRING} макс. узросту
+STR_CONFIG_SETTING_AUTORENEW_MONTHS                             :Аўтазамена транспарта {STRING} заканчэння тэрміна эксплуатацыі
 STR_CONFIG_SETTING_AUTORENEW_MONTHS_HELPTEXT                    :Адносны ўзрост, калі транспартны сродак будзе разглядацца як той, што патрабуе аўтаўзамены.
 STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_BEFORE                :{COMMA} месяц{P "" ы аў} перад
 STR_CONFIG_SETTING_AUTORENEW_MONTHS_VALUE_AFTER                 :{COMMA} месяц{P "" ы аў} пасьля
@@ -1559,21 +1581,37 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Паказва�
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Таўшчыня лiнiяў у ґрафiках: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Таўшчыня лініяў ґрафікаў. Тонкая лінія дакладней, тоўстую лягчэй убачыць і адрозьніць колер.
 
+STR_CONFIG_SETTING_LANDSCAPE                                    :Тып карты: {STRING}
+STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Выбар тыпу мапы вызначае аснову гульнёвага працэсу, напрыклад, даступныя тыпы транспарта і грузаў, розныя ўмовы росту гарадоў. Усё гэта таксама можа быць зменена з дапамогай модуляў NewGRF і гульнёвых скрыптоў.
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Ґенэратар зямлі: {STRING}
+STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :Арыгінальны генератар разлічаны на базавы графічны набор і стварае ландшафт з тыпавых элементаў.{}TerraGenesis выкарыстоўвае для стварэння ландшафту шум Перлiна і больш тонка наладжваецца.
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Арыґінальны
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Тып ландшафту: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(Толькі для TerraGenesis){}Узгоркаватасць ландшафту
+STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Колькасць прадпрыемстваў: {STRING}
+STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Выберыце, колькі прадпрыемстваў ствараць напачатку і на якім узроўні падтрымліваць іх колькасць падчас гульні.
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Макс. адлегласьць ад краю мапы да нафтаперапрацоўчых заводаў: {STRING}
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Нафтаперапрацоўчыя заводы будуюцца толькі каля краю мапы, у тым ліку на востраве.
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Вышыня сьнегавой лініі: {STRING}
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Нароўнасьць ляндшафту (толькі TerraGenesis) : {STRING}
+STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Азначце, на якой вышыні ў субарктычным клімаце ўсталёўваецца снегавы полаг. Наяўнасьць снега ўплывае на расстаноўку прадпрыемстваў і на ўмовы росту гарадоў.
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Нароўнасьць ляндшафту: {STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(Толькі для TerraGenesis){}Выберыце колькасьць гор і ўзгоркаў на карце. На гладкім ландшафце ўзгоркаў трохі і яны больш пакатыя. На грубым - шмат гор, і ландшафт можа здацца занадта аднастайным.
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Вельмі гладкі
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Гладкі
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Грубы
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Вельмі грубы
+STR_CONFIG_SETTING_VARIETY                                      :Разнастайнасць ландшафту: {STRING}
+STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :(Толькі для TerraGenesis){}Вызначае наяўнасць на карце як горных, так і раўнінных абласцей. Паколькі дадзеная наладка ўплывае толькі на згладжванне карты, астатнія наладкі павінны быць выстаўлены ў горны ландшафт.
+STR_CONFIG_SETTING_RIVER_AMOUNT                                 :Колькасць рэк: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Выберыце колькасць рэк на мапе
 STR_CONFIG_SETTING_TREE_PLACER                                  :Альґарытм расстаноўкі дрэваў: {STRING}
+STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :Выберыце спосаб размеркаваньня дрэў на карце: «арыгінальны» алгарытм высаджвае іх раўнамерна па ўсёй карце; «палепшаны» - групамі.
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :Няма
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Арыґінальны
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Палепшаны
+STR_CONFIG_SETTING_ROAD_SIDE                                    :Рух аўтатранспарту: {STRING}
+STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Выберыце бок дарогі, па якому рухаецца аўтатранспарт
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Кручэньне мапы вышыняў: {STRING}
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :супраць руху гадзіньнікавай стрэлкі
 STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :па гадзіньнікавай стрэлцы
@@ -1598,7 +1636,7 @@ STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Павольн�
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Кантралюе, што адбудзецца ў галоўным вакне, калі пстрыкнуць у малым вакне прагляду па нейкай кропцы. Калі ўключана, позірк будзе павольна перамяшчацца па мапе ў галоўным вакне. Калі выключана — экран адразу прыгне ў вызначанае месца.
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Паказваць замеры пры будаўніцтве: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Паказваць адлегласьць у клетках і розьніцу ў вышынях, калі нешта будуецца "працяжкай" (з націснутай кнопкай мышы).
-STR_CONFIG_SETTING_LIVERIES                                     :Паказваць індывідуальныя афарбоўкі транспарту (два фірмовыя колеры): {STRING}
+STR_CONFIG_SETTING_LIVERIES                                     :Паказваць індывідуальную афарбоўку транспарта: {STRING}
 STR_CONFIG_SETTING_LIVERIES_HELPTEXT                            :Ўжываньне спэцыфічных афарбовак (ліўрэй) для канкрэтнага тыпу транспартных сродкаў (у адрозьненьне ад фірмовага колеру ўсёй кампаніі).
 STR_CONFIG_SETTING_LIVERIES_NONE                                :не
 STR_CONFIG_SETTING_LIVERIES_OWN                                 :толькі для сваёй кампаніі
@@ -1628,6 +1666,9 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :выключа�
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Скролінг па кліку левай кнопкай мышы: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Уключыць пракручваньне мапы цягненьнем з націснутай левай кнопкай мышы. Гэта асабліва зручна пры выкарыстоўваньні сэнсарнага экрана.
 
+STR_CONFIG_SETTING_AUTOSAVE                                     :Аўтазахаваньні: {STRING}
+STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Азначце інтэрвал паміж аўтаматычнымі захаваньнямі
+
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES                    :Выкарыстоўваць {STRING} фармат даты для імёнаў захаваньняў
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_HELPTEXT           :Фармат даты ў назвах захаваных гульняў.
 STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_LONG               :доўгі (31-е Сту 2008 г.)
@@ -1642,7 +1683,7 @@ STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_NO_ACTIONS               :нiчога
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_CONSTRUCTION     :усе дзеяньні, акрамя будаўніцтва
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_LANDSCAPING      :усе дзеяньнi, акрамя зьмяненьня ляндшафту
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_ACTIONS              :усе дзеяньнi
-STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :Выкарыстоўваць пашыраны сьпіс транспорту: {STRING}
+STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :Паказваць групы ў сьпісе транспарта: {STRING}
 STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Дазволіць ужываньне пашыранага сьпісу транспартных сродкаў для групаваньня.
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :Паказваць індыкатар загрузкі: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :Выбраць, ці будуць паказвацца індыкатары загрузкі над транспартам, які грузіцца ці разгружаецца.
@@ -1657,7 +1698,7 @@ STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_HELPTEXT                   :Тып чыгу
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_FIRST                      :першыя даступныя
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_LAST                       :апошнія даступныя
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE_MOST_USED                  :найбольш ужывальныя
-STR_CONFIG_SETTING_SHOW_TRACK_RESERVATION                       :Паказваць каляіны, якія зарэзэрваваў цягнік: {STRING}
+STR_CONFIG_SETTING_SHOW_TRACK_RESERVATION                       :Паказваць зарэзерваваныя каляiны: {STRING}
 STR_CONFIG_SETTING_SHOW_TRACK_RESERVATION_HELPTEXT              :Зарэзэрваваныя рэйкі будуць мець адрозны колер. Дапамагае вырашыць праблему, калі цягнік адмаўляецца заехаць у блёк з маршрутнымі сьветлафорамі.
 STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS                     :Захоўваць актыўнымі інструмэнты будаўніцтва пасьля ўжываньня: {STRING}
 STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS_HELPTEXT            :Захаваць будаўнічыя інструмэнты для мастоў, тунэляў і г.д. пасля выкарыстаньня.
@@ -1716,7 +1757,7 @@ STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Інтэрва�
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Выбраць, ці залежыць абслугоўваньне транспарту ад даты апошняга абслугоўваньня або ад падзеньня надзейнасьці на пэўны адсотак ад максымальнай.
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Iнтэрвал абслугоўваньня для цягнiкоў: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Усталяваць міжсэрвісны інтэрвал для новых чыгуначных транспартных сродкаў, калі пэўны інтэрвал ня вызначаны для канкрэтнага цягніка.
-STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA} д{P зень днi дзён}/%
+STR_CONFIG_SETTING_SERVINT_VALUE                                :{COMMA}{NBSP}д{P зень днi дзён}/%
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :адключана
 STR_CONFIG_SETTING_SERVINT_ROAD_VEHICLES                        :Iнтэрвал абслугоўваньня для аўтатранспарту: {STRING}
 STR_CONFIG_SETTING_SERVINT_ROAD_VEHICLES_HELPTEXT               :Усталяваць міжсэрвісны інтэрвал для новага аўтатранспарту, калі пэўны інтэрвал ня вызначаны для канкрэтнай машыны.
@@ -1807,7 +1848,7 @@ STR_CONFIG_SETTING_ALLOW_TOWN_ROADS_HELPTEXT                    :Дазволі�
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS                   :Гарадам дазволена будаваць чыгуначныя пераезды: {STRING}
 STR_CONFIG_SETTING_ALLOW_TOWN_LEVEL_CROSSINGS_HELPTEXT          :Уключэньне гэтай наладкі дазваляе гарадам будаваць чыгуначная пераезды.
 STR_CONFIG_SETTING_NOISE_LEVEL                                  :Гарадам дазволена кантраляваць узровень шуму ад аэрапортаў: {STRING}
-STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :Калі гэта наладка адключаная, у кожным населеным пунце можа быць толькі два аэрапорта. Калі ўключаная — колькасьць аэрапортаў абмяжуецца ўзроўнем шума, які дапускае горад. Гэта, у сваю чаргу, залежыць ад колькасьці насельніцтва, памераў аэрапортаў і адлегласьці да іх.
+STR_CONFIG_SETTING_NOISE_LEVEL_HELPTEXT                         :Пры выключанай наладцы колькасьць аэрапортаў абмежавана дзвюма на кожны горад. Пры ўключанай - адміністрацыя горада абмяжоўвае толькі ўзровень дапушчальнага шуму (ён залежыць ад колькасці жыхароў). Узровень шуму, вырабленага аэрапортам, залежыць ад яго тыпу і адлегласьці ад цэнтра горада.
 STR_CONFIG_SETTING_TOWN_FOUNDING                                :Заснаваньне гарадоў у гульні: {STRING}
 STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Уключэньне гэтай наладкі дазваляе гульцам фундаваць новыя населеныя пункты падчас гульні.
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :забаронена
@@ -1856,9 +1897,9 @@ STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :нiводнае
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Першапачатковы множнік памеру населенага пункта: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Адносная колькасьць гарадоў у параўнаньні з мястэчкамі на пачатку гульні.
 
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Абнаўляць ґраф размеркаваньня раз у {STRING} д{P 0:2 зень ні зён}
+STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Абнаўляць ґраф размеркаваньня раз у {STRING}{NBSP}д{P 0:2 зень ні зён}
 STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Перыяд пераразьліку ґрафаў размеркаваньня. У кожным цыкле разьлічваецца не ґраф цалкам, а толькі адзін зь яго кампанэнтаў. Чым менш гэта значэньне, тым больш будзе нагрузка на працэсар. Чым больш значэньне, тым больш часу пройдзе перад пачаткам разьліку ґрафаў для новых маршрутаў.
-STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Пералічваць ґраф разьмеркаваньня раз у {STRING} д{P 0:2 зень ні зён}
+STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Пералічваць ґраф разьмеркаваньня раз у {STRING}{NBSP}д{P 0:2 зень ні зён}
 STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :Час, адведзены для пераразьліку кампанэнтаў ґрафа. Разьлік запускаецца асобным патокам і працягваецца на працягу паказанай колькасьці гульнявых дзён. Калі значэньне будзе надта малым, то, магчыма, разьлік не пасьпее завяршыцца, і гульня будзе чакаць завяршэньня (гэта прывядзе да затрымак). Пры вялікіх значэньнях ґрафы размеркаваньня будуць павольней абнаўляцца пры зьменах маршрутаў.
 STR_CONFIG_SETTING_DISTRIBUTION_MANUAL                          :уручную
 STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :несымэтрычнае
@@ -1917,11 +1958,23 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :мэтрычн�
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :СІ (м)
 
 STR_CONFIG_SETTING_LOCALISATION                                 :{ORANGE}Лакалізацыя
+STR_CONFIG_SETTING_GRAPHICS                                     :{ORANGE}Графіка
 STR_CONFIG_SETTING_SOUND                                        :{ORANGE}Гукавыя эфэкты
 STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Інтэрфэйс
+STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}Агульныя наладкі
+STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Вокны прагляду
 STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Будаўніцтва
+STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}Навіны і інфармацыя
+STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Кампанія
+STR_CONFIG_SETTING_ACCOUNTING                                   :{ORANGE}Фінансы
 STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Транспарт
+STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Фізічная мадэль
 STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Маршруты
+STR_CONFIG_SETTING_LIMITATIONS                                  :{ORANGE}Абмежаваньні
+STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Аварыі і катастрофы
+STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Стварэньне мапы
+STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Навакольнае асяроддзе
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Гарадская адміністрацыя
 STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Населеныя пункты
 STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Прамысловасьць
 STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Разьмеркаваньне грузаў
@@ -2204,10 +2257,10 @@ STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Абар
 STR_NETWORK_START_SERVER_UNADVERTISED                           :Не
 STR_NETWORK_START_SERVER_ADVERTISED                             :Так
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} клiент{P "" ы аў}
-STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Макс. клiентаў:
+STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Макс. колькасьць клiентаў:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Выбар максымальнай колькасьці кліентаў. Ня ўсе месцы павінны быць занятыя
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} кампанi{P я i яў}
-STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Макс. кампанiяў:
+STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Макс. колькасьць кампанiяў:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Абмежаваць максымальную колькасьць кампаніяў на сэрвэры
 STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} назіральнік{P "" i аў}
 STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Макс. назіральнiкаў:
@@ -3063,6 +3116,8 @@ STR_NEWGRF_SETTINGS_MOVEUP                                      :{BLACK}Увер
 STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP                              :{BLACK}Перамясьціць выбраны файл NewGRF вышэй
 STR_NEWGRF_SETTINGS_MOVEDOWN                                    :{BLACK}Уніз
 STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP                            :{BLACK}Перамясьціць выбраны файл NewGRF ніжэй
+STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Абнавіць
+STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Абнавіць файлы модуляў NewGRF, калі ёсць такая магчымасьць
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}Сьпіс устаноўленых файлаў NewGRF.
 
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Усталяваць парамэтры
@@ -3086,6 +3141,16 @@ STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}Няма
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}Файл ня знойдзены
 STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Адключана
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Несумяшчальна з дадзенай вэрсіяй OpenTTD
+
+# NewGRF save preset window
+STR_SAVE_PRESET_CAPTION                                         :{WHITE}Захаванне набору
+STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Сьпіс даступных набораў. Выберыце адзін з іх, каб скапіяваць яго назву ў радок імя.
+STR_SAVE_PRESET_TITLE                                           :{BLACK}Увядзіце імя набору
+STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Бягучае імя для захаваньня набору
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Адмена
+STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Не рабіць ніякіх змен
+STR_SAVE_PRESET_SAVE                                            :{BLACK}Захаваць
+STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Захаваць набор пад выбраным імем
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Зьмяніць парамэтры NewGRF
@@ -3229,8 +3294,8 @@ STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} дастаўлена
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED} (недастаткова)
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN} (дастаткова)
-STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}Горад расьце раз у {ORANGE}{COMMA}{BLACK} д{P зень нi зён}
-STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}Горад расьце раз у {ORANGE}{COMMA}{BLACK} д{P зень нi зён} (прафінансавана)
+STR_TOWN_VIEW_TOWN_GROWS_EVERY                                  :{BLACK}Горад расьце раз у {ORANGE}{COMMA}{BLACK}{NBSP}д{P зень нi зён}
+STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED                           :{BLACK}Горад расьце раз у {ORANGE}{COMMA}{BLACK}{NBSP}д{P зень нi зён} (прафінансавана)
 STR_TOWN_VIEW_TOWN_GROW_STOPPED                                 :{BLACK}Горад {RED}не{BLACK} разьвіваецца
 STR_TOWN_VIEW_NOISE_IN_TOWN                                     :{BLACK}Узровень шуму ў горадзе: {ORANGE}{COMMA}{BLACK}  Макс: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CENTER_TOOLTIP                                    :{BLACK}Паказаць горад у асноўным вакне. Ctrl+клік — паказаць у дадатковым вакне.
@@ -3906,7 +3971,7 @@ STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}Ёмiс�
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}Выручка перавозкі: {LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Агляд кожныя {LTBLUE}{COMMA} дзён{BLACK}   Апошнi раз: {LTBLUE}{DATE_LONG}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}Агляд кожныя {LTBLUE}{COMMA}{NBSP}дзён{BLACK}   Апошнi раз: {LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}Агляд кожныя {LTBLUE}{COMMA}%{BLACK}   Апошнi раз: {LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Павялiчыць інтэрвал абслугоўваньня на 10. Ctrl+клік — павялічыць інтэрвал абслугоўваньня на 5.
 STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Зьменшыць інтэрвал абслугоўваньня на 10. Ctrl+клік — паменшыць інтэрвал абслугоўваньня на 5.
@@ -4004,8 +4069,8 @@ STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}Зьмя
 
 STR_ORDER_REFIT                                                 :{BLACK}Пераабсталяваць
 STR_ORDER_REFIT_TOOLTIP                                         :{BLACK}Выберыце тып грузу для пераабсталяваньня. Ctrl+клік — для выдаленьня заданьня.
-STR_ORDER_REFIT_AUTO                                            :{BLACK}Аўтаматычнае пераабсталяваньне
-STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}Выберыце груз для пераабсталяваньня ў гэтым заданьнi. Ctrl+Клiк — скасаваньне. Аўтаматычнае пераабсталяваньне адбудзецца, толькi калi транспарт гэта дазваляе
+STR_ORDER_REFIT_AUTO                                            :{BLACK}Пераабсталяваньне
+STR_ORDER_REFIT_AUTO_TOOLTIP                                    :{BLACK}Выберыце тып грузу для пераабсталяваньня. Яно будзе праведзена, калі ТС дазваляе гэта зрабіць. Ctrl+пстрычка адменіць пераабсталяваньне.
 STR_ORDER_DROP_REFIT_AUTO                                       :Нязьменны груз
 STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Даступны груз
 
@@ -4096,18 +4161,18 @@ STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :(Не разг�
 STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :(Не разгружацца й чакаць поўнай загрузкі любым грузам)
 STR_ORDER_NO_UNLOAD_NO_LOAD                                     :(Не разгружацца й не грузіцца)
 
-STR_ORDER_AUTO_REFIT                                            :(Пераабсталяваньне для {STRING})
-STR_ORDER_FULL_LOAD_REFIT                                       :(Поўная загрузка з пераабсталяваньнем для {STRING})
-STR_ORDER_FULL_LOAD_ANY_REFIT                                   :(Поўная загрузка любым грузам з пераабсталяваньнем для {STRING})
-STR_ORDER_UNLOAD_REFIT                                          :(Разгрузіць і забраць груз з пераабсталяваньнем для {STRING})
-STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :(Разгрузіць і чакаць поўнай загрузкі з пераабсталяваньнем для {STRING})
-STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :(Разгрузіць і чакаць любой поўнай загрузкі з пераабсталяваньнем для {STRING})
-STR_ORDER_TRANSFER_REFIT                                        :(Перадаць i забраць груз з пераабсталяваньнем для {STRING})
-STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :(Перадаць i чакаць поўнай загрузкi з пераабсталяваньнем для {STRING})
-STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :(Перадаць i чакаць любой поўнай загрузкi з пераабсталяваньнем для {STRING})
-STR_ORDER_NO_UNLOAD_REFIT                                       :(Не разгружацца й забраць груз з пераабсталяваньнем для {STRING})
-STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :(Не разгружацца й чакаць поўнай загрузкi з пераабсталяваньнем для {STRING})
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :(Не разгружацца й чакаць любой поўнай загрузкi з пераабсталяваньнем для {STRING})
+STR_ORDER_AUTO_REFIT                                            :(Пераабстал. пад {STRING.acc})
+STR_ORDER_FULL_LOAD_REFIT                                       :(Пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі)
+STR_ORDER_FULL_LOAD_ANY_REFIT                                   :(Пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі любым грузам)
+STR_ORDER_UNLOAD_REFIT                                          :(Разгрузіцца, пераабстал. пад {STRING.acc} і забраць груз)
+STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :(Разгрузіцца, пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі)
+STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :(Разгрузіцца, пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі любым грузам)
+STR_ORDER_TRANSFER_REFIT                                        :(Перадаць, пераабстал. пад {STRING.acc} і забраць груз)
+STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :(Перадаць, пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі)
+STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :(Перадаць, пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі любым грузам)
+STR_ORDER_NO_UNLOAD_REFIT                                       :(Не разгружацца, пераабстал. пад {STRING.acc} і забраць груз)
+STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :(Не разгружацца, пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі)
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :(Не разгружацца, пераабстал. пад {STRING.acc} і чакаць поўнай загрузкі любым грузам)
 
 STR_ORDER_AUTO_REFIT_ANY                                        :даступны груз
 
@@ -4136,10 +4201,14 @@ STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Час у шл�
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Рухацца не хутчэй за {2:VELOCITY} (расклад ня вызначаны)
 STR_TIMETABLE_TRAVEL_FOR                                        :Час у шляху — {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Рухацца да {STRING} не хутчэй за {VELOCITY}
+STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :У дарозе прыкладна {STRING} (графік не складзены)
+STR_TIMETABLE_TRAVEL_FOR_SPEED_ESTIMATED                        :Ісці прыкладна {STRING} з хуткасцю не больш за {VELOCITY} (графік не складзены)
+STR_TIMETABLE_STAY_FOR_ESTIMATED                                :(чакаць {STRING}, графік не складзены)
+STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(у дарозе {STRING}, графік не складзены)
 STR_TIMETABLE_STAY_FOR                                          :і чакаць {STRING}
 STR_TIMETABLE_AND_TRAVEL_FOR                                    :і рухацца да {STRING}
-STR_TIMETABLE_DAYS                                              :{COMMA} д{P зень нi зён}
-STR_TIMETABLE_TICKS                                             :{COMMA} цiк{P "" i аў}
+STR_TIMETABLE_DAYS                                              :{COMMA}{NBSP}д{P зень нi зён}
+STR_TIMETABLE_TICKS                                             :{COMMA}{NBSP}цiк{P "" i аў}
 
 STR_TIMETABLE_TOTAL_TIME                                        :{BLACK}Увесь маршрут зойме {STRING}
 STR_TIMETABLE_TOTAL_TIME_INCOMPLETE                             :{BLACK}Рух па маршруце зойме {STRING} (ня ўсё ўлічана)
@@ -4403,7 +4472,7 @@ STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... за
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... занадта блізка да іншага горада
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... занадта шмат гарадоў
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... няма месца на мапе
-STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}Гарады ня будуць будаваць дарогі. Вы можаце ўключыць будаўніцтва дарог у мэню: Пашыр. наладкi->Эканоміка->Гарады.
+STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}Гарады ня будуць будаваць дарогі. Вы можаце ўключыць будаўніцтва дарог у мэню: Пашыр. наладкi->Навак. асяроддзе->Гарады.
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Ідуць дарожныя работы...
 STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Немагчыма зьнішчыць горад:{}да яго адносіцца станцыя або дэпо, альбо немагчыма ачысьціць адну з занятых ім клетак.
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... у цэнтры горада няма месца для статуі
@@ -4426,6 +4495,9 @@ STR_ERROR_CAN_ONLY_BE_POSITIONED                                :{WHITE}... мо
 STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}... лес можна саджаць толькі вышэй за сьнегавую лiнiю
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}... магчыма пабудаваць толькi вышэй за сьнегавую лiнiю
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :{WHITE}... магчыма пабудаваць толькi нiжэй за сьнегавую лiнiю
+
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES                     :{WHITE}Няма прыдатных месцаў для прамысловасьці "{STRING}"
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION         :{WHITE}Змяніце наладкі стварэньня мапы для атрыманьня лепшай мапы
 
 # Station construction related errors
 STR_ERROR_CAN_T_BUILD_RAILROAD_STATION                          :{WHITE}Тут немагчыма пабудаваць чыгуначную станцыю...
