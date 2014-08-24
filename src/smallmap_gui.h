@@ -69,6 +69,7 @@ protected:
 	static const uint FORCE_REFRESH_PERIOD = 0x1F; ///< map is redrawn after that many ticks
 	static const uint BLINK_PERIOD         = 0x0F; ///< highlight blinking interval
 
+	bool show_legend;              ///< Display legend.
 	uint min_number_of_columns;    ///< Minimal number of columns in legends.
 	uint min_number_of_fixed_rows; ///< Minimal number of rows in the legends for the fixed layouts only (all except #SMT_INDUSTRY).
 	uint column_width;             ///< Width of a column in the #WID_SM_LEGEND widget.
@@ -114,7 +115,7 @@ protected:
 	 */
 	inline uint GetMinLegendWidth() const
 	{
-		return WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width;
+		return show_legend ? WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width : 0;
 	}
 
 	/**
@@ -123,7 +124,7 @@ protected:
 	 */
 	inline uint GetNumberColumnsLegend(uint width) const
 	{
-		return width / this->column_width;
+		return max(2u, width / this->column_width);
 	}
 
 	/**
@@ -133,8 +134,8 @@ protected:
 	 */
 	inline uint GetLegendHeight(uint num_columns) const
 	{
-		return WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
-				this->GetNumberRowsLegend(num_columns) * this->row_height;
+		return show_legend ? WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
+				this->GetNumberRowsLegend(num_columns) * this->row_height : 0;
 	}
 
 	/**
