@@ -105,6 +105,7 @@ struct GUISettings {
 	ZoomLevelByte zoom_max;                  ///< maximum zoom out level
 	bool   disable_unsuitable_building;      ///< disable infrastructure building when no suitable vehicles are available
 	byte   autosave;                         ///< how often should we do autosaves?
+	byte   save_to_network;                  ///< backup all savegames to network
 	bool   threaded_saves;                   ///< should we do threaded saves?
 	bool   keep_all_autosave;                ///< name the autosave in a different way
 	bool   autosave_on_exit;                 ///< save an autosave when you quit the game, but do not ask "Do you really want to quit?"

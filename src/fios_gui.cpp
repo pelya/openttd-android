@@ -109,6 +109,7 @@ static const NWidgetPart _nested_load_dialog_widgets[] = {
 				EndContainer(),
 				NWidget(WWT_RESIZEBOX, COLOUR_GREY),
 			EndContainer(),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SL_LOAD_NETWORK_BUTTON), SetDataTip(STR_SAVELOAD_LOAD_NETWORK_BUTTON, STR_SAVELOAD_LOAD_NETWORK_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
 		EndContainer(),
 	EndContainer(),
 };
@@ -180,7 +181,7 @@ static const NWidgetPart _nested_save_dialog_widgets[] = {
 		NWidget(WWT_PANEL, COLOUR_GREY),
 			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_SL_DETAILS), SetResize(1, 1), SetFill(1, 1),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(NWID_SPACER), SetResize(1, 0), SetFill(1, 1),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SL_SAVE_NETWORK_BUTTON), SetDataTip(STR_SAVELOAD_SAVE_NETWORK_BUTTON, STR_SAVELOAD_SAVE_NETWORK_TOOLTIP), SetFill(1, 1), SetResize(1, 0),
 				NWidget(WWT_RESIZEBOX, COLOUR_GREY),
 			EndContainer(),
 		EndContainer(),
