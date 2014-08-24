@@ -706,6 +706,7 @@ STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP                    :{BLACK}Show lan
 STR_SMALLMAP_TOOLTIP_INDUSTRY_SELECTION                         :{BLACK}Click on an industry type to toggle displaying it. Ctrl+Click disables all types except the selected one. Ctrl+Click on it again to enable all industry types
 STR_SMALLMAP_TOOLTIP_COMPANY_SELECTION                          :{BLACK}Click on a company to toggle displaying its property. Ctrl+Click disables all companies except the selected one. Ctrl+Click on it again to enable all companies
 STR_SMALLMAP_TOOLTIP_CARGO_SELECTION                            :{BLACK}Click on a cargo to toggle displaying its property. Ctrl+Click disables all cargoes except the selected one. Ctrl+Click on it again to enable all cargoes
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Show map legend / description of map symbols
 
 STR_SMALLMAP_LEGENDA_ROADS                                      :{TINY_FONT}{BLACK}Roads
 STR_SMALLMAP_LEGENDA_RAILROADS                                  :{TINY_FONT}{BLACK}Railways
