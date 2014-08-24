@@ -2716,6 +2716,10 @@ STR_SAVELOAD_SAVE_TOOLTIP                                       :{BLACK}Save the
 STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}Load
 STR_SAVELOAD_LOAD_TOOLTIP                                       :{BLACK}Load the selected game
 STR_SAVELOAD_LOAD_HEIGHTMAP_TOOLTIP                             :{BLACK}Load the selected heightmap
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Load from network
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Load a game from the network storage
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Save to network
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Back up the game to the network storage
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Game Details
 STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}No information available
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}: {WHITE}{STRING1}
