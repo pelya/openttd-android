@@ -902,7 +902,7 @@ bool MakeScreenshot(ScreenshotType t, const char *name)
 
 	if (ret) {
 		SetDParamStr(0, _screenshot_name);
-		ShowErrorMessage(STR_MESSAGE_SCREENSHOT_SUCCESSFULLY, INVALID_STRING_ID, WL_WARNING);
+		//ShowErrorMessage(STR_MESSAGE_SCREENSHOT_SUCCESSFULLY, INVALID_STRING_ID, WL_WARNING); // No need for message when we're doing cloudsave
 	} else {
 		ShowErrorMessage(STR_ERROR_SCREENSHOT_FAILED, INVALID_STRING_ID, WL_ERROR);
 	}
