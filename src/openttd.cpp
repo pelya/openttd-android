@@ -69,6 +69,9 @@
 #include <stdarg.h>
 
 #include "safeguards.h"
+#ifdef __ANDROID__
+#include <SDL_android.h>
+#endif
 
 void CallLandscapeTick();
 void IncreaseDate();
@@ -81,6 +84,8 @@ bool HandleBootstrap();
 extern Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY);
 extern void ShowOSErrorBox(const char *buf, bool system);
 extern char *_config_file;
+const char *NETWORK_SAVE_SCREENSHOT_FILE = "OpenTTD-network-save";
+const char *NETWORK_SAVE_SCREENSHOT_FILE_PNG = "OpenTTD-network-save.png";
 
 /**
  * Error handling for fatal user errors.
@@ -1161,6 +1166,23 @@ void SwitchToMode(SwitchMode new_mode)
 				ShowErrorMessage(STR_JUST_RAW_STRING, INVALID_STRING_ID, WL_ERROR);
 			} else {
 				DeleteWindowById(WC_SAVELOAD, 0);
+#ifdef __ANDROID__
+				if (_settings_client.gui.save_to_network) {
+					char screenshotFile[PATH_MAX] = "";
+					const char* lastPart = strrchr(_file_to_saveload.name, PATHSEPCHAR);
+					if (!lastPart) {
+						lastPart = _file_to_saveload.name;
+					} else {
+						lastPart++;
+					}
+					MakeScreenshot(SC_VIEWPORT, NETWORK_SAVE_SCREENSHOT_FILE);
+					FioFindFullPath(screenshotFile, sizeof(screenshotFile), SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
+					int ret = SDL_ANDROID_CloudSave(_file_to_saveload.name, lastPart, "OpenTTD", lastPart, screenshotFile, _date);
+					if (_settings_client.gui.save_to_network == 2) {
+						_settings_client.gui.save_to_network = ret ? 1 : 0;
+					}
+				}
+#endif
 			}
 			break;
 

@@ -293,7 +293,7 @@ static const char * const _subdirs[] = {
 	"game" PATHSEP,
 	"game" PATHSEP "library" PATHSEP,
 #ifdef __ANDROID__
-	"../../../../../../Pictures/",
+	"screenshot" PATHSEP,
 #else
 	"screenshot" PATHSEP,
 #endif

@@ -35,12 +35,16 @@
 #include "table/strings.h"
 
 #include "safeguards.h"
+#ifdef __ANDROID__
+#include <SDL_android.h>
+#endif
 
 SaveLoadDialogMode _saveload_mode;
 LoadCheckData _load_check_data;    ///< Data loaded from save during SL_LOAD_CHECK.
 
 static bool _fios_path_changed;
 static bool _savegame_sort_dirty;
+static const char *NETWORK_SAVE_FILENAME = "network-save.sav";
 
 
 /**
@@ -285,6 +289,7 @@ public:
 		this->FinishInitNested(0);
 
 		this->LowerWidget(WID_SL_DRIVES_DIRECTORIES_LIST);
+		if (mode == SLD_SAVE_GAME) this->SetWidgetLoweredState(WID_SL_SAVE_NETWORK_BUTTON, _settings_client.gui.save_to_network);
 
 		/* pause is only used in single-player, non-editor mode, non-menu mode. It
 		 * will be unpaused in the WE_DESTROY event handler. */
@@ -627,6 +632,32 @@ public:
 				/* Note, this is also called via the OSK; and we need to lower the button. */
 				this->HandleButtonClick(WID_SL_SAVE_GAME);
 				break;
+
+			case WID_SL_SAVE_NETWORK_BUTTON:
+				_settings_client.gui.save_to_network = !_settings_client.gui.save_to_network;
+				this->SetWidgetLoweredState(WID_SL_SAVE_NETWORK_BUTTON, _settings_client.gui.save_to_network);
+				this->SetDirty();
+				break;
+
+			case WID_SL_LOAD_NETWORK_BUTTON: {
+					char savePath[PATH_MAX];
+					FiosMakeSavegameName(savePath, NETWORK_SAVE_FILENAME, sizeof(savePath));
+#ifdef __ANDROID__
+					if (!SDL_ANDROID_CloudLoad(savePath, NULL, "OpenTTD")) {
+						break;
+					}
+#endif
+					_load_check_data.Clear();
+					SaveOrLoadResult res = SaveOrLoad(savePath, SL_LOAD_CHECK, SAVE_DIR, false);
+					if (res == SL_OK && !_load_check_data.HasErrors()) {
+						strecpy(_file_to_saveload.name, savePath, lastof(_file_to_saveload.name));
+						strecpy(_file_to_saveload.title, "", lastof(_file_to_saveload.title));
+						if (!_load_check_data.HasNewGrfs() || _load_check_data.grf_compatibility != GLC_NOT_FOUND || _settings_client.gui.UserIsAllowedToChangeNewGRFs()) {
+							_switch_mode = (_game_mode == GM_EDITOR) ? SM_LOAD_SCENARIO : SM_LOAD_GAME;
+						}
+					}
+					break;
+				}
 		}
 	}
 
