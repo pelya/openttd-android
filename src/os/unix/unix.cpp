@@ -382,11 +382,11 @@ void OSOpenBrowser(const char *url)
 	args[8] = NULL;
 #else
 	const char *args[3];
-	args[0] = "/usr/bin/xdg-open";
+	args[0] = "xdg-open";
 	args[1] = url;
 	args[2] = NULL;
 #endif
-	execv(args[0], const_cast<char * const *>(args));
+	execvp(args[0], const_cast<char * const *>(args));
 	DEBUG(misc, 0, "Failed to open url: %s", url);
 	exit(0);
 }
