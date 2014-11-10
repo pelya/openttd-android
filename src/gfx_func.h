@@ -65,6 +65,7 @@ extern bool _left_button_down;
 extern bool _left_button_clicked;
 extern bool _right_button_down;
 extern bool _right_button_clicked;
+extern Point _right_button_down_pos;
 
 extern DrawPixelInfo _screen;
 extern bool _screen_disable_anim;   ///< Disable palette animation (important for 32bpp-anim blitter during giant screenshot)

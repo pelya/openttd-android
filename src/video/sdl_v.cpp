@@ -598,6 +598,8 @@ int VideoDriver_SDL::PollEvent()
 				case SDL_BUTTON_RIGHT:
 					_right_button_down = true;
 					_right_button_clicked = true;
+					_right_button_down_pos.x = ev.motion.x;
+					_right_button_down_pos.y = ev.motion.y;
 					break;
 
 				case SDL_BUTTON_WHEELUP:   _cursor.wheel--; break;
