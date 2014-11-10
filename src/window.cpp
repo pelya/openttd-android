@@ -2774,6 +2774,24 @@ static void HandleAutoscroll()
 #undef scrollspeed
 }
 
+/**
+ * Perform small continuous scrolling with right button press and drag.
+ */
+static void HandleContinuousScroll()
+{
+#define scrollspeed 0.05f
+	if (_scrolling_viewport && _right_button_down) {
+		Window *w = FindWindowFromPt(_right_button_down_pos.x, _right_button_down_pos.y);
+		if (w == NULL || w->flags & WF_DISABLE_VP_SCROLL) return;
+		ViewPort *vp = IsPtInWindowViewport(w, _right_button_down_pos.x, _right_button_down_pos.y);
+		if (vp == NULL) return;
+
+		w->viewport->dest_scrollpos_x += ScaleByZoom(scrollspeed * (_right_button_down_pos.x - _cursor.pos.x), vp->zoom);
+		w->viewport->dest_scrollpos_y += ScaleByZoom(scrollspeed * (_right_button_down_pos.y - _cursor.pos.y), vp->zoom);
+	}
+#undef scrollspeed
+}
+
 enum MouseClick {
 	MC_NONE = 0,
 	MC_LEFT,
@@ -3093,6 +3111,7 @@ void InputLoop()
 	/* HandleMouseEvents was already called for this tick */
 	HandleMouseEvents();
 	HandleAutoscroll();
+	HandleContinuousScroll();
 }
 
 /**
