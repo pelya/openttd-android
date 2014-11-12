@@ -747,6 +747,10 @@ public:
 	 */
 	virtual void OnPlaceObjectAbort() {}
 
+	/**
+	 * Select the cancelled tool again, this is called after OnPlaceObjectAbort()
+	 */
+	virtual void SelectLastTool() {}
 
 	/**
 	 * The user is dragging over the map when the tile highlight mode

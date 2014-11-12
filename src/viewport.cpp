@@ -2941,6 +2941,9 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
 
 #include "table/animcursors.h"
 
+static WindowClass _last_selected_window_class;
+static WindowNumber _last_selected_window_number;
+
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num)
 {
 	if (_thd.window_class != WC_INVALID) {
@@ -2987,7 +2990,18 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 
 void ResetObjectToPlace()
 {
+	if (_thd.window_class != WC_INVALID) {
+		_last_selected_window_class = _thd.window_class;
+		_last_selected_window_number = _thd.window_number;
+	}
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+}
+
+void ToolbarSelectLastTool()
+{
+	Window *w = FindWindowById(_last_selected_window_class, _last_selected_window_number);
+	if (w != NULL) w->SelectLastTool();
+	_last_selected_window_class = WC_INVALID;
 }
 
 Point GetViewportStationMiddle(const ViewPort *vp, const Station *st)

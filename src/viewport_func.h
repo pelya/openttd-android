@@ -82,4 +82,6 @@ void MarkTileDirtyByTile(TileIndex tile);
 
 Point GetViewportStationMiddle(const ViewPort *vp, const Station *st);
 
+void ToolbarSelectLastTool();
+
 #endif /* VIEWPORT_FUNC_H */

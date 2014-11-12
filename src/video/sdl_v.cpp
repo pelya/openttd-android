@@ -621,6 +621,7 @@ int VideoDriver_SDL::PollEvent()
 					// Two-finger click - hacky way to determine if the right mouse button is already pressed without processing the left button event
 					// Cancel whatewer action we were doing, to allow two finger scrolling
 					ResetObjectToPlace();
+					SelectLastTool();
 				}
 #endif
 			} else if (ev.button.button == SDL_BUTTON_RIGHT) {
