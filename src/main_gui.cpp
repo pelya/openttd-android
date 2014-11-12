@@ -340,7 +340,7 @@ struct MainWindow : Window
 				break;
 			}
 
-			case GHK_RESET_OBJECT_TO_PLACE: ResetObjectToPlace(); break;
+			case GHK_RESET_OBJECT_TO_PLACE: ResetObjectToPlace(); ToolbarSelectLastTool(); break;
 			case GHK_DELETE_WINDOWS: DeleteNonVitalWindows(); break;
 			case GHK_DELETE_NONVITAL_WINDOWS: DeleteAllNonVitalWindows(); break;
 			case GHK_REFRESH_SCREEN: MarkWholeScreenDirty(); break;

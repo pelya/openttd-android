@@ -536,6 +536,16 @@ struct BuildRoadToolbarWindow : Window {
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
+	virtual void SelectLastTool()
+	{
+		// User misplaced something - activate last selected tool again
+		if (this->last_started_action == WIDGET_LIST_END)
+			return;
+		Point dummy = {0, 0};
+		this->RaiseWidget(this->last_started_action);
+		this->OnClick(dummy, this->last_started_action, 0);
+	}
+
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
 	{
 		/* Here we update the end tile flags
