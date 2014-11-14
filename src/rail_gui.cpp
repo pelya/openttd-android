@@ -757,6 +757,16 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
+	virtual void SelectLastTool()
+	{
+		// User misplaced something - activate last selected tool again
+		if (this->last_user_action == WIDGET_LIST_END)
+			return;
+		Point dummy = {0, 0};
+		this->RaiseWidget(this->last_user_action);
+		this->OnClick(dummy, this->last_user_action, 0);
+	}
+
 	virtual void OnPlacePresize(Point pt, TileIndex tile_from)
 	{
 		TileIndex tile_to = tile_from;

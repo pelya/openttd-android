@@ -25,6 +25,7 @@
 #include "../fileio_func.h"
 #include "../settings_type.h"
 #include "../tilehighlight_func.h"
+#include "../viewport_func.h"
 #include "sdl_v.h"
 #include <SDL.h>
 #ifdef __ANDROID__
@@ -623,7 +624,7 @@ int VideoDriver_SDL::PollEvent()
 					// Two-finger click - hacky way to determine if the right mouse button is already pressed without processing the left button event
 					// Cancel whatewer action we were doing, to allow two finger scrolling
 					ResetObjectToPlace();
-					SelectLastTool();
+					ToolbarSelectLastTool();
 				}
 #endif
 			} else if (ev.button.button == SDL_BUTTON_RIGHT) {
