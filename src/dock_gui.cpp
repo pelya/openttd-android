@@ -284,6 +284,16 @@ struct BuildDocksToolbarWindow : Window {
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
+	virtual void SelectLastTool()
+	{
+		// User misplaced something - activate last selected tool again
+		if (this->last_clicked_widget == WIDGET_LIST_END)
+			return;
+		Point dummy = {0, 0};
+		this->RaiseWidget(this->last_clicked_widget);
+		this->OnClick(dummy, this->last_clicked_widget, 0);
+	}
+
 	virtual void OnPlacePresize(Point pt, TileIndex tile_from)
 	{
 		if (!IsValidTile(tile_from)) return;
