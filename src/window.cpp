@@ -1727,7 +1727,9 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 			pt.x = (_screen.width + 10 - default_width) - 20;
 		}
 		const Window *wt = FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0);
-		if (wt && pt.x + default_width > _screen.width - wt->width) {
+		if (wt && (pt.x + default_width > _screen.width - wt->width ||
+			desc->parent_cls == WC_BUILD_TOOLBAR || desc->parent_cls == WC_SCEN_LAND_GEN)) {
+			// Move all build toolbar windows to the right, because all build toolbars are always at the right part of the screen
 			pt.x = _screen.width - wt->width - default_width;
 		}
 
