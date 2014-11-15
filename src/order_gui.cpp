@@ -587,6 +587,9 @@ private:
 		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, goto_place_style[type - 1], this);
 		this->goto_type = type;
 		this->SetWidgetDirty(WID_O_GOTO);
+		if (type == OPOS_GOTO) {
+			MoveAllWindowsOffScreen();
+		}
 	}
 
 	/**
