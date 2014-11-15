@@ -1684,7 +1684,7 @@ Point GetToolbarAlignedWindowPosition(int window_width)
 	Point pt;
 	if (_settings_client.gui.vertical_toolbar) {
 		// Retermine if the window was opened from the left or the right toolbar
-		pt.x = (_last_clicked_toolbar_idx == 0) ? w->left + w->width : _screen.width - w->width - window_width - 1;
+		pt.x = (_last_clicked_toolbar_idx == 0) ? w->left + w->width : _screen.width - w->width - window_width;
 		pt.y = w->top;
 	} else {
 		pt.x = _current_text_dir == TD_RTL ? w->left : (w->left + w->width) - window_width;
