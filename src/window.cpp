@@ -2894,7 +2894,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 
 	if (w == NULL) return;
 
-	if (click != MC_NONE && click != MC_HOVER && !MaybeBringWindowToFront(w)) return;
+	if (click != MC_NONE && click != MC_HOVER && click != MC_LEFT_UP && !MaybeBringWindowToFront(w)) return;
 
 	if (mousewheel != 0) {
 		/* Send mousewheel event to window */
