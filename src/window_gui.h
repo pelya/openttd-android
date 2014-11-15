@@ -865,6 +865,8 @@ Wcls *AllocateWindowDescFront(WindowDesc *desc, int window_number)
 }
 
 void RelocateAllWindows(int neww, int newh);
+void MoveAllWindowsOffScreen();
+void MoveAllHiddenWindowsBackToScreen();
 
 /* misc_gui.cpp */
 enum TooltipCloseCondition {

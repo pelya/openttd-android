@@ -2997,6 +2997,7 @@ void ResetObjectToPlace()
 		_last_selected_window_number = _thd.window_number;
 	}
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+	MoveAllHiddenWindowsBackToScreen();
 }
 
 void ToolbarSelectLastTool()

@@ -2924,6 +2924,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 			case MC_LEFT_UP:
 				if (!_left_button_dragged && mouse_down_on_viewport) {
 					HandleViewportMouseUp(vp, x, y);
+					MoveAllHiddenWindowsBackToScreen();
 				}
 				_left_button_dragged = false;
 				mouse_down_on_viewport = false;
@@ -3600,6 +3601,64 @@ void RelocateAllWindows(int neww, int newh)
 
 		EnsureVisibleCaption(w, left, top);
 	}
+}
+
+static void MoveAllWindowsOffScreen(bool moveOffScreen)
+{
+	Window *w;
+	bool updateScreen = false;
+
+	FOR_ALL_WINDOWS_FROM_BACK(w) {
+		switch (w->window_class) {
+			case WC_MAIN_WINDOW:
+			case WC_BOOTSTRAP:
+			case WC_MAIN_TOOLBAR:
+			case WC_MAIN_TOOLBAR_RIGHT:
+			case WC_NEWS_WINDOW:
+			case WC_STATUS_BAR:
+			case WC_SEND_NETWORK_MSG:
+			case WC_CONSOLE:
+				continue;
+
+			default:
+				if (moveOffScreen) {
+					if (w->left < _screen.width) {
+						w->left += _screen.width;
+						if (w->viewport != NULL) {
+							w->viewport->left += _screen.width;
+						}
+						//w->SetDirty();
+						updateScreen = true;
+					}
+				} else {
+					if (w->left >= _screen.width) {
+						w->left -= _screen.width;
+						if (w->viewport != NULL) {
+							w->viewport->left -= _screen.width;
+						}
+						w->SetDirty();
+						//updateScreen = true;
+					}
+				}
+				break;
+		}
+	}
+	if (updateScreen) {
+		w = FindWindowById(WC_MAIN_WINDOW, 0);
+		if (w) {
+			w->SetDirty();
+		}
+	}
+}
+
+void MoveAllWindowsOffScreen()
+{
+	MoveAllWindowsOffScreen(true);
+}
+
+void MoveAllHiddenWindowsBackToScreen()
+{
+	MoveAllWindowsOffScreen(false);
 }
 
 /**
