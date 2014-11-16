@@ -548,6 +548,11 @@ struct BuildRoadToolbarWindow : Window {
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
 	{
+		if (this->last_started_action == WID_ROT_BUILD_TUNNEL) {
+			this->OnPlacePresize(pt, TileVirtXY(pt.x, pt.y));
+			return;
+		}
+
 		/* Here we update the end tile flags
 		 * of the road placement actions.
 		 * At first we reset the end halfroad
