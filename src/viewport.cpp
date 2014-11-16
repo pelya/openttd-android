@@ -1953,7 +1953,9 @@ bool HandleViewportClicked(const ViewPort *vp, int x, int y)
 {
 	if (_move_pressed) return false;
 
-	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
+	// Allow scrolling viewport with mouse even in selection mode,
+	// unless we select line or area, or perform drag&drop
+	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE && !(_thd.place_mode & HT_SCROLL_VIEWPORT)) {
 		PlaceObject();
 		return true;
 	}
@@ -1969,6 +1971,11 @@ bool HandleViewportMouseUp(const ViewPort *vp, int x, int y)
 
 	if (_thd.place_mode & HT_VEHICLE) {
 		if (v != NULL && VehicleClicked(v)) return true;
+	}
+
+	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
+		PlaceObject();
+		return true;
 	}
 
 	if (CheckClickOnTown(vp, x, y)) return true;

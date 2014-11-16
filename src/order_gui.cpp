@@ -580,9 +580,9 @@ private:
 		assert(type > OPOS_NONE && type < OPOS_END);
 
 		static const HighLightStyle goto_place_style[OPOS_END - 1] = {
-			HT_RECT | HT_VEHICLE, // OPOS_GOTO
+			HT_RECT | HT_VEHICLE | HT_SCROLL_VIEWPORT, // OPOS_GOTO
 			HT_NONE,              // OPOS_CONDITIONAL
-			HT_VEHICLE,           // OPOS_SHARE
+			HT_VEHICLE | HT_SCROLL_VIEWPORT,           // OPOS_SHARE
 		};
 		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, goto_place_style[type - 1], this);
 		this->goto_type = type;
