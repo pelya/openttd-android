@@ -2916,6 +2916,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 					_scrolling_viewport = true;
 					_cursor.fix_at = false;
 				} else {
+					// Viewport already clicked, prevent sending same event on mouse-up
 					_left_button_dragged = true;
 				}
 				mouse_down_on_viewport = true;
