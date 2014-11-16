@@ -88,7 +88,7 @@ struct BuildAirToolbarWindow : Window {
 	{
 		switch (widget) {
 			case WID_AT_AIRPORT:
-				if (HandlePlacePushButton(this, WID_AT_AIRPORT, SPR_CURSOR_AIRPORT, HT_RECT | HT_SCROLL_VIEWPORT)) {
+				if (HandlePlacePushButton(this, WID_AT_AIRPORT, SPR_CURSOR_AIRPORT, HT_RECT)) {
 					ShowBuildAirportPicker(this);
 					this->last_user_action = widget;
 				}
@@ -108,6 +108,7 @@ struct BuildAirToolbarWindow : Window {
 		switch (this->last_user_action) {
 			case WID_AT_AIRPORT: {
 				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_STATION);
+				MoveAllWindowsOffScreen();
 				break;
 			}
 
@@ -130,6 +131,7 @@ struct BuildAirToolbarWindow : Window {
 		switch (select_proc) {
 			case DDSP_BUILD_STATION:
 				assert(start_tile == end_tile);
+				MoveAllHiddenWindowsBackToScreen();
 				PlaceAirport(end_tile);
 				break;
 			case DDSP_DEMOLISH_AREA:
