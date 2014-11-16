@@ -172,7 +172,7 @@ public:
 static void PopupMainToolbMenu(Window *w, int widget, DropDownList *list, int def)
 {
 	if (!_settings_client.gui.vertical_toolbar) {
-		ShowDropDownList(w, list, def, widget, 0, true, true);
+		ShowDropDownList(w, list, def, widget, 0, true, list->Length() <= 1);
 	} else {
 		Rect wi_rect;
 		NWidgetCore *nwi = w->GetWidget<NWidgetCore>(widget);
@@ -180,7 +180,7 @@ static void PopupMainToolbMenu(Window *w, int widget, DropDownList *list, int de
 		wi_rect.right  = nwi->pos_x + nwi->current_x;
 		wi_rect.top    = nwi->pos_y;
 		wi_rect.bottom = nwi->pos_y + nwi->current_y;
-		ShowDropDownListAt(w, list, def, widget, wi_rect, nwi->colour, true, true);
+		ShowDropDownListAt(w, list, def, widget, wi_rect, nwi->colour, true, list->Length() <= 1);
 	}
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 }
@@ -334,7 +334,7 @@ static CallBackFunction ToolbarOptionsClick(Window *w)
 	*list->Append() = new DropDownListCheckedItem(STR_SETTINGS_MENU_TRANSPARENT_BUILDINGS,   OME_TRANSPARENTBUILDINGS, false, IsTransparencySet(TO_HOUSES));
 	*list->Append() = new DropDownListCheckedItem(STR_SETTINGS_MENU_TRANSPARENT_SIGNS,       OME_SHOW_STATIONSIGNS, false, IsTransparencySet(TO_SIGNS));
 
-	ShowDropDownList(w, list, 0, WID_TN_SETTINGS, 140, true, true);
+	ShowDropDownList(w, list, 0, WID_TN_SETTINGS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -870,7 +870,7 @@ static CallBackFunction ToolbarZoomOutClick(Window *w)
 
 static CallBackFunction ToolbarBuildRailClick(Window *w)
 {
-	ShowDropDownList(w, GetRailTypeDropDownList(), _last_built_railtype, WID_TN_RAILS, 140, true, true);
+	ShowDropDownList(w, GetRailTypeDropDownList(), _last_built_railtype, WID_TN_RAILS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -907,7 +907,7 @@ static CallBackFunction ToolbarBuildRoadClick(Window *w)
 		*list->Append() = new DropDownListStringItem(STR_ROAD_MENU_TRAM_CONSTRUCTION, ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM));
 		break;
 	}
-	ShowDropDownList(w, list, _last_built_roadtype, WID_TN_ROADS, 140, true, true);
+	ShowDropDownList(w, list, _last_built_roadtype, WID_TN_ROADS, 140, true, list->Length() <= 1);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
