@@ -1538,6 +1538,7 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
 	int bottom = height + top;
 
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
+	bool vertical_toolbar = _settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR;
 	if (!vertical_toolbar || !main_toolbar) {
 		if (left < 0 || (main_toolbar != NULL && top < main_toolbar->height) || right > _screen.width || bottom > _screen.height) return false;
 	} else {
