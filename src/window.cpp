@@ -1464,6 +1464,7 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 {
 	def_width  = max(def_width,  this->width); // Don't allow default size to be smaller than smallest size
 	def_height = max(def_height, this->height);
+	bool vertical_toolbar = _settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR;
 	/* Try to make windows smaller when our window is too small.
 	 * w->(width|height) is normally the same as min_(width|height),
 	 * but this way the GUIs can be made a little more dynamic;
@@ -1475,11 +1476,11 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 		const Window *wt = FindWindowById(WC_STATUS_BAR, 0);
 		if (wt != NULL) free_height -= wt->height;
 		wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
-		if (wt != NULL && !_settings_client.gui.vertical_toolbar) free_height -= wt->height;
+		if (wt != NULL && !vertical_toolbar) free_height -= wt->height;
 
 		int enlarge_x = max(min(def_width  - this->width,  _screen.width - this->width),  0);
 		int enlarge_y = max(min(def_height - this->height, free_height   - this->height), 0);
-		if (wt && _settings_client.gui.vertical_toolbar && enlarge_x > _screen.width - wt->width * 2) {
+		if (wt && vertical_toolbar && enlarge_x > _screen.width - wt->width * 2) {
 			enlarge_x = _screen.width - wt->width * 2;
 		}
 
@@ -1502,7 +1503,7 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 	if (nx + this->width > _screen.width) nx -= (nx + this->width - _screen.width);
 
 	const Window *wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
-	if (!_settings_client.gui.vertical_toolbar) {
+	if (!vertical_toolbar) {
 		ny = max(ny, (wt == NULL || this == wt || this->top == 0) ? 0 : wt->height);
 		nx = max(nx, 0);
 	} else {
@@ -1537,7 +1538,7 @@ static bool IsGoodAutoPlace1(int left, int top, int width, int height, Point &po
 	int bottom = height + top;
 
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
-	if (!_settings_client.gui.vertical_toolbar || !main_toolbar) {
+	if (!vertical_toolbar || !main_toolbar) {
 		if (left < 0 || (main_toolbar != NULL && top < main_toolbar->height) || right > _screen.width || bottom > _screen.height) return false;
 	} else {
 		if (left < main_toolbar->width || top < 0 || right > _screen.width - main_toolbar->width * 2 || bottom > _screen.height) return false;
@@ -1608,10 +1609,11 @@ static bool IsGoodAutoPlace2(int left, int top, int width, int height, Point &po
 static Point GetAutoPlacePosition(int width, int height)
 {
 	Point pt;
+	bool vertical_toolbar = _settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR;
 
 	/* First attempt, try top-left of the screen */
 	const Window *main_toolbar = FindWindowByClass(WC_MAIN_TOOLBAR);
-	if (_settings_client.gui.vertical_toolbar) {
+	if (vertical_toolbar) {
 		if (IsGoodAutoPlace1(main_toolbar != NULL ? main_toolbar->width : 0, 0, width, height, pt)) return pt;
 	} else {
 		if (IsGoodAutoPlace1(0, main_toolbar != NULL ? main_toolbar->height : 0, width, height, pt)) return pt;
@@ -1652,7 +1654,7 @@ static Point GetAutoPlacePosition(int width, int height)
 	 * of (+5, +5)
 	 */
 	int left = 0, top = 24;
-	if (_settings_client.gui.vertical_toolbar) {
+	if (vertical_toolbar) {
 		left = main_toolbar != NULL ? main_toolbar->width : 0;
 		top = 0;
 	}
@@ -1682,7 +1684,7 @@ Point GetToolbarAlignedWindowPosition(int window_width)
 	const Window *w = FindWindowById(WC_MAIN_TOOLBAR, 0);
 	assert(w != NULL);
 	Point pt;
-	if (_settings_client.gui.vertical_toolbar) {
+	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR) {
 		// Retermine if the window was opened from the left or the right toolbar
 		pt.x = (_last_clicked_toolbar_idx == 0) ? w->left + w->width : _screen.width - w->width - window_width;
 		pt.y = w->top;
@@ -2144,7 +2146,7 @@ void ResizeWindow(Window *w, int delta_x, int delta_y, bool clamp_to_screen)
  */
 int GetMainViewTop()
 {
-	if (_settings_client.gui.vertical_toolbar) return 0;
+	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR) return 0;
 	Window *w = FindWindowById(WC_MAIN_TOOLBAR, 0);
 	return (w == NULL) ? 0 : w->top + w->height;
 }
@@ -3472,7 +3474,7 @@ static int PositionWindow(Window *w, WindowClass clss, int setting)
  */
 int PositionMainToolbar(Window *w)
 {
-	if (_settings_client.gui.vertical_toolbar) return 0; /* Always at the left */
+	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR) return 0; /* Always at the left */
 	DEBUG(misc, 5, "Repositioning Main Toolbar...");
 	return PositionWindow(w, WC_MAIN_TOOLBAR, _settings_client.gui.toolbar_pos);
 }
