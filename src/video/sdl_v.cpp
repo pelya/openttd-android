@@ -601,6 +601,11 @@ int VideoDriver_SDL::PollEvent()
 					_right_button_clicked = true;
 					_right_button_down_pos.x = ev.motion.x;
 					_right_button_down_pos.y = ev.motion.y;
+#ifdef __ANDROID__
+					// Right button click on Android - cancel whatever action we were doing
+					ResetObjectToPlace();
+					ToolbarSelectLastTool();
+#endif
 					break;
 
 				case SDL_BUTTON_WHEELUP:   _cursor.wheel--; break;
@@ -622,7 +627,7 @@ int VideoDriver_SDL::PollEvent()
 #ifdef __ANDROID__
 				if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_RMASK) {
 					// Two-finger click - hacky way to determine if the right mouse button is already pressed without processing the left button event
-					// Cancel whatewer action we were doing, to allow two finger scrolling
+					// Cancel whatever action we were doing, to allow two finger scrolling
 					ResetObjectToPlace();
 					ToolbarSelectLastTool();
 				}
@@ -656,7 +661,21 @@ int VideoDriver_SDL::PollEvent()
 				WChar character;
 				uint keycode = ConvertSdlKeyIntoMy(&ev.key.keysym, &character);
 				HandleKeypress(keycode, character);
+#ifdef __ANDROID__
+				if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL)
+					_ctrl_pressed = true;
+				if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT)
+					_shift_pressed = true;
+#endif
 			}
+			break;
+		case SDL_KEYUP:
+#ifdef __ANDROID__
+			if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL)
+				_ctrl_pressed = false;
+			if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT)
+				_shift_pressed = false;
+#endif
 			break;
 #ifndef __ANDROID__
 		case SDL_VIDEORESIZE: {
