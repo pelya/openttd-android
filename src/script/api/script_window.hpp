@@ -149,12 +149,6 @@ public:
 		WC_STATUS_BAR                                = ::WC_STATUS_BAR,
 
 		/**
-		 * Tablet bar; %Window numbers:
-		 *   - 0 = #StatusbarWidgets
-		 */
-		WC_TABLET_BAR                                = ::WC_TABLET_BAR,
-
-		/**
 		 * Build toolbar; %Window numbers:
 		 *   - #TRANSPORT_RAIL = #RailToolbarWidgets
 		 *   - #TRANSPORT_AIR = #AirportToolbarWidgets
