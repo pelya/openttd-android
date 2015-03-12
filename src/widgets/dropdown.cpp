@@ -96,6 +96,7 @@ struct DropdownWindow : Window {
 	byte click_delay;             ///< Timer to delay selection.
 	bool drag_mode;
 	bool instant_close;           ///< Close the window when the mouse button is raised.
+	bool left_button_state;       ///< Close the window when the mouse button is clicked outside the window.
 	int scrolling;                ///< If non-zero, auto-scroll the item list (one time).
 	Point position;               ///< Position of the topleft corner of the window.
 	Scrollbar *vscroll;
@@ -156,6 +157,7 @@ struct DropdownWindow : Window {
 		this->click_delay      = 0;
 		this->drag_mode        = instant_close;
 		this->instant_close    = instant_close;
+		this->left_button_state = _left_button_down;
 	}
 
 	~DropdownWindow()
@@ -319,6 +321,16 @@ struct DropdownWindow : Window {
 				this->selected_index = item;
 				this->SetDirty();
 			}
+		}
+
+		// Close dropdown if user clicks outside of it
+		if (_left_button_down && !this->left_button_state && (
+			_cursor.pos.x < this->left || _cursor.pos.x > this->left + this->width ||
+			_cursor.pos.y < this->top || _cursor.pos.y > this->top + this->height)) {
+			delete this;
+			return;
+		} else {
+			this->left_button_state = _left_button_down;
 		}
 	}
 };
