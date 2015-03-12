@@ -1293,7 +1293,6 @@ static uint GetWindowZPriority(const Window *w)
 			++z_priority;
 
 		case WC_NEWS_WINDOW:
-		case WC_TABLET_BAR:
 			++z_priority;
 
 		default:

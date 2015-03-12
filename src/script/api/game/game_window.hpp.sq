@@ -40,7 +40,6 @@ void SQGSWindow_Register(Squirrel *engine)
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_MAIN_WINDOW,                            "WC_MAIN_WINDOW");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_MAIN_TOOLBAR,                           "WC_MAIN_TOOLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_STATUS_BAR,                             "WC_STATUS_BAR");
-	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_TABLET_BAR,                             "WC_TABLET_BAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_BUILD_TOOLBAR,                          "WC_BUILD_TOOLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_SCEN_BUILD_TOOLBAR,                     "WC_SCEN_BUILD_TOOLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WC_BUILD_TREES,                            "WC_BUILD_TREES");
