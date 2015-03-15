@@ -32,6 +32,8 @@
 #include "table/sprites.h"
 
 
+static bool showTutorialMainMenu = false;
+
 static const char * ANY_LANG = "ANY_LANG";
 
 struct VideoLink_t {
@@ -69,35 +71,39 @@ static const NWidgetPart _nested_tutorial_widgets[] = {
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_TUTORIAL_WINDOW_TITLE, STR_TUTORIAL_WINDOW_TOOLTIP),
 	EndContainer(),
-	NWidget(NWID_HORIZONTAL), SetPIP(6, 0, 6),
-		NWidget(WWT_PANEL, COLOUR_GREY), SetPIP(8, 2, 6),
-			// TODO: make different button IDs
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_BUS_STATION, STR_SMALLMAP_LEGENDA_BUS_STATION), SetFill(1, 1),
-				NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_ROAD_VEHICLES, STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY), SetFill(1, 1),
+	NWidget(WWT_PANEL, COLOUR_GREY),
+		NWidget(NWID_HORIZONTAL),
+			NWidget(NWID_SPACER), SetMinimalSize(6, 0), SetFill(1, 0),
+			NWidget(NWID_VERTICAL), SetPIP(16, 2, 6),
+				// TODO: make different button IDs
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_BUS_STATION, STR_SMALLMAP_LEGENDA_BUS_STATION), SetFill(1, 1),
+					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_ROAD_VEHICLES, STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY), SetFill(1, 1),
+				EndContainer(),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_BUS), SetMinimalSize(120, 20), SetDataTip(SPR_VEH_BUS_SW_VIEW, STR_SMALLMAP_LEGENDA_BUS_STATION), SetFill(1, 1),
+					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_TRUCK), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_TRUCKLIST, STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY), SetFill(1, 1),
+				EndContainer(),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_RAILROADS, STR_SMALLMAP_LEGENDA_RAILROAD_STATION), SetFill(1, 1),
+					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_SHIPS, STR_SMALLMAP_LEGENDA_DOCK), SetFill(1, 1),
+				EndContainer(),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_TRAIN), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_TRAINLIST, STR_SMALLMAP_LEGENDA_RAILROAD_STATION), SetFill(0, 1),
+					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_SHIP), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_SHIPLIST, STR_SMALLMAP_LEGENDA_DOCK), SetFill(0, 1),
+				EndContainer(),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_AIRCRAFT, STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT), SetFill(1, 1),
+					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_INDUSTRIES, STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES), SetFill(1, 1),
+				EndContainer(),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_AIRPLANE), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_AIRPLANESLIST, STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT), SetFill(0, 1),
+					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_FACILALL), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_COMPANY_FINANCE, STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES), SetFill(0, 1),
+				EndContainer(),
 			EndContainer(),
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_BUS), SetMinimalSize(120, 20), SetDataTip(SPR_VEH_BUS_SW_VIEW, STR_SMALLMAP_LEGENDA_BUS_STATION), SetFill(1, 1),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_TRUCK), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_TRUCKLIST, STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY), SetFill(1, 1),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_RAILROADS, STR_SMALLMAP_LEGENDA_RAILROAD_STATION), SetFill(1, 1),
-				NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_SHIPS, STR_SMALLMAP_LEGENDA_DOCK), SetFill(1, 1),
-			EndContainer(),
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_TRAIN), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_TRAINLIST, STR_SMALLMAP_LEGENDA_RAILROAD_STATION), SetFill(0, 1),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_SHIP), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_SHIPLIST, STR_SMALLMAP_LEGENDA_DOCK), SetFill(0, 1),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_AIRCRAFT, STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT), SetFill(1, 1),
-				NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_INDUSTRIES, STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES), SetFill(1, 1),
-			EndContainer(),
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_AIRPLANE), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_AIRPLANESLIST, STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT), SetFill(0, 1),
-				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_FACILALL), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_COMPANY_FINANCE, STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES), SetFill(0, 1),
-			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(6, 0), SetFill(1, 0),
 		EndContainer(),
 	EndContainer(),
 };
@@ -127,6 +133,7 @@ struct TutorialWindow : public Window {
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
+		showTutorialMainMenu = false;
 		counter = 5;
 		this->LowerWidget(widget);
 		this->SetDirty();
@@ -179,11 +186,14 @@ void ShowTutorialWindow()
 void ShowTutorialWindowOnceAfterInstall()
 {
 	static const char * TUTORIAL_SHOWN_FLAG = ".tutorial-shown-1.flag";
+
 	FILE *ff = fopen(TUTORIAL_SHOWN_FLAG, "r");
 	if (ff) {
 		fclose(ff);
-		return;
+		if (!showTutorialMainMenu)
+			return;
 	}
+	showTutorialMainMenu = true;
 	ff = fopen(TUTORIAL_SHOWN_FLAG, "w");
 	fprintf(ff, "Tutorial shown");
 	fclose(ff);
