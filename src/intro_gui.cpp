@@ -27,6 +27,7 @@
 #include "language.h"
 #include "rev.h"
 #include "highscore.h"
+#include "tutorial_gui.h"
 
 #include "widgets/intro_widget.h"
 
@@ -139,6 +140,7 @@ struct SelectGameWindow : public Window {
 				}
 				break;
 			case WID_SGI_AI_SETTINGS:     ShowAIConfigWindow(); break;
+			case WID_SGI_TUTORIAL:        ShowTutorialWindow(); break;
 			case WID_SGI_EXIT:            HandleExitGameRequest(); break;
 		}
 	}
@@ -234,11 +236,11 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
 
 	/* 'exit program' button */
-	NWidget(NWID_HORIZONTAL),
-		NWidget(NWID_SPACER), SetFill(1, 0),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_EXIT), SetMinimalSize(128, 12),
-							SetDataTip(STR_INTRO_QUIT, STR_INTRO_TOOLTIP_QUIT),
-		NWidget(NWID_SPACER), SetFill(1, 0),
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_TUTORIAL), SetMinimalSize(158, 12),
+							SetDataTip(STR_ABOUT_MENU_TUTORIAL, STR_TUTORIAL_WINDOW_TOOLTIP), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_EXIT), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_QUIT, STR_INTRO_TOOLTIP_QUIT), SetPadding(0, 10, 0, 0), SetFill(1, 0),
 	EndContainer(),
 
 	NWidget(NWID_SPACER), SetMinimalSize(0, 8),
