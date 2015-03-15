@@ -46,6 +46,7 @@
 #include "game/game.hpp"
 #include "goal_base.h"
 #include "story_base.h"
+#include "tutorial_gui.h"
 
 #include "widgets/toolbar_widget.h"
 
@@ -1145,6 +1146,7 @@ static CallBackFunction MenuClickHelp(int index)
 {
 	switch (index) {
 		case  0: return PlaceLandBlockInfo();
+		case  1: ShowTutorialWindow();             break;
 		case  2: IConsoleSwitch();                 break;
 		case  3: ShowAIDebugWindow();              break;
 		case  4: MenuClickSmallScreenshot();       break;

@@ -32,6 +32,7 @@
 #include "linkgraph/linkgraph_gui.h"
 #include "tilehighlight_func.h"
 #include "hotkeys.h"
+#include "tutorial_gui.h"
 
 #include "saveload/saveload.h"
 
@@ -563,6 +564,7 @@ void SetupColoursAndInitialWindow()
 		default: NOT_REACHED();
 		case GM_MENU:
 			ShowSelectGameWindow();
+			ShowTutorialWindowOnceAfterInstall();
 			break;
 
 		case GM_NORMAL:
