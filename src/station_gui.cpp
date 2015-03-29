@@ -807,17 +807,13 @@ static const NWidgetPart _nested_station_view_widgets[] = {
  * @param y y coordinate
  * @param width the width of the view
  */
-static void DrawCargoIcons(CargoID i, uint waiting, int left, int right, int top, int bottom)
+static void DrawCargoIcons(CargoID i, uint waiting, int left, int right, int top, int y)
 {
 	int width = ScaleGUITrad(10);
 	uint num = min((waiting + (width / 2)) / width, (right - left) / width); // maximum is width / 10 icons so it won't overflow
 	if (num == 0) return;
 
 	SpriteID sprite = CargoSpec::Get(i)->GetCargoIcon();
-	Dimension d = GetSpriteSize(sprite);
-
-	uint num = min((waiting + 5) / d.width, (right - left) / d.width); // maximum is width / 10 icons so it won't overflow
-	if (num == 0) return;
 
 	int x = _current_text_dir == TD_RTL ? left : right - num * width;
 	do {

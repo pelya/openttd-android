@@ -3590,7 +3590,7 @@ void RelocateAllWindows(int neww, int newh)
 				break;
 
 			case WC_MAIN_TOOLBAR_RIGHT:
-				ResizeWindow(w, min(neww, w->window_desc->default_width) - w->width, 0, false);
+				ResizeWindow(w, min(neww, _toolbar_width) - w->width, 0, false);
 
 				top = w->top;
 				left = neww - w->width;
