@@ -468,7 +468,7 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
-STR_ABOUT_MENU_SEPARATOR                                        :
+STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Tutorial
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
@@ -479,6 +479,7 @@ STR_ABOUT_MENU_ABOUT_OPENTTD                                    :About 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Sprite aligner
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Toggle bounding boxes
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Toggle colouring of dirty blocks
+STR_ABOUT_MENU_SEPARATOR                                        :
 ############ range ends here
 
 ############ range for ordinal numbers used for the place in the highscore window
@@ -717,6 +718,7 @@ STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP                    :{BLACK}Show lan
 STR_SMALLMAP_TOOLTIP_INDUSTRY_SELECTION                         :{BLACK}Click on an industry type to toggle displaying it. Ctrl+Click disables all types except the selected one. Ctrl+Click on it again to enable all industry types
 STR_SMALLMAP_TOOLTIP_COMPANY_SELECTION                          :{BLACK}Click on a company to toggle displaying its property. Ctrl+Click disables all companies except the selected one. Ctrl+Click on it again to enable all companies
 STR_SMALLMAP_TOOLTIP_CARGO_SELECTION                            :{BLACK}Click on a cargo to toggle displaying its property. Ctrl+Click disables all cargoes except the selected one. Ctrl+Click on it again to enable all cargoes
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Show map legend / description of map symbols
 
 STR_SMALLMAP_LEGENDA_ROADS                                      :{TINY_FONT}{BLACK}Roads
 STR_SMALLMAP_LEGENDA_RAILROADS                                  :{TINY_FONT}{BLACK}Railways
@@ -1215,6 +1217,12 @@ STR_CONFIG_SETTING_SIGNALSIDE_HELPTEXT                          :Select on which
 STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :On the left
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :On the driving side
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :On the right
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Vertical toolbar
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}Main toolbar is split into two vertical toolbars on the sides of the screen
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Button size
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Size of all user interface elements
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Font size
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Size of all game fonts
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}
@@ -2480,6 +2488,14 @@ STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND                  :{BLACK}Raise a 
 STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Level an area of land to the height of the first selected corner. Ctrl selects the area diagonally. Shift toggles building/showing cost estimate
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Purchase land for future use. Shift toggles building/showing cost estimate
 
+# Tablet toolbar
+STR_TABLET_CLOSE                                                :{BLACK}X
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Close all opened windows (except pinned ones)
+STR_TABLET_SHIFT                                                :{BLACK}{TINY_FONT}Shft
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Press it for getting an estimated cost of executing an action
+STR_TABLET_CTRL                                                 :{BLACK}{TINY_FONT}Ctrl
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Use it for actions that use the "CTRL" key
+
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Object Selection
 STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Select object to build. Shift toggles building/showing cost estimate
@@ -2693,6 +2709,10 @@ STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD version {REV}
 STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2015 The OpenTTD team
 
+#Tutorial window
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Tutorial videos
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Open a video player to watch tutorial videos
+
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Save Game
 STR_SAVELOAD_LOAD_CAPTION                                       :{WHITE}Load Game
@@ -2711,6 +2731,10 @@ STR_SAVELOAD_SAVE_TOOLTIP                                       :{BLACK}Save the
 STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}Load
 STR_SAVELOAD_LOAD_TOOLTIP                                       :{BLACK}Load the selected game
 STR_SAVELOAD_LOAD_HEIGHTMAP_TOOLTIP                             :{BLACK}Load the selected heightmap
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Load from network
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Load a game from the network storage
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Save to network
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Back up the game to the network storage
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Game Details
 STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}No information available
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}: {WHITE}{STRING1}

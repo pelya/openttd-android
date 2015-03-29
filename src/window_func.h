@@ -41,6 +41,7 @@ void InvalidateWindowClassesData(WindowClass cls, int data = 0, bool gui_scope =
 void DeleteNonVitalWindows();
 void DeleteAllNonVitalWindows();
 void DeleteConstructionWindows();
+void DeleteToolbarLinkedWindows();
 void HideVitalWindows();
 void ShowVitalWindows();
 

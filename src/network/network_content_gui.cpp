@@ -23,6 +23,7 @@
 #include "../querystring_gui.h"
 #include "../core/geometry_func.hpp"
 #include "../textfile_gui.h"
+#include "../settings_type.h"
 #include "network_content_gui.h"
 
 
@@ -534,7 +535,7 @@ public:
 
 			case WID_NCL_MATRIX:
 				resize->height = max(this->checkbox_size.height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				size->height = 10 * resize->height;
+				size->height = 6 * resize->height;
 				break;
 		}
 	}
@@ -544,7 +545,7 @@ public:
 	{
 		switch (widget) {
 			case WID_NCL_FILTER_CAPT:
-				DrawString(r.left, r.right, r.top, STR_CONTENT_FILTER_TITLE, TC_FROMSTRING, SA_RIGHT);
+				DrawString(r.left, r.right, Center(r.top, r.bottom - r.top), STR_CONTENT_FILTER_TITLE, TC_FROMSTRING, SA_RIGHT);
 				break;
 
 			case WID_NCL_DETAILS:
@@ -594,7 +595,7 @@ public:
 		for (ConstContentIterator iter = this->content.Get(this->vscroll->GetPosition()); iter != this->content.End() && cnt < this->vscroll->GetCapacity(); iter++, cnt++) {
 			const ContentInfo *ci = *iter;
 
-			if (ci == this->selected) GfxFillRect(r.left + 1, y + 1, r.right - 1, y + this->resize.step_height - 1, PC_GREY);
+			if (ci == this->selected) GfxFillRect(r.left + 1, y + WD_FRAMERECT_TOP, r.right - 1, y + this->resize.step_height - WD_FRAMERECT_BOTTOM, PC_GREY);
 
 			SpriteID sprite;
 			SpriteID pal = PAL_NONE;
@@ -606,7 +607,8 @@ public:
 				case ContentInfo::DOES_NOT_EXIST: sprite = SPR_BLOT; pal = PALETTE_TO_RED;   break;
 				default: NOT_REACHED();
 			}
-			DrawSprite(sprite, pal, nwi_checkbox->pos_x + (pal == PAL_NONE ? 2 : 3), y + sprite_y_offset + (pal == PAL_NONE ? 1 : 0));
+
+			DrawSprite(sprite, pal, Center(nwi_checkbox->pos_x + (pal == PAL_NONE ? 2 : 3), nwi_checkbox->current_x, sprite_dim.width), Center(y, this->resize.step_height, sprite_dim.height + (pal == PAL_NONE ? 0 : -2)));
 
 			StringID str = STR_CONTENT_TYPE_BASE_GRAPHICS + ci->type - CONTENT_TYPE_BASE_GRAPHICS;
 			DrawString(nwi_type->pos_x, nwi_type->pos_x + nwi_type->current_x - 1, y + text_y_offset, str, TC_BLACK, SA_HOR_CENTER);
@@ -976,14 +978,7 @@ static const NWidgetPart _nested_network_content_list_widgets[] = {
 		NWidget(WWT_DEFSIZEBOX, COLOUR_LIGHT_BLUE),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_LIGHT_BLUE, WID_NCL_BACKGROUND),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 7), SetResize(1, 0),
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(8, 8, 8),
-			/* Top */
-			NWidget(WWT_EMPTY, COLOUR_LIGHT_BLUE, WID_NCL_FILTER_CAPT), SetFill(1, 0), SetResize(1, 0),
-			NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NCL_FILTER), SetFill(1, 0), SetResize(1, 0),
-						SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 7), SetResize(1, 0),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 3), SetResize(1, 0),
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(8, 8, 8),
 			/* Left side. */
 			NWidget(NWID_VERTICAL), SetPIP(0, 4, 0),
@@ -1013,6 +1008,13 @@ static const NWidgetPart _nested_network_content_list_widgets[] = {
 			EndContainer(),
 			/* Right side. */
 			NWidget(NWID_VERTICAL), SetPIP(0, 4, 0),
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(8, 8, 8),
+					/* Top */
+					NWidget(WWT_EMPTY, COLOUR_LIGHT_BLUE, WID_NCL_FILTER_CAPT), SetFill(1, 0), SetResize(1, 0),
+					NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NCL_FILTER), SetFill(1, 0), SetResize(1, 0),
+								SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
+				EndContainer(),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 3), SetResize(1, 0),
 				NWidget(WWT_PANEL, COLOUR_LIGHT_BLUE, WID_NCL_DETAILS), SetResize(1, 1), SetFill(1, 1), EndContainer(),
 				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, 8, 0),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL),

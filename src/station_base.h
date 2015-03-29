@@ -299,6 +299,14 @@ struct GoodsEntry {
 		FlowStatMap::const_iterator flow_it(this->flows.find(source));
 		return flow_it != this->flows.end() ? flow_it->second.GetVia(excluded, excluded2) : INVALID_STATION;
 	}
+
+	/**
+	 * Return true if a cargo type has a rating here or if there is cargo waiting for this type.
+	 */
+	inline bool IsSourceStationForCargo() const
+	{
+		return this->HasRating() || this->cargo.TotalCount() > 0;
+	}
 };
 
 /** All airport-related information. Only valid if tile != INVALID_TILE. */

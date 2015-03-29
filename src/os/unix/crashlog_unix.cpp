@@ -143,7 +143,11 @@ public:
 };
 
 /** The signals we want our crash handler to handle. */
+#ifdef __ANDROID__
+static const int _signals_to_handle[] = { }; // Default Android signal handler will give us stack trace
+#else
 static const int _signals_to_handle[] = { SIGSEGV, SIGABRT, SIGFPE, SIGBUS, SIGILL };
+#endif
 
 /**
  * Entry point for the crash handler.

@@ -747,6 +747,10 @@ public:
 	 */
 	virtual void OnPlaceObjectAbort() {}
 
+	/**
+	 * Select the cancelled tool again, this is called after OnPlaceObjectAbort()
+	 */
+	virtual void SelectLastTool() {}
 
 	/**
 	 * The user is dragging over the map when the tile highlight mode
@@ -864,6 +868,8 @@ Wcls *AllocateWindowDescFront(WindowDesc *desc, int window_number, bool return_e
 }
 
 void RelocateAllWindows(int neww, int newh);
+void MoveAllWindowsOffScreen();
+void MoveAllHiddenWindowsBackToScreen();
 
 /* misc_gui.cpp */
 enum TooltipCloseCondition {
@@ -888,6 +894,9 @@ extern Point _cursorpos_drag_start;
 extern int _scrollbar_start_pos;
 extern int _scrollbar_size;
 extern byte _scroller_click_timeout;
+enum {
+	SCROLLER_CLICK_DELAY = 6 ///< Delay in video frames between scrollbar doing scroll, we don't want to get to the bottom of the list in an instant
+};
 
 extern bool _scrolling_viewport;
 extern bool _mouse_hovering;

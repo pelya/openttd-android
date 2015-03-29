@@ -40,7 +40,7 @@ uint DropDownListStringItem::Width() const
 
 void DropDownListStringItem::Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const
 {
-	DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top, this->String(), sel ? TC_WHITE : TC_BLACK);
+	DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, Center(top, bottom - top), this->String(), sel ? TC_WHITE : TC_BLACK);
 }
 
 /**
@@ -96,6 +96,7 @@ struct DropdownWindow : Window {
 	byte click_delay;             ///< Timer to delay selection.
 	bool drag_mode;
 	bool instant_close;           ///< Close the window when the mouse button is raised.
+	bool left_button_state;       ///< Close the window when the mouse button is clicked outside the window.
 	int scrolling;                ///< If non-zero, auto-scroll the item list (one time).
 	Point position;               ///< Position of the topleft corner of the window.
 	Scrollbar *vscroll;
@@ -154,8 +155,9 @@ struct DropdownWindow : Window {
 		this->list             = list;
 		this->selected_index   = selected;
 		this->click_delay      = 0;
-		this->drag_mode        = true;
+		this->drag_mode        = instant_close;
 		this->instant_close    = instant_close;
+		this->left_button_state = _left_button_down;
 	}
 
 	~DropdownWindow()
@@ -260,8 +262,11 @@ struct DropdownWindow : Window {
 		if (this->scrolling != 0) {
 			int pos = this->vscroll->GetPosition();
 
-			this->vscroll->UpdatePosition(this->scrolling);
-			this->scrolling = 0;
+			if (_scroller_click_timeout <= 1) {
+				_scroller_click_timeout = SCROLLER_CLICK_DELAY;
+				this->vscroll->UpdatePosition(this->scrolling);
+				this->scrolling = 0;
+			}
 
 			if (pos != this->vscroll->GetPosition()) {
 				this->SetDirty();
@@ -317,6 +322,16 @@ struct DropdownWindow : Window {
 				this->SetDirty();
 			}
 		}
+
+		// Close dropdown if user clicks outside of it
+		if (_left_button_down && !this->left_button_state && (
+			_cursor.pos.x < this->left || _cursor.pos.x > this->left + this->width ||
+			_cursor.pos.y < this->top || _cursor.pos.y > this->top + this->height)) {
+			delete this;
+			return;
+		} else {
+			this->left_button_state = _left_button_down;
+		}
 	}
 };
 
@@ -347,6 +362,14 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 	/* Longest item in the list, if auto_width is enabled */
 	uint max_item_width = 0;
 
+	if (auto_width) {
+		/* Find the longest item in the list */
+		for (const DropDownListItem * const *it = list->Begin(); it != list->End(); ++it) {
+			const DropDownListItem *item = *it;
+			max_item_width = max(max_item_width, item->Width() + 5);
+		}
+	}
+
 	/* Total length of list */
 	int height = 0;
 
@@ -360,11 +383,14 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 	int screen_bottom = GetMainViewBottom();
 	bool scroll = false;
 
-	/* Check if the dropdown will fully fit below the widget */
-	if (top + height + 4 >= screen_bottom) {
-		/* If not, check if it will fit above the widget */
-		if (w->top + wi_rect.top - height > GetMainViewTop()) {
-			top = w->top + wi_rect.top - height - 4;
+	enum { DISPLAY_BORDER = 20, TOP_BORDER = 4 };
+
+	/* Check if the dropdown will fully fit below the widget. */
+	if (top + height + DISPLAY_BORDER >= screen_bottom) {
+		/* If not, check if it will fit above the widget. */
+		int screen_top = GetMainViewTop();
+		if (w->top + wi_rect.top - TOP_BORDER > screen_top + height) {
+			top = w->top + wi_rect.top - height - TOP_BORDER;
 		} else {
 			/* ... and lastly if it won't, enable the scroll bar and fit the
 			 * list in below the widget */
@@ -372,9 +398,30 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 			int rows = (screen_bottom - 4 - top) / avg_height;
 			height = rows * avg_height;
 			scroll = true;
-			/* Add space for the scroll bar if we automatically determined
-			 * the width of the list. */
+
+			/* ... and choose whether to put the list above or below the widget. */
+			bool put_above = false;
+			int available_height = screen_bottom - w->top - wi_rect.bottom;
+			if (w->top + wi_rect.top - screen_top > available_height) {
+				// Put it above.
+				available_height = w->top + wi_rect.top - screen_top - DISPLAY_BORDER - TOP_BORDER;
+				put_above = true;
+			}
+
+			/* Check at least there is space for one item. */
+			assert(available_height >= avg_height);
+
+			/* And lastly, fit the list,... */
+			int rows = available_height / avg_height;
+			height = rows * avg_height;
+
+			/* ... add space for the scrollbar,... */
 			max_item_width += NWidgetScrollbar::GetVerticalDimension().width;
+
+			/* ... and set the top position if needed. */
+			if (put_above) {
+				top = w->top + wi_rect.top - height - TOP_BORDER;
+			}
 		}
 	}
 

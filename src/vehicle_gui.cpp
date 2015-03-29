@@ -330,7 +330,7 @@ typedef SmallVector<RefitOption, 32> SubtypeList; ///< List of refit subtypes as
  */
 static void DrawVehicleRefitWindow(const SubtypeList list[NUM_CARGO], const int sel[2], uint pos, uint rows, uint delta, const Rect &r)
 {
-	uint y = r.top + WD_MATRIX_TOP;
+	uint y = Center(r.top, delta);
 	uint current = 0;
 
 	bool rtl = _current_text_dir == TD_RTL;
@@ -660,8 +660,8 @@ struct RefitWindow : public Window {
 	{
 		switch (widget) {
 			case WID_VR_MATRIX:
-				resize->height = WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM;
-				size->height = resize->height * 8;
+				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
+				size->height = resize->height * 6;
 				break;
 
 			case WID_VR_VEHICLE_PANEL_DISPLAY:
@@ -725,11 +725,12 @@ struct RefitWindow : public Window {
 			case WID_VR_VEHICLE_PANEL_DISPLAY: {
 				Vehicle *v = Vehicle::Get(this->window_number);
 				DrawVehicleImage(v, this->sprite_left + WD_FRAMERECT_LEFT, this->sprite_right - WD_FRAMERECT_RIGHT,
-					r.top + WD_FRAMERECT_TOP, INVALID_VEHICLE, EIT_IN_DETAILS, this->hscroll != NULL ? this->hscroll->GetPosition() : 0);
+					r.top, r.bottom - r.top + 1, INVALID_VEHICLE, EIT_IN_DETAILS, this->hscroll != NULL ? this->hscroll->GetPosition() : 0);
 
 				/* Highlight selected vehicles. */
 				if (this->order != INVALID_VEH_ORDER_ID) break;
 				int x = 0;
+				int y_offset_frame = Center(0, r.bottom - r.top + 1, 14);
 				switch (v->type) {
 					case VEH_TRAIN: {
 						VehicleSet vehicles_to_refit;
@@ -1323,8 +1324,9 @@ static void DrawSmallOrderList(const Vehicle *v, int left, int right, int y, Veh
  * @param selection Selected vehicle to draw a frame around
  * @param skip      Number of pixels to skip at the front (for scrolling)
  */
-void DrawVehicleImage(const Vehicle *v, int left, int right, int y, VehicleID selection, EngineImageType image_type, int skip)
+void DrawVehicleImage(const Vehicle *v, int left, int right, int y, int height, VehicleID selection, EngineImageType image_type, int skip)
 {
+	y = Center(y, height, GetVehicleHeight(v->type));
 	switch (v->type) {
 		case VEH_TRAIN:    DrawTrainImage(Train::From(v), left, right, y, selection, image_type, skip); break;
 		case VEH_ROAD:     DrawRoadVehImage(v, left, right, y, selection, image_type, skip);  break;
@@ -1389,7 +1391,7 @@ void BaseVehicleListWindow::DrawVehicleListItems(VehicleID selected_vehicle, int
 		SetDParam(0, v->GetDisplayProfitThisYear());
 		SetDParam(1, v->GetDisplayProfitLastYear());
 
-		DrawVehicleImage(v, image_left, image_right, y + FONT_HEIGHT_SMALL - 1, selected_vehicle, EIT_IN_LIST, 0);
+		DrawVehicleImage(v, image_left, image_right, y, line_height, selected_vehicle, EIT_IN_LIST, 0);
 		DrawString(text_left, text_right, y + line_height - FONT_HEIGHT_SMALL - WD_FRAMERECT_BOTTOM - 1, STR_VEHICLE_LIST_PROFIT_THIS_YEAR_LAST_YEAR);
 
 		if (v->name != NULL) {
@@ -1491,7 +1493,7 @@ public:
 						break;
 					case VEH_SHIP:
 					case VEH_AIRCRAFT:
-						size->height = 4 * resize->height;
+						size->height = 3 * resize->height;
 						break;
 					default: NOT_REACHED();
 				}
@@ -1683,6 +1685,7 @@ public:
 	virtual void OnResize()
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_VL_LIST);
+		this->GetWidget<NWidgetCore>(WID_VL_LIST)->widget_data = (this->vscroll->GetCapacity() << MAT_ROW_START) + (1 << MAT_COL_START);
 	}
 
 	/**
@@ -2102,12 +2105,12 @@ struct VehicleDetailsWindow : Window {
 
 				/* Articulated road vehicles use a complete line. */
 				if (v->type == VEH_ROAD && v->HasArticulatedPart()) {
-					DrawVehicleImage(v, r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, INVALID_VEHICLE, EIT_IN_DETAILS, 0);
+					DrawVehicleImage(v, r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top, r.bottom - r.top, INVALID_VEHICLE, EIT_IN_DETAILS, 0);
 				} else {
 					uint sprite_left  = rtl ? text_right : r.left;
 					uint sprite_right = rtl ? r.right : text_left;
 
-					DrawVehicleImage(v, sprite_left + WD_FRAMERECT_LEFT, sprite_right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, INVALID_VEHICLE, EIT_IN_DETAILS, 0);
+					DrawVehicleImage(v, sprite_left + WD_FRAMERECT_LEFT, sprite_right - WD_FRAMERECT_RIGHT, r.top, r.bottom - r.top, INVALID_VEHICLE, EIT_IN_DETAILS, 0);
 				}
 				DrawVehicleDetails(v, text_left + WD_FRAMERECT_LEFT, text_right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, 0, 0, this->tab);
 				break;
@@ -2642,14 +2645,15 @@ public:
 
 		/* Draw the flag plus orders. */
 		bool rtl = (_current_text_dir == TD_RTL);
-		uint text_offset = max(GetSpriteSize(SPR_FLAG_VEH_STOPPED).width, GetSpriteSize(SPR_FLAG_VEH_RUNNING).width) + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT;
+		int image = ((v->vehstatus & VS_STOPPED) != 0) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING;
+		Dimension d = GetSpriteSize(image);
+		uint text_offset = d.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT;
 		int text_left = r.left + (rtl ? (uint)WD_FRAMERECT_LEFT : text_offset);
 		int text_right = r.right - (rtl ? text_offset : (uint)WD_FRAMERECT_RIGHT);
 		int image_left = (rtl ? text_right + 1 : r.left) + WD_IMGBTN_LEFT;
-		int image = ((v->vehstatus & VS_STOPPED) != 0) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING;
 		int lowered = this->IsWidgetLowered(WID_VV_START_STOP) ? 1 : 0;
-		DrawSprite(image, PAL_NONE, image_left + lowered, r.top + WD_IMGBTN_TOP + lowered);
-		DrawString(text_left + lowered, text_right + lowered, r.top + WD_FRAMERECT_TOP + lowered, str, TC_FROMSTRING, SA_HOR_CENTER);
+		DrawSprite(image, PAL_NONE, image_left + lowered, Center(r.top + WD_IMGBTN_TOP + lowered, r.bottom - r.top, d.height));
+		DrawString(text_left + lowered, text_right + lowered, Center(r.top + lowered, r.bottom - r.top), str, TC_FROMSTRING, SA_HOR_CENTER);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)

@@ -32,6 +32,7 @@
 #include "linkgraph/linkgraph_gui.h"
 #include "tilehighlight_func.h"
 #include "hotkeys.h"
+#include "tutorial_gui.h"
 
 #include "saveload/saveload.h"
 
@@ -340,7 +341,7 @@ struct MainWindow : Window
 				break;
 			}
 
-			case GHK_RESET_OBJECT_TO_PLACE: ResetObjectToPlace(); break;
+			case GHK_RESET_OBJECT_TO_PLACE: ResetObjectToPlace(); ToolbarSelectLastTool(); break;
 			case GHK_DELETE_WINDOWS: DeleteNonVitalWindows(); break;
 			case GHK_DELETE_NONVITAL_WINDOWS: DeleteAllNonVitalWindows(); break;
 			case GHK_REFRESH_SCREEN: MarkWholeScreenDirty(); break;
@@ -463,6 +464,7 @@ struct MainWindow : Window
 		if (!gui_scope) return;
 		/* Forward the message to the appropriate toolbar (ingame or scenario editor) */
 		InvalidateWindowData(WC_MAIN_TOOLBAR, 0, data, true);
+		InvalidateWindowData(WC_MAIN_TOOLBAR_RIGHT, 0, data, true);
 	}
 
 	static HotkeyList hotkeys;
@@ -562,6 +564,7 @@ void SetupColoursAndInitialWindow()
 		default: NOT_REACHED();
 		case GM_MENU:
 			ShowSelectGameWindow();
+			ShowTutorialWindowOnceAfterInstall();
 			break;
 
 		case GM_NORMAL:

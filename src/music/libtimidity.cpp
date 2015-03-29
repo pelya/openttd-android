@@ -13,6 +13,7 @@
 #include "../openttd.h"
 #include "../sound_type.h"
 #include "../debug.h"
+#include "../core/math_func.hpp"
 #include "libtimidity.h"
 #include <fcntl.h>
 #include <sys/types.h>
@@ -22,6 +23,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <timidity.h>
+#include <SDL.h>
 #if defined(PSP)
 #include <pspaudiolib.h>
 #endif /* PSP */
@@ -53,14 +55,34 @@ static void AudioOutCallback(void *buf, unsigned int _reqn, void *userdata)
 	}
 }
 #endif /* PSP */
+#ifdef __ANDROID__
+/* Android does not have Midi chip, we have to route the libtimidity output through SDL audio output */
+void Android_MidiMixMusic(Sint16 *stream, int len)
+{
+	if (_midi.status == MIDI_PLAYING) {
+		Sint16 buf[16384];
+		while( len > 0 )
+		{
+			int minlen = min(sizeof(buf), len);
+			mid_song_read_wave(_midi.song, buf, min(sizeof(buf), len*2));
+			for( Uint16 i = 0; i < minlen; i++ )
+				stream[i] += buf[i];
+			stream += minlen;
+			len -= minlen;
+		}
+	}
+}
+#endif /* __ANDROID__ */
 
 /** Factory for the libtimidity driver. */
 static FMusicDriver_LibTimidity iFMusicDriver_LibTimidity;
 
+enum { TIMIDITY_MAX_VOLUME = 50 };
 const char *MusicDriver_LibTimidity::Start(const char * const *param)
 {
 	_midi.status = MIDI_STOPPED;
 	_midi.song = NULL;
+	volume = TIMIDITY_MAX_VOLUME; // Avoid clipping
 
 	if (mid_init(param == NULL ? NULL : const_cast<char *>(param[0])) < 0) {
 		/* If init fails, it can be because no configuration was found.
@@ -115,6 +137,7 @@ void MusicDriver_LibTimidity::PlaySong(const char *filename)
 		return;
 	}
 
+	mid_song_set_volume(_midi.song, volume);
 	mid_song_start(_midi.song);
 	_midi.status = MIDI_PLAYING;
 }
@@ -142,5 +165,6 @@ bool MusicDriver_LibTimidity::IsSongPlaying()
 
 void MusicDriver_LibTimidity::SetVolume(byte vol)
 {
+	volume = vol * TIMIDITY_MAX_VOLUME / 127; // I'm not sure about that value
 	if (_midi.song != NULL) mid_song_set_volume(_midi.song, vol);
 }

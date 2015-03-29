@@ -105,7 +105,7 @@ struct OskWindow : public Window {
 
 		widget -= WID_OSK_LETTERS;
 		DrawCharCentered(_keyboard[this->shift][widget],
-			r.left + 8,
+			(r.left + r.right) / 2,
 			r.top + 3,
 			TC_BLACK);
 	}
@@ -229,7 +229,8 @@ static const int INTER_KEY_SPACE = 2; // Number of pixels between two keys.
  */
 static void AddKey(NWidgetHorizontal *hor, int height, int num_half, WidgetType widtype, int widnum, uint16 widdata, int *biggest_index)
 {
-	int key_width = HALF_KEY_WIDTH + (INTER_KEY_SPACE + HALF_KEY_WIDTH) * (num_half - 1);
+	int min_half_key = max<int>(GetMinSizing(NWST_BUTTON), HALF_KEY_WIDTH);
+	int key_width = min_half_key + (INTER_KEY_SPACE + min_half_key) * (num_half - 1);
 
 	if (widtype == NWID_SPACER) {
 		if (!hor->IsEmpty()) key_width += INTER_KEY_SPACE;
@@ -252,7 +253,7 @@ static void AddKey(NWidgetHorizontal *hor, int height, int num_half, WidgetType 
 static NWidgetBase *MakeTopKeys(int *biggest_index)
 {
 	NWidgetHorizontal *hor = new NWidgetHorizontal();
-	int key_height = FONT_HEIGHT_NORMAL + 2;
+	int key_height = GetMinSizing(NWST_KEYBOARD, FONT_HEIGHT_NORMAL + 2);
 
 	AddKey(hor, key_height, 6 * 2, WWT_TEXTBTN,    WID_OSK_CANCEL,    STR_BUTTON_CANCEL,  biggest_index);
 	AddKey(hor, key_height, 6 * 2, WWT_TEXTBTN,    WID_OSK_OK,        STR_BUTTON_OK,      biggest_index);
@@ -264,7 +265,7 @@ static NWidgetBase *MakeTopKeys(int *biggest_index)
 static NWidgetBase *MakeNumberKeys(int *biggest_index)
 {
 	NWidgetHorizontal *hor = new NWidgetHorizontalLTR();
-	int key_height = FONT_HEIGHT_NORMAL + 6;
+	int key_height = GetMinSizing(NWST_KEYBOARD, FONT_HEIGHT_NORMAL + 6);
 
 	for (int widnum = WID_OSK_NUMBERS_FIRST; widnum <= WID_OSK_NUMBERS_LAST; widnum++) {
 		AddKey(hor, key_height, 2, WWT_PUSHBTN, widnum, 0x0, biggest_index);
@@ -276,7 +277,7 @@ static NWidgetBase *MakeNumberKeys(int *biggest_index)
 static NWidgetBase *MakeQwertyKeys(int *biggest_index)
 {
 	NWidgetHorizontal *hor = new NWidgetHorizontalLTR();
-	int key_height = FONT_HEIGHT_NORMAL + 6;
+	int key_height = GetMinSizing(NWST_KEYBOARD, FONT_HEIGHT_NORMAL + 6);
 
 	AddKey(hor, key_height, 3, WWT_PUSHIMGBTN, WID_OSK_SPECIAL, SPR_OSK_SPECIAL, biggest_index);
 	for (int widnum = WID_OSK_QWERTY_FIRST; widnum <= WID_OSK_QWERTY_LAST; widnum++) {
@@ -290,7 +291,7 @@ static NWidgetBase *MakeQwertyKeys(int *biggest_index)
 static NWidgetBase *MakeAsdfgKeys(int *biggest_index)
 {
 	NWidgetHorizontal *hor = new NWidgetHorizontalLTR();
-	int key_height = FONT_HEIGHT_NORMAL + 6;
+	int key_height = GetMinSizing(NWST_KEYBOARD, FONT_HEIGHT_NORMAL + 6);
 
 	AddKey(hor, key_height, 4, WWT_IMGBTN, WID_OSK_CAPS, SPR_OSK_CAPS, biggest_index);
 	for (int widnum = WID_OSK_ASDFG_FIRST; widnum <= WID_OSK_ASDFG_LAST; widnum++) {
@@ -303,7 +304,7 @@ static NWidgetBase *MakeAsdfgKeys(int *biggest_index)
 static NWidgetBase *MakeZxcvbKeys(int *biggest_index)
 {
 	NWidgetHorizontal *hor = new NWidgetHorizontalLTR();
-	int key_height = FONT_HEIGHT_NORMAL + 6;
+	int key_height = GetMinSizing(NWST_KEYBOARD, FONT_HEIGHT_NORMAL + 6);
 
 	AddKey(hor, key_height, 3, WWT_IMGBTN, WID_OSK_SHIFT, SPR_OSK_SHIFT, biggest_index);
 	for (int widnum = WID_OSK_ZXCVB_FIRST; widnum <= WID_OSK_ZXCVB_LAST; widnum++) {
@@ -317,7 +318,7 @@ static NWidgetBase *MakeZxcvbKeys(int *biggest_index)
 static NWidgetBase *MakeSpacebarKeys(int *biggest_index)
 {
 	NWidgetHorizontal *hor = new NWidgetHorizontal();
-	int key_height = FONT_HEIGHT_NORMAL + 6;
+	int key_height = GetMinSizing(NWST_KEYBOARD, FONT_HEIGHT_NORMAL + 6);
 
 	AddKey(hor, key_height,  8, NWID_SPACER, 0, 0, biggest_index);
 	AddKey(hor, key_height, 13, WWT_PUSHTXTBTN, WID_OSK_SPACE, STR_EMPTY, biggest_index);
@@ -329,7 +330,7 @@ static NWidgetBase *MakeSpacebarKeys(int *biggest_index)
 
 
 static const NWidgetPart _nested_osk_widgets[] = {
-	NWidget(WWT_CAPTION, COLOUR_GREY, WID_OSK_CAPTION), SetDataTip(STR_WHITE_STRING, STR_NULL),
+	NWidget(WWT_CAPTION, COLOUR_GREY, WID_OSK_CAPTION), SetSizingType(NWST_BUTTON), SetDataTip(STR_WHITE_STRING, STR_NULL),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_OSK_TEXT), SetMinimalSize(252, 12), SetPadding(2, 2, 2, 2),
 	EndContainer(),

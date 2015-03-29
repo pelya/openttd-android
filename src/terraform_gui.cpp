@@ -161,6 +161,7 @@ struct TerraformToolbarWindow : Window {
 
 	~TerraformToolbarWindow()
 	{
+		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 	}
 
 	virtual void OnInit()
@@ -242,15 +243,9 @@ struct TerraformToolbarWindow : Window {
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
-				DoCommandP(tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound1E);
-				break;
-
 			case WID_TT_PLACE_SIGN: // Place sign button
-				PlaceProc_Sign(tile);
-				break;
-
 			case WID_TT_PLACE_OBJECT: // Place object button
-				PlaceProc_Object(tile);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
 				break;
 
 			default: NOT_REACHED();
@@ -260,13 +255,6 @@ struct TerraformToolbarWindow : Window {
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
 	{
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
-	}
-
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
-	{
-		Point pt = GetToolbarAlignedWindowPosition(sm_width);
-		pt.y += sm_height;
-		return pt;
 	}
 
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
@@ -280,6 +268,21 @@ struct TerraformToolbarWindow : Window {
 				case DDSP_LEVEL_AREA:
 					GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
 					break;
+
+				case DDSP_SINGLE_TILE:
+					assert(start_tile == end_tile);
+					switch (this->last_user_action) {
+						case WID_TT_BUY_LAND:
+							DoCommandP(end_tile, OBJECT_OWNED_LAND, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_PURCHASE_THIS_LAND), CcPlaySound1E);
+							break;
+						case WID_TT_PLACE_SIGN:
+							PlaceProc_Sign(end_tile);
+							break;
+						case WID_TT_PLACE_OBJECT:
+							PlaceProc_Object(end_tile);
+							break;
+						default: NOT_REACHED();
+					}
 			}
 		}
 	}
@@ -288,6 +291,17 @@ struct TerraformToolbarWindow : Window {
 	{
 		DeleteWindowById(WC_BUILD_OBJECT, 0);
 		this->RaiseButtons();
+		ResetObjectToPlace();
+	}
+
+	virtual void SelectLastTool()
+	{
+		// User misplaced something - activate last selected tool again
+		if (this->last_user_action == WIDGET_LIST_END)
+			return;
+		Point dummy = {0, 0};
+		this->RaiseWidget(this->last_user_action);
+		this->OnClick(dummy, this->last_user_action, 0);
 	}
 
 	static HotkeyList hotkeys;
@@ -351,7 +365,7 @@ static const NWidgetPart _nested_terraform_widgets[] = {
 };
 
 static WindowDesc _terraform_desc(
-	WDP_MANUAL, "toolbar_landscape", 0, 0,
+	WDP_ALIGN_TOOLBAR, "toolbar_landscape", 0, 0,
 	WC_SCEN_LAND_GEN, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_terraform_widgets, lengthof(_nested_terraform_widgets),
@@ -369,6 +383,7 @@ Window *ShowTerraformToolbar(Window *link)
 
 	Window *w;
 	if (link == NULL) {
+		DeleteToolbarLinkedWindows();
 		w = AllocateWindowDescFront<TerraformToolbarWindow>(&_terraform_desc, 0);
 		return w;
 	}
@@ -377,7 +392,6 @@ Window *ShowTerraformToolbar(Window *link)
 	DeleteWindowById(WC_SCEN_LAND_GEN, 0, true);
 	w = AllocateWindowDescFront<TerraformToolbarWindow>(&_terraform_desc, 0);
 	/* Align the terraform toolbar under the main toolbar. */
-	w->top -= w->height;
 	w->SetDirty();
 	/* Put the linked toolbar to the left / right of it. */
 	link->left = w->left + (_current_text_dir == TD_RTL ? w->width : -link->width);
@@ -754,7 +768,7 @@ static Hotkey terraform_editor_hotkeys[] = {
 HotkeyList ScenarioEditorLandscapeGenerationWindow::hotkeys("terraform_editor", terraform_editor_hotkeys, TerraformToolbarEditorGlobalHotkeys);
 
 static WindowDesc _scen_edit_land_gen_desc(
-	WDP_AUTO, "toolbar_landscape_scen", 0, 0,
+	WDP_ALIGN_TOOLBAR, "toolbar_landscape_scen", 0, 0,
 	WC_SCEN_LAND_GEN, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_scen_edit_land_gen_widgets, lengthof(_nested_scen_edit_land_gen_widgets),
@@ -767,5 +781,6 @@ static WindowDesc _scen_edit_land_gen_desc(
  */
 Window *ShowEditorTerraformToolbar()
 {
+	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<ScenarioEditorLandscapeGenerationWindow>(&_scen_edit_land_gen_desc, 0);
 }

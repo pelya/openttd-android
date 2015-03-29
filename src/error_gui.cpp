@@ -187,6 +187,7 @@ public:
 		CopyInDParam(0, this->decode_params, lengthof(this->decode_params));
 		if (this->textref_stack_size > 0) StartTextRefStackUsage(this->textref_stack_grffile, this->textref_stack_size, this->textref_stack);
 
+		size->width = GetMinSizing(NWST_WINDOW_LENGTH, size->width);
 		int text_width = max(0, (int)size->width - WD_FRAMETEXT_LEFT - WD_FRAMETEXT_RIGHT);
 		this->height_summary  = GetStringHeight(this->summary_msg, text_width);
 		this->height_detailed = (this->detailed_msg == INVALID_STRING_ID) ? 0 : GetStringHeight(this->detailed_msg, text_width);

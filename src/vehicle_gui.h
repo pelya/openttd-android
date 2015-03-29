@@ -99,6 +99,6 @@ void StartStopVehicle(const Vehicle *v, bool texteffect);
 
 Vehicle *CheckClickOnVehicle(const struct ViewPort *vp, int x, int y);
 
-void DrawVehicleImage(const Vehicle *v, int left, int right, int y, VehicleID selection, EngineImageType image_type, int skip);
+void DrawVehicleImage(const Vehicle *v, int left, int right, int y, int height, VehicleID selection, EngineImageType image_type, int skip);
 
 #endif /* VEHICLE_GUI_H */

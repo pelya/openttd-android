@@ -93,6 +93,7 @@ tgp.cpp
 tile_map.cpp
 tilearea.cpp
 townname.cpp
+tutorial_gui.cpp
 #if WIN32
 #else
 	#if WINCE
@@ -365,6 +366,7 @@ tilehighlight_func.h
 tilehighlight_type.h
 tilematrix_type.hpp
 timetable.h
+toolbar_type.h
 toolbar_gui.h
 town.h
 town_type.h
@@ -905,6 +907,12 @@ script/api/script_window.cpp
 # Blitters
 #if DEDICATED
 #else
+blitter/16bpp_base.cpp
+blitter/16bpp_base.hpp
+blitter/16bpp_anim.cpp
+blitter/16bpp_anim.hpp
+blitter/16bpp_simple.cpp
+blitter/16bpp_simple.hpp
 blitter/32bpp_anim.cpp
 blitter/32bpp_anim.hpp
 #if SSE

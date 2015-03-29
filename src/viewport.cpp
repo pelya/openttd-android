@@ -1930,7 +1930,7 @@ void MarkTileDirtyByTileOutsideMap(int x, int y)
  *
  * @ingroup dirty
  */
-static void SetSelectionTilesDirty()
+void SetSelectionTilesDirty()
 {
 	int x_size = _thd.size.x;
 	int y_size = _thd.size.y;
@@ -2164,13 +2164,28 @@ static void PlaceObject()
 
 bool HandleViewportClicked(const ViewPort *vp, int x, int y)
 {
+	if (_move_pressed) return false;
+
+	// Allow scrolling viewport with mouse even in selection mode,
+	// unless we select line or area, or perform drag&drop
+	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE && !(_thd.place_mode & HT_SCROLL_VIEWPORT)) {
+		PlaceObject();
+		return true;
+	}
+
+	return false;
+}
+
+bool HandleViewportMouseUp(const ViewPort *vp, int x, int y)
+{
+	if (_move_pressed) return false;
+
 	const Vehicle *v = CheckClickOnVehicle(vp, x, y);
 
 	if (_thd.place_mode & HT_VEHICLE) {
 		if (v != NULL && VehicleClicked(v)) return true;
 	}
 
-	/* Vehicle placement mode already handled above. */
 	if ((_thd.place_mode & HT_DRAG_MASK) != HT_NONE) {
 		PlaceObject();
 		return true;
@@ -2484,7 +2499,9 @@ void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDrag
 	}
 
 	HighLightStyle others = _thd.place_mode & ~(HT_DRAG_MASK | HT_DIR_MASK);
-	if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT) {
+	if (method == VPM_SINGLE_TILE) {
+		/* Nothing to do. */
+	} else if ((_thd.place_mode & HT_DRAG_MASK) == HT_RECT) {
 		_thd.place_mode = HT_SPECIAL | others;
 		_thd.next_drawstyle = HT_RECT | others;
 	} else if (_thd.place_mode & (HT_RAIL | HT_LINE)) {
@@ -2521,7 +2538,7 @@ void VpSetPresizeRange(TileIndex from, TileIndex to)
 	if (distance > 1) ShowMeasurementTooltips(STR_MEASURE_LENGTH, 1, &distance, TCC_HOVER);
 }
 
-static void VpStartPreSizing()
+void VpStartPreSizing()
 {
 	_thd.selend.x = -1;
 	_special_mouse_mode = WSM_PRESIZE;
@@ -2963,6 +2980,11 @@ void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method)
 	int limit = 0;
 
 	switch (method) {
+		case VPM_SINGLE_TILE:
+			_thd.selstart.x = x;
+			_thd.selstart.y = y;
+			break;
+
 		case VPM_X_OR_Y: // drag in X or Y direction
 			if (abs(sy - y) < abs(sx - x)) {
 				y = sy;
@@ -3121,7 +3143,9 @@ EventState VpHandlePlaceSizingDrag()
 	 * keep the selected tool, but reset it to the original mode. */
 	_special_mouse_mode = WSM_NONE;
 	HighLightStyle others = _thd.place_mode & ~(HT_DRAG_MASK | HT_DIR_MASK);
-	if ((_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT) {
+	if (_thd.select_method == VPM_SINGLE_TILE) {
+		goto place_mouseup;
+	} else if ((_thd.next_drawstyle & HT_DRAG_MASK) == HT_RECT) {
 		_thd.place_mode = HT_RECT | others;
 	} else if (_thd.select_method & VPM_SIGNALDIRS) {
 		_thd.place_mode = HT_RECT | others;
@@ -3132,8 +3156,8 @@ EventState VpHandlePlaceSizingDrag()
 	}
 	SetTileSelectSize(1, 1);
 
+place_mouseup:
 	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
-
 	return ES_HANDLED;
 }
 
@@ -3143,6 +3167,9 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
 }
 
 #include "table/animcursors.h"
+
+static WindowClass _last_selected_window_class;
+static WindowNumber _last_selected_window_number;
 
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num)
 {
@@ -3190,7 +3217,19 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 
 void ResetObjectToPlace()
 {
+	if (_thd.window_class != WC_INVALID) {
+		_last_selected_window_class = _thd.window_class;
+		_last_selected_window_number = _thd.window_number;
+	}
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+	MoveAllHiddenWindowsBackToScreen();
+}
+
+void ToolbarSelectLastTool()
+{
+	Window *w = FindWindowById(_last_selected_window_class, _last_selected_window_number);
+	if (w != NULL) w->SelectLastTool();
+	_last_selected_window_class = WC_INVALID;
 }
 
 Point GetViewportStationMiddle(const ViewPort *vp, const Station *st)

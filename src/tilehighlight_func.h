@@ -25,10 +25,12 @@ void ResetObjectToPlace();
 
 void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method);
 void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDragDropSelectionProcess process);
+void VpStartPreSizing();
 void VpSetPresizeRange(TileIndex from, TileIndex to);
 void VpSetPlaceSizingLimit(int limit);
 
 void UpdateTileSelection();
+void SetSelectionTilesDirty();
 
 extern TileHighlightData _thd;
 

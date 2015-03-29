@@ -268,7 +268,7 @@ public:
 			case WID_RV_LEFT_MATRIX:
 			case WID_RV_RIGHT_MATRIX:
 				resize->height = GetEngineListHeight((VehicleType)this->window_number);
-				size->height = (this->window_number <= VEH_ROAD ? 8 : 4) * resize->height;
+				size->height = 4 * resize->height;
 				break;
 
 			case WID_RV_LEFT_DETAILS:
@@ -396,7 +396,7 @@ public:
 					str = STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED;
 				}
 
-				DrawString(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, r.top + WD_FRAMERECT_TOP, str, TC_BLACK, SA_HOR_CENTER);
+				DrawString(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, Center(r.top + WD_FRAMERECT_TOP, r.bottom - r.top - WD_FRAMERECT_TOP), STR_BLACK_STRING, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}
 

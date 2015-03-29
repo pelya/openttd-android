@@ -26,6 +26,8 @@
 #include "signal_func.h"
 #include "core/backup_type.hpp"
 #include "object_base.h"
+#include "string_func.h"
+#include "tilehighlight_func.h"
 
 #include "table/strings.h"
 

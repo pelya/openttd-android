@@ -54,6 +54,7 @@
 #include "base_media_base.h"
 #include "gamelog.h"
 #include "settings_func.h"
+#include "settings_gui.h"
 #include "ini_type.h"
 #include "ai/ai_config.hpp"
 #include "ai/ai.hpp"
@@ -64,6 +65,7 @@
 #include "roadveh.h"
 #include "fios.h"
 #include "strings_func.h"
+#include "toolbar_gui.h"
 
 #include "void_map.h"
 #include "station_base.h"
@@ -1073,6 +1075,16 @@ static bool ZoomMinMaxChanged(int32 p1)
 		_gui_zoom = _settings_client.gui.zoom_min;
 		UpdateCursorSize();
 		LoadStringWidthTable();
+	}
+	return true;
+}
+
+static bool VerticalToolbarChanged(int32 p1)
+{
+	if (FindWindowByClass(WC_MAIN_TOOLBAR)) {
+		HideVitalWindows();
+		ShowVitalWindows();
+		ReInitAllWindows();
 	}
 	return true;
 }
