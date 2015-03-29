@@ -14,7 +14,9 @@
 
 #include "stdafx.h"
 
+#ifdef __ANDROID__
 #include <SDL_android.h>
+#endif
 
 #include "tutorial_gui.h"
 #include "debug.h"
@@ -63,7 +65,13 @@ void OpenExternTutorialVideo(VideoLink_t *tutorial)
 	if (!link) {
 		return;
 	}
+#ifdef __ANDROID__
 	SDL_ANDROID_OpenExternalWebBrowser(link);
+#else
+	char cmd[PATH_MAX] = "xdg-open ";
+	strcat(cmd, link);
+	system(cmd);
+#endif
 }
 
 static const NWidgetPart _nested_tutorial_widgets[] = {
