@@ -773,7 +773,7 @@ public:
 	static void InvalidateDimensionCache();
 	static Dimension GetVerticalDimension();
 	static Dimension GetHorizontalDimension();
-	static void ResetAllWidgetMinSizes();  ///< Called when screen size or font size or button size changes
+	friend void ResetAllWidgetMinSizes();  ///< Called when screen size or font size or button size changes
 
 private:
 	static Dimension vertical_dimension;   ///< Cached size of vertical scrollbar button.

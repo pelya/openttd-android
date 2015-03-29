@@ -607,8 +607,7 @@ public:
 				case ContentInfo::DOES_NOT_EXIST: sprite = SPR_BLOT; pal = PALETTE_TO_RED;   break;
 				default: NOT_REACHED();
 			}
-
-			DrawSprite(sprite, pal, Center(nwi_checkbox->pos_x + (pal == PAL_NONE ? 2 : 3), nwi_checkbox->current_x, sprite_dim.width), Center(y, this->resize.step_height, sprite_dim.height + (pal == PAL_NONE ? 0 : -2)));
+			DrawSprite(sprite, pal, nwi_checkbox->pos_x + (pal == PAL_NONE ? 2 : 3), y + sprite_y_offset + (pal == PAL_NONE ? 1 : 0));
 
 			StringID str = STR_CONTENT_TYPE_BASE_GRAPHICS + ci->type - CONTENT_TYPE_BASE_GRAPHICS;
 			DrawString(nwi_type->pos_x, nwi_type->pos_x + nwi_type->current_x - 1, y + text_y_offset, str, TC_BLACK, SA_HOR_CENTER);

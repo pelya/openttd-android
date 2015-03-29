@@ -1874,7 +1874,7 @@ Window *FindWindowFromPt(int x, int y)
  * @todo Check if it can be moved to another file, so we do not need to include error, string and fontcache headers.
  * @todo Fix magic numbers 16/18/20/30/32
  */
-void NWidgetScrollbar::ResetAllWidgetMinSizes()
+void ResetAllWidgetMinSizes()
 {
 	NWidgetScrollbar::vertical_dimension = {0, 0};
 	NWidgetScrollbar::horizontal_dimension = {0, 0};
@@ -3586,7 +3586,7 @@ void RelocateAllWindows(int neww, int newh)
 				break;
 
 			case WC_MAIN_TOOLBAR_RIGHT:
-				ResizeWindow(w, min(neww, w->window_desc->default_width) - w->width, 0, false);
+				ResizeWindow(w, min(neww, _toolbar_width) - w->width, 0, false);
 
 				top = w->top;
 				left = neww - w->width;

@@ -1176,7 +1176,7 @@ void SwitchToMode(SwitchMode new_mode)
 						lastPart++;
 					}
 					MakeScreenshot(SC_VIEWPORT, NETWORK_SAVE_SCREENSHOT_FILE);
-					FioFindFullPath(screenshotFile, sizeof(screenshotFile), SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
+					FioFindFullPath(screenshotFile, lastof(screenshotFile), SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
 					uint64_t playedTime = abs(_date - DAYS_TILL(_settings_newgame.game_creation.starting_year)) * 1000;
 					int ret = SDL_ANDROID_CloudSave(_file_to_saveload.name, lastPart, "OpenTTD", lastPart, screenshotFile, playedTime);
 					if (_settings_client.gui.save_to_network == 2) {

@@ -893,6 +893,7 @@ void DrawEngineList(VehicleType type, int l, int r, int y, const GUIEngineList *
 	int sprite_width = sprite_left + sprite_right;
 
 	int sprite_x        = rtl ? r - sprite_right - 1 : l + sprite_left + 1;
+	int sprite_y_offset = sprite_y_offsets[type] + step_size / 2;
 
 	Dimension replace_icon = {0, 0};
 	int count_width = 0;
@@ -907,6 +908,10 @@ void DrawEngineList(VehicleType type, int l, int r, int y, const GUIEngineList *
 	int replace_icon_left = rtl ? l + WD_FRAMERECT_LEFT : r - WD_FRAMERECT_RIGHT - replace_icon.width;
 	int count_left = l;
 	int count_right = rtl ? text_left : r - WD_FRAMERECT_RIGHT - replace_icon.width - 8;
+
+	int normal_text_y_offset = (step_size - FONT_HEIGHT_NORMAL) / 2;
+	int small_text_y_offset  = step_size - FONT_HEIGHT_SMALL - WD_FRAMERECT_BOTTOM - 1;
+	int replace_icon_y_offset = (step_size - replace_icon.height) / 2 - 1;
 
 	for (; min < max; min++, y += step_size) {
 		const EngineID engine = (*eng_list)[min];
@@ -923,8 +928,8 @@ void DrawEngineList(VehicleType type, int l, int r, int y, const GUIEngineList *
 		DrawVehicleEngine(l, r, sprite_x, y + sprite_y_offset, engine, (show_count && num_engines == 0) ? PALETTE_CRASH : GetEnginePalette(engine, _local_company), EIT_PURCHASE);
 		if (show_count) {
 			SetDParam(0, num_engines);
-			DrawString(count_left, count_right, Center(y, step_size, FONT_HEIGHT_SMALL), STR_TINY_BLACK_COMA, TC_FROMSTRING, SA_RIGHT | SA_FORCE);
-			if (EngineHasReplacementForCompany(Company::Get(_local_company), engine, selected_group)) DrawSprite(SPR_GROUP_REPLACE_ACTIVE, num_engines == 0 ? PALETTE_CRASH : PAL_NONE, replace_icon_left, Center(y, step_size, replace_icon.height));
+			DrawString(count_left, count_right, y + small_text_y_offset, STR_TINY_BLACK_COMA, TC_FROMSTRING, SA_RIGHT | SA_FORCE);
+			if (EngineHasReplacementForCompany(Company::Get(_local_company), engine, selected_group)) DrawSprite(SPR_GROUP_REPLACE_ACTIVE, num_engines == 0 ? PALETTE_CRASH : PAL_NONE, replace_icon_left, y + replace_icon_y_offset);
 		}
 	}
 }

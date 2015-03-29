@@ -2067,9 +2067,6 @@ void NWidgetScrollbar::Draw(const Window *w)
 		horizontal_dimension.height = GetMinSizing(NWST_STEP, horizontal_dimension.height);
 	}
 	return horizontal_dimension;
-	SETTING_BUTTON_HEIGHT = max<int>(GetMinSizing(NWST_STEP) - 10, 10);
-	SETTING_BUTTON_WIDTH  = 2 * SETTING_BUTTON_HEIGHT;
-
 }
 
 Dimension NWidgetScrollbar::vertical_dimension = {0, 0};
@@ -2135,7 +2132,6 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 			case NWID_BUTTON_DROPDOWN:
 			case WWT_DROPDOWN:
 			case WWT_ARROWBTN:
-			case WWT_PUSHARROWBTN:
 				this->sizing_type = NWST_STEP;
 				break;
 			default:

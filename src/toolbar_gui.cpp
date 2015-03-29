@@ -1418,9 +1418,11 @@ public:
 		}
 		_toolbar_width = nbuttons * this->smallest_x;
 		if (type == NWID_HORIZONTAL) {
-			w->window_desc->default_width = nbuttons * this->smallest_x;
+			//w->window_desc->default_width_trad = nbuttons * this->smallest_x;
+			w->window_desc->pref_width = nbuttons * this->smallest_x;
 		} else {
-			w->window_desc->default_height = nbuttons * this->smallest_y;
+			//w->window_desc->default_height_trad = nbuttons * this->smallest_y;
+			w->window_desc->pref_height = nbuttons * this->smallest_y;
 		}
 	}
 

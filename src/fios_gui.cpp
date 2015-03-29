@@ -641,7 +641,7 @@ public:
 
 			case WID_SL_LOAD_NETWORK_BUTTON: {
 					char savePath[PATH_MAX];
-					FiosMakeSavegameName(savePath, NETWORK_SAVE_FILENAME, sizeof(savePath));
+					FiosMakeSavegameName(savePath, NETWORK_SAVE_FILENAME, lastof(savePath));
 #ifdef __ANDROID__
 					if (!SDL_ANDROID_CloudLoad(savePath, NULL, "OpenTTD")) {
 						break;
