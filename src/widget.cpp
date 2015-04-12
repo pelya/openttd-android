@@ -2310,7 +2310,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 		case WWT_EDITBOX: {
 			Dimension sprite_size = GetSpriteSize(_current_text_dir == TD_RTL ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
 			size.width = 30 + sprite_size.width;
-			size.height = max(sprite_size.height, GetStringBoundingBox("_").height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
+			//size.height = max(sprite_size.height, GetStringBoundingBox("_").height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
 			/* FALL THROUGH */
 		}
 		case WWT_PUSHBTN: {
