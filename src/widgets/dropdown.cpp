@@ -375,21 +375,45 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 	int screen_bottom = GetMainViewBottom();
 	bool scroll = false;
 
+	enum { DISPLAY_BORDER = 20, TOP_BORDER = 4 };
+
 	/* Check if the dropdown will fully fit below the widget */
-	if (top + height + 4 >= screen_bottom) {
+	if (top + height + DISPLAY_BORDER >= screen_bottom) {
 		/* If not, check if it will fit above the widget */
-		if (w->top + wi_rect.top - height > GetMainViewTop()) {
-			top = w->top + wi_rect.top - height - 4;
+		int screen_top = GetMainViewTop();
+		if (w->top + wi_rect.top - TOP_BORDER > screen_top + height) {
+			top = w->top + wi_rect.top - height - TOP_BORDER;
 		} else {
+			/* If it doesn't fit above the widget, we need to enable a scrollbar... */
+			int avg_height = height / (int)list->Length();
+			scroll = true;
+
+			/* ... and choose whether to put the list above or below the widget. */
+			bool put_above = false;
+			int available_height = screen_bottom - w->top - wi_rect.bottom;
+			if (w->top + wi_rect.top - screen_top > available_height) {
+				// Put it above.
+				available_height = w->top + wi_rect.top - screen_top - DISPLAY_BORDER - TOP_BORDER;
+				put_above = true;
+			}
+
+			/* Check at least there is space for one item. */
+			assert(available_height >= avg_height);
+
 			/* ... and lastly if it won't, enable the scroll bar and fit the
 			 * list in below the widget */
-			int avg_height = height / (int)list->Length();
-			int rows = (screen_bottom - 4 - top) / avg_height;
+			int rows = available_height / avg_height;
 			height = rows * avg_height;
+
 			scroll = true;
 			/* Add space for the scroll bar if we automatically determined
 			 * the width of the list. */
 			max_item_width += NWidgetScrollbar::GetVerticalDimension().width;
+
+			/* ... and set the top position if needed. */
+			if (put_above) {
+				top = w->top + wi_rect.top - height - TOP_BORDER;
+			}
 		}
 	}
 
