@@ -539,12 +539,12 @@ static inline void DrawButtonDropdown(const Rect &r, Colours colour, bool clicke
 	if (_current_text_dir == TD_LTR) {
 		DrawFrameRect(r.left, r.top, r.right - dd_width, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
 		DrawFrameRect(r.right + 1 - dd_width, r.top, r.right, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
-		DrawSprite(SPR_ARROW_DOWN, PAL_NONE, r.right - (dd_width - 2) + clicked_dropdown, r.top + image_offset + clicked_dropdown);
+		DrawSpriteCenteredRect(SPR_ARROW_DOWN, PAL_NONE, r.right - (dd_width - 2) + clicked_dropdown * 2, r.top + image_offset + clicked_dropdown * 2, r.right, r.bottom);
 		if (str != STR_NULL) DrawString(r.left + WD_DROPDOWNTEXT_LEFT + clicked_button, r.right - dd_width - WD_DROPDOWNTEXT_RIGHT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
 	} else {
 		DrawFrameRect(r.left + dd_width, r.top, r.right, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
 		DrawFrameRect(r.left, r.top, r.left + dd_width - 1, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
-		DrawSprite(SPR_ARROW_DOWN, PAL_NONE, r.left + 1 + clicked_dropdown, r.top + image_offset + clicked_dropdown);
+		DrawSpriteCenteredRect(SPR_ARROW_DOWN, PAL_NONE, r.left + 1 + clicked_dropdown * 2, r.top + image_offset + clicked_dropdown * 2, r.left + dd_width, r.bottom);
 		if (str != STR_NULL) DrawString(r.left + dd_width + WD_DROPDOWNTEXT_LEFT + clicked_button, r.right - WD_DROPDOWNTEXT_RIGHT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
 	}
 }
