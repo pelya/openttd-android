@@ -388,10 +388,10 @@ static inline void DrawHorizontalScrollbar(const Rect &r, Colours colour, bool l
 	int height = NWidgetScrollbar::GetVerticalDimension().height;
 
 	DrawFrameRect(r.left, r.top, r.left + width - 1, r.bottom, colour, left_clicked ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_LEFT, PAL_NONE, r.left + 1 + left_clicked, r.top + height / 2 + 1 + left_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_LEFT, PAL_NONE, r.left + left_clicked * 2, r.top + 2 + left_clicked * 2, r.left + height, r.bottom);
 
 	DrawFrameRect(r.right - (width - 1), r.top, r.right, r.bottom, colour, right_clicked ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_RIGHT, PAL_NONE, r.right - (width - 2) + right_clicked, r.top + height / 2 + 1 + right_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_RIGHT, PAL_NONE, r.right - width + right_clicked * 2, r.top + 2 + right_clicked * 2, r.right, r.bottom);
 
 	int c1 = _colour_gradient[colour & 0xF][3];
 	int c2 = _colour_gradient[colour & 0xF][7];
