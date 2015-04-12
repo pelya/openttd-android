@@ -637,6 +637,12 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_GUI_ZOOM_FRAME, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_GUI_ZOOM_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
+				NWidget(WWT_FRAME, COLOUR_GREY),
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_VERTICAL_TOOLBAR, STR_NULL),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VERTICAL_TOOLBAR), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT),
+					EndContainer(),
+				EndContainer(),
 			EndContainer(),
 
 			NWidget(NWID_VERTICAL), SetPIP(0, 6, 0),
@@ -646,21 +652,15 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_LANGUAGE, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_LANG_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_RAW_STRING, STR_GAME_OPTIONS_LANGUAGE_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME, STR_NULL),
+					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_CURRENCY_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP), SetFill(1, 0),
+				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_BUTTON_SIZE, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_BUTTON_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_FONT_SIZE, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_TEXT_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY),
-					NWidget(NWID_HORIZONTAL),
-						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_VERTICAL_TOOLBAR, STR_NULL),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VERTICAL_TOOLBAR), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT),
-					EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_CURRENCY_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP), SetFill(1, 0),
-				EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 0), SetFill(0, 1),
 			EndContainer(),
 
 			NWidget(NWID_VERTICAL), SetPIP(0, 6, 0),
@@ -671,9 +671,9 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 					EndContainer(),
 					NWidget(WWT_TEXT, COLOUR_GREY, WID_GO_BASE_GRF_DESCRIPTION), SetMinimalSize(330, 0), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP), SetFill(1, 0), SetPadding(6, 0, 6, 0),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_GRF_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_GRF_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_NULL),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_GRF_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_GRF_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL), SetMinimalSize(9, 9),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_GRF_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_NULL), SetMinimalSize(9, 9),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_GRF_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL), SetMinimalSize(9, 9),
 					EndContainer(),
 				EndContainer(),
 
@@ -684,9 +684,9 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 					EndContainer(),
 					NWidget(WWT_TEXT, COLOUR_GREY, WID_GO_BASE_SFX_DESCRIPTION), SetMinimalSize(330, 0), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP), SetFill(1, 0), SetPadding(6, 0, 6, 0),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_SFX_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_SFX_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_NULL),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_SFX_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_SFX_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL), SetMinimalSize(9, 9),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_SFX_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_NULL), SetMinimalSize(9, 9),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_SFX_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL), SetMinimalSize(9, 9),
 					EndContainer(),
 				EndContainer(),
 
@@ -697,9 +697,9 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 					EndContainer(),
 					NWidget(WWT_TEXT, COLOUR_GREY, WID_GO_BASE_MUSIC_DESCRIPTION), SetMinimalSize(330, 0), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP), SetFill(1, 0), SetPadding(6, 0, 6, 0),
 					NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_MUSIC_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_MUSIC_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_NULL),
-						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_MUSIC_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_MUSIC_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL), SetMinimalSize(9, 9),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_MUSIC_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_NULL), SetMinimalSize(9, 9),
+						NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GO_BASE_MUSIC_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0), SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL), SetMinimalSize(9, 9),
 					EndContainer(),
 				EndContainer(),
 			EndContainer(),
@@ -1115,6 +1115,7 @@ bool SettingEntry::UpdateFilterState(SettingFilter &filter, bool force_visible)
 	if (!visible) SETBITS(this->flags, SEF_FILTERED);
 	return visible;
 }
+
 
 static const void *ResolveVariableAddress(const GameSettings *settings_ptr, const SettingDesc *sd)
 {
@@ -2472,7 +2473,7 @@ void DrawDropDownButton(int x, int y, Colours button_colour, bool state, bool cl
 	int colour = _colour_gradient[button_colour][2];
 
 	DrawFrameRect(x, y, x + SETTING_BUTTON_WIDTH - 1, y + SETTING_BUTTON_HEIGHT - 1, button_colour, state ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_DOWN, PAL_NONE, x + (SETTING_BUTTON_WIDTH - NWidgetScrollbar::GetVerticalDimension().width) / 2 + state, y + 2 + state);
+	DrawSpriteCentered(SPR_ARROW_DOWN, PAL_NONE, x + (SETTING_BUTTON_WIDTH - NWidgetScrollbar::GetVerticalDimension().width) + state, y + state + SETTING_BUTTON_HEIGHT / 2);
 
 	if (!clickable) {
 		GfxFillRect(x +  1, y, x + SETTING_BUTTON_WIDTH - 1, y + SETTING_BUTTON_HEIGHT - 2, colour, FILLRECT_CHECKER);
