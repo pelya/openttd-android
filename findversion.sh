@@ -67,12 +67,6 @@ fi
 cd `dirname "$0"`
 ROOT_DIR=`pwd`
 
-# Override version number, to allow OpenTTD with Android modifications to connect to official servers
-if [ -e $ROOT_DIR/version-override ]; then
-	cat $ROOT_DIR/version-override
-	exit
-fi
-
 # Determine if we are using a modified version
 # Assume the dir is not modified
 MODIFIED="0"
