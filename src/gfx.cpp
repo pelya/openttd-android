@@ -882,7 +882,7 @@ void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSpri
  * @param sub    If available, draw only specified part of the sprite
  * @param zoom   Zoom level of sprite
  */
-void DrawSpriteCenteredInRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub, ZoomLevel zoom)
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub, ZoomLevel zoom)
 {
 	DrawSpriteCentered(img, pal, (left + right) / 2, (top + bottom) / 2, sub, zoom);
 }
@@ -895,9 +895,9 @@ void DrawSpriteCenteredInRect(SpriteID img, PaletteID pal, int left, int top, in
  * @param sub    If available, draw only specified part of the sprite
  * @param zoom   Zoom level of sprite
  */
-void DrawSpriteCenteredInRect(SpriteID img, PaletteID pal, const Rect &rect, const SubSprite *sub, ZoomLevel zoom)
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &rect, const SubSprite *sub, ZoomLevel zoom)
 {
-	DrawSpriteCenteredInRect(img, pal, rect.left, rect.top, rect.right, rect.bottom, sub, zoom);
+	DrawSpriteCenteredRect(img, pal, rect.left, rect.top, rect.right, rect.bottom, sub, zoom);
 }
 
 /**

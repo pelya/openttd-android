@@ -97,8 +97,8 @@ Dimension GetSpriteSize(SpriteID sprid, Point *offset = NULL, ZoomLevel zoom = Z
 void DrawSpriteViewport(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL);
 void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
 void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
-void DrawSpriteCenteredInRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
-void DrawSpriteCenteredInRect(SpriteID img, PaletteID pal, const Rect &r, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &r, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
 
 /** How to align the to-be drawn text. */
 enum StringAlignment {

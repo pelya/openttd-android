@@ -350,10 +350,10 @@ static inline void DrawVerticalScrollbar(const Rect &r, Colours colour, bool up_
 
 	/* draw up/down buttons */
 	DrawFrameRect(r.left, r.top, r.right, r.top + height - 1, colour, (up_clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_UP, PAL_NONE, r.left + 1 + up_clicked, r.top + 1 + up_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_UP, PAL_NONE, r.left + 2 + up_clicked * 2, r.top + 2 + up_clicked * 2, r.right, r.top + height);
 
 	DrawFrameRect(r.left, r.bottom - (height - 1), r.right, r.bottom, colour, (down_clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_DOWN, PAL_NONE, r.left + 1 + down_clicked, r.bottom - (height - 2) + down_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_DOWN, PAL_NONE, r.left + 2 + down_clicked * 2, r.bottom - height + 2 + down_clicked, r.right, r.bottom);
 
 	int c1 = _colour_gradient[colour & 0xF][3];
 	int c2 = _colour_gradient[colour & 0xF][7];
@@ -489,7 +489,7 @@ static inline void DrawResizeBox(const Rect &r, Colours colour, bool at_left, bo
 static inline void DrawCloseBox(const Rect &r, Colours colour)
 {
 	if (colour != COLOUR_WHITE) DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, FR_NONE);
-	DrawSpriteCenteredInRect(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1 << PALETTE_TEXT_RECOLOUR),
+	DrawSpriteCenteredRect(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1 << PALETTE_TEXT_RECOLOUR),
 		r.left + WD_CLOSEBOX_LEFT * 2, r.top + WD_CLOSEBOX_TOP * 2, r.right, r.bottom);
 }
 
