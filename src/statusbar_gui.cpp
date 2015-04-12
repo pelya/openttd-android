@@ -26,6 +26,7 @@
 #include "statusbar_gui.h"
 #include "toolbar_gui.h"
 #include "core/geometry_func.hpp"
+#include "settings_gui.h"
 
 #include "widgets/statusbar_widget.h"
 
@@ -104,7 +105,7 @@ struct StatusBarWindow : Window {
 
 	virtual void FindWindowPlacementAndResize(int def_width, int def_height)
 	{
-		Window::FindWindowPlacementAndResize(_toolbar_width, def_height);
+		Window::FindWindowPlacementAndResize(min(_toolbar_width, _screen.width - SETTING_BUTTON_HEIGHT * 2), def_height);
 	}
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)

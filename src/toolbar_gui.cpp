@@ -1541,6 +1541,16 @@ public:
 	 * @return the button configuration.
 	 */
 	virtual const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const = 0;
+
+	/**
+	 * Override NWidgetContainer::Add to setup minimal button size,
+	 * this will force buttons to resize to the min_button size defined in settings
+	 */
+	void Add(NWidgetResizeBase *child)
+	{
+		child->SetMinimalSize(9,9);
+		NWidgetContainer::Add(child);
+	}
 };
 
 /** Container for the 'normal' main toolbar */
