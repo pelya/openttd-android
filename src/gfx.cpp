@@ -857,6 +857,50 @@ void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub,
 }
 
 /**
+ * Draw a sprite, centered at x:y, not in a viewport
+ * @param img  Image number to draw
+ * @param pal  Palette to use.
+ * @param x    Left coordinate of image in pixels
+ * @param y    Top coordinate of image in pixels
+ * @param sub  If available, draw only specified part of the sprite
+ * @param zoom Zoom level of sprite
+ */
+void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub, ZoomLevel zoom)
+{
+	Dimension size = GetSpriteSize(img, NULL, zoom);
+	DrawSprite(img, pal, x - size.width / 2, y - size.height / 2, sub, zoom);
+}
+
+/**
+ * Draw a sprite, centered in rect, not in a viewport
+ * @param img    Image number to draw
+ * @param pal    Palette to use.
+ * @param left   Left coordinate of image bounding box in pixels
+ * @param top    Top coordinate of image bounding box in pixels
+ * @param right  Right coordinate of image bounding box in pixels
+ * @param bottom Bottom coordinate of image bounding box in pixels
+ * @param sub    If available, draw only specified part of the sprite
+ * @param zoom   Zoom level of sprite
+ */
+void DrawSpriteCenteredInRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub, ZoomLevel zoom)
+{
+	DrawSpriteCentered(img, pal, (left + right) / 2, (top + bottom) / 2, sub, zoom);
+}
+
+/**
+ * Draw a sprite, centered in rect, not in a viewport
+ * @param img    Image number to draw
+ * @param pal    Palette to use.
+ * @param rect   Image bounding box in pixels
+ * @param sub    If available, draw only specified part of the sprite
+ * @param zoom   Zoom level of sprite
+ */
+void DrawSpriteCenteredInRect(SpriteID img, PaletteID pal, const Rect &rect, const SubSprite *sub, ZoomLevel zoom)
+{
+	DrawSpriteCenteredInRect(img, pal, rect.left, rect.top, rect.right, rect.bottom, sub, zoom);
+}
+
+/**
  * The code for setting up the blitter mode and sprite information before finally drawing the sprite.
  * @param sprite The sprite to draw.
  * @param x      The X location to draw.
