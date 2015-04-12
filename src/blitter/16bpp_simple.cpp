@@ -66,6 +66,12 @@ void Blitter_16bppSimple::Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom)
 					if (src->a != 0) *dst = MakeTransparent(*dst, 192);
 					break;
 
+				case BM_BLACK_REMAP:
+					if (src->a != 0) {
+						*dst = Colour16(0, 0, 0);
+					}
+					break;
+
 				default:
 					if (src->a != 0) *dst = ComposeColourPA(src->c, src->a, *dst);
 					break;
@@ -84,6 +90,7 @@ void Blitter_16bppSimple::Draw(Blitter::BlitterParams *bp, BlitterMode mode, Zoo
 		case BM_COLOUR_REMAP: Draw<BM_COLOUR_REMAP>(bp, zoom); return;
 		case BM_TRANSPARENT:  Draw<BM_TRANSPARENT> (bp, zoom); return;
 		case BM_CRASH_REMAP:  Draw<BM_CRASH_REMAP> (bp, zoom); return;
+		case BM_BLACK_REMAP:  Draw<BM_BLACK_REMAP> (bp, zoom); return;
 	}
 }
 
