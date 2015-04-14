@@ -2128,12 +2128,14 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 			case WWT_RESIZEBOX:
 			case WWT_CLOSEBOX:
 				this->sizing_type = NWST_BUTTON;
+				this->SetMinimalSize(8, 8);
 				break;
 			case NWID_PUSHBUTTON_DROPDOWN:
 			case NWID_BUTTON_DROPDOWN:
 			case WWT_DROPDOWN:
 			case WWT_ARROWBTN:
 				this->sizing_type = NWST_STEP;
+				this->SetMinimalSize(8, 8);
 				break;
 			default:
 				this->sizing_type = NWST_OVERRIDE;
@@ -2170,7 +2172,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 		case WWT_CAPTION:
 			this->SetFill(1, 0);
 			this->SetResize(1, 0);
-			this->min_y = WD_CAPTION_HEIGHT;
+			//this->min_y = WD_CAPTION_HEIGHT;
 			this->SetDataTip(data, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS);
 			break;
 
@@ -2212,7 +2214,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 
 		case WWT_DROPDOWN:
 			this->SetFill(0, 0);
-			this->min_y = WD_DROPDOWN_HEIGHT;
+			//this->min_y = WD_DROPDOWN_HEIGHT;
 			break;
 
 		default:
