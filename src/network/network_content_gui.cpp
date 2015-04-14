@@ -24,6 +24,7 @@
 #include "../core/geometry_func.hpp"
 #include "../textfile_gui.h"
 #include "../settings_type.h"
+#include "../settings_gui.h"
 #include "network_content_gui.h"
 
 
@@ -534,7 +535,7 @@ public:
 			}
 
 			case WID_NCL_MATRIX:
-				resize->height = max(this->checkbox_size.height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
+				resize->height = SETTING_BUTTON_HEIGHT;
 				size->height = 6 * resize->height;
 				break;
 		}
@@ -588,8 +589,8 @@ public:
 		int line_height = max(this->checkbox_size.height, (uint)FONT_HEIGHT_NORMAL);
 
 		/* Fill the matrix with the information */
-		int sprite_y_offset = WD_MATRIX_TOP + (line_height - this->checkbox_size.height) / 2 - 1;
-		int text_y_offset = WD_MATRIX_TOP + (line_height - FONT_HEIGHT_NORMAL) / 2;
+		int sprite_y_offset = WD_MATRIX_TOP + (line_height - this->checkbox_size.height) / 2 - 1 + (this->resize.step_height - line_height) / 2;
+		int text_y_offset = WD_MATRIX_TOP + (line_height - FONT_HEIGHT_NORMAL) / 2 + (this->resize.step_height - line_height) / 2;
 		uint y = r.top;
 		int cnt = 0;
 		for (ConstContentIterator iter = this->content.Get(this->vscroll->GetPosition()); iter != this->content.End() && cnt < this->vscroll->GetCapacity(); iter++, cnt++) {
