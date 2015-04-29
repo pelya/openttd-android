@@ -938,9 +938,12 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 	char text[512];
 	strecpy(text, this->text.buf, lastof(text));
 	this->text.DeleteAll();
-	SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); /* Invoke Android built-in screen keyboard */
+	SDL_ANDROID_ToggleScreenKeyboardTextInput(text); // Invoke Android built-in screen keyboard, this will not block
+	/*
+	SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); // Invoke Android built-in screen keyboard, this will block
 	this->text.Assign(text);
 	w->OnEditboxChanged(wid);
+	*/
 #endif
 }
 
