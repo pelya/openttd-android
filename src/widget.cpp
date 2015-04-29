@@ -18,6 +18,7 @@
 #include "transparency.h"
 #include "core/geometry_func.hpp"
 #include "settings_type.h"
+#include "settings_gui.h"
 #include "querystring_gui.h"
 
 #include "table/sprites.h"
@@ -2391,7 +2392,8 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			padding = &extra;
 			if (NWidgetLeaf::dropdown_dimension.width == 0) {
 				NWidgetLeaf::dropdown_dimension = GetSpriteSize(SPR_ARROW_DOWN);
-				NWidgetLeaf::dropdown_dimension.width += WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT;
+				NWidgetLeaf::dropdown_dimension.width = SETTING_BUTTON_HEIGHT;
+				//NWidgetLeaf::dropdown_dimension.width += WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT;
 				NWidgetLeaf::dropdown_dimension.height += WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM;
 				extra.width = WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT + NWidgetLeaf::dropdown_dimension.width;
 			}
