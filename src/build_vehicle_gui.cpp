@@ -80,7 +80,7 @@ static const NWidgetPart _nested_build_vehicle_widgets[] = {
 			EndContainer(),
 		EndContainer(),
 		/* Panel with details. */
-		NWidget(WWT_PANEL, COLOUR_GREY, WID_BV_PANEL), SetMinimalSize(240, 122), SetResize(1, 0), EndContainer(),
+		NWidget(WWT_PANEL, COLOUR_GREY, WID_BV_PANEL), SetMinimalSize(240, 122), SetResize(1, 1), EndContainer(),
 	EndContainer(),
 	/* Build/rename buttons, resize button. */
 	NWidget(NWID_HORIZONTAL),
