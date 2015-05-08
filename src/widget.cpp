@@ -2553,7 +2553,7 @@ void NWidgetLeaf::Draw(const Window *w)
  */
 bool NWidgetLeaf::ButtonHit(const Point &pt)
 {
-	uint button_size = GetMinSizing(NWST_STEP, 12);
+	uint button_size = GetMinSizing(NWST_STEP, NWidgetLeaf::dropdown_dimension.width);
 	if (_current_text_dir == TD_LTR) {
 		int button_width = this->pos_x + this->current_x - button_size;
 		return pt.x < button_width;
