@@ -518,7 +518,7 @@ struct GenerateLandscapeWindow : public Window {
 			}
 		}
 		size->width += padding.width;
-		size->height = GetMinSizing(NWST_BUTTON, max(size->height, (uint)(FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM)));
+		size->height = max(size->height, (uint)(FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM));
 	}
 
 	virtual void DrawWidget(const Rect &r, int widget) const
