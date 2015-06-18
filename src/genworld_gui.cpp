@@ -517,7 +517,7 @@ struct GenerateLandscapeWindow : public Window {
 				*size = maxdim(*size, GetStringBoundingBox(*strs++));
 			}
 		}
-		size->width += padding.width;
+		//size->width += padding.width;
 		size->height = max(size->height, (uint)(FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM));
 	}
 
