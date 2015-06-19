@@ -661,7 +661,7 @@ struct RefitWindow : public Window {
 		switch (widget) {
 			case WID_VR_MATRIX:
 				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
-				size->height = resize->height * 6;
+				size->height = resize->height * 5;
 				break;
 
 			case WID_VR_VEHICLE_PANEL_DISPLAY:
@@ -670,6 +670,7 @@ struct RefitWindow : public Window {
 
 			case WID_VR_INFO:
 				size->width = WD_FRAMERECT_LEFT + this->information_width + WD_FRAMERECT_RIGHT;
+				size->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 				break;
 		}
 	}
@@ -790,7 +791,8 @@ struct RefitWindow : public Window {
 					StringID string = this->GetCapacityString(this->cargo);
 					if (string != INVALID_STRING_ID) {
 						DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT,
-								r.top + WD_FRAMERECT_TOP, r.bottom - WD_FRAMERECT_BOTTOM, string);
+								r.top + WD_FRAMERECT_TOP, r.bottom - WD_FRAMERECT_BOTTOM, string,
+								TC_FROMSTRING, SA_VERT_CENTER | SA_LEFT);
 					}
 				}
 				break;
