@@ -1781,6 +1781,7 @@ struct NetworkClientListPopupWindow : Window {
 			d = maxdim(GetStringBoundingBox(action->name), d);
 		}
 
+		d.height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 		d.height *= this->actions.Length();
 		d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
@@ -1792,23 +1793,23 @@ struct NetworkClientListPopupWindow : Window {
 		/* Draw the actions */
 		int sel = this->sel_index;
 		int y = r.top + WD_FRAMERECT_TOP;
-		for (const ClientListAction *action = this->actions.Begin(); action != this->actions.End(); action++, y += FONT_HEIGHT_NORMAL) {
+		for (const ClientListAction *action = this->actions.Begin(); action != this->actions.End(); action++, y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)) {
 			TextColour colour;
 			if (sel-- == 0) { // Selected item, highlight it
-				GfxFillRect(r.left + 1, y, r.right - 1, y + FONT_HEIGHT_NORMAL - 1, PC_BLACK);
+				GfxFillRect(r.left + 1, y, r.right - 1, y + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) - 1, PC_BLACK);
 				colour = TC_WHITE;
 			} else {
 				colour = TC_BLACK;
 			}
 
-			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, action->name, colour);
+			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)), action->name, colour);
 		}
 	}
 
 	virtual void OnMouseLoop()
 	{
 		/* We selected an action */
-		uint index = (_cursor.pos.y - this->top - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
+		uint index = (_cursor.pos.y - this->top - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 
 		if (_left_button_down) {
 			if (index == this->sel_index || index >= this->actions.Length()) return;
@@ -1883,12 +1884,15 @@ struct NetworkClientListWindow : Window {
 			if (ci->client_playas != COMPANY_INACTIVE_CLIENT) num++;
 		}
 
-		num *= FONT_HEIGHT_NORMAL;
+		num *= GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 
 		int diff = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
 		/* If height is changed */
 		if (diff != 0) {
 			ResizeWindow(this, 0, diff);
+			if (this->height + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) >= _cur_resolution.height) {
+				ResizeWindow(this, 0, _cur_resolution.height - this->height - GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL));
+			}
 			return false;
 		}
 		return true;
@@ -1923,7 +1927,7 @@ struct NetworkClientListWindow : Window {
 		if (widget != WID_CL_PANEL) return;
 
 		bool rtl = _current_text_dir == TD_RTL;
-		int icon_y_offset = 1 + (FONT_HEIGHT_NORMAL - 10) / 2;
+		int icon_y_offset = Center(0, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL));
 		uint y = r.top + WD_FRAMERECT_TOP;
 		uint left = r.left + WD_FRAMERECT_LEFT;
 		uint right = r.right - WD_FRAMERECT_RIGHT;
@@ -1941,24 +1945,24 @@ struct NetworkClientListWindow : Window {
 		FOR_ALL_CLIENT_INFOS(ci) {
 			TextColour colour;
 			if (this->selected_item == i++) { // Selected item, highlight it
-				GfxFillRect(r.left + 1, y, r.right - 1, y + FONT_HEIGHT_NORMAL - 1, PC_BLACK);
+				GfxFillRect(r.left + 1, y, r.right - 1, y + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) - 1, PC_BLACK);
 				colour = TC_WHITE;
 			} else {
 				colour = TC_BLACK;
 			}
 
 			if (ci->client_id == CLIENT_ID_SERVER) {
-				DrawString(type_left, type_right, y, STR_NETWORK_SERVER, colour);
+				DrawString(type_left, type_right, Center(y, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)), STR_NETWORK_SERVER, colour);
 			} else {
-				DrawString(type_left, type_right, y, STR_NETWORK_CLIENT, colour);
+				DrawString(type_left, type_right, Center(y, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)), STR_NETWORK_CLIENT, colour);
 			}
 
 			/* Filter out spectators */
 			if (Company::IsValidID(ci->client_playas)) DrawCompanyIcon(ci->client_playas, icon_left, y + icon_y_offset);
 
-			DrawString(name_left, name_right, y, ci->client_name, colour);
+			DrawString(name_left, name_right, Center(y, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)), ci->client_name, colour);
 
-			y += FONT_HEIGHT_NORMAL;
+			y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 		}
 	}
 
@@ -1991,7 +1995,7 @@ struct NetworkClientListWindow : Window {
 		pt.y -= this->GetWidget<NWidgetBase>(WID_CL_PANEL)->pos_y;
 		int item = -1;
 		if (IsInsideMM(pt.y, WD_FRAMERECT_TOP, this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y - WD_FRAMERECT_BOTTOM)) {
-			item = (pt.y - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
+			item = (pt.y - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 		}
 
 		/* It did not change.. no update! */
