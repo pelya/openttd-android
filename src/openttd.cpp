@@ -72,6 +72,8 @@
 #ifdef __ANDROID__
 #include <SDL_android.h>
 #endif
+#include <limits.h>
+#include <string>
 
 void CallLandscapeTick();
 void IncreaseDate();
@@ -734,6 +736,14 @@ int openttd_main(int argc, char *argv[])
 	 * just be out of the bounds of the window. */
 	_cursor.in_window = true;
 
+	{
+		// Configure local font path on Android
+		//char curdir[PATH_MAX];
+		//getcwd(curdir, sizeof(curdir));
+		//setenv("FONTCONFIG_FONTS", (std::string(curdir) + "/fonts").c_str(), 1);
+		setenv("FONTCONFIG_FONTS", "fonts", 1);
+		DEBUG(misc, 1, "Set FONTCONFIG_FONTS to %s", getenv("FONTCONFIG_FONTS"));
+	}
 	/* enumerate language files */
 	InitializeLanguagePacks();
 
