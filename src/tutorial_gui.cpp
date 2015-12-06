@@ -49,6 +49,12 @@ static VideoLink_t busTutorial[] = {
 	{ NULL, NULL }
 };
 
+static VideoLink_t trainTutorial[] = {
+	{ "en", "https://www.youtube.com/watch?v=VdMdL2qyZ6s" },
+	{ ANY_LANG, "https://www.youtube.com/watch?v=VdMdL2qyZ6s" },
+	{ NULL, NULL }
+};
+
 void OpenExternTutorialVideo(VideoLink_t *tutorial)
 {
 	const char *link = NULL;
@@ -131,7 +137,6 @@ struct TutorialWindow : public Window {
 	{
 		this->InitNested(WN_GAME_OPTIONS_ABOUT);
 		this->SetWidgetDisabledState(WID_STL_TRUCK, true);
-		this->SetWidgetDisabledState(WID_STL_TRAIN, true);
 		this->SetWidgetDisabledState(WID_STL_SHIP, true);
 		this->SetWidgetDisabledState(WID_STL_AIRPLANE, true);
 		this->SetWidgetDisabledState(WID_STL_FACILALL, true);
@@ -152,6 +157,7 @@ struct TutorialWindow : public Window {
 			case WID_STL_TRUCK:
 				break;
 			case WID_STL_TRAIN:
+				video = trainTutorial;
 				break;
 			case WID_STL_SHIP:
 				break;
@@ -193,7 +199,7 @@ void ShowTutorialWindow()
 
 void ShowTutorialWindowOnceAfterInstall()
 {
-	static const char * TUTORIAL_SHOWN_FLAG = ".tutorial-shown-1.flag";
+	static const char * TUTORIAL_SHOWN_FLAG = ".tutorial-shown-2.flag";
 
 	FILE *ff = fopen(TUTORIAL_SHOWN_FLAG, "r");
 	if (ff) {
