@@ -2114,8 +2114,10 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 		ny = Clamp(ny, 0, _screen.height - MIN_VISIBLE_TITLE_BAR);
 
 		/* Make sure the title bar isn't hidden behind the main tool bar or the status bar. */
-		PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_MAIN_TOOLBAR, 0), w->left, PHD_DOWN);
-		PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0), w->left, PHD_DOWN);
+		if (!_settings_client.gui.vertical_toolbar || _game_mode == GM_EDITOR) {
+			// This call hides the window totally with vertical toolbar if you move it slightly off-screen to the left
+			PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_MAIN_TOOLBAR, 0), w->left, PHD_DOWN);
+		}
 		PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_STATUS_BAR,   0), w->left, PHD_UP);
 	}
 
