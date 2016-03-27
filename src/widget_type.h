@@ -785,7 +785,7 @@ private:
  */
 class NWidgetLeaf : public NWidgetCore {
 public:
-	NWidgetLeaf(WidgetType tp, Colours colour, int index, uint16 data, StringID tip);
+	NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, StringID tip);
 
 	/* virtual */ void SetupSmallestSize(Window *w, bool init_array);
 	/* virtual */ void Draw(const Window *w);
@@ -872,7 +872,7 @@ static inline uint ComputeMaxSize(uint base, uint max_space, uint step)
  * @ingroup NestedWidgetParts
  */
 struct NWidgetPartDataTip {
-	uint16 data;      ///< Data value of the widget.
+	uint32 data;      ///< Data value of the widget.
 	StringID tooltip; ///< Tooltip of the widget.
 };
 
@@ -1045,7 +1045,7 @@ static inline NWidgetPart EndContainer()
  * @param tip  Tooltip of the widget.
  * @ingroup NestedWidgetParts
  */
-static inline NWidgetPart SetDataTip(uint16 data, StringID tip)
+static inline NWidgetPart SetDataTip(uint32 data, StringID tip)
 {
 	NWidgetPart part;
 

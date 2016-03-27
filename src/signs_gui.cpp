@@ -160,7 +160,6 @@ struct SignListWindow : Window, SignList {
 
 		/* Initialize the text edit widget */
 		this->querystrings[WID_SIL_FILTER_TEXT] = &this->filter_editbox;
-		this->filter_editbox.ok_button = WID_SIL_FILTER_ENTER_BTN;
 		this->filter_editbox.cancel_button = QueryString::ACTION_CLEAR;
 
 		/* Initialize the filtering variables */
@@ -269,8 +268,7 @@ struct SignListWindow : Window, SignList {
 				Dimension spr_dim = GetSpriteSize(SPR_COMPANY_ICON);
 				this->text_offset = WD_FRAMETEXT_LEFT + spr_dim.width + 2; // 2 pixels space between icon and the sign text.
 				resize->height = max<uint>(FONT_HEIGHT_NORMAL, spr_dim.height);
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
-				Dimension d = {this->text_offset + WD_FRAMETEXT_RIGHT, WD_FRAMERECT_TOP + 5 * resize->height + WD_FRAMERECT_BOTTOM};
+				Dimension d = {(uint)(this->text_offset + WD_FRAMETEXT_RIGHT), WD_FRAMERECT_TOP + 5 * resize->height + WD_FRAMERECT_BOTTOM};
 				*size = maxdim(*size, d);
 				break;
 			}

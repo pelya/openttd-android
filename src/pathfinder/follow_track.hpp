@@ -130,9 +130,8 @@ struct CFollowTrackT
 		if (!CanExitOldTile()) return false;
 		FollowTileExit();
 		if (!QueryNewTileTrackStatus()) return TryReverse();
-		if (!CanEnterNewTile()) return false;
 		m_new_td_bits &= DiagdirReachesTrackdirs(m_exitdir);
-		if (m_new_td_bits == TRACKDIR_BIT_NONE) {
+		if (m_new_td_bits == TRACKDIR_BIT_NONE || !CanEnterNewTile()) {
 			/* In case we can't enter the next tile, but are
 			 * a normal road vehicle, then we can actually
 			 * try to reverse as this is the end of the road.
@@ -145,7 +144,12 @@ struct CFollowTrackT
 			 * missing road bit, or inability to connect the
 			 * different bits due to slopes. */
 			if (IsRoadTT() && !IsTram() && TryReverse()) return true;
-			m_err = EC_NO_WAY;
+
+			/* CanEnterNewTile already set a reason.
+			 * Do NOT overwrite it (important for example for EC_RAIL_TYPE).
+			 * Only set a reason if CanEnterNewTile was not called */
+			if (m_new_td_bits == TRACKDIR_BIT_NONE) m_err = EC_NO_WAY;
+
 			return false;
 		}
 		if (!Allow90degTurns()) {

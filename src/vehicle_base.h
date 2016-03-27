@@ -696,6 +696,11 @@ public:
 	void UpdateVisualEffect(bool allow_power_change = true);
 	void ShowVisualEffect() const;
 
+	void UpdatePosition();
+	void UpdateViewport(bool dirty);
+	void UpdatePositionAndViewport();
+	void MarkAllViewportsDirty() const;
+
 	inline uint16 GetServiceInterval() const { return this->service_interval; }
 
 	inline void SetServiceInterval(uint16 interval) { this->service_interval = interval; }
@@ -1067,14 +1072,12 @@ struct SpecializedVehicle : public Vehicle {
 	 */
 	inline void UpdateViewport(bool force_update, bool update_delta)
 	{
-		extern void VehicleUpdateViewport(Vehicle *v, bool dirty);
-
 		/* Explicitly choose method to call to prevent vtable dereference -
 		 * it gives ~3% runtime improvements in games with many vehicles */
 		if (update_delta) ((T *)this)->T::UpdateDeltaXY(this->direction);
 		SpriteID old_image = this->cur_image;
 		this->cur_image = ((T *)this)->T::GetImage(this->direction, EIT_ON_MAP);
-		if (force_update || this->cur_image != old_image) VehicleUpdateViewport(this, true);
+		if (force_update || this->cur_image != old_image) this->Vehicle::UpdateViewport(true);
 	}
 };
 
@@ -1084,28 +1087,6 @@ struct SpecializedVehicle : public Vehicle {
  * @param var  The variable used to iterate over.
  */
 #define FOR_ALL_VEHICLES_OF_TYPE(name, var) FOR_ALL_ITEMS_FROM(name, vehicle_index, var, 0) if (var->type == name::EXPECTED_TYPE)
-
-/**
- * Disasters, like submarines, skyrangers and their shadows, belong to this class.
- */
-struct DisasterVehicle FINAL : public SpecializedVehicle<DisasterVehicle, VEH_DISASTER> {
-	SpriteID image_override;            ///< Override for the default disaster vehicle sprite.
-	VehicleID big_ufo_destroyer_target; ///< The big UFO that this destroyer is supposed to bomb.
-
-	/** We don't want GCC to zero our struct! It already is zeroed and has an index! */
-	DisasterVehicle() : SpecializedVehicleBase() {}
-	/** We want to 'destruct' the right class. */
-	virtual ~DisasterVehicle() {}
-
-	void UpdateDeltaXY(Direction direction);
-	bool Tick();
-};
-
-/**
- * Iterate over disaster vehicles.
- * @param var The variable used to iterate over.
- */
-#define FOR_ALL_DISASTERVEHICLES(var) FOR_ALL_VEHICLES_OF_TYPE(DisasterVehicle, var)
 
 /** Generates sequence of free UnitID numbers */
 struct FreeUnitIDGenerator {

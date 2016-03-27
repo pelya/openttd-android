@@ -17,6 +17,7 @@
  * See docs/desync.txt for details.
  */
 // #define DEBUG_DUMP_COMMANDS
+// #define DEBUG_FAILED_DUMP_COMMANDS
 
 #include "core/address.h"
 #include "network_type.h"
@@ -33,7 +34,6 @@ extern NetworkCompanyState *_network_company_states;
 extern ClientID _network_own_client_id;
 extern ClientID _redirect_console_to_client;
 extern bool _network_need_advertise;
-extern uint32 _network_last_advertise_frame;
 extern uint8 _network_reconnect;
 extern StringList _network_bind_list;
 extern StringList _network_host_list;

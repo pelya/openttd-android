@@ -206,7 +206,7 @@ uint Vehicle::Crash(bool flooded)
 		/* We do not transfer reserver cargo back, so TotalCount() instead of StoredCount() */
 		if (IsCargoInClass(v->cargo_type, CC_PASSENGERS)) pass += v->cargo.TotalCount();
 		v->vehstatus |= VS_CRASHED;
-		MarkSingleVehicleDirty(v);
+		v->MarkAllViewportsDirty();
 	}
 
 	/* Dirty some windows */
@@ -809,7 +809,7 @@ Vehicle::~Vehicle()
 
 	/* sometimes, eg. for disaster vehicles, when company bankrupts, when removing crashed/flooded vehicles,
 	 * it may happen that vehicle chain is deleted when visible */
-	if (!(this->vehstatus & VS_HIDDEN)) MarkSingleVehicleDirty(this);
+	if (!(this->vehstatus & VS_HIDDEN)) this->MarkAllViewportsDirty();
 
 	Vehicle *v = this->Next();
 	this->SetNext(NULL);
@@ -1290,6 +1290,9 @@ void AgeVehicle(Vehicle *v)
  * @param front The front vehicle of the consist to check.
  * @param colour The string to show depending on if we are unloading or loading
  * @return A percentage of how full the Vehicle is.
+ *         Percentages are rounded towards 50%, so that 0% and 100% are only returned
+ *         if the vehicle is completely empty or full.
+ *         This is useful for both display and conditional orders.
  */
 uint8 CalcPercentVehicleFilled(const Vehicle *front, StringID *colour)
 {
@@ -1337,7 +1340,13 @@ uint8 CalcPercentVehicleFilled(const Vehicle *front, StringID *colour)
 	if (max == 0) return 100;
 
 	/* Return the percentage */
-	return (count * 100) / max;
+	if (count * 2 < max) {
+		/* Less than 50%; round up, so that 0% means really empty. */
+		return CeilDiv(count * 100, max);
+	} else {
+		/* More than 50%; round down, so that 100% means really full. */
+		return (count * 100) / max;
+	}
 }
 
 /**
@@ -1464,67 +1473,62 @@ void VehicleEnterDepot(Vehicle *v)
 /**
  * Update the position of the vehicle. This will update the hash that tells
  *  which vehicles are on a tile.
- * @param v The vehicle to update.
  */
-void VehicleUpdatePosition(Vehicle *v)
+void Vehicle::UpdatePosition()
 {
-	UpdateVehicleTileHash(v, false);
+	UpdateVehicleTileHash(this, false);
 }
 
 /**
  * Update the vehicle on the viewport, updating the right hash and setting the
  *  new coordinates.
- * @param v The vehicle to update.
  * @param dirty Mark the (new and old) coordinates of the vehicle as dirty.
  */
-void VehicleUpdateViewport(Vehicle *v, bool dirty)
+void Vehicle::UpdateViewport(bool dirty)
 {
-	int img = v->cur_image;
-	Point pt = RemapCoords(v->x_pos + v->x_offs, v->y_pos + v->y_offs, v->z_pos);
+	int img = this->cur_image;
+	Point pt = RemapCoords(this->x_pos + this->x_offs, this->y_pos + this->y_offs, this->z_pos);
 	const Sprite *spr = GetSprite(img, ST_NORMAL);
 
 	pt.x += spr->x_offs;
 	pt.y += spr->y_offs;
 
-	UpdateVehicleViewportHash(v, pt.x, pt.y);
+	UpdateVehicleViewportHash(this, pt.x, pt.y);
 
-	Rect old_coord = v->coord;
-	v->coord.left   = pt.x;
-	v->coord.top    = pt.y;
-	v->coord.right  = pt.x + spr->width + 2 * ZOOM_LVL_BASE;
-	v->coord.bottom = pt.y + spr->height + 2 * ZOOM_LVL_BASE;
+	Rect old_coord = this->coord;
+	this->coord.left   = pt.x;
+	this->coord.top    = pt.y;
+	this->coord.right  = pt.x + spr->width + 2 * ZOOM_LVL_BASE;
+	this->coord.bottom = pt.y + spr->height + 2 * ZOOM_LVL_BASE;
 
 	if (dirty) {
 		if (old_coord.left == INVALID_COORD) {
-			MarkSingleVehicleDirty(v);
+			this->MarkAllViewportsDirty();
 		} else {
-			MarkAllViewportsDirty(
-				min(old_coord.left,   v->coord.left),
-				min(old_coord.top,    v->coord.top),
-				max(old_coord.right,  v->coord.right) + 1 * ZOOM_LVL_BASE,
-				max(old_coord.bottom, v->coord.bottom) + 1 * ZOOM_LVL_BASE
-			);
+			::MarkAllViewportsDirty(
+					min(old_coord.left,   this->coord.left),
+					min(old_coord.top,    this->coord.top),
+					max(old_coord.right,  this->coord.right),
+					max(old_coord.bottom, this->coord.bottom));
 		}
 	}
 }
 
 /**
  * Update the position of the vehicle, and update the viewport.
- * @param v The vehicle to update.
  */
-void VehicleUpdatePositionAndViewport(Vehicle *v)
+void Vehicle::UpdatePositionAndViewport()
 {
-	VehicleUpdatePosition(v);
-	VehicleUpdateViewport(v, true);
+	this->UpdatePosition();
+	this->UpdateViewport(true);
 }
 
 /**
  * Marks viewports dirty where the vehicle's image is.
- * @param v vehicle to mark dirty
  */
-void MarkSingleVehicleDirty(const Vehicle *v)
+void Vehicle::MarkAllViewportsDirty() const
 {
-	MarkAllViewportsDirty(v->coord.left, v->coord.top, v->coord.right + 1 * ZOOM_LVL_BASE, v->coord.bottom + 1 * ZOOM_LVL_BASE);
+	::MarkAllViewportsDirty(this->coord.left, this->coord.top, this->coord.right, this->coord.bottom);
 }
 
 /**
@@ -2360,7 +2364,7 @@ static void SpawnAdvancedVisualEffect(const Vehicle *v)
 	int8 l_center = 0;
 	if (auto_center) {
 		/* For road vehicles: Compute offset from vehicle position to vehicle center */
-		if (v->type == VEH_ROAD) l_center = -(VEHICLE_LENGTH - RoadVehicle::From(v)->gcache.cached_veh_length) / 2;
+		if (v->type == VEH_ROAD) l_center = -(int)(VEHICLE_LENGTH - RoadVehicle::From(v)->gcache.cached_veh_length) / 2;
 	} else {
 		/* For trains: Compute offset from vehicle position to sprite position */
 		if (v->type == VEH_TRAIN) l_center = (VEHICLE_LENGTH - Train::From(v)->gcache.cached_veh_length) / 2;
@@ -2392,7 +2396,6 @@ static void SpawnAdvancedVisualEffect(const Vehicle *v)
 				case 0xF1: CreateEffectVehicleRel(v, x_center + x, y_center + y, z, EV_STEAM_SMOKE); break;
 				case 0xF2: CreateEffectVehicleRel(v, x_center + x, y_center + y, z, EV_DIESEL_SMOKE); break;
 				case 0xF3: CreateEffectVehicleRel(v, x_center + x, y_center + y, z, EV_ELECTRIC_SPARK); break;
-				case 0xF6: CreateEffectVehicleRel(v, x_center + x, y_center + y, z, EV_BREAKDOWN_SMOKE); break;
 				case 0xFA: CreateEffectVehicleRel(v, x_center + x, y_center + y, z, EV_BREAKDOWN_SMOKE_AIRCRAFT); break;
 				default: break;
 			}
@@ -2420,7 +2423,9 @@ void Vehicle::ShowVisualEffect() const
 		return;
 	}
 
-	uint max_speed = this->vcache.cached_max_speed;
+	/* Use the speed as limited by underground and orders. */
+	uint max_speed = this->GetCurrentMaxSpeed();
+
 	if (this->type == VEH_TRAIN) {
 		const Train *t = Train::From(this);
 		/* For trains, do not show any smoke when:
@@ -2429,14 +2434,10 @@ void Vehicle::ShowVisualEffect() const
 		 */
 		if (HasBit(t->flags, VRF_REVERSING) ||
 				(IsRailStationTile(t->tile) && t->IsFrontEngine() && t->current_order.ShouldStopAtStation(t, GetStationIndex(t->tile)) &&
-				t->cur_speed >= t->Train::GetCurrentMaxSpeed())) {
+				t->cur_speed >= max_speed)) {
 			return;
 		}
-
-		max_speed = min(max_speed, t->gcache.cached_max_track_speed);
-		max_speed = min(max_speed, this->current_order.GetMaxSpeed());
 	}
-	if (this->type == VEH_ROAD || this->type == VEH_SHIP) max_speed = min(max_speed, this->current_order.GetMaxSpeed() * 2);
 
 	const Vehicle *v = this;
 
@@ -2465,7 +2466,7 @@ void Vehicle::ShowVisualEffect() const
 		 * - The vehicle is a train engine that is currently unpowered */
 		if (effect_model == VESM_NONE ||
 				v->vehstatus & VS_HIDDEN ||
-				(MayHaveBridgeAbove(v->tile) && IsBridgeAbove(v->tile)) ||
+				IsBridgeAbove(v->tile) ||
 				IsDepotTile(v->tile) ||
 				IsTunnelTile(v->tile) ||
 				(v->type == VEH_TRAIN &&

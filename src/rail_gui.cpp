@@ -412,6 +412,18 @@ struct BuildRailToolbarWindow : Window {
 	}
 
 	/**
+	 * Some data on this window has become invalid.
+	 * @param data Information about the changed data.
+	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
+	 */
+	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	{
+		if (!gui_scope) return;
+
+		if (!CanBuildVehicleInfrastructure(VEH_TRAIN)) delete this;
+	}
+
+	/**
 	 * Configures the rail toolbar for railtype given
 	 * @param railtype the railtype to display
 	 */
@@ -1106,6 +1118,13 @@ public:
 				break;
 			}
 
+			case WID_BRAS_PLATFORM_DIR_X:
+			case WID_BRAS_PLATFORM_DIR_Y:
+			case WID_BRAS_IMAGE:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(58) + 2;
+				break;
+
 			case WID_BRAS_COVERAGE_TEXTS:
 				size->height = this->coverage_height;
 				break;
@@ -1127,9 +1146,10 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.right - r.left + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					int x = Center(TILE_PIXELS, r.right - r.left, 2 * TILE_PIXELS);
-					if (!DrawStationTile(x, 28, _cur_railtype, AXIS_X, _railstation.station_class, _railstation.station_type)) {
-						StationPickerDrawSprite(x, 28, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2);
+					int x = ScaleGUITrad(31) + 1;
+					int y = r.bottom - r.top - ScaleGUITrad(31);
+					if (!DrawStationTile(x, y, _cur_railtype, AXIS_X, _railstation.station_class, _railstation.station_type)) {
+						StationPickerDrawSprite(x, y, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2);
 					}
 					_cur_dpi = old_dpi;
 				}
@@ -1140,9 +1160,10 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.right - r.left + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					int x = Center(TILE_PIXELS, r.right - r.left, 2 * TILE_PIXELS);
-					if (!DrawStationTile(x, 28, _cur_railtype, AXIS_Y, _railstation.station_class, _railstation.station_type)) {
-						StationPickerDrawSprite(x, 28, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 3);
+					int x = ScaleGUITrad(31) + 1;
+					int y = r.bottom - r.top - ScaleGUITrad(31);
+					if (!DrawStationTile(x, y, _cur_railtype, AXIS_Y, _railstation.station_class, _railstation.station_type)) {
+						StationPickerDrawSprite(x, y, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 3);
 					}
 					_cur_dpi = old_dpi;
 				}
@@ -1177,9 +1198,10 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.right - r.left + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					int x = Center(TILE_PIXELS, r.right - r.left, 2 * TILE_PIXELS);
-					if (!DrawStationTile(x, 28, _cur_railtype, _railstation.orientation, _railstation.station_class, type)) {
-						StationPickerDrawSprite(x, 28, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2 + _railstation.orientation);
+					int x = ScaleGUITrad(31) + 1;
+					int y = r.bottom - r.top - ScaleGUITrad(31);
+					if (!DrawStationTile(x, y, _cur_railtype, _railstation.orientation, _railstation.station_class, type)) {
+						StationPickerDrawSprite(x, y, STATION_RAIL, _cur_railtype, INVALID_ROADTYPE, 2 + _railstation.orientation);
 					}
 					_cur_dpi = old_dpi;
 				}
@@ -1717,11 +1739,19 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 		this->LowerWidget(_build_depot_direction + WID_BRAD_DEPOT_NE);
 	}
 
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		if (!IsInsideMM(widget, WID_BRAD_DEPOT_NE, WID_BRAD_DEPOT_NW + 1)) return;
+
+		size->width  = ScaleGUITrad(64) + 2;
+		size->height = ScaleGUITrad(48) + 2;
+	}
+
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		if (!IsInsideMM(widget, WID_BRAD_DEPOT_NE, WID_BRAD_DEPOT_NW + 1)) return;
 
-		DrawTrainDepotSprite(r.left - 1, r.top, widget - WID_BRAD_DEPOT_NE + DIAGDIR_NE, _cur_railtype);
+		DrawTrainDepotSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), widget - WID_BRAD_DEPOT_NE + DIAGDIR_NE, _cur_railtype);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1809,6 +1839,11 @@ struct BuildRailWaypointWindow : PickerWindowBase {
 				/* Resizing in X direction only at blob size, but at pixel level in Y. */
 				resize->height = 1;
 				break;
+
+			case WID_BRW_WAYPOINT:
+				size->width  = ScaleGUITrad(64) + 2;
+				size->height = ScaleGUITrad(58) + 2;
+				break;
 		}
 	}
 
@@ -1818,7 +1853,7 @@ struct BuildRailWaypointWindow : PickerWindowBase {
 			case WID_BRW_WAYPOINT: {
 				byte type = GB(widget, 16, 16);
 				const StationSpec *statspec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(type);
-				DrawWaypointSprite(r.left + TILE_PIXELS, r.bottom - TILE_PIXELS, type, _cur_railtype);
+				DrawWaypointSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), type, _cur_railtype);
 
 				if (!IsStationAvailable(statspec)) {
 					GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK, FILLRECT_CHECKER);
@@ -1982,17 +2017,6 @@ void InitializeRailGUI()
 }
 
 /**
- * Compare railtypes based on their sorting order.
- * @param first  The railtype to compare to.
- * @param second The railtype to compare.
- * @return True iff the first should be sorted before the second.
- */
-static int CDECL CompareRailTypes(const DropDownListItem * const *first, const DropDownListItem * const *second)
-{
-	return GetRailTypeInfo((RailType)(*first)->result)->sorting_order - GetRailTypeInfo((RailType)(*second)->result)->sorting_order;
-}
-
-/**
  * Create a drop down list for all the rail types of the local company.
  * @param for_replacement Whether this list is for the replacement window.
  * @return The populated and sorted #DropDownList.
@@ -2014,13 +2038,12 @@ DropDownList *GetRailTypeDropDownList(bool for_replacement)
 
 	const Company *c = Company::Get(_local_company);
 	DropDownList *list = new DropDownList();
-	for (RailType rt = RAILTYPE_BEGIN; rt != RAILTYPE_END; rt++) {
+	RailType rt;
+	FOR_ALL_SORTED_RAILTYPES(rt) {
 		/* If it's not used ever, don't show it to the user. */
 		if (!HasBit(used_railtypes, rt)) continue;
 
 		const RailtypeInfo *rti = GetRailTypeInfo(rt);
-		/* Skip rail type if it has no label */
-		if (rti->label == 0) continue;
 
 		StringID str = for_replacement ? rti->strings.replace_text : (rti->max_speed > 0 ? STR_TOOLBAR_RAILTYPE_VELOCITY : STR_JUST_STRING);
 		DropDownListParamStringItem *item = new DropDownListParamStringItem(str, rt, !HasBit(c->avail_railtypes, rt));
@@ -2028,6 +2051,5 @@ DropDownList *GetRailTypeDropDownList(bool for_replacement)
 		item->SetParam(1, rti->max_speed);
 		*list->Append() = item;
 	}
-	QSortT(list->Begin(), list->Length(), CompareRailTypes);
 	return list;
 }
