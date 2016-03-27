@@ -438,7 +438,7 @@ struct NewGRFInspectWindow : Window {
 				GrfSpecFeature f = GetFeatureNum(this->window_number);
 				int h = GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height;
 				int y = Center(r.top, r.bottom - r.top, h);
-				DrawVehicleImage(v->First(), r.left + WD_BEVEL_LEFT, r.right - WD_BEVEL_RIGHT, y + 1, h, INVALID_VEHICLE, EIT_IN_DETAILS, skip);
+				DrawVehicleImage(v->First(), r.left + WD_BEVEL_LEFT, r.right - WD_BEVEL_RIGHT, y + 1, INVALID_VEHICLE, EIT_IN_DETAILS, skip);
 
 				/* Highlight the articulated part (this is different to the whole-vehicle highlighting of DrawVehicleImage */
 				if (_current_text_dir == TD_RTL) {
