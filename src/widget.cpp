@@ -782,6 +782,27 @@ void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
 {
 	this->min_x = max(this->min_x, min_x);
 	this->min_y = max(this->min_y, min_y);
+	uint min_size = 0;
+	switch (this->sizing_type) {
+		case NWST_NONE:
+		case NWST_OVERRIDE:
+			min_size = 0;
+			break;
+		case NWST_BUTTON:
+			min_size = _settings_client.gui.min_button;
+			break;
+		case NWST_STEP:
+			min_size = _settings_client.gui.min_step;
+			break;
+		case NWST_VIEWPORT:
+			min_size = 3 * _settings_client.gui.min_button;
+			break;
+		default: NOT_REACHED();
+	}
+	min_size = RescaleFrom854x480(min_size);
+
+	this->min_x = max(min_x, min_size);
+	this->min_y = max(min_y, min_size);
 }
 
 /**
@@ -2089,6 +2110,39 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 	this->min_y = 0;
 	this->SetResize(0, 0);
 
+	if (this->sizing_type == NWST_NONE) {
+		switch (tp) {
+			case WWT_PUSHBTN:
+			case WWT_IMGBTN:
+			case WWT_PUSHIMGBTN:
+			case WWT_IMGBTN_2:
+			case WWT_TEXTBTN:
+			case WWT_PUSHTXTBTN:
+			case WWT_TEXTBTN_2:
+			case WWT_PUSHARROWBTN:
+			case WWT_EDITBOX:
+			case WWT_CAPTION:
+			case WWT_STICKYBOX:
+			case WWT_SHADEBOX:
+			case WWT_DEBUGBOX:
+			case WWT_DEFSIZEBOX:
+			case WWT_RESIZEBOX:
+			case WWT_CLOSEBOX:
+				this->sizing_type = NWST_BUTTON;
+				this->SetMinimalSize(8, 8);
+				break;
+			case NWID_PUSHBUTTON_DROPDOWN:
+			case NWID_BUTTON_DROPDOWN:
+			case WWT_DROPDOWN:
+			case WWT_ARROWBTN:
+				this->sizing_type = NWST_STEP;
+				this->SetMinimalSize(8, 8);
+				break;
+			default:
+				this->sizing_type = NWST_OVERRIDE;
+		}
+	}
+
 	switch (tp) {
 		case WWT_EMPTY:
 			break;
@@ -2500,10 +2554,10 @@ bool NWidgetLeaf::ButtonHit(const Point &pt)
 {
 	uint button_size = GetMinSizing(NWST_STEP, 12);
 	if (_current_text_dir == TD_LTR) {
-		int button_width = this->pos_x + this->current_x - NWidgetLeaf::dropdown_dimension.width;
+		int button_width = this->pos_x + this->current_x - button_size;
 		return pt.x < button_width;
 	} else {
-		int button_left = this->pos_x + NWidgetLeaf::dropdown_dimension.width;
+		int button_left = this->pos_x + button_size;
 		return pt.x >= button_left;
 	}
 }
