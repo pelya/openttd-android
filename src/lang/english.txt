@@ -468,6 +468,7 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
+STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Tutorial
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
@@ -479,7 +480,6 @@ STR_ABOUT_MENU_ABOUT_OPENTTD                                    :About 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Sprite aligner
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Toggle bounding boxes
 STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS                              :Toggle colouring of dirty blocks
-STR_ABOUT_MENU_SEPARATOR                                        :
 ############ range ends here
 
 ############ range for ordinal numbers used for the place in the highscore window
