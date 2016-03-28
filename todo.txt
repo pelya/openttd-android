@@ -1,0 +1,20 @@
+
+- 'Place Sign' does not work. Landscaping - Place Sign works.
+
+- Companies - Sort By arrow and text misaligned.
+
+- Text input fields too small.
+
+- Extra viewport window resize button is on a separate empty panel.
+
+- Help - Tutorial opens console
+
+- Subsidies list text too small.
+
+- Sign list window is broken.
+
+- Map of the world cannot be scrolled with one finger.
+
+- Hide all windows when building something, add Confirm/Cancel dialog.
+
+- Make tutorial window into a text list, add more videos.
