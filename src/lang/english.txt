@@ -468,7 +468,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Message history
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Tutorial
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
@@ -2708,6 +2707,11 @@ STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD 
 #Tutorial window
 STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Tutorial videos
 STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Open a video player to watch tutorial videos
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Building roads and stations, buying vehicles
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Railways and trains
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Road vehicles
+STR_TUTORIAL_SHIPS                                              :{BLACK}Ships and docks
+STR_TUTORIAL_CARGO                                              :{BLACK}Cargo types
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Save Game

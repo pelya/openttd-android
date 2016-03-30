@@ -44,14 +44,32 @@ struct VideoLink_t {
 };
 
 static VideoLink_t busTutorial[] = {
-	{ "en", "https://www.youtube.com/watch?v=EULXRMR4PyE" },
+	{ "en",     "https://www.youtube.com/watch?v=EULXRMR4PyE" },
 	{ ANY_LANG, "https://www.youtube.com/watch?v=EULXRMR4PyE" },
 	{ NULL, NULL }
 };
 
 static VideoLink_t trainTutorial[] = {
-	{ "en", "https://www.youtube.com/watch?v=VdMdL2qyZ6s" },
+	{ "en",     "https://www.youtube.com/watch?v=VdMdL2qyZ6s" },
 	{ ANY_LANG, "https://www.youtube.com/watch?v=VdMdL2qyZ6s" },
+	{ NULL, NULL }
+};
+
+static VideoLink_t truckTutorial[] = {
+	{ "en",     "https://www.youtube.com/watch?v=B-CL-XFGNtw" },
+	{ ANY_LANG, "https://www.youtube.com/watch?v=B-CL-XFGNtw" },
+	{ NULL, NULL }
+};
+
+static VideoLink_t shipTutorial[] = {
+	{ "en",     "https://www.youtube.com/watch?v=a5JHlWtIg3A" },
+	{ ANY_LANG, "https://www.youtube.com/watch?v=a5JHlWtIg3A" },
+	{ NULL, NULL }
+};
+
+static VideoLink_t cargoTutorial[] = {
+	{ "en",     "https://www.youtube.com/watch?v=GwjiQYsu3xg" },
+	{ ANY_LANG, "https://www.youtube.com/watch?v=GwjiQYsu3xg" },
 	{ NULL, NULL }
 };
 
@@ -90,32 +108,15 @@ static const NWidgetPart _nested_tutorial_widgets[] = {
 			NWidget(NWID_SPACER), SetMinimalSize(6, 0), SetFill(1, 0),
 			NWidget(NWID_VERTICAL), SetPIP(16, 2, 6),
 				// TODO: make different button IDs
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_BUS_STATION, STR_SMALLMAP_LEGENDA_BUS_STATION), SetFill(1, 1),
-					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_ROAD_VEHICLES, STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY), SetFill(1, 1),
-				EndContainer(),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_BUS), SetMinimalSize(120, 20), SetDataTip(SPR_VEH_BUS_SW_VIEW, STR_SMALLMAP_LEGENDA_BUS_STATION), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_TRUCK), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_TRUCKLIST, STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY), SetFill(1, 1),
-				EndContainer(),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_STL_BUS), SetMinimalSize(120, 20), SetDataTip(STR_TUTORIAL_ROADS_AND_STATIONS, STR_TUTORIAL_ROADS_AND_STATIONS), SetFill(1, 1),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_RAILROADS, STR_SMALLMAP_LEGENDA_RAILROAD_STATION), SetFill(1, 1),
-					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_SHIPS, STR_SMALLMAP_LEGENDA_DOCK), SetFill(1, 1),
-				EndContainer(),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_TRAIN), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_TRAINLIST, STR_SMALLMAP_LEGENDA_RAILROAD_STATION), SetFill(0, 1),
-					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_SHIP), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_SHIPLIST, STR_SMALLMAP_LEGENDA_DOCK), SetFill(0, 1),
-				EndContainer(),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_STL_TRAIN), SetMinimalSize(120, 20), SetDataTip(STR_TUTORIAL_RAILWAYS, STR_TUTORIAL_RAILWAYS), SetFill(1, 1),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_AIRCRAFT, STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT), SetFill(1, 1),
-					NWidget(WWT_LABEL, COLOUR_GREY), SetMinimalSize(120, 12), SetDataTip(STR_SMALLMAP_LEGENDA_INDUSTRIES, STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES), SetFill(1, 1),
-				EndContainer(),
-				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_AIRPLANE), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_AIRPLANESLIST, STR_SMALLMAP_LEGENDA_AIRPORT_HELIPORT), SetFill(0, 1),
-					NWidget(WWT_IMGBTN, COLOUR_GREY, WID_STL_FACILALL), SetMinimalSize(120, 20), SetDataTip(SPR_IMG_COMPANY_FINANCE, STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES), SetFill(0, 1),
-				EndContainer(),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_STL_TRUCK), SetMinimalSize(120, 20), SetDataTip(STR_TUTORIAL_ROAD_VEHICLES, STR_TUTORIAL_ROAD_VEHICLES), SetFill(1, 1),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_STL_SHIP), SetMinimalSize(120, 20), SetDataTip(STR_TUTORIAL_SHIPS, STR_TUTORIAL_SHIPS), SetFill(1, 1),
+				NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetFill(1, 0),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_STL_FACILALL), SetMinimalSize(120, 20), SetDataTip(STR_TUTORIAL_CARGO, STR_TUTORIAL_CARGO), SetFill(1, 1),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(6, 0), SetFill(1, 0),
 		EndContainer(),
@@ -136,10 +137,6 @@ struct TutorialWindow : public Window {
 	TutorialWindow() : Window(&_tutorial_desc)
 	{
 		this->InitNested(WN_GAME_OPTIONS_ABOUT);
-		this->SetWidgetDisabledState(WID_STL_TRUCK, true);
-		this->SetWidgetDisabledState(WID_STL_SHIP, true);
-		this->SetWidgetDisabledState(WID_STL_AIRPLANE, true);
-		this->SetWidgetDisabledState(WID_STL_FACILALL, true);
 		video = NULL;
 		counter = 0;
 	}
@@ -155,15 +152,18 @@ struct TutorialWindow : public Window {
 				video = busTutorial;
 				break;
 			case WID_STL_TRUCK:
+				video = truckTutorial;
 				break;
 			case WID_STL_TRAIN:
 				video = trainTutorial;
 				break;
 			case WID_STL_SHIP:
+				video = shipTutorial;
 				break;
 			case WID_STL_AIRPLANE:
 				break;
 			case WID_STL_FACILALL:
+				video = cargoTutorial;
 				break;
 		}
 	}
@@ -199,7 +199,7 @@ void ShowTutorialWindow()
 
 void ShowTutorialWindowOnceAfterInstall()
 {
-	static const char * TUTORIAL_SHOWN_FLAG = ".tutorial-shown-2.flag";
+	static const char * TUTORIAL_SHOWN_FLAG = ".tutorial-shown-3.flag";
 
 	FILE *ff = fopen(TUTORIAL_SHOWN_FLAG, "r");
 	if (ff) {
