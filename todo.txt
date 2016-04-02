@@ -3,8 +3,6 @@
 
 - Companies - Sort By arrow and text misaligned.
 
-- Text input fields too small.
-
 - Subsidies list text too small.
 
 - Sign list window is broken.
