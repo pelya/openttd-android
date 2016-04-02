@@ -3,6 +3,4 @@
 
 - Subsidies list text too small.
 
-- Map of the world cannot be scrolled with one finger.
-
 - Hide all windows when building something, add Confirm/Cancel dialog.
