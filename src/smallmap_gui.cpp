@@ -1390,6 +1390,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 			 * actually being (virtually) clicked every inputloop.
 			 */
 			_left_button_clicked = false;
+			_scrolling_viewport = true;
 
 			const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_SM_MAP);
 			Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
