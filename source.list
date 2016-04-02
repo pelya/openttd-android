@@ -1121,7 +1121,7 @@ music/null_m.cpp
 			#else
 				#if MORPHOS
 				#else
-					music/extmidi.cpp
+					music/libtimidity.cpp
 				#end
 			#end
 		#end
