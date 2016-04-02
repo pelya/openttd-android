@@ -608,8 +608,8 @@ void Window::DrawSortButtonState(int widget, SortButtonState state) const
 
 	/* Sort button uses the same sprites as vertical scrollbar */
 	int offset = this->IsWidgetLowered(widget) ? 1 : 0;
-	int x = offset + nwid->pos_x + (_current_text_dir == TD_LTR ? nwid->current_x - SETTING_BUTTON_HEIGHT / 4 : SETTING_BUTTON_HEIGHT / 4);
-	int y = offset + nwid->pos_y + nwid->current_y - SETTING_BUTTON_HEIGHT / 2;
+	int x = offset + nwid->pos_x + (_current_text_dir == TD_LTR ? nwid->current_x - SETTING_BUTTON_HEIGHT / 2 : SETTING_BUTTON_HEIGHT / 2);
+	int y = offset + Center(nwid->pos_y, nwid->current_y, FONT_HEIGHT_NORMAL / 4);
 
 	DrawSpriteCentered(state == SBS_DOWN ? SPR_ARROW_DOWN : SPR_ARROW_UP, PAL_NONE, x, y);
 }
