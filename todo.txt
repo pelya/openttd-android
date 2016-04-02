@@ -1,11 +1,7 @@
 
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
-- Companies - Sort By arrow and text misaligned.
-
 - Subsidies list text too small.
-
-- Sign list window is broken.
 
 - Map of the world cannot be scrolled with one finger.
 
