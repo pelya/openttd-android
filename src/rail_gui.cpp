@@ -652,6 +652,7 @@ struct BuildRailToolbarWindow : Window {
 
 			default: NOT_REACHED();
 		}
+		MoveAllWindowsOffScreen();
 	}
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
@@ -752,11 +753,13 @@ struct BuildRailToolbarWindow : Window {
 							CcRailDepot);
 					break;
 			}
+			MoveAllHiddenWindowsBackToScreen();
 		}
 	}
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 		this->DisableWidget(WID_RAT_REMOVE);
 		this->SetWidgetDirty(WID_RAT_REMOVE);

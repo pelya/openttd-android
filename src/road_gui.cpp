@@ -525,10 +525,12 @@ struct BuildRoadToolbarWindow : Window {
 
 			default: NOT_REACHED();
 		}
+		MoveAllWindowsOffScreen();
 	}
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 		this->SetWidgetsDisabledState(true,
 				WID_ROT_REMOVE,
@@ -669,6 +671,7 @@ struct BuildRoadToolbarWindow : Window {
 						CMD_BUILD_ROAD_DEPOT | CMD_MSG(_road_type_infos[_cur_roadtype].err_depot), CcRoadDepot);
 				break;
 			}
+			MoveAllHiddenWindowsBackToScreen();
 		}
 	}
 

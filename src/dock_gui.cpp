@@ -209,6 +209,7 @@ struct BuildDocksToolbarWindow : Window {
 
 			default: NOT_REACHED();
 		}
+		MoveAllWindowsOffScreen();
 	}
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
@@ -277,11 +278,13 @@ struct BuildDocksToolbarWindow : Window {
 
 				default: break;
 			}
+			MoveAllHiddenWindowsBackToScreen();
 		}
 	}
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
