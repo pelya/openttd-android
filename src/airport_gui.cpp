@@ -120,7 +120,6 @@ struct BuildAirToolbarWindow : Window {
 		switch (this->last_user_action) {
 			case WID_AT_AIRPORT: {
 				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_STATION);
-				MoveAllWindowsOffScreen();
 				break;
 			}
 
@@ -130,6 +129,7 @@ struct BuildAirToolbarWindow : Window {
 
 			default: NOT_REACHED();
 		}
+		MoveAllWindowsOffScreen();
 	}
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
@@ -140,10 +140,10 @@ struct BuildAirToolbarWindow : Window {
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
 	{
 		if (pt.x == -1) return;
+		MoveAllHiddenWindowsBackToScreen();
 		switch (select_proc) {
 			case DDSP_BUILD_STATION:
 				assert(start_tile == end_tile);
-				MoveAllHiddenWindowsBackToScreen();
 				PlaceAirport(end_tile);
 				break;
 			case DDSP_DEMOLISH_AREA:
@@ -155,8 +155,8 @@ struct BuildAirToolbarWindow : Window {
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
-
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		ResetObjectToPlace();
