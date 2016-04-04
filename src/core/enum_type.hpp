@@ -28,19 +28,6 @@
 	}
 
 
-/** Some enums need to have cycling through values */
-#define DECLARE_CYCLE(type, min_val, max_val) \
-	inline type CycleUp(type e) \
-	{ \
-		assert(!((int)e < min_val || (int)e > max_val)); \
-		return e == max_val ? (type)min_val : (type)((int)e + 1); \
-	} \
-	inline type CycleDown(type e) \
-	{ \
-		assert(!((int)e < min_val || (int)e > max_val)); \
-		return e == min_val ? (type)max_val : (type)((int)e - 1); \
-	}
-
 
 /** Operators to allow to work with enum as with type safe bit set in C++ */
 # define DECLARE_ENUM_AS_BIT_SET(mask_t) \

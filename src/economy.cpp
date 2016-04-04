@@ -1637,7 +1637,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 	CargoPayment *payment = front->cargo_payment;
 
 	uint artic_part = 0; // Articulated part we are currently trying to load. (not counting parts without capacity)
-	for (Vehicle *v = front; v != NULL && payment != NULL; v = v->Next()) {
+	for (Vehicle *v = front; v != NULL; v = v->Next()) {
 		if (v == front || !v->Previous()->HasArticulatedPart()) artic_part = 0;
 		if (v->cargo_cap == 0) continue;
 		artic_part++;
@@ -1651,7 +1651,9 @@ static void LoadUnloadVehicle(Vehicle *front)
 			uint amount_unloaded = _settings_game.order.gradual_loading ? min(cargo_count, load_amount) : cargo_count;
 			bool remaining = false; // Are there cargo entities in this vehicle that can still be unloaded here?
 
-			payment->SetCargo(v->cargo_type);
+			if (payment != NULL) {
+				payment->SetCargo(v->cargo_type);
+			}
 
 			if (!HasBit(ge->status, GoodsEntry::GES_ACCEPTANCE) && v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER) > 0) {
 				/* The station does not accept our goods anymore. */
@@ -1690,7 +1692,9 @@ static void LoadUnloadVehicle(Vehicle *front)
 				}
 			}
 
-			amount_unloaded = v->cargo.Unload(amount_unloaded, &ge->cargo, payment);
+			if (payment != NULL) {
+				amount_unloaded = v->cargo.Unload(amount_unloaded, &ge->cargo, payment);
+			}
 			remaining = v->cargo.UnloadCount() > 0;
 			if (amount_unloaded > 0) {
 				dirty_vehicle = true;
