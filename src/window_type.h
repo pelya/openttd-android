@@ -60,6 +60,12 @@ enum WindowClass {
 	WC_MAIN_TOOLBAR_RIGHT,
 
 	/**
+	 * Confirmation window for building anything; %Window numbers:
+	 *   - 0 = #BuildConfirmationWidgets
+	 */
+	WC_BUILD_CONFIRMATION,
+
+	/**
 	 * Statusbar (at the bottom of your screen); %Window numbers:
 	 *   - 0 = #StatusbarWidgets
 	 */

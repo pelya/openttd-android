@@ -84,6 +84,7 @@
 #include "linkgraph/linkgraph_gui.h"
 #include "viewport_sprite_sorter.h"
 #include "bridge_map.h"
+#include "build_confirmation_func.h"
 
 #include <map>
 
@@ -2163,6 +2164,7 @@ static void PlaceObject()
 
 	w = _thd.GetCallbackWnd();
 	if (w != NULL) w->OnPlaceObject(pt, TileVirtXY(pt.x, pt.y));
+	HideBuildConfirmationWindow();
 }
 
 
@@ -3139,6 +3141,7 @@ EventState VpHandlePlaceSizingDrag()
 
 	/* while dragging execute the drag procedure of the corresponding window (mostly VpSelectTilesWithMethod() ) */
 	if (_left_button_down) {
+		HideBuildConfirmationWindow();
 		w->OnPlaceDrag(_thd.select_method, _thd.select_proc, GetTileBelowCursor());
 		return ES_HANDLED;
 	}
@@ -3161,8 +3164,17 @@ EventState VpHandlePlaceSizingDrag()
 	SetTileSelectSize(1, 1);
 
 place_mouseup:
-	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
+	ShowBuildConfirmationWindow();
 	return ES_HANDLED;
+}
+
+void ConfirmPlacingObject()
+{
+	Window *w = _thd.GetCallbackWnd();
+	if (w == NULL) ResetObjectToPlace();
+
+
+	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 }
 
 /**
@@ -3202,6 +3214,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		 * place or not properly reset the original selection. */
 		_thd.window_class = WC_INVALID;
 		if (w != NULL) w->OnPlaceObjectAbort();
+		HideBuildConfirmationWindow();
 	}
 
 	/* Mark the old selection dirty, in case the selection shape or colour changes */

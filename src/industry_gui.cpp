@@ -550,6 +550,7 @@ public:
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
 		VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
+		MoveAllWindowsOffScreen();
 	}
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
@@ -562,6 +563,7 @@ public:
 		if (pt.x == -1) return;
 		assert(end_tile == start_tile);
 
+		MoveAllHiddenWindowsBackToScreen();
 		bool success = true;
 		/* We do not need to protect ourselves against "Random Many Industries" in this mode */
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
@@ -624,6 +626,7 @@ public:
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 	}
 
