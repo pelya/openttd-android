@@ -2449,6 +2449,8 @@ void UpdateTileSelection()
 		}
 	}
 
+	if (ConfirmationWindowShown()) return;
+
 	/* redraw selection */
 	if (_thd.drawstyle != new_drawstyle ||
 			_thd.pos.x != _thd.new_pos.x || _thd.pos.y != _thd.new_pos.y ||
