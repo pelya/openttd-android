@@ -1176,6 +1176,7 @@ public:
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
 		VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
+		MoveAllWindowsOffScreen();
 	}
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
@@ -1187,10 +1188,12 @@ public:
 	{
 		assert(start_tile == end_tile);
 		this->ExecuteFoundTownCommand(end_tile, false, STR_ERROR_CAN_T_FOUND_TOWN_HERE, CcFoundTown);
+		MoveAllHiddenWindowsBackToScreen();
 	}
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 		this->UpdateButtons(false);
 	}

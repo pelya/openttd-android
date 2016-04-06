@@ -144,6 +144,7 @@ base_media_func.h
 base_station_base.h
 bmp.h
 bridge.h
+build_confirmation_func.h
 cargo_type.h
 cargoaction.h
 cargomonitor.h
@@ -453,6 +454,7 @@ airport_gui.cpp
 autoreplace_gui.cpp
 bootstrap_gui.cpp
 bridge_gui.cpp
+build_confirmation_gui.cpp
 build_vehicle_gui.cpp
 cheat_gui.cpp
 company_gui.cpp

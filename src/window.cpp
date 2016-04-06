@@ -42,6 +42,7 @@
 #include "station_base.h"
 #include "waypoint_base.h"
 #include "command_func.h"
+#include "build_confirmation_func.h"
 
 #include "table/strings.h"
 
@@ -1438,6 +1439,12 @@ void Window::InitializeData(WindowNumber window_number)
 	this->owner = INVALID_OWNER;
 	this->nested_focus = NULL;
 	this->window_number = window_number;
+
+	if (this->window_class != WC_BUILD_CONFIRMATION &&
+			this->window_class != WC_TOOLTIPS &&
+			this->window_class != WC_NEWS_WINDOW) {
+		HideBuildConfirmationWindow();
+	}
 
 	this->OnInit();
 	/* Initialize nested widget tree. */
@@ -3650,6 +3657,7 @@ static void MoveAllWindowsOffScreen(bool moveOffScreen)
 	FOR_ALL_WINDOWS_FROM_BACK(w) {
 		switch (w->window_class) {
 			case WC_MAIN_WINDOW:
+			case WC_BUILD_CONFIRMATION:
 			case WC_BOOTSTRAP:
 			case WC_MAIN_TOOLBAR:
 			case WC_MAIN_TOOLBAR_RIGHT:
