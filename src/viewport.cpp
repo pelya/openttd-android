@@ -2151,6 +2151,8 @@ static void PlaceObject()
 	Point pt;
 	Window *w;
 
+	if (BuildConfirmationWindowProcessViewportClick()) return;
+
 	pt = GetTileBelowCursor();
 	if (pt.x == -1) return;
 
@@ -2164,7 +2166,6 @@ static void PlaceObject()
 
 	w = _thd.GetCallbackWnd();
 	if (w != NULL) w->OnPlaceObject(pt, TileVirtXY(pt.x, pt.y));
-	HideBuildConfirmationWindow();
 }
 
 
@@ -3216,7 +3217,6 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		 * place or not properly reset the original selection. */
 		_thd.window_class = WC_INVALID;
 		if (w != NULL) w->OnPlaceObjectAbort();
-		HideBuildConfirmationWindow();
 	}
 
 	/* Mark the old selection dirty, in case the selection shape or colour changes */
