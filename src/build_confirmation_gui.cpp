@@ -18,8 +18,7 @@
 #include "gfx_func.h"
 #include "tilehighlight_func.h"
 #include "viewport_func.h"
-#include "blitter/factory.hpp"
-#include "video/video_driver.hpp"
+#include "zoom_func.h"
 
 #include "widgets/build_confirmation_widget.h"
 #include "build_confirmation_func.h"
@@ -34,30 +33,44 @@ struct BuildConfirmationWindow : Window {
 
 	// TODO: show estimated price
 	static bool shown; // Just to speed up window hiding, HideBuildConfirmationWindow() is called very often
-	uint8 * background;
 
 	BuildConfirmationWindow(WindowDesc *desc) : Window(desc)
 	{
-		this->background = NULL;
 		this->InitNested(0);
+
+		Point pt;
+		const Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
+		NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_BC_OK);
+
+		pt.x = w->viewport->scrollpos_x + ScaleByZoom(_cursor.pos.x - nvp->current_x / 2, w->viewport->zoom);
+		pt.y = w->viewport->scrollpos_y + ScaleByZoom(_cursor.pos.y - nvp->current_y / 4, w->viewport->zoom);
+
+		nvp->InitializeViewport(this, 0, w->viewport->zoom);
+		nvp->disp_flags |= ND_SHADE_DIMMED;
+
+		this->viewport->scrollpos_x = pt.x;
+		this->viewport->scrollpos_y = pt.y;
+		this->viewport->dest_scrollpos_x = this->viewport->scrollpos_x;
+		this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
+
 		BuildConfirmationWindow::shown = true;
 	}
 
 	~BuildConfirmationWindow()
 	{
 		BuildConfirmationWindow::shown = false;
-		free(this->background);
 	}
 
 	void OnClick(Point pt, int widget, int click_count)
 	{
 		switch (widget) {
 			case WID_BC_OK:
-				ConfirmPlacingObject();
-				ToolbarSelectLastTool();
-				break;
-			case WID_BC_CANCEL:
-				ResetObjectToPlace();
+				if (pt.y <= GetWidget<NWidgetViewport>(WID_BC_OK)->current_y / 2) {
+					ConfirmPlacingObject();
+					ToolbarSelectLastTool();
+				} else {
+					ResetObjectToPlace();
+				}
 				break;
 		}
 		HideBuildConfirmationWindow(); // this == NULL after this call
@@ -67,63 +80,45 @@ struct BuildConfirmationWindow : Window {
 	{
 		switch (widget) {
 			case WID_BC_OK:
-			case WID_BC_CANCEL:
 				size->width = GetMinSizing(NWST_BUTTON) * 2;
-				size->height = GetMinSizing(NWST_BUTTON) * 1.5;
+				size->height = GetMinSizing(NWST_BUTTON) * 3;
 				break;
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	virtual void OnPaint()
 	{
-		const NWidgetCore *w = GetWidget<NWidgetCore>(widget);
-		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
-		// Draw our background
-		
-		blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, this->left, this->top + w->pos_y),
-									this->background + w->pos_y * this->width * blitter->GetBytesPerPixel(),
-									this->width, w->current_y);
-		VideoDriver::GetInstance()->MakeDirty(this->left, this->top + w->pos_y, this->width, w->current_y);
+		this->DrawWidgets();
 
-		DrawFrameRect(w->pos_x, w->pos_y, w->pos_x + w->current_x, w->pos_y + w->current_y, w->colour, FR_TRANSPARENT); //FR_BORDERONLY
-		DrawFrameRect(w->pos_x, w->pos_y, w->pos_x + w->current_x, w->pos_y + w->current_y, w->colour, FR_BORDERONLY);
-		Dimension d = GetStringBoundingBox(w->widget_data);
-		DrawFrameRect((w->pos_x + w->current_x - d.width - 2) / 2,
-						Center(w->pos_y, w->current_y) - 2,
-						(w->pos_x + w->current_x + d.width + 2) / 2,
-						Center(w->pos_y, w->current_y) + d.height,
-						w->colour, FR_NONE);
-		DrawString(w->pos_x, w->pos_x + w->current_x, Center(w->pos_y, w->current_y), w->widget_data, TC_FROMSTRING, SA_HOR_CENTER);
+		DrawButtonFrame(0, 0, this->width, this->height / 2 - 1, STR_BUTTON_OK);
+		DrawButtonFrame(0, this->height / 2, this->width, this->height / 2, STR_BUTTON_CANCEL);
 	}
 
-	void OnPaint()
+	void DrawButtonFrame(int x, int y, int w, int h, int str)
 	{
-		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
-		if (this->background == NULL) {
-			// Make a copy of the screen as it is before painting
-			this->background = ReallocT(this->background, this->width * this->height * blitter->GetBytesPerPixel());
-			printf("blitter->CopyToBuffer %d %d %p %d %d size %d\n", this->left, this->top, this->background, this->width, this->height, this->width * this->height * blitter->GetBytesPerPixel());
-			blitter->CopyToBuffer(blitter->MoveTo(_screen.dst_ptr, this->left, this->top), this->background, this->width, this->height);
-		}
-
-		this->DrawWidgets();
+		DrawFrameRect(x, y, x + w, y + h, COLOUR_GREY, FR_BORDERONLY);
+		Dimension d = GetStringBoundingBox(str);
+		DrawFrameRect(x + w / 2 - d.width / 2 - 1,
+						Center(y, h) - 2,
+						x + w / 2 + d.width / 2 + 1,
+						Center(y, h) + d.height,
+						COLOUR_GREY, FR_NONE);
+		DrawString(x, x + w, Center(y, h), str, TC_FROMSTRING, SA_HOR_CENTER);
 	}
 };
 
 bool BuildConfirmationWindow::shown = false;
 
 static const NWidgetPart _nested_build_confirmation_widgets[] = {
-	NWidget(NWID_VERTICAL),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_BC_OK), SetDataTip(STR_BUTTON_OK, STR_NULL),
-		NWidget(NWID_SPACER), SetMinimalSize(1, 1), SetFill(1, 1),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_BC_CANCEL), SetDataTip(STR_BUTTON_CANCEL, STR_NULL),
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_BC_PANEL),
+		NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_BC_OK), SetSizingType(NWST_VIEWPORT), SetResize(1, 1), SetFill(1, 1), //SetPadding(2, 2, 2, 2),
 	EndContainer(),
 };
 
 static WindowDesc _build_confirmation_desc(
-	WDP_AUTO, "build_confirmation", 100, 80,
+	WDP_MANUAL, "build_confirmation", 0, 0,
 	WC_BUILD_CONFIRMATION, WC_NONE,
-	WDF_CONSTRUCTION,
+	0,
 	_nested_build_confirmation_widgets, lengthof(_nested_build_confirmation_widgets)
 );
 
@@ -133,10 +128,16 @@ static WindowDesc _build_confirmation_desc(
 void ShowBuildConfirmationWindow()
 {
 	HideBuildConfirmationWindow();
-	BuildConfirmationWindow *wnd = new BuildConfirmationWindow(&_build_confirmation_desc);
-	wnd->left = _cursor.pos.x - wnd->width / 2;
-	wnd->top = _cursor.pos.y - wnd->height / 4;
-	wnd->SetDirty();
+	BuildConfirmationWindow *w = new BuildConfirmationWindow(&_build_confirmation_desc);
+
+	int old_left = w->left;
+	int old_top = w->top;
+	w->left = _cursor.pos.x - w->width / 2;
+	w->top = _cursor.pos.y - w->height / 4;
+	w->viewport->left += w->left - old_left;
+	w->viewport->top += w->top - old_top;
+	w->SetDirty();
+	SetDirtyBlocks(0, 0, _screen.width, _screen.height); // I don't know what does this do, but it looks important
 }
 
 /**
@@ -152,4 +153,21 @@ void HideBuildConfirmationWindow()
 bool ConfirmationWindowShown()
 {
 	return BuildConfirmationWindow::shown;
+}
+
+bool BuildConfirmationWindowProcessViewportClick()
+{
+	if (!BuildConfirmationWindow::shown) return false;
+
+	Window *w = FindWindowById(WC_BUILD_CONFIRMATION, 0);
+	if (w != NULL && IsInsideBS(_cursor.pos.x, w->left, w->width) && IsInsideBS(_cursor.pos.y, w->top, w->height)) {
+		Point pt;
+		pt.x = _cursor.pos.x - w->left;
+		pt.y = _cursor.pos.y - w->top;
+		w->OnClick(pt, WID_BC_OK, 1);
+		return true;
+	}
+
+	HideBuildConfirmationWindow();
+	return false;
 }

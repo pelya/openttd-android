@@ -17,6 +17,7 @@ enum BuildConfirmationWidgets {
 	WID_BC_PRICE,                     ///< Estimated price.
 	WID_BC_OK,                        ///< Confirm action.
 	WID_BC_CANCEL,                    ///< Cancel action.
+	WID_BC_PANEL,                     ///< Cancel action.
 };
 
 #endif /* WIDGETS_BUILD_CONFIRMATION_WIDGET_H */

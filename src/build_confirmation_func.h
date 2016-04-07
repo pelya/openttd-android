@@ -20,6 +20,6 @@
 void ShowBuildConfirmationWindow();
 void HideBuildConfirmationWindow();
 bool ConfirmationWindowShown();
-
+bool BuildConfirmationWindowProcessViewportClick();
 
 #endif /* BUILD_CONFIRMATION_FUNC_H */
