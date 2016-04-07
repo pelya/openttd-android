@@ -17,6 +17,9 @@
 #include "window_gui.h"
 #include "gfx_func.h"
 #include "tilehighlight_func.h"
+#include "viewport_func.h"
+#include "blitter/factory.hpp"
+#include "video/video_driver.hpp"
 
 #include "widgets/build_confirmation_widget.h"
 #include "build_confirmation_func.h"
@@ -26,22 +29,24 @@
 #include "safeguards.h"
 
 
-static const NWidgetPart _nested_build_confirmation_widgets[] = {
-	NWidget(NWID_VERTICAL),
-		NWidget(NWID_SPACER), SetFill(1, 1),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_BC_OK), SetDataTip(STR_BUTTON_OK, STR_NULL), SetSizingType(NWST_BUTTON),
-		NWidget(NWID_SPACER), SetFill(1, 1),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_BC_CANCEL), SetDataTip(STR_BUTTON_CANCEL, STR_NULL), SetSizingType(NWST_BUTTON),
-		NWidget(NWID_SPACER), SetFill(1, 1),
-	EndContainer(),
-};
-
 /** GUI for confirming building actions. */
 struct BuildConfirmationWindow : Window {
 
+	// TODO: show estimated price
+	static bool shown; // Just to speed up window hiding, HideBuildConfirmationWindow() is called very often
+	uint8 * background;
+
 	BuildConfirmationWindow(WindowDesc *desc) : Window(desc)
 	{
+		this->background = NULL;
 		this->InitNested(0);
+		BuildConfirmationWindow::shown = true;
+	}
+
+	~BuildConfirmationWindow()
+	{
+		BuildConfirmationWindow::shown = false;
+		free(this->background);
 	}
 
 	void OnClick(Point pt, int widget, int click_count)
@@ -49,6 +54,7 @@ struct BuildConfirmationWindow : Window {
 		switch (widget) {
 			case WID_BC_OK:
 				ConfirmPlacingObject();
+				ToolbarSelectLastTool();
 				break;
 			case WID_BC_CANCEL:
 				ResetObjectToPlace();
@@ -59,24 +65,59 @@ struct BuildConfirmationWindow : Window {
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
-	}
-
-	/*
-	virtual void DrawWidget(const Rect &r, int widget) const
-	{
 		switch (widget) {
-			case WID_BV_LIST:
+			case WID_BC_OK:
+			case WID_BC_CANCEL:
+				size->width = GetMinSizing(NWST_BUTTON) * 2;
+				size->height = GetMinSizing(NWST_BUTTON) * 1.5;
 				break;
 		}
 	}
-	*/
 
-	/*
-	virtual void OnPaint()
+	virtual void DrawWidget(const Rect &r, int widget) const
 	{
+		const NWidgetCore *w = GetWidget<NWidgetCore>(widget);
+		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
+		// Draw our background
+		
+		blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, this->left, this->top + w->pos_y),
+									this->background + w->pos_y * this->width * blitter->GetBytesPerPixel(),
+									this->width, w->current_y);
+		VideoDriver::GetInstance()->MakeDirty(this->left, this->top + w->pos_y, this->width, w->current_y);
+
+		DrawFrameRect(w->pos_x, w->pos_y, w->pos_x + w->current_x, w->pos_y + w->current_y, w->colour, FR_TRANSPARENT); //FR_BORDERONLY
+		DrawFrameRect(w->pos_x, w->pos_y, w->pos_x + w->current_x, w->pos_y + w->current_y, w->colour, FR_BORDERONLY);
+		Dimension d = GetStringBoundingBox(w->widget_data);
+		DrawFrameRect((w->pos_x + w->current_x - d.width - 2) / 2,
+						Center(w->pos_y, w->current_y) - 2,
+						(w->pos_x + w->current_x + d.width + 2) / 2,
+						Center(w->pos_y, w->current_y) + d.height,
+						w->colour, FR_NONE);
+		DrawString(w->pos_x, w->pos_x + w->current_x, Center(w->pos_y, w->current_y), w->widget_data, TC_FROMSTRING, SA_HOR_CENTER);
+	}
+
+	void OnPaint()
+	{
+		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
+		if (this->background == NULL) {
+			// Make a copy of the screen as it is before painting
+			this->background = ReallocT(this->background, this->width * this->height * blitter->GetBytesPerPixel());
+			printf("blitter->CopyToBuffer %d %d %p %d %d size %d\n", this->left, this->top, this->background, this->width, this->height, this->width * this->height * blitter->GetBytesPerPixel());
+			blitter->CopyToBuffer(blitter->MoveTo(_screen.dst_ptr, this->left, this->top), this->background, this->width, this->height);
+		}
+
 		this->DrawWidgets();
 	}
-	*/
+};
+
+bool BuildConfirmationWindow::shown = false;
+
+static const NWidgetPart _nested_build_confirmation_widgets[] = {
+	NWidget(NWID_VERTICAL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_BC_OK), SetDataTip(STR_BUTTON_OK, STR_NULL),
+		NWidget(NWID_SPACER), SetMinimalSize(1, 1), SetFill(1, 1),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_BC_CANCEL), SetDataTip(STR_BUTTON_CANCEL, STR_NULL),
+	EndContainer(),
 };
 
 static WindowDesc _build_confirmation_desc(
@@ -85,8 +126,6 @@ static WindowDesc _build_confirmation_desc(
 	WDF_CONSTRUCTION,
 	_nested_build_confirmation_widgets, lengthof(_nested_build_confirmation_widgets)
 );
-
-static bool _confirmationWindowShown = false; // Just to speed up window hiding, HideBuildConfirmationWindow() is called very often
 
 /**
  * Show build confirmation window under the mouse cursor
@@ -98,7 +137,6 @@ void ShowBuildConfirmationWindow()
 	wnd->left = _cursor.pos.x - wnd->width / 2;
 	wnd->top = _cursor.pos.y - wnd->height / 4;
 	wnd->SetDirty();
-	_confirmationWindowShown = true;
 }
 
 /**
@@ -106,14 +144,12 @@ void ShowBuildConfirmationWindow()
 */
 void HideBuildConfirmationWindow()
 {
-	if (!_confirmationWindowShown) {
-		//return;
-	}
+	if (!BuildConfirmationWindow::shown) return;
+
 	DeleteWindowById(WC_BUILD_CONFIRMATION, 0);
-	_confirmationWindowShown = false;
 }
 
 bool ConfirmationWindowShown()
 {
-	return _confirmationWindowShown;
+	return BuildConfirmationWindow::shown;
 }
