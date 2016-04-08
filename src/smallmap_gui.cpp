@@ -1049,7 +1049,7 @@ void SmallMapWindow::SetupWidgetData()
 
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 		Window(desc),
-		show_legend(false),
+		show_legend(true),
 		row_height(max(GetMinSizing(NWST_STEP, FONT_HEIGHT_SMALL) * 2 / 3, uint(FONT_HEIGHT_SMALL))), // Default spacing makes legend too tall - shrink it by 1/3
 		refresh(FORCE_REFRESH_PERIOD)
 {
@@ -1063,6 +1063,7 @@ SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 	//this->SetWidgetLoweredState(WID_SM_SHOW_HEIGHT, _smallmap_show_heightmap);
 
 	this->SetWidgetLoweredState(WID_SM_TOGGLETOWNNAME, this->show_towns);
+	this->SetWidgetLoweredState(WID_SM_SHOW_LEGEND, this->show_legend);
 
 	this->SetupWidgetData();
 
