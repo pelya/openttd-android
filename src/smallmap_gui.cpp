@@ -37,7 +37,7 @@ static int _smallmap_company_count;  ///< Number of entries in the owner legend.
 static int _smallmap_cargo_count;    ///< Number of cargos in the link stats legend.
 
 /** Link stat colours shown in legenda. */
-static uint8 _linkstat_colours_in_legenda[] = {0, 1, 3, 5, 7, 9, 11};
+static uint8 _linkstat_colours_in_legenda[] = {0, 1, 3, 5, 7};
 
 static const int NUM_NO_COMPANY_ENTRIES = 4; ///< Number of entries in the owner legend that are not companies.
 
@@ -85,12 +85,12 @@ static LegendAndColour _legend_land_contours[] = {
 	MC(false),
 	MC(false),
 	MC(false),
-	MC(false),
 	MC(true),
 	MC(false),
 	MC(false),
 	MC(false),
 	MC(false),
+	MC(true),
 	MC(false),
 	MKEND()
 };
@@ -125,12 +125,13 @@ static const LegendAndColour _legend_vegetation[] = {
 	MK(PC_BARE_LAND,       STR_SMALLMAP_LEGENDA_BARE_LAND),
 	MK(PC_FIELDS,          STR_SMALLMAP_LEGENDA_FIELDS),
 	MK(PC_TREES,           STR_SMALLMAP_LEGENDA_TREES),
-	MK(PC_GREEN,           STR_SMALLMAP_LEGENDA_FOREST),
 
-	MS(PC_GREY,            STR_SMALLMAP_LEGENDA_ROCKS),
+	MS(PC_GREEN,           STR_SMALLMAP_LEGENDA_FOREST),
+	MK(PC_GREY,            STR_SMALLMAP_LEGENDA_ROCKS),
 	MK(PC_ORANGE,          STR_SMALLMAP_LEGENDA_DESERT),
 	MK(PC_LIGHT_BLUE,      STR_SMALLMAP_LEGENDA_SNOW),
-	MK(PC_BLACK,           STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES),
+
+	MS(PC_BLACK,           STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES),
 	MK(PC_DARK_RED,        STR_SMALLMAP_LEGENDA_BUILDINGS_INDUSTRIES),
 	MKEND()
 };
@@ -145,6 +146,7 @@ static LegendAndColour _legend_land_owners[NUM_NO_COMPANY_ENTRIES + MAX_COMPANIE
 };
 
 #undef MK
+#undef MKB
 #undef MC
 #undef MS
 #undef MO
@@ -185,7 +187,7 @@ void BuildIndustriesLegend()
 			_legend_from_industries[j].colour = indsp->map_colour;
 			_legend_from_industries[j].type = ind;
 			_legend_from_industries[j].show_on_map = true;
-			_legend_from_industries[j].col_break = false;
+			_legend_from_industries[j].col_break = j > 0 && j % lengthof(_linkstat_colours_in_legenda) == 0;
 			_legend_from_industries[j].end = false;
 
 			/* Store widget number for this industry type. */
@@ -216,6 +218,7 @@ void BuildLinkStatsLegend()
 		_legend_linkstats[i].colour = cs->legend_colour;
 		_legend_linkstats[i].type = cs->Index();
 		_legend_linkstats[i].show_on_map = true;
+		_legend_linkstats[i].col_break = i > 0 && i % lengthof(_linkstat_colours_in_legenda) == 0;
 	}
 
 	_legend_linkstats[i].col_break = true;
@@ -312,7 +315,7 @@ void BuildLandLegend()
 	uint delta = deltas[i][1];
 
 	int total_entries = (_settings_game.construction.max_heightlevel / delta) + 1;
-	int rows = CeilDiv(total_entries, 2);
+	int rows = lengthof(_linkstat_colours_in_legenda);
 	int j = 0;
 
 	for (i = 0; i < lengthof(_legend_land_contours) - 1 && j < total_entries; i++) {
@@ -340,7 +343,7 @@ void BuildOwnerLegend()
 		_legend_land_owners[i].colour = _colour_gradient[c->colour][5];
 		_legend_land_owners[i].company = c->index;
 		_legend_land_owners[i].show_on_map = true;
-		_legend_land_owners[i].col_break = false;
+		_legend_land_owners[i].col_break = i > 0 && i % lengthof(_linkstat_colours_in_legenda) == 0;
 		_legend_land_owners[i].end = false;
 		_company_to_list_pos[c->index] = i;
 		i++;
@@ -1037,9 +1040,11 @@ void SmallMapWindow::SetupWidgetData()
 	}
 
 	this->GetWidget<NWidgetCore>(WID_SM_LEGEND)->SetDataTip(STR_NULL, legend_tooltip);
+/*
 	this->GetWidget<NWidgetCore>(WID_SM_ENABLE_ALL)->SetDataTip(STR_SMALLMAP_ENABLE_ALL, enable_all_tooltip);
 	this->GetWidget<NWidgetCore>(WID_SM_DISABLE_ALL)->SetDataTip(STR_SMALLMAP_DISABLE_ALL, disable_all_tooltip);
 	this->GetWidget<NWidgetStacked>(WID_SM_SELECT_BUTTONS)->SetDisplayedPlane(plane);
+*/
 }
 
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
@@ -1055,7 +1060,7 @@ SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 
 	this->RebuildColourIndexIfNecessary();
 
-	this->SetWidgetLoweredState(WID_SM_SHOW_HEIGHT, _smallmap_show_heightmap);
+	//this->SetWidgetLoweredState(WID_SM_SHOW_HEIGHT, _smallmap_show_heightmap);
 
 	this->SetWidgetLoweredState(WID_SM_TOGGLETOWNNAME, this->show_towns);
 
@@ -1133,7 +1138,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 				}
 			} else {
 				if (tbl->col_break) {
-					this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
+					//this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
 					height = 0;
 					num_columns++;
 				}
@@ -1142,7 +1147,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 			}
 			min_width = max(GetStringBoundingBox(str).width, min_width);
 		}
-		this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
+		//this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
 		this->min_number_of_columns = max(this->min_number_of_columns, num_columns);
 	}
 
@@ -1662,6 +1667,14 @@ Point SmallMapWindow::GetStationMiddle(const Station *st) const
 	return ret;
 }
 
+/* virtual */ void SmallMapWindow::UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+{
+	if (widget != WID_SM_LEGEND) return;
+
+	size->width = this->GetMinLegendWidth();
+	size->height = this->GetLegendHeight(this->min_number_of_columns);
+}
+
 SmallMapWindow::SmallMapType SmallMapWindow::map_type = SMT_CONTOUR;
 bool SmallMapWindow::show_towns = true;
 int SmallMapWindow::max_heightlevel = -1;
@@ -1691,6 +1704,7 @@ public:
 		bar->SetupSmallestSize(w, init_array);
 
 		this->smallmap_window = dynamic_cast<SmallMapWindow *>(w);
+
 		assert(this->smallmap_window != NULL);
 		this->smallest_x = max(display->smallest_x, max(bar->smallest_x, smallmap_window->GetMinLegendWidth()));
 		this->smallest_y = display->smallest_y + max(bar->smallest_y, smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
@@ -1718,7 +1732,7 @@ public:
 			bar->AssignSizePosition(ST_SMALLEST, x, y + display->smallest_y, bar->smallest_x, bar->smallest_y, rtl);
 		}
 
-		uint bar_height = max(bar->smallest_y, this->smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
+		uint bar_height = max(bar->smallest_y, this->smallmap_window->GetLegendHeight(this->smallmap_window->GetNumberColumnsLegend(given_width - bar->smallest_x)));
 		uint display_height = given_height - bar_height;
 		display->AssignSizePosition(ST_RESIZE, x, y, given_width, display_height, rtl);
 		bar->AssignSizePosition(ST_RESIZE, x, y + display_height, given_width, bar_height, rtl);
@@ -1778,8 +1792,9 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 							SetDataTip(SPR_IMG_PLANTTREES, STR_SMALLMAP_TOOLTIP_SHOW_VEGETATION_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_OWNERS),
 							SetDataTip(SPR_IMG_COMPANY_GENERAL, STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP), SetFill(1, 1),
+					NWidget(NWID_SPACER), SetResize(1, 0), SetMinimalSize(0, 1),
+					NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 				EndContainer(),
-				NWidget(NWID_SPACER), SetResize(0, 1),
 			EndContainer(),
 		EndContainer(),
 		NWidget(WWT_EMPTY, INVALID_COLOUR, WID_SM_LEGEND), SetResize(1, 1),
@@ -1806,6 +1821,7 @@ static const NWidgetPart _nested_smallmap_widgets[] = {
 	EndContainer(),
 	NWidgetFunction(SmallMapDisplay), // Smallmap display and legend bar + image buttons.
 	/* Bottom button row and resize box. */
+/*
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_SM_SELECT_BUTTONS),
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
@@ -1820,6 +1836,7 @@ static const NWidgetPart _nested_smallmap_widgets[] = {
 		EndContainer(),
 		NWidget(WWT_RESIZEBOX, COLOUR_BROWN),
 	EndContainer(),
+*/
 };
 
 static WindowDesc _smallmap_desc(

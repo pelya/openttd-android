@@ -125,7 +125,7 @@ protected:
 	 */
 	inline uint GetNumberColumnsLegend(uint width) const
 	{
-		return max(2u, width / this->column_width);
+		return width / this->column_width;
 	}
 
 	/**
@@ -136,7 +136,7 @@ protected:
 	inline uint GetLegendHeight(uint num_columns) const
 	{
 		return show_legend ? WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
-				this->GetNumberRowsLegend(num_columns) * this->row_height : 0;
+				this->min_number_of_fixed_rows * this->row_height : 0;
 	}
 
 	/**
@@ -191,6 +191,7 @@ public:
 	virtual void OnTick();
 	virtual void OnScroll(Point delta);
 	virtual void OnMouseOver(Point pt, int widget);
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize);
 };
 
 #endif /* SMALLMAP_GUI_H */
