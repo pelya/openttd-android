@@ -476,6 +476,12 @@ struct GameOptionsWindow : Window {
 				ReconstructUserInterface();
 				break;
 
+			case WID_GO_BUILD_CONFIRMATION:
+				_settings_client.gui.build_confirmation = !_settings_client.gui.build_confirmation;
+				this->SetWidgetLoweredState(WID_GO_BUILD_CONFIRMATION, _settings_client.gui.build_confirmation);
+				this->SetDirty();
+				break;
+
 			default: {
 				int selected;
 				DropDownList *list = this->BuildDropDownList(widget, &selected);
@@ -605,6 +611,7 @@ struct GameOptionsWindow : Window {
 		if (!gui_scope) return;
 		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
 		this->SetWidgetLoweredState(WID_GO_VERTICAL_TOOLBAR, _settings_client.gui.vertical_toolbar);
+		this->SetWidgetLoweredState(WID_GO_BUILD_CONFIRMATION, _settings_client.gui.build_confirmation);
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);
@@ -646,8 +653,10 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY),
 					NWidget(NWID_HORIZONTAL),
-						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_VERTICAL_TOOLBAR, STR_NULL),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VERTICAL_TOOLBAR), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT),
+						//NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_VERTICAL_TOOLBAR, STR_NULL),
+						//NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VERTICAL_TOOLBAR), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_BUILD_CONFIRMATION, STR_NULL),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_BUILD_CONFIRMATION), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT),
 					EndContainer(),
 				EndContainer(),
 			EndContainer(),

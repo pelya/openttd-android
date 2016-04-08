@@ -3,6 +3,4 @@
 
 - Subsidies list text too small.
 
-- Hide all windows when building something, add Confirm/Cancel dialog.
-
 - Multiplayer client list is too small again.
