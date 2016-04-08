@@ -1,6 +1,5 @@
 
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
-- Subsidies list text too small.
-
 - Multiplayer client list is too small again.
+
