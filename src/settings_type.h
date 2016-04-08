@@ -78,6 +78,7 @@ struct GUISettings {
 	uint8  order_review_system;              ///< perform order reviews on vehicles
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
 	bool   vertical_toolbar;                 ///< main toolbar is split into two vertical toolbars
+	bool   build_confirmation;               ///< show confirmation dialog when building roads and stations
 	uint   min_button;                       ///< min size of most button widgets
 	uint   min_step;                         ///< min size of scrollbar/dropdown elements
 	bool   show_finances;                    ///< show finances at end of year

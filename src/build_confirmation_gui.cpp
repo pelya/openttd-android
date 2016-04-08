@@ -19,6 +19,7 @@
 #include "tilehighlight_func.h"
 #include "viewport_func.h"
 #include "zoom_func.h"
+#include "settings_type.h"
 
 #include "widgets/build_confirmation_widget.h"
 #include "build_confirmation_func.h"
@@ -65,7 +66,7 @@ struct BuildConfirmationWindow : Window {
 	{
 		switch (widget) {
 			case WID_BC_OK:
-				if (pt.y <= GetWidget<NWidgetViewport>(WID_BC_OK)->current_y / 2) {
+				if (pt.y <= (int)GetWidget<NWidgetViewport>(WID_BC_OK)->current_y / 2) {
 					ConfirmPlacingObject();
 					ToolbarSelectLastTool();
 				} else {
@@ -128,6 +129,13 @@ static WindowDesc _build_confirmation_desc(
 void ShowBuildConfirmationWindow()
 {
 	HideBuildConfirmationWindow();
+
+	if (!_settings_client.gui.build_confirmation || _shift_pressed) {
+		ConfirmPlacingObject();
+		ToolbarSelectLastTool();
+		return;
+	}
+
 	BuildConfirmationWindow *w = new BuildConfirmationWindow(&_build_confirmation_desc);
 
 	int old_left = w->left;
