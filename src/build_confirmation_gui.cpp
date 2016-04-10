@@ -185,5 +185,8 @@ bool BuildConfirmationWindowProcessViewportClick()
 	}
 
 	HideBuildConfirmationWindow();
+
+	_thd.new_outersize = _thd.outersize; // Revert station catchment area highlight, which is getting set to zero inside drawing funcs
+
 	return false;
 }
