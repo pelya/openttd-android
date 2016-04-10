@@ -5111,6 +5111,8 @@ STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Veličin
 STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Veličina svih elemenata korisničkog sučelja
 STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Veličina fonta
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Veličina svih fontova u igri
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Potvrdi akcije
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Prikaži dijalog potvrde pri gradnji cesta i stanica
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Zatvori sve otvorene prozore (osim zakačenih)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Pritisnuti za procjenu troškova izvođenja neke akcije
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Koristiti za sve akcije za koje se koristi tipka "CTRL"
