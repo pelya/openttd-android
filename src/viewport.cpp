@@ -3149,6 +3149,8 @@ EventState VpHandlePlaceSizingDrag()
 		return ES_HANDLED;
 	}
 
+	ShowBuildConfirmationWindow(); // This will also remember tile selection, so it's okay for the4 code below
+
 	/* mouse button released..
 	 * keep the selected tool, but reset it to the original mode. */
 	_special_mouse_mode = WSM_NONE;
@@ -3167,7 +3169,6 @@ EventState VpHandlePlaceSizingDrag()
 	SetTileSelectSize(1, 1);
 
 place_mouseup:
-	ShowBuildConfirmationWindow();
 	return ES_HANDLED;
 }
 
@@ -3175,7 +3176,6 @@ void ConfirmPlacingObject()
 {
 	Window *w = _thd.GetCallbackWnd();
 	if (w == NULL) ResetObjectToPlace();
-
 
 	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 }
@@ -3257,6 +3257,7 @@ void ResetObjectToPlace()
 		_last_selected_window_number = _thd.window_number;
 	}
 	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+	HideBuildConfirmationWindow();
 	MoveAllHiddenWindowsBackToScreen();
 }
 
