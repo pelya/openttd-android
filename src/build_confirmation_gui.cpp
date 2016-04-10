@@ -33,10 +33,16 @@
 struct BuildConfirmationWindow : Window {
 
 	// TODO: show estimated price
-	static bool shown; // Just to speed up window hiding, HideBuildConfirmationWindow() is called very often
+	static bool shown;   ///< Just to speed up window hiding, HideBuildConfirmationWindow() is called very often.
+	Point selstart;      ///< The selection start on the viewport.
+	Point selend;        ///< The selection end on the viewport.
 
 	BuildConfirmationWindow(WindowDesc *desc) : Window(desc)
 	{
+		// Save tile selection points, they will be reset by subsequent code, and we must keep them
+		selstart = _thd.selstart;
+		selend = _thd.selend;
+
 		this->InitNested(0);
 
 		Point pt;
@@ -67,6 +73,8 @@ struct BuildConfirmationWindow : Window {
 		switch (widget) {
 			case WID_BC_OK:
 				if (pt.y <= (int)GetWidget<NWidgetViewport>(WID_BC_OK)->current_y / 2) {
+					_thd.selstart = selstart;
+					_thd.selend = selend;
 					ConfirmPlacingObject();
 					ToolbarSelectLastTool();
 				} else {
@@ -91,8 +99,8 @@ struct BuildConfirmationWindow : Window {
 	{
 		this->DrawWidgets();
 
-		DrawButtonFrame(0, 0, this->width, this->height / 2 - 1, STR_BUTTON_OK);
-		DrawButtonFrame(0, this->height / 2, this->width, this->height / 2, STR_BUTTON_CANCEL);
+		DrawButtonFrame(0, 0, this->width - 1, this->height / 2 - 2, STR_BUTTON_OK);
+		DrawButtonFrame(0, this->height / 2, this->width - 1, this->height / 2 - 1, STR_BUTTON_CANCEL);
 	}
 
 	void DrawButtonFrame(int x, int y, int w, int h, int str)
