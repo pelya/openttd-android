@@ -1353,6 +1353,7 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	uint line = (pt.y - wi->pos_y - WD_FRAMERECT_TOP) / this->row_height;
 	uint columns = this->GetNumberColumnsLegend(wi->current_x);
 	uint number_of_rows = this->GetNumberRowsLegend(columns);
+	number_of_rows = this->min_number_of_fixed_rows;
 	if (line >= number_of_rows) return -1;
 
 	bool rtl = _current_text_dir == TD_RTL;
