@@ -2,5 +2,3 @@
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
 - Multiplayer client list is too small again.
-
-- Minimap legend clicks wrong items after few usages.
