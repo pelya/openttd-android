@@ -2438,8 +2438,10 @@ void UpdateTileSelection()
 
 						default: NOT_REACHED();
 					}
-					_thd.selstart.x = x1 & ~TILE_UNIT_MASK;
-					_thd.selstart.y = y1 & ~TILE_UNIT_MASK;
+					if (!ConfirmationWindowShown()) {
+						_thd.selstart.x = x1 & ~TILE_UNIT_MASK;
+						_thd.selstart.y = y1 & ~TILE_UNIT_MASK;
+					}
 					break;
 				default:
 					NOT_REACHED();
