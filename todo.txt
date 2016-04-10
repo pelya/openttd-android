@@ -3,3 +3,8 @@
 
 - Multiplayer client list is too small again.
 
+- Non-autorail rail building is broken with confirmation dialog enabled.
+
+- Station catchment area disappears after few clicks with confirmation dialog.
+
+- Minimap legend clicks wrong items after few usages.
