@@ -20,13 +20,80 @@
 #include "viewport_func.h"
 #include "zoom_func.h"
 #include "settings_type.h"
-
-#include "widgets/build_confirmation_widget.h"
+#include "station_gui.h"
 #include "build_confirmation_func.h"
+#include "widgets/build_confirmation_widget.h"
+#include "widgets/misc_widget.h"
 
 #include "table/strings.h"
 
 #include "safeguards.h"
+
+static const NWidgetPart _nested_station_build_info_widgets[] = {
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_TT_BACKGROUND), SetMinimalSize(200, 32), EndContainer(),
+};
+
+static WindowDesc _station_build_info_desc(
+	WDP_MANUAL, NULL, 0, 0, // Coordinates and sizes are not used,
+	WC_TOOLTIPS, WC_NONE,
+	WDF_NO_FOCUS,
+	_nested_station_build_info_widgets, lengthof(_nested_station_build_info_widgets)
+);
+
+/** Window for displaying accepted goods for a station. */
+struct StationBuildInfoWindow : public Window
+{
+	StationCoverageType sct;
+
+	static void show()
+	{
+		StationCoverageType sct;
+		if (FindWindowByClass(WC_BUILD_STATION) != NULL) sct = SCT_ALL;
+		else if (FindWindowByClass(WC_BUS_STATION) != NULL) sct = SCT_PASSENGERS_ONLY;
+		else if (FindWindowByClass(WC_TRUCK_STATION) != NULL) sct = SCT_NON_PASSENGERS_ONLY;
+		else return;
+		new StationBuildInfoWindow(sct);
+	}
+
+	StationBuildInfoWindow(StationCoverageType sct) : Window(&_station_build_info_desc)
+	{
+		this->sct = sct;
+		this->InitNested();
+
+		CLRBITS(this->flags, WF_WHITE_BORDER);
+	}
+
+	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	{
+		Point pt;
+		pt.y = GetMainViewTop();
+		pt.x = _screen.width - sm_width - FindWindowById(WC_MAIN_TOOLBAR, 0)->width;
+		return pt;
+	}
+
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	{
+		size->width  = GetStringBoundingBox(STR_STATION_BUILD_COVERAGE_AREA_TITLE).width * 2.5;
+		size->height = GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, size->width) * 2;
+
+		/* Increase slightly to have some space around the box. */
+		size->width  += 2 + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
+		size->height += 2 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+	}
+
+	virtual void DrawWidget(const Rect &r, int widget) const
+	{
+		/* There is only one widget. */
+		GfxFillRect(r.left, r.top, r.right, r.bottom, PC_BLACK);
+		GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_LIGHT_YELLOW);
+
+		int top = r.top + WD_FRAMERECT_TOP;
+		top = DrawStationCoverageAreaText(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, sct, _thd.outersize.x / TILE_SIZE / 2, false);
+		if (top - r.top <= GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, r.right - r.left) * 1.5) {
+			DrawStationCoverageAreaText(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, sct, _thd.outersize.x / TILE_SIZE / 2, true);
+		}
+	}
+};
 
 
 /** GUI for confirming building actions. */
@@ -154,6 +221,8 @@ void ShowBuildConfirmationWindow()
 	w->viewport->top += w->top - old_top;
 	w->SetDirty();
 	SetDirtyBlocks(0, 0, _screen.width, _screen.height); // I don't know what does this do, but it looks important
+
+	StationBuildInfoWindow::show();
 }
 
 /**
@@ -164,6 +233,7 @@ void HideBuildConfirmationWindow()
 	if (!BuildConfirmationWindow::shown) return;
 
 	DeleteWindowById(WC_BUILD_CONFIRMATION, 0);
+	DeleteWindowById(WC_TOOLTIPS, 0);
 }
 
 bool ConfirmationWindowShown()
