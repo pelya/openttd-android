@@ -572,6 +572,7 @@ struct GameOptionsWindow : Window {
 				_freetype.large.size = _freetype.medium.size * 16 / 12;
 				_freetype.mono.size = _freetype.medium.size;
 				ReconstructUserInterface();
+				break;
 
 			case WID_GO_GUI_ZOOM_DROPDOWN:
 				GfxClearSpriteCache();
