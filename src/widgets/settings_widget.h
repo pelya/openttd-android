@@ -23,6 +23,9 @@ enum GameOptionsWidgets {
 	WID_GO_LANG_DROPDOWN,          ///< Language dropdown.
 	WID_GO_RESOLUTION_DROPDOWN,    ///< Dropdown for the resolution.
 	WID_GO_FULLSCREEN_BUTTON,      ///< Toggle fullscreen.
+	WID_GO_8BPP_BUTTON,            ///< 8 bits per pixel video mode
+	WID_GO_16BPP_BUTTON,           ///< 16 bits per pixel video mode
+	WID_GO_32BPP_BUTTON,           ///< 32 bits per pixel video mode
 	WID_GO_BUTTON_SIZE_DROPDOWN,   ///< Size of in-game UI elements, such as buttons.
 	WID_GO_TEXT_SIZE_DROPDOWN,     ///< Size of medium font, sizes of other fonts are derived from it.
 	WID_GO_VERTICAL_TOOLBAR,       ///< Enable vertical toolbar.

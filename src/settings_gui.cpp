@@ -37,10 +37,15 @@
 #include "stringfilter_type.h"
 #include "querystring_gui.h"
 #include "fontcache.h"
+#include "settings_func.h"
 
 #include <vector>
 
 #include "safeguards.h"
+
+#ifdef __ANDROID__
+#include <SDL_android.h>
+#endif
 
 enum { MIN_BUTTON_SIZE = 10, MAX_BUTTON_SIZE = 40 };
 
@@ -482,6 +487,39 @@ struct GameOptionsWindow : Window {
 				this->SetDirty();
 				break;
 
+			case WID_GO_8BPP_BUTTON:
+				if (this->IsWidgetLowered(WID_GO_8BPP_BUTTON)) break;
+				free(_ini_blitter);
+				_ini_blitter = stredup("8bpp-optimized");
+				SaveToConfig();
+				#ifdef __ANDROID__
+				SDL_ANDROID_SetConfigOption(SDL_ANDROID_CONFIG_VIDEO_DEPTH_BPP, 16);
+				SDL_ANDROID_RestartMyself("restart-settings"); // We terminate here, no need to update widget state
+				#endif
+				break;
+
+			case WID_GO_16BPP_BUTTON:
+				if (this->IsWidgetLowered(WID_GO_16BPP_BUTTON)) break;
+				free(_ini_blitter);
+				_ini_blitter = stredup("16bpp-simple");
+				SaveToConfig();
+				#ifdef __ANDROID__
+				SDL_ANDROID_SetConfigOption(SDL_ANDROID_CONFIG_VIDEO_DEPTH_BPP, 16);
+				SDL_ANDROID_RestartMyself("restart-settings"); // We terminate here, no need to update widget state
+				#endif
+				break;
+
+			case WID_GO_32BPP_BUTTON:
+				if (this->IsWidgetLowered(WID_GO_32BPP_BUTTON)) break;
+				free(_ini_blitter);
+				_ini_blitter = stredup("32bpp-anim");
+				SaveToConfig();
+				#ifdef __ANDROID__
+				SDL_ANDROID_SetConfigOption(SDL_ANDROID_CONFIG_VIDEO_DEPTH_BPP, 24);
+				SDL_ANDROID_RestartMyself("restart-settings"); // We terminate here, no need to update widget state
+				#endif
+				break;
+
 			default: {
 				int selected;
 				DropDownList *list = this->BuildDropDownList(widget, &selected);
@@ -610,9 +648,12 @@ struct GameOptionsWindow : Window {
 	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
 	{
 		if (!gui_scope) return;
-		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
+		//this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
 		//this->SetWidgetLoweredState(WID_GO_VERTICAL_TOOLBAR, _settings_client.gui.vertical_toolbar);
 		this->SetWidgetLoweredState(WID_GO_BUILD_CONFIRMATION, _settings_client.gui.build_confirmation);
+		this->SetWidgetLoweredState(WID_GO_8BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "8bpp-optimized") == 0);
+		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == NULL || strcmp(_ini_blitter, "16bpp-simple") == 0);
+		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "32bpp-anim") == 0);
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);
@@ -645,8 +686,9 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_RESOLUTION, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_RESOLUTION_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_RESOLUTION_TOOLTIP), SetFill(1, 0), SetPadding(0, 0, 3, 0),
 					NWidget(NWID_HORIZONTAL),
-						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_GAME_OPTIONS_FULLSCREEN, STR_NULL),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_FULLSCREEN_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_8BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_8BPP, STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_16BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_16BPP, STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_32BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_24BPP, STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT),
 					EndContainer(),
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_GUI_ZOOM_FRAME, STR_NULL),
