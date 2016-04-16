@@ -280,12 +280,15 @@ static bool RailToolbar_CtrlChanged(Window *w)
 	if (w->IsWidgetDisabled(WID_RAT_REMOVE)) return false;
 
 	/* allow ctrl to switch remove mode only for these widgets */
+	// This breaks joining rail stations functionality on Android
+	/*
 	for (uint i = WID_RAT_BUILD_NS; i <= WID_RAT_BUILD_STATION; i++) {
 		if ((i <= WID_RAT_AUTORAIL || i >= WID_RAT_BUILD_WAYPOINT) && w->IsWidgetLowered(i)) {
 			ToggleRailButton_Remove(w);
 			return true;
 		}
 	}
+	*/
 
 	return false;
 }
