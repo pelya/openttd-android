@@ -4971,3 +4971,7 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Schaltflächengröße
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Schriftartgröße
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Schließe alle offene Fenster (außer Festgepinnte)
+STR_TUTORIAL_CARGO                                              :{BLACK}Warentypen

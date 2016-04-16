@@ -1220,6 +1220,12 @@ STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Font siz
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Size of all game fonts
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Confirm actions
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Show confirmation dialog when building roads and stations
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Set video color depth to 8 bits per pixel, this video mode supports water animation
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Set video color depth to 16 bits per pixel, this requires restart, this video mode does not support water animation
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Set video color depth to 24 bits per pixel, this video mode supports water animation
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}
@@ -2485,7 +2491,6 @@ STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND                  :{BLACK}Raise a 
 STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Level an area of land to the height of the first selected corner. Ctrl selects the area diagonally. Shift toggles building/showing cost estimate
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Purchase land for future use. Shift toggles building/showing cost estimate
 
-# Tablet toolbar
 STR_TABLET_CLOSE                                                :{BLACK}X
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Close all opened windows (except pinned ones)
 STR_TABLET_SHIFT                                                :{BLACK}{TINY_FONT}Shft
@@ -2706,7 +2711,6 @@ STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD version {REV}
 STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2016 The OpenTTD team
 
-#Tutorial window
 STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Tutorial videos
 STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Open a video player to watch tutorial videos
 STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Building roads and stations, buying vehicles

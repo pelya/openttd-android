@@ -33,6 +33,7 @@
 #include "tilehighlight_func.h"
 #include "hotkeys.h"
 #include "tutorial_gui.h"
+#include "gui.h"
 
 #include "saveload/saveload.h"
 
@@ -565,6 +566,12 @@ void SetupColoursAndInitialWindow()
 		case GM_MENU:
 			ShowSelectGameWindow();
 			ShowTutorialWindowOnceAfterInstall();
+			if (getenv("SDL_RESTART_PARAMS") != NULL) {
+				static int counter = 5; // This part of code is called several times during startup, which closes all windows, so we need to put random hacks here
+				counter--;
+				ShowGameOptions();
+				if (counter == 0) unsetenv("SDL_RESTART_PARAMS");
+			}
 			break;
 
 		case GM_NORMAL:
