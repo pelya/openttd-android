@@ -1717,7 +1717,7 @@ struct NetworkClientListPopupWindow : Window {
 		ClientList_Action_Proc *proc; ///< Action to execute
 	};
 
-	uint sel_index;
+	int sel_index;
 	ClientID client_id;
 	Point desired_location;
 	SmallVector<ClientListAction, 2> actions; ///< Actions to execute
@@ -1736,10 +1736,10 @@ struct NetworkClientListPopupWindow : Window {
 
 	NetworkClientListPopupWindow(WindowDesc *desc, int x, int y, ClientID client_id) :
 			Window(desc),
-			sel_index(0), client_id(client_id)
+			sel_index(-1), client_id(client_id)
 	{
-		this->desired_location.x = x;
-		this->desired_location.y = y;
+		this->desired_location.x = x - GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+		this->desired_location.y = y + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) / 2;
 
 		const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(client_id);
 
@@ -1806,24 +1806,16 @@ struct NetworkClientListPopupWindow : Window {
 		}
 	}
 
-	virtual void OnMouseLoop()
+	virtual void OnClick(Point pt, int widget, int click_count)
 	{
-		/* We selected an action */
-		uint index = (_cursor.pos.y - this->top - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+		int index = (pt.y - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 
-		if (_left_button_down) {
-			if (index == this->sel_index || index >= this->actions.Length()) return;
-
-			this->sel_index = index;
-			this->SetDirty();
-		} else {
-			if (index < this->actions.Length() && _cursor.pos.y >= this->top) {
-				const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(this->client_id);
-				if (ci != NULL) this->actions[index].proc(ci);
-			}
-
-			DeleteWindowByClass(WC_CLIENT_LIST_POPUP);
+		if (index >= 0 && index < (int)this->actions.Length()) {
+			const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(this->client_id);
+			if (ci != NULL) this->actions[index].proc(ci);
 		}
+
+		DeleteWindowByClass(WC_CLIENT_LIST_POPUP);
 	}
 };
 
@@ -1863,6 +1855,8 @@ struct NetworkClientListWindow : Window {
 
 	uint server_client_width;
 	uint line_height;
+	uint line_width;
+	enum { MAX_ROWS = 6 }; // Split the list in two if it does not fit the screen
 
 	Dimension icon_size;
 
@@ -1886,15 +1880,16 @@ struct NetworkClientListWindow : Window {
 			if (ci->client_playas != COMPANY_INACTIVE_CLIENT) num++;
 		}
 
-		num *= GetMinSizing(NWST_STEP, this->line_height);
+		int cols = 1 + (num - 1) / MAX_ROWS;
+		cols *= this->line_width;
+		num = min(num, MAX_ROWS);
+		num *= this->line_height;
 
-		int diff = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
+		int diffx = (cols + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_x);
+		int diffy = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
 		/* If height is changed */
-		if (diff != 0) {
-			ResizeWindow(this, 0, diff);
-			if (this->height + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) >= _cur_resolution.height) {
-				ResizeWindow(this, 0, _cur_resolution.height - this->height - GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL));
-			}
+		if (diffx != 0 || diffy != 0) {
+			ResizeWindow(this, diffx, diffy);
 			return false;
 		}
 		return true;
@@ -1907,6 +1902,7 @@ struct NetworkClientListWindow : Window {
 		this->server_client_width = max(GetStringBoundingBox(STR_NETWORK_SERVER).width, GetStringBoundingBox(STR_NETWORK_CLIENT).width) + WD_FRAMERECT_RIGHT;
 		this->icon_size = GetSpriteSize(SPR_COMPANY_ICON);
 		this->line_height = max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
+		this->line_height = GetMinSizing(NWST_STEP, this->line_height);
 
 		uint width = 100; // Default width
 		const NetworkClientInfo *ci;
@@ -1914,7 +1910,7 @@ struct NetworkClientListWindow : Window {
 			width = max(width, GetStringBoundingBox(ci->client_name).width);
 		}
 
-		size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->icon_size.width + WD_FRAMERECT_LEFT + width + WD_FRAMERECT_RIGHT;
+		this->line_width = this->server_client_width + this->icon_size.width + WD_FRAMERECT_LEFT + width + WD_FRAMERECT_RIGHT;
 	}
 
 	virtual void OnPaint()
@@ -1938,19 +1934,21 @@ struct NetworkClientListWindow : Window {
 		uint right = r.right - WD_FRAMERECT_RIGHT;
 		uint type_icon_width = this->server_client_width + this->icon_size.width + WD_FRAMERECT_LEFT;
 
-
-		uint type_left  = rtl ? right - this->server_client_width : left;
-		uint type_right = rtl ? right : left + this->server_client_width - 1;
-		uint icon_left  = rtl ? right - type_icon_width + WD_FRAMERECT_LEFT : left + this->server_client_width;
-		uint name_left  = rtl ? left : left + type_icon_width;
-		uint name_right = rtl ? right - type_icon_width : right;
-
 		int i = 0;
 		const NetworkClientInfo *ci;
 		FOR_ALL_CLIENT_INFOS(ci) {
+			uint type_left  = rtl ? right - this->server_client_width : left;
+			uint type_right = rtl ? right : left + this->server_client_width - 1;
+			uint icon_left  = rtl ? right - type_icon_width + WD_FRAMERECT_LEFT : left + this->server_client_width;
+			uint name_left  = rtl ? right - this->line_width : left + type_icon_width;
+			uint name_right = rtl ? right - type_icon_width : left + this->line_width;
 			TextColour colour;
 			if (this->selected_item == i++) { // Selected item, highlight it
-				GfxFillRect(r.left + 1, y, r.right - 1, y + this->line_height - 1, PC_BLACK);
+				if (rtl) {
+					GfxFillRect(right - this->line_width, y, right + WD_FRAMERECT_RIGHT - 1, y + this->line_height - 1, PC_BLACK);
+				} else {
+					GfxFillRect(left - WD_FRAMERECT_LEFT + 1, y, left + this->line_width, y + this->line_height - 1, PC_BLACK);
+				}
 				colour = TC_WHITE;
 			} else {
 				colour = TC_BLACK;
@@ -1968,6 +1966,14 @@ struct NetworkClientListWindow : Window {
 			DrawString(name_left, name_right, y + text_offset, ci->client_name, colour);
 
 			y += line_height;
+			if (i % MAX_ROWS == 0 && i > 1) {
+				y = r.top + WD_FRAMERECT_TOP;
+				if (rtl) {
+					right -= this->line_width;
+				} else {
+					left += this->line_width;
+				}
+			}
 		}
 	}
 
@@ -2000,7 +2006,7 @@ struct NetworkClientListWindow : Window {
 		pt.y -= this->GetWidget<NWidgetBase>(WID_CL_PANEL)->pos_y;
 		int item = -1;
 		if (IsInsideMM(pt.y, WD_FRAMERECT_TOP, this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y - WD_FRAMERECT_BOTTOM)) {
-			item = (pt.y - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, this->line_height);
+			item = (pt.y - WD_FRAMERECT_TOP) / this->line_height + ((pt.x - WD_FRAMERECT_LEFT) / this->line_width) * MAX_ROWS;
 		}
 
 		/* It did not change.. no update! */
