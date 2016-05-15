@@ -1837,7 +1837,7 @@ static const NWidgetPart _nested_client_list_widgets[] = {
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_NETWORK_COMPANY_LIST_CLIENT_LIST, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_GREY, WID_CL_PANEL), SetMinimalSize(250, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM), SetResize(1, 1), EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_CL_PANEL), SetMinimalSize(100, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM), SetResize(1, 1), EndContainer(),
 };
 
 static WindowDesc _client_list_desc(
@@ -1888,7 +1888,7 @@ struct NetworkClientListWindow : Window {
 		int diffx = (cols + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_x);
 		int diffy = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
 		/* If height is changed */
-		if (diffx != 0 || diffy != 0) {
+		if (diffx > 0 || diffy != 0) { // Width can only grow, also title bar can be wider than content
 			ResizeWindow(this, diffx, diffy);
 			return false;
 		}
