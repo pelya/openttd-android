@@ -3174,17 +3174,6 @@ place_mouseup:
 	return ES_HANDLED;
 }
 
-void ConfirmPlacingObject()
-{
-	Window *w = _thd.GetCallbackWnd();
-	if (w == NULL) {
-		ResetObjectToPlace();
-		return;
-	}
-
-	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
-}
-
 /**
  * Change the cursor and mouse click/drag handling to a mode for performing special operations like tile area selection, object placement, etc.
  * @param icon New shape of the mouse cursor.
@@ -3201,6 +3190,20 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
 
 static WindowClass _last_selected_window_class;
 static WindowNumber _last_selected_window_number;
+
+/** Place object from the build confirmation dialog */
+void ConfirmPlacingObject()
+{
+	Window *w = _thd.GetCallbackWnd();
+	if (w == NULL) {
+		ResetObjectToPlace();
+		return;
+	}
+
+	_last_selected_window_class = _thd.window_class;
+	_last_selected_window_number = _thd.window_number;
+	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
+}
 
 /**
  * Change the cursor and mouse click/drag handling to a mode for performing special operations like tile area selection, object placement, etc.
