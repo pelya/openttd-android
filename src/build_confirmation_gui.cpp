@@ -222,7 +222,9 @@ void ShowBuildConfirmationWindow()
 	w->SetDirty();
 	SetDirtyBlocks(0, 0, _screen.width, _screen.height); // I don't know what does this do, but it looks important
 
-	StationBuildInfoWindow::show();
+	if (_settings_client.gui.station_show_coverage) {
+		StationBuildInfoWindow::show();
+	}
 }
 
 /**

@@ -295,8 +295,8 @@ struct GameOptionsWindow : Window {
 				}
 				break;
 
-			case WID_GO_BUTTON_SIZE_DROPDOWN: // Setup screenshot format dropdown
-			case WID_GO_TEXT_SIZE_DROPDOWN: // Setup screenshot format dropdown
+			case WID_GO_BUTTON_SIZE_DROPDOWN: // Dropdowns for size of all GUI elements and fonts
+			case WID_GO_TEXT_SIZE_DROPDOWN:
 				list = new DropDownList();
 				*selected_index = (widget == WID_GO_BUTTON_SIZE_DROPDOWN) ?
 									_settings_client.gui.min_button :
