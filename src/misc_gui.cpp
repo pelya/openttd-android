@@ -26,6 +26,7 @@
 #include "core/geometry_func.hpp"
 #include "newgrf_debug.h"
 #include "zoom_func.h"
+#include "build_confirmation_func.h"
 
 #include "widgets/misc_widget.h"
 
@@ -529,6 +530,10 @@ void ShowAboutWindow()
  */
 void ShowEstimatedCostOrIncome(Money cost, int x, int y)
 {
+	if (ConfirmationWindowEstimatingCost()) {
+		ConfirmationWindowSetEstimatedCost(cost);
+		return;
+	}
 	StringID msg = STR_MESSAGE_ESTIMATED_COST;
 
 	if (cost < 0) {

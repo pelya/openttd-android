@@ -21,5 +21,7 @@ void ShowBuildConfirmationWindow();
 void HideBuildConfirmationWindow();
 bool ConfirmationWindowShown();
 bool BuildConfirmationWindowProcessViewportClick();
+bool ConfirmationWindowEstimatingCost();
+void ConfirmationWindowSetEstimatedCost(Money cost);
 
 #endif /* BUILD_CONFIRMATION_FUNC_H */
