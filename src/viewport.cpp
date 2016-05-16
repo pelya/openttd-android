@@ -3151,7 +3151,7 @@ EventState VpHandlePlaceSizingDrag()
 		return ES_HANDLED;
 	}
 
-	ShowBuildConfirmationWindow(); // This will also remember tile selection, so it's okay for the4 code below
+	ShowBuildConfirmationWindow(); // This will also remember tile selection, so it's okay for the code below to change selection
 
 	/* mouse button released..
 	 * keep the selected tool, but reset it to the original mode. */
@@ -3177,7 +3177,10 @@ place_mouseup:
 void ConfirmPlacingObject()
 {
 	Window *w = _thd.GetCallbackWnd();
-	if (w == NULL) ResetObjectToPlace();
+	if (w == NULL) {
+		ResetObjectToPlace();
+		return;
+	}
 
 	w->OnPlaceMouseUp(_thd.select_method, _thd.select_proc, _thd.selend, TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y));
 }

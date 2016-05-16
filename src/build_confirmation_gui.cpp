@@ -29,34 +29,38 @@
 
 #include "safeguards.h"
 
-static const NWidgetPart _nested_station_build_info_widgets[] = {
+static const NWidgetPart _nested_build_info_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_TT_BACKGROUND), SetMinimalSize(200, 32), EndContainer(),
 };
 
-static WindowDesc _station_build_info_desc(
+static WindowDesc _build_info_desc(
 	WDP_MANUAL, NULL, 0, 0, // Coordinates and sizes are not used,
 	WC_TOOLTIPS, WC_NONE,
 	WDF_NO_FOCUS,
-	_nested_station_build_info_widgets, lengthof(_nested_station_build_info_widgets)
+	_nested_build_info_widgets, lengthof(_nested_build_info_widgets)
 );
 
 /** Window for displaying accepted goods for a station. */
-struct StationBuildInfoWindow : public Window
+struct BuildInfoWindow : public Window
 {
 	StationCoverageType sct;
+	bool station;
+	static Money cost;
 
 	static void show()
 	{
-		StationCoverageType sct;
+		bool station = _settings_client.gui.station_show_coverage; // Station info is inaccurate when station coverage area option is disabled
+		StationCoverageType sct = SCT_ALL;
 		if (FindWindowByClass(WC_BUILD_STATION) != NULL) sct = SCT_ALL;
 		else if (FindWindowByClass(WC_BUS_STATION) != NULL) sct = SCT_PASSENGERS_ONLY;
 		else if (FindWindowByClass(WC_TRUCK_STATION) != NULL) sct = SCT_NON_PASSENGERS_ONLY;
-		else return;
-		new StationBuildInfoWindow(sct);
+		else station = false;
+		new BuildInfoWindow(station, sct);
 	}
 
-	StationBuildInfoWindow(StationCoverageType sct) : Window(&_station_build_info_desc)
+	BuildInfoWindow(bool station, StationCoverageType sct) : Window(&_build_info_desc)
 	{
+		this->station = station;
 		this->sct = sct;
 		this->InitNested();
 
@@ -74,7 +78,7 @@ struct StationBuildInfoWindow : public Window
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
 	{
 		size->width  = GetStringBoundingBox(STR_STATION_BUILD_COVERAGE_AREA_TITLE).width * 2.5;
-		size->height = GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, size->width) * 2;
+		size->height = GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, size->width) * (this->station ? 3 : 1);
 
 		/* Increase slightly to have some space around the box. */
 		size->width  += 2 + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
@@ -88,6 +92,17 @@ struct StationBuildInfoWindow : public Window
 		GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_LIGHT_YELLOW);
 
 		int top = r.top + WD_FRAMERECT_TOP;
+		Money cost = BuildInfoWindow::cost;
+		StringID msg = STR_MESSAGE_ESTIMATED_COST;
+		SetDParam(0, cost);
+		if (cost < 0) {
+			msg = STR_MESSAGE_ESTIMATED_INCOME;
+			SetDParam(0, -cost);
+		}
+		top = DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, INT32_MAX, msg);
+
+		if (!this->station) return;
+
 		top = DrawStationCoverageAreaText(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, sct, _thd.outersize.x / TILE_SIZE / 2, false);
 		if (top - r.top <= GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, r.right - r.left) * 1.5) {
 			DrawStationCoverageAreaText(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, sct, _thd.outersize.x / TILE_SIZE / 2, true);
@@ -95,12 +110,14 @@ struct StationBuildInfoWindow : public Window
 	}
 };
 
+Money BuildInfoWindow::cost = 0;
 
 /** GUI for confirming building actions. */
 struct BuildConfirmationWindow : Window {
 
 	// TODO: show estimated price
 	static bool shown;   ///< Just to speed up window hiding, HideBuildConfirmationWindow() is called very often.
+	static bool estimating_cost; ///< Calculate action cost instead of executing action.
 	Point selstart;      ///< The selection start on the viewport.
 	Point selend;        ///< The selection end on the viewport.
 
@@ -128,6 +145,17 @@ struct BuildConfirmationWindow : Window {
 		this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
 
 		BuildConfirmationWindow::shown = true;
+		BuildConfirmationWindow::estimating_cost = true;
+		ConfirmationWindowSetEstimatedCost(0); // Clear old value, just in case
+		// This is a hack - we invoke the build command with estimating_cost flag, which is equal to _shift_pressed,
+		// then we select last build tool, restore viewport selection, and hide all windows, which pop up when command is invoked,
+		// and all that just to get cost estimate value.
+		ConfirmPlacingObject();
+		ToolbarSelectLastTool();
+		_thd.selstart = selstart;
+		_thd.selend = selend;
+		BuildConfirmationWindow::estimating_cost = false;
+		MoveAllWindowsOffScreen();
 	}
 
 	~BuildConfirmationWindow()
@@ -184,6 +212,7 @@ struct BuildConfirmationWindow : Window {
 };
 
 bool BuildConfirmationWindow::shown = false;
+bool BuildConfirmationWindow::estimating_cost = false;
 
 static const NWidgetPart _nested_build_confirmation_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_BC_PANEL),
@@ -203,6 +232,8 @@ static WindowDesc _build_confirmation_desc(
 */
 void ShowBuildConfirmationWindow()
 {
+	if (ConfirmationWindowEstimatingCost()) return; // Special case, ignore recursive call
+
 	HideBuildConfirmationWindow();
 
 	if (!_settings_client.gui.build_confirmation || _shift_pressed) {
@@ -222,16 +253,16 @@ void ShowBuildConfirmationWindow()
 	w->SetDirty();
 	SetDirtyBlocks(0, 0, _screen.width, _screen.height); // I don't know what does this do, but it looks important
 
-	if (_settings_client.gui.station_show_coverage) {
-		StationBuildInfoWindow::show();
-	}
+	BuildInfoWindow::show();
 }
 
 /**
- * Destory build confirmation window, this does not cancel current action
+ * Destroy build confirmation window, this does not cancel current action
 */
 void HideBuildConfirmationWindow()
 {
+	if (ConfirmationWindowEstimatingCost()) return; // Special case, ignore recursive call
+
 	if (!BuildConfirmationWindow::shown) return;
 
 	DeleteWindowById(WC_BUILD_CONFIRMATION, 0);
@@ -261,4 +292,14 @@ bool BuildConfirmationWindowProcessViewportClick()
 	_thd.new_outersize = _thd.outersize; // Revert station catchment area highlight, which is getting set to zero inside drawing funcs
 
 	return false;
+}
+
+bool ConfirmationWindowEstimatingCost()
+{
+	return BuildConfirmationWindow::estimating_cost;
+}
+
+void ConfirmationWindowSetEstimatedCost(Money cost)
+{
+	BuildInfoWindow::cost = cost;
 }
