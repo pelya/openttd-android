@@ -298,6 +298,8 @@ static bool RoadToolbar_CtrlChanged(Window *w)
 /** Road toolbar window handler. */
 struct BuildRoadToolbarWindow : Window {
 	int last_started_action; ///< Last started user action.
+	bool last_started_action_remove; ///< Use bulldozer button with last action
+	bool last_started_action_oneway; ///< Use 'one way road' button with last action
 
 	BuildRoadToolbarWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
 	{
@@ -309,6 +311,8 @@ struct BuildRoadToolbarWindow : Window {
 
 		this->OnInvalidateData();
 		this->last_started_action = WIDGET_LIST_END;
+		this->last_started_action_remove = false;
+		this->last_started_action_oneway = false;
 
 		if (_settings_client.gui.link_terraform_toolbar) ShowTerraformToolbar(this);
 	}
@@ -557,6 +561,9 @@ struct BuildRoadToolbarWindow : Window {
 		Point dummy = {0, 0};
 		this->RaiseWidget(this->last_started_action);
 		this->OnClick(dummy, this->last_started_action, 0);
+		if (this->last_started_action_remove) ToggleRoadButton_Remove(this);
+		if (this->last_started_action_oneway) this->LowerWidget(WID_ROT_ONE_WAY);
+		_one_way_button_clicked = this->last_started_action_oneway;
 	}
 
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
@@ -609,6 +616,8 @@ struct BuildRoadToolbarWindow : Window {
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
 	{
 		if (pt.x != -1) {
+			this->last_started_action_remove = _remove_button_clicked;
+			this->last_started_action_oneway = _one_way_button_clicked;
 			switch (select_proc) {
 				default: NOT_REACHED();
 				case DDSP_BUILD_BRIDGE:
