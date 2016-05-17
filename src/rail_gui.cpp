@@ -37,6 +37,7 @@
 
 #include "station_map.h"
 #include "tunnelbridge_map.h"
+#include "build_confirmation_func.h"
 
 #include "widgets/rail_widget.h"
 
@@ -775,7 +776,7 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_RAIL);
 		DeleteWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
 		DeleteWindowById(WC_SELECT_STATION, 0);
-		DeleteWindowByClass(WC_BUILD_BRIDGE);
+		if (!ConfirmationWindowShown()) DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
 	virtual void SelectLastTool()
