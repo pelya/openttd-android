@@ -397,6 +397,7 @@ static void HandleAutoSignalPlacement()
 struct BuildRailToolbarWindow : Window {
 	RailType railtype;    ///< Rail type to build.
 	int last_user_action; ///< Last started user action.
+	bool last_user_action_remove; ///< Use bulldozer button with last action
 
 	BuildRailToolbarWindow(WindowDesc *desc, RailType railtype) : Window(desc)
 	{
@@ -404,6 +405,7 @@ struct BuildRailToolbarWindow : Window {
 		this->SetupRailToolbar(railtype);
 		this->DisableWidget(WID_RAT_REMOVE);
 		this->last_user_action = WIDGET_LIST_END;
+		this->last_user_action_remove = false;
 
 		if (_settings_client.gui.link_terraform_toolbar) ShowTerraformToolbar(this);
 	}
@@ -677,6 +679,7 @@ struct BuildRailToolbarWindow : Window {
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
 	{
 		if (pt.x != -1) {
+			this->last_user_action_remove = _remove_button_clicked;
 			switch (select_proc) {
 				default: NOT_REACHED();
 				case DDSP_PLACE_AUTOROAD:
@@ -783,6 +786,7 @@ struct BuildRailToolbarWindow : Window {
 		Point dummy = {0, 0};
 		this->RaiseWidget(this->last_user_action);
 		this->OnClick(dummy, this->last_user_action, 0);
+		if (this->last_user_action_remove) BuildRailClick_Remove(this);
 	}
 
 	virtual void OnPlacePresize(Point pt, TileIndex tile_from)
