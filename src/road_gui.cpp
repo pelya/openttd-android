@@ -29,6 +29,7 @@
 #include "hotkeys.h"
 #include "road_gui.h"
 #include "zoom_func.h"
+#include "build_confirmation_func.h"
 
 #include "widgets/road_widget.h"
 
@@ -550,7 +551,7 @@ struct BuildRoadToolbarWindow : Window {
 		DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
 		DeleteWindowById(WC_SELECT_STATION, 0);
-		DeleteWindowByClass(WC_BUILD_BRIDGE);
+		if (!ConfirmationWindowShown()) DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
 	virtual void SelectLastTool()

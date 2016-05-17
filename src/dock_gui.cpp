@@ -290,7 +290,6 @@ struct BuildDocksToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
 		DeleteWindowById(WC_SELECT_STATION, 0);
-		DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
 	virtual void SelectLastTool()
