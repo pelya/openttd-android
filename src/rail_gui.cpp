@@ -1102,8 +1102,8 @@ public:
 					d = maxdim(d, GetStringBoundingBox(StationClass::Get((StationClassID)i)->name));
 				}
 				size->width = max(size->width, d.width + padding.width);
-				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				size->height = 5 * this->line_height;
+				this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				size->height = 3 * this->line_height;
 				resize->height = this->line_height;
 				break;
 			}
@@ -1145,6 +1145,13 @@ public:
 			case WID_BRAS_MATRIX:
 				fill->height = 1;
 				resize->height = 1;
+				break;
+
+			case WID_BRAS_NEWST_SPACER:
+				size->height = 0;
+				if (_railstation.newstations) {
+					size->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				}
 				break;
 		}
 	}
@@ -1188,7 +1195,8 @@ public:
 				for (uint i = 0; i < StationClass::GetClassCount(); i++) {
 					if (i == STAT_CLASS_WAYP) continue;
 					if (this->vscroll->IsVisible(statclass)) {
-						DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT, row * this->line_height + r.top + WD_MATRIX_TOP,
+						DrawString(r.left + WD_MATRIX_LEFT, r.right - WD_MATRIX_RIGHT,
+								Center(row * this->line_height + r.top, this->line_height),
 								StationClass::Get((StationClassID)i)->name,
 								(StationClassID)i == _railstation.station_class ? TC_WHITE : TC_BLACK);
 						row++;
@@ -1438,12 +1446,22 @@ static const NWidgetPart _nested_station_builder_widgets[] = {
 						NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_BRAS_NEWST_SCROLL),
 					EndContainer(),
 				EndContainer(),
-				NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(144, 11), SetDataTip(STR_STATION_BUILD_ORIENTATION, STR_NULL), SetPadding(1, 2, 0, 2),
 				NWidget(NWID_HORIZONTAL),
+					NWidget(NWID_VERTICAL),
+						NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(144, 11), SetDataTip(STR_STATION_BUILD_ORIENTATION, STR_NULL), SetPadding(1, 2, 0, 2),
+						NWidget(NWID_HORIZONTAL),
+							NWidget(NWID_SPACER), SetMinimalSize(7, 0), SetFill(1, 0),
+							NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAS_PLATFORM_DIR_X), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 60), SetFill(0, 0), SetDataTip(0x0, STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP), EndContainer(),
+							NWidget(NWID_SPACER), SetMinimalSize(7, 0), SetFill(1, 0),
+							NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAS_PLATFORM_DIR_Y), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 60), SetFill(0, 0), SetDataTip(0x0, STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP), EndContainer(),
+							NWidget(NWID_SPACER), SetMinimalSize(7, 0), SetFill(1, 0),
+						EndContainer(),
+					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(7, 0), SetFill(1, 0),
-					NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAS_PLATFORM_DIR_X), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 60), SetFill(0, 0), SetDataTip(0x0, STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP), EndContainer(),
-					NWidget(NWID_SPACER), SetMinimalSize(2, 0), SetFill(1, 0),
-					NWidget(WWT_PANEL, COLOUR_GREY, WID_BRAS_PLATFORM_DIR_Y), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 60), SetFill(0, 0), SetDataTip(0x0, STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP), EndContainer(),
+					NWidget(NWID_VERTICAL),
+						NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(0, 1),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BRAS_PLATFORM_DRAG_N_DROP), SetMinimalSize(75, 12), SetDataTip(STR_STATION_BUILD_DRAG_DROP, STR_STATION_BUILD_DRAG_DROP_TOOLTIP),
+					EndContainer(),
 					NWidget(NWID_SPACER), SetMinimalSize(7, 0), SetFill(1, 0),
 				EndContainer(),
 				NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BRAS_SHOW_NEWST_TYPE), SetMinimalSize(144, 11), SetDataTip(STR_ORANGE_STRING, STR_NULL), SetPadding(1, 2, 4, 2),
@@ -1473,11 +1491,6 @@ static const NWidgetPart _nested_station_builder_widgets[] = {
 				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 				NWidget(NWID_HORIZONTAL),
-					NWidget(NWID_HORIZONTAL),
-						NWidget(NWID_SPACER), SetMinimalSize(2, 0), SetFill(1, 0),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BRAS_PLATFORM_DRAG_N_DROP), SetMinimalSize(75, 12), SetDataTip(STR_STATION_BUILD_DRAG_DROP, STR_STATION_BUILD_DRAG_DROP_TOOLTIP),
-						NWidget(NWID_SPACER), SetMinimalSize(2, 0), SetFill(1, 0),
-					EndContainer(),
 					NWidget(NWID_VERTICAL),
 						NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(144, 11), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL), SetPadding(3, 2, 0, 2),
 						NWidget(NWID_HORIZONTAL),
@@ -1494,15 +1507,20 @@ static const NWidgetPart _nested_station_builder_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BRAS_SHOW_NEWST_MATRIX),
 				/* We need an additional background for the matrix, as the matrix cannot handle the scrollbar due to not being an NWidgetCore. */
-				NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetScrollbar(WID_BRAS_MATRIX_SCROLL),
-					NWidget(NWID_HORIZONTAL),
-						NWidget(NWID_MATRIX, COLOUR_DARK_GREEN, WID_BRAS_MATRIX), SetScrollbar(WID_BRAS_MATRIX_SCROLL), SetPIP(0, 2, 0), SetPadding(2, 0, 0, 0),
-							NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BRAS_IMAGE), SetMinimalSize(66, 60),
-									SetFill(0, 0), SetResize(0, 0), SetDataTip(0x0, STR_STATION_BUILD_STATION_TYPE_TOOLTIP), SetScrollbar(WID_BRAS_MATRIX_SCROLL),
+				NWidget(NWID_VERTICAL),
+					NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetScrollbar(WID_BRAS_MATRIX_SCROLL),
+						NWidget(NWID_HORIZONTAL),
+							NWidget(NWID_MATRIX, COLOUR_DARK_GREEN, WID_BRAS_MATRIX), SetScrollbar(WID_BRAS_MATRIX_SCROLL), SetPIP(0, 2, 0), SetPadding(2, 0, 0, 0),
+								NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BRAS_IMAGE), SetMinimalSize(66, 60),
+										SetFill(0, 0), SetResize(0, 0), SetDataTip(0x0, STR_STATION_BUILD_STATION_TYPE_TOOLTIP), SetScrollbar(WID_BRAS_MATRIX_SCROLL),
+								EndContainer(),
 							EndContainer(),
+							NWidget(NWID_VSCROLLBAR, COLOUR_DARK_GREEN, WID_BRAS_MATRIX_SCROLL),
 						EndContainer(),
-						NWidget(NWID_VSCROLLBAR, COLOUR_DARK_GREEN, WID_BRAS_MATRIX_SCROLL),
 					EndContainer(),
+					NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BRAS_NEWST_SPACER), SetDataTip(STR_EMPTY, STR_NULL),
+					NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetDataTip(STR_EMPTY, STR_NULL),
+					NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetDataTip(STR_EMPTY, STR_NULL),
 				EndContainer(),
 			EndContainer(),
 		EndContainer(),
