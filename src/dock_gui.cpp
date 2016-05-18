@@ -27,6 +27,7 @@
 #include "hotkeys.h"
 #include "gui.h"
 #include "zoom_func.h"
+#include "build_confirmation_func.h"
 
 #include "widgets/dock_widget.h"
 
@@ -287,6 +288,7 @@ struct BuildDocksToolbarWindow : Window {
 		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 
+		if (ConfirmationWindowShown()) return;
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
 		DeleteWindowById(WC_SELECT_STATION, 0);

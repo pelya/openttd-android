@@ -1443,7 +1443,8 @@ void Window::InitializeData(WindowNumber window_number)
 	if (this->window_class != WC_BUILD_CONFIRMATION &&
 		this->window_class != WC_TOOLTIPS &&
 		this->window_class != WC_NEWS_WINDOW &&
-		this->window_class != WC_BUILD_BRIDGE) {
+		this->window_class != WC_BUILD_BRIDGE &&
+		this->window_class != WC_SELECT_STATION) {
 		HideBuildConfirmationWindow();
 	}
 
