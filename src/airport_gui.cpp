@@ -29,6 +29,7 @@
 #include "vehicle_func.h"
 #include "gui.h"
 #include "command_func.h"
+#include "build_confirmation_func.h"
 
 #include "widgets/airport_widget.h"
 
@@ -157,8 +158,10 @@ struct BuildAirToolbarWindow : Window {
 	{
 		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
-		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
-		DeleteWindowById(WC_SELECT_STATION, 0);
+		if (!ConfirmationWindowShown()) {
+			DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
+			DeleteWindowById(WC_SELECT_STATION, 0);
+		}
 		ResetObjectToPlace();
 	}
 

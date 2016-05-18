@@ -547,11 +547,12 @@ struct BuildRoadToolbarWindow : Window {
 		this->SetWidgetDirty(WID_ROT_REMOVE);
 		this->SetWidgetDirty(WID_ROT_ONE_WAY);
 
+		if (ConfirmationWindowShown()) return;
 		DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
 		DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
 		DeleteWindowById(WC_SELECT_STATION, 0);
-		if (!ConfirmationWindowShown()) DeleteWindowByClass(WC_BUILD_BRIDGE);
+		DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
 	virtual void SelectLastTool()
