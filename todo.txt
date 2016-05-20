@@ -1,6 +1,4 @@
 
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
-- Multiplayer client list is too small again.
-
 - Selecting bigger font size crashes the game.
