@@ -645,8 +645,6 @@ static WindowDesc _tool_tips_desc(
 	_nested_tooltips_widgets, lengthof(_nested_tooltips_widgets)
 );
 
-uint _tooltip_width = 194;
-
 /** Window for displaying a tooltip. */
 struct TooltipsWindow : public Window
 {
@@ -687,6 +685,15 @@ struct TooltipsWindow : public Window
 		if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.offs.y - 5, scr_bot) - sm_height;
 		pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
 
+		// Move it to the top of the screen, away from mouse cursor, so it won't steal screen taps on Android
+		pt.y = GetMainViewTop();
+		pt.x = _cursor.pos.x > _screen.width / 2 ?
+				FindWindowById(WC_MAIN_TOOLBAR, 0)->width :
+				_screen.width - sm_width - FindWindowById(WC_MAIN_TOOLBAR, 0)->width;
+		if (_cursor.pos.y > pt.y + GetMinSizing(NWST_STEP)) {
+			pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
+		}
+
 		return pt;
 	}
 
@@ -695,7 +702,7 @@ struct TooltipsWindow : public Window
 		/* There is only one widget. */
 		for (uint i = 0; i != this->paramcount; i++) SetDParam(i, this->params[i]);
 
-		size->width  = min(GetStringBoundingBox(this->string_id).width, ScaleGUITrad(194));
+		size->width  = min(GetStringBoundingBox(this->string_id).width, ScaleGUITrad(250));
 		size->height = GetStringHeight(this->string_id, size->width);
 
 		/* Increase slightly to have some space around the box. */

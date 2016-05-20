@@ -1891,9 +1891,6 @@ void CheckWindowMinSizings()
 {
 	SETTING_BUTTON_HEIGHT = max<int>(GetMinSizing(NWST_STEP) - 10, 10);
 	SETTING_BUTTON_WIDTH  = 2 * SETTING_BUTTON_HEIGHT;
-
-	extern uint _tooltip_width;
-	_tooltip_width = max<uint>(194, 10 * RescaleFrom854x480(_settings_client.gui.min_button));
 }
 
 /**
