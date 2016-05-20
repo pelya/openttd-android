@@ -238,7 +238,6 @@ void ShowBuildConfirmationWindow()
 
 	if (!_settings_client.gui.build_confirmation || _shift_pressed) {
 		ConfirmPlacingObject();
-		ToolbarSelectLastTool();
 		return;
 	}
 
