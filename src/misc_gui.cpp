@@ -687,11 +687,8 @@ struct TooltipsWindow : public Window
 
 		// Move it to the top of the screen, away from mouse cursor, so it won't steal screen taps on Android
 		pt.y = GetMainViewTop();
-		pt.x = _cursor.pos.x > _screen.width / 2 ?
-				FindWindowById(WC_MAIN_TOOLBAR, 0)->width :
-				_screen.width - sm_width - FindWindowById(WC_MAIN_TOOLBAR, 0)->width;
-		if (_cursor.pos.y > pt.y + GetMinSizing(NWST_STEP)) {
-			pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
+		if (_cursor.pos.y < pt.y + GetMinSizing(NWST_STEP)) {
+			pt.x = _cursor.pos.x > _screen.width / 2 ? GetMinSizing(NWST_STEP) : _screen.width - sm_width - GetMinSizing(NWST_STEP);
 		}
 
 		return pt;
