@@ -1889,7 +1889,7 @@ struct NetworkClientListWindow : Window {
 		int diffy = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
 		/* If height is changed */
 		if (diffx > 0 || diffy != 0) { // Width can only grow, also title bar can be wider than content
-			ResizeWindow(this, diffx, diffy);
+			ResizeWindow(this, diffx, diffy, false);
 			return false;
 		}
 		return true;
