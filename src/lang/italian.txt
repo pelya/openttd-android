@@ -5000,3 +5000,33 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
+STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Istruzioni
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Mostrare la legenda della mappa / descrizione dei simboli sulla mappa
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Barra di strumenti verticale
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}La barra di strumenti principale è divisa in due barre verticali su lati della schermata
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Dimensioni dei pulsanti
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Dimensioni di elementi d'interfaccia
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Dimensioni di caratteri
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Dimensioni di caratteri nel gioco
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Conferma d'azioni
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Mostrare il dialogo di conferma durante la costruzione di strade e stazioni
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Impostare i colori a 8 bit per pixel, questa modalità di video supporta l'animazione dell'acqua
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Impostare i colori a 16 bit per pixel, richiede riavvio, questa modalità di video non supporta l'animazione dell'acqua
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Impostare i colori a 24 bit per pixel, questa modalità di video supporta l'animazione dell'acqua
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Chiudere tutte le schermate aperte (eccetto quelle fissate)
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Premere tasto per l'estimazione di costi per eseguire l'azione desiderata
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Usare per azioni che usano il tasto "CTRL"
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Video istruzionali
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Aprire il lettore video per guardare i video istruzionali
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Costruzione di strade e stazioni, l'acquisto di veicoli
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Ferrovie e treni
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Veicoli stradali
+STR_TUTORIAL_SHIPS                                              :{BLACK}Navi e attracchi
+STR_TUTORIAL_CARGO                                              :{BLACK}Tipi di merce
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Caricare dalla rete
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Caricare il gioco dalla memoria di rete
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Salvare sulla rete
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Salvare il gioco nella memoria di rete
