@@ -1063,7 +1063,7 @@ SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 	//this->SetWidgetLoweredState(WID_SM_SHOW_HEIGHT, _smallmap_show_heightmap);
 
 	this->SetWidgetLoweredState(WID_SM_TOGGLETOWNNAME, this->show_towns);
-	this->SetWidgetLoweredState(WID_SM_SHOW_LEGEND, this->show_legend);
+	//this->SetWidgetLoweredState(WID_SM_SHOW_LEGEND, this->show_legend);
 
 	this->SetupWidgetData();
 
@@ -1770,8 +1770,8 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 			NWidget(NWID_HORIZONTAL),
 				/* Top button row. */
 				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_SHOW_LEGEND),
-							SetDataTip(SPR_IMG_QUERY, STR_SMALLMAP_TOOLTIP_SHOW_LEGEND), SetFill(1, 1),
+					//NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_SHOW_LEGEND),
+					//		SetDataTip(SPR_IMG_QUERY, STR_SMALLMAP_TOOLTIP_SHOW_LEGEND), SetFill(1, 1),
 					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_ZOOM_IN),
 							SetDataTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN), SetFill(1, 1),
 					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_ZOOM_OUT),
