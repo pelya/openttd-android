@@ -288,7 +288,7 @@ struct BuildDocksToolbarWindow : Window {
 		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 
-		if (ConfirmationWindowShown()) return;
+		if (ConfirmationWindowShown() && _ctrl_pressed) return;
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
 		DeleteWindowById(WC_SELECT_STATION, 0);

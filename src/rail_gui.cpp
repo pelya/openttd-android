@@ -771,7 +771,7 @@ struct BuildRailToolbarWindow : Window {
 		this->DisableWidget(WID_RAT_REMOVE);
 		this->SetWidgetDirty(WID_RAT_REMOVE);
 
-		if (ConfirmationWindowShown()) return;
+		if (ConfirmationWindowShown() && (this->last_user_action == WID_RAT_BUILD_BRIDGE || _ctrl_pressed)) return;
 		DeleteWindowById(WC_BUILD_SIGNAL, TRANSPORT_RAIL);
 		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_RAIL);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_RAIL);
@@ -935,7 +935,6 @@ static void HandleStationPlacement(TileIndex start, TileIndex end)
 	uint32 p2 = _railstation.station_class | _railstation.station_type << 8 | INVALID_STATION << 16;
 
 	CommandContainer cmdcont = { ta.tile, p1, p2, CMD_BUILD_RAIL_STATION | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION), CcStation, "" };
-	printf("Rail station ctrl pressed %d\n", _ctrl_pressed);
 	ShowSelectStationIfNeeded(cmdcont, ta);
 }
 
