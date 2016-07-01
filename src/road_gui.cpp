@@ -547,7 +547,7 @@ struct BuildRoadToolbarWindow : Window {
 		this->SetWidgetDirty(WID_ROT_REMOVE);
 		this->SetWidgetDirty(WID_ROT_ONE_WAY);
 
-		if (ConfirmationWindowShown()) return;
+		if (ConfirmationWindowShown() && (this->last_started_action == WID_ROT_BUILD_BRIDGE || _ctrl_pressed)) return;
 		DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
 		DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
