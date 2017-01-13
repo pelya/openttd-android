@@ -2,5 +2,3 @@
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
 - Smallmap UI won't fit all FIRS industries.
-
-- Opening tutorial video crashes the app.

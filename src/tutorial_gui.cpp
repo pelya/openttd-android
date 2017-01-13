@@ -134,36 +134,38 @@ static WindowDesc _tutorial_desc(
 struct TutorialWindow : public Window {
 	VideoLink_t *video;
 	int counter;
+
 	TutorialWindow() : Window(&_tutorial_desc)
 	{
 		this->InitNested(WN_GAME_OPTIONS_ABOUT);
-		video = NULL;
-		counter = 0;
+		this->video = NULL;
+		this->counter = 0;
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		showTutorialMainMenu = false;
-		counter = 5;
+		this->counter = 5;
 		this->LowerWidget(widget);
 		this->SetDirty();
 		switch (widget) {
 			case WID_STL_BUS:
-				video = busTutorial;
+				this->video = busTutorial;
 				break;
 			case WID_STL_TRUCK:
-				video = truckTutorial;
+				this->video = truckTutorial;
 				break;
 			case WID_STL_TRAIN:
-				video = trainTutorial;
+				this->video = trainTutorial;
 				break;
 			case WID_STL_SHIP:
-				video = shipTutorial;
+				this->video = shipTutorial;
 				break;
-			case WID_STL_AIRPLANE:
-				break;
+			//case WID_STL_AIRPLANE:
+			//	this->video = planeTutorial;
+			//	break;
 			case WID_STL_FACILALL:
-				video = cargoTutorial;
+				this->video = cargoTutorial;
 				break;
 		}
 	}
@@ -172,20 +174,21 @@ struct TutorialWindow : public Window {
 	{
 		// Open video with delay, to make visual feedback of button pressing,
 		// because youtube app freezes a screen for a second before launching.
-		if (counter > 0) {
-			counter--;
-			if (counter == 0) {
-				if (video) {
-					OpenExternTutorialVideo(video);
-				}
-				video = NULL;
+		if (this->counter > 0) {
+			this->counter--;
+			if (counter == 1) {
 				this->RaiseWidget(WID_STL_BUS);
 				this->RaiseWidget(WID_STL_TRUCK);
 				this->RaiseWidget(WID_STL_TRAIN);
 				this->RaiseWidget(WID_STL_SHIP);
-				this->RaiseWidget(WID_STL_AIRPLANE);
+				//this->RaiseWidget(WID_STL_AIRPLANE);
 				this->RaiseWidget(WID_STL_FACILALL);
 				this->SetDirty();
+			}
+			if (counter == 0) {
+				if (video) {
+					OpenExternTutorialVideo(video);
+				}
 			}
 		}
 	}
