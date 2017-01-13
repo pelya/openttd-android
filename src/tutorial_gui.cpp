@@ -176,7 +176,7 @@ struct TutorialWindow : public Window {
 		// because youtube app freezes a screen for a second before launching.
 		if (this->counter > 0) {
 			this->counter--;
-			if (counter == 1) {
+			if (this->counter == 1) {
 				this->RaiseWidget(WID_STL_BUS);
 				this->RaiseWidget(WID_STL_TRUCK);
 				this->RaiseWidget(WID_STL_TRAIN);
@@ -185,9 +185,10 @@ struct TutorialWindow : public Window {
 				this->RaiseWidget(WID_STL_FACILALL);
 				this->SetDirty();
 			}
-			if (counter == 0) {
-				if (video) {
-					OpenExternTutorialVideo(video);
+			if (this->counter == 0) {
+				if (this->video) {
+					OpenExternTutorialVideo(this->video);
+					this->video = NULL;
 				}
 			}
 		}
