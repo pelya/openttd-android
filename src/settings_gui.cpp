@@ -187,6 +187,7 @@ struct GameOptionsWindow : Window {
 	{
 		DeleteWindowById(WC_CUSTOM_CURRENCY, 0);
 		if (this->reload) _switch_mode = SM_MENU;
+		SaveToConfig(); // save all settins immediately on Android, because users tend to kill the app instead of pressing 'Quit' button
 	}
 
 	/**
@@ -1929,6 +1930,11 @@ struct GameSettingsWindow : Window {
 		this->SetFocusedWidget(WID_GS_FILTER);
 
 		this->InvalidateData();
+	}
+
+	~GameSettingsWindow()
+	{
+		SaveToConfig(); // save all settins immediately on Android, because users tend to kill the app instead of pressing 'Quit' button
 	}
 
 	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
