@@ -6,3 +6,13 @@
 - Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), and fix double-backspace bug in SDL.
 
 - Put mouse cursor in the middle between touch points when zooming in and out.
+
+- Option to remove all window titles.
+
+- Move and resize all windows with two-finger gestures.
+
+- Windows can cover status bar.
+
+- Close news window by flicking it sideways.
+
+- Default button size set to 48, update vertical toolbar buttons.
