@@ -47,7 +47,7 @@
 #include <SDL_android.h>
 #endif
 
-enum { MIN_BUTTON_SIZE = 10, MAX_BUTTON_SIZE = 40 };
+enum { MIN_BUTTON_SIZE = 10, MAX_BUTTON_SIZE = 100 };
 
 static const StringID _driveside_dropdown[] = {
 	STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT,
