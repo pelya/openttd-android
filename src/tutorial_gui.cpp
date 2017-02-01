@@ -92,7 +92,12 @@ void OpenExternTutorialVideo(VideoLink_t *tutorial)
 #ifdef __ANDROID__
 	SDL_ANDROID_OpenExternalWebBrowser(link);
 #else
-	char cmd[PATH_MAX] = "xdg-open ";
+	char cmd[PATH_MAX] =
+#ifdef WIN32
+		"start ";
+#else
+		"xdg-open ";
+#endif
 	strcat(cmd, link);
 	system(cmd);
 #endif
