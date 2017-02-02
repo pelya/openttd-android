@@ -570,7 +570,9 @@ void SetupColoursAndInitialWindow()
 				static int counter = 5; // This part of code is called several times during startup, which closes all windows, so we need to put random hacks here
 				counter--;
 				ShowGameOptions();
+#ifndef WIN32
 				if (counter == 0) unsetenv("SDL_RESTART_PARAMS");
+#endif
 			}
 			break;
 
