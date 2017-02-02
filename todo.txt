@@ -16,3 +16,6 @@
 - Close news window by flicking it sideways.
 
 - Default button size set to 48, update vertical toolbar buttons.
+
+- Remove Shift key from toolbar, it's not needed anymore.
+
