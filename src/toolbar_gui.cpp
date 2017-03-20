@@ -1878,6 +1878,7 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 
 	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
 	{
+		// Some rather artistic button arrangement, I'm proud of myself
 		static const byte arrange_left_classic[] = {
 			WID_TN_DELETE,
 			WID_TN_CTRL,
@@ -1892,7 +1893,6 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_TOWNS,
 			WID_TN_SUBSIDIES,
 		};
-		// Some rather artistic button arrangement, I'm proud of myself
 		static const byte arrange_right_classic[] = {
 			WID_TN_SWITCH_BAR,
 			WID_TN_RAILS,
@@ -1921,6 +1921,8 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_HELP,
 		};
 
+		// Ultra-compact arrangement, ultra-huge buttons.
+		// No WID_TN_SHIFT, WID_TN_STORY, WID_TN_GOAL, and WID_TN_LEAGUE buttons.
 		static const byte arrange_left_compact[] = {
 			WID_TN_DELETE,
 			WID_TN_CTRL,
@@ -1932,7 +1934,6 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_SAVE,
 			WID_TN_SMALL_MAP,
 			WID_TN_TOWNS,
-			WID_TN_SUBSIDIES,
 		};
 		static const byte arrange_right_compact[] = {
 			WID_TN_SWITCH_BAR,
@@ -1945,22 +1946,55 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_ROADVEHS,
 			WID_TN_SHIPS,
 			WID_TN_AIRCRAFTS,
-			WID_TN_HELP,
 
 			WID_TN_SWITCH_BAR,
+			WID_TN_SUBSIDIES,
 			WID_TN_STATIONS,
 			WID_TN_FINANCES,
 			WID_TN_COMPANIES,
-			WID_TN_STORY,
-			WID_TN_GOAL,
 			WID_TN_GRAPHS,
-			WID_TN_LEAGUE,
 			WID_TN_INDUSTRIES,
 			WID_TN_MUSIC_SOUND,
 			WID_TN_MESSAGES,
+			WID_TN_HELP,
 		};
 
-		// Full-length toolbar without switch button, if enough space
+		// Full-length toolbar without switch button.
+		// No WID_TN_SHIFT, WID_TN_STORY, WID_TN_GOAL, and WID_TN_LEAGUE buttons.
+		static const byte arrange_left_almost_all[] = {
+			WID_TN_DELETE,
+			WID_TN_CTRL,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+		};
+		static const byte arrange_right_almost_all[] = {
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_LANDSCAPE,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP
+		};
+
+		// Full-length toolbar without switch button, all buttons are included.
 		static const byte arrange_left_all[] = {
 			WID_TN_DELETE,
 			WID_TN_CTRL,

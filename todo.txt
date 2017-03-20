@@ -7,11 +7,11 @@
 
 - Put mouse cursor in the middle between touch points when zooming in and out.
 
-- Option to remove all window titles.
+- Remove all window titles.
 
-- Move and resize all windows with two-finger gestures.
+- Move windows by dragging past window edge, close windows by moving them to toolbar.
 
-- Windows can cover status bar.
+- Windows should cover status bar and news window.
 
 - Close news window by flicking it sideways.
 
