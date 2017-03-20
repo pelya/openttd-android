@@ -1880,19 +1880,83 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 	{
 		// TODO: replace with WID_TN_XXX
 		static const byte arrange_left[] = {
-			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,
+			WID_TN_DELETE,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
 		};
 		// Some rather artistic button arrangement, I'm proud of myself
 		static const byte arrange_right[] = {
-			29, 21, 22, 23, 24, 25,  7,  8,  9, 12, 14, 28,
-			29, 15, 16, 17, 18, 13,  7, 10, 11, 26, 27, 28,
+			WID_TN_SWITCH_BAR,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_HELP,
+
+			WID_TN_SWITCH_BAR,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_LEAGUE,
+			WID_TN_STATIONS,
+			WID_TN_STORY,
+			WID_TN_GOAL,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
 		};
 		// Full-length toolbar without switch button, if enough space
 		static const byte arrange_left_all[] = {
-			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 13,
+			WID_TN_DELETE,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_STORY,
 		};
 		static const byte arrange_right_all[] = {
-			10, 11, 12, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_LANDSCAPE,
+			WID_TN_GOAL,
+			WID_TN_GRAPHS,
+			WID_TN_LEAGUE,
+			WID_TN_INDUSTRIES,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP
 		};
 
 		spacer_count = 0;
