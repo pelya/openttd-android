@@ -1878,8 +1878,7 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 
 	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
 	{
-		// TODO: replace with WID_TN_XXX
-		static const byte arrange_left[] = {
+		static const byte arrange_left_classic[] = {
 			WID_TN_DELETE,
 			WID_TN_CTRL,
 			WID_TN_SHIFT,
@@ -1894,7 +1893,7 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_SUBSIDIES,
 		};
 		// Some rather artistic button arrangement, I'm proud of myself
-		static const byte arrange_right[] = {
+		static const byte arrange_right_classic[] = {
 			WID_TN_SWITCH_BAR,
 			WID_TN_RAILS,
 			WID_TN_ROADS,
@@ -1921,6 +1920,46 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
 		};
+
+		static const byte arrange_left_compact[] = {
+			WID_TN_DELETE,
+			WID_TN_CTRL,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+		};
+		static const byte arrange_right_compact[] = {
+			WID_TN_SWITCH_BAR,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_HELP,
+
+			WID_TN_SWITCH_BAR,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_STORY,
+			WID_TN_GOAL,
+			WID_TN_GRAPHS,
+			WID_TN_LEAGUE,
+			WID_TN_INDUSTRIES,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+		};
+
 		// Full-length toolbar without switch button, if enough space
 		static const byte arrange_left_all[] = {
 			WID_TN_DELETE,
@@ -1971,11 +2010,11 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 		}
 
 		if (side == 0) {
-			button_count = arrangable_count = lengthof(arrange_left);
-			return arrange_left;
+			button_count = arrangable_count = lengthof(arrange_left_classic);
+			return arrange_left_classic;
 		}
-		button_count = arrangable_count = lengthof(arrange_right) / 2;
-		return &arrange_right[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
+		button_count = arrangable_count = lengthof(arrange_right_classic) / 2;
+		return &arrange_right_classic[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
 	}
 };
 
