@@ -462,7 +462,7 @@ struct NetworkChatWindow : public Window {
 
 	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
 	{
-		Point pt = { GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) * 2, _screen.height - sm_height - FindWindowById(WC_STATUS_BAR, 0)->height };
+		Point pt = { (int)GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) * 2, _screen.height - sm_height - FindWindowById(WC_STATUS_BAR, 0)->height };
 		return pt;
 	}
 
