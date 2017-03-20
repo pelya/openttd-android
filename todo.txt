@@ -18,3 +18,7 @@
 - Default button size set to 48, update vertical toolbar buttons.
 
 - Tooltip window steals touches.
+
+- Move chat window outside of the vertical toolbar.
+
+- Add dedicated 'Chat all' button to the 'Companies' menu.
