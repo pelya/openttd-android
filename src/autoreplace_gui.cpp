@@ -252,7 +252,7 @@ public:
 			case WID_RV_LEFT_MATRIX:
 			case WID_RV_RIGHT_MATRIX:
 				resize->height = GetEngineListHeight((VehicleType)this->window_number);
-				size->height = (widget == WID_RV_RIGHT_MATRIX ? 3 : 4) * resize->height;
+				size->height = (widget == WID_RV_LEFT_MATRIX ? 3 : 4) * resize->height;
 				break;
 
 			case WID_RV_LEFT_DETAILS:
@@ -601,6 +601,11 @@ static const NWidgetPart _nested_replace_rail_vehicle_widgets[] = {
 	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
 		NWidget(NWID_VERTICAL),
 			NWidget(NWID_HORIZONTAL),
+				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_TRAIN_RAILTYPE_DROPDOWN), SetMinimalSize(136, 12), SetDataTip(0x0, STR_REPLACE_HELP_RAILTYPE), SetFill(1, 0), SetResize(1, 0),
+				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_TRAIN_ENGINEWAGON_DROPDOWN), SetDataTip(STR_BLACK_STRING, STR_REPLACE_ENGINE_WAGON_SELECT_HELP),
+			EndContainer(),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_RV_TRAIN_WAGONREMOVE_TOGGLE), SetMinimalSize(138, 12), SetDataTip(STR_REPLACE_REMOVE_WAGON, STR_REPLACE_REMOVE_WAGON_HELP), SetFill(1, 0), SetResize(1, 0),
+			NWidget(NWID_HORIZONTAL),
 				NWidget(WWT_MATRIX, COLOUR_GREY, WID_RV_LEFT_MATRIX), SetMinimalSize(216, 0), SetFill(1, 1), SetMatrixDataTip(1, 0, STR_REPLACE_HELP_LEFT_ARRAY), SetResize(1, 1), SetScrollbar(WID_RV_LEFT_SCROLLBAR),
 				NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_RV_LEFT_SCROLLBAR),
 			EndContainer(),
@@ -618,9 +623,6 @@ static const NWidgetPart _nested_replace_rail_vehicle_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_VERTICAL),
 				NWidget(WWT_PANEL, COLOUR_GREY, WID_RV_RIGHT_DETAILS), SetMinimalSize(240, 122), SetResize(1, 0), EndContainer(),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_RV_TRAIN_WAGONREMOVE_TOGGLE), SetMinimalSize(138, 12), SetDataTip(STR_REPLACE_REMOVE_WAGON, STR_REPLACE_REMOVE_WAGON_HELP), SetFill(1, 0), SetResize(1, 0),
-				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_TRAIN_RAILTYPE_DROPDOWN), SetMinimalSize(136, 12), SetDataTip(0x0, STR_REPLACE_HELP_RAILTYPE), SetFill(1, 0), SetResize(1, 0),
-				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_RV_TRAIN_ENGINEWAGON_DROPDOWN), SetDataTip(STR_BLACK_STRING, STR_REPLACE_ENGINE_WAGON_SELECT_HELP),
 			EndContainer(),
 		EndContainer(),
 	EndContainer(),

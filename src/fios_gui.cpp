@@ -303,7 +303,7 @@ public:
 		this->FinishInitNested(0);
 
 		this->LowerWidget(WID_SL_DRIVES_DIRECTORIES_LIST);
-		if (mode == SLD_SAVE_GAME) this->SetWidgetLoweredState(WID_SL_SAVE_NETWORK_BUTTON, _settings_client.gui.save_to_network);
+		if (this->fop == SLO_SAVE) this->SetWidgetLoweredState(WID_SL_SAVE_NETWORK_BUTTON, _settings_client.gui.save_to_network);
 
 		/* pause is only used in single-player, non-editor mode, non-menu mode. It
 		 * will be unpaused in the WE_DESTROY event handler. */
@@ -662,14 +662,8 @@ public:
 					}
 #endif
 					_load_check_data.Clear();
-					SaveOrLoadResult res = SaveOrLoad(savePath, SL_LOAD_CHECK, SAVE_DIR, false);
-					if (res == SL_OK && !_load_check_data.HasErrors()) {
-						strecpy(_file_to_saveload.name, savePath, lastof(_file_to_saveload.name));
-						strecpy(_file_to_saveload.title, "", lastof(_file_to_saveload.title));
-						if (!_load_check_data.HasNewGrfs() || _load_check_data.grf_compatibility != GLC_NOT_FOUND || _settings_client.gui.UserIsAllowedToChangeNewGRFs()) {
-							_switch_mode = (_game_mode == GM_EDITOR) ? SM_LOAD_SCENARIO : SM_LOAD_GAME;
-						}
-					}
+					SaveOrLoad(savePath, SLO_CHECK, DFT_GAME_FILE, NO_DIRECTORY, false);
+					this->InvalidateData(1);
 					break;
 				}
 		}
