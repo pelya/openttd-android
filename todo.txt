@@ -11,8 +11,6 @@
 
 - Move windows by dragging past window edge, close windows by moving them to toolbar.
 
-- Windows should cover status bar and news window.
-
 - Close news window by flicking it sideways.
 
 - Default button size set to 48, update vertical toolbar buttons.
