@@ -1295,7 +1295,6 @@ static uint GetWindowZPriority(const Window *w)
 
 		case WC_MAIN_TOOLBAR:
 		case WC_MAIN_TOOLBAR_RIGHT:
-		case WC_STATUS_BAR:
 			++z_priority;
 
 		case WC_OSK:
@@ -1326,10 +1325,13 @@ static uint GetWindowZPriority(const Window *w)
 		case WC_CONSOLE:
 			++z_priority;
 
-		case WC_NEWS_WINDOW:
+		default:
 			++z_priority;
 
-		default:
+		case WC_STATUS_BAR:
+			++z_priority;
+
+		case WC_NEWS_WINDOW:
 			++z_priority;
 
 		case WC_MAIN_WINDOW:
