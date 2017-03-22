@@ -475,17 +475,19 @@ struct GameOptionsWindow : Window {
 				this->SetDirty();
 				break;
 
-			case WID_GO_VERTICAL_TOOLBAR:
-				_settings_client.gui.vertical_toolbar = !_settings_client.gui.vertical_toolbar;
-				this->SetWidgetLoweredState(WID_GO_VERTICAL_TOOLBAR, _settings_client.gui.vertical_toolbar);
+			case WID_GO_WINDOWS_TITLEBARS:
+				_settings_client.gui.windows_titlebars = !_settings_client.gui.windows_titlebars;
+				this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
 				this->SetDirty();
+				if (_settings_client.gui.min_button == 48 && _settings_client.gui.windows_titlebars) {
+					_settings_client.gui.min_button = 40;
+					_settings_client.gui.min_step = 40;
+				}
+				if (_settings_client.gui.min_button == 40 && !_settings_client.gui.windows_titlebars) {
+					_settings_client.gui.min_button = 48;
+					_settings_client.gui.min_step = 48;
+				}
 				ReconstructUserInterface();
-				break;
-
-			case WID_GO_BUILD_CONFIRMATION:
-				_settings_client.gui.build_confirmation = !_settings_client.gui.build_confirmation;
-				this->SetWidgetLoweredState(WID_GO_BUILD_CONFIRMATION, _settings_client.gui.build_confirmation);
-				this->SetDirty();
 				break;
 
 			case WID_GO_8BPP_BUTTON:
@@ -649,9 +651,7 @@ struct GameOptionsWindow : Window {
 	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
 	{
 		if (!gui_scope) return;
-		//this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
-		//this->SetWidgetLoweredState(WID_GO_VERTICAL_TOOLBAR, _settings_client.gui.vertical_toolbar);
-		this->SetWidgetLoweredState(WID_GO_BUILD_CONFIRMATION, _settings_client.gui.build_confirmation);
+		this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
 		this->SetWidgetLoweredState(WID_GO_8BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "8bpp-optimized") == 0);
 		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == NULL || strcmp(_ini_blitter, "16bpp-simple") == 0);
 		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "32bpp-anim") == 0);
@@ -697,10 +697,8 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY),
 					NWidget(NWID_HORIZONTAL),
-						//NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_VERTICAL_TOOLBAR, STR_NULL),
-						//NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_VERTICAL_TOOLBAR), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT),
-						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_BUILD_CONFIRMATION, STR_NULL),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_BUILD_CONFIRMATION), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_WINDOWS_TITLEBARS, STR_NULL),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_WINDOWS_TITLEBARS), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT),
 					EndContainer(),
 				EndContainer(),
 			EndContainer(),
@@ -1651,6 +1649,8 @@ static SettingsContainer &GetSettingsTree()
 
 			interface->Add(new SettingEntry("gui.autosave"));
 			interface->Add(new SettingEntry("gui.vertical_toolbar"));
+			interface->Add(new SettingEntry("gui.build_confirmation"));
+			interface->Add(new SettingEntry("gui.windows_titlebars"));
 			interface->Add(new SettingEntry("gui.toolbar_pos"));
 			interface->Add(new SettingEntry("gui.statusbar_pos"));
 			interface->Add(new SettingEntry("gui.prefer_teamchat"));
