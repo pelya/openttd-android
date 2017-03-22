@@ -79,6 +79,7 @@ struct GUISettings {
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
 	bool   vertical_toolbar;                 ///< main toolbar is split into two vertical toolbars
 	bool   build_confirmation;               ///< show confirmation dialog when building roads and stations
+	bool   windows_titlebars;                ///< show or hide titlebars for all windows to increase scrren space
 	uint   min_button;                       ///< min size of most button widgets
 	uint   min_step;                         ///< min size of scrollbar/dropdown elements
 	bool   show_finances;                    ///< show finances at end of year
