@@ -24,6 +24,7 @@
 #include "sortlist_type.h"
 #include "stringfilter_type.h"
 #include "string_func.h"
+#include "settings_type.h"
 #include "core/geometry_func.hpp"
 #include "hotkeys.h"
 #include "transparency.h"
@@ -274,6 +275,7 @@ struct SignListWindow : Window, SignList {
 			}
 
 			case WID_SIL_CAPTION:
+				if (!_settings_client.gui.windows_titlebars) break;
 				SetDParamMaxValue(0, Sign::GetPoolSize(), 3);
 				*size = GetStringBoundingBox(STR_SIGN_LIST_CAPTION);
 				size->height += padding.height;
