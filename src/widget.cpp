@@ -2112,17 +2112,6 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 
 	if (this->sizing_type == NWST_NONE) {
 		switch (tp) {
-			case WWT_CAPTION:
-			case WWT_STICKYBOX:
-			case WWT_SHADEBOX:
-			case WWT_DEFSIZEBOX:
-			case WWT_CLOSEBOX:
-				if (!_settings_client.gui.windows_titlebars) {
-					this->sizing_type = NWST_OVERRIDE;
-					this->SetMinimalSize(0, 0);
-					this->SetFill(0, 0);
-					return;
-				}
 			case WWT_PUSHBTN:
 			case WWT_IMGBTN:
 			case WWT_PUSHIMGBTN:
@@ -2132,8 +2121,13 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 			case WWT_TEXTBTN_2:
 			case WWT_PUSHARROWBTN:
 			case WWT_EDITBOX:
+			case WWT_CAPTION:
+			case WWT_STICKYBOX:
+			case WWT_SHADEBOX:
 			case WWT_DEBUGBOX:
+			case WWT_DEFSIZEBOX:
 			case WWT_RESIZEBOX:
+			case WWT_CLOSEBOX:
 				this->sizing_type = NWST_BUTTON;
 				this->SetMinimalSize(8, 8);
 				break;
@@ -2241,9 +2235,13 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 	const Dimension *padding = NULL;
 	if (!_settings_client.gui.windows_titlebars && w->window_class != WC_NEWS_WINDOW &&
 		(this->type == WWT_CAPTION || this->type == WWT_STICKYBOX || this->type == WWT_SHADEBOX ||
-		this->type == WWT_DEFSIZEBOX || this->type == WWT_CLOSEBOX)) {
+		this->type == WWT_DEFSIZEBOX || this->type == WWT_CLOSEBOX || this->type == WWT_DEBUGBOX)) {
 		static const Dimension extra = {0, 0};
 		padding = &extra;
+		this->sizing_type = NWST_OVERRIDE;
+		size = extra;
+		fill = extra;
+		resize = extra;
 	} else switch (this->type) {
 		case WWT_EMPTY: {
 			static const Dimension extra = {0, 0};
