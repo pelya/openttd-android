@@ -2112,6 +2112,17 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 
 	if (this->sizing_type == NWST_NONE) {
 		switch (tp) {
+			case WWT_CAPTION:
+			case WWT_STICKYBOX:
+			case WWT_SHADEBOX:
+			case WWT_DEFSIZEBOX:
+			case WWT_CLOSEBOX:
+				if (!_settings_client.gui.windows_titlebars) {
+					this->sizing_type = NWST_OVERRIDE;
+					this->SetMinimalSize(0, 0);
+					this->SetFill(0, 0);
+					return;
+				}
 			case WWT_PUSHBTN:
 			case WWT_IMGBTN:
 			case WWT_PUSHIMGBTN:
@@ -2121,13 +2132,8 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 			case WWT_TEXTBTN_2:
 			case WWT_PUSHARROWBTN:
 			case WWT_EDITBOX:
-			case WWT_CAPTION:
-			case WWT_STICKYBOX:
-			case WWT_SHADEBOX:
 			case WWT_DEBUGBOX:
-			case WWT_DEFSIZEBOX:
 			case WWT_RESIZEBOX:
-			case WWT_CLOSEBOX:
 				this->sizing_type = NWST_BUTTON;
 				this->SetMinimalSize(8, 8);
 				break;
@@ -2245,6 +2251,11 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			break;
 		}
 		case WWT_SHADEBOX: {
+			if (!_settings_client.gui.windows_titlebars) {
+				static const Dimension extra = {0, 0};
+				padding = &extra;
+				break;
+			}
 			static const Dimension extra = {WD_SHADEBOX_LEFT + WD_SHADEBOX_RIGHT, WD_SHADEBOX_TOP + WD_SHADEBOX_BOTTOM};
 			padding = &extra;
 			if (NWidgetLeaf::shadebox_dimension.width == 0) {
@@ -2274,6 +2285,11 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			break;
 
 		case WWT_STICKYBOX: {
+			if (!_settings_client.gui.windows_titlebars) {
+				static const Dimension extra = {0, 0};
+				padding = &extra;
+				break;
+			}
 			static const Dimension extra = {WD_STICKYBOX_LEFT + WD_STICKYBOX_RIGHT, WD_STICKYBOX_TOP + WD_STICKYBOX_BOTTOM};
 			padding = &extra;
 			if (NWidgetLeaf::stickybox_dimension.width == 0) {
@@ -2286,6 +2302,11 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 		}
 
 		case WWT_DEFSIZEBOX: {
+			if (!_settings_client.gui.windows_titlebars) {
+				static const Dimension extra = {0, 0};
+				padding = &extra;
+				break;
+			}
 			static const Dimension extra = {WD_DEFSIZEBOX_LEFT + WD_DEFSIZEBOX_RIGHT, WD_DEFSIZEBOX_TOP + WD_DEFSIZEBOX_BOTTOM};
 			padding = &extra;
 			if (NWidgetLeaf::defsizebox_dimension.width == 0) {
@@ -2344,6 +2365,11 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 		}
 
 		case WWT_CLOSEBOX: {
+			if (!_settings_client.gui.windows_titlebars) {
+				static const Dimension extra = {0, 0};
+				padding = &extra;
+				break;
+			}
 			static const Dimension extra = {WD_CLOSEBOX_LEFT + WD_CLOSEBOX_RIGHT, WD_CLOSEBOX_TOP + WD_CLOSEBOX_BOTTOM};
 			padding = &extra;
 			if (NWidgetLeaf::closebox_dimension.width == 0) {
@@ -2375,6 +2401,11 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			break;
 		}
 		case WWT_CAPTION: {
+			if (!_settings_client.gui.windows_titlebars) {
+				static const Dimension extra = {0, 0};
+				padding = &extra;
+				break;
+			}
 			static const Dimension extra = {WD_CAPTIONTEXT_LEFT + WD_CAPTIONTEXT_RIGHT, WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM};
 			padding = &extra;
 			if (this->index >= 0) w->SetStringParameters(this->index);
