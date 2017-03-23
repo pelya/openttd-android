@@ -200,8 +200,8 @@ struct TimetableWindow : Window {
 				/* FALL THROUGH */
 			case WID_VT_ARRIVAL_DEPARTURE_SELECTION:
 			case WID_VT_TIMETABLE_PANEL:
-				resize->height = FONT_HEIGHT_NORMAL;
-				size->height = WD_FRAMERECT_TOP + 8 * resize->height + WD_FRAMERECT_BOTTOM;
+				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				size->height = WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM;
 				break;
 
 			case WID_VT_SUMMARY_PANEL:
@@ -212,7 +212,8 @@ struct TimetableWindow : Window {
 
 	int GetOrderFromTimetableWndPt(int y, const Vehicle *v)
 	{
-		int sel = (y - this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->pos_y - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
+		int line_height = this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->resize_y;
+		int sel = (y - this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->pos_y - WD_FRAMERECT_TOP) / line_height;
 
 		if ((uint)sel >= this->vscroll->GetCapacity()) return INVALID_ORDER;
 
@@ -355,7 +356,8 @@ struct TimetableWindow : Window {
 
 		switch (widget) {
 			case WID_VT_TIMETABLE_PANEL: {
-				int y = r.top + WD_FRAMERECT_TOP;
+				int line_height = this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->resize_y;
+				int y = Center(r.top + WD_FRAMERECT_TOP, line_height);
 				int i = this->vscroll->GetPosition();
 				VehicleOrderID order_id = (i + 1) / 2;
 				bool final_order = false;
@@ -413,7 +415,7 @@ struct TimetableWindow : Window {
 					}
 
 					i++;
-					y += FONT_HEIGHT_NORMAL;
+					y += line_height;
 				}
 				break;
 			}
@@ -431,7 +433,8 @@ struct TimetableWindow : Window {
 
 				VehicleOrderID earlyID = BuildArrivalDepartureList(v, arr_dep) ? cur_order : (VehicleOrderID)INVALID_VEH_ORDER_ID;
 
-				int y = r.top + WD_FRAMERECT_TOP;
+				int line_height = this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->resize_y;
+				int y = Center(r.top + WD_FRAMERECT_TOP, line_height);
 
 				bool show_late = this->show_expected && v->lateness_counter > DAY_TICKS;
 				Ticks offset = show_late ? 0 : -v->lateness_counter;
@@ -466,7 +469,7 @@ struct TimetableWindow : Window {
 									show_late ? TC_RED : i == selected ? TC_WHITE : TC_BLACK);
 						}
 					}
-					y += FONT_HEIGHT_NORMAL;
+					y += line_height;
 				}
 				break;
 			}
