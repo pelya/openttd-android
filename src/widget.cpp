@@ -2242,6 +2242,10 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 		size = extra;
 		fill = extra;
 		resize = extra;
+		if (this->type == WWT_CAPTION) {
+			fill.width = 1;
+			resize.width = 1;
+		}
 	} else switch (this->type) {
 		case WWT_EMPTY: {
 			static const Dimension extra = {0, 0};
