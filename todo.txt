@@ -3,20 +3,16 @@
 
 - Smallmap UI won't fit all FIRS industries.
 
-- Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), and fix double-backspace bug in SDL.
+- Add dedicated 'Chat all' button to the 'Companies' menu.
 
 - Put mouse cursor in the middle between touch points when zooming in and out.
 
-- Remove all window titles.
-
-- Move windows by dragging past window edge, close windows by moving them to toolbar.
-
-- Close news window by flicking it sideways.
-
-- Default button size set to 48, update vertical toolbar buttons.
-
-- Tooltip window steals touches.
-
 - Move chat window outside of the vertical toolbar.
 
-- Add dedicated 'Chat all' button to the 'Companies' menu.
+- Misclicking station from orders dialog should hide the dialog for 3 times.
+
+- Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), and fix double-backspace bug in SDL.
+
+- Tooltip window steals touches, move tooltip window back to the top of the mouse cursor.
+
+- Move windows by dragging past window edge, close windows by moving them to toolbar.
