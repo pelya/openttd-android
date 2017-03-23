@@ -16,3 +16,7 @@
 - Tooltip window steals touches, move tooltip window back to the top of the mouse cursor.
 
 - Move windows by dragging past window edge, close windows by moving them to toolbar.
+
+- Graph window is too wide.
+
+- Timetable window is not finger-friendly.

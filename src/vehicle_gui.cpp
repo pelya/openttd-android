@@ -2654,8 +2654,8 @@ public:
 		int image_left = (rtl ? text_right + 1 : r.left) + WD_IMGBTN_LEFT;
 		int image = ((v->vehstatus & VS_STOPPED) != 0) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING;
 		int lowered = this->IsWidgetLowered(WID_VV_START_STOP) ? 1 : 0;
-		DrawSprite(image, PAL_NONE, image_left + lowered, r.top + WD_IMGBTN_TOP + lowered);
-		DrawString(text_left + lowered, text_right + lowered, r.top + WD_FRAMERECT_TOP + lowered, str, TC_FROMSTRING, SA_HOR_CENTER);
+		DrawSprite(image, PAL_NONE, image_left + lowered, Center(r.top, r.bottom - r.top) + WD_IMGBTN_TOP + lowered);
+		DrawString(text_left + lowered, text_right + lowered, Center(r.top, r.bottom - r.top) + lowered, str, TC_FROMSTRING, SA_HOR_CENTER);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
