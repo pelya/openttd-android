@@ -3,11 +3,9 @@
 
 - Smallmap UI won't fit all FIRS industries.
 
-- Add dedicated 'Chat all' button to the 'Companies' menu.
+- 'New game' dialog is broken again.
 
 - Put mouse cursor in the middle between touch points when zooming in and out.
-
-- Move chat window outside of the vertical toolbar.
 
 - Misclicking station from orders dialog should hide the dialog for 3 times.
 

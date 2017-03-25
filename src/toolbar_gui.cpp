@@ -216,6 +216,7 @@ static const int CTMN_CLIENT_LIST = -1; ///< Show the client list
 static const int CTMN_NEW_COMPANY = -2; ///< Create a new company
 static const int CTMN_SPECTATE    = -3; ///< Become spectator
 static const int CTMN_SPECTATOR   = -4; ///< Show a company window as spectator
+static const int CTMN_SPEAK_ALL   = -5; ///< Send message to public chat
 
 /**
  * Pop up a generic company list menu.
@@ -237,6 +238,7 @@ static void PopupMainCompanyToolbMenu(Window *w, int widget, int grey = 0, bool 
 
 		if (include_spectator) {
 			if (widget == WID_TN_COMPANIES) {
+				*list->Append() = new DropDownListStringItem(STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL, CTMN_SPEAK_ALL, false);
 				if (_local_company == COMPANY_SPECTATOR) {
 					*list->Append() = new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_NEW_COMPANY, CTMN_NEW_COMPANY, NetworkMaxCompaniesReached());
 				} else {
@@ -635,6 +637,10 @@ static CallBackFunction MenuClickCompany(int index)
 				} else {
 					NetworkClientRequestMove(COMPANY_SPECTATOR);
 				}
+				return CBF_NONE;
+
+			case CTMN_SPEAK_ALL:
+				ShowNetworkChatQueryWindow(DESTTYPE_BROADCAST, 0);
 				return CBF_NONE;
 		}
 	}
