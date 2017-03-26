@@ -3,16 +3,14 @@
 
 - Smallmap UI won't fit all FIRS industries.
 
-- 'New game' dialog is broken again.
-
 - Put mouse cursor in the middle between touch points when zooming in and out.
 
 - Misclicking station from orders dialog should hide the dialog for 3 times.
 
+- Draggable combo boxes.
+
+- 'New game' dialog is broken again.
+
 - Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), and fix double-backspace bug in SDL.
 
 - Tooltip window steals touches, move tooltip window back to the top of the mouse cursor.
-
-- Move windows by dragging past window edge, close windows by moving them to toolbar.
-
-- Draggable combo boxes.
