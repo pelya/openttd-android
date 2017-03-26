@@ -59,6 +59,7 @@ enum ViewportAutoscrolling {
 static bool _dragging_window; ///< A window is being dragged or resized.
 static Point _drag_delta; ///< delta between mouse cursor and upper left corner of dragged window
 static Point _left_button_down_pos; ///< Position of left mouse button down event, to handle the difference between click and drag
+static bool _dragging_widget; ///< A widget inside the window is being dragged, prevent the window itself from being dragged
 static Window *_mouseover_last_w = NULL; ///< Window of the last #MOUSEOVER event.
 static Window *_last_scroll_window = NULL; ///< Window of the last scroll event.
 
@@ -677,12 +678,23 @@ static void ChangeFocusedWindow(Window *w, int x, int y)
 		focused_widget_changed |= w->SetFocusedWidget(widget_index);
 	}
 
-	if (widget_type == WWT_RESIZEBOX) {
-		// Special case - resize button does not wait for button-up event to start processing
-		/* When the resize widget is on the left size of the window
-		 * we assume that that button is used to resize to the left. */
-		StartWindowSizing(w, (int)nw->pos_x < (w->width / 2));
-		nw->SetDirty(w);
+	// Special cases for scrollable widgets and resize button
+	switch (widget_type) {
+		case NWID_VSCROLLBAR:
+		case NWID_HSCROLLBAR:
+			_dragging_widget = true;
+			ScrollbarClickHandler(w, nw, x, y);
+			break;
+
+		case WWT_RESIZEBOX:
+			/* When the resize widget is on the left size of the window
+			 * we assume that that button is used to resize to the left. */
+			StartWindowSizing(w, (int)nw->pos_x < (w->width / 2));
+			nw->SetDirty(w);
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -717,11 +729,6 @@ static void SendLeftClickEventToWindow(Window *w, int x, int y, int click_count)
 	Point pt = { x, y };
 
 	switch (widget_type) {
-		case NWID_VSCROLLBAR:
-		case NWID_HSCROLLBAR:
-			ScrollbarClickHandler(w, nw, x, y);
-			break;
-
 		case WWT_EDITBOX: {
 			QueryString *query = w->GetQueryString(widget_index);
 			if (query != NULL) query->ClickEditBox(w, pt, widget_index, click_count, focused_widget_changed);
@@ -828,6 +835,7 @@ static void DispatchLeftButtonUpEvent(Window *w, int x, int y)
 		// Special case, such as toolbar buttons
 		SendLeftClickEventToWindow(w, x, y, 1);
 	}
+	_dragging_widget = false;
 }
 
 /**
@@ -2070,8 +2078,8 @@ static void HandlePlacePresize()
 static void HandleMouseDragNoTitlebars()
 {
 	if (_settings_client.gui.windows_titlebars || _dragging_window ||
-		!_left_button_down || _focused_window == NULL) return;
-	int distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
+		!_left_button_down || _focused_window == NULL || _dragging_widget) return;
+	unsigned distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
 	if (distance * 2 > GetMinSizing(NWST_STEP, 6)) {
 		//SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x, _left_button_down_pos.y, 1);
 		StartWindowDrag(_focused_window);
