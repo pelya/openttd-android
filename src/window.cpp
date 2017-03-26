@@ -2080,7 +2080,7 @@ static void HandleMouseDragNoTitlebars()
 	if (_settings_client.gui.windows_titlebars || _dragging_window ||
 		!_left_button_down || _focused_window == NULL || _dragging_widget) return;
 	unsigned distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
-	if (distance * 2 > GetMinSizing(NWST_STEP, 6)) {
+	if (distance * 2 > GetMinSizing(NWST_STEP)) {
 		//SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x, _left_button_down_pos.y, 1);
 		StartWindowDrag(_focused_window);
 		_drag_delta.x += _cursor.pos.x - _left_button_down_pos.x;
@@ -2296,8 +2296,8 @@ static bool GetWindowDraggedOffScreen(Window *w)
 	if (_settings_client.gui.windows_titlebars) return false;
 	Rect edge = { 0, GetMainViewTop(), _screen.width, _screen.height };
 	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR) {
-		edge.left += GetMinSizing(NWST_BUTTON, 1);
-		edge.right -= GetMinSizing(NWST_BUTTON, 1);
+		edge.left += GetMinSizing(NWST_BUTTON);
+		edge.right -= GetMinSizing(NWST_BUTTON);
 	}
 	if (w->left < edge.left && w->left + w->width < edge.right) return true;
 	if (w->left + w->width > edge.right && w->left > edge.left) return true;
