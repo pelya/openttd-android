@@ -2211,7 +2211,7 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 		ny = Clamp(ny, 0, _screen.height - MIN_VISIBLE_TITLE_BAR);
 
 		/* Make sure the title bar isn't hidden behind the main tool bar or the status bar. */
-		if (!_settings_client.gui.vertical_toolbar || _game_mode == GM_EDITOR) {
+		if ((!_settings_client.gui.vertical_toolbar && _settings_client.gui.windows_titlebars) || _game_mode == GM_EDITOR) {
 			// This call hides the window totally with vertical toolbar if you move it slightly off-screen to the left
 			PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_MAIN_TOOLBAR, 0), w->left, PHD_DOWN);
 		}
@@ -2291,6 +2291,20 @@ int GetMainViewBottom()
 	return (w == NULL) ? _screen.height : w->top;
 }
 
+static bool GetWindowDraggedOffScreen(Window *w)
+{
+	if (_settings_client.gui.windows_titlebars) return false;
+	Rect edge = { 0, GetMainViewTop(), _screen.width, _screen.height };
+	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR) {
+		edge.left += GetMinSizing(NWST_BUTTON, 1);
+		edge.right -= GetMinSizing(NWST_BUTTON, 1);
+	}
+	if (w->left < edge.left && w->left + w->width < edge.right) return true;
+	if (w->left + w->width > edge.right && w->left > edge.left) return true;
+	if (w->top < edge.top && w->top + w->height < edge.bottom) return true;
+	return false;
+}
+
 /**
  * Handle dragging/resizing of a window.
  * @return State of handling the event.
@@ -2310,6 +2324,9 @@ static EventState HandleWindowDragging()
 			/* Stop the dragging if the left mouse button was released */
 			if (!_left_button_down) {
 				w->flags &= ~WF_DRAGGING;
+				if (GetWindowDraggedOffScreen(w)) {
+					delete w;
+				}
 				break;
 			}
 
@@ -2399,6 +2416,12 @@ static EventState HandleWindowDragging()
 			EnsureVisibleCaption(w, nx, ny);
 
 			w->SetDirty();
+			if (GetWindowDraggedOffScreen(w)) {
+				GuiShowTooltips(w, STR_TOOLTIP_CLOSE_WINDOW, 0, NULL, TCC_LEFT_CLICK);
+			} else {
+				GuiShowTooltips(w, STR_NULL, 0, NULL, TCC_LEFT_CLICK); // Hide tooltip
+			}
+
 			return ES_HANDLED;
 		} else if (w->flags & WF_SIZING) {
 			/* Stop the sizing if the left mouse button was released */
