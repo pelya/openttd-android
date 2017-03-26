@@ -2813,5 +2813,8 @@ void ReconstructUserInterface()
 	}
 
 	ReInitAllWindows();
-	ShowGameOptions();
+	if (_settings_client.gui.windows_titlebars) {
+		// Hack to prevent second click on the same button via button-up event
+		ShowGameOptions();
+	}
 }
