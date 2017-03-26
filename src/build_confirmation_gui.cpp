@@ -174,6 +174,7 @@ struct BuildConfirmationWindow : Window {
 					ToolbarSelectLastTool();
 				} else {
 					ResetObjectToPlace();
+					DeleteWindowByClass(WC_BUILD_BRIDGE);
 				}
 				break;
 		}
