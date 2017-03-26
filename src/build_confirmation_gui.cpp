@@ -276,13 +276,14 @@ bool ConfirmationWindowShown()
 bool BuildConfirmationWindowProcessViewportClick()
 {
 	if (!BuildConfirmationWindow::shown) return false;
-
 	Window *w = FindWindowById(WC_BUILD_CONFIRMATION, 0);
 	if (w != NULL && IsInsideBS(_cursor.pos.x, w->left, w->width) && IsInsideBS(_cursor.pos.y, w->top, w->height)) {
-		Point pt;
-		pt.x = _cursor.pos.x - w->left;
-		pt.y = _cursor.pos.y - w->top;
-		w->OnClick(pt, WID_BC_OK, 1);
+		if (_settings_client.gui.windows_titlebars || !_left_button_down) {
+			Point pt;
+			pt.x = _cursor.pos.x - w->left;
+			pt.y = _cursor.pos.y - w->top;
+			w->OnClick(pt, WID_BC_OK, 1);
+		}
 		return true;
 	}
 

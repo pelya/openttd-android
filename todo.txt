@@ -17,4 +17,4 @@
 
 - Drag&drop is broken.
 
-- Bridges dialog is broken.
+- Cancelling bridge building still sohws the dialog.
