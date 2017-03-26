@@ -56,7 +56,9 @@ enum ViewportAutoscrolling {
 	VA_EVERY_VIEWPORT,            //!< Scroll all viewports at their edges.
 };
 
+static bool _dragging_window; ///< A window is being dragged or resized.
 static Point _drag_delta; ///< delta between mouse cursor and upper left corner of dragged window
+static Point _left_button_down_pos; ///< Position of left mouse button down event, to handle the difference between click and drag
 static Window *_mouseover_last_w = NULL; ///< Window of the last #MOUSEOVER event.
 static Window *_last_scroll_window = NULL; ///< Window of the last scroll event.
 
@@ -633,13 +635,12 @@ static void StartWindowDrag(Window *w);
 static void StartWindowSizing(Window *w, bool to_left);
 
 /**
- * Dispatch left mouse-button (possibly double) click in window.
+ * Mouse left button down event changes window focus, but not always triggers OnClick event.
  * @param w Window to dispatch event in
  * @param x X coordinate of the click
  * @param y Y coordinate of the click
- * @param click_count Number of fast consecutive clicks at same position
  */
-static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count)
+static void ChangeFocusedWindow(Window *w, int x, int y)
 {
 	NWidgetCore *nw = w->nested_root->GetWidgetFromPos(x, y);
 	WidgetType widget_type = (nw != NULL) ? nw->type : WWT_EMPTY;
@@ -675,6 +676,36 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count)
 		 */
 		focused_widget_changed |= w->SetFocusedWidget(widget_index);
 	}
+
+	if (widget_type == WWT_RESIZEBOX) {
+		// Special case - resize button does not wait for button-up event to start processing
+		/* When the resize widget is on the left size of the window
+		 * we assume that that button is used to resize to the left. */
+		StartWindowSizing(w, (int)nw->pos_x < (w->width / 2));
+		nw->SetDirty(w);
+	}
+}
+
+/**
+ * Mouse left button down+up events trigger OnClick event for a window.
+ * @param w Window to dispatch event in
+ * @param x X coordinate of the click
+ * @param y Y coordinate of the click
+ * @param click_count Number of fast consecutive clicks at same position
+ */
+static void SendLeftClickEventToWindow(Window *w, int x, int y, int click_count)
+{
+	NWidgetCore *nw = w->nested_root->GetWidgetFromPos(x, y);
+	WidgetType widget_type = (nw != NULL) ? nw->type : WWT_EMPTY;
+
+	bool focused_widget_changed = false; // Only used for OSK window
+
+	if (nw == NULL) return; // exit if clicked outside of widgets
+
+	/* don't allow any interaction if the button has been disabled */
+	if (nw->IsDisabled()) return;
+
+	int widget_index = nw->index; ///< Index of the widget
 
 	/* Close any child drop down menus. If the button pressed was the drop down
 	 * list's own button, then we should not process the click any further. */
@@ -763,6 +794,35 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count)
 	}
 
 	w->OnClick(pt, widget_index, click_count);
+}
+
+/**
+ * Dispatch left mouse-button (possibly double) press in window.
+ * @param w Window to dispatch event in
+ * @param x X coordinate of the click
+ * @param y Y coordinate of the click
+ * @param click_count Number of fast consecutive clicks at same position
+ */
+static void DispatchLeftButtonDownEvent(Window *w, int x, int y, int click_count)
+{
+	ChangeFocusedWindow(w, x, y);
+	if (_settings_client.gui.windows_titlebars || click_count > 1) {
+		SendLeftClickEventToWindow(w, x, y, click_count);
+	} else {
+		_left_button_down_pos = Point { x, y };
+	}
+}
+
+/**
+ * Dispatch left mouse-button (possibly double) release in window.
+ * @param w Window to dispatch event in
+ * @param x X coordinate of the click
+ * @param y Y coordinate of the click
+ */
+static void DispatchLeftButtonUpEvent(Window *w, int x, int y)
+{
+	if (_settings_client.gui.windows_titlebars || _dragging_window) return;
+	SendLeftClickEventToWindow(w, x, y, 1);
 }
 
 /**
@@ -2202,8 +2262,6 @@ int GetMainViewBottom()
 	return (w == NULL) ? _screen.height : w->top;
 }
 
-static bool _dragging_window; ///< A window is being dragged or resized.
-
 /**
  * Handle dragging/resizing of a window.
  * @return State of handling the event.
@@ -2989,11 +3047,12 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	} else {
 		switch (click) {
 			case MC_LEFT_UP:
+				DispatchLeftButtonUpEvent(w, x - w->left, y - w->top);
 				break;
 
 			case MC_LEFT:
 			case MC_DOUBLE_LEFT:
-				DispatchLeftClickEvent(w, x - w->left, y - w->top, click == MC_DOUBLE_LEFT ? 2 : 1);
+				DispatchLeftButtonDownEvent(w, x - w->left, y - w->top, click == MC_DOUBLE_LEFT ? 2 : 1);
 				break;
 
 			default:
