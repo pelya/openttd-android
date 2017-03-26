@@ -821,7 +821,7 @@ static void DispatchLeftButtonDownEvent(Window *w, int x, int y, int click_count
 static void DispatchLeftButtonUpEvent(Window *w, int x, int y)
 {
 	if (_settings_client.gui.windows_titlebars || _dragging_window) return;
-	if (_focused_window) {
+	if (_focused_window != NULL && w->window_class != WC_MAIN_TOOLBAR && w->window_class != WC_MAIN_TOOLBAR_RIGHT) {
 		// Send event to the window and widget which were initially under the mouse cursor
 		SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x - _focused_window->left, _left_button_down_pos.y - _focused_window->top, 1);
 	} else {
