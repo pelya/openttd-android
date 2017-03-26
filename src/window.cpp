@@ -2587,7 +2587,7 @@ static EventState HandleViewportScroll()
 		if (_left_button_down) {
 			oldDx += _cursor.delta.x;
 			oldDy += _cursor.delta.y;
-			if (!_left_button_dragged && abs(oldDx) + abs(oldDy) > 20) {
+			if (!_left_button_dragged && (abs(oldDx) + abs(oldDy)) * 2 > (int)GetMinSizing(NWST_STEP, 10)) {
 				_left_button_dragged = true;
 			}
 		} else {
@@ -3080,6 +3080,8 @@ static void MouseLoop(MouseClick click, int mousewheel)
 				if (!_left_button_dragged && mouse_down_on_viewport) {
 					HandleViewportMouseUp(vp, x, y);
 					MoveAllHiddenWindowsBackToScreen();
+				} else if (_left_button_dragged && mouse_down_on_viewport) {
+					BuildConfirmationWindowProcessViewportClick();
 				}
 				_left_button_dragged = false;
 				mouse_down_on_viewport = false;
