@@ -696,6 +696,7 @@ static void ChangeFocusedWindow(Window *w, int x, int y)
 static void SendLeftClickEventToWindow(Window *w, int x, int y, int click_count)
 {
 	NWidgetCore *nw = w->nested_root->GetWidgetFromPos(x, y);
+	if (w->nested_focus != NULL) nw = w->GetWidget<NWidgetCore>(w->nested_focus->index);
 	WidgetType widget_type = (nw != NULL) ? nw->type : WWT_EMPTY;
 
 	bool focused_widget_changed = false; // Only used for OSK window
@@ -808,8 +809,6 @@ static void DispatchLeftButtonDownEvent(Window *w, int x, int y, int click_count
 	ChangeFocusedWindow(w, x, y);
 	if (_settings_client.gui.windows_titlebars || click_count > 1) {
 		SendLeftClickEventToWindow(w, x, y, click_count);
-	} else {
-		_left_button_down_pos = Point { x, y };
 	}
 }
 
@@ -822,7 +821,13 @@ static void DispatchLeftButtonDownEvent(Window *w, int x, int y, int click_count
 static void DispatchLeftButtonUpEvent(Window *w, int x, int y)
 {
 	if (_settings_client.gui.windows_titlebars || _dragging_window) return;
-	SendLeftClickEventToWindow(w, x, y, 1);
+	if (_focused_window) {
+		// Send event to the window and widget which were initially under the mouse cursor
+		SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x - _focused_window->left, _left_button_down_pos.y - _focused_window->top, 1);
+	} else {
+		// Special case, such as toolbar buttons
+		SendLeftClickEventToWindow(w, x, y, 1);
+	}
 }
 
 /**
@@ -2060,6 +2065,22 @@ static void HandlePlacePresize()
 }
 
 /**
+ * Handle dragging mouse while left button is pressed in no-titlebars mode.
+ */
+static void HandleMouseDragNoTitlebars()
+{
+	if (_settings_client.gui.windows_titlebars || _dragging_window ||
+		!_left_button_down || _focused_window == NULL) return;
+	int distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
+	if (distance * 2 > GetMinSizing(NWST_STEP, 6)) {
+		//SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x, _left_button_down_pos.y, 1);
+		StartWindowDrag(_focused_window);
+		_drag_delta.x += _cursor.pos.x - _left_button_down_pos.x;
+		_drag_delta.y += _cursor.pos.y - _left_button_down_pos.y;
+	}
+}
+
+/**
  * Handle dragging and dropping in mouse dragging mode (#WSM_DRAGDROP).
  * @return State of handling the event.
  */
@@ -2978,8 +2999,11 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	/* Don't allow any action in a viewport if either in menu or when having a modal progress window */
 	if (vp != NULL && (_game_mode == GM_MENU || HasModalProgress())) return;
 
+	if (click == MC_LEFT) _left_button_down_pos = Point { x, y };
+
 	HandlePlacePresize();
 	UpdateTileSelection();
+	if (!mouse_down_on_viewport) HandleMouseDragNoTitlebars();
 
 	if (VpHandlePlaceSizingDrag()  == ES_HANDLED) return;
 	if (HandleMouseDragDrop()      == ES_HANDLED) return;
@@ -3048,6 +3072,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		switch (click) {
 			case MC_LEFT_UP:
 				DispatchLeftButtonUpEvent(w, x - w->left, y - w->top);
+				mouse_down_on_viewport = false;
 				break;
 
 			case MC_LEFT:
