@@ -16,3 +16,5 @@
 - Tooltip window steals touches, move tooltip window back to the top of the mouse cursor.
 
 - Drag&drop is broken.
+
+- Clicking disabled toolbar button in titlebars mode is broken.
