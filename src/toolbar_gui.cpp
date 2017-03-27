@@ -1896,7 +1896,7 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_SETTINGS,
 			WID_TN_SAVE,
 			WID_TN_SMALL_MAP,
-			WID_TN_TOWNS,
+			WID_TN_STATIONS,
 		};
 		static const byte arrange_right_compact[] = {
 			WID_TN_SWITCH_BAR,
@@ -1905,8 +1905,8 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_WATER,
 			WID_TN_AIR,
 			WID_TN_LANDSCAPE,
+			WID_TN_TOWNS,
 			WID_TN_SUBSIDIES,
-			WID_TN_STATIONS,
 			WID_TN_FINANCES,
 			WID_TN_COMPANIES,
 
