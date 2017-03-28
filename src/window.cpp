@@ -2205,10 +2205,14 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 		caption_rect.right  = caption->pos_x + caption->current_x;
 		caption_rect.top    = caption->pos_y;
 		caption_rect.bottom = caption->pos_y + caption->current_y;
+		if (_settings_client.gui.windows_titlebars) {
+			caption_rect.left = w->left;
+			caption_rect.right = w->left + w->width;
+		}
 
 		/* Make sure the window doesn't leave the screen */
 		nx = Clamp(nx, MIN_VISIBLE_TITLE_BAR - caption_rect.right, _screen.width - MIN_VISIBLE_TITLE_BAR - caption_rect.left);
-		ny = Clamp(ny, 0, _screen.height - MIN_VISIBLE_TITLE_BAR);
+		ny = Clamp(ny, _settings_client.gui.windows_titlebars ? - w->height : 0, _screen.height - MIN_VISIBLE_TITLE_BAR);
 
 		/* Make sure the title bar isn't hidden behind the main tool bar or the status bar. */
 		if ((!_settings_client.gui.vertical_toolbar && _settings_client.gui.windows_titlebars) || _game_mode == GM_EDITOR) {
@@ -2302,6 +2306,7 @@ static bool GetWindowDraggedOffScreen(Window *w)
 	if (w->left < edge.left && w->left + w->width < edge.right) return true;
 	if (w->left + w->width > edge.right && w->left > edge.left) return true;
 	if (w->top < edge.top && w->top + w->height < edge.bottom) return true;
+	if (w->top + w->height > edge.bottom && w->top > edge.top) return true;
 	return false;
 }
 
