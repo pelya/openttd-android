@@ -22,3 +22,5 @@
 - Main menu is too big.
 
 - Cannot close tutorial menu.
+
+- Main menu can be closed permanently.
