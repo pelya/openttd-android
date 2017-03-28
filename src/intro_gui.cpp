@@ -62,6 +62,9 @@ struct SelectGameWindow : public Window {
 	virtual void OnInit()
 	{
 		bool missing_sprites = _missing_extra_graphics > 0 && !IsReleasedVersion();
+#ifdef __ANDROID__
+		missing_sprites = false;
+#endif
 		this->GetWidget<NWidgetStacked>(WID_SGI_BASESET_SELECTION)->SetDisplayedPlane(missing_sprites ? 0 : SZSP_NONE);
 
 		bool missing_lang = _current_language->missing >= _settings_client.gui.missing_strings_threshold && !IsReleasedVersion();
