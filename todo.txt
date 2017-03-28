@@ -18,3 +18,7 @@
 - Drag&drop is broken.
 
 - Clicking disabled toolbar button in titlebars mode is broken.
+
+- Main menu is too big.
+
+- Cannot close tutorial menu.
