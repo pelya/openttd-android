@@ -20,6 +20,8 @@
 #include "settings_type.h"
 #include "settings_gui.h"
 #include "querystring_gui.h"
+#include "blitter/factory.hpp"
+
 
 #include "table/sprites.h"
 #include "table/strings.h"
@@ -1845,12 +1847,142 @@ void NWidgetBackground::Draw(const Window *w)
 			NOT_REACHED();
 	}
 
+	DrawEdgeOrnament(w);
+
 	if (this->index >= 0) w->DrawWidget(r, this->index);
 	if (this->child != NULL) this->child->Draw(w);
 
 	if (this->IsDisabled()) {
 		GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, _colour_gradient[this->colour & 0xF][2], FILLRECT_CHECKER);
 	}
+}
+
+
+/*
+  Ornament image
+  ++.........+
+  ..++.....++.
+  ....+...+...
+  .....+.+....
+  ......+.....
+  ......+.....
+  ..+..+.+..+.
+  ...++...++..
+*/
+
+static unsigned char ornamentImg[][2] = {
+	{ 0,  2 - 1, },
+	{ 1,  2 - 1, },
+	{ 2,  3 - 1, },
+	{ 3,  3 - 1, },
+	{ 4,  4 - 1, },
+	{ 5,  5 - 1, },
+	{ 6,  6 - 1, },
+	{ 7,  5 - 1, },
+	{ 8,  4 - 1, },
+	{ 9,  3 - 1, },
+	{ 10, 3 - 1, },
+	{ 11, 2 - 1, },
+
+//	{ 2,  8 - 1, },
+//	{ 3,  9 - 1, },
+//	{ 4,  9 - 1, },
+//	{ 5,  8 - 1, },
+//	{ 6,  7 - 1, },
+//	{ 7,  8 - 1, },
+//	{ 8,  9 - 1, },
+//	{ 9,  9 - 1, },
+//	{ 10, 8 - 1, },
+};
+
+enum { ORNAMENT_STEP = 12, ORNAMENT_IMG_LEN = sizeof(ornamentImg) / sizeof(ornamentImg[0]) };
+
+void NWidgetBackground::DrawEdgeOrnament(const Window *w)
+{
+	if (this->pos_x == 0) {
+		DrawEdgeOrnamentL(w);
+	}
+	if (int(this->pos_x + this->current_x) == w->width) {
+		DrawEdgeOrnamentR(w);
+	}
+	if (this->pos_y == 0) {
+		DrawEdgeOrnamentT(w);
+		if (this->pos_x == 0) {
+			DrawEdgeOrnamentTL(w);
+		}
+		if (int(this->pos_x + this->current_x) == w->width) {
+			DrawEdgeOrnamentTR(w);
+		}
+	}
+	if (int(this->pos_y + this->current_y) == w->height) {
+		DrawEdgeOrnamentB(w);
+		if (this->pos_x == 0) {
+			DrawEdgeOrnamentBL(w);
+		}
+		if (int(this->pos_x + this->current_x) == w->width) {
+			DrawEdgeOrnamentBR(w);
+		}
+	}
+}
+
+void NWidgetBackground::DrawEdgeOrnamentL(const Window *w)
+{
+	if (_cur_dpi == NULL || _cur_dpi->zoom != ZOOM_LVL_NORMAL) return;
+
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
+
+	void *dst = _cur_dpi->dst_ptr;
+	int left = _cur_dpi->left;
+	//int right = _cur_dpi->left + _cur_dpi->width;
+	int width = _cur_dpi->width;
+	int top = _cur_dpi->top;
+	//int bottom = _cur_dpi->top + _cur_dpi->height;
+	int height = _cur_dpi->height;
+
+	int half = this->pos_y + this->current_y / 2 - top;
+
+	int x = this->pos_x - left;
+
+	for (int y = this->pos_y - top; y < half; y += ORNAMENT_STEP) {
+		for (int i = 0; i < ORNAMENT_IMG_LEN; i++) {
+			int xx = x + ornamentImg[i][1];
+			int yy = y + ornamentImg[i][0];
+			if (xx >= 0 && xx < width && yy >= 0 && yy < height) {
+				blitter->SetPixel(dst, xx, yy, PC_DARK_GREY);
+			}
+		}
+	}
+
+	for (int y = this->pos_y + this->current_y - 1 - top; y > half; y -= ORNAMENT_STEP) {
+		for (int i = 0; i < ORNAMENT_IMG_LEN; i++) {
+			int xx = x + ornamentImg[i][1];
+			int yy = y + ORNAMENT_STEP - 1 - ornamentImg[i][0];
+			if (xx >= 0 && xx < width && yy >= 0 && yy < height) {
+				blitter->SetPixel(dst, xx, yy, PC_DARK_GREY);
+			}
+		}
+	}
+}
+void NWidgetBackground::DrawEdgeOrnamentR(const Window *w)
+{
+}
+void NWidgetBackground::DrawEdgeOrnamentT(const Window *w)
+{
+}
+void NWidgetBackground::DrawEdgeOrnamentB(const Window *w)
+{
+}
+void NWidgetBackground::DrawEdgeOrnamentTL(const Window *w)
+{
+}
+void NWidgetBackground::DrawEdgeOrnamentTR(const Window *w)
+{
+}
+void NWidgetBackground::DrawEdgeOrnamentBL(const Window *w)
+{
+}
+void NWidgetBackground::DrawEdgeOrnamentBR(const Window *w)
+{
 }
 
 NWidgetCore *NWidgetBackground::GetWidgetFromPos(int x, int y)
