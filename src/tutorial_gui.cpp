@@ -208,6 +208,8 @@ void ShowTutorialWindow()
 
 void ShowTutorialWindowOnceAfterInstall()
 {
+	// Close button on tutorial window is gone, so don't show that windows on first run, it's confusing
+#if 0
 	static const char * TUTORIAL_SHOWN_FLAG = ".tutorial-shown-3.flag";
 
 	FILE *ff = fopen(TUTORIAL_SHOWN_FLAG, "r");
@@ -221,4 +223,5 @@ void ShowTutorialWindowOnceAfterInstall()
 	fprintf(ff, "Tutorial shown");
 	fclose(ff);
 	ShowTutorialWindow();
+#endif
 }
