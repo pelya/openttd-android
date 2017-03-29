@@ -11,6 +11,8 @@
 
 - Main menu can be closed permanently.
 
+- Combo box popup menu cannot reach top of the screen.
+
 - Draggable combo boxes.
 
 - 'New game' dialog is broken again.
