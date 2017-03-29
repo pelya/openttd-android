@@ -1860,14 +1860,18 @@ void NWidgetBackground::Draw(const Window *w)
 
 /*
   Ornament image
-  ++.........+
-  ..++.....++.
-  ....+...+...
-  .....+.+....
-  ......+.....
-  ......+.....
-  ..+..+.+..+.
-  ...++...++..
+
+  . . . . . . . . . . . . 0
+  . . . . . . . . . . . . 1
+  + + . . . + . + . . . + 2
+  . . + + . . + . . + + . 3
+  . . . . + . . . + . . . 4
+  . . . . . + . + . . . . 5
+  . . . . . . + . . . . . 6
+  . . . . . . + . . . . . 7
+  . . + . . + . + . . + . 8
+  . . . + + . . . + + . . 9
+  0 1 2 3 4 5 6 7 8 9 0 1
 */
 
 static unsigned char ornamentImg[][2] = {
@@ -1877,8 +1881,11 @@ static unsigned char ornamentImg[][2] = {
 	{ 3,  3 - 1, },
 	{ 4,  4 - 1, },
 	{ 5,  5 - 1, },
+	{ 5,  2 - 1, },
 	{ 6,  6 - 1, },
+	{ 6,  3 - 1, },
 	{ 7,  5 - 1, },
+	{ 7,  2 - 1, },
 	{ 8,  4 - 1, },
 	{ 9,  3 - 1, },
 	{ 10, 3 - 1, },
@@ -1933,10 +1940,8 @@ void NWidgetBackground::DrawEdgeOrnamentL(const Window *w)
 
 	void *dst = _cur_dpi->dst_ptr;
 	int left = _cur_dpi->left;
-	//int right = _cur_dpi->left + _cur_dpi->width;
 	int width = _cur_dpi->width;
 	int top = _cur_dpi->top;
-	//int bottom = _cur_dpi->top + _cur_dpi->height;
 	int height = _cur_dpi->height;
 
 	int half = this->pos_y + this->current_y / 2 - top;
