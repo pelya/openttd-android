@@ -9,8 +9,6 @@
 
 - Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), and fix double-backspace bug in SDL.
 
-- Main menu can be closed permanently.
-
 - Combo box popup menu cannot reach top of the screen.
 
 - Draggable combo boxes.

@@ -577,6 +577,15 @@ public:
 
 private:
 	NWidgetPIPContainer *child; ///< Child widget.
+	void DrawEdgeOrnament(const Window *w);
+	void DrawEdgeOrnamentL(const Window *w);
+	void DrawEdgeOrnamentR(const Window *w);
+	void DrawEdgeOrnamentT(const Window *w);
+	void DrawEdgeOrnamentB(const Window *w);
+	void DrawEdgeOrnamentTL(const Window *w);
+	void DrawEdgeOrnamentTR(const Window *w);
+	void DrawEdgeOrnamentBL(const Window *w);
+	void DrawEdgeOrnamentBR(const Window *w);
 };
 
 /**
