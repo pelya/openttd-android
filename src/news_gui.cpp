@@ -361,7 +361,7 @@ struct NewsWindow : Window {
 	{
 		switch (widget) {
 			case WID_N_CAPTION:
-				DrawCaption(r, COLOUR_LIGHT_BLUE, this->owner, STR_NEWS_MESSAGE_CAPTION);
+				DrawCaption(r, COLOUR_LIGHT_BLUE, this->owner, STR_NEWS_MESSAGE_CAPTION, this->GetWidget<NWidgetCore>(WID_N_CAPTION), this);
 				break;
 
 			case WID_N_PANEL:

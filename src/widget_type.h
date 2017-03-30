@@ -309,6 +309,12 @@ public:
 	inline void SetDisabled(bool disabled);
 	inline bool IsDisabled() const;
 
+	inline void DrawEdgeOrnament(const Window *w) const;
+	inline void DrawEdgeOrnamentL() const;
+	inline void DrawEdgeOrnamentR() const;
+	inline void DrawEdgeOrnamentT() const;
+	inline void DrawEdgeOrnamentB() const;
+
 	/* virtual */ void FillNestedArray(NWidgetBase **array, uint length);
 	/* virtual */ NWidgetCore *GetWidgetFromPos(int x, int y);
 	/* virtual */ bool IsHighlighted() const;
@@ -577,15 +583,6 @@ public:
 
 private:
 	NWidgetPIPContainer *child; ///< Child widget.
-	void DrawEdgeOrnament(const Window *w);
-	void DrawEdgeOrnamentL(const Window *w);
-	void DrawEdgeOrnamentR(const Window *w);
-	void DrawEdgeOrnamentT(const Window *w);
-	void DrawEdgeOrnamentB(const Window *w);
-	void DrawEdgeOrnamentTL(const Window *w);
-	void DrawEdgeOrnamentTR(const Window *w);
-	void DrawEdgeOrnamentBL(const Window *w);
-	void DrawEdgeOrnamentBR(const Window *w);
 };
 
 /**
