@@ -2014,7 +2014,10 @@ static const unsigned char ornamentImg[][2] = {
 };
 
 
-enum { ORNAMENT_STEP = 16, ORNAMENT_IMG_LEN = sizeof(ornamentImg) / sizeof(ornamentImg[0]) };
+enum {
+	ORNAMENT_STEP = 16,
+	ORNAMENT_HEIGHT = 4,
+	ORNAMENT_IMG_LEN = sizeof(ornamentImg) / sizeof(ornamentImg[0]) };
 
 
 void NWidgetBackground::DrawEdgeOrnamentL(const Window *w)
@@ -2029,39 +2032,106 @@ void NWidgetBackground::DrawEdgeOrnamentL(const Window *w)
 	int top = _cur_dpi->top;
 	int height = _cur_dpi->height;
 
-	int half = this->pos_y + this->current_y / 2 - top;
+	int edge = this->pos_y + this->current_y - top - 1 - ORNAMENT_HEIGHT;
 
 	int x = this->pos_x - left;
 
-	for (int y = this->pos_y - top; y < half; y += ORNAMENT_STEP) {
+	for (int y = this->pos_y - top + 1 + ORNAMENT_HEIGHT; y < edge + ORNAMENT_STEP; y += ORNAMENT_STEP) {
 		for (int i = 0; i < ORNAMENT_IMG_LEN; i++) {
 			int xx = x + ornamentImg[i][1];
 			int yy = y + ornamentImg[i][0];
-			if (xx >= 0 && xx < width && yy >= 0 && yy < height) {
-				blitter->SetPixel(dst, xx, yy, PC_DARK_GREY);
-			}
-		}
-	}
-
-	for (int y = this->pos_y + this->current_y - 1 - top; y > half; y -= ORNAMENT_STEP) {
-		for (int i = 0; i < ORNAMENT_IMG_LEN; i++) {
-			int xx = x + ornamentImg[i][1];
-			int yy = y + ORNAMENT_STEP - 1 - ornamentImg[i][0];
-			if (xx >= 0 && xx < width && yy >= 0 && yy < height) {
+			if (yy >= height || yy >= edge) break;
+			if (xx >= 0 && xx < width && yy >= 0) {
 				blitter->SetPixel(dst, xx, yy, PC_DARK_GREY);
 			}
 		}
 	}
 }
+
 void NWidgetBackground::DrawEdgeOrnamentR(const Window *w)
 {
+	if (_cur_dpi == NULL || _cur_dpi->zoom != ZOOM_LVL_NORMAL) return;
+
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
+
+	void *dst = _cur_dpi->dst_ptr;
+	int left = _cur_dpi->left;
+	int width = _cur_dpi->width;
+	int top = _cur_dpi->top;
+	int height = _cur_dpi->height;
+
+	int edge = this->pos_y + this->current_y - top - 1 - ORNAMENT_HEIGHT;
+
+	int x = this->pos_x + this->current_x - left - 1;
+
+	for (int y = this->pos_y - top + 1 + ORNAMENT_HEIGHT; y < edge + ORNAMENT_STEP; y += ORNAMENT_STEP) {
+		for (int i = 0; i < ORNAMENT_IMG_LEN; i++) {
+			int xx = x - ornamentImg[i][1];
+			int yy = y + ornamentImg[i][0];
+			if (yy >= height || yy >= edge) break;
+			if (xx >= 0 && xx < width && yy >= 0) {
+				blitter->SetPixel(dst, xx, yy, PC_DARK_GREY);
+			}
+		}
+	}
 }
+
 void NWidgetBackground::DrawEdgeOrnamentT(const Window *w)
 {
+	if (_cur_dpi == NULL || _cur_dpi->zoom != ZOOM_LVL_NORMAL) return;
+
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
+
+	void *dst = _cur_dpi->dst_ptr;
+	int left = _cur_dpi->left;
+	int width = _cur_dpi->width;
+	int top = _cur_dpi->top;
+	int height = _cur_dpi->height;
+
+	int edge = this->pos_x + this->current_x - left - 1 - ORNAMENT_HEIGHT;
+
+	int y = this->pos_y - top;
+
+	for (int x = this->pos_x - left + 1 + ORNAMENT_HEIGHT; x < edge + ORNAMENT_STEP; x += ORNAMENT_STEP) {
+		for (int i = 0; i < ORNAMENT_IMG_LEN; i++) {
+			int xx = x + ornamentImg[i][0];
+			int yy = y + ornamentImg[i][1];
+			if (xx >= width || xx >= edge) break;
+			if (yy >= 0 && yy < height && xx >= 0) {
+				blitter->SetPixel(dst, xx, yy, PC_DARK_GREY);
+			}
+		}
+	}
 }
+
 void NWidgetBackground::DrawEdgeOrnamentB(const Window *w)
 {
+	if (_cur_dpi == NULL || _cur_dpi->zoom != ZOOM_LVL_NORMAL) return;
+
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
+
+	void *dst = _cur_dpi->dst_ptr;
+	int left = _cur_dpi->left;
+	int width = _cur_dpi->width;
+	int top = _cur_dpi->top;
+	int height = _cur_dpi->height;
+
+	int edge = this->pos_x + this->current_x - left - 1 - ORNAMENT_HEIGHT;
+
+	int y = this->pos_y + this->current_y - top - 1;
+
+	for (int x = this->pos_x - left + 1 + ORNAMENT_HEIGHT; x < edge + ORNAMENT_STEP; x += ORNAMENT_STEP) {
+		for (int i = 0; i < ORNAMENT_IMG_LEN; i++) {
+			int xx = x + ornamentImg[i][0];
+			int yy = y - ornamentImg[i][1];
+			if (xx >= width || xx >= edge) break;
+			if (yy >= 0 && yy < height && xx >= 0) {
+				blitter->SetPixel(dst, xx, yy, PC_DARK_GREY);
+			}
+		}
+	}
 }
+
 void NWidgetBackground::DrawEdgeOrnamentTL(const Window *w)
 {
 }
