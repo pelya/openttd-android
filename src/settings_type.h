@@ -80,6 +80,7 @@ struct GUISettings {
 	bool   vertical_toolbar;                 ///< main toolbar is split into two vertical toolbars
 	bool   build_confirmation;               ///< show confirmation dialog when building roads and stations
 	bool   windows_titlebars;                ///< show or hide titlebars for all windows to increase scrren space
+	bool   windows_decorations;              ///< draw ornament on all window edges
 	uint   min_button;                       ///< min size of most button widgets
 	uint   min_step;                         ///< min size of scrollbar/dropdown elements
 	bool   show_finances;                    ///< show finances at end of year

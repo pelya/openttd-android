@@ -900,7 +900,8 @@ void NWidgetCore::DrawEdgeOrnament(const Window *w) const
 		w->window_class == WC_BUILD_CONFIRMATION ||
 		w->window_class == WC_STATUS_BAR ||
 		w->window_class == WC_TOOLTIPS ||
-		w->window_class == WC_DROPDOWN_MENU) {
+		w->window_class == WC_DROPDOWN_MENU ||
+		!_settings_client.gui.windows_decorations) {
 		return;
 	}
 	if (this->pos_x == 0) {
