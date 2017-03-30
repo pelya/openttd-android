@@ -1222,6 +1222,8 @@ STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Confirm 
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Show confirmation dialog when building roads and stations
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Title bars
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Show title bars for all windows, or hide them to save screen space
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :{BLACK}Window decorations
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :{BLACK}Ornaments on window edges
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
 STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Set video color depth to 8 bits per pixel, this video mode supports water animation
 STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit

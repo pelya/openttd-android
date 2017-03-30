@@ -1651,6 +1651,7 @@ static SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.vertical_toolbar"));
 			interface->Add(new SettingEntry("gui.build_confirmation"));
 			interface->Add(new SettingEntry("gui.windows_titlebars"));
+			interface->Add(new SettingEntry("gui.windows_decorations"));
 			interface->Add(new SettingEntry("gui.toolbar_pos"));
 			interface->Add(new SettingEntry("gui.statusbar_pos"));
 			interface->Add(new SettingEntry("gui.prefer_teamchat"));
