@@ -2341,7 +2341,7 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 
 		/* Make sure the window doesn't leave the screen */
 		nx = Clamp(nx, MIN_VISIBLE_TITLE_BAR - caption_rect.right, _screen.width - MIN_VISIBLE_TITLE_BAR - caption_rect.left);
-		ny = Clamp(ny, _settings_client.gui.windows_titlebars ? - w->height : 0, _screen.height - MIN_VISIBLE_TITLE_BAR);
+		ny = Clamp(ny, _settings_client.gui.windows_titlebars ? 0 : - w->height, _screen.height - MIN_VISIBLE_TITLE_BAR);
 
 		/* Make sure the title bar isn't hidden behind the main tool bar or the status bar. */
 		if ((!_settings_client.gui.vertical_toolbar && _settings_client.gui.windows_titlebars) || _game_mode == GM_EDITOR) {
