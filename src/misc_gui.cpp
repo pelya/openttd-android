@@ -46,8 +46,6 @@ enum OskActivation {
 	OSKA_IMMEDIATELY,        ///< Focusing click already opens OSK.
 };
 
-static char _android_text_input[512];
-
 
 static const NWidgetPart _nested_land_info_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -775,14 +773,6 @@ void QueryString::HandleEditBox(Window *w, int wid)
 		/* For the OSK also invalidate the parent window */
 		if (w->window_class == WC_OSK) w->InvalidateData();
 	}
-#ifdef __ANDROID__
-	if (SDL_IsScreenKeyboardShown(NULL)) {
-		if (SDL_ANDROID_GetScreenKeyboardTextInputAsync(_android_text_input, sizeof(_android_text_input)) == SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED) {
-			this->text.Assign(_android_text_input);
-			w->OnEditboxChanged(wid);
-		}
-	}
-#endif
 }
 
 void QueryString::DrawEditBox(const Window *w, int wid) const
@@ -964,12 +954,15 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 		ShowOnScreenKeyboard(w, wid);
 	}
 #ifdef __ANDROID__
-	strecpy(_android_text_input, this->text.buf, lastof(_android_text_input));
+	char text[512];
+	strecpy(text, this->text.buf, lastof(text));
 	this->text.DeleteAll();
-	if (SDL_ANDROID_GetScreenKeyboardTextInputAsync(_android_text_input, sizeof(_android_text_input)) == SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED) {
-		this->text.Assign(_android_text_input);
-		w->OnEditboxChanged(wid);
-	}
+	SDL_ANDROID_ToggleScreenKeyboardTextInput(text); // Invoke Android built-in screen keyboard, this will not block
+	/*
+	SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); // Invoke Android built-in screen keyboard, this will block
+	this->text.Assign(text);
+	w->OnEditboxChanged(wid);
+	*/
 #endif
 }
 
