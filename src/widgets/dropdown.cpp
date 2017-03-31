@@ -375,7 +375,7 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 	int screen_bottom = GetMainViewBottom();
 	bool scroll = false;
 
-	enum { DISPLAY_BORDER = 20, TOP_BORDER = 4 };
+	enum { DISPLAY_BORDER = 0, TOP_BORDER = 0 };
 
 	/* Check if the dropdown will fully fit below the widget */
 	if (top + height + DISPLAY_BORDER >= screen_bottom) {
