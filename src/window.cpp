@@ -635,6 +635,134 @@ void Window::HandleButtonClick(byte widget)
 static void StartWindowDrag(Window *w);
 static void StartWindowSizing(Window *w, bool to_left);
 
+#if 0
+static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count)
+{
+	NWidgetCore *nw = w->nested_root->GetWidgetFromPos(x, y);
+	WidgetType widget_type = (nw != NULL) ? nw->type : WWT_EMPTY;
+
+	bool focused_widget_changed = false;
+	/* If clicked on a window that previously did dot have focus */
+	if (_focused_window != w &&                 // We already have focus, right?
+			(w->window_desc->flags & WDF_NO_FOCUS) == 0 &&  // Don't lose focus to toolbars
+			widget_type != WWT_CLOSEBOX) {          // Don't change focused window if 'X' (close button) was clicked
+		focused_widget_changed = true;
+		SetFocusedWindow(w);
+	}
+
+	if (nw == NULL) return; // exit if clicked outside of widgets
+
+	/* don't allow any interaction if the button has been disabled */
+	if (nw->IsDisabled()) return;
+
+	int widget_index = nw->index; ///< Index of the widget
+
+	/* Clicked on a widget that is not disabled.
+	 * So unless the clicked widget is the caption bar, change focus to this widget.
+	 * Exception: In the OSK we always want the editbox to stay focussed. */
+	if (widget_type != WWT_CAPTION && w->window_class != WC_OSK) {
+		/* focused_widget_changed is 'now' only true if the window this widget
+		 * is in gained focus. In that case it must remain true, also if the
+		 * local widget focus did not change. As such it's the logical-or of
+		 * both changed states.
+		 *
+		 * If this is not preserved, then the OSK window would be opened when
+		 * a user has the edit box focused and then click on another window and
+		 * then back again on the edit box (to type some text).
+		 */
+		focused_widget_changed |= w->SetFocusedWidget(widget_index);
+	}
+
+	/* Close any child drop down menus. If the button pressed was the drop down
+	 * list's own button, then we should not process the click any further. */
+	if (HideDropDownMenu(w) == widget_index && widget_index >= 0) return;
+
+	if ((widget_type & ~WWB_PUSHBUTTON) < WWT_LAST && (widget_type & WWB_PUSHBUTTON)) w->HandleButtonClick(widget_index);
+
+	Point pt = { x, y };
+
+	switch (widget_type) {
+		case NWID_VSCROLLBAR:
+		case NWID_HSCROLLBAR:
+			ScrollbarClickHandler(w, nw, x, y);
+			break;
+
+		case WWT_EDITBOX: {
+			QueryString *query = w->GetQueryString(widget_index);
+			if (query != NULL) query->ClickEditBox(w, pt, widget_index, click_count, focused_widget_changed);
+			break;
+		}
+
+		case WWT_CLOSEBOX: // 'X'
+			delete w;
+			return;
+
+		case WWT_CAPTION: // 'Title bar'
+			StartWindowDrag(w);
+			return;
+
+		case WWT_RESIZEBOX:
+			/* When the resize widget is on the left size of the window
+			 * we assume that that button is used to resize to the left. */
+			StartWindowSizing(w, (int)nw->pos_x < (w->width / 2));
+			nw->SetDirty(w);
+			return;
+
+		case WWT_DEFSIZEBOX: {
+			if (_ctrl_pressed) {
+				w->window_desc->pref_width = w->width;
+				w->window_desc->pref_height = w->height;
+			} else {
+				int16 def_width = max<int16>(min(w->window_desc->GetDefaultWidth(), _screen.width), w->nested_root->smallest_x);
+				int16 def_height = max<int16>(min(w->window_desc->GetDefaultHeight(), _screen.height - 50), w->nested_root->smallest_y);
+
+				int dx = (w->resize.step_width  == 0) ? 0 : def_width  - w->width;
+				int dy = (w->resize.step_height == 0) ? 0 : def_height - w->height;
+				/* dx and dy has to go by step.. calculate it.
+				 * The cast to int is necessary else dx/dy are implicitly casted to unsigned int, which won't work. */
+				if (w->resize.step_width  > 1) dx -= dx % (int)w->resize.step_width;
+				if (w->resize.step_height > 1) dy -= dy % (int)w->resize.step_height;
+				ResizeWindow(w, dx, dy, false);
+			}
+
+			nw->SetLowered(true);
+			nw->SetDirty(w);
+			w->SetTimeout();
+			break;
+		}
+
+		case WWT_DEBUGBOX:
+			w->ShowNewGRFInspectWindow();
+			break;
+
+		case WWT_SHADEBOX:
+			nw->SetDirty(w);
+			w->SetShaded(!w->IsShaded());
+			return;
+
+		case WWT_STICKYBOX:
+			w->flags ^= WF_STICKY;
+			nw->SetDirty(w);
+			if (_ctrl_pressed) w->window_desc->pref_sticky = (w->flags & WF_STICKY) != 0;
+			return;
+
+		default:
+			break;
+	}
+
+	/* Widget has no index, so the window is not interested in it. */
+	if (widget_index < 0) return;
+
+	/* Check if the widget is highlighted; if so, disable highlight and dispatch an event to the GameScript */
+	if (w->IsWidgetHighlighted(widget_index)) {
+		w->SetWidgetHighlight(widget_index, TC_INVALID);
+		Game::NewEvent(new ScriptEventWindowWidgetClick((ScriptWindow::WindowClass)w->window_class, w->window_number, widget_index));
+	}
+
+	w->OnClick(pt, widget_index, click_count);
+}
+#endif
+
 /**
  * Mouse left button down event changes window focus, but not always triggers OnClick event.
  * @param w Window to dispatch event in
