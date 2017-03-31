@@ -2205,7 +2205,7 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 		caption_rect.right  = caption->pos_x + caption->current_x;
 		caption_rect.top    = caption->pos_y;
 		caption_rect.bottom = caption->pos_y + caption->current_y;
-		if (_settings_client.gui.windows_titlebars) {
+		if (!_settings_client.gui.windows_titlebars) {
 			caption_rect.left = w->left;
 			caption_rect.right = w->left + w->width;
 		}
