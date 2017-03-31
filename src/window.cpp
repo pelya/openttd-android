@@ -808,7 +808,8 @@ static void ChangeFocusedWindow(Window *w, int x, int y)
 	switch (widget_type) {
 		case NWID_VSCROLLBAR:
 		case NWID_HSCROLLBAR:
-			if (ScrollbarClickHandler(w, nw, x, y)) _dragging_widget = true;
+			ScrollbarClickHandler(w, nw, x, y);
+			_dragging_widget = true;
 			break;
 
 		case WWT_RESIZEBOX:
@@ -2213,7 +2214,14 @@ static EventState HandleMouseDragDrop()
 {
 	if (_special_mouse_mode != WSM_DRAGDROP) return ES_NOT_HANDLED;
 
-	if (_left_button_down && _cursor.delta.x == 0 && _cursor.delta.y == 0) return ES_HANDLED; // Dragging, but the mouse did not move.
+	bool button = _left_button_down;
+	static bool button_second_click = false;
+	if (!_settings_client.gui.windows_titlebars) {
+		if (_left_button_down) button_second_click = true;
+		button = _left_button_down || !button_second_click;
+	}
+
+	if (button && _cursor.delta.x == 0 && _cursor.delta.y == 0) return ES_HANDLED; // Dragging, but the mouse did not move.
 
 	Window *w = _thd.GetCallbackWnd();
 	if (w != NULL) {
@@ -2221,14 +2229,18 @@ static EventState HandleMouseDragDrop()
 		Point pt;
 		pt.x = _cursor.pos.x - w->left;
 		pt.y = _cursor.pos.y - w->top;
-		if (_left_button_down) {
+		if (button) {
 			w->OnMouseDrag(pt, GetWidgetFromPos(w, pt.x, pt.y));
 		} else {
 			w->OnDragDrop(pt, GetWidgetFromPos(w, pt.x, pt.y));
 		}
 	}
 
-	if (!_left_button_down) ResetObjectToPlace(); // Button released, finished dragging.
+	if (!button) {
+		ResetObjectToPlace(); // Button released, finished dragging.
+		button_second_click = false;
+	}
+
 	return ES_HANDLED;
 }
 
