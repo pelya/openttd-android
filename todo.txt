@@ -7,7 +7,7 @@
 
 - Misclicking station from orders dialog should hide the dialog for 3 times.
 
-- Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), and fix double-backspace bug in SDL.
+- Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), TODO: it's broken in SDL.
 
 - Draggable combo boxes.
 
