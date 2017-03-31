@@ -2459,12 +2459,7 @@ static EventState HandleWindowDragging()
 			if (!_left_button_down) {
 				w->flags &= ~WF_DRAGGING;
 				if (GetWindowDraggedOffScreen(w)) {
-					if (w->window_class == WC_SELECT_GAME) {
-						w->left = (_screen.width - w->width) / 2;
-						w->top = (_screen.height - w->height) / 2;
-					} else {
-						delete w;
-					}
+					if (w->window_class != WC_SELECT_GAME) delete w;
 				}
 				break;
 			}
