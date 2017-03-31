@@ -11,6 +11,4 @@
 
 - Draggable combo boxes.
 
-- 'New game' dialog is broken again.
-
 - Clicking disabled toolbar buttons is broken, and buttons are clicked randomly when many windows are open.
