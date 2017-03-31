@@ -15,6 +15,6 @@
 
 - 'New game' dialog is broken again.
 
-- Clicking disabled toolbar button in titlebars mode is broken.
+- Clicking disabled toolbar buttons is broken, and buttons are clicked randomly when many windows are open.
 
 - Drag&drop is broken.
