@@ -912,6 +912,6 @@ extern SpecialMouseMode _special_mouse_mode;
 
 void SetFocusedWindow(Window *w);
 
-void ScrollbarClickHandler(Window *w, NWidgetCore *nw, int x, int y);
+bool ScrollbarClickHandler(Window *w, NWidgetCore *nw, int x, int y);
 
 #endif /* WINDOW_GUI_H */

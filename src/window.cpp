@@ -646,12 +646,10 @@ static void ChangeFocusedWindow(Window *w, int x, int y)
 	NWidgetCore *nw = w->nested_root->GetWidgetFromPos(x, y);
 	WidgetType widget_type = (nw != NULL) ? nw->type : WWT_EMPTY;
 
-	bool focused_widget_changed = false;
 	/* If clicked on a window that previously did dot have focus */
 	if (_focused_window != w &&                 // We already have focus, right?
 			(w->window_desc->flags & WDF_NO_FOCUS) == 0 &&  // Don't lose focus to toolbars
 			widget_type != WWT_CLOSEBOX) {          // Don't change focused window if 'X' (close button) was clicked
-		focused_widget_changed = true;
 		SetFocusedWindow(w);
 	}
 
@@ -675,15 +673,14 @@ static void ChangeFocusedWindow(Window *w, int x, int y)
 		 * a user has the edit box focused and then click on another window and
 		 * then back again on the edit box (to type some text).
 		 */
-		focused_widget_changed |= w->SetFocusedWidget(widget_index);
+		w->SetFocusedWidget(widget_index);
 	}
 
 	// Special cases for scrollable widgets and resize button
 	switch (widget_type) {
 		case NWID_VSCROLLBAR:
 		case NWID_HSCROLLBAR:
-			_dragging_widget = true;
-			ScrollbarClickHandler(w, nw, x, y);
+			if (ScrollbarClickHandler(w, nw, x, y)) _dragging_widget = true;
 			break;
 
 		case WWT_RESIZEBOX:
@@ -711,8 +708,6 @@ static void SendLeftClickEventToWindow(Window *w, int x, int y, int click_count)
 	if (w->nested_focus != NULL) nw = w->GetWidget<NWidgetCore>(w->nested_focus->index);
 	WidgetType widget_type = (nw != NULL) ? nw->type : WWT_EMPTY;
 
-	bool focused_widget_changed = false; // Only used for OSK window
-
 	if (nw == NULL) return; // exit if clicked outside of widgets
 
 	/* don't allow any interaction if the button has been disabled */
@@ -731,7 +726,7 @@ static void SendLeftClickEventToWindow(Window *w, int x, int y, int click_count)
 	switch (widget_type) {
 		case WWT_EDITBOX: {
 			QueryString *query = w->GetQueryString(widget_index);
-			if (query != NULL) query->ClickEditBox(w, pt, widget_index, click_count, focused_widget_changed);
+			if (query != NULL) query->ClickEditBox(w, pt, widget_index, click_count, false);
 			break;
 		}
 
@@ -827,15 +822,9 @@ static void DispatchLeftButtonDownEvent(Window *w, int x, int y, int click_count
  */
 static void DispatchLeftButtonUpEvent(Window *w, int x, int y)
 {
-	if (_settings_client.gui.windows_titlebars || _dragging_window) return;
-	if (_focused_window != NULL && w->window_class != WC_MAIN_TOOLBAR && w->window_class != WC_MAIN_TOOLBAR_RIGHT) {
-		// Send event to the window and widget which were initially under the mouse cursor
-		SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x - _focused_window->left, _left_button_down_pos.y - _focused_window->top, 1);
-	} else {
-		// Special case, such as toolbar buttons
-		SendLeftClickEventToWindow(w, x, y, 1);
-	}
 	_dragging_widget = false;
+	if (_settings_client.gui.windows_titlebars || _dragging_window) return;
+	SendLeftClickEventToWindow(w, x, y, 1);
 }
 
 /**

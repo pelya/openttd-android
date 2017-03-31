@@ -86,12 +86,14 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
  * @param ma  Maximum coordinate of the scroll bar.
  * @param x   The X coordinate of the mouse click.
  * @param y   The Y coordinate of the mouse click.
+ * @return    true if scrollbar slider is pressed
  */
-static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, int y, int mi, int ma)
+static bool ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, int y, int mi, int ma)
 {
 	int pos;
 	int button_size;
 	bool rtl = false;
+	bool sliderPressed = false;
 
 	if (sb->type == NWID_HSCROLLBAR) {
 		pos = x;
@@ -132,10 +134,12 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 				_scrollbar_size -= button_size;
 			w->scrolling_scrollbar = sb->index;
 			_cursorpos_drag_start = _cursor.pos;
+			sliderPressed = true;
 		}
 	}
 
 	w->SetDirty();
+	return sliderPressed;
 }
 
 /**
@@ -145,8 +149,9 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
  * @param nw Pointer to the scrollbar widget.
  * @param x The X coordinate of the mouse click.
  * @param y The Y coordinate of the mouse click.
+ * @return true if scrollbar slider is pressed
  */
-void ScrollbarClickHandler(Window *w, NWidgetCore *nw, int x, int y)
+bool ScrollbarClickHandler(Window *w, NWidgetCore *nw, int x, int y)
 {
 	int mi, ma;
 
@@ -159,7 +164,7 @@ void ScrollbarClickHandler(Window *w, NWidgetCore *nw, int x, int y)
 	}
 	NWidgetScrollbar *scrollbar = dynamic_cast<NWidgetScrollbar*>(nw);
 	assert(scrollbar != NULL);
-	ScrollbarClickPositioning(w, scrollbar, x, y, mi, ma);
+	return ScrollbarClickPositioning(w, scrollbar, x, y, mi, ma);
 }
 
 /**
