@@ -47,7 +47,6 @@ enum OskActivation {
 };
 
 static char _android_text_input[512];
-static bool _android_text_input_active = false;
 
 
 static const NWidgetPart _nested_land_info_widgets[] = {
@@ -776,9 +775,8 @@ void QueryString::HandleEditBox(Window *w, int wid)
 		if (w->window_class == WC_OSK) w->InvalidateData();
 	}
 #ifdef __ANDROID__
-	if (_android_text_input_active) {
+	if (SDL_IsScreenKeyboardShown(NULL)) {
 		if (SDL_ANDROID_GetScreenKeyboardTextInputAsync(_android_text_input, sizeof(_android_text_input)) == SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED) {
-			_android_text_input_active = false;
 			this->text.Assign(_android_text_input);
 			w->OnEditboxChanged(wid);
 		}
@@ -966,10 +964,8 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 	}
 #ifdef __ANDROID__
 	strecpy(_android_text_input, this->text.buf, lastof(_android_text_input));
-	//this->text.DeleteAll();
-	_android_text_input_active = true;
+	this->text.DeleteAll();
 	if (SDL_ANDROID_GetScreenKeyboardTextInputAsync(_android_text_input, sizeof(_android_text_input)) == SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED) {
-		_android_text_input_active = false;
 		this->text.Assign(_android_text_input);
 		w->OnEditboxChanged(wid);
 	}
