@@ -5,10 +5,10 @@
 
 - Put mouse cursor in the middle between touch points when zooming in and out.
 
+- Add 'Goal' menu item somewhere to compact toolbar.
+
 - Misclicking station from orders dialog should hide the dialog for 3 times.
 
 - Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), TODO: it's broken in SDL.
 
 - Draggable combo boxes.
-
-- Clicking disabled toolbar buttons is broken, and buttons are clicked randomly when many windows are open.
