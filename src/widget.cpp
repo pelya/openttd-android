@@ -895,13 +895,13 @@ NWidgetCore *NWidgetCore::GetWidgetFromPos(int x, int y)
 
 void NWidgetCore::DrawEdgeOrnament(const Window *w) const
 {
+	if (!_settings_client.gui.windows_decorations ^ _settings_client.gui.windows_titlebars) return; // April 1st, fools!
 	if (w->window_class == WC_MAIN_TOOLBAR ||
 		w->window_class == WC_MAIN_TOOLBAR_RIGHT ||
 		w->window_class == WC_BUILD_CONFIRMATION ||
 		w->window_class == WC_STATUS_BAR ||
 		w->window_class == WC_TOOLTIPS ||
-		w->window_class == WC_DROPDOWN_MENU ||
-		!_settings_client.gui.windows_decorations) {
+		w->window_class == WC_DROPDOWN_MENU) {
 		return;
 	}
 	if (this->pos_x == 0) {
