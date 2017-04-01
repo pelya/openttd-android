@@ -5119,6 +5119,8 @@ STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Potvrdi 
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Prikaži dijalog potvrde pri gradnji cesta i stanica
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Naslovne trake
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Prikaži naslovne trake za sve prozore ili ih sakrij za uštedu prostora na ekranu
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :{BLACK}Ukrasi prozora
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :{BLACK}Ukrasi na rubovima prozora
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
 STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Postavi dubinu boja videa na 8 bitova po pikselu, ovaj način podržava animaciju vode
 STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
