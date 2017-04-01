@@ -2181,22 +2181,17 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 	/* Search for the title bar rectangle. */
 	Rect caption_rect;
 	const NWidgetBase *caption = w->nested_root->GetWidgetOfType(WWT_CAPTION);
-	if (caption != NULL) {
+	if (caption != NULL && _settings_client.gui.windows_titlebars) {
 		caption_rect.left   = caption->pos_x;
 		caption_rect.right  = caption->pos_x + caption->current_x;
 		caption_rect.top    = caption->pos_y;
 		caption_rect.bottom = caption->pos_y + caption->current_y;
-		if (!_settings_client.gui.windows_titlebars) {
-			caption_rect.left = w->left;
-			caption_rect.right = w->left + w->width;
-		}
 
 		/* Make sure the window doesn't leave the screen */
 		nx = Clamp(nx, MIN_VISIBLE_TITLE_BAR - caption_rect.right, _screen.width - MIN_VISIBLE_TITLE_BAR - caption_rect.left);
-		ny = Clamp(ny, _settings_client.gui.windows_titlebars ? 0 : - w->height, _screen.height - MIN_VISIBLE_TITLE_BAR);
-
+		ny = Clamp(ny, 0, _screen.height - MIN_VISIBLE_TITLE_BAR);
 		/* Make sure the title bar isn't hidden behind the main tool bar or the status bar. */
-		if ((!_settings_client.gui.vertical_toolbar && _settings_client.gui.windows_titlebars) || _game_mode == GM_EDITOR) {
+		if (!_settings_client.gui.vertical_toolbar || _game_mode == GM_EDITOR) {
 			// This call hides the window totally with vertical toolbar if you move it slightly off-screen to the left
 			PreventHiding(&nx, &ny, caption_rect, FindWindowById(WC_MAIN_TOOLBAR, 0), w->left, PHD_DOWN);
 		}
