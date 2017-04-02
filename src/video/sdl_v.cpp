@@ -155,7 +155,11 @@ static void CheckPaletteAnim()
 static void DrawSurfaceToScreen()
 {
 	int n = _num_dirty_rects;
+#ifdef __ANDROID__
+	if (n == 0 && !_left_button_down) return; // We have to update the screen regularly to receive mouse_up event on Android
+#else
 	if (n == 0) return;
+#endif
 	static int frameskip = 0;
 
 #ifdef __ANDROID__
@@ -179,7 +183,9 @@ static void DrawSurfaceToScreen()
 				SDL_CALL SDL_BlitSurface(_sdl_screen, &_dirty_rects[i], _sdl_realscreen, &_dirty_rects[i]);
 			}
 		}
-		SDL_CALL SDL_UpdateRects(_sdl_realscreen, n, _dirty_rects);
+		static SDL_Rect dummy_rect = { 0, 0, 8, 8 };
+		if (n > 0) SDL_CALL SDL_UpdateRects(_sdl_realscreen, n, _dirty_rects);
+		else SDL_CALL SDL_UpdateRects(_sdl_realscreen, 1, &dummy_rect);
 	}
 }
 
