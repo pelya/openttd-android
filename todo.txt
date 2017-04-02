@@ -15,5 +15,3 @@
 
 - Cannot scroll minimap.
 
-- Screen not updated on mouse up.
-
