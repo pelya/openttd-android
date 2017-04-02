@@ -160,16 +160,6 @@ static void DrawSurfaceToScreen()
 #else
 	if (n == 0) return;
 #endif
-	static int frameskip = 0;
-
-#ifdef __ANDROID__
-	if (_fast_forward) {
-		frameskip++;
-		if (frameskip < 5)
-			return;
-		frameskip = 0;
-	}
-#endif
 
 	_num_dirty_rects = 0;
 	if (n > MAX_DIRTY_RECTS) {
@@ -811,7 +801,9 @@ void VideoDriver_SDL::MainLoop()
 			 * except sleeping can't. */
 			if (_draw_mutex != NULL) _draw_mutex->EndCritical();
 
-			GameLoop();
+			for (int i = (_fast_forward ? 5 : 1); i > 0; i--) {
+				GameLoop();
+			}
 
 			if (_draw_mutex != NULL) _draw_mutex->BeginCritical();
 
