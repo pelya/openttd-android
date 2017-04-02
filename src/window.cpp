@@ -680,7 +680,10 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 		focused_widget_changed |= w->SetFocusedWidget(widget_index);
 	}
 
+	Point pt = { x, y };
+
 	if (!_settings_client.gui.windows_titlebars && mouse_down) {
+		// TODO: this should be handled inside window or widget methods, not here
 		if (widget_type == NWID_VSCROLLBAR || widget_type == NWID_HSCROLLBAR) {
 			ScrollbarClickHandler(w, nw, x, y);
 			_dragging_widget = true;
@@ -688,6 +691,10 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 		if (widget_type == WWT_RESIZEBOX) {
 			StartWindowSizing(w, (int)nw->pos_x < (w->width / 2));
 			nw->SetDirty(w);
+		}
+		if (w->window_class == WC_SMALLMAP && widget_index == WID_SM_MAP) {
+			w->OnClick(pt, widget_index, click_count);
+			_dragging_widget = true;
 		}
 		return;
 	}
@@ -697,8 +704,6 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 	if (HideDropDownMenu(w) == widget_index && widget_index >= 0) return;
 
 	if ((widget_type & ~WWB_PUSHBUTTON) < WWT_LAST && (widget_type & WWB_PUSHBUTTON)) w->HandleButtonClick(widget_index);
-
-	Point pt = { x, y };
 
 	switch (widget_type) {
 		case NWID_VSCROLLBAR:

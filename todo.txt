@@ -13,5 +13,3 @@
 
 - Draggable combo boxes.
 
-- Cannot scroll minimap.
-
