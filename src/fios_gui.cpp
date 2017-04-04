@@ -662,7 +662,7 @@ public:
 					}
 #endif
 					_load_check_data.Clear();
-					SaveOrLoad(savePath, SLO_CHECK, DFT_GAME_FILE, NO_DIRECTORY, false);
+					SaveOrLoad(savePath, SLO_LOAD, DFT_GAME_FILE, NO_DIRECTORY, false);
 					this->InvalidateData(1);
 					break;
 				}
