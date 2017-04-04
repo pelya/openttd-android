@@ -13,3 +13,4 @@
 
 - Draggable combo boxes.
 
+- Changing screen color depth resets all settings to zero.

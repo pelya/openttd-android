@@ -661,9 +661,10 @@ public:
 						break;
 					}
 #endif
-					_load_check_data.Clear();
-					SaveOrLoad(savePath, SLO_LOAD, DFT_GAME_FILE, NO_DIRECTORY, false);
-					this->InvalidateData(1);
+					_file_to_saveload.SetMode(FIOS_TYPE_FILE);
+					_file_to_saveload.SetName(savePath);
+					_file_to_saveload.SetTitle("Network Save");
+					_switch_mode = SM_LOAD_GAME;
 					break;
 				}
 		}
