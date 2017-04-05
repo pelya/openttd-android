@@ -187,7 +187,7 @@ struct GameOptionsWindow : Window {
 	{
 		DeleteWindowById(WC_CUSTOM_CURRENCY, 0);
 		if (this->reload) _switch_mode = SM_MENU;
-		SaveToConfig(); // save all settins immediately on Android, because users tend to kill the app instead of pressing 'Quit' button
+		if (!_exit_game) SaveToConfig(); // Save all settings immediately on Android, because users tend to kill the app instead of pressing 'Quit' button
 	}
 
 	/**
@@ -494,10 +494,10 @@ struct GameOptionsWindow : Window {
 				if (this->IsWidgetLowered(WID_GO_8BPP_BUTTON)) break;
 				free(_ini_blitter);
 				_ini_blitter = stredup("8bpp-optimized");
-				SaveToConfig();
+				_exit_game = true;
+				_restart_game = true;
 				#ifdef __ANDROID__
 				SDL_ANDROID_SetConfigOption(SDL_ANDROID_CONFIG_VIDEO_DEPTH_BPP, 16);
-				SDL_ANDROID_RestartMyself("restart-settings"); // We terminate here, no need to update widget state
 				#endif
 				break;
 
@@ -505,10 +505,10 @@ struct GameOptionsWindow : Window {
 				if (this->IsWidgetLowered(WID_GO_16BPP_BUTTON)) break;
 				free(_ini_blitter);
 				_ini_blitter = stredup("16bpp-simple");
-				SaveToConfig();
+				_exit_game = true;
+				_restart_game = true;
 				#ifdef __ANDROID__
 				SDL_ANDROID_SetConfigOption(SDL_ANDROID_CONFIG_VIDEO_DEPTH_BPP, 16);
-				SDL_ANDROID_RestartMyself("restart-settings"); // We terminate here, no need to update widget state
 				#endif
 				break;
 
@@ -516,10 +516,10 @@ struct GameOptionsWindow : Window {
 				if (this->IsWidgetLowered(WID_GO_32BPP_BUTTON)) break;
 				free(_ini_blitter);
 				_ini_blitter = stredup("32bpp-anim");
-				SaveToConfig();
+				_exit_game = true;
+				_restart_game = true;
 				#ifdef __ANDROID__
 				SDL_ANDROID_SetConfigOption(SDL_ANDROID_CONFIG_VIDEO_DEPTH_BPP, 24);
-				SDL_ANDROID_RestartMyself("restart-settings"); // We terminate here, no need to update widget state
 				#endif
 				break;
 
