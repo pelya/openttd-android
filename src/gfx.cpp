@@ -47,6 +47,7 @@ Point _right_button_down_pos; ///< Pos of right mouse button click, for drag and
 DrawPixelInfo _screen;
 bool _screen_disable_anim = false;   ///< Disable palette animation (important for 32bpp-anim blitter during giant screenshot)
 bool _exit_game;
+bool _restart_game;
 GameMode _game_mode;
 SwitchMode _switch_mode;  ///< The next mainloop command.
 PauseModeByte _pause_mode;

@@ -491,6 +491,20 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 		}
 #endif /* ENABLE_NETWORK */
 
+		// TODO: remove this hack in one year
+		// Check if OpenTTD config is broken by blitter changing code
+		static bool checked = false;
+		DEBUG(misc, 0, "========= Limits for vehicles: %d %d %d %d", _settings_newgame.vehicle.max_trains, _settings_newgame.vehicle.max_roadveh, _settings_newgame.vehicle.max_aircraft, _settings_newgame.vehicle.max_ships);
+		if (!checked &&
+			_settings_newgame.vehicle.max_trains == 0 && _settings_newgame.vehicle.max_roadveh == 0 &&
+			_settings_newgame.vehicle.max_aircraft == 0 && _settings_newgame.vehicle.max_ships == 0) {
+			unlink("libsdl-DownloadFinished-1.flag");
+			//_exit_game = true;
+			//_restart_game = true;
+			abort(); // Kill myself with contempt, user will restart the app, because otherwise we enter infinite restart loop
+		}
+		checked = true;
+
 		/* After the scan we're not used anymore. */
 		delete this;
 	}
@@ -924,6 +938,13 @@ exit_normal:
 		fclose(_log_fd);
 	}
 #endif /* ENABLE_NETWORK */
+
+	if (_restart_game) {
+#ifdef __ANDROID__
+		// This makes OpenTTD reset all it's settings for some reason. Just abort and pretend we crashed
+		//SDL_ANDROID_RestartMyself("restart-settings");
+#endif
+	}
 
 	return ret;
 }

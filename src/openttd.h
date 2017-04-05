@@ -52,6 +52,7 @@ enum DisplayOptions {
 extern GameMode _game_mode;
 extern SwitchMode _switch_mode;
 extern bool _exit_game;
+extern bool _restart_game;
 
 /** Modes of pausing we've got */
 enum PauseMode {
