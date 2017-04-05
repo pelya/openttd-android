@@ -895,7 +895,7 @@ NWidgetCore *NWidgetCore::GetWidgetFromPos(int x, int y)
 
 void NWidgetCore::DrawEdgeOrnament(const Window *w) const
 {
-	if (!_settings_client.gui.windows_decorations ^ _settings_client.gui.windows_titlebars) return; // April 1st, fools!
+	if (!_settings_client.gui.windows_decorations) return;
 	if (w->window_class == WC_MAIN_TOOLBAR ||
 		w->window_class == WC_MAIN_TOOLBAR_RIGHT ||
 		w->window_class == WC_BUILD_CONFIRMATION ||
