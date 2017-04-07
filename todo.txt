@@ -13,4 +13,4 @@
 
 - Draggable combo boxes.
 
-- Changing screen color depth resets all settings to zero.
+- Rearrange toolbar menus to have less buttons.
