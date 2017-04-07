@@ -2055,7 +2055,12 @@ static void HandleMouseDragNoTitlebars()
 	if (_settings_client.gui.windows_titlebars || _dragging_window ||
 		!_left_button_down || _focused_window == NULL || _dragging_widget) return;
 	unsigned distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
-	if (distance * 2 > GetMinSizing(NWST_STEP)) {
+	if (distance * 2 > GetMinSizing(NWST_STEP) &&
+		_focused_window->window_class != WC_SELECT_GAME &&
+		_focused_window->window_class != WC_STATUS_BAR &&
+		_focused_window->window_class != WC_MAIN_TOOLBAR &&
+		_focused_window->window_class != WC_MAIN_TOOLBAR_RIGHT &&
+		_focused_window->window_class != WC_BUILD_CONFIRMATION) {
 		//SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x, _left_button_down_pos.y, 1);
 		StartWindowDrag(_focused_window);
 		_drag_delta.x += _cursor.pos.x - _left_button_down_pos.x;
@@ -2276,18 +2281,29 @@ int GetMainViewBottom()
 	return (w == NULL) ? _screen.height : w->top;
 }
 
-static bool GetWindowDraggedOffScreen(Window *w)
+bool GetWindowDraggedOffScreen(const Window *w)
 {
 	if (_settings_client.gui.windows_titlebars) return false;
 	Rect edge = { 0, GetMainViewTop(), _screen.width, _screen.height };
-	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR) {
+	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR && _game_mode != GM_MENU) {
 		edge.left += GetMinSizing(NWST_BUTTON);
 		edge.right -= GetMinSizing(NWST_BUTTON);
 	}
-	if (w->left < edge.left && w->left + w->width < edge.right) return true;
-	if (w->left + w->width > edge.right && w->left > edge.left) return true;
-	if (w->top < edge.top && w->top + w->height < edge.bottom) return true;
-	if (w->top + w->height > edge.bottom && w->top > edge.top) return true;
+	Rect visible = { edge.left + (int)GetMinSizing(NWST_BUTTON) * 4, edge.top + (int)GetMinSizing(NWST_BUTTON) * 2,
+						edge.right - (int)GetMinSizing(NWST_BUTTON) * 4, edge.bottom - (int)GetMinSizing(NWST_BUTTON) * 2 };
+	// 1/4 of the window must be hidden to close it when flicking it off to the left/right
+	if (w->width >= (int)GetMinSizing(NWST_BUTTON) * 4) {
+		edge.left -= GetMinSizing(NWST_BUTTON) * 2;
+		edge.right += GetMinSizing(NWST_BUTTON) * 2;
+	}
+	if (w->height >= (int)GetMinSizing(NWST_BUTTON) * 4) {
+		edge.top -= GetMinSizing(NWST_BUTTON);
+		edge.bottom += GetMinSizing(NWST_BUTTON);
+	}
+	if (w->left < edge.left && w->left + w->width < visible.right) return true;
+	if (w->left + w->width > edge.right && w->left > visible.left) return true;
+	if (w->top < edge.top && w->top + w->height < visible.bottom) return true;
+	if (w->top + w->height > edge.bottom && w->top > visible.top) return true;
 	return false;
 }
 
@@ -2311,7 +2327,7 @@ static EventState HandleWindowDragging()
 			if (!_left_button_down) {
 				w->flags &= ~WF_DRAGGING;
 				if (GetWindowDraggedOffScreen(w)) {
-					if (w->window_class != WC_SELECT_GAME) delete w;
+					delete w;
 				}
 				break;
 			}

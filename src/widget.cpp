@@ -592,6 +592,11 @@ void Window::DrawWidgets() const
 			GfxFillRect(left,                 bottom, right,                  bottom,                   colour);
 		}
 	}
+
+	/* Dim the window if it's about to close */
+	if ((this->flags & WF_DRAGGING) && !_settings_client.gui.windows_titlebars && GetWindowDraggedOffScreen(this)) {
+		GfxFillRect(2, 2, this->width - 3, this->height - 3, PALETTE_TO_TRANSPARENT, FILLRECT_RECOLOUR);
+	}
 }
 
 /**
