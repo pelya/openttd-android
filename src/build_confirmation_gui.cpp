@@ -176,7 +176,9 @@ struct BuildConfirmationWindow : Window {
 				} else {
 					ResetObjectToPlace();
 					DeleteWindowByClass(WC_BUILD_BRIDGE);
-					ClearErrorMessages();
+					//ClearErrorMessages();
+					Window *w = FindWindowById(WC_ERRMSG, 0);
+					if (w != NULL) delete w;
 				}
 				break;
 		}
