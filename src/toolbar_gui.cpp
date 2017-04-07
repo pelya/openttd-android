@@ -1556,8 +1556,8 @@ public:
 class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
 	{
-		static const uint SMALLEST_ARRANGEMENT = 14;
-		static const uint BIGGEST_ARRANGEMENT  = 20;
+		uint SMALLEST_ARRANGEMENT = 14 + (_settings_client.gui.build_confirmation ? 1 : 2);
+		uint BIGGEST_ARRANGEMENT  = 20 + (_settings_client.gui.build_confirmation ? 1 : 2);
 
 		/* The number of buttons of each row of the toolbar should match the number of items which we want to be visible.
 		 * The total number of buttons should be equal to arrangable_count * 2.
@@ -1579,6 +1579,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_WATER,
 			WID_TN_AIR,
 			WID_TN_LANDSCAPE,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 			// lower toolbar
 			WID_TN_SETTINGS,
@@ -1594,6 +1595,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MUSIC_SOUND,
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 		};
 		static const byte arrange15[] = {
@@ -1611,6 +1613,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_LANDSCAPE,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 			// lower toolbar
 			WID_TN_PAUSE,
@@ -1627,6 +1630,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MUSIC_SOUND,
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 		};
 		static const byte arrange16[] = {
@@ -1645,6 +1649,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_LANDSCAPE,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 			// lower toolbar
 			WID_TN_PAUSE,
@@ -1662,6 +1667,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_HELP,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 		};
 		static const byte arrange17[] = {
@@ -1681,6 +1687,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_LANDSCAPE,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 			// lower toolbar
 			WID_TN_PAUSE,
@@ -1699,6 +1706,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_HELP,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 		};
 		static const byte arrange18[] = {
@@ -1719,6 +1727,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_LANDSCAPE,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 			// lower toolbar
 			WID_TN_PAUSE,
@@ -1738,6 +1747,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_HELP,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 		};
 		static const byte arrange19[] = {
@@ -1759,6 +1769,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MUSIC_SOUND,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 			// lower toolbar
 			WID_TN_PAUSE,
@@ -1779,6 +1790,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_HELP,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 		};
 		static const byte arrange20[] = {
@@ -1801,6 +1813,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_GOAL,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 			// lower toolbar
 			WID_TN_PAUSE,
@@ -1822,6 +1835,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_HELP,
 			WID_TN_ZOOM_IN,
 			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
 			WID_TN_SWITCH_BAR,
 		};
 		static const byte arrange_all[] = {
@@ -1853,19 +1867,345 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_LANDSCAPE,
 			WID_TN_MUSIC_SOUND,
 			WID_TN_MESSAGES,
+			WID_TN_CTRL,
 			WID_TN_HELP
+		};
+		/* With 'Shift' button included */
+		static const byte arrange14shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+			// lower toolbar
+			WID_TN_SETTINGS,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+		};
+		static const byte arrange15shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SMALL_MAP,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+			// lower toolbar
+			WID_TN_PAUSE,
+			WID_TN_SETTINGS,
+			WID_TN_SMALL_MAP,
+			WID_TN_SAVE,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+		};
+		static const byte arrange16shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SMALL_MAP,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+			// lower toolbar
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SAVE,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+		};
+		static const byte arrange17shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SMALL_MAP,
+			WID_TN_SUBSIDIES,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+			// lower toolbar
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_SUBSIDIES,
+			WID_TN_TOWNS,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+		};
+		static const byte arrange18shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_INDUSTRIES,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+			// lower toolbar
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_GRAPHS,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+		};
+		static const byte arrange19shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+			// lower toolbar
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_MESSAGES,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_HELP,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+		};
+		static const byte arrange20shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_GOAL,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+			// lower toolbar
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_INDUSTRIES,
+			WID_TN_MESSAGES,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_STORY,
+			WID_TN_HELP,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
+			WID_TN_SWITCH_BAR,
+		};
+		static const byte arrange_all_shift[] = {
+			WID_TN_PAUSE,
+			WID_TN_FAST_FORWARD,
+			WID_TN_SETTINGS,
+			WID_TN_SAVE,
+			WID_TN_SMALL_MAP,
+			WID_TN_TOWNS,
+			WID_TN_SUBSIDIES,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_STORY,
+			WID_TN_GOAL,
+			WID_TN_GRAPHS,
+			WID_TN_LEAGUE,
+			WID_TN_INDUSTRIES,
+			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
+			WID_TN_ZOOM_IN,
+			WID_TN_ZOOM_OUT,
+			WID_TN_RAILS,
+			WID_TN_ROADS,
+			WID_TN_WATER,
+			WID_TN_AIR,
+			WID_TN_LANDSCAPE,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+			WID_TN_CTRL,
+			WID_TN_SHIFT,
 		};
 
 		/* If at least BIGGEST_ARRANGEMENT fit, just spread all the buttons nicely */
 		uint full_buttons = max(CeilDiv(width, this->smallest_x), SMALLEST_ARRANGEMENT);
 		if (full_buttons > BIGGEST_ARRANGEMENT) {
-			button_count = arrangable_count = lengthof(arrange_all);
+			button_count = arrangable_count = _settings_client.gui.build_confirmation ? lengthof(arrange_all) : lengthof(arrange_all_shift);
 			spacer_count = this->spacers;
-			return arrange_all;
+			return _settings_client.gui.build_confirmation ? arrange_all : arrange_all_shift;
 		}
 
 		/* Introduce the split toolbar */
-		static const byte * const arrangements[] = { arrange14, arrange15, arrange16, arrange17, arrange18, arrange19, arrange20 };
+		static const byte * const arrangements_noshift[] = { arrange14, arrange15, arrange16, arrange17, arrange18, arrange19, arrange20 };
+
+		static const byte * const arrangements_shift[] = { arrange14shift, arrange15shift, arrange16shift, arrange17shift, arrange18shift, arrange19shift, arrange20shift };
+
+		const byte * const * arrangements = _settings_client.gui.build_confirmation ? arrangements_noshift : arrangements_shift;
 
 		button_count = arrangable_count = full_buttons;
 		spacer_count = this->spacers;
