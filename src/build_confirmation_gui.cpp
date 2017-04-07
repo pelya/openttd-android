@@ -21,6 +21,7 @@
 #include "zoom_func.h"
 #include "settings_type.h"
 #include "station_gui.h"
+#include "error.h"
 #include "build_confirmation_func.h"
 #include "widgets/build_confirmation_widget.h"
 #include "widgets/misc_widget.h"
