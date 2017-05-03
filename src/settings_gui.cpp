@@ -627,6 +627,7 @@ struct GameOptionsWindow : Window {
 				UpdateCursorSize();
 				LoadStringWidthTable();
 				ReconstructUserInterface();
+				UpdateAllVirtCoords();
 				break;
 
 			case WID_GO_BASE_GRF_DROPDOWN:
