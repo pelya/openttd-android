@@ -398,25 +398,6 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 			/* Check at least there is space for one item. */
 			assert(available_height >= avg_height);
 
-			/* ... and lastly if it won't, enable the scroll bar and fit the
-			 * list in below the widget */
-			int rows = available_height / avg_height;
-			height = rows * avg_height;
-
-			scroll = true;
-
-			/* ... and choose whether to put the list above or below the widget. */
-			bool put_above = false;
-			int available_height = screen_bottom - w->top - wi_rect.bottom;
-			if (w->top + wi_rect.top - screen_top > available_height) {
-				// Put it above.
-				available_height = w->top + wi_rect.top - screen_top;
-				put_above = true;
-			}
-
-			/* Check at least there is space for one item. */
-			assert(available_height >= avg_height);
-
 			/* And lastly, fit the list... */
 			int rows = available_height / avg_height;
 			height = rows * avg_height;
