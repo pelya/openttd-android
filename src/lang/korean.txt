@@ -4985,6 +4985,10 @@ STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}폰트 �
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}게임 내부 폰트의 크기
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}명령 확인
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}도로와 정류장을 건설시 확인 팝업을 보임
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}이름 창
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}모든 창에 대해 이름을 보여주거나, 화면 공간 절약을 위해 이름을 가리기
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :{BLACK}창 꾸미기
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :{BLACK}창 모서리에 꾸밈 효과
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8비트
 STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}그래픽 색상 깊이를 픽셀당 8비트로 설정합니다. 이 그래픽 모드는 물이 흐르는 애니메이션 효과를 표현할 수 있습니다.
 STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16비트
