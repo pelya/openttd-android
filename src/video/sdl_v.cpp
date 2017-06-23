@@ -56,6 +56,9 @@ static int _num_dirty_rects;
 static int _use_hwpalette;
 static int _requested_hwpalette; /* Did we request a HWPALETTE for the current video mode? */
 
+static SDL_Joystick * _multitouch_device = NULL;
+static Point _multitouch_second_point;
+
 void VideoDriver_SDL::MakeDirty(int left, int top, int width, int height)
 {
 	if (_num_dirty_rects < MAX_DIRTY_RECTS) {
@@ -422,6 +425,12 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 
 	GameSizeChanged();
 
+#ifdef __ANDROID__
+	if (!_multitouch_device) {
+		_multitouch_device = SDL_JoystickOpen(0);
+	}
+#endif
+
 	return true;
 }
 
@@ -630,19 +639,31 @@ int VideoDriver_SDL::PollEvent()
 				uint keycode = ConvertSdlKeyIntoMy(&ev.key.keysym, &character);
 				HandleKeypress(keycode, character);
 #ifdef __ANDROID__
-				if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL)
+				if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL) {
 					_ctrl_pressed = true;
-				if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT)
+				}
+				if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT) {
 					_shift_pressed = true;
+				}
+				if (ev.key.keysym.sym == SDLK_KP_PLUS || ev.key.keysym.sym == SDLK_KP_MINUS) {
+					// Center the mouse cursor between touch points
+					SDL_GetMouseState(&_right_button_down_pos.x, &_right_button_down_pos.y);
+					_right_button_down_pos.x = (_right_button_down_pos.x + _multitouch_second_point.x) / 2;
+					_right_button_down_pos.y = (_right_button_down_pos.y + _multitouch_second_point.y) / 2;
+					_cursor.pos = _right_button_down_pos;
+					//_cursor.UpdateCursorPosition(_cursor.pos.x, _cursor.pos.y, false);
+				}
 #endif
 			}
 			break;
 		case SDL_KEYUP:
 #ifdef __ANDROID__
-			if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL)
+			if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL) {
 				_ctrl_pressed = false;
-			if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT)
+			}
+			if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT) {
 				_shift_pressed = false;
+			}
 #endif
 			break;
 #ifndef __ANDROID__
@@ -652,6 +673,11 @@ int VideoDriver_SDL::PollEvent()
 			CreateMainSurface(w, h);
 			break;
 		}
+		case SDL_JOYBALLMOTION:
+			if (evt.jball.which == 0 && evt.jball.ball == 1) {
+				_multitouch_second_point.x = evt.jball.xrel;
+				_multitouch_second_point.y = evt.jball.yrel;
+			}
 #endif /* not __ANDROID__ */
 		case SDL_VIDEOEXPOSE: {
 			/* Force a redraw of the entire screen. Note
