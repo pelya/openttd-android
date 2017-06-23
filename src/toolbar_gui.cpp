@@ -886,10 +886,22 @@ static CallBackFunction ToolbarZoomOutClick(Window *w)
 
 static CallBackFunction ToolbarBuildRailClick(Window *w)
 {
-	ShowDropDownList(w, GetRailTypeDropDownList(), _last_built_railtype, WID_TN_RAILS, 140, true);
+	DropDownList *list = GetRailTypeDropDownList();
+	if (_settings_client.gui.compact_vertical_toolbar) {
+		const Company *c = Company::Get(_local_company);
+		*list->Append() = new DropDownListStringItem(STR_ROAD_MENU_ROAD_CONSTRUCTION, RAILTYPE_END + ROADTYPE_ROAD, false);
+		*list->Append() = new DropDownListStringItem(STR_ROAD_MENU_TRAM_CONSTRUCTION, RAILTYPE_END + ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM));
+		*list->Append() = new DropDownListStringItem(STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, RAILTYPE_END + WID_TN_WATER, false);
+		*list->Append() = new DropDownListStringItem(STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, RAILTYPE_END + WID_TN_AIR, false);
+	}
+	ShowDropDownList(w, list, _last_built_railtype, WID_TN_RAILS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
+
+static CallBackFunction MenuClickBuildRoad(int index);
+static CallBackFunction MenuClickBuildWater(int index);
+static CallBackFunction MenuClickBuildAir(int index);
 
 /**
  * Handle click on the entry in the Build Rail menu.
@@ -899,6 +911,16 @@ static CallBackFunction ToolbarBuildRailClick(Window *w)
  */
 static CallBackFunction MenuClickBuildRail(int index)
 {
+	switch (index) {
+		case RAILTYPE_END + ROADTYPE_ROAD:
+			return MenuClickBuildRoad(ROADTYPE_ROAD);
+		case RAILTYPE_END + ROADTYPE_TRAM:
+			return MenuClickBuildRoad(ROADTYPE_TRAM);
+		case RAILTYPE_END + WID_TN_WATER:
+			return MenuClickBuildWater(0);
+		case RAILTYPE_END + WID_TN_AIR:
+			return MenuClickBuildAir(0);
+	}
 	_last_built_railtype = (RailType)index;
 	ShowBuildRailToolbar(_last_built_railtype);
 	return CBF_NONE;
@@ -2261,6 +2283,18 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
 		};
+		static const byte arrange_right_compact_noswitch[] = {
+			WID_TN_RAILS,
+			WID_TN_LANDSCAPE,
+			WID_TN_TRAINS,
+			WID_TN_TOWNS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+		};
 
 		// Some rather artistic button arrangement, I'm proud of myself
 		static const byte arrange_left_classic[] = {
@@ -2300,6 +2334,20 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_STATIONS,
 			WID_TN_STORY,
 			WID_TN_GOAL,
+			WID_TN_MUSIC_SOUND,
+			WID_TN_MESSAGES,
+			WID_TN_HELP,
+		};
+		static const byte arrange_right_classic_noswitch[] = {
+			WID_TN_RAILS,
+			WID_TN_LANDSCAPE,
+			WID_TN_TRAINS,
+			WID_TN_STATIONS,
+			WID_TN_FINANCES,
+			WID_TN_COMPANIES,
+			WID_TN_GRAPHS,
+			WID_TN_LEAGUE,
+			WID_TN_STATIONS,
 			WID_TN_MUSIC_SOUND,
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
@@ -2398,11 +2446,13 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 		{
 			button_count = arrangable_count = lengthof(arrange_left_classic);
 			if (side == 0) return arrange_left_classic;
+			if (_settings_client.gui.compact_vertical_toolbar) return arrange_right_classic_noswitch;
 			return &arrange_right_classic[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
 		}
 
 		button_count = arrangable_count = lengthof(arrange_left_compact);
 		if (side == 0) return arrange_left_compact;
+		if (_settings_client.gui.compact_vertical_toolbar) return arrange_right_compact_noswitch;
 		return &arrange_right_compact[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
 	}
 };
