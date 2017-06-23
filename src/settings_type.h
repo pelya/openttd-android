@@ -78,6 +78,7 @@ struct GUISettings {
 	uint8  order_review_system;              ///< perform order reviews on vehicles
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
 	bool   vertical_toolbar;                 ///< main toolbar is split into two vertical toolbars
+	bool   compact_vertical_toolbar;         ///< compact mode for vertical toolbars, with more sub-menus
 	bool   build_confirmation;               ///< show confirmation dialog when building roads and stations
 	bool   windows_titlebars;                ///< show or hide titlebars for all windows to increase scrren space
 	bool   windows_decorations;              ///< draw ornament on all window edges
