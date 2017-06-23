@@ -1212,26 +1212,26 @@ STR_CONFIG_SETTING_SIGNALSIDE_HELPTEXT                          :Select on which
 STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :On the left
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :On the driving side
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :On the right
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Vertical toolbar
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}Main toolbar is split into two vertical toolbars on the sides of the screen
-STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :{BLACK}Compact vertical toolbar
-STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :{BLACK}No 'Switch toolbars' button in the vertical toolbar, but more sub-menus
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Button size
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Size of all user interface elements
-STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Font size
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Size of all game fonts
-STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Confirm actions
-STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Show confirmation dialog when building roads and stations
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Title bars
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Show title bars for all windows, or hide them to save screen space
-STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :{BLACK}Window decorations
-STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :{BLACK}Ornaments on window edges
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Set video color depth to 8 bits per pixel, this video mode supports water animation
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Set video color depth to 16 bits per pixel, this requires restart, this video mode does not support water animation
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Set video color depth to 24 bits per pixel, this video mode supports water animation
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Vertical toolbar: {STRING2}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Main toolbar is split into two vertical toolbars on the sides of the screen
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :Compact vertical toolbar: {STRING2}
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :No 'Switch toolbars' button in the vertical toolbar, but more sub-menus
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Button size
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Size of all user interface elements
+STR_CONFIG_SETTING_FONT_SIZE                                    :Font size
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Size of all game fonts
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Confirm actions: {STRING2}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Show confirmation dialog when building roads and stations
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :Title bars: {STRING2}
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :Show title bars for all windows, or hide them to save screen space
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Window decorations: {STRING2}
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Ornaments on window edges
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Set video color depth to 8 bits per pixel, this video mode supports water animation
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Set video color depth to 16 bits per pixel, this requires restart, this video mode does not support water animation
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Set video color depth to 24 bits per pixel, this video mode supports water animation
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}
