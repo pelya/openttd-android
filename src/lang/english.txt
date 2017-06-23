@@ -1214,6 +1214,8 @@ STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :On the driving 
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :On the right
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Vertical toolbar
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}Main toolbar is split into two vertical toolbars on the sides of the screen
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :{BLACK}Compact vertical toolbar
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :{BLACK}No 'Switch toolbars' button in the vertical toolbar, but more sub-menus
 STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Button size
 STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Size of all user interface elements
 STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Font size
