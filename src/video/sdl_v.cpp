@@ -666,6 +666,13 @@ int VideoDriver_SDL::PollEvent()
 			}
 #endif
 			break;
+#ifdef __ANDROID__
+		case SDL_JOYBALLMOTION:
+			if (ev.jball.which == 0 && ev.jball.ball == 1) {
+				_multitouch_second_point.x = ev.jball.xrel;
+				_multitouch_second_point.y = ev.jball.yrel;
+			}
+#endif /* not __ANDROID__ */
 #ifndef __ANDROID__
 		case SDL_VIDEORESIZE: {
 			int w = max(ev.resize.w, 64);
@@ -673,11 +680,6 @@ int VideoDriver_SDL::PollEvent()
 			CreateMainSurface(w, h);
 			break;
 		}
-		case SDL_JOYBALLMOTION:
-			if (evt.jball.which == 0 && evt.jball.ball == 1) {
-				_multitouch_second_point.x = evt.jball.xrel;
-				_multitouch_second_point.y = evt.jball.yrel;
-			}
 #endif /* not __ANDROID__ */
 		case SDL_VIDEOEXPOSE: {
 			/* Force a redraw of the entire screen. Note

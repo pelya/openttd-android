@@ -3,8 +3,6 @@
 
 - Smallmap UI won't fit all FIRS industries.
 
-- Put mouse cursor in the middle between touch points when zooming in and out.
-
 - Add 'Goal' menu item somewhere to compact toolbar.
 
 - Misclicking station from orders dialog should hide the dialog for 3 times.
