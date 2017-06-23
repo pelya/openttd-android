@@ -446,7 +446,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Boð søga
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Landa økis kunning
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Console opið ella lukka
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Spæl script debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Skermmynd

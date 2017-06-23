@@ -469,7 +469,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Historial de me
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Información sobre área de terreno
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Activar consola
 STR_ABOUT_MENU_AI_DEBUG                                         :Depuración de scripts de IA o juego
 STR_ABOUT_MENU_SCREENSHOT                                       :Captura de pantalla

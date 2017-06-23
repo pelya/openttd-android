@@ -468,7 +468,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :消息历史
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :查询地块信息
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :切换到控制台模式
 STR_ABOUT_MENU_AI_DEBUG                                         :AI /游戏脚本调试
 STR_ABOUT_MENU_SCREENSHOT                                       :屏幕截图

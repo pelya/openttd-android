@@ -463,7 +463,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :செய்த
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :நிலா பகுதி விவரம்
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :முனையத்தை மாற்று
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/வரிவடிவம் சரிபார்
 STR_ABOUT_MENU_SCREENSHOT                                       :திரைபிடிப்பு

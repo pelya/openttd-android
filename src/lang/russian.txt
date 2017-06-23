@@ -594,7 +594,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :История 
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Информация об участке земли
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Консоль
 STR_ABOUT_MENU_AI_DEBUG                                         :Отладка ИИ / скриптов
 STR_ABOUT_MENU_SCREENSHOT                                       :Снимок экрана

@@ -470,7 +470,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Tidlegare meldi
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Informasjon om landområde
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Syne/gøym konsoll
 STR_ABOUT_MENU_AI_DEBUG                                         :AI- / Spelscriptfeilsøking
 STR_ABOUT_MENU_SCREENSHOT                                       :Skjermdump

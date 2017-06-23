@@ -847,7 +847,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Poprzednie wiad
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Informacje o terenie
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Przełącz konsolę
 STR_ABOUT_MENU_AI_DEBUG                                         :Debugowanie SI / Game Script
 STR_ABOUT_MENU_SCREENSHOT                                       :Zrzut ekranu

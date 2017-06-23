@@ -564,7 +564,6 @@ STR_NEWS_MENU_MESSAGE_HISTORY_MENU                              :Povijest poruka
 
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Podaci o zemljištu
-STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Otvori konzolu
 STR_ABOUT_MENU_AI_DEBUG                                         :Debugiranje UI-ja/Skripte igre
 STR_ABOUT_MENU_SCREENSHOT                                       :Slika zaslona
