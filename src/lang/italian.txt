@@ -5005,20 +5005,20 @@ STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELO
 # Android strings
 STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Istruzioni
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Mostra la legenda della mappa / descrizione dei simboli della mappa
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Barra degli strumenti verticale
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}La barra degli strumenti è divisa in due barre verticali sui lati dello schermo
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Dimensioni dei pulsanti
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Dimensioni degli elementi dell'interfaccia
-STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Dimensioni dei caratteri
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Dimensioni dei caratteri nel gioco
-STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Conferma
-STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Mostra il dialogo di conferma durante la costruzione di strade e stazioni
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Imposta i colori a 8 bit per pixel. Questa modalità video supporta l'animazione dell'acqua
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Imposta i colori a 16 bit per pixel (richiede il riavvio). Questa modalità video non supporta l'animazione dell'acqua
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Imposta i colori a 24 bit per pixel. Questa modalità video supporta l'animazione dell'acqua
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Barra degli strumenti verticale: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :La barra degli strumenti è divisa in due barre verticali sui lati dello schermo
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Dimensioni dei pulsanti
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Dimensioni degli elementi dell'interfaccia
+STR_CONFIG_SETTING_FONT_SIZE                                    :Dimensioni dei caratteri
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Dimensioni dei caratteri nel gioco
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Conferma: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Mostra il dialogo di conferma durante la costruzione di strade e stazioni
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Imposta i colori a 8 bit per pixel. Questa modalità video supporta l'animazione dell'acqua
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Imposta i colori a 16 bit per pixel (richiede il riavvio). Questa modalità video non supporta l'animazione dell'acqua
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Imposta i colori a 24 bit per pixel. Questa modalità video supporta l'animazione dell'acqua
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Chiude tutte le schermate aperte (eccetto quelle permanenti)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Premi questo tasto per una stima dei costi dell'azione desiderata
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Usa per le azioni che usano il tasto "CTRL"

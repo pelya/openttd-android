@@ -4968,20 +4968,20 @@ STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELO
 # Android strings
 STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Tutorial
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Zeige Kartenlegende / Beschreibung der Kartensymbole
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Vertikale Werkzeugsleiste
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}Hauptwerzeugleiste ist in zwei vertikale Leisten an den Bildschirmseiten aufgeteilt
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Schaltflächengröße
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Größe aller Elemente der Benutzeroberfläche
-STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Schriftartgröße
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Größe aller Schriftarten
-STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Aktionen bestätigen
-STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Zeige Bestätigungsdialog bei Straßen- und Haltenstellebau
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Setzt die Farbtiefe auf 8 Bits per Pixel. Dieser Modus unterstützt Wasseranimation
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Setzt die Farbtiefe auf 16 Bit per Pixel. Erfordert Neustart und dieser Modus unterstützt keine Wasseranimation
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Setzt die Farbtiefe auf 24 Bits per Pixel. Dieser Modus unterstützt Wasseranimation
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Vertikale Werkzeugsleiste: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Hauptwerzeugleiste ist in zwei vertikale Leisten an den Bildschirmseiten aufgeteilt
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Schaltflächengröße
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Größe aller Elemente der Benutzeroberfläche
+STR_CONFIG_SETTING_FONT_SIZE                                    :Schriftartgröße
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Größe aller Schriftarten
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Aktionen bestätigen: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Zeige Bestätigungsdialog bei Straßen- und Haltenstellebau
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Setzt die Farbtiefe auf 8 Bits per Pixel. Dieser Modus unterstützt Wasseranimation
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Setzt die Farbtiefe auf 16 Bit per Pixel. Erfordert Neustart und dieser Modus unterstützt keine Wasseranimation
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Setzt die Farbtiefe auf 24 Bits per Pixel. Dieser Modus unterstützt Wasseranimation
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Schließe alle offene Fenster (außer Festgepinnte)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Drücke hier, um eine Kostenabschätzung für die Durchführung einer Aktion zu erhalten
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Für Aktionen benutzen, welche die "STRG" Taste benutzen
