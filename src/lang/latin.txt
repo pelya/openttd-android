@@ -5292,20 +5292,20 @@ STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELO
 # Android strings
 STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Rudimentum
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Monstrare formulam graphicam / descriptionem tabulae
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Arca instrumentorum directa
-STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}Si vis, arca instrumentorum prima dividitur in partes duas apud margines scrinii
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Magnitudo globulorum
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Magnitudo omnium elementorum interfaciei
-STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Magnitudo fontis typographici
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Magnitudo omnium fontium typographicorum in ludo
-STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Confirmare
-STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Monstrare confirmationem dum struuntur stationes viaeque
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8bpp
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Eligere modum coloris 8bpp; hic sinit colores aquae moventes
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16bpp
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Eligere modum coloris 16bpp (necesse erit programma exire et resumere); hic NON sinit colores aquae moventes
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24bpp
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Eligere modum coloris 24bpp; hic sinit colores aquae moventes
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Arca instrumentorum directa: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Si vis, arca instrumentorum prima dividitur in partes duas apud margines scrinii
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Magnitudo globulorum
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Magnitudo omnium elementorum interfaciei
+STR_CONFIG_SETTING_FONT_SIZE                                    :Magnitudo fontis typographici
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Magnitudo omnium fontium typographicorum in ludo
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Confirmare: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Monstrare confirmationem dum struuntur stationes viaeque
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8bpp
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Eligere modum coloris 8bpp; hic sinit colores aquae moventes
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16bpp
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Eligere modum coloris 16bpp (necesse erit programma exire et resumere); hic NON sinit colores aquae moventes
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24bpp
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Eligere modum coloris 24bpp; hic sinit colores aquae moventes
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Claudere omnes fenestras (sed non glutinosas)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Preme ut aestimatio actionis monstretur
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Utendum est ad actiones cum "CTRL"
