@@ -2308,7 +2308,7 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
 		};
-		// TODO: WID_TN_SUBSIDIES, WID_TN_INDUSTRIES,
+		// TODO: WID_TN_SUBSIDIES, WID_TN_INDUSTRIES, WID_TN_LANDSCAPE,
 		static const byte arrange_right_compact_noswitch[] = {
 			WID_TN_RAILS,
 			WID_TN_TRAINS,
