@@ -1087,7 +1087,27 @@ static CallBackFunction PlaceLandBlockInfo()
 
 static CallBackFunction ToolbarHelpClick(Window *w)
 {
-	PopupMainToolbMenu(w, WID_TN_HELP, STR_ABOUT_MENU_LAND_BLOCK_INFO, _settings_client.gui.newgrf_developer_tools ? 12 : 9);
+	//PopupMainToolbMenu(w, WID_TN_HELP, STR_ABOUT_MENU_LAND_BLOCK_INFO, _settings_client.gui.newgrf_developer_tools ? 12 : 9);
+	DropDownList *list = new DropDownList();
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_LAND_BLOCK_INFO,         0, false);
+	*list->Append() = new DropDownListStringItem(STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT, 1, false);
+	*list->Append() = new DropDownListStringItem(STR_NEWS_MENU_MESSAGE_HISTORY_MENU,     2, false);
+	*list->Append() = new DropDownListStringItem(STR_TOOLBAR_SOUND_MUSIC,                3, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_TUTORIAL,                4, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_TOGGLE_CONSOLE,          5, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_AI_DEBUG,                6, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_SCREENSHOT,              7, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_ZOOMIN_SCREENSHOT,       8, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT,  9, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_GIANT_SCREENSHOT,       10, false);
+	*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_ABOUT_OPENTTD,          11, false);
+	if (_settings_client.gui.newgrf_developer_tools) {
+		*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_SPRITE_ALIGNER,        12, false);
+		*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES, 13, false);
+		*list->Append() = new DropDownListStringItem(STR_ABOUT_MENU_TOGGLE_DIRTY_BLOCKS,   14, false);
+	}
+	ShowDropDownList(w, list, 0, WID_TN_HELP, 140, true);
+	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
 
@@ -1183,17 +1203,20 @@ static CallBackFunction MenuClickHelp(int index)
 {
 	switch (index) {
 		case  0: return PlaceLandBlockInfo();
-		case  1: ShowTutorialWindow();             break;
-		case  2: IConsoleSwitch();                 break;
-		case  3: ShowAIDebugWindow();              break;
-		case  4: MenuClickSmallScreenshot();       break;
-		case  5: MenuClickLargeWorldScreenshot(SC_ZOOMEDIN);    break;
-		case  6: MenuClickLargeWorldScreenshot(SC_DEFAULTZOOM); break;
-		case  7: MenuClickLargeWorldScreenshot(SC_WORLD);       break;
-		case  8: ShowAboutWindow();                break;
-		case  9: ShowSpriteAlignerWindow();        break;
-		case 10: ToggleBoundingBoxes();            break;
-		case 11: ToggleDirtyBlocks();              break;
+		case  1: ShowLastNewsMessage();            break;
+		case  2: ShowMessageHistory();             break;
+		case  3: ShowMusicWindow();                break;
+		case  4: ShowTutorialWindow();             break;
+		case  5: IConsoleSwitch();                 break;
+		case  6: ShowAIDebugWindow();              break;
+		case  7: MenuClickSmallScreenshot();       break;
+		case  8: MenuClickLargeWorldScreenshot(SC_ZOOMEDIN);    break;
+		case  9: MenuClickLargeWorldScreenshot(SC_DEFAULTZOOM); break;
+		case 10: MenuClickLargeWorldScreenshot(SC_WORLD);       break;
+		case 11: ShowAboutWindow();                break;
+		case 12: ShowSpriteAlignerWindow();        break;
+		case 13: ToggleBoundingBoxes();            break;
+		case 14: ToggleDirtyBlocks();              break;
 	}
 	return CBF_NONE;
 }
@@ -2285,16 +2308,17 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
 		};
+		// TODO: WID_TN_SUBSIDIES, WID_TN_INDUSTRIES,
 		static const byte arrange_right_compact_noswitch[] = {
 			WID_TN_RAILS,
-			WID_TN_LANDSCAPE,
 			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
 			WID_TN_TOWNS,
 			WID_TN_FINANCES,
 			WID_TN_COMPANIES,
 			WID_TN_GRAPHS,
-			WID_TN_MUSIC_SOUND,
-			WID_TN_MESSAGES,
 			WID_TN_HELP,
 		};
 
