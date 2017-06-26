@@ -5351,7 +5351,7 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
-STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Oideachadh
+STR_ABOUT_MENU_TUTORIAL                                         :Oideachadh
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Seall treòir a' mhapa / tuairisgeulan air samhlaidhean a' mhapa
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Bàr-inneal inghearach: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Thèid am prìomh bhàr-inneal a sgoltadh 'na bhàraichean-inneal inghearach ri dà thaobh an sgrìn

@@ -5003,7 +5003,7 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
-STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Istruzioni
+STR_ABOUT_MENU_TUTORIAL                                         :Istruzioni
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Mostra la legenda della mappa / descrizione dei simboli della mappa
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Barra degli strumenti verticale: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :La barra degli strumenti è divisa in due barre verticali sui lati dello schermo

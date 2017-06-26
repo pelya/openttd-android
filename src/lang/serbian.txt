@@ -5176,7 +5176,7 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
-STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Priručnik
+STR_ABOUT_MENU_TUTORIAL                                         :Priručnik
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Prikaži legendu mape / opis simbola na mapi
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Vertikalna alatna traka: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Glavna alatna traka je podeljena na dve okomite alatne trake na rubovima ekrana

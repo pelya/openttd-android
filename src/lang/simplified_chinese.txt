@@ -4965,7 +4965,7 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
-STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}教程
+STR_ABOUT_MENU_TUTORIAL                                         :教程
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}在地图上显示图例/描述
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :垂直工具栏: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :将主工具栏分为屏幕两侧的两个垂直工具栏
