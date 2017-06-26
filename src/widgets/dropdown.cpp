@@ -373,6 +373,7 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 
 	/* Check if the status bar is visible, as we don't want to draw over it */
 	int screen_bottom = GetMainViewBottom();
+	screen_bottom = _screen.height; /* We will draw over the status bar without a second thought on Android */
 	bool scroll = false;
 
 	/* Check if the dropdown will fully fit below the widget */
