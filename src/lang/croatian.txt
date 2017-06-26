@@ -5106,10 +5106,12 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
-STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Udžbenik
+STR_ABOUT_MENU_TUTORIAL                                         :Udžbenik
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Prikaži legendu mape / opis simbola na mapi
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Okomita alatna traka: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Glavna alatna traka je podijeljena na dvije okomite alatne trake na rubovima ekrana
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :Kompaktna okomita alatna traka: {STRING}
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :Ne postoji dugme 'Izmijeni alatnu traku' u okomitoj alatnoj traci ali postoje pod-meniji
 STR_CONFIG_SETTING_BUTTON_SIZE                                  :Veličina tipki
 STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Veličina svih elemenata korisničkog sučelja
 STR_CONFIG_SETTING_FONT_SIZE                                    :Veličina fonta
