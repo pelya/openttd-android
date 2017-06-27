@@ -516,7 +516,7 @@ static CallBackFunction MenuClickMap(int index)
 
 static CallBackFunction ToolbarTownClick(Window *w)
 {
-	PopupMainToolbMenu(w, WID_TN_TOWNS, STR_TOWN_MENU_TOWN_DIRECTORY, (_settings_game.economy.found_town == TF_FORBIDDEN) ? 1 : 2);
+	PopupMainToolbMenu(w, WID_TN_TOWNS, STR_TOWN_MENU_TOWN_DIRECTORY, (_settings_game.economy.found_town == TF_FORBIDDEN) ? 5 : 6);
 	return CBF_NONE;
 }
 
@@ -530,7 +530,11 @@ static CallBackFunction MenuClickTown(int index)
 {
 	switch (index) {
 		case 0: ShowTownDirectory(); break;
-		case 1: // setting could be changed when the dropdown was open
+		case 1: ShowSubsidiesList(); break;
+		case 2: ShowIndustryDirectory(); break;
+		case 3: ShowIndustryCargoesWindow(); break;
+		case 4: if (_local_company != COMPANY_SPECTATOR) ShowBuildIndustryWindow(); break;
+		case 5: // setting could be changed when the dropdown was open
 			if (_settings_game.economy.found_town != TF_FORBIDDEN) ShowFoundTownWindow();
 			break;
 	}
@@ -2308,16 +2312,15 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_MESSAGES,
 			WID_TN_HELP,
 		};
-		// TODO: WID_TN_SUBSIDIES, WID_TN_INDUSTRIES,
 		static const byte arrange_right_compact_noswitch[] = {
 			WID_TN_RAILS,
 			WID_TN_TRAINS,
 			WID_TN_ROADVEHS,
 			WID_TN_SHIPS,
 			WID_TN_AIRCRAFTS,
-			WID_TN_TOWNS,
 			WID_TN_FINANCES,
 			WID_TN_COMPANIES,
+			WID_TN_TOWNS,
 			WID_TN_GRAPHS,
 			WID_TN_HELP,
 		};
