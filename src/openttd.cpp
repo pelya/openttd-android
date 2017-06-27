@@ -925,40 +925,6 @@ exit_normal:
 	if (_restart_game) {
 #ifdef __ANDROID__
 		// This makes OpenTTD reset all it's settings for some reason, because the process is not killed and shared libraries are not unloaded.
-		//SDL_ANDROID_RestartMyself("restart-settings");
-		/*
-		pid_t parent = getpid();
-		pid_t pid = fork();
-		if (pid == -1) return ret;
-		if (pid > 0) {
-			usleep(300 * 1000);
-			exit(0);
-		} else {
-			setsid();
-			close(0);
-			close(1);
-			close(2);
-			execlp("/system/bin/sh", "/system/bin/sh", "-c", "sleep 2 ; am start --user -2 -n org.openttd.sdl/.MainActivity </dev/null >/dev/null 2>&1");
-			exit(0);
-		}
-		*/
-		DEBUG(misc, 0, "============ Restarting OpenTTD");
-		class restart
-		{
-			public:
-			static void run(void *)
-			{
-				const char *cmd = "$APPDIR/setsid /system/bin/sh -c 'echo Sleeping ; sleep 3 ; am start --user -3 -n org.openttd.sdl/.MainActivity' >$DATADIR/restart1.log 2>&1 </dev/null";
-				DEBUG(misc, 0, "============ Starting cmd: %s", cmd);
-				system(cmd);
-				DEBUG(misc, 0, "============ Cmd finished");
-			}
-		};
-		ThreadObject *t;
-		ThreadObject::New(&restart::run, NULL, &t, "ottd:restart");
-		DEBUG(misc, 0, "============ Sleeping 400 ms");
-		usleep(400 * 1000);
-		DEBUG(misc, 0, "============ Exiting");
 		exit(0);
 #endif
 	}
