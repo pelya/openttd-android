@@ -2378,7 +2378,7 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 			WID_TN_COMPANIES,
 			WID_TN_GRAPHS,
 			WID_TN_LEAGUE,
-			WID_TN_STATIONS,
+			WID_TN_GOAL,
 			WID_TN_HELP,
 		};
 
