@@ -2369,16 +2369,16 @@ class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
 		};
 		static const byte arrange_right_classic_noswitch[] = {
 			WID_TN_RAILS,
-			WID_TN_LANDSCAPE,
 			WID_TN_TRAINS,
+			WID_TN_ROADVEHS,
+			WID_TN_SHIPS,
+			WID_TN_AIRCRAFTS,
 			WID_TN_STATIONS,
 			WID_TN_FINANCES,
 			WID_TN_COMPANIES,
 			WID_TN_GRAPHS,
 			WID_TN_LEAGUE,
 			WID_TN_STATIONS,
-			WID_TN_MUSIC_SOUND,
-			WID_TN_MESSAGES,
 			WID_TN_HELP,
 		};
 
