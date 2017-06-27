@@ -315,7 +315,7 @@ struct BuildRoadToolbarWindow : Window {
 		this->last_started_action_remove = false;
 		this->last_started_action_oneway = false;
 
-		if (_settings_client.gui.link_terraform_toolbar) ShowTerraformToolbar(this);
+		if (_settings_client.gui.link_terraform_toolbar || _settings_client.gui.compact_vertical_toolbar) ShowTerraformToolbar(this);
 	}
 
 	~BuildRoadToolbarWindow()
