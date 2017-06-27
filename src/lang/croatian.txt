@@ -5112,22 +5112,22 @@ STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Okomita alatna 
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Glavna alatna traka je podijeljena na dvije okomite alatne trake na rubovima ekrana
 STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :Kompaktna okomita alatna traka: {STRING}
 STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :Ne postoji dugme 'Izmijeni alatnu traku' u okomitoj alatnoj traci ali postoje pod-meniji
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :Veličina tipki
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Veličina svih elemenata korisničkog sučelja
-STR_CONFIG_SETTING_FONT_SIZE                                    :Veličina fonta
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Veličina svih fontova u igri
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Veličina tipki
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Veličina svih elemenata korisničkog sučelja
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Veličina fonta
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Veličina svih fontova u igri
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Potvrdi akcije: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Prikaži dijalog potvrde pri gradnji cesta i stanica
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :Naslovne trake: {STRING}
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :Prikaži naslovne trake za sve prozore ili ih sakrij za uštedu prostora na ekranu
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Ukrasi prozora: {STRING}
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Ukrasi na rubovima prozora
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Postavi dubinu boja videa na 8 bitova po pikselu, ovaj način podržava animaciju vode
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Postavi dubinu boja videa na 16 bitova po pikselu, za ovo treba restart, ovaj način ne podržava animaciju vode
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Postavi dubinu boja videa na 24 bita po pikselu, ovaj način podržava animaciju vode
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Postavi dubinu boja videa na 8 bitova po pikselu, ovaj način podržava animaciju vode
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Postavi dubinu boja videa na 16 bitova po pikselu, za ovo treba restart, ovaj način ne podržava animaciju vode
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Postavi dubinu boja videa na 24 bita po pikselu, ovaj način podržava animaciju vode
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Zatvori sve otvorene prozore (osim zakačenih)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Pritisnuti za procjenu troškova izvođenja neke akcije
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Koristiti za sve akcije za koje se koristi tipka "CTRL"

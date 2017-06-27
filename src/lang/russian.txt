@@ -5204,18 +5204,18 @@ STR_ABOUT_MENU_TUTORIAL                                         :Учебник
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Показывать миникарту / легенду
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Вертикальное меню: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Меню разделено на два вертикальных меню по краям экрата
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :Размер кнопок
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Размер элементов интерфейса
-STR_CONFIG_SETTING_FONT_SIZE                                    :Размер шрифта
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Размер всех шрифтов в игре
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Размер кнопок
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Размер элементов интерфейса
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Размер шрифта
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Размер всех шрифтов в игре
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Подтверждать действия: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Показывать окно подтверждения при постройки дорог и станций
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 бит
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Установить глубину цвета в 16 бит на точку. Этот режим поддерживает анимацию воды
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 бит
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Установить глубину цвета в 16 бит на точку. Это потребует перезапуска программы. Этот режим не поддерживает анимацию воды
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 бит
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Установить глубину цвета в 24 бит на точку. Этот режим поддерживает анимацию воды
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 бит
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Установить глубину цвета в 16 бит на точку. Этот режим поддерживает анимацию воды
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 бит
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Установить глубину цвета в 16 бит на точку. Это потребует перезапуска программы. Этот режим не поддерживает анимацию воды
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 бит
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Установить глубину цвета в 24 бит на точку. Этот режим поддерживает анимацию воды
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Закрыть все открытые окна (кроме закреплённых)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Использовать в качестве кнопки "SHIFT" (оценка стоимости)
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Использовать в качестве кнопки "CTRL"
