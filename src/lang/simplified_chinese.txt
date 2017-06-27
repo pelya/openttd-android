@@ -4969,18 +4969,18 @@ STR_ABOUT_MENU_TUTORIAL                                         :教程
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}在地图上显示图例/描述
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :垂直工具栏: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :将主工具栏分为屏幕两侧的两个垂直工具栏
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :按键大小
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :用户界面大小
-STR_CONFIG_SETTING_FONT_SIZE                                    :字体大小
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :游戏字体大小
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}按键大小
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}用户界面大小
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}字体大小
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}游戏字体大小
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :确认操作: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :建立道路和车站时显示确认对话框
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :将视频颜色深度设置为8位像素，此模式支持水面动态涟漪
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :将视频颜色深度设置为16位像素，这需要重新启动，此模式不支持水面动态涟漪
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :将视频颜色深度设置为24位像素，此模式支持水面动态涟漪
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}将视频颜色深度设置为8位像素，此模式支持水面动态涟漪
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}将视频颜色深度设置为16位像素，这需要重新启动，此模式不支持水面动态涟漪
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}将视频颜色深度设置为24位像素，此模式支持水面动态涟漪
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}关闭所有打开的窗口（已固定的窗口除外）
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}按住显示预计费用
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}将其用于“CTRL”键的操作

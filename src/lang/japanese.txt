@@ -4973,18 +4973,18 @@ STR_ABOUT_MENU_TUTORIAL                                         :チュートリ
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}マップシンボルについての説明の表示
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :垂直ツールバー: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :メインツールバーはスクリーンの両脇に垂直に2つに分割しています
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :ボタンサイズ
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :すべてのユーザーインターフェースの構成サイズ
-STR_CONFIG_SETTING_FONT_SIZE                                    :フォントサイズ
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :全てのゲームのフォント
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}ボタンサイズ
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}すべてのユーザーインターフェースの構成サイズ
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}フォントサイズ
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}全てのゲームのフォント
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :アクションの確認: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :道路とステーションの建設時に確認のダイアログの表示
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :色深度を8 bppに設定します 再起動が必要です このビデオモードは水のアニメーションに対応していません
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :色深度を16 bppに設定します 再起動が必要です このビデオモードは水のアニメーションに対応していません
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :色深度を24 bppに設定します 再起動が必要です このビデオモードは水のアニメーションに対応していません
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}色深度を8 bppに設定します 再起動が必要です このビデオモードは水のアニメーションに対応していません
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}色深度を16 bppに設定します 再起動が必要です このビデオモードは水のアニメーションに対応していません
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}色深度を24 bppに設定します 再起動が必要です このビデオモードは水のアニメーションに対応していません
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}全ての開いているウィンドウを閉じます (固定してあるものは除く)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}押すことでアクションの決定時に費用の見積もりができます
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK} "CTRL" キーを使うアクションのために使います

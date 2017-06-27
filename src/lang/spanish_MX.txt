@@ -4973,18 +4973,18 @@ STR_ABOUT_MENU_TUTORIAL                                         :Guía de cómo 
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Mostrar leyenda o descripción de símbolos del mapa
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Barra de herramientas vertical: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :La barra de herramientas principal se divide en dos barras verticales laterales
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :Tamaño de botones
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Tamaño de elementos de la interfaz
-STR_CONFIG_SETTING_FONT_SIZE                                    :Tamaño de letra
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Tamaño de letra de los elementos del juego
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Tamaño de botones
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Tamaño de elementos de la interfaz
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Tamaño de letra
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Tamaño de letra de los elementos del juego
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Confirmar acciones: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Mostrar diálogo de confirmación al construir carreteras y estaciones
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bits
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Establecer profundidad de color de video a 8 bits por pixel. Este modo de video soporta animación de agua
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bits
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Establecer profundidad de color de video a 16 bits por pixel. Requiere reinicio. Este modo de video no soporta animación de agua
-STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bits
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Establecer profundidad de color de video a 24 bits por pixel. Este modo de video soporta animación de agua
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bits
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Establecer profundidad de color de video a 8 bits por pixel. Este modo de video soporta animación de agua
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bits
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Establecer profundidad de color de video a 16 bits por pixel. Requiere reinicio. Este modo de video no soporta animación de agua
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bits
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Establecer profundidad de color de video a 24 bits por pixel. Este modo de video soporta animación de agua
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Cerrar todas las ventanas abiertas, salvo las que estén fijas
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Pulsar para ver una estimación del precio al realizar una acción
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Emplearlo para acciones que utilizan la tecla "Ctrl"
