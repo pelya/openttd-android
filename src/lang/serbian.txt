@@ -5176,14 +5176,14 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
-STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Priručnik
+STR_ABOUT_MENU_TUTORIAL                                         :Priručnik
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Prikaži legendu mape / opis simbola na mapi
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Vertikalna alatna traka: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Glavna alatna traka je podeljena na dve okomite alatne trake na rubovima ekrana
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Veličina dugmeta
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Veličina svih elemenata korisničkog interfejsa
-STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Veličina slova
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Veličina svih slova u igri
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Veličina dugmeta
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Veličina svih elemenata korisničkog interfejsa
+STR_CONFIG_SETTING_FONT_SIZE                                    :Veličina slova
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Veličina svih slova u igri
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Potvrdi akcije: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Prikaži dijalog potvrde pri gradnji drumova i stanica
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Zatvori sve otvorene prozore (osim zakačenih)

@@ -4974,26 +4974,28 @@ STR_SHIP                                                        :{G=f}{BLACK}{SH
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
-STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}튜토리얼
+STR_ABOUT_MENU_TUTORIAL                                         : {BLACK}튜토리얼
 STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}지도 범례 / 기호 설명을 보여줌
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :수직 작업창: {STRING}
 STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :메인 작업창이 두 개의 화면 양쪽 두개의 수직 작업창으로 나뉨
-STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}버튼 크기
-STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}모든 사용자 인터페이스의 크기
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :소형 수직 작업창: {STRING}
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :수직 작업창에 '작업창 바꾸기'메뉴가 없지만, 부 메뉴가 추가로 있음
+STR_CONFIG_SETTING_BUTTON_SIZE                                  : {BLACK}버튼 크기
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          : {BLACK}모든 사용자 인터페이스의 크기
 STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}폰트 크기
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}게임 내부 폰트의 크기
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}모든 게임 폰트의 크기
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :명령 확인: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :도로와 정류장을 건설시 확인 팝업을 보임
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :이름 창: {STRING}
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :이름 창
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :모든 창에 대해 이름을 보여주거나, 화면 공간 절약을 위해 이름을 가리기
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :창 꾸미기: {STRING}
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :창 모서리에 꾸밈 효과
-STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8비트
-STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}그래픽 색상 깊이를 픽셀당 8비트로 설정합니다. 이 그래픽 모드는 물이 흐르는 애니메이션 효과를 표현할 수 있습니다.
-STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16비트
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}그래픽 색상 깊이를 픽셀당 16비트로 설정합니다. 이 그래픽 모드는 물이 흐르는 애니메이션 효과를 표현할 수 있습니다.
+STR_CONFIG_SETTING_VIDEO_8BPP                                   : {BLACK}8비트
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :그래픽 색상 심도를 픽셀당 8비트로 설정합니다. 이 그래픽 모드는 물이 흐르는 애니메이션 효과를 표현할 수 있습니다.
+STR_CONFIG_SETTING_VIDEO_16BPP                                  : {BLACK}16비트
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}그래픽 색상 심도를 픽셀당 16비트로 설정합니다. 이 그래픽 모드는 물이 흐르는 애니메이션 효과를 표현할 수 있습니다.
 STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24비트
-STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}그래픽 색상 깊이를 픽셀당 24비트로 설정합니다. 이 그래픽 모드는 물이 흐르는 애니메이션 효과를 표현할 수 있습니다.
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :그래픽 색상 심도를 픽셀당 24비트로 설정합니다. 이 그래픽 모드는 물이 흐르는 애니메이션 효과를 표현할 수 있습니다.
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}열려있는 모든 창 닫기 (고정된 창 제외)
 STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}이 행동을 하기 위한 예상 비용을 알아보려면 누르세요.
 STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}"컨트롤"키를 이용하는 명령을 위해 사용
