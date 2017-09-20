@@ -30,6 +30,7 @@
 #include <SDL.h>
 #ifdef __ANDROID__
 #include <SDL_screenkeyboard.h>
+#include <SDL_android.h>
 #endif
 
 #include "../safeguards.h"
@@ -429,6 +430,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	if (!_multitouch_device) {
 		_multitouch_device = SDL_JoystickOpen(0);
 	}
+	SDL_ANDROID_SetSystemMousePointerVisible(0); // We have our own cursor, only works on Android N
 #endif
 
 	return true;
