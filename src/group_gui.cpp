@@ -191,7 +191,7 @@ private:
 	uint ComputeGroupInfoSize()
 	{
 		this->column_size[VGC_NAME] = maxdim(GetStringBoundingBox(STR_GROUP_DEFAULT_TRAINS + this->vli.vtype), GetStringBoundingBox(STR_GROUP_ALL_TRAINS + this->vli.vtype));
-/* We consider the max average length of characters to be the one of "a" */
+		/* We consider the max average length of characters to be the one of "a" */
 		this->column_size[VGC_NAME].width = max(GetCharacterWidth(FS_NORMAL, 97) * (MAX_LENGTH_GROUP_NAME_CHARS - 4), this->column_size[VGC_NAME].width);
 		this->tiny_step_height = max(11U, this->column_size[VGC_NAME].height);
 
@@ -218,7 +218,7 @@ private:
 		this->tiny_step_height = GetMinSizing(NWST_STEP, this->tiny_step_height);
 
 		return WD_FRAMERECT_LEFT + 8 +
-			this->column_size[VGC_NAME].width + 2 +
+			this->column_size[VGC_NAME].width + 8 +
 			this->column_size[VGC_PROTECT].width + 2 +
 			this->column_size[VGC_AUTOREPLACE].width + 2 +
 			this->column_size[VGC_PROFIT].width + 2 +
@@ -250,7 +250,6 @@ private:
 		bool rtl = _current_text_dir == TD_RTL;
 
 		/* draw group name */
-		int longer_name = 0;
 		StringID str;
 		if (IsAllGroupID(g_id)) {
 			str = STR_GROUP_ALL_TRAINS + this->vli.vtype;
@@ -259,16 +258,12 @@ private:
 		} else {
 			SetDParam(0, g_id);
 			str = STR_GROUP_NAME;
-			if (!protection) {
-				longer_name += this->column_size[VGC_PROTECT].width + 2;
-				if (!stats.autoreplace_defined) longer_name += this->column_size[VGC_AUTOREPLACE].width + 2;
-			}
 		}
-		int x = rtl ? right - WD_FRAMERECT_RIGHT - 8 - this->column_size[VGC_NAME].width - longer_name + 1 : left + WD_FRAMERECT_LEFT + 8;
-		DrawString(x + indent * LEVEL_WIDTH, x + this->column_size[VGC_NAME].width + longer_name - 1, y + (this->tiny_step_height - this->column_size[VGC_NAME].height) / 2, str, colour);
+		int x = rtl ? right - WD_FRAMERECT_RIGHT - 8 - this->column_size[VGC_NAME].width + 1 : left + WD_FRAMERECT_LEFT + 8;
+		DrawString(x + indent * LEVEL_WIDTH, x + this->column_size[VGC_NAME].width - 1, y + (this->tiny_step_height - this->column_size[VGC_NAME].height) / 2, str, colour);
 
 		/* draw autoreplace protection */
-		x = rtl ? x - 2 - this->column_size[VGC_PROTECT].width : x + 2 + this->column_size[VGC_NAME].width;
+		x = rtl ? x - 8 - this->column_size[VGC_PROTECT].width : x + 8 + this->column_size[VGC_NAME].width;
 		if (protection) DrawSprite(SPR_GROUP_REPLACE_PROTECT, PAL_NONE, x, y + (this->tiny_step_height - this->column_size[VGC_PROTECT].height) / 2);
 
 		/* draw autoreplace status */
@@ -369,10 +364,16 @@ public:
 				resize->height = this->tiny_step_height;
 
 				/* Minimum height is the height of the list widget minus all and default vehicles... */
-				size->height = (this->vli.vtype >= VEH_SHIP ? 3.5 : 7) * GetVehicleListHeight(this->vli.vtype, this->tiny_step_height) - 2 * this->tiny_step_height;
+				size->height =  4 * GetVehicleListHeight(this->vli.vtype, this->tiny_step_height) - 2 * this->tiny_step_height;
+
+				/* ... minus the buttons at the bottom ... */
+				uint max_icon_height = GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_CREATE_GROUP)->widget_data).height;
+				max_icon_height = max(max_icon_height, GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_RENAME_GROUP)->widget_data).height);
+				max_icon_height = max(max_icon_height, GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_DELETE_GROUP)->widget_data).height);
+				max_icon_height = max(max_icon_height, GetSpriteSize(this->GetWidget<NWidgetCore>(WID_GL_REPLACE_PROTECTION)->widget_data).height);
 
 				/* Get a multiple of tiny_step_height of that amount */
-				size->height = Ceil(size->height, tiny_step_height);
+				size->height = Ceil(size->height - max_icon_height, tiny_step_height);
 				break;
 			}
 
@@ -520,15 +521,15 @@ public:
 	{
 		switch (widget) {
 			case WID_GL_ALL_VEHICLES:
-				DrawGroupInfo(r.top, r.left, r.right, ALL_GROUP);
+				DrawGroupInfo(r.top + WD_FRAMERECT_TOP, r.left, r.right, ALL_GROUP);
 				break;
 
 			case WID_GL_DEFAULT_VEHICLES:
-				DrawGroupInfo(r.top, r.left, r.right, DEFAULT_GROUP);
+				DrawGroupInfo(r.top + WD_FRAMERECT_TOP, r.left, r.right, DEFAULT_GROUP);
 				break;
 
 			case WID_GL_LIST_GROUP: {
-				int y1 = r.top;
+				int y1 = r.top + WD_FRAMERECT_TOP;
 				int max = min(this->group_sb->GetPosition() + this->group_sb->GetCapacity(), this->groups.Length());
 				for (int i = this->group_sb->GetPosition(); i < max; ++i) {
 					const Group *g = this->groups[i];
