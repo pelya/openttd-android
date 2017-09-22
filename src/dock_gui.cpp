@@ -191,9 +191,10 @@ struct BuildDocksToolbarWindow : Window {
 				PlaceProc_DemolishArea(tile);
 				break;
 
-			case WID_DT_STATION: // Build station button
+			case WID_DT_STATION: { // Build station button
 				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_STATION);
 				break;
+			}
 
 			case WID_DT_DEPOT: // Build depot button
 			case WID_DT_BUOY: // Build buoy button
