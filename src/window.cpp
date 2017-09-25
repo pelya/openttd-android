@@ -3066,6 +3066,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 		switch (click) {
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
+				mouse_down_on_viewport = true;
 				if (!HandleViewportClicked(vp, x, y) &&
 						!(w->flags & WF_DISABLE_VP_SCROLL) &&
 						(_settings_client.gui.left_mouse_btn_scrolling || _move_pressed)) {
@@ -3075,7 +3076,6 @@ static void MouseLoop(MouseClick click, int mousewheel)
 					// Viewport already clicked, prevent sending same event on mouse-up
 					_left_button_dragged = true;
 				}
-				mouse_down_on_viewport = true;
 				break;
 
 			case MC_LEFT_UP:
