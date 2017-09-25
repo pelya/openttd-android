@@ -10,5 +10,3 @@
 - Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), TODO: it's broken in SDL.
 
 - Draggable combo boxes.
-
-- Group GUI is broken - Android patch did not apply.
