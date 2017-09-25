@@ -409,7 +409,7 @@ struct BuildRailToolbarWindow : Window {
 		this->last_user_action = WIDGET_LIST_END;
 		this->last_user_action_remove = false;
 
-		if (_settings_client.gui.link_terraform_toolbar || _settings_client.gui.compact_vertical_toolbar) ShowTerraformToolbar(NULL);
+		if (_settings_client.gui.link_terraform_toolbar || _settings_client.gui.compact_vertical_toolbar) ShowTerraformToolbar();
 	}
 
 	~BuildRailToolbarWindow()
