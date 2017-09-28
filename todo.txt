@@ -10,3 +10,6 @@
 - Fix text input - it should use SDL_ANDROID_GetScreenKeyboardTextInputAsync(), TODO: it's broken in SDL.
 
 - Draggable combo boxes.
+
+- Multitouch events are broken in SDL
+
