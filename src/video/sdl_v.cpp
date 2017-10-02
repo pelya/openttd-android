@@ -428,6 +428,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 
 #ifdef __ANDROID__
 	if (!_multitouch_device) {
+		SDL_InitSubSystem(SDL_INIT_JOYSTICK);
 		_multitouch_device = SDL_JoystickOpen(0);
 	}
 	SDL_ANDROID_SetSystemMousePointerVisible(0); // We have our own cursor, only works on Android N
@@ -674,6 +675,7 @@ int VideoDriver_SDL::PollEvent()
 				_multitouch_second_point.x = ev.jball.xrel;
 				_multitouch_second_point.y = ev.jball.yrel;
 			}
+			break;
 #endif /* not __ANDROID__ */
 #ifndef __ANDROID__
 		case SDL_VIDEORESIZE: {
