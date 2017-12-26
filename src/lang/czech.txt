@@ -5193,3 +5193,39 @@ STR_SHIP                                                        :{BLACK}{SHIP}
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
 
 # Android strings
+STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Tutoriál
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Zobrazit legendu mapy / popis symbolů na mapě
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Svislý panel nástrojů: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Hlavní panel nástrojů je rozdělen ma dva svislé panely nástrojů na krajích obrazovky
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :Kompaktní svislý panel nástrojů: {STRING}
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :Žádné 'Přepnout panely nástrojů' tlačítko ve svislém panelu nástrojů, avšak více podmenu
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Velikost tlačítka
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Velikost všech prvků uživatelského rozhraní
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Veliksot fontu
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Velikost všech fontů ve hře
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Potvrdit akce: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Zobrazitr potvrzující okno při stavbě silnic a stanic
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :Titulní pruhy
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :Zobrazit titulní pruhy u všech oken, nebo je schovat pro ušetření místa na displeji
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Ozdoby oken: {STRING}
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Ozdoby na hranách oken
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bitů
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Nastavit hloubku videa na 8 bitů / pixel, tento mód podporuje animaci vody.
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bitů
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Nastavit hloubku videa na 16 bitů / pixel, vyžaduje restart, tento mód nepodporuje animaci vody.
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bitů
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Nastavit hloubku videa na 24 bitů / pixel, tento mód podporuje animaci vody.
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Zavřít všechna otevřená okna (vyjma připnutých)
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Podrž pro zobrazení odhadované ceny akce
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Použij pro akce, které užívají klávesu"CTRL"
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Tutoriálová videa
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Otevřít video přehrávač ke shlédnutí tutoriálových videí
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Stavba silnic a stanic, koupě vozidel
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Železnice a vlaky
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Silniční vozidla
+STR_TUTORIAL_SHIPS                                              :{BLACK}Lodě a doky
+STR_TUTORIAL_CARGO                                              :{BLACK}Typy nákladů
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Nahrát ze sítě
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Nahrát hru ze síťového uložiště
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Uložit na síť
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Zálohovat hru na síťové uložiště
