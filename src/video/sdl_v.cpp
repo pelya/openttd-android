@@ -588,8 +588,21 @@ int VideoDriver_SDL::PollEvent()
 #endif
 					break;
 
+#ifdef __ANDROID__
+				case SDL_BUTTON_WHEELUP:
+				case SDL_BUTTON_WHEELDOWN:
+					_cursor.wheel += (ev.button.button == SDL_BUTTON_WHEELDOWN) ? 1 : -1;
+					_right_button_down = false;
+					// Center the mouse cursor between touch points
+					SDL_GetMouseState(&_cursor.pos.x, &_cursor.pos.y);
+					_cursor.pos.x = (_cursor.pos.x + _multitouch_second_point.x) / 2;
+					_cursor.pos.y = (_cursor.pos.y + _multitouch_second_point.y) / 2;
+					//_cursor.UpdateCursorPosition(_cursor.pos.x, _cursor.pos.y, false);
+					break;
+#else
 				case SDL_BUTTON_WHEELUP:   _cursor.wheel--; break;
 				case SDL_BUTTON_WHEELDOWN: _cursor.wheel++; break;
+#endif
 
 				default: break;
 			}
@@ -647,14 +660,6 @@ int VideoDriver_SDL::PollEvent()
 				}
 				if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT) {
 					_shift_pressed = true;
-				}
-				if (ev.key.keysym.sym == SDLK_KP_PLUS || ev.key.keysym.sym == SDLK_KP_MINUS) {
-					// Center the mouse cursor between touch points
-					SDL_GetMouseState(&_right_button_down_pos.x, &_right_button_down_pos.y);
-					_right_button_down_pos.x = (_right_button_down_pos.x + _multitouch_second_point.x) / 2;
-					_right_button_down_pos.y = (_right_button_down_pos.y + _multitouch_second_point.y) / 2;
-					_cursor.pos = _right_button_down_pos;
-					//_cursor.UpdateCursorPosition(_cursor.pos.x, _cursor.pos.y, false);
 				}
 #endif
 			}
