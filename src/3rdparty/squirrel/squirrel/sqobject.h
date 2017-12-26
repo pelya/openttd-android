@@ -2,6 +2,7 @@
 #ifndef _SQOBJECT_H_
 #define _SQOBJECT_H_
 
+#include <limits>
 #include "squtils.h"
 
 #define SQ_CLOSURESTREAM_HEAD (('S'<<24)|('Q'<<16)|('I'<<8)|('R'))
