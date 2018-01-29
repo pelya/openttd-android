@@ -70,6 +70,7 @@
 
 #include "safeguards.h"
 #ifdef __ANDROID__
+#include <unistd.h>
 #include <SDL_android.h>
 #endif
 #include <limits.h>
@@ -501,7 +502,7 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 			unlink("libsdl-DownloadFinished-1.flag");
 			//_exit_game = true;
 			//_restart_game = true;
-			abort(); // Kill myself with contempt, user will restart the app, because otherwise we enter infinite restart loop
+			_exit(0); // kill(getpid(), SIG_KILL); //abort(); // Kill myself with contempt, user will restart the app, because otherwise we enter infinite restart loop
 		}
 		checked = true;
 
@@ -891,7 +892,15 @@ int openttd_main(int argc, char *argv[])
 	ScanNewGRFFiles(scanner);
 	scanner = NULL;
 
-	VideoDriver::GetInstance()->MainLoop();
+	try {
+		VideoDriver::GetInstance()->MainLoop();
+	} catch (const std::exception & e) {
+		DEBUG(misc, 0, "Main thread got exception: %s", e.what());
+		throw;
+	} catch (...) {
+		DEBUG(misc, 0, "Main thread got unknown exception");
+		throw;
+	}
 
 	WaitTillSaved();
 

@@ -203,7 +203,7 @@ static inline bool IsValidNewGRFImageIndex(uint8 image_index)
 	return image_index == 0xFD || IsValidImageIndex<T>(image_index);
 }
 
-class OTTDByteReaderSignal { };
+class OTTDByteReaderSignal: public std::runtime_error { public: OTTDByteReaderSignal():std::runtime_error("OTTDByteReaderSignal: NewGRF byte data invalid") {} };
 
 /** Class to read from a NewGRF file */
 class ByteReader {
