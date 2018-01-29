@@ -4981,8 +4981,8 @@ STR_CONFIG_SETTING_FONT_SIZE                                    : {BLACK}フォ�
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            : {BLACK}全てのゲームのフォント
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :アクションの確認: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :道路とステーションの建設時に確認のダイアログの表示
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :タイトルバー
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :ウィンドウのタイトルバーを表示するか、隠して画面のスペースを確保するか選べます
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}タイトルバー
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}ウィンドウのタイトルバーを表示するか、隠して画面のスペースを確保するか選べます
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :ウィンドウの装飾: {STRING}
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :ウィンドウの縁を装飾します
 STR_CONFIG_SETTING_VIDEO_8BPP                                   : {BLACK}8 bit
