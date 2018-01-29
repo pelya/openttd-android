@@ -4981,8 +4981,8 @@ STR_CONFIG_SETTING_FONT_SIZE                                    :字体大小
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :游戏字体大小
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :确认操作: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :建立道路和车站时显示确认对话框
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :标题栏
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :显示所有窗口的标题栏，或者隐藏它们以节省屏幕空间
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}标题栏
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}显示所有窗口的标题栏，或者隐藏它们以节省屏幕空间
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :窗口装饰: {STRING}
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :窗口边缘装饰
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit

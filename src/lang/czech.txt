@@ -5205,8 +5205,8 @@ STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Veliksot
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Velikost všech fontů ve hře
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Potvrdit akce: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Zobrazitr potvrzující okno při stavbě silnic a stanic
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :Titulní pruhy
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :Zobrazit titulní pruhy u všech oken, nebo je schovat pro ušetření místa na displeji
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Titulní pruhy
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Zobrazit titulní pruhy u všech oken, nebo je schovat pro ušetření místa na displeji
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Ozdoby oken: {STRING}
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Ozdoby na hranách oken
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bitů

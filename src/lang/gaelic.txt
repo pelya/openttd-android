@@ -5383,8 +5383,8 @@ STR_CONFIG_SETTING_FONT_SIZE                                    :Meud a' chrutha
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Am meud air gach cruth-clò a' gheama
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Dearbhaich na gnìomhan: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Seall còmhradh dearbhaidh le togail rathaidean is stèiseanan
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :Bàraichean-tiotail
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :Seall bàr-tiotail air gach uinneag no falaich iad gus rum a shàbhaladh air an sgrìn
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Bàraichean-tiotail
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Seall bàr-tiotail air gach uinneag no falaich iad gus rum a shàbhaladh air an sgrìn
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Sgeadachadh nan uinneagan: {STRING}
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Sgeadachadh air oirean nan uinneagan
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 biod

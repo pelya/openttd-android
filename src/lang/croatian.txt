@@ -5118,8 +5118,8 @@ STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Veličin
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Veličina svih fontova u igri
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Potvrdi akcije: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Prikaži dijalog potvrde pri gradnji cesta i stanica
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :Naslovne trake
-STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :Prikaži naslovne trake za sve prozore ili ih sakrij za uštedu prostora na ekranu
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Naslovne trake
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Prikaži naslovne trake za sve prozore ili ih sakrij za uštedu prostora na ekranu
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Ukrasi prozora: {STRING}
 STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Ukrasi na rubovima prozora
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bita
