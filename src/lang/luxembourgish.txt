@@ -1118,7 +1118,7 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Spillastellunge
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Firmenastellungen (am Save gespäichert; betrëfft just nei Spiller)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Firmenastellungen (am Save gespäichert; betrëfft just déi aktuell Firma)
 STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Weis all Sich-Resultater no der Astellung{}{SILVER}Kategorie {BLACK}bis {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :Weis all Sich-Resultater no der Astellung{}{SILVER}Typ {BLACK}bis {WHITE}All Astellungstypen
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Weis all Sich-Resultater no der Astellung{}{SILVER}Typ {BLACK}bis {WHITE}All Astellungstypen
 STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Weis all Sich-Resultater no der Astellung{}{SILVER}Kategorie {BLACK}bis {WHITE}{STRING} {BLACK}an {SILVER}Typ {BLACK}bis {WHITE}All Astellungstypen
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Keng -
 
@@ -1371,6 +1371,8 @@ STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :Aus
 
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING                     :Lénksklickscroll: {STRING}
 STR_CONFIG_SETTING_LEFT_MOUSE_BTN_SCROLLING_HELPTEXT            :Schalt d'Scrollen vun der Kaart un, wann se mat der lénker Maustast gezunn gëtt
+STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :Fënster mat rietsem Mausklick zouman: {STRING}
+STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :Mécht eng Fenster mat engem Rietsklick zou, wann een an d'Fënster klickt. Schalt Tooltips aus déi per Rietsklick gemet ginn!
 
 STR_CONFIG_SETTING_AUTOSAVE                                     :Autospäicheren: {STRING}
 STR_CONFIG_SETTING_AUTOSAVE_HELPTEXT                            :Setz den Interval tëschend automateschen Späicherstänn
@@ -2688,7 +2690,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Land am Firmenb
 STR_ABOUT_OPENTTD                                               :{WHITE}Iwwert OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original Copyright {COPYRIGHT} 1995 Chris Sawyer, All Rechter virbehalen
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD Versioun {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2017 D'OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 D'OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Spill späicheren
@@ -3113,8 +3115,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}Akzepté
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}Weis d'Lëscht vun den akzptéierten Wueren
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Akzeptéiert: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Des Statioun huet exklusiv Transportrechter an deser Stad
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} huet exklusiv Transportrechter an deser Stad kaf.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Des Statioun huet exklusiv Transportrechter an deser Stad
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} huet exklusiv Transportrechter an deser Stad kaf.
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Bewäertungen
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Weis d'Statiounsbewäertungen
@@ -3293,6 +3295,9 @@ STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Brauch: 
 STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Brauch: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
 ############ range for requires ends
 
+STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Brauch:
+STR_INDUSTRY_VIEW_ACCEPT_CARGO                                  :{YELLOW}{STRING}{BLACK}{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT                           :{YELLOW}{STRING}{BLACK}: {CARGO_SHORT} um waarden{STRING}
 
 ############ range for produces starts
 STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Produzéiert: {YELLOW}{STRING}{STRING}
@@ -3361,6 +3366,11 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :All Gefierer ew
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Eng Grupp ëmbenennen
 
+STR_GROUP_PROFIT_THIS_YEAR                                      :Profit dëst Joer:
+STR_GROUP_PROFIT_LAST_YEAR                                      :Profit lescht Joer:
+STR_GROUP_OCCUPANCY                                             :Aktuell Benotzung:
+STR_GROUP_OCCUPANCY_VALUE                                       :{NUM}%
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Nei Zich
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Nei Elektrozich
@@ -3392,6 +3402,7 @@ STR_PURCHASE_INFO_ALL_TYPES                                     :All Wuerentyp
 STR_PURCHASE_INFO_ALL_BUT                                       :Alles ausser {CARGO_LIST}
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Max. Zéikraaft: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Distanz: {GOLD}{COMMA} Felder
+STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Fliger Typ: {GOLD}{STRING}
 
 STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Zuchlëscht - klick op en Zuch fir Informatiounen. Ctrl+Klick fir tëscht dem Verstoppen hin an hier ze sprangen
 STR_BUY_VEHICLE_ROAD_VEHICLE_LIST_TOOLTIP                       :{BLACK}Stroossegefierlëscht - klick op en Gefier fir Informatiounen. Ctrl+Klick fir tëscht dem Verstoppen hin an hier ze sprangen
@@ -3523,12 +3534,13 @@ STR_ENGINE_PREVIEW_SHIP                                         :Schëff
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :Monorail Lokomotiv
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :Magnéitbunnlokomotiv
 
-STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Käschten: {CURRENCY_LONG} Gewiicht: {WEIGHT_SHORT}{}Geschwindegkeet: {VELOCITY}  Kraaft: {POWER}{}Betribskäschten {CURRENCY_LONG}/Joer{}Kapazitéit: {CARGO_LONG}
+STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Käschten: {CURRENCY_LONG} Gewiicht: {WEIGHT_SHORT}{}Geschwindegkeet: {VELOCITY}  Kraaft: {POWER}{}Betribskäschten {CURRENCY_LONG}/Jr{}Kapazitéit: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Käschten: {CURRENCY_LONG} Gewicht: {WEIGHT_SHORT}{}Geschw.: {VELOCITY}  Kraaft: {POWER}  Max. T.E.: {6:FORCE}{}Betribskäschten: {4:CURRENCY_LONG}/Jr{}Kapazitéit: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschwindegkeet: {VELOCITY}{}Kapazitéit: {CARGO_LONG}, {CARGO_LONG}{}Betribskäschten {CURRENCY_LONG}/Joer
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschwindegkeet: {VELOCITY}{}Kapazitéit: {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Joer
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Käschten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY} Distanz: {COMMA} Felder{}Kapazitéit: {CARGO_LONG}, {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY} Distanz: {COMMA} Felder{}Kapazitéit: {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschwindegkeet: {VELOCITY}{}Kapazitéit: {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY}{}Fliger Typ: {STRING}{}Kapazitéit: {CARGO_LONG}, {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY}{}Fliger Typ: {STRING}{}Kapazitéit: {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY}{}Fliger Typ: {STRING} Reeschwäit: {COMMA} Felder{}Kapazitéit: {CARGO_LONG}, {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY}{}Fliger Typ: {STRING} Reechwäit: {COMMA} Felder{}Kapazitéit: {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Ersetz {STRING} - {STRING}
@@ -3651,7 +3663,8 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} Joer ({
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} Joer ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Max. Geschwindegkeet: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Max. Geschw.: {LTBLUE}{VELOCITY} {BLACK}Distanz: {LTBLUE}{COMMA} Felder
+STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Max. Geschw.: {LTBLUE}{VELOCITY} {BLACK}Fliger Typ: {LTBLUE}{STRING}
+STR_VEHICLE_INFO_MAX_SPEED_TYPE_RANGE                           :{BLACK}Max. Geschw.: {LTBLUE}{VELOCITY} {BLACK}Fliger Typ: {LTBLUE}{STRING} {BLACK}Reechwäit: {LTBLUE}{COMMA} Felder
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Gewiicht: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kraaft: {LTBLUE}{POWER}{BLACK} Max. Geschwindegkeet: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Gewiicht: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kraaft: {LTBLUE}{POWER}{BLACK} Max. Geschwindegkeet: {LTBLUE}{VELOCITY} {BLACK}Max. T.E.: {LTBLUE}{FORCE}
 

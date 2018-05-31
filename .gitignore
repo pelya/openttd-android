@@ -23,9 +23,13 @@ bundles/*
 docs/aidocs/*
 docs/gamedocs/*
 docs/source/*
+.kdev4
+.kdev4/*
+*.kdev4
 media/openttd.desktop
 media/openttd.desktop.install
 objs/*
+projects/.vs
 projects/Debug
 projects/Release
 projects/*.ncb
@@ -34,6 +38,8 @@ projects/*.sdf
 projects/*.opensdf
 projects/*.vcproj.*.user
 projects/*.vcxproj.user
+projects/*.VC.db
+projects/*.VC.opendb
 src/rev.cpp
 src/os/windows/ottdres.rc
 

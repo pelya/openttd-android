@@ -13,12 +13,16 @@ config.pwd
 docs/aidocs/*
 docs/gamedocs/*
 docs/source/*
+.kdev4
+.kdev4/*
+*.kdev4
 Makefile
 Makefile.am
 Makefile.bundle
 media/openttd.desktop
 media/openttd.desktop.install
 objs/*
+projects/.vs
 projects/*.ncb
 projects/*.suo
 projects/*.sdf

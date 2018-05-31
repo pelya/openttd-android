@@ -232,8 +232,8 @@ static inline void DrawImageButtons(const Rect &r, WidgetType type, Colours colo
 	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
 
 	if ((type & WWT_MASK) == WWT_IMGBTN_2 && clicked) img++; // Show different image when clicked for #WWT_IMGBTN_2.
-	Dimension d2 = GetSpriteSize(img);
-	DrawSprite(img, PAL_NONE, Center(r.left + clicked, r.right - r.left, d2.width), Center(r.top + clicked, r.bottom - r.top, d2.height));
+	Dimension d = GetSpriteSize(img);
+	DrawSprite(img, PAL_NONE, CenterBounds(r.left, r.right, d.width) + clicked, CenterBounds(r.top, r.bottom, d.height) + clicked);
 }
 
 /**
@@ -465,6 +465,50 @@ static inline void DrawFrame(const Rect &r, Colours colour, StringID str)
 }
 
 /**
+ * Draw a shade box.
+ * @param r       Rectangle of the box.
+ * @param colour  Colour of the shade box.
+ * @param clicked Box is lowered.
+ */
+static inline void DrawShadeBox(const Rect &r, Colours colour, bool clicked)
+{
+	DrawImageButtons(r, WWT_SHADEBOX, colour, clicked, clicked ? SPR_WINDOW_SHADE: SPR_WINDOW_UNSHADE);
+}
+
+/**
+ * Draw a sticky box.
+ * @param r       Rectangle of the box.
+ * @param colour  Colour of the sticky box.
+ * @param clicked Box is lowered.
+ */
+static inline void DrawStickyBox(const Rect &r, Colours colour, bool clicked)
+{
+	DrawImageButtons(r, WWT_STICKYBOX, colour, clicked, clicked ? SPR_PIN_UP : SPR_PIN_DOWN);
+}
+
+/**
+ * Draw a defsize box.
+ * @param r       Rectangle of the box.
+ * @param colour  Colour of the defsize box.
+ * @param clicked Box is lowered.
+ */
+static inline void DrawDefSizeBox(const Rect &r, Colours colour, bool clicked)
+{
+	DrawImageButtons(r, WWT_DEFSIZEBOX, colour, clicked, SPR_WINDOW_DEFSIZE);
+}
+
+/**
+ * Draw a NewGRF debug box.
+ * @param r       Rectangle of the box.
+ * @param colour  Colour of the debug box.
+ * @param clicked Box is lowered.
+ */
+static inline void DrawDebugBox(const Rect &r, Colours colour, bool clicked)
+{
+	DrawImageButtons(r, WWT_DEBUGBOX, colour, clicked, SPR_WINDOW_DEBUG);
+}
+
+/**
  * Draw a resize box.
  * @param r       Rectangle of the box.
  * @param colour  Colour of the resize box.
@@ -493,8 +537,9 @@ static inline void DrawResizeBox(const Rect &r, Colours colour, bool at_left, bo
 static inline void DrawCloseBox(const Rect &r, Colours colour)
 {
 	if (colour != COLOUR_WHITE) DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, FR_NONE);
-	DrawSpriteCenteredRect(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1 << PALETTE_TEXT_RECOLOUR),
-		r.left + WD_CLOSEBOX_LEFT * 2, r.top + WD_CLOSEBOX_TOP * 2, r.right, r.bottom);
+	Dimension d = GetSpriteSize(SPR_CLOSEBOX);
+	int s = UnScaleGUI(1); /* Offset to account for shadow of SPR_CLOSEBOX */
+	DrawSprite(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1 << PALETTE_TEXT_RECOLOUR), CenterBounds(r.left, r.right, d.width - s), CenterBounds(r.top, r.bottom, d.height - s));
 }
 
 /**
@@ -2521,8 +2566,8 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			size.width = max(size.width, 30 + sprite_size.width);
 			size.height = max(sprite_size.height, GetStringBoundingBox("_").height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
 			size.height = GetMinSizing(NWST_BUTTON, size.height);
-			/* FALL THROUGH */
 		}
+		FALLTHROUGH;
 		case WWT_PUSHBTN: {
 			static const Dimension extra = {WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM};
 			padding = &extra;

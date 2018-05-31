@@ -2687,7 +2687,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Tir cwmni
 STR_ABOUT_OPENTTD                                               :{WHITE}Gwybodaeth am OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Hawlfraint Wreiddiol {COPYRIGHT} 1995 Chris Sawyer, Holl cedwir pob hawl
 STR_ABOUT_VERSION                                               :{BLACK}fersiwn OpenTTD {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2017 Y tîm OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2018 Y tîm OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Cadw Gêm
@@ -3112,8 +3112,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}Derbyn
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}Dangos rhestr o'r llwythi sy'n cael eu derbyn
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Derbyn: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Mae gan yr orsaf hon hawliau cludo cyfyngol yn y dref hon.
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :Mae {YELLOW}{COMPANY}{BLACK} wedi prynnu hawliau cludo cyfyngol yn y dref hon.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Mae gan yr orsaf hon hawliau cludo cyfyngol yn y dref hon.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :Mae {YELLOW}{COMPANY}{BLACK} wedi prynnu hawliau cludo cyfyngol yn y dref hon.
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Perfformiad
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Dangos graddfeydd gorsaf
@@ -3360,6 +3360,7 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :Dileu pob cerby
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Ailenwi grŵp
 
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Cerbydau Rheilffordd Newydd
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Cerbydau Rheilffordd Trydan Newydd
@@ -3524,10 +3525,7 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :trên maglef
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Côst: {CURRENCY_LONG} Pwysau: {WEIGHT_SHORT}{}Cyflymder: {VELOCITY}  Pŵer: {POWER}{}Côst Rhedeg: {CURRENCY_LONG}/bl{}Gallu cludo: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Cost: {CURRENCY_LONG} Pwysau: {WEIGHT_SHORT}{}Cyflymder: {VELOCITY}  Pŵer: {POWER}  Grym Uchaf: {6:FORCE}{}Cost Rhedeg: {4:CURRENCY_LONG}/bl{}Cynhwysedd: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Cost: {CURRENCY_LONG} Cyflym. Uchaf: {VELOCITY}{}Cynhwysedd: {CARGO_LONG}, {CARGO_LONG}{}Côst Rhedeg: {CURRENCY_LONG}/bl
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Cost: {CURRENCY_LONG} Cyflym. Uchaf: {VELOCITY}{}Cynhwysedd: {CARGO_LONG}{}Cost Rhedeg: {CURRENCY_LONG}/bl
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Cost: {CURRENCY_LONG} Cyf. Uchaf: {VELOCITY} Pellter: {COMMA} teil{}Cynhwysedd: {CARGO_LONG}, {CARGO_LONG}{}Cost Rhedeg: {CURRENCY_LONG}/bl
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Cost: {CURRENCY_LONG} Cyf. Uchaf: {VELOCITY} Pellter: {COMMA} teil{}Cynhwysedd: {CARGO_LONG}{}Cost Rhedeg: {CURRENCY_LONG}/bl
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Cost: {CURRENCY_LONG} Cyflym. Uchaf: {VELOCITY}{}Cynhwysedd: {CARGO_LONG}{}Cost Rhedeg: {CURRENCY_LONG}/bl
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Disodli {STRING} - {STRING}
@@ -3650,7 +3648,6 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} blwyddy
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} blwyddyn ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}cyflymder uchaf: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Cyf. uchaf: {LTBLUE}{VELOCITY} {BLACK}Pell. Cyrraedd: {LTBLUE}{COMMA} teil
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Pwys: {LTBLUE}{WEIGHT_SHORT} {BLACK}Pŵer: {LTBLUE}{POWER}{BLACK} Cyflym. Max: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Pwys: {LTBLUE}{WEIGHT_SHORT} {BLACK}Pŵer: {LTBLUE}{POWER}{BLACK} Cyflym. Max: {LTBLUE}{VELOCITY} {BLACK}Max. T.E.: {LTBLUE}{FORCE}
 

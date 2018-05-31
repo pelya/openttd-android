@@ -1431,7 +1431,7 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Наладкі 
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Наладкі кампаніі (запісваюцца ў захаваньні; уплываюць толькі на новыя гульні)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Наладкі кампаніі (запісваюцца ў захаваньне; уплываюць толькі на бягучую кампанію)
 STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Паказаць усе вынікі пошуку па наладках{}{SILVER}Катэґорыя {BLACK}да {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Паказаць усе вынікі пошуку па наладках{}{SILVER}Тып BLACK}да {WHITE}Усе тыпы наладак
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Паказаць усе вынікі пошуку па наладках{}{SILVER}Тып {BLACK}да {WHITE}Усе тыпы наладак
 STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Паказаць усе вынікі пошуку па наладках{}{SILVER}Катэґорыя {BLACK}да {WHITE}{STRING} {BLACK}і {SILVER}Тып {BLACK}да {WHITE}Усе тыпы наладак
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Няма -
 
@@ -3019,7 +3019,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Зямля на
 STR_ABOUT_OPENTTD                                               :{WHITE}Аб OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Арыґінальныя аўтарскія правы {COPYRIGHT} 1995 Chris Sawyer. Усе правы абароненыя.
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD вэрсія {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002–2017 Каманда распрацоўнікаў OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002–2018 Каманда распрацоўнікаў OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Захаваць гульню
@@ -3444,8 +3444,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}Прым
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}Паказаць сьпіс прымаемых грузаў
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Прымае: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Гэта станцыя мае эксклюзыўныя транспартныя правы ў гэтым населеным пункце.
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} набыў эксклюзыўныя транспартныя правы ў гэтым населеным пункце.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Гэта станцыя мае эксклюзыўныя транспартныя правы ў гэтым населеным пункце.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} набыў эксклюзыўныя транспартныя правы ў гэтым населеным пункце.
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Рэйтынґ
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Паказаць рэйтынґ станцыі
@@ -3692,6 +3692,7 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :Выдаліц�
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Перайменаваць групу
 
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Новы цягнік
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Новы электрычны цягнік
@@ -3868,10 +3869,7 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE.acc                        :магніта�
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Кошт: {CURRENCY_LONG} Вага: {WEIGHT_SHORT}{}Хуткасьць: {VELOCITY}  Магутнасьць: {POWER}{}Кошт абслуг.: {CURRENCY_LONG}/год{}Ёмістасьць: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Кошт: {CURRENCY_LONG} Вага: {WEIGHT_SHORT}{}Хуткасьць: {VELOCITY}  Магутнасьць: {POWER}  Макс. ЦН: {6:FORCE}{}Кошт абслуг.: {4:CURRENCY_LONG}/год{}Ёмістасьць: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Кошт: {CURRENCY_LONG} Макс. хуткасьць: {VELOCITY}{}Ёмістасьць: {CARGO_LONG}, {CARGO_LONG}{}Кошт абслуг.: {CURRENCY_LONG}/год
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Кошт: {CURRENCY_LONG} Макс. хуткасьць: {VELOCITY}{}Ёмістасьць: {CARGO_LONG}{}Кошт абслуг.: {CURRENCY_LONG}/год
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Кошт: {CURRENCY_LONG} Макс. хуткасьць: {VELOCITY} Далёкасьць: {COMMA} клетк{P а i ак}{}Умяшчальнасьць: {CARGO_LONG}, {CARGO_LONG}{}Кошт абслугоўваньня: {CURRENCY_LONG}/год
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Кошт: {CURRENCY_LONG} Макс. хуткасьць: {VELOCITY} Далёкасьць: {COMMA} клет{P ка кi ак}{}Умяшчальнасьць: {CARGO_LONG}{}Кошт абслугоўваньня: {CURRENCY_LONG}/год
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Кошт: {CURRENCY_LONG} Макс. хуткасьць: {VELOCITY}{}Ёмістасьць: {CARGO_LONG}{}Кошт абслуг.: {CURRENCY_LONG}/год
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Замена {STRING.gen} — {STRING}
@@ -4001,7 +3999,6 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} г{P о
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} г{P од ады адоў} ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Макс. хуткасьць: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Макс. хуткасьць: {LTBLUE}{VELOCITY} {BLACK}Далёкасьць: {LTBLUE}{COMMA} клетк{P а i ак}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Вага: {LTBLUE}{WEIGHT_SHORT} {BLACK}Магутнасьць: {LTBLUE}{POWER}{BLACK} Макс. хуткасьць: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Вага: {LTBLUE}{WEIGHT_SHORT} {BLACK}Магутнасьць: {LTBLUE}{POWER}{BLACK} Макс. хуткасьць: {LTBLUE}{VELOCITY} {BLACK}Макс. ЦН: {LTBLUE}{FORCE}
 

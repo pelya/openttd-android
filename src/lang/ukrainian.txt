@@ -2817,7 +2817,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Ця ділян
 STR_ABOUT_OPENTTD                                               :{WHITE}Про OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Авторське право {COPYRIGHT} 1995 Кріс Сойєр, Всі права захищені
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD версія {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2017 команда OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2018 команда OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Зберегти гру
@@ -3242,8 +3242,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}Прий
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}Показати список приймання вантажів
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Приймає: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Ця станція має ексклюзивні права на перевезення.
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} отримала ексклюзивні права на перевезення.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Ця станція має ексклюзивні права на перевезення.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} отримала ексклюзивні права на перевезення.
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Рейтинг
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Показати рейтинг станції
@@ -3490,6 +3490,7 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :Позбути�
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Перейменувати групу
 
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Новий неелектрифікований поїзд
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Новий електрифікований поїзд
@@ -3654,10 +3655,7 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :магнітн�
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Ціна: {CURRENCY_LONG} Вага: {WEIGHT_SHORT}{}Швидкість: {VELOCITY}{}Потужність: {POWER}{}Вартість експлуатації: {CURRENCY_LONG}/рік{}Місткість: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Вартість: {CURRENCY_LONG} Вага: {WEIGHT_SHORT}{}Швидкість: {VELOCITY}  Потужність: {POWER}  Макс. тяга: {6:FORCE}{}Вартість експлуатації: {4:CURRENCY_LONG}/рік{}Місткість: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Вартість: {CURRENCY_LONG} Макс. швидкість: {VELOCITY}{}Місткість: {CARGO_LONG}, {CARGO_LONG}{}Вартість експлуатації: {CURRENCY_LONG}/рік
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Вартість: {CURRENCY_LONG} Макс. швидкість: {VELOCITY}{}Місткість: {CARGO_LONG}{}Вартість експлуатації: {CURRENCY_LONG}/рік
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Ціна: {CURRENCY_LONG} Макс. швидкість: {VELOCITY} Дальність: {COMMA} клітинок{}Місткість: {CARGO_LONG}, {CARGO_LONG}{}Вартість експлуатації: {CURRENCY_LONG}/рік
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Вартість: {CURRENCY_LONG} Макс. швидкість: {VELOCITY} Дальність: {COMMA} клітинок{}Місткість: {CARGO_LONG}{}Витрати від експлуатації: {CURRENCY_LONG}/рік
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Вартість: {CURRENCY_LONG} Макс. швидкість: {VELOCITY}{}Місткість: {CARGO_LONG}{}Вартість експлуатації: {CURRENCY_LONG}/рік
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Оновити {STRING} - {STRING}
@@ -3779,7 +3777,6 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} р{P і
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} р{P ік оки оків} ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Макс. швидкість: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Макс. швидкість: {LTBLUE}{VELOCITY} {BLACK}Дальність: {LTBLUE}{COMMA} клітинок
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Вага: {LTBLUE}{WEIGHT_SHORT} {BLACK}Потужність: {LTBLUE}{POWER}{BLACK} Макс. швидкість: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Вага: {LTBLUE}{WEIGHT_SHORT} {BLACK}Потужність: {LTBLUE}{POWER}{BLACK} Макс. швидкість: {LTBLUE}{VELOCITY} {BLACK}Макс. тяга: {LTBLUE}{FORCE}
 
@@ -3799,7 +3796,7 @@ STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}Інте
 STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Збільшити інтервал техогляду на 10. Ctrl+клац мишою збільшує інтервал техогляду на 5
 STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP         :{BLACK}Зменшити період техогляду на 10. Ctrl+клац мишою зменшує інтервал техогляду на 5
 
-STR_SERVICE_INTERVAL_DROPDOWN_TOOLTIP                           :Відлік інтервалу між техоглядами
+STR_SERVICE_INTERVAL_DROPDOWN_TOOLTIP                           :{BLACK}Відлік інтервалу між техоглядами
 STR_VEHICLE_DETAILS_DEFAULT                                     :Стандартно
 STR_VEHICLE_DETAILS_DAYS                                        :Дні
 STR_VEHICLE_DETAILS_PERCENT                                     :Проценти

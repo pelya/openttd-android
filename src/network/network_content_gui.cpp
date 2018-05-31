@@ -910,7 +910,8 @@ public:
 					}
 					return ES_HANDLED;
 				}
-				/* FALL THROUGH, space is pressed and filter is focused. */
+				/* space is pressed and filter is focused. */
+				FALLTHROUGH;
 
 			default:
 				return ES_NOT_HANDLED;

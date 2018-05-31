@@ -2625,7 +2625,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Земя, пр�
 STR_ABOUT_OPENTTD                                               :{WHITE}Относно OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Авторски права {COPYRIGHT} 1995 Крис Сойер (Chris Sawyer), Всички права са запазени
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD версия {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2017 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2018 The OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Запази играта
@@ -2775,7 +2775,7 @@ STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{G=n}{RED}Не�
 # NewGRF save preset window
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Въведи име за шаблона
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Текущо избраното име за именуване на шаблона
-STR_SAVE_PRESET_CANCEL                                          :Отказ
+STR_SAVE_PRESET_CANCEL                                          :{BLACK}Отказ
 STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Не променяй шаблона
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Запис
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Запази шаблона за текущо избраното име
@@ -3034,8 +3034,8 @@ STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}Прие
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}Покажи списък с приетите товари
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}Приема: {WHITE}{CARGO_LIST}
 
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Тази станция има специални транспортни привилегии за града
-STR_STATIOV_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} закупи специални транспортни привилегии за града.
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_SELF                          :{BLACK}Тази станция има специални транспортни привилегии за града
+STR_STATION_VIEW_EXCLUSIVE_RIGHTS_COMPANY                       :{YELLOW}{COMPANY}{BLACK} закупи специални транспортни привилегии за града.
 
 STR_STATION_VIEW_RATINGS_BUTTON                                 :{BLACK}Рейтинги
 STR_STATION_VIEW_RATINGS_TOOLTIP                                :{BLACK}Покажи нивото на обслужване
@@ -3279,6 +3279,7 @@ STR_GROUP_REMOVE_ALL_VEHICLES                                   :Премахн�
 
 STR_GROUP_RENAME_CAPTION                                        :{BLACK}Преименовай група
 
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Нови Машини за Двурелсов път
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Нови електрически влакове
@@ -3443,10 +3444,7 @@ STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :локомот�
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Цена: {CURRENCY_LONG} Тегло: {WEIGHT_SHORT}{}Скорост: {VELOCITY}  Мощност: {POWER}{}Разход: {CURRENCY_LONG}/г.{}Капацитет: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Цена: {CURRENCY_LONG} Тегло: {WEIGHT_SHORT}{}Скорост: {VELOCITY}  Мощност: {POWER}  Макс. Т.С.: {6:FORCE}{}Експлоатационни разходи: {4:CURRENCY_LONG}/год.{}Вместимост: {5:CARGO_LONG}
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_CAPACITY_RUNCOST     :{BLACK}Цена: {CURRENCY_LONG} Макс. Скорост: {VELOCITY}{}Вместимост: {CARGO_LONG}, {CARGO_LONG}{}Експлоатационни разходи: {CURRENCY_LONG}/год.
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAPACITY_RUNCOST              :{BLACK}Цена: {CURRENCY_LONG} Макс. Скорост: {VELOCITY}{}Вместимост: {CARGO_LONG}{}Експлоатационни разходи: {CURRENCY_LONG}/год.
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Цена: {CURRENCY_LONG} Макс. Скорост: {VELOCITY} Обхват: {COMMA} полета{}Капацитет: {CARGO_LONG}, {CARGO_LONG}{}Транспортни разходи: {CURRENCY_LONG}/година
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Цена: {CURRENCY_LONG} Макс. Скорост: {VELOCITY} Обхват: {COMMA} полета{}Капацитет: {CARGO_LONG}{}Транспортни разходи: {CURRENCY_LONG}/година
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Цена: {CURRENCY_LONG} Макс. Скорост: {VELOCITY}{}Вместимост: {CARGO_LONG}{}Експлоатационни разходи: {CURRENCY_LONG}/год.
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Замяна {STRING} - {STRING}
@@ -3568,7 +3566,6 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} год�
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} годин{P а и} ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Макс. скорост: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Макс. скорост: {LTBLUE}{VELOCITY} {BLACK}Обхват: {LTBLUE}{COMMA} полета
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Тегло: {LTBLUE}{WEIGHT_SHORT} {BLACK}Мощност: {LTBLUE}{POWER}{BLACK} Макс. Скорост: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Тегло: {LTBLUE}{WEIGHT_SHORT} {BLACK}Мощност: {LTBLUE}{POWER}{BLACK} Макс. Скорост: {LTBLUE}{VELOCITY} {BLACK}Макс. Т.С.: {LTBLUE}{FORCE}
 
