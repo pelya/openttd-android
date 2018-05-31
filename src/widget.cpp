@@ -18,6 +18,7 @@
 #include "transparency.h"
 #include "core/geometry_func.hpp"
 #include "settings_type.h"
+#include "settings_gui.h"
 #include "querystring_gui.h"
 
 #include "table/sprites.h"
@@ -47,6 +48,11 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
 	}
 	top += button_size;    // top    points to just below the up-button
 	bottom -= button_size; // bottom points to top of the down-button
+	bool wide_enough = false;
+	if (bottom > top + button_size * 2) {
+		bottom -= button_size; // Slider should be no smaller than a regular button, reserve some size from bottom
+		wide_enough = true;
+	}
 
 	int height = (bottom - top);
 	int pos = sb->GetPosition();
@@ -57,10 +63,11 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
 
 	if (cap > count) cap = count;
 	if (count != 0) bottom -= (count - pos - cap) * height / count;
+	if (wide_enough) bottom += button_size;
 
 	Point pt;
 	if (horizontal && _current_text_dir == TD_RTL) {
-		pt.x = rev_base - bottom;
+		pt.x = rev_base - bottom - button_size;
 		pt.y = rev_base - top;
 	} else {
 		pt.x = top;
@@ -96,7 +103,7 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		/* Pressing the upper button? */
 		SetBit(sb->disp_flags, NDB_SCROLLBAR_UP);
 		if (_scroller_click_timeout <= 1) {
-			_scroller_click_timeout = 3;
+			_scroller_click_timeout = SCROLLER_CLICK_DELAY;
 			sb->UpdatePosition(rtl ? 1 : -1);
 		}
 		w->scrolling_scrollbar = sb->index;
@@ -105,7 +112,7 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		SetBit(sb->disp_flags, NDB_SCROLLBAR_DOWN);
 
 		if (_scroller_click_timeout <= 1) {
-			_scroller_click_timeout = 3;
+			_scroller_click_timeout = SCROLLER_CLICK_DELAY;
 			sb->UpdatePosition(rtl ? -1 : 1);
 		}
 		w->scrolling_scrollbar = sb->index;
@@ -119,6 +126,8 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		} else {
 			_scrollbar_start_pos = pt.x - mi - button_size;
 			_scrollbar_size = ma - mi - button_size * 2;
+			if (_scrollbar_size > button_size * 2)
+				_scrollbar_size -= button_size;
 			w->scrolling_scrollbar = sb->index;
 			_cursorpos_drag_start = _cursor.pos;
 		}
@@ -221,7 +230,8 @@ static inline void DrawImageButtons(const Rect &r, WidgetType type, Colours colo
 	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
 
 	if ((type & WWT_MASK) == WWT_IMGBTN_2 && clicked) img++; // Show different image when clicked for #WWT_IMGBTN_2.
-	DrawSprite(img, PAL_NONE, r.left + WD_IMGBTN_LEFT + clicked, r.top + WD_IMGBTN_TOP + clicked);
+	Dimension d2 = GetSpriteSize(img);
+	DrawSprite(img, PAL_NONE, Center(r.left + clicked, r.right - r.left, d2.width), Center(r.top + clicked, r.bottom - r.top, d2.height));
 }
 
 /**
@@ -341,10 +351,10 @@ static inline void DrawVerticalScrollbar(const Rect &r, Colours colour, bool up_
 
 	/* draw up/down buttons */
 	DrawFrameRect(r.left, r.top, r.right, r.top + height - 1, colour, (up_clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_UP, PAL_NONE, r.left + 1 + up_clicked, r.top + 1 + up_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_UP, PAL_NONE, r.left + 2 + up_clicked * 2, r.top + 2 + up_clicked * 2, r.right, r.top + height);
 
 	DrawFrameRect(r.left, r.bottom - (height - 1), r.right, r.bottom, colour, (down_clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_DOWN, PAL_NONE, r.left + 1 + down_clicked, r.bottom - (height - 2) + down_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_DOWN, PAL_NONE, r.left + 2 + down_clicked * 2, r.bottom - height + 2 + down_clicked, r.right, r.bottom);
 
 	int c1 = _colour_gradient[colour & 0xF][3];
 	int c2 = _colour_gradient[colour & 0xF][7];
@@ -376,12 +386,13 @@ static inline void DrawHorizontalScrollbar(const Rect &r, Colours colour, bool l
 {
 	int centre = (r.bottom - r.top) / 2;
 	int width = NWidgetScrollbar::GetHorizontalDimension().width;
+	int height = NWidgetScrollbar::GetVerticalDimension().height;
 
 	DrawFrameRect(r.left, r.top, r.left + width - 1, r.bottom, colour, left_clicked ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_LEFT, PAL_NONE, r.left + 1 + left_clicked, r.top + 1 + left_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_LEFT, PAL_NONE, r.left + left_clicked * 2, r.top + 2 + left_clicked * 2, r.left + height, r.bottom);
 
 	DrawFrameRect(r.right - (width - 1), r.top, r.right, r.bottom, colour, right_clicked ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_ARROW_RIGHT, PAL_NONE, r.right - (width - 2) + right_clicked, r.top + 1 + right_clicked);
+	DrawSpriteCenteredRect(SPR_ARROW_RIGHT, PAL_NONE, r.right - width + right_clicked * 2, r.top + 2 + right_clicked * 2, r.right, r.bottom);
 
 	int c1 = _colour_gradient[colour & 0xF][3];
 	int c2 = _colour_gradient[colour & 0xF][7];
@@ -452,54 +463,6 @@ static inline void DrawFrame(const Rect &r, Colours colour, StringID str)
 }
 
 /**
- * Draw a shade box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the shade box.
- * @param clicked Box is lowered.
- */
-static inline void DrawShadeBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite((clicked) ? SPR_WINDOW_SHADE : SPR_WINDOW_UNSHADE, PAL_NONE, r.left + WD_SHADEBOX_LEFT + clicked, r.top + WD_SHADEBOX_TOP + clicked);
-}
-
-/**
- * Draw a sticky box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the sticky box.
- * @param clicked Box is lowered.
- */
-static inline void DrawStickyBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite((clicked) ? SPR_PIN_UP : SPR_PIN_DOWN, PAL_NONE, r.left + WD_STICKYBOX_LEFT + clicked, r.top + WD_STICKYBOX_TOP + clicked);
-}
-
-/**
- * Draw a defsize box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the defsize box.
- * @param clicked Box is lowered.
- */
-static inline void DrawDefSizeBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_WINDOW_DEFSIZE, PAL_NONE, r.left + WD_DEFSIZEBOX_LEFT + clicked, r.top + WD_DEFSIZEBOX_TOP + clicked);
-}
-
-/**
- * Draw a NewGRF debug box.
- * @param r       Rectangle of the box.
- * @param colour  Colour of the debug box.
- * @param clicked Box is lowered.
- */
-static inline void DrawDebugBox(const Rect &r, Colours colour, bool clicked)
-{
-	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
-	DrawSprite(SPR_WINDOW_DEBUG, PAL_NONE, r.left + WD_DEBUGBOX_LEFT + clicked, r.top + WD_DEBUGBOX_TOP + clicked);
-}
-
-/**
  * Draw a resize box.
  * @param r       Rectangle of the box.
  * @param colour  Colour of the resize box.
@@ -509,12 +472,13 @@ static inline void DrawDebugBox(const Rect &r, Colours colour, bool clicked)
 static inline void DrawResizeBox(const Rect &r, Colours colour, bool at_left, bool clicked)
 {
 	DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, (clicked) ? FR_LOWERED : FR_NONE);
+	Dimension d = GetSpriteSize(at_left ? SPR_WINDOW_RESIZE_LEFT : SPR_WINDOW_RESIZE_RIGHT);
 	if (at_left) {
-		DrawSprite(SPR_WINDOW_RESIZE_LEFT, PAL_NONE, r.left + WD_RESIZEBOX_RIGHT + clicked,
-				 r.bottom - WD_RESIZEBOX_BOTTOM - GetSpriteSize(SPR_WINDOW_RESIZE_LEFT).height + clicked);
+		DrawSprite(SPR_WINDOW_RESIZE_LEFT, PAL_NONE, r.left + WD_RESIZEBOX_LEFT + clicked,
+				 r.bottom - WD_RESIZEBOX_BOTTOM - d.height + clicked);
 	} else {
-		DrawSprite(SPR_WINDOW_RESIZE_RIGHT, PAL_NONE, r.left + WD_RESIZEBOX_LEFT + clicked,
-				 r.bottom - WD_RESIZEBOX_BOTTOM - GetSpriteSize(SPR_WINDOW_RESIZE_RIGHT).height + clicked);
+		DrawSprite(SPR_WINDOW_RESIZE_RIGHT, PAL_NONE, r.right - WD_RESIZEBOX_RIGHT - d.width + clicked,
+				 r.bottom - WD_RESIZEBOX_BOTTOM - d.height + clicked);
 	}
 }
 
@@ -526,7 +490,8 @@ static inline void DrawResizeBox(const Rect &r, Colours colour, bool at_left, bo
 static inline void DrawCloseBox(const Rect &r, Colours colour)
 {
 	if (colour != COLOUR_WHITE) DrawFrameRect(r.left, r.top, r.right, r.bottom, colour, FR_NONE);
-	DrawSprite(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1 << PALETTE_TEXT_RECOLOUR), r.left + WD_CLOSEBOX_LEFT, r.top + WD_CLOSEBOX_TOP);
+	DrawSpriteCenteredRect(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1 << PALETTE_TEXT_RECOLOUR),
+		r.left + WD_CLOSEBOX_LEFT * 2, r.top + WD_CLOSEBOX_TOP * 2, r.right, r.bottom);
 }
 
 /**
@@ -568,19 +533,19 @@ static inline void DrawButtonDropdown(const Rect &r, Colours colour, bool clicke
 {
 	int text_offset = max(0, ((int)(r.bottom - r.top + 1) - FONT_HEIGHT_NORMAL) / 2); // Offset for rendering the text vertically centered
 
-	int dd_width  = NWidgetLeaf::dropdown_dimension.width;
-	int dd_height = NWidgetLeaf::dropdown_dimension.height;
+	int dd_width  = GetMinSizing(NWST_STEP, NWidgetLeaf::dropdown_dimension.width);
+	int dd_height = GetMinSizing(NWST_STEP, NWidgetLeaf::dropdown_dimension.height);
 	int image_offset = max(0, ((int)(r.bottom - r.top + 1) - dd_height) / 2);
 
 	if (_current_text_dir == TD_LTR) {
 		DrawFrameRect(r.left, r.top, r.right - dd_width, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
 		DrawFrameRect(r.right + 1 - dd_width, r.top, r.right, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
-		DrawSprite(SPR_ARROW_DOWN, PAL_NONE, r.right - (dd_width - 2) + clicked_dropdown, r.top + image_offset + clicked_dropdown);
+		DrawSpriteCenteredRect(SPR_ARROW_DOWN, PAL_NONE, r.right - (dd_width - 2) + clicked_dropdown * 2, r.top + image_offset + clicked_dropdown * 2, r.right, r.bottom);
 		if (str != STR_NULL) DrawString(r.left + WD_DROPDOWNTEXT_LEFT + clicked_button, r.right - dd_width - WD_DROPDOWNTEXT_RIGHT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
 	} else {
 		DrawFrameRect(r.left + dd_width, r.top, r.right, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
 		DrawFrameRect(r.left, r.top, r.left + dd_width - 1, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
-		DrawSprite(SPR_ARROW_DOWN, PAL_NONE, r.left + 1 + clicked_dropdown, r.top + image_offset + clicked_dropdown);
+		DrawSpriteCenteredRect(SPR_ARROW_DOWN, PAL_NONE, r.left + 1 + clicked_dropdown * 2, r.top + image_offset + clicked_dropdown * 2, r.left + dd_width, r.bottom);
 		if (str != STR_NULL) DrawString(r.left + dd_width + WD_DROPDOWNTEXT_LEFT + clicked_button, r.right - WD_DROPDOWNTEXT_RIGHT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
 	}
 }
@@ -642,12 +607,11 @@ void Window::DrawSortButtonState(int widget, SortButtonState state) const
 	const NWidgetBase *nwid = this->GetWidget<NWidgetBase>(widget);
 
 	/* Sort button uses the same sprites as vertical scrollbar */
-	Dimension dim = NWidgetScrollbar::GetVerticalDimension();
 	int offset = this->IsWidgetLowered(widget) ? 1 : 0;
-	int x = offset + nwid->pos_x + (_current_text_dir == TD_LTR ? nwid->current_x - dim.width : 0);
-	int y = offset + nwid->pos_y + (nwid->current_y - dim.height) / 2;
+	int x = offset + nwid->pos_x + (_current_text_dir == TD_LTR ? nwid->current_x - SETTING_BUTTON_HEIGHT / 2 : SETTING_BUTTON_HEIGHT / 2);
+	int y = offset + Center(nwid->pos_y, nwid->current_y, FONT_HEIGHT_NORMAL / 4);
 
-	DrawSprite(state == SBS_DOWN ? SPR_ARROW_DOWN : SPR_ARROW_UP, PAL_NONE, x, y);
+	DrawSpriteCentered(state == SBS_DOWN ? SPR_ARROW_DOWN : SPR_ARROW_UP, PAL_NONE, x, y);
 }
 
 /**
@@ -804,6 +768,7 @@ NWidgetBase *NWidgetBase::GetWidgetOfType(WidgetType tp)
  */
 NWidgetResizeBase::NWidgetResizeBase(WidgetType tp, uint fill_x, uint fill_y) : NWidgetBase(tp)
 {
+	this->sizing_type = NWST_NONE;
 	this->fill_x = fill_x;
 	this->fill_y = fill_y;
 }
@@ -817,6 +782,27 @@ void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
 {
 	this->min_x = max(this->min_x, min_x);
 	this->min_y = max(this->min_y, min_y);
+	uint min_size = 0;
+	switch (this->sizing_type) {
+		case NWST_NONE:
+		case NWST_OVERRIDE:
+			min_size = 0;
+			break;
+		case NWST_BUTTON:
+			min_size = _settings_client.gui.min_button;
+			break;
+		case NWST_STEP:
+			min_size = _settings_client.gui.min_step;
+			break;
+		case NWST_VIEWPORT:
+			min_size = 3 * _settings_client.gui.min_button;
+			break;
+		default: NOT_REACHED();
+	}
+	min_size = RescaleFrom854x480(min_size);
+
+	this->min_x = max(min_x, min_size);
+	this->min_y = max(min_y, min_size);
 }
 
 /**
@@ -868,6 +854,7 @@ void NWidgetResizeBase::AssignSizePosition(SizingType sizing, uint x, uint y, ui
  */
 NWidgetCore::NWidgetCore(WidgetType tp, Colours colour, uint fill_x, uint fill_y, uint32 widget_data, StringID tool_tip) : NWidgetResizeBase(tp, fill_x, fill_y)
 {
+	this->sizing_type = NWST_NONE;
 	this->colour = colour;
 	this->index = -1;
 	this->widget_data = widget_data;
@@ -1988,6 +1975,7 @@ void Scrollbar::SetCapacityFromWidget(Window *w, int widget, int padding)
 NWidgetScrollbar::NWidgetScrollbar(WidgetType tp, Colours colour, int index) : NWidgetCore(tp, colour, 1, 1, 0x0, STR_NULL), Scrollbar(tp != NWID_HSCROLLBAR)
 {
 	assert(tp == NWID_HSCROLLBAR || tp == NWID_VSCROLLBAR);
+	this->sizing_type = NWST_STEP;
 	this->SetIndex(index);
 }
 
@@ -2062,7 +2050,9 @@ void NWidgetScrollbar::Draw(const Window *w)
 	if (vertical_dimension.width == 0) {
 		vertical_dimension = maxdim(GetSpriteSize(SPR_ARROW_UP), GetSpriteSize(SPR_ARROW_DOWN));
 		vertical_dimension.width += extra.width;
+		vertical_dimension.width = GetMinSizing(NWST_STEP, vertical_dimension.width);
 		vertical_dimension.height += extra.height;
+		vertical_dimension.height = GetMinSizing(NWST_STEP, vertical_dimension.height);
 	}
 	return vertical_dimension;
 }
@@ -2073,7 +2063,9 @@ void NWidgetScrollbar::Draw(const Window *w)
 	if (horizontal_dimension.width == 0) {
 		horizontal_dimension = maxdim(GetSpriteSize(SPR_ARROW_LEFT), GetSpriteSize(SPR_ARROW_RIGHT));
 		horizontal_dimension.width += extra.width;
+		horizontal_dimension.width = GetMinSizing(NWST_STEP, horizontal_dimension.width);
 		horizontal_dimension.height += extra.height;
+		horizontal_dimension.height = GetMinSizing(NWST_STEP, horizontal_dimension.height);
 	}
 	return horizontal_dimension;
 }
@@ -2111,11 +2103,45 @@ Dimension NWidgetLeaf::dropdown_dimension   = {0, 0};
  */
 NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, StringID tip) : NWidgetCore(tp, colour, 1, 1, data, tip)
 {
+	assert(this->sizing_type < NWST_END);
 	assert(index >= 0 || tp == WWT_LABEL || tp == WWT_TEXT || tp == WWT_CAPTION || tp == WWT_RESIZEBOX || tp == WWT_SHADEBOX || tp == WWT_DEFSIZEBOX || tp == WWT_DEBUGBOX || tp == WWT_STICKYBOX || tp == WWT_CLOSEBOX);
 	if (index >= 0) this->SetIndex(index);
 	this->min_x = 0;
 	this->min_y = 0;
 	this->SetResize(0, 0);
+
+	if (this->sizing_type == NWST_NONE) {
+		switch (tp) {
+			case WWT_PUSHBTN:
+			case WWT_IMGBTN:
+			case WWT_PUSHIMGBTN:
+			case WWT_IMGBTN_2:
+			case WWT_TEXTBTN:
+			case WWT_PUSHTXTBTN:
+			case WWT_TEXTBTN_2:
+			case WWT_PUSHARROWBTN:
+			case WWT_EDITBOX:
+			case WWT_CAPTION:
+			case WWT_STICKYBOX:
+			case WWT_SHADEBOX:
+			case WWT_DEBUGBOX:
+			case WWT_DEFSIZEBOX:
+			case WWT_RESIZEBOX:
+			case WWT_CLOSEBOX:
+				this->sizing_type = NWST_BUTTON;
+				this->SetMinimalSize(8, 8);
+				break;
+			case NWID_PUSHBUTTON_DROPDOWN:
+			case NWID_BUTTON_DROPDOWN:
+			case WWT_DROPDOWN:
+			case WWT_ARROWBTN:
+				this->sizing_type = NWST_STEP;
+				this->SetMinimalSize(8, 8);
+				break;
+			default:
+				this->sizing_type = NWST_OVERRIDE;
+		}
+	}
 
 	switch (tp) {
 		case WWT_EMPTY:
@@ -2145,7 +2171,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 		case WWT_CAPTION:
 			this->SetFill(1, 0);
 			this->SetResize(1, 0);
-			this->min_y = WD_CAPTION_HEIGHT;
+			//this->min_y = WD_CAPTION_HEIGHT;
 			this->SetDataTip(data, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS);
 			break;
 
@@ -2187,7 +2213,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 
 		case WWT_DROPDOWN:
 			this->SetFill(0, 0);
-			this->min_y = WD_DROPDOWN_HEIGHT;
+			//this->min_y = WD_DROPDOWN_HEIGHT;
 			break;
 
 		default:
@@ -2286,6 +2312,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			Dimension sprite_size = GetSpriteSize(_current_text_dir == TD_RTL ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
 			size.width = max(size.width, 30 + sprite_size.width);
 			size.height = max(sprite_size.height, GetStringBoundingBox("_").height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
+			size.height = GetMinSizing(NWST_BUTTON, size.height);
 			/* FALL THROUGH */
 		}
 		case WWT_PUSHBTN: {
@@ -2352,7 +2379,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			padding = &extra;
 			if (this->index >= 0) w->SetStringParameters(this->index);
 			Dimension d2 = GetStringBoundingBox(this->widget_data);
-			d2.width += extra.width;
+			d2.width += extra.width + GetMinSizing(NWST_STEP, 11U);
 			d2.height += extra.height;
 			size = maxdim(size, d2);
 			break;
@@ -2364,7 +2391,8 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			padding = &extra;
 			if (NWidgetLeaf::dropdown_dimension.width == 0) {
 				NWidgetLeaf::dropdown_dimension = GetSpriteSize(SPR_ARROW_DOWN);
-				NWidgetLeaf::dropdown_dimension.width += WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT;
+				NWidgetLeaf::dropdown_dimension.width = SETTING_BUTTON_HEIGHT;
+				//NWidgetLeaf::dropdown_dimension.width += WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT;
 				NWidgetLeaf::dropdown_dimension.height += WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM;
 				extra.width = WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT + NWidgetLeaf::dropdown_dimension.width;
 			}
@@ -2474,21 +2502,23 @@ void NWidgetLeaf::Draw(const Window *w)
 
 		case WWT_SHADEBOX:
 			assert(this->widget_data == 0);
-			DrawShadeBox(r, this->colour, w->IsShaded());
+			DrawImageButtons(r, WWT_SHADEBOX, this->colour, w->IsShaded(), w->IsShaded() ? SPR_WINDOW_SHADE : SPR_WINDOW_UNSHADE);
 			break;
 
 		case WWT_DEBUGBOX:
-			DrawDebugBox(r, this->colour, clicked);
+			DrawImageButtons(r, WWT_DEBUGBOX, this->colour, clicked, SPR_WINDOW_DEBUG);
 			break;
 
-		case WWT_STICKYBOX:
+		case WWT_STICKYBOX: {
 			assert(this->widget_data == 0);
-			DrawStickyBox(r, this->colour, !!(w->flags & WF_STICKY));
+			bool clicked = !!(w->flags & WF_STICKY);
+			DrawImageButtons(r, WWT_STICKYBOX, this->colour, clicked, clicked ? SPR_PIN_DOWN : SPR_PIN_UP);
 			break;
+		}
 
 		case WWT_DEFSIZEBOX:
 			assert(this->widget_data == 0);
-			DrawDefSizeBox(r, this->colour, clicked);
+			DrawImageButtons(r, WWT_DEFSIZEBOX, this->colour, clicked, SPR_WINDOW_DEFSIZE);
 			break;
 
 		case WWT_RESIZEBOX:
@@ -2532,11 +2562,12 @@ void NWidgetLeaf::Draw(const Window *w)
  */
 bool NWidgetLeaf::ButtonHit(const Point &pt)
 {
+	uint button_size = GetMinSizing(NWST_STEP, 12);
 	if (_current_text_dir == TD_LTR) {
-		int button_width = this->pos_x + this->current_x - NWidgetLeaf::dropdown_dimension.width;
+		int button_width = this->pos_x + this->current_x - button_size;
 		return pt.x < button_width;
 	} else {
-		int button_left = this->pos_x + NWidgetLeaf::dropdown_dimension.width;
+		int button_left = this->pos_x + button_size;
 		return pt.x >= button_left;
 	}
 }
@@ -2625,6 +2656,16 @@ static int MakeNWidget(const NWidgetPart *parts, int count, NWidgetBase **dest, 
 				if (nwrb != NULL) {
 					assert(parts->u.xy.x >= 0 && parts->u.xy.y >= 0);
 					nwrb->SetResize(parts->u.xy.x, parts->u.xy.y);
+				}
+				break;
+			}
+
+			case WPT_SIZINGTYPE: {
+				NWidgetResizeBase *nwrb = dynamic_cast<NWidgetResizeBase *>(*dest);
+				if (nwrb != NULL) {
+					assert(parts->u.sizing_type < NWST_END);
+					nwrb->sizing_type = parts->u.sizing_type;
+					nwrb->SetMinimalSize(0, 0);
 				}
 				break;
 			}
@@ -2885,6 +2926,7 @@ NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int wid
 		}
 
 		NWidgetBackground *panel = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, widnum);
+		panel->sizing_type = NWST_STEP;
 		panel->SetMinimalSize(sprite_size.width, sprite_size.height);
 		panel->SetFill(1, 1);
 		panel->SetResize(1, 0);
@@ -2904,4 +2946,36 @@ NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int wid
 	}
 	if (hor != NULL) vert->Add(hor);
 	return vert;
+}
+
+/**
+ * Return the minimal automatic size for a widget.
+ * @param type The automatic sizing type to use.
+ * @param min_1 Minimal passed value.
+ * @return At least the passed value, or the minimal size for the associated sizing type.
+ */
+uint GetMinSizing(NWidSizingType type, uint min_1)
+{
+	uint min_sizing;
+	switch (type) {
+		case NWST_NONE:
+		case NWST_OVERRIDE:
+			return min_1;
+		case NWST_BUTTON:
+			min_sizing = _settings_client.gui.min_button;
+			break;
+		case NWST_STEP:
+			min_sizing = _settings_client.gui.min_step;
+			break;
+		case NWST_KEYBOARD:
+			min_sizing = 2 * _settings_client.gui.min_button;
+			break;
+		case NWST_WINDOW_LENGTH:
+			min_sizing = 8 * _settings_client.gui.min_button;
+			break;
+		default: NOT_REACHED();
+	}
+	min_sizing = RescaleFrom854x480(min_sizing);
+
+	return max(min_sizing, min_1);
 }

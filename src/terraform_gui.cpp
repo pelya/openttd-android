@@ -222,18 +222,22 @@ struct TerraformToolbarWindow : Window {
 		switch (this->last_user_action) {
 			case WID_TT_LOWER_LAND: // Lower land button
 				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_LOWER_AND_LEVEL_AREA);
+				MoveAllWindowsOffScreen();
 				break;
 
 			case WID_TT_RAISE_LAND: // Raise land button
 				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_RAISE_AND_LEVEL_AREA);
+				MoveAllWindowsOffScreen();
 				break;
 
 			case WID_TT_LEVEL_LAND: // Level land button
 				VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_LEVEL_AREA);
+				MoveAllWindowsOffScreen();
 				break;
 
 			case WID_TT_DEMOLISH: // Demolish aka dynamite button
 				PlaceProc_DemolishArea(tile);
+				MoveAllWindowsOffScreen();
 				break;
 
 			case WID_TT_BUY_LAND: // Buy land button
@@ -272,12 +276,24 @@ struct TerraformToolbarWindow : Window {
 					GUIPlaceProcDragXY(select_proc, start_tile, end_tile);
 					break;
 			}
+			MoveAllHiddenWindowsBackToScreen();
 		}
 	}
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
+	}
+
+	virtual void SelectLastTool()
+	{
+		// User misplaced something - activate last selected tool again
+		if (this->last_user_action == WIDGET_LIST_END)
+			return;
+		Point dummy = {0, 0};
+		this->RaiseWidget(this->last_user_action);
+		this->OnClick(dummy, this->last_user_action, 0);
 	}
 
 	static HotkeyList hotkeys;

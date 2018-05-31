@@ -627,8 +627,10 @@ void SQGSWindow_Register(Squirrel *engine)
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TF_VSCROLLBAR,                         "WID_TF_VSCROLLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TF_HSCROLLBAR,                         "WID_TF_HSCROLLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_LIST_LEFT,                         "WID_MTS_LIST_LEFT");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_LEFT_SCROLLBAR,                    "WID_MTS_LEFT_SCROLLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_PLAYLIST,                          "WID_MTS_PLAYLIST");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_LIST_RIGHT,                        "WID_MTS_LIST_RIGHT");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_RIGHT_SCROLLBAR,                   "WID_MTS_RIGHT_SCROLLBAR");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_ALL,                               "WID_MTS_ALL");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_OLD,                               "WID_MTS_OLD");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_MTS_NEW,                               "WID_MTS_NEW");
@@ -1193,6 +1195,9 @@ void SQGSWindow_Register(Squirrel *engine)
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TN_MESSAGES,                           "WID_TN_MESSAGES");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TN_HELP,                               "WID_TN_HELP");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TN_SWITCH_BAR,                         "WID_TN_SWITCH_BAR");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TN_CTRL,                               "WID_TN_CTRL");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TN_SHIFT,                              "WID_TN_SHIFT");
+	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TN_DELETE,                             "WID_TN_DELETE");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TN_END,                                "WID_TN_END");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TE_PAUSE,                              "WID_TE_PAUSE");
 	SQGSWindow.DefSQConst(engine, ScriptWindow::WID_TE_FAST_FORWARD,                       "WID_TE_FAST_FORWARD");

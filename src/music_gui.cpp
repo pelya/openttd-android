@@ -297,13 +297,32 @@ static void SelectPlaylist(byte list)
 }
 
 struct MusicTrackSelectionWindow : public Window {
+	Scrollbar *left_sb;
+	Scrollbar *right_sb;
+
+	/** Count the number of tracks of current tracklist. */
+	uint GetNumberOfTracksOfTracklist() const
+	{
+		uint i = 0;
+		for (; _playlists[_settings_client.music.playlist][i] > 0; i++) {}
+		return i;
+	}
+
 	MusicTrackSelectionWindow(WindowDesc *desc, WindowNumber number) : Window(desc)
 	{
-		this->InitNested(number);
+
+		this->CreateNestedTree();
+		this->left_sb = this->GetScrollbar(WID_MTS_LEFT_SCROLLBAR);
+		this->right_sb = this->GetScrollbar(WID_MTS_RIGHT_SCROLLBAR);
+
 		this->LowerWidget(WID_MTS_LIST_LEFT);
 		this->LowerWidget(WID_MTS_LIST_RIGHT);
 		this->SetWidgetDisabledState(WID_MTS_CLEAR, _settings_client.music.playlist <= 3);
 		this->LowerWidget(WID_MTS_ALL + _settings_client.music.playlist);
+		this->FinishInitNested(number);
+
+		this->left_sb->SetCount(NUM_SONGS_AVAILABLE);
+		this->right_sb->SetCount(GetNumberOfTracksOfTracklist());
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -327,6 +346,7 @@ struct MusicTrackSelectionWindow : public Window {
 			this->SetWidgetLoweredState(WID_MTS_ALL + i, i == _settings_client.music.playlist);
 		}
 		this->SetWidgetDisabledState(WID_MTS_CLEAR, _settings_client.music.playlist <= 3);
+		this->right_sb->SetCount(GetNumberOfTracksOfTracklist());
 		this->SetDirty();
 	}
 
@@ -346,7 +366,8 @@ struct MusicTrackSelectionWindow : public Window {
 				break;
 			}
 
-			case WID_MTS_LIST_LEFT: case WID_MTS_LIST_RIGHT: {
+			case WID_MTS_LIST_LEFT:
+			case WID_MTS_LIST_RIGHT: {
 				Dimension d = {0, 0};
 
 				for (uint i = 0; i < NUM_SONGS_AVAILABLE; i++) {
@@ -356,12 +377,11 @@ struct MusicTrackSelectionWindow : public Window {
 					SetDParam(0, GetTrackNumber(i));
 					SetDParam(1, 2);
 					SetDParamStr(2, GetSongName(i));
-					Dimension d2 = GetStringBoundingBox(STR_PLAYLIST_TRACK_NAME);
-					d.width = max(d.width, d2.width);
-					d.height += d2.height;
+					d = maxdim(d, GetStringBoundingBox(STR_PLAYLIST_TRACK_NAME));
 				}
-				d.width += padding.width;
-				d.height += padding.height;
+				resize->height = GetMinSizing(NWST_STEP, d.height);
+				d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
+				d.height = 7 * resize->height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				*size = maxdim(*size, d);
 				break;
 			}
@@ -375,15 +395,17 @@ struct MusicTrackSelectionWindow : public Window {
 				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK);
 
 				int y = r.top + WD_FRAMERECT_TOP;
-				for (uint i = 0; i < NUM_SONGS_AVAILABLE; i++) {
+				uint vscroll_max = min(this->left_sb->GetPosition() + this->left_sb->GetCapacity(), NUM_SONGS_AVAILABLE);
+
+				for (uint i = this->left_sb->GetPosition(); i < vscroll_max; i++) {
 					const char *song_name = GetSongName(i);
 					if (StrEmpty(song_name)) continue;
 
 					SetDParam(0, GetTrackNumber(i));
 					SetDParam(1, 2);
 					SetDParamStr(2, song_name);
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_PLAYLIST_TRACK_NAME);
-					y += FONT_HEIGHT_SMALL;
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, this->resize.step_height, FONT_HEIGHT_SMALL), STR_PLAYLIST_TRACK_NAME);
+					y += this->resize.step_height;
 				}
 				break;
 			}
@@ -392,13 +414,15 @@ struct MusicTrackSelectionWindow : public Window {
 				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK);
 
 				int y = r.top + WD_FRAMERECT_TOP;
-				for (const byte *p = _playlists[_settings_client.music.playlist]; *p != 0; p++) {
-					uint i = *p - 1;
-					SetDParam(0, GetTrackNumber(i));
+				uint vscroll_max = min(this->right_sb->GetPosition() + this->right_sb->GetCapacity(), this->GetNumberOfTracksOfTracklist());
+
+				for (uint i = this->right_sb->GetPosition(); i < vscroll_max; i++) {
+					uint j = _playlists[_settings_client.music.playlist][i] - 1;
+					SetDParam(0, GetTrackNumber(j));
 					SetDParam(1, 2);
-					SetDParamStr(2, GetSongName(i));
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_PLAYLIST_TRACK_NAME);
-					y += FONT_HEIGHT_SMALL;
+					SetDParamStr(2, GetSongName(j));
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, this->resize.step_height, FONT_HEIGHT_SMALL), STR_PLAYLIST_TRACK_NAME);
+					y += this->resize.step_height;
 				}
 				break;
 			}
@@ -409,22 +433,22 @@ struct MusicTrackSelectionWindow : public Window {
 	{
 		switch (widget) {
 			case WID_MTS_LIST_LEFT: { // add to playlist
-				int y = this->GetRowFromWidget(pt.y, widget, 0, FONT_HEIGHT_SMALL);
-
 				if (_settings_client.music.playlist < 4) return;
-				if (!IsInsideMM(y, 0, BaseMusic::GetUsedSet()->num_available)) return;
+				int id_m = this->left_sb->GetScrolledRowFromWidget(pt.y, this, WID_MTS_LIST_LEFT, WD_FRAMERECT_TOP, this->resize.step_height);
+				if (!IsInsideMM(id_m, 0, BaseMusic::GetUsedSet()->num_available)) return;
 
 				byte *p = _playlists[_settings_client.music.playlist];
 				for (uint i = 0; i != NUM_SONGS_PLAYLIST - 1; i++) {
 					if (p[i] == 0) {
 						/* Find the actual song number */
 						for (uint j = 0; j < NUM_SONGS_AVAILABLE; j++) {
-							if (GetTrackNumber(j) == y + 1) {
+							if (GetTrackNumber(j) == id_m + 1) {
 								p[i] = j + 1;
 								break;
 							}
 						}
 						p[i + 1] = 0;
+						this->right_sb->SetCount(GetNumberOfTracksOfTracklist());
 						this->SetDirty();
 						SelectSongToPlay();
 						break;
@@ -434,16 +458,16 @@ struct MusicTrackSelectionWindow : public Window {
 			}
 
 			case WID_MTS_LIST_RIGHT: { // remove from playlist
-				int y = this->GetRowFromWidget(pt.y, widget, 0, FONT_HEIGHT_SMALL);
-
 				if (_settings_client.music.playlist < 4) return;
-				if (!IsInsideMM(y, 0, NUM_SONGS_PLAYLIST)) return;
+				int id_m = this->right_sb->GetScrolledRowFromWidget(pt.y, this, WID_MTS_LIST_RIGHT, WD_FRAMERECT_TOP, this->resize.step_height);
+				if (!IsInsideMM(id_m, 0, NUM_SONGS_PLAYLIST)) return;
 
 				byte *p = _playlists[_settings_client.music.playlist];
-				for (uint i = y; i != NUM_SONGS_PLAYLIST - 1; i++) {
+				for (uint i = id_m; i != NUM_SONGS_PLAYLIST - 1; i++) {
 					p[i] = p[i + 1];
 				}
 
+				this->right_sb->SetCount(GetNumberOfTracksOfTracklist());
 				this->SetDirty();
 				SelectSongToPlay();
 				break;
@@ -451,18 +475,31 @@ struct MusicTrackSelectionWindow : public Window {
 
 			case WID_MTS_CLEAR: // clear
 				for (uint i = 0; _playlists[_settings_client.music.playlist][i] != 0; i++) _playlists[_settings_client.music.playlist][i] = 0;
+				this->right_sb->SetCount(GetNumberOfTracksOfTracklist());
 				this->SetDirty();
 				StopMusic();
 				SelectSongToPlay();
 				break;
 
-			case WID_MTS_ALL: case WID_MTS_OLD: case WID_MTS_NEW:
-			case WID_MTS_EZY: case WID_MTS_CUSTOM1: case WID_MTS_CUSTOM2: // set playlist
+			case WID_MTS_ALL:
+			case WID_MTS_OLD:
+			case WID_MTS_NEW:
+			case WID_MTS_EZY:
+			case WID_MTS_CUSTOM1:
+			case WID_MTS_CUSTOM2: // set playlist
 				SelectPlaylist(widget - WID_MTS_ALL);
+				this->right_sb->SetCount(GetNumberOfTracksOfTracklist());
+				this->SetDirty();
 				StopMusic();
 				SelectSongToPlay();
 				break;
 		}
+	}
+
+	virtual void OnResize()
+	{
+		this->left_sb->SetCapacityFromWidget(this, WID_MTS_LIST_LEFT);
+		this->right_sb->SetCapacityFromWidget(this, WID_MTS_LIST_RIGHT);
 	}
 };
 
@@ -470,35 +507,41 @@ static const NWidgetPart _nested_music_track_selection_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_PLAYLIST_MUSIC_PROGRAM_SELECTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 4, 2),
 			/* Left panel. */
 			NWidget(NWID_VERTICAL),
 				NWidget(WWT_LABEL, COLOUR_GREY), SetDataTip(STR_PLAYLIST_TRACK_INDEX, STR_NULL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_MTS_LIST_LEFT), SetMinimalSize(180, 194), SetDataTip(0x0, STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK), EndContainer(),
+				NWidget(NWID_HORIZONTAL),
+					NWidget(WWT_MATRIX, COLOUR_GREY, WID_MTS_LIST_LEFT), SetMinimalSize(180, 100), SetMatrixDataTip(1, 0, STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK),
+							SetFill(1, 0), SetResize(1, 1), SetScrollbar(WID_MTS_LEFT_SCROLLBAR),
+					NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_MTS_LEFT_SCROLLBAR),
+				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-			EndContainer(),
-			/* Middle buttons. */
-			NWidget(NWID_VERTICAL),
-				NWidget(NWID_SPACER), SetMinimalSize(60, 30), // Space above the first button from the title bar.
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_ALL), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_ALL, STR_MUSIC_TOOLTIP_SELECT_ALL_TRACKS_PROGRAM),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_OLD), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_OLD_STYLE, STR_MUSIC_TOOLTIP_SELECT_OLD_STYLE_MUSIC),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_NEW), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_NEW_STYLE, STR_MUSIC_TOOLTIP_SELECT_NEW_STYLE_MUSIC),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_EZY), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_EZY_STREET, STR_MUSIC_TOOLTIP_SELECT_EZY_STREET_STYLE),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_CUSTOM1), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_CUSTOM_1, STR_MUSIC_TOOLTIP_SELECT_CUSTOM_1_USER_DEFINED),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_CUSTOM2), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_CUSTOM_2, STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 16), // Space above 'clear' button
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_MTS_CLEAR), SetFill(1, 0), SetDataTip(STR_PLAYLIST_CLEAR, STR_PLAYLIST_TOOLTIP_CLEAR_CURRENT_PROGRAM_CUSTOM1),
-				NWidget(NWID_SPACER), SetFill(0, 1),
 			EndContainer(),
 			/* Right panel. */
 			NWidget(NWID_VERTICAL),
 				NWidget(WWT_LABEL, COLOUR_GREY, WID_MTS_PLAYLIST), SetDataTip(STR_PLAYLIST_PROGRAM, STR_NULL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_MTS_LIST_RIGHT), SetMinimalSize(180, 194), SetDataTip(0x0, STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK), EndContainer(),
+				NWidget(NWID_HORIZONTAL),
+					NWidget(WWT_MATRIX, COLOUR_GREY, WID_MTS_LIST_RIGHT), SetMinimalSize(180, 100), SetMatrixDataTip(1, 0, STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK),
+							SetFill(1, 0), SetResize(1, 1), SetScrollbar(WID_MTS_RIGHT_SCROLLBAR),
+					NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_MTS_RIGHT_SCROLLBAR),
+				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 			EndContainer(),
 		EndContainer(),
+	EndContainer(),
+	NWidget(NWID_HORIZONTAL),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_ALL), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_ALL, STR_MUSIC_TOOLTIP_SELECT_ALL_TRACKS_PROGRAM),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_OLD), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_OLD_STYLE, STR_MUSIC_TOOLTIP_SELECT_OLD_STYLE_MUSIC),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_NEW), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_NEW_STYLE, STR_MUSIC_TOOLTIP_SELECT_NEW_STYLE_MUSIC),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_EZY), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_EZY_STREET, STR_MUSIC_TOOLTIP_SELECT_EZY_STREET_STYLE),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_CUSTOM1), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_CUSTOM_1, STR_MUSIC_TOOLTIP_SELECT_CUSTOM_1_USER_DEFINED),
+		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_MTS_CUSTOM2), SetFill(1, 0), SetDataTip(STR_MUSIC_PLAYLIST_CUSTOM_2, STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_MTS_CLEAR), SetFill(1, 0), SetDataTip(STR_PLAYLIST_CLEAR, STR_PLAYLIST_TOOLTIP_CLEAR_CURRENT_PROGRAM_CUSTOM1),
+		NWidget(WWT_RESIZEBOX, COLOUR_GREY),
 	EndContainer(),
 };
 
@@ -577,7 +620,7 @@ struct MusicWindow : public Window {
 					SetDParam(1, 2);
 					str = STR_MUSIC_TRACK_DIGIT;
 				}
-				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, str);
+				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(r.top, r.bottom - r.top, FONT_HEIGHT_SMALL), str);
 				break;
 			}
 
@@ -588,7 +631,7 @@ struct MusicWindow : public Window {
 					str = STR_MUSIC_TITLE_NAME;
 					SetDParamStr(0, GetSongName(_music_wnd_cursong - 1));
 				}
-				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, str, TC_FROMSTRING, SA_HOR_CENTER);
+				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(r.top, r.bottom - r.top, FONT_HEIGHT_SMALL), str, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}
 
@@ -653,7 +696,7 @@ struct MusicWindow : public Window {
 				if (_current_text_dir == TD_RTL) new_vol = 127 - new_vol;
 				if (new_vol != *vol) {
 					*vol = new_vol;
-					if (widget == WID_M_MUSIC_VOL) MusicVolumeChanged(new_vol);
+					if (widget == WID_M_MUSIC_VOL) MusicVolumeChanged((new_vol * new_vol) / 127); // Kinda logarithmic scale
 					this->SetDirty();
 				}
 
@@ -679,7 +722,6 @@ struct MusicWindow : public Window {
 				SelectPlaylist(widget - WID_M_ALL);
 				StopMusic();
 				SelectSongToPlay();
-				this->SetDirty();
 				break;
 		}
 	}
@@ -744,11 +786,11 @@ static const NWidgetPart _nested_music_window_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_VERTICAL), SetPadding(0, 0, 3, 3),
 				NWidget(WWT_LABEL, COLOUR_GREY, WID_M_TRACK), SetFill(0, 0), SetDataTip(STR_MUSIC_TRACK, STR_NULL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_M_TRACK_NR), EndContainer(),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_M_TRACK_NR), SetFill(0, 1), EndContainer(),
 			EndContainer(),
 			NWidget(NWID_VERTICAL), SetPadding(0, 3, 3, 0),
 				NWidget(WWT_LABEL, COLOUR_GREY, WID_M_TRACK_TITLE), SetFill(1, 0), SetDataTip(STR_MUSIC_XTITLE, STR_NULL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_M_TRACK_NAME), SetFill(1, 0), EndContainer(),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_M_TRACK_NAME), SetFill(1, 1), EndContainer(),
 			EndContainer(),
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetFill(0, 1),

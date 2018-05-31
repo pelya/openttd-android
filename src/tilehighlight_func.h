@@ -22,13 +22,17 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Window *w);
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num);
 void ResetObjectToPlace();
+void ConfirmPlacingObject();
+
 
 void VpSelectTilesWithMethod(int x, int y, ViewportPlaceMethod method);
 void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDragDropSelectionProcess process);
+void VpStartPreSizing();
 void VpSetPresizeRange(TileIndex from, TileIndex to);
 void VpSetPlaceSizingLimit(int limit);
 
 void UpdateTileSelection();
+void SetSelectionTilesDirty();
 
 extern TileHighlightData _thd;
 

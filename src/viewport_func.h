@@ -60,6 +60,7 @@ void StartSpriteCombine();
 void EndSpriteCombine();
 
 bool HandleViewportClicked(const ViewPort *vp, int x, int y);
+bool HandleViewportMouseUp(const ViewPort *vp, int x, int y);
 void SetRedErrorSquare(TileIndex tile);
 void SetTileSelectSize(int w, int h);
 void SetTileSelectBigSize(int ox, int oy, int sx, int sy);
@@ -83,5 +84,7 @@ void MarkTileDirtyByTile(TileIndex tile, int bridge_level_offset = 0);
 void MarkTileDirtyByTileOutsideMap(int x, int y);
 
 Point GetViewportStationMiddle(const ViewPort *vp, const Station *st);
+
+void ToolbarSelectLastTool();
 
 #endif /* VIEWPORT_FUNC_H */

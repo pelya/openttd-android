@@ -116,6 +116,7 @@ static NWidgetBase *MakeNWidgetCompanyLines(int *biggest_index)
 
 	for (int widnum = WID_GL_FIRST_COMPANY; widnum <= WID_GL_LAST_COMPANY; widnum++) {
 		NWidgetBackground *panel = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, widnum);
+		panel->sizing_type = NWST_STEP;
 		panel->SetMinimalSize(246, line_height);
 		panel->SetFill(1, 0);
 		panel->SetDataTip(0x0, STR_GRAPH_KEY_COMPANY_SELECTION_TOOLTIP);
@@ -1130,6 +1131,7 @@ private:
 	uint ordinal_width; ///< The width of the ordinal number
 	uint text_width;    ///< The width of the actual text
 	uint icon_width;    ///< The width of the company icon
+	uint icon_y_offset; ///< The vertical offset for drawing the company icon.
 	int line_height;    ///< Height of the text lines
 
 	/**
@@ -1176,8 +1178,7 @@ public:
 	{
 		if (widget != WID_CL_BACKGROUND) return;
 
-		int icon_y_offset = 1 + (FONT_HEIGHT_NORMAL - this->line_height) / 2;
-		uint y = r.top + WD_FRAMERECT_TOP - icon_y_offset;
+		uint y = r.top + WD_FRAMERECT_TOP;
 
 		bool rtl = _current_text_dir == TD_RTL;
 		uint ordinal_left  = rtl ? r.right - WD_FRAMERECT_LEFT - this->ordinal_width : r.left + WD_FRAMERECT_LEFT;
@@ -1190,7 +1191,7 @@ public:
 			const Company *c = this->companies[i];
 			DrawString(ordinal_left, ordinal_right, y, i + STR_ORDINAL_NUMBER_1ST, i == 0 ? TC_WHITE : TC_YELLOW);
 
-			DrawCompanyIcon(c->index, icon_left, y + icon_y_offset);
+			DrawCompanyIcon(c->index, icon_left, y + this->icon_y_offset);
 
 			SetDParam(0, c->index);
 			SetDParam(1, c->index);
@@ -1223,6 +1224,7 @@ public:
 		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
 		this->icon_width = d.width + 2;
 		this->line_height = max<int>(d.height + 2, FONT_HEIGHT_NORMAL);
+		this->icon_y_offset = Center(1, this->line_height, d.height);
 
 		const Company *c;
 		FOR_ALL_COMPANIES(c) {

@@ -29,6 +29,7 @@
 #include "saveload/saveload.h"
 #include "progress.h"
 #include "error.h"
+#include "settings_gui.h"
 
 #include "widgets/genworld_widget.h"
 
@@ -63,20 +64,20 @@ static const NWidgetPart _nested_generate_landscape_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_BROWN),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 10),
-		/* Landscape selection. */
-		NWidget(NWID_HORIZONTAL), SetPIP(10, 0, 10),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 11),
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 5, 10),
+			/* Landscape selection. */
+			NWidget(NWID_VERTICAL), SetPIP(10, 0, 10),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(20, 0),
 			NWidget(NWID_HORIZONTAL), SetPIP(0, 3, 0),
 				/* Left column with labels. */
 				NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPIP(0, 4, 0),
@@ -169,7 +170,7 @@ static const NWidgetPart _nested_generate_landscape_widgets[] = {
 				NWidget(NWID_SPACER), SetFill(1, 1),
 			EndContainer(),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 9), SetFill(1, 1),
+		NWidget(NWID_SPACER), SetMinimalSize(0, 10),
 	EndContainer(),
 };
 
@@ -458,6 +459,7 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_MAPSIZE_Y_PULLDOWN:
 				SetDParamMaxValue(0, MAX_MAP_SIZE);
 				*size = maxdim(*size, GetStringBoundingBox(STR_JUST_INT));
+				size->width = size->width + GetMinSizing(NWST_BUTTON);
 				break;
 
 			case WID_GL_SNOW_LEVEL_TEXT:
@@ -468,7 +470,8 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_HEIGHTMAP_SIZE_TEXT:
 				SetDParam(0, this->x);
 				SetDParam(1, this->y);
-				*size = maxdim(*size, GetStringBoundingBox(STR_MAPGEN_HEIGHTMAP_SIZE));
+				//*size = maxdim(*size, GetStringBoundingBox(STR_MAPGEN_HEIGHTMAP_SIZE));
+				size->height = SETTING_BUTTON_HEIGHT;
 				break;
 
 			case WID_GL_TOWN_PULLDOWN:
@@ -492,18 +495,19 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_VARIETY_PULLDOWN:    strs = _variety; break;
 			case WID_GL_HEIGHTMAP_ROTATION_PULLDOWN: strs = _rotation; break;
 			case WID_GL_BORDERS_RANDOM:
-				*size = maxdim(GetStringBoundingBox(STR_MAPGEN_BORDER_RANDOMIZE), GetStringBoundingBox(STR_MAPGEN_BORDER_MANUAL));
+				//*size = maxdim(GetStringBoundingBox(STR_MAPGEN_BORDER_RANDOMIZE), GetStringBoundingBox(STR_MAPGEN_BORDER_MANUAL));
 				break;
 
 			case WID_GL_WATER_NE:
 			case WID_GL_WATER_NW:
 			case WID_GL_WATER_SE:
 			case WID_GL_WATER_SW:
-				*size = maxdim(GetStringBoundingBox(STR_MAPGEN_BORDER_RANDOM), maxdim(GetStringBoundingBox(STR_MAPGEN_BORDER_WATER), GetStringBoundingBox(STR_MAPGEN_BORDER_FREEFORM)));
+				//*size = maxdim(GetStringBoundingBox(STR_MAPGEN_BORDER_RANDOM), maxdim(GetStringBoundingBox(STR_MAPGEN_BORDER_WATER), GetStringBoundingBox(STR_MAPGEN_BORDER_FREEFORM)));
 				break;
 
 			case WID_GL_HEIGHTMAP_NAME_TEXT:
 				size->width = 0;
+				size->height = SETTING_BUTTON_HEIGHT;
 				break;
 
 			default:
@@ -947,7 +951,9 @@ struct CreateScenarioWindow : public Window
 		}
 		*size = maxdim(*size, GetStringBoundingBox(str));
 		size->width += padding.width;
+		size->width = GetMinSizing(NWST_BUTTON, size->width);
 		size->height += padding.height;
+		size->height = GetMinSizing(NWST_BUTTON, size->height);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
@@ -1066,11 +1072,16 @@ static const NWidgetPart _nested_create_scenario_widgets[] = {
 		NWidget(NWID_SPACER), SetMinimalSize(0, 10),
 		/* Landscape style selection. */
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 3, 10),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
+			NWidget(NWID_SPACER), SetFill(1, 1),
 			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_CS_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
-		EndContainer(),
+			NWidget(NWID_SPACER), SetFill(1, 1),
+			EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 8, 10),
 			/* Green generation type buttons: 'Flat land' and 'Random land'. */
 			NWidget(NWID_VERTICAL), SetPIP(10, 6, 10),

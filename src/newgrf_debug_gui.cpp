@@ -437,7 +437,7 @@ struct NewGRFInspectWindow : Window {
 
 				GrfSpecFeature f = GetFeatureNum(this->window_number);
 				int h = GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height;
-				int y = (r.top + r.bottom - h) / 2;
+				int y = Center(r.top, r.bottom - r.top, h);
 				DrawVehicleImage(v->First(), r.left + WD_BEVEL_LEFT, r.right - WD_BEVEL_RIGHT, y + 1, INVALID_VEHICLE, EIT_IN_DETAILS, skip);
 
 				/* Highlight the articulated part (this is different to the whole-vehicle highlighting of DrawVehicleImage */
@@ -860,7 +860,7 @@ struct SpriteAlignerWindow : Window {
 	{
 		if (widget != WID_SA_LIST) return;
 
-		resize->height = max(11, FONT_HEIGHT_NORMAL + 1);
+		resize->height = GetMinSizing(NWST_STEP, max(11, FONT_HEIGHT_NORMAL + 1));
 		resize->width  = 1;
 
 		/* Resize to about 200 pixels (for the preview) */
@@ -897,10 +897,10 @@ struct SpriteAlignerWindow : Window {
 				SmallVector<SpriteID, 256> &list = _newgrf_debug_sprite_picker.sprites;
 				int max = min<int>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), list.Length());
 
-				int y = r.top + WD_FRAMERECT_TOP;
+				int y = Center(r.top + WD_FRAMERECT_TOP, step_size, FONT_HEIGHT_NORMAL);
 				for (int i = this->vscroll->GetPosition(); i < max; i++) {
 					SetDParam(0, list[i]);
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_BLACK_COMMA, TC_FROMSTRING, SA_RIGHT | SA_FORCE);
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_BLACK_COMMA, TC_FROMSTRING, SA_CENTER | SA_FORCE);
 					y += step_size;
 				}
 				break;

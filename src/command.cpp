@@ -26,6 +26,9 @@
 #include "signal_func.h"
 #include "core/backup_type.hpp"
 #include "object_base.h"
+#include "string_func.h"
+#include "tilehighlight_func.h"
+#include "build_confirmation_func.h"
 
 #include "table/strings.h"
 
@@ -551,10 +554,17 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 	 * However, in case of incoming network commands,
 	 * map generation or the pause button we do want
 	 * to execute. */
-	bool estimate_only = _shift_pressed && IsLocalCompany() &&
+	bool estimate_only = (_shift_pressed || ConfirmationWindowEstimatingCost()) &&
+			IsLocalCompany() &&
 			!_generating_world &&
 			!(cmd & CMD_NETWORK_COMMAND) &&
 			(cmd & CMD_ID_MASK) != CMD_PAUSE;
+
+	if (ConfirmationWindowEstimatingCost() && !estimate_only) {
+		// We cannot estimate cost, so abort the command - it will be repeated by confirmation dialog later
+		ShowEstimatedCostOrIncome(0, 0, 0);
+		return false;
+	}
 
 	/* We're only sending the command, so don't do
 	 * fancy things for 'success'. */

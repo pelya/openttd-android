@@ -127,7 +127,11 @@ STR_QUANTITY_TOFFEE                                             :{WEIGHT_LONG} d
 STR_QUANTITY_BATTERIES                                          :{COMMA} pila{P "" s}
 STR_QUANTITY_PLASTIC                                            :{VOLUME_LONG} de plásticos
 STR_QUANTITY_FIZZY_DRINKS                                       :{COMMA} refresco{P "" s}
+<<<<<<< HEAD
+STR_QUANTITY_N_A                                                :Ninguna
+=======
 STR_QUANTITY_N_A                                                :N/A
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 # Two letter abbreviation of cargo name
 STR_ABBREV_NOTHING                                              :
@@ -301,7 +305,11 @@ STR_SORT_BY_WAITING_TOTAL                                       :Cargamento tota
 STR_SORT_BY_WAITING_AVAILABLE                                   :Cargamento disponible en espera
 STR_SORT_BY_RATING_MAX                                          :Valoración más alta de cargamento
 STR_SORT_BY_RATING_MIN                                          :Valoración más baja de cargamento
+<<<<<<< HEAD
+STR_SORT_BY_ENGINE_ID                                           :Id. de locomotora (orden clásico)
+=======
 STR_SORT_BY_ENGINE_ID                                           :EngineID (classic sort)Id. locomotora (orden clásico)
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_SORT_BY_COST                                                :Costo
 STR_SORT_BY_POWER                                               :Potencia
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Fuerza de tracción
@@ -379,7 +387,11 @@ STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Configuración 
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Opciones de transparencia
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Mostrar nombres de pueblos
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Mostrar nombres de estaciones
+<<<<<<< HEAD
+STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Mostrar puestos guías
+=======
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Mostrar puntos guías
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_SETTINGS_MENU_SIGNS_DISPLAYED                               :Mostrar carteles propios
 STR_SETTINGS_MENU_SHOW_COMPETITOR_SIGNS                         :Mostrar carteles y nombres del competidor
 STR_SETTINGS_MENU_FULL_ANIMATION                                :Animación completa
@@ -893,7 +905,11 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Selecci�
 
 ############ start of currency region
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra británica (GBP)
+<<<<<<< HEAD
+STR_GAME_OPTIONS_CURRENCY_USD                                   :Dólar americano (USD)
+=======
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dólar estadounidense (USD)
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro (EUR)
 STR_GAME_OPTIONS_CURRENCY_JPY                                   :Yen japonés (¥)
 STR_GAME_OPTIONS_CURRENCY_ATS                                   :Chelín austríaco (ATS)
@@ -1008,7 +1024,11 @@ STR_ERROR_FULLSCREEN_FAILED                                     :{WHITE}El modo 
 # Custom currency window
 
 STR_CURRENCY_WINDOW                                             :{WHITE}Moneda personalizada
+<<<<<<< HEAD
+STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Tasa de cambio: {ORANGE}{CURRENCY_LONG} = £ {COMMA}
+=======
 STR_CURRENCY_EXCHANGE_RATE                                      :{LTBLUE}Tasa de cambio: {ORANGE} {CURRENCY_LONG} = £ {COMMA}
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CURRENCY_DECREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Reducir el valor de la moneda por una libra (£)
 STR_CURRENCY_INCREASE_EXCHANGE_RATE_TOOLTIP                     :{BLACK}Incrementar el valor de la moneda por una libra (£)
 STR_CURRENCY_SET_EXCHANGE_RATE_TOOLTIP                          :{BLACK}Ajustar el valor de cambio de la moneda por una Libra (£)
@@ -1027,7 +1047,11 @@ STR_CURRENCY_SET_CUSTOM_CURRENCY_TO_EURO_TOOLTIP                :{BLACK}Establec
 STR_CURRENCY_DECREASE_CUSTOM_CURRENCY_TO_EURO_TOOLTIP           :{BLACK}Cambiar a euro antes
 STR_CURRENCY_INCREASE_CUSTOM_CURRENCY_TO_EURO_TOOLTIP           :{BLACK}Cambiar a euro después
 
+<<<<<<< HEAD
+STR_CURRENCY_PREVIEW                                            :{LTBLUE}Vista previa: {ORANGE}{CURRENCY_LONG}
+=======
 STR_CURRENCY_PREVIEW                                            :{LTBLUE}Vista previa: {ORANGE} {CURRENCY_LONG}
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CURRENCY_CUSTOM_CURRENCY_PREVIEW_TOOLTIP                    :{BLACK}10000 libras (£) en la moneda
 STR_CURRENCY_CHANGE_PARAMETER                                   :{BLACK}Cambiar parámetro de moneda personalizada
 
@@ -1097,11 +1121,19 @@ STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Plegar t
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(no hay explicación disponible)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Valor predeterminado: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Tipo de opción: {ORANGE}{STRING}
+<<<<<<< HEAD
+STR_CONFIG_SETTING_TYPE_CLIENT                                  :Opción de cliente (no se almacena en partidas guardadas, afecta a todas las partidas)
+STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Opción de partida (se almacena en las partidas guardadas, afecta solamente a nuevas partidas)
+STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Opción de partida (almacenada en la partida guardada, afecta solamente a la partida actual)
+STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Opción de empresa (se almacena en las partidas guardadas, afecta solamente a las nuevas partidas)
+STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Opción de empresa (almacenada en la partida guardada, afecta solamente a la empresa actual)
+=======
 STR_CONFIG_SETTING_TYPE_CLIENT                                  :Opción de cliente (no se almacena en partidas guardadas, afecta todas las partidas)
 STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Opción de partida (se almacena en las partidas guardadas, afecta solamente partidas nuevas)
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Opción de partida (almacenada en la partida guardada, afecta solamente la partida actual)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Opción de empresa (se almacena en las partidas guardadas, afecta solamente las partidas nuevas)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Opción de empresa (almacenada en la partida guardada, afecta solamente la empresa actual)
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Categoría:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipo:
@@ -1114,11 +1146,19 @@ STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_NEW                 :Opciones con un
 
 STR_CONFIG_SETTING_TYPE_DROPDOWN_HELPTEXT                       :{BLACK}Restringir la lista a ciertos tipos de opciones
 STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL                            :Todos los tipos de opciones
+<<<<<<< HEAD
+STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT                         :Opciones de cliente (no se almacena en partidas guardadas, afecta a todas las partidas)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Opciones de juego (se almacena en las partidas guardadas, afecta solamente a partidas nuevas)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Opciones de juego (se almacena en las partidas guardadas, afecta solamente a la partida actual)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Opciones de empresa (se almacena en las partidas guardadas, afecta solamente a partidas nuevas)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Opciones de empresa (se almacena en las partidas guardadas, afecta solamente a la empresa actual)
+=======
 STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT                         :Opciones de cliente (no se almacena en partidas guardadas, afecta todas las partidas)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Opciones de juego (se almacena en las partidas guardadas, afecta solamente partidas nuevas)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Opciones de juego (se almacena en las partidas guardadas, afecta solamente la partida actual)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Opciones de empresa (se almacena en las partidas guardadas, afecta solamente partidas nuevas)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Opciones de empresa (se almacena en las partidas guardadas, afecta solamente la empresa actual)
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Mostrar todos los resultados por opción de configuración{}{SILVER}Categoría {BLACK}a {WHITE}{STRING}
 STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Mostrar todos los resultados por opción de configuración{}{SILVER}Tipo {BLACK}a {WHITE}Todos los tipos de opción
 STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Mostrar todos los resultados por opción de configuración{}{SILVER}Categoría {BLACK}a {WHITE}{STRING} {BLACK}y {SILVER}Tipo {BLACK}a {WHITE}Todos los tipos de opción
@@ -1148,7 +1188,11 @@ STR_CONFIG_SETTING_RUNNING_COSTS                                :Costos de opera
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Nivel de los costos de mantenimiento y operación de vehículos e infraestructura
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Velocidad de construcción: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Restringir la velocidad de las acciones de construcción de jugadores no humanos
+<<<<<<< HEAD
+STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS                           :Descomposturas de vehículos: {STRING}
+=======
 STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS                           :Averías de vehículos: {STRING}
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS_HELPTEXT                  :Controlar cada cuánto los vehículos con poco mantenimiento sufren fallas
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER                           :Multiplicador de subsidio: {STRING}
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Establecer cuánto se paga por subsidios conectados
@@ -1161,7 +1205,11 @@ STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :Si se activa, l
 STR_CONFIG_SETTING_DISASTERS                                    :Desastres: {STRING}
 STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Desastres que ocasionalmente pueden bloquear o destruir vehículos o infraestructura
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Actitud de los ayuntamientos ante restructuraciones hechas en sus zonas: {STRING}
+<<<<<<< HEAD
+STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :En qué medida el ruido y el daño ambiental causado por las empresas afectan su evaluación y futuras acciones de construcción en las mismas zonas
+=======
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :Medida en que el ruido y el daño ambiental causado por las empresas afectan su evaluación y futuras acciones de construcción en las mismas zonas
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 STR_CONFIG_SETTING_MAX_HEIGHTLEVEL                              :Elevación máxima del mapa: {STRING}
 STR_CONFIG_SETTING_MAX_HEIGHTLEVEL_HELPTEXT                     :Elevación máxima que las montañas pueden tener en el mapa
@@ -1230,7 +1278,11 @@ STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :Todas las vista
 STR_CONFIG_SETTING_BRIBE                                        :Permitir sobornos al ayuntamiento: {STRING}
 STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :Las empresas pueden tratar de sobornar a los ayuntamientos. Si el soborno es descubierto por un inspector, la empresa no podrá realizar actividades en la localidad durante seis meses
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE                              :Permitir adquirir los derechos de transporte exclusivos: {STRING}
+<<<<<<< HEAD
+STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :Si una empresa adquiere los derechos de transporte exclusivos en un pueblo, las estaciones de la competencia (pasajeros o cargamento) no recibirán nada para transportar durante un año
+=======
 STR_CONFIG_SETTING_ALLOW_EXCLUSIVE_HELPTEXT                     :Si una empresa adquiere los derechos de transporte exclusivos en un pueblo, las estaciones de la competencia (de pasajeros o carga) no recibirán nada que entregar durante un año
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS                         :Permitir la construcción de nuevos edificios: {STRING}
 STR_CONFIG_SETTING_ALLOW_FUND_BUILDINGS_HELPTEXT                :Las empresas aportan dinero a los ayuntamientos para que construyan nuevas casas y edificios
 STR_CONFIG_SETTING_ALLOW_FUND_ROAD                              :Permitir el pago de la reconstrucción de las carreteras locales: {STRING}
@@ -1290,7 +1342,11 @@ STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Grosor de las l
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Grosor de las líneas en las gráficas. Una línea fina es más precisa, una línea más gruesa es más fácil de distinguir
 
 STR_CONFIG_SETTING_LANDSCAPE                                    :Terreno: {STRING}
+<<<<<<< HEAD
+STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Los terrenos definen mapas con diferentes tipos de cargamentos y requisitos de crecimiento para los pueblos. Es posible modificarlos empleando NewGRF y scripts de juego
+=======
 STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Los terrenos definen mapas con diferentes tipos de carga y requisitos de crecimiento para los pueblos. Es posible modificarlos empleando NewGRF y scripts de juego
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Generador de terreno: {STRING}
 STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :El generador 'Original' depende de los gráficos base y crea formas de terreno fijas. 'TerraGenesis' es un generador basado en Ruido Perlin que permite un mayor control de configuración
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Original
@@ -1473,8 +1529,13 @@ STR_CONFIG_SETTING_SERVINT_AIRCRAFT                             :Intervalo de ma
 STR_CONFIG_SETTING_SERVINT_AIRCRAFT_HELPTEXT                    :Intervalo de mantenimiento predeterminado para nuevas aeronaves, en caso de no definirse otro explícitamente
 STR_CONFIG_SETTING_SERVINT_SHIPS                                :Intervalo de mantenimiento predeterminado para barcos: {STRING}
 STR_CONFIG_SETTING_SERVINT_SHIPS_HELPTEXT                       :Intervalo de mantenimiento predeterminado para nuevos barcos, en caso de no definirse otro explícitamente
+<<<<<<< HEAD
+STR_CONFIG_SETTING_NOSERVICE                                    :Desactivar mantenimiento si las descomposturas están desactivadas: {STRING}
+STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Al activarse, los vehículos no recibirán mantenimiento si no pueden descomponerse
+=======
 STR_CONFIG_SETTING_NOSERVICE                                    :Desactivar mantenimiento si las averías están desactivadas: {STRING}
 STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Al activarse, los vehículos no recibirán mantenimiento si no pueden averiarse
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Activar límites de velocidad para vagones: {STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Al activarse, se tienen en cuenta los límites de velocidad de los vagones para decidir la máxima velocidad de un tren
 STR_CONFIG_SETTING_DISABLE_ELRAILS                              :Desactivar ferrocarriles eléctricos: {STRING}
@@ -1522,8 +1583,13 @@ STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Activar econom�
 STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Al activarse, habrá cambios de producción en las industrias más frecuentemente y en escala menor. Si se usa un NewGRF con industrias adicionales esta opción generalmente no tiene efecto
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Permitir comprar acciones de otras empresas: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Al activarse, se pueden comprar y vender acciones de otras empresas. Las acciones de una empresa solamente estarán disponibles cuando la empresa cumpla una edad determinada
+<<<<<<< HEAD
+STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Porcentaje de la utilidad total a pagar por transferencias de cargamento: {STRING}
+STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :Porcentaje de utilidad cedida a los transportes intermedios en sistemas de transferencias de cargamento, dando un mayor control sobre la utilidad de cada vehículo
+=======
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Porcentaje de la utilidad total a pagar por transferencias de carga: {STRING}
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :Porcentaje de utilidad cedida a los transportes intermedios en sistemas de transferencia de carga, dando un mayor control sobre la utilidad de cada vehículo
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY                         :Al arrastrar, colocar señales cada: {STRING}
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY_HELPTEXT                :Distancia de separación entre señales hasta topar con algún obstáculo (otra señal, un desvío, etc.) al instalarlas mediante arrastre con el ratón
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY_VALUE                   :{COMMA} casilla{P 0 "" s}
@@ -1564,7 +1630,11 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Permitido
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Permitido, diseño urbano personalizado
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Crecimiento de árboles durante la partida: {STRING}
+<<<<<<< HEAD
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Controlar la aparición aleatoria de árboles durante la partida. Esto puede afectar a industrias que dependen del crecimiento de árboles, como los aserraderos
+=======
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Controlar la aparición aleatoria de árboles durante la partida. Esto puede afectar industrias que dependen del crecimiento de árboles, como los aserraderos
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :Ninguno {RED}(inutiliza aserraderos)
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :Solo en selva
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :Cualquier parte
@@ -1623,7 +1693,11 @@ STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :'Asimétrica' s
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Precisión de la distribución: {STRING}
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Si el valor es alto, se requerirá mayor tiempo para calcular la gráfica de distribución (si se lleva demasiado tiempo, se notará desfase en el juego). Si es muy bajo, la distribución será imprecisa, pudiendo hacer que el cargamento no vaya al lugar indicado
 STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Efecto de la distancia en la demanda: {STRING}
+<<<<<<< HEAD
+STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Con un valor diferente a 0, la distancia entre la estación de origen de cierto cargamento y una posible estación de destino afectará a la cantidad de cargamento que se envíe entre ambas. Cuanto más lejos estén entre sí, menos cargamento se enviará. Cuanto mayor sea el valor de esta opción, menos cargamento se enviará a estaciones distantes en favor de estaciones cercanas
+=======
 STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Con un valor diferente a 0, la distancia entre la estación de origen de cierta carga y una posible estación de destino afectará la cantidad de cargamento que se envíe entre ambas. Cuanto más lejos estén entre sí, menos cargamento se enviará. Cuanto mayor sea el valor de esta opción, menos cargamento se enviará a estaciones distantes en favor de estaciones cercanas
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_DEMAND_SIZE                                  :Cantidad de cargamento a devolver en modo simétrico: {STRING}
 STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Establecer un valor menor de 100% hará que la distribución simétrica de cargamento sea más asimétrica. Se enviará menos cargamento de regreso forzosamente si una cantidad determinada es enviada a una estación. Si se fija a 0%, la distribución simétrica será como una distribución asimétrica
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Nivel de saturación de rutas cortas antes de cambiar a rutas de mayor capacidad: {STRING}
@@ -1685,7 +1759,11 @@ STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Ambient
 STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Autoridades
 STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Pueblos
 STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industrias
+<<<<<<< HEAD
+STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distribución de cargamento
+=======
 STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distribución de carga
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Competidores
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Jugadores no humanos
 
@@ -1762,7 +1840,10 @@ STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Revisar 
 STR_INTRO_TOOLTIP_SCRIPT_SETTINGS                               :{BLACK}Mostrar configuración de scripts
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Salir de 'OpenTTD'
 
+<<<<<<< HEAD
+=======
 STR_INTRO_BASESET                                               :{BLACK}A los gráficos base elegidos les hace falta {NUM} spirte{P "" s}. Necesitan actualizarse.
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_INTRO_TRANSLATION                                           :{BLACK}A esta traducción le falta{P 0 "" n} {NUM} cadena{P "" s}. Considera ayudar a mejorar OpenTTD convirtiéndote en traductor. Consulta el archivo readme.txt para más detalles.
 
 # Quit window
@@ -2272,7 +2353,11 @@ STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Activar 
 STR_TRANSPARENT_TREES_TOOLTIP                                   :{BLACK}Activar o desactivar transparencia para árboles. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_HOUSES_TOOLTIP                                  :{BLACK}Activar o desactivar transparencia para casas. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_INDUSTRIES_TOOLTIP                              :{BLACK}Activar o desactivar transparencia para industrias. Ctrl+Clic para excluir de tecla rápida 'X'
+<<<<<<< HEAD
+STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Activar o desactivar transparencia para edificios como estaciones, depósitos o puestos guías. Ctrl+Clic para excluir de tecla rápida 'X'
+=======
 STR_TRANSPARENT_BUILDINGS_TOOLTIP                               :{BLACK}Activar o desactivar transparencia para edificios como estaciones, depósitos o puntos guías. Ctrl+Clic para excluir de tecla rápida 'X'
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_TRANSPARENT_BRIDGES_TOOLTIP                                 :{BLACK}Activar o desactivar transparencia para puentes. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_STRUCTURES_TOOLTIP                              :{BLACK}Activar o desactivar transparencia para estructuras como faros o antenas. Ctrl+Clic para excluir de tecla rápida 'X'
 STR_TRANSPARENT_CATENARY_TOOLTIP                                :{BLACK}Activar o desactivar transparencia para catenaria. Ctrl+Clic para excluir de tecla rápida 'X'
@@ -2303,7 +2388,11 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Provee: 
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Ampliar estación
 STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Construir aparte
 
+<<<<<<< HEAD
+STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Unir puestos guías
+=======
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Unir puntos guías
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Construir aparte
 
 # Rail construction toolbar
@@ -2333,8 +2422,13 @@ STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}Orientac
 STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Elegir la orientación del depósito de trenes
 
 # Rail waypoint construction window
+<<<<<<< HEAD
+STR_WAYPOINT_CAPTION                                            :{WHITE}Puesto guía
+STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Elegir el tipo de puesto guía
+=======
 STR_WAYPOINT_CAPTION                                            :{WHITE}Punto guía
 STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Elegir el tipo de punto guía
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Selección de estación
@@ -2351,7 +2445,11 @@ STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Mostrar 
 STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Construir el tipo de estación elegida
 
 STR_STATION_CLASS_DFLT                                          :Estación predeterminada
+<<<<<<< HEAD
+STR_STATION_CLASS_WAYP                                          :Puestos guías
+=======
 STR_STATION_CLASS_WAYP                                          :Puntos guías
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 # Signal window
 STR_BUILD_SIGNAL_CAPTION                                        :{WHITE}Selección de señales
@@ -2432,7 +2530,11 @@ STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Construi
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}Construir esclusa. Mayús muestra una estimación del precio
 STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}Construir astillero (para comprar y dar mantenimiento a barcos). Mayús muestra una estimación del precio
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Construir muelles. Ctrl activa la ampliación de estaciones. Mayús muestra una estimación del precio
+<<<<<<< HEAD
+STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Colocar boya para utilizar como puesto guía marítimo. Mayús muestra una estimación del precio
+=======
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Colocar boya para utilizar como punto guía marítimo. Mayús muestra una estimación del precio
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Construir acueducto. Mayús muestra una estimación del precio
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Definir cuerpo de agua.{}Crea un canal, a menos que se pulse Ctrl en un área al nivel del mar, en cuyo caso se inundarán los alrededores
 STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Colocar ríos
@@ -2591,7 +2693,10 @@ STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME                      :{BLACK}Nombre d
 STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Cargamento recibido: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
+<<<<<<< HEAD
+=======
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}Tipo de vía: {LTBLUE}{STRING}
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Límite de velocidad de ferrocarril: {LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Límite de velocidad de carretera: {LTBLUE}{VELOCITY}
 
@@ -2604,6 +2709,31 @@ STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :Campos
 STR_LAI_CLEAR_DESCRIPTION_SNOW_COVERED_LAND                     :Terreno nevado
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :Desierto
 
+<<<<<<< HEAD
+STR_LAI_RAIL_DESCRIPTION_TRACK                                  :Vía de {STRING}
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_SIGNALS              :Vía de {STRING} con señales de bloqueo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRESIGNALS                  :Vía de {STRING} con señales de entrada
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXITSIGNALS                 :Vía de {STRING} con señales de salida
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBOSIGNALS                :Vía de {STRING} con señales de combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBSSIGNALS                  :Vía de {STRING} con señales de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NOENTRYSIGNALS              :Vía de {STRING} con señales de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PRESIGNALS           :Vía de {STRING} con señales de bloqueo y señales de entrada
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_EXITSIGNALS          :Vía de {STRING} con señales de bloqueo y señales de salida
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_COMBOSIGNALS         :Vía de {STRING} con señales de bloqueo y señales combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PBSSIGNALS           :Vía de {STRING} con señales de bloqueo y señales de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_NOENTRYSIGNALS       :Vía de {STRING} con señales de bloqueo y señales de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_EXITSIGNALS             :Vía de {STRING} con señales de entrada y señales de salida
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_COMBOSIGNALS            :Vía de {STRING} con señales de entrada y señales combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_PBSSIGNALS              :Vía de {STRING} con señales de entrada y señales de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_NOENTRYSIGNALS          :Vía de {STRING} con señales de entrada y señales de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_COMBOSIGNALS           :Vía de {STRING} con señales de salida y señales de combo
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_PBSSIGNALS             :Vía de {STRING} con señales de salida y señales de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_NOENTRYSIGNALS         :Vía de {STRING} con señales de salida y señales de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :Vía de {STRING} con señales de combo y señales de ruta
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :Vía de {STRING} con señales de combo y señales de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :Vía de {STRING} con señales de ruta y señales de ruta de un solo sentido
+STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :Depósito ({STRING})
+=======
 STR_LAI_RAIL_DESCRIPTION_TRACK                                  :Vías férreas
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_SIGNALS              :Vías férreas con señales de bloqueo
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRESIGNALS                  :Vías férreas con señales de entrada
@@ -2627,6 +2757,7 @@ STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :Vías férreas 
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :Vías férreas con señales combo y de ruta de un solo sentido
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :Vías férreas con señales de ruta y de ruta de un solo sentido
 STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :Depósito (trenes)
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 STR_LAI_ROAD_DESCRIPTION_ROAD                                   :Carretera
 STR_LAI_ROAD_DESCRIPTION_ROAD_WITH_STREETLIGHTS                 :Carretera con alumbrado
@@ -2649,7 +2780,11 @@ STR_LAI_STATION_DESCRIPTION_TRUCK_LOADING_AREA                  :Estación de ca
 STR_LAI_STATION_DESCRIPTION_BUS_STATION                         :Parada de autobús
 STR_LAI_STATION_DESCRIPTION_SHIP_DOCK                           :Muelle
 STR_LAI_STATION_DESCRIPTION_BUOY                                :Boya
+<<<<<<< HEAD
+STR_LAI_STATION_DESCRIPTION_WAYPOINT                            :puesto guía
+=======
 STR_LAI_STATION_DESCRIPTION_WAYPOINT                            :Punto guía
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 STR_LAI_WATER_DESCRIPTION_WATER                                 :Agua
 STR_LAI_WATER_DESCRIPTION_CANAL                                 :Canal
@@ -2690,7 +2825,11 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Terreno propied
 STR_ABOUT_OPENTTD                                               :{WHITE}Acerca de OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright original {COPYRIGHT} 1995 Chris Sawyer, Todos los derechos reservados
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versión {REV}
+<<<<<<< HEAD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2016, el equipo de OpenTTD
+=======
 STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2017, el equipo de OpenTTD
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Guardar partida
@@ -2816,7 +2955,11 @@ STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}Actualiz
 STR_NEWGRF_SETTINGS_UPGRADE_TOOLTIP                             :{BLACK}Actualizar los archivos NewGRF que lo requieran a la versión más reciente
 STR_NEWGRF_SETTINGS_FILE_TOOLTIP                                :{BLACK}Lista de archivos NewGRF instalados
 
+<<<<<<< HEAD
+STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Establecer parámetros
+=======
 STR_NEWGRF_SETTINGS_SET_PARAMETERS                              :{BLACK}Parámetros
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_NEWGRF_SETTINGS_SHOW_PARAMETERS                             :{BLACK}Mostrar parámetros
 STR_NEWGRF_SETTINGS_TOGGLE_PALETTE                              :{BLACK}Cambiar paleta
 STR_NEWGRF_SETTINGS_TOGGLE_PALETTE_TOOLTIP                      :{BLACK}Cambia la paleta del NewGRF elegido.{}Esto es necesario cuando los gráficos de un NewGRF se ven de color rosa durante el juego
@@ -2909,6 +3052,11 @@ STR_NEWGRF_ERROR_INVALID_ID                                     :Intento de usar
 STR_NEWGRF_ERROR_CORRUPT_SPRITE                                 :{YELLOW}{STRING} contiene un sprite con errores. Todos los sprites con errores se muestran como un símbolo de interrogación rojo (?)
 STR_NEWGRF_ERROR_MULTIPLE_ACTION_8                              :Contiene múltiples entradas de Acción 8 (sprite {3:NUM})
 STR_NEWGRF_ERROR_READ_BOUNDS                                    :La lectura excedió el límite de pseudo-sprite (sprite {3:NUM})
+<<<<<<< HEAD
+STR_NEWGRF_ERROR_MISSING_SPRITES                                :{WHITE}A los gráficos base actualmente en uso les faltan algunos sprites.{}Los gráficos base deben ser actualizados
+STR_NEWGRF_ERROR_MISSING_SPRITES_UNSTABLE                       :{WHITE}A los gráficos base actualmente en uso les faltan algunos sprites.{}Los gráficos base deben ser actualizados.{}Dado que esta es una {YELLOW}versión de desarrollo de OpenTTD{WHITE}, es posible que también se requiera una {YELLOW}versión de desarrollo de los gráficos base{WHITE}
+=======
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_NEWGRF_ERROR_GRM_FAILED                                     :Recursos GRF solicitados no disponibles (sprite {3:NUM})
 STR_NEWGRF_ERROR_FORCEFULLY_DISABLED                            :{1:STRING} fue desactivado por {STRING}
 STR_NEWGRF_ERROR_INVALID_SPRITE_LAYOUT                          :Formato de colocación de sprites no válido o desconocido (sprite {3:NUM})
@@ -3172,12 +3320,21 @@ STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}No permi
 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
+<<<<<<< HEAD
+STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Centrar vista en ubicación del puesto guía. Ctrl+Clic abre una ventana de vista en dicha ubicación
+STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Cambiar nombre de puesto guía
+STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centrar la vista en la ubicación de la boya. Ctrl+Clic abre una ventana de vista en dicha ubicación
+STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}Cambiar nombre de boya
+
+STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Cambiar nombre de puesto guía
+=======
 STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Centrar vista en ubicación del punto guía. Ctrl+Clic abre una ventana de vista en dicha ubicación
 STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Cambiar nombre de punto guía
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Centrar la vista en la ubicación de la boya. Ctrl+Clic abre una ventana de vista en dicha ubicación
 STR_BUOY_VIEW_CHANGE_BUOY_NAME                                  :{BLACK}Cambiar nombre de boya
 
 STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Cambiar nombre de punto guía
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 # Finances window
 STR_FINANCES_CAPTION                                            :{WHITE}Finanzas de {COMPANY} {BLACK}{COMPANY_NUM}
@@ -3295,8 +3452,14 @@ STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO                          :{BLACK}Requiere
 STR_INDUSTRY_VIEW_REQUIRES_CARGO_CARGO_CARGO                    :{BLACK}Requiere: {YELLOW}{STRING}{STRING}, {STRING}{STRING}, {STRING}{STRING}
 ############ range for requires ends
 
+<<<<<<< HEAD
+############ range for produces starts
+STR_INDUSTRY_VIEW_WAITING_FOR_PROCESSING                        :{BLACK}Cargamento esperando a ser procesado:
+STR_INDUSTRY_VIEW_WAITING_STOCKPILE_CARGO                       :{YELLOW}{CARGO_LONG}{STRING}{BLACK}
+=======
 
 ############ range for produces starts
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_INDUSTRY_VIEW_PRODUCES_CARGO                                :{BLACK}Produce: {YELLOW}{STRING}{STRING}
 STR_INDUSTRY_VIEW_PRODUCES_CARGO_CARGO                          :{BLACK}Produce: {YELLOW}{STRING}{STRING}, {STRING}{STRING}
 ############ range for produces ends
@@ -3557,10 +3720,17 @@ STR_REPLACE_REPLACING_WHEN_OLD                                  :{ENGINE} cuando
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}Dejar de reemplazar vehículos
 STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}Presionar este botón para detener el reemplazo del vehículo situado a la izquierda
 
+<<<<<<< HEAD
+STR_REPLACE_ENGINE_WAGON_SELECT                                 :{BLACK}Reemplazando: {ORANGE}{STRING}
+STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Cambiar entre reemplazo de vagón y locomotora
+STR_REPLACE_ENGINES                                             :Locomotoras
+STR_REPLACE_WAGONS                                              :Vagones
+=======
 STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Cambiar entre reemplazo de vagón y locomotora
 STR_REPLACE_ENGINES                                             :Locomotoras
 STR_REPLACE_WAGONS                                              :Vagones
 STR_REPLACE_ALL_RAILTYPE                                        :Todos los vehículos ferroviarios
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Elegir el tipo de vías férreas para las que se desea reemplazar locomotoras
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Mostrar el vehículo que reemplazará al otro de la izquierda
@@ -3619,7 +3789,11 @@ STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Activida
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Cargando/Descargando
 STR_VEHICLE_STATUS_LEAVING                                      :{LTBLUE}Partiendo
 STR_VEHICLE_STATUS_CRASHED                                      :{RED}¡Accidentado!
+<<<<<<< HEAD
+STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}Descompuesto
+=======
 STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}Averiado
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_VEHICLE_STATUS_STOPPED                                      :{RED}Detenido
 STR_VEHICLE_STATUS_TRAIN_STOPPING_VEL                           :{RED}Deteniéndose, {VELOCITY}
 STR_VEHICLE_STATUS_TRAIN_NO_POWER                               :{RED}Sin potencia
@@ -3658,7 +3832,11 @@ STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Peso: {L
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Peso: {LTBLUE}{WEIGHT_SHORT} {BLACK}Potencia: {LTBLUE}{POWER}{BLACK} Velocidad máx.: {LTBLUE}{VELOCITY} {BLACK}F.T. máx.: {LTBLUE}{FORCE}
 
 STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR                     :{BLACK}Utilidad este año: {LTBLUE}{CURRENCY_LONG} (año pasado: {CURRENCY_LONG})
+<<<<<<< HEAD
+STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Fiabilidad: {LTBLUE}{COMMA}%  {BLACK}Descomposturas desde el último mantenimiento: {LTBLUE}{COMMA}
+=======
 STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Fiabilidad: {LTBLUE}{COMMA}%  {BLACK}Averías desde el último mantenimiento: {LTBLUE}{COMMA}
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}Construido: {LTBLUE}{NUM}{BLACK} Valor: {LTBLUE}{CURRENCY_LONG}
 STR_VEHICLE_INFO_NO_CAPACITY                                    :{BLACK}Capacidad: {LTBLUE}Ninguna{STRING}
@@ -3773,7 +3951,11 @@ STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Cargamento disp
 
 STR_ORDER_SERVICE                                               :{BLACK}Mantenimiento
 STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Ir siempre
+<<<<<<< HEAD
+STR_ORDER_DROP_SERVICE_DEPOT                                    :Mantenimiento si es necesario
+=======
 STR_ORDER_DROP_SERVICE_DEPOT                                    :Mantto. si es necesario
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_ORDER_DROP_HALT_DEPOT                                       :Detenerse
 STR_ORDER_SERVICE_TOOLTIP                                       :{BLACK}Ignorar esta orden a menos que el mantenimiento sea necesario
 
@@ -3815,7 +3997,11 @@ STR_ORDER_GO_TO_NEAREST_DEPOT                                   :Ir al depósito
 STR_ORDER_GO_TO_NEAREST_HANGAR                                  :Ir al hangar más cercano
 STR_ORDER_CONDITIONAL                                           :Salto de orden condicional
 STR_ORDER_SHARE                                                 :Compartir órdenes
+<<<<<<< HEAD
+STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Añadir nueva orden antes de la orden marcada o añadirla al final de la lista. Ctrl+Clic sobre una estación para establecer la orden a 'Cargar máx. cualquier carga', sobre un puesto guía para 'Sin paradas' y sobre un depósito para 'Mantenimiento' (esta última desactivará el mantenimiento automático). Ctrl+Clic sobre otro vehículo para hacer que ambos compartan siempre las mismas órdenes. Clic sobre un vehículo para copiar sus órdenes (sin compartirlas).
+=======
 STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Añadir nueva orden antes de la orden marcada o añadirla al final de la lista. Ctrl+Clic sobre una estación para establecer la orden a 'Cargar máx. cualquier carga', sobre un punto guía para 'Sin paradas' y sobre un depósito para 'Mantenimiento' (esta última desactivará el mantenimiento automático). Ctrl+Clic sobre otro vehículo para hacer que ambos compartan siempre las mismas órdenes. Clic sobre un vehículo para copiar sus órdenes (sin compartirlas).
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 
 STR_ORDERS_VEH_WITH_SHARED_ORDERS_LIST_TOOLTIP                  :{BLACK}Ver todos los vehículos que comparten el mismo itinerario
 
@@ -4240,6 +4426,17 @@ STR_ERROR_MUST_DEMOLISH_DOCK_FIRST                              :{WHITE}Primero 
 STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Primero se debe demoler el aeropuerto
 
 # Waypoint related errors
+<<<<<<< HEAD
+STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Se amplía más de un puesto guía existente
+STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Demasiado cerca de otro puesto guía
+
+STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}No se puede construir el puesto guía aquí...
+STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}No se puede colocar la boya aquí...
+STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}No se puede cambiar nombre del puesto guía...
+
+STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}No se puede quitar el puesto guía de aquí...
+STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Primero se debe retirar el puesto guía
+=======
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Se amplía más de un punto guía existente
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Demasiado cerca de otro punto guía
 
@@ -4249,6 +4446,7 @@ STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}No se pu
 
 STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}No se puede quitar el punto guía de aquí...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Primero se debe retirar el punto guía
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... una boya obstaculiza
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... ¡boya en uso por otra empresa!
 
@@ -4860,7 +5058,11 @@ STR_FORMAT_BUOY_NAME_SERIAL                                     :Boya {TOWN} #{C
 STR_FORMAT_COMPANY_NUM                                          :(Empresa {COMMA})
 STR_FORMAT_GROUP_NAME                                           :Grupo {COMMA}
 STR_FORMAT_INDUSTRY_NAME                                        :{1:STRING}, {0:TOWN}
+<<<<<<< HEAD
+STR_FORMAT_WAYPOINT_NAME                                        :Puesto guía {TOWN}
+=======
 STR_FORMAT_WAYPOINT_NAME                                        :Punto guía, {TOWN}
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584
 STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :Puesto guía #{1:COMMA}, {0:TOWN}
 
 STR_FORMAT_DEPOT_NAME_TRAIN                                     :Depósito de trenes, {TOWN}
@@ -4968,3 +5170,38 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+<<<<<<< HEAD
+
+# Android strings
+STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Guía de cómo jugar
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Mostrar leyenda o descripción de símbolos del mapa
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :{BLACK}Barra de herramientas vertical
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :{BLACK}La barra de herramientas principal se divide en dos barras verticales laterales
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Tamaño de botones
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Tamaño de elementos de la interfaz
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Tamaño de letra
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Tamaño de letra de los elementos del juego
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :{BLACK}Confirmar acciones
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :{BLACK}Mostrar diálogo de confirmación al construir carreteras y estaciones
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bits
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Establecer profundidad de color de video a 8 bits por pixel. Este modo de video soporta animación de agua
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bits
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Establecer profundidad de color de video a 16 bits por pixel. Requiere reinicio. Este modo de video no soporta animación de agua
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bits
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Establecer profundidad de color de video a 24 bits por pixel. Este modo de video soporta animación de agua
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Cerrar todas las ventanas abiertas, salvo las que estén fijas
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Pulsar para ver una estimación del precio al realizar una acción
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Emplearlo para acciones que utilizan la tecla "Ctrl"
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Videos de guías de juego
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Abrir reproductor de video para ver guías de juego
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Construir carrerteras y estaciones; comprar vehículos
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Vías férreas y trenes
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Vehículos de carretera
+STR_TUTORIAL_SHIPS                                              :{BLACK}Barcos y muelles
+STR_TUTORIAL_CARGO                                              :{BLACK}Cargamentos
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Cargar desde red
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Cargar partida desde almacenamiento en red
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Guardar en red
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Realizar respaldo en almacenamiento de red
+=======
+>>>>>>> d3de08088326415d55ef052dc858053ab4932584

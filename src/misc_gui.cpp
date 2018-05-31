@@ -26,12 +26,17 @@
 #include "core/geometry_func.hpp"
 #include "newgrf_debug.h"
 #include "zoom_func.h"
+#include "build_confirmation_func.h"
 
 #include "widgets/misc_widget.h"
 
 #include "table/strings.h"
 
 #include "safeguards.h"
+
+#ifdef __ANDROID__
+#include <SDL_screenkeyboard.h>
+#endif
 
 /** Method to open the OSK. */
 enum OskActivation {
@@ -533,6 +538,10 @@ void ShowAboutWindow()
  */
 void ShowEstimatedCostOrIncome(Money cost, int x, int y)
 {
+	if (ConfirmationWindowEstimatingCost()) {
+		ConfirmationWindowSetEstimatedCost(cost);
+		return;
+	}
 	StringID msg = STR_MESSAGE_ESTIMATED_COST;
 
 	if (cost < 0) {
@@ -684,6 +693,12 @@ struct TooltipsWindow : public Window
 		if (pt.y + sm_height > scr_bot) pt.y = min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
 		pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
 
+		// Move it to the top of the screen, away from mouse cursor, so it won't steal screen taps on Android
+		pt.y = GetMainViewTop();
+		if (_cursor.pos.y < pt.y + GetMinSizing(NWST_STEP)) {
+			pt.x = _cursor.pos.x > _screen.width / 2 ? GetMinSizing(NWST_STEP) : _screen.width - sm_width - GetMinSizing(NWST_STEP);
+		}
+
 		return pt;
 	}
 
@@ -692,7 +707,7 @@ struct TooltipsWindow : public Window
 		/* There is only one widget. */
 		for (uint i = 0; i != this->paramcount; i++) SetDParam(i, this->params[i]);
 
-		size->width  = min(GetStringBoundingBox(this->string_id).width, ScaleGUITrad(194));
+		size->width  = min(GetStringBoundingBox(this->string_id).width, ScaleGUITrad(250));
 		size->height = GetStringHeight(this->string_id, size->width);
 
 		/* Increase slightly to have some space around the box. */
@@ -765,7 +780,7 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 
 	bool rtl = _current_text_dir == TD_RTL;
 	Dimension sprite_size = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
-	int clearbtn_width = sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT;
+	int clearbtn_width = GetMinSizing(NWST_BUTTON, sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT);
 
 	int clearbtn_left  = wi->pos_x + (rtl ? 0 : wi->current_x - clearbtn_width);
 	int clearbtn_right = wi->pos_x + (rtl ? clearbtn_width : wi->current_x) - 1;
@@ -776,7 +791,7 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 	int bottom = wi->pos_y + wi->current_y - 1;
 
 	DrawFrameRect(clearbtn_left, top, clearbtn_right, bottom, wi->colour, wi->IsLowered() ? FR_LOWERED : FR_NONE);
-	DrawSprite(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT, PAL_NONE, clearbtn_left + WD_IMGBTN_LEFT + (wi->IsLowered() ? 1 : 0), (top + bottom - sprite_size.height) / 2 + (wi->IsLowered() ? 1 : 0));
+	DrawSprite(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT, PAL_NONE, Center(clearbtn_left + wi->IsLowered(), clearbtn_width, sprite_size.width), Center(top + wi->IsLowered(), bottom - top, sprite_size.height));
 	if (this->text.bytes == 1) GfxFillRect(clearbtn_left + 1, top + 1, clearbtn_right - 1, bottom - 1, _colour_gradient[wi->colour & 0xF][2], FILLRECT_CHECKER);
 
 	DrawFrameRect(left, top, right, bottom, wi->colour, FR_LOWERED | FR_DARKENED);
@@ -799,11 +814,12 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 	/* If we have a marked area, draw a background highlight. */
 	if (tb->marklength != 0) GfxFillRect(delta + tb->markxoffs, 0, delta + tb->markxoffs + tb->marklength - 1, bottom - top, PC_GREY);
 
-	DrawString(delta, tb->pixels, 0, tb->buf, TC_YELLOW);
+	DrawString(delta, tb->pixels, Center(0, bottom - top), tb->buf, TC_YELLOW);
+
 	bool focussed = w->IsWidgetGloballyFocused(wid) || IsOSKOpenedFor(w, wid);
 	if (focussed && tb->caret) {
 		int caret_width = GetStringBoundingBox("_").width;
-		DrawString(tb->caretxoffs + delta, tb->caretxoffs + delta + caret_width, 0, "_", TC_WHITE);
+		DrawString(tb->caretxoffs + delta, tb->caretxoffs + delta + caret_width, Center(0, bottom - top), "_", TC_WHITE);
 	}
 
 	_cur_dpi = old_dpi;
@@ -934,6 +950,17 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 		/* Open the OSK window */
 		ShowOnScreenKeyboard(w, wid);
 	}
+#ifdef __ANDROID__
+	char text[512];
+	strecpy(text, this->text.buf, lastof(text));
+	this->text.DeleteAll();
+	SDL_ANDROID_ToggleScreenKeyboardTextInput(text); // Invoke Android built-in screen keyboard, this will not block
+	/*
+	SDL_ANDROID_GetScreenKeyboardTextInput(text, sizeof(text) - 1); // Invoke Android built-in screen keyboard, this will block
+	this->text.Assign(text);
+	w->OnEditboxChanged(wid);
+	*/
+#endif
 }
 
 /** Class for the string query window. */
@@ -1113,6 +1140,7 @@ struct QueryWindow : public Window {
 	{
 		if (widget != WID_Q_TEXT) return;
 
+		size->width = GetMinSizing(NWST_WINDOW_LENGTH, size->width);
 		Dimension d = GetStringMultiLineBoundingBox(this->message, *size);
 		d.width += WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;

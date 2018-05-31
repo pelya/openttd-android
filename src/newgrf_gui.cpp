@@ -654,10 +654,9 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_NS_SCROLLBAR);
-		this->vscroll2 = this->GetScrollbar(WID_NS_SCROLL2BAR);
+		this->vscroll2 = this->editable ? this->GetScrollbar(WID_NS_SCROLL2BAR) : NULL;
 
 		this->GetWidget<NWidgetStacked>(WID_NS_SHOW_REMOVE)->SetDisplayedPlane(this->editable ? 0 : 1);
-		this->GetWidget<NWidgetStacked>(WID_NS_SHOW_APPLY)->SetDisplayedPlane(this->editable ? 0 : this->show_params ? 1 : SZSP_HORIZONTAL);
 		this->FinishInitNested(WN_GAME_OPTIONS_NEWGRF_STATE);
 
 		this->querystrings[WID_NS_FILTER] = &this->filter_editbox;
@@ -738,14 +737,14 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 			case WID_NS_FILE_LIST:
 			{
 				Dimension d = maxdim(GetSpriteSize(SPR_SQUARE), GetSpriteSize(SPR_WARNING_SIGN));
-				resize->height = max(d.height + 2U, FONT_HEIGHT_NORMAL + 2U);
-				size->height = max(size->height, WD_FRAMERECT_TOP + 6 * resize->height + WD_FRAMERECT_BOTTOM);
+				resize->height = GetMinSizing(NWST_STEP, max(d.height + 2U, FONT_HEIGHT_NORMAL + 2U));
+				size->height = max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
 				break;
 			}
 
 			case WID_NS_AVAIL_LIST:
-				resize->height = max(12, FONT_HEIGHT_NORMAL + 2);
-				size->height = max(size->height, WD_FRAMERECT_TOP + 8 * resize->height + WD_FRAMERECT_BOTTOM);
+				resize->height = GetMinSizing(NWST_STEP, max(12, FONT_HEIGHT_NORMAL + 2));
+				size->height = max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
 				break;
 
 			case WID_NS_NEWGRF_INFO_TITLE: {
@@ -768,6 +767,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 					}
 				}
 				d.width += padding.width;
+				d.height = GetMinSizing(NWST_BUTTON, d.height);
 				*size = maxdim(d, *size);
 				break;
 			}
@@ -778,6 +778,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 				*size = maxdim(d, GetStringBoundingBox(STR_INTRO_ONLINE_CONTENT));
 				size->width  += padding.width;
 				size->height += padding.height;
+				size->height = GetMinSizing(NWST_BUTTON, size->height);
 				break;
 			}
 		}
@@ -786,7 +787,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 	virtual void OnResize()
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_NS_FILE_LIST);
-		this->vscroll2->SetCapacityFromWidget(this, WID_NS_AVAIL_LIST);
+		if (this->vscroll2) this->vscroll2->SetCapacityFromWidget(this, WID_NS_AVAIL_LIST);
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -1294,8 +1295,10 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 			widget_data = STR_INTRO_ONLINE_CONTENT;
 			tool_tip    = STR_INTRO_TOOLTIP_ONLINE_CONTENT;
 		}
-		this->GetWidget<NWidgetCore>(WID_NS_CONTENT_DOWNLOAD)->widget_data  = widget_data;
-		this->GetWidget<NWidgetCore>(WID_NS_CONTENT_DOWNLOAD)->tool_tip     = tool_tip;
+		if (this->editable) {
+			this->GetWidget<NWidgetCore>(WID_NS_CONTENT_DOWNLOAD)->widget_data  = widget_data;
+			this->GetWidget<NWidgetCore>(WID_NS_CONTENT_DOWNLOAD)->tool_tip     = tool_tip;
+		}
 		this->GetWidget<NWidgetCore>(WID_NS_CONTENT_DOWNLOAD2)->widget_data = widget_data;
 		this->GetWidget<NWidgetCore>(WID_NS_CONTENT_DOWNLOAD2)->tool_tip    = tool_tip;
 
@@ -1493,7 +1496,7 @@ private:
 			if (this->avail_pos < 0) this->avail_sel = NULL;
 		}
 
-		this->vscroll2->SetCount(this->avails.Length()); // Update the scrollbar
+		if (this->vscroll2) this->vscroll2->SetCount(this->avails.Length()); // Update the scrollbar
 	}
 
 	/**
@@ -1628,8 +1631,8 @@ public:
 		uint min_inf_height = this->inf->smallest_y + this->inf->padding_top + this->inf->padding_bottom;
 
 		/* Smallest window is in two column mode. */
-		this->smallest_x = max(min_avs_width, min_acs_width) + INTER_COLUMN_SPACING + min_inf_width;
-		this->smallest_y = max(min_inf_height, min_acs_height + INTER_LIST_SPACING + min_avs_height);
+		this->smallest_x = min_avs_width + min_acs_width + min_inf_width + INTER_COLUMN_SPACING * 2;
+		this->smallest_y = max(max(min_inf_height, min_acs_height), min_avs_height);
 
 		/* Filling. */
 		this->fill_x = LeastCommonMultiple(this->avs->fill_x, this->acs->fill_x);
@@ -1666,7 +1669,7 @@ public:
 		/* Use 2 or 3 columns? */
 		uint min_three_columns = min_avs_width + min_acs_width + min_inf_width + 2 * INTER_COLUMN_SPACING;
 		uint min_two_columns   = min_list_width + min_inf_width + INTER_COLUMN_SPACING;
-		bool use_three_columns = this->editable && (min_three_columns + MIN_EXTRA_FOR_3_COLUMNS <= given_width);
+		bool use_three_columns = true; // this->editable;
 
 		/* Info panel is a separate column in both modes. Compute its width first. */
 		uint extra_width, inf_width;
@@ -1774,7 +1777,7 @@ public:
 	{
 		if (!IsInsideBS(x, this->pos_x, this->current_x) || !IsInsideBS(y, this->pos_y, this->current_y)) return NULL;
 
-		NWidgetCore *nw = (this->editable) ? this->avs->GetWidgetFromPos(x, y) : NULL;
+		NWidgetCore *nw = this->avs->GetWidgetFromPos(x, y);
 		if (nw == NULL) nw = this->acs->GetWidgetFromPos(x, y);
 		if (nw == NULL) nw = this->inf->GetWidgetFromPos(x, y);
 		return nw;
@@ -1782,7 +1785,7 @@ public:
 
 	virtual void Draw(const Window *w)
 	{
-		if (this->editable) this->avs->Draw(w);
+		this->avs->Draw(w);
 		this->acs->Draw(w);
 		this->inf->Draw(w);
 	}
@@ -1898,33 +1901,111 @@ static const NWidgetPart _nested_newgrf_infopanel_widgets[] = {
 					SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL),
 		EndContainer(),
 	EndContainer(),
-	NWidget(NWID_SELECTION, INVALID_COLOUR, WID_NS_SHOW_APPLY),
-		/* Right side, buttons. */
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WD_RESIZEBOX_WIDTH, 0),
-			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_SET_PARAMETERS), SetFill(1, 0), SetResize(1, 0),
-						SetDataTip(STR_NEWGRF_SETTINGS_SET_PARAMETERS, STR_NULL),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_TOGGLE_PALETTE), SetFill(1, 0), SetResize(1, 0),
-						SetDataTip(STR_NEWGRF_SETTINGS_TOGGLE_PALETTE, STR_NEWGRF_SETTINGS_TOGGLE_PALETTE_TOOLTIP),
-			EndContainer(),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_APPLY_CHANGES), SetFill(1, 0), SetResize(1, 0),
-					SetDataTip(STR_NEWGRF_SETTINGS_APPLY_CHANGES, STR_NULL),
+	/* Right side, buttons. */
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WD_RESIZEBOX_WIDTH, 0),
+		NWidget(NWID_VERTICAL),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_SET_PARAMETERS), SetFill(1, 0), SetResize(1, 0),
+					SetDataTip(STR_NEWGRF_SETTINGS_SET_PARAMETERS, STR_NULL),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_TOGGLE_PALETTE), SetFill(1, 0), SetResize(1, 0),
+					SetDataTip(STR_NEWGRF_SETTINGS_TOGGLE_PALETTE, STR_NEWGRF_SETTINGS_TOGGLE_PALETTE_TOOLTIP),
 		EndContainer(),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_APPLY_CHANGES), SetFill(1, 0), SetResize(1, 0),
+				SetDataTip(STR_NEWGRF_SETTINGS_APPLY_CHANGES, STR_NULL),
+	EndContainer(),
+};
+
+static const NWidgetPart _nested_newgrf_actives_wide_widgets[] = {
+	/* Left side, presets. */
+	NWidget(NWID_VERTICAL),
+		NWidget(WWT_LABEL, COLOUR_MAUVE), SetDataTip(STR_NEWGRF_SETTINGS_ACTIVE_LIST, STR_NULL),
+				SetFill(1, 0), SetResize(1, 0), SetPadding(3, WD_FRAMETEXT_RIGHT, 0, WD_FRAMETEXT_LEFT),
+		/* Left side, active grfs. */
+		NWidget(NWID_HORIZONTAL), SetPadding(0, 2, 0, 2),
+			NWidget(WWT_PANEL, COLOUR_MAUVE),
+				NWidget(WWT_INSET, COLOUR_MAUVE, WID_NS_FILE_LIST), SetMinimalSize(100, 1), SetPadding(2, 2, 2, 2),
+						SetFill(1, 1), SetResize(1, 1), SetScrollbar(WID_NS_SCROLLBAR), SetDataTip(STR_NULL, STR_NEWGRF_SETTINGS_FILE_TOOLTIP),
+				EndContainer(),
+			EndContainer(),
+			NWidget(NWID_VSCROLLBAR, COLOUR_MAUVE, WID_NS_SCROLLBAR),
+		EndContainer(),
+	EndContainer(),
+};
+
+static const NWidgetPart _nested_newgrf_buttons_wide_widgets[] = {
+	NWidget(NWID_VERTICAL),
+		NWidget(NWID_HORIZONTAL),
+			NWidget(WWT_TEXT, COLOUR_MAUVE), SetDataTip(STR_NEWGRF_SETTINGS_SELECT_PRESET, STR_NULL),
+					SetPadding(0, WD_FRAMETEXT_RIGHT, 0, 0),
+			NWidget(WWT_DROPDOWN, COLOUR_YELLOW, WID_NS_PRESET_LIST), SetFill(1, 0), SetResize(1, 0),
+					SetDataTip(STR_JUST_STRING, STR_NEWGRF_SETTINGS_PRESET_LIST_TOOLTIP),
+		EndContainer(),
+		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_PRESET_SAVE), SetFill(1, 0), SetResize(1, 0),
+					SetDataTip(STR_NEWGRF_SETTINGS_PRESET_SAVE, STR_NEWGRF_SETTINGS_PRESET_SAVE_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_PRESET_DELETE), SetFill(1, 0), SetResize(1, 0),
+					SetDataTip(STR_NEWGRF_SETTINGS_PRESET_DELETE, STR_NEWGRF_SETTINGS_PRESET_DELETE_TOOLTIP),
+		EndContainer(),
+
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_NS_SHOW_REMOVE),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(0, 2, 0, 2), SetPIP(0, WD_RESIZEBOX_WIDTH, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_REMOVE), SetFill(1, 0), SetResize(1, 0),
+						SetDataTip(STR_NEWGRF_SETTINGS_REMOVE, STR_NEWGRF_SETTINGS_REMOVE_TOOLTIP),
+				NWidget(NWID_VERTICAL),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_MOVE_UP), SetFill(1, 0), SetResize(1, 0),
+							SetDataTip(STR_NEWGRF_SETTINGS_MOVEUP, STR_NEWGRF_SETTINGS_MOVEUP_TOOLTIP),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_MOVE_DOWN), SetFill(1, 0), SetResize(1, 0),
+							SetDataTip(STR_NEWGRF_SETTINGS_MOVEDOWN, STR_NEWGRF_SETTINGS_MOVEDOWN_TOOLTIP),
+				EndContainer(),
+			EndContainer(),
+			NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPadding(0, 0, 0, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_RESCAN_FILES2), SetFill(1, 0), SetResize(1, 0),
+						SetDataTip(STR_NEWGRF_SETTINGS_RESCAN_FILES, STR_NEWGRF_SETTINGS_RESCAN_FILES_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_CONTENT_DOWNLOAD2), SetFill(1, 0), SetResize(1, 0),
+						SetDataTip(STR_INTRO_ONLINE_CONTENT, STR_INTRO_TOOLTIP_ONLINE_CONTENT),
+			EndContainer(),
+		EndContainer(),
+
+		NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_OPEN_URL), SetFill(1, 0), SetResize(1, 0),
+				SetDataTip(STR_CONTENT_OPEN_URL, STR_CONTENT_OPEN_URL_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_NEWGRF_TEXTFILE + TFT_README), SetFill(1, 0), SetResize(1, 0),
+				SetDataTip(STR_TEXTFILE_VIEW_README, STR_NULL),
+		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_NEWGRF_TEXTFILE + TFT_CHANGELOG), SetFill(1, 0), SetResize(1, 0),
+					SetDataTip(STR_TEXTFILE_VIEW_CHANGELOG, STR_NULL),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_NEWGRF_TEXTFILE + TFT_LICENSE), SetFill(1, 0), SetResize(1, 0),
+					SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL),
+		EndContainer(),
+
 		NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_VIEW_PARAMETERS), SetFill(1, 0), SetResize(1, 0),
 			SetDataTip(STR_NEWGRF_SETTINGS_SHOW_PARAMETERS, STR_NULL),
 	EndContainer(),
 };
 
+static const NWidgetPart _nested_newgrf_infopanel_wide_widgets[] = {
+	/* Right side, info panel. */
+	NWidget(WWT_PANEL, COLOUR_MAUVE),
+		NWidget(WWT_EMPTY, COLOUR_MAUVE, WID_NS_NEWGRF_INFO_TITLE), SetFill(1, 0), SetResize(1, 0),
+		NWidget(WWT_EMPTY, COLOUR_MAUVE, WID_NS_NEWGRF_INFO), SetFill(1, 1), SetResize(1, 1), SetMinimalSize(100, 100),
+	EndContainer(),
+};
+
 /** Construct nested container widget for managing the lists and the info panel of the NewGRF GUI. */
+static bool _newgrf_display_editable = false; // Quick hack
 NWidgetBase* NewGRFDisplay(int *biggest_index)
 {
-	NWidgetBase *avs = MakeNWidgets(_nested_newgrf_availables_widgets, lengthof(_nested_newgrf_availables_widgets), biggest_index, NULL);
+	NWidgetBase *avs = _newgrf_display_editable ?
+						MakeNWidgets(_nested_newgrf_availables_widgets, lengthof(_nested_newgrf_availables_widgets), biggest_index, NULL) :
+						MakeNWidgets(_nested_newgrf_actives_wide_widgets, lengthof(_nested_newgrf_actives_wide_widgets), biggest_index, NULL);
 
 	int biggest2;
-	NWidgetBase *acs = MakeNWidgets(_nested_newgrf_actives_widgets, lengthof(_nested_newgrf_actives_widgets), &biggest2, NULL);
+	NWidgetBase *acs = _newgrf_display_editable ?
+						MakeNWidgets(_nested_newgrf_actives_widgets, lengthof(_nested_newgrf_actives_widgets), &biggest2, NULL) :
+						MakeNWidgets(_nested_newgrf_buttons_wide_widgets, lengthof(_nested_newgrf_buttons_wide_widgets), &biggest2, NULL);
 	*biggest_index = max(*biggest_index, biggest2);
 
-	NWidgetBase *inf = MakeNWidgets(_nested_newgrf_infopanel_widgets, lengthof(_nested_newgrf_infopanel_widgets), &biggest2, NULL);
+	NWidgetBase *inf = _newgrf_display_editable ?
+						MakeNWidgets(_nested_newgrf_infopanel_widgets, lengthof(_nested_newgrf_infopanel_widgets), &biggest2, NULL) :
+						MakeNWidgets(_nested_newgrf_infopanel_wide_widgets, lengthof(_nested_newgrf_infopanel_wide_widgets), &biggest2, NULL);
 	*biggest_index = max(*biggest_index, biggest2);
 
 	return new NWidgetNewGRFDisplay(avs, acs, inf);
@@ -2001,6 +2082,7 @@ static void NewGRFConfirmationCallback(Window *w, bool confirmed)
 void ShowNewGRFSettings(bool editable, bool show_params, bool exec_changes, GRFConfig **config)
 {
 	DeleteWindowByClass(WC_GAME_OPTIONS);
+	_newgrf_display_editable = editable;
 	new NewGRFWindow(&_newgrf_desc, editable, show_params, exec_changes, config);
 }
 
@@ -2163,6 +2245,7 @@ static void ShowSavePresetWindow(const char *initial_text)
 /** Widgets for the progress window. */
 static const NWidgetPart _nested_scan_progress_widgets[] = {
 	NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_NEWGRF_SCAN_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+			SetSizingType(NWST_BUTTON),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_HORIZONTAL), SetPIP(20, 0, 20),
 			NWidget(NWID_VERTICAL), SetPIP(11, 8, 11),

@@ -462,7 +462,7 @@ struct NetworkChatWindow : public Window {
 
 	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
 	{
-		Point pt = { 0, _screen.height - sm_height - FindWindowById(WC_STATUS_BAR, 0)->height };
+		Point pt = { GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) * 2, _screen.height - sm_height - FindWindowById(WC_STATUS_BAR, 0)->height };
 		return pt;
 	}
 
@@ -486,7 +486,7 @@ struct NetworkChatWindow : public Window {
 		if (this->dtype == DESTTYPE_CLIENT) {
 			SetDParamStr(0, NetworkClientInfo::GetByClientID((ClientID)this->dest)->client_name);
 		}
-		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, this->dest_string, TC_BLACK, SA_RIGHT);
+		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(r.top, r.bottom - r.top), this->dest_string, TC_BLACK, SA_RIGHT);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)

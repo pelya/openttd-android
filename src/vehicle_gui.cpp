@@ -330,7 +330,7 @@ typedef SmallVector<RefitOption, 32> SubtypeList; ///< List of refit subtypes as
  */
 static void DrawVehicleRefitWindow(const SubtypeList list[NUM_CARGO], const int sel[2], uint pos, uint rows, uint delta, const Rect &r)
 {
-	uint y = r.top + WD_MATRIX_TOP;
+	uint y = Center(r.top, delta);
 	uint current = 0;
 
 	bool rtl = _current_text_dir == TD_RTL;
@@ -660,16 +660,17 @@ struct RefitWindow : public Window {
 	{
 		switch (widget) {
 			case WID_VR_MATRIX:
-				resize->height = WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM;
-				size->height = resize->height * 8;
+				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
+				size->height = resize->height * 5;
 				break;
 
 			case WID_VR_VEHICLE_PANEL_DISPLAY:
-				size->height = ScaleGUITrad(GetVehicleHeight(Vehicle::Get(this->window_number)->type));
+				size->height = max((int)GetMinSizing(NWST_STEP), ScaleGUITrad(GetVehicleHeight(Vehicle::Get(this->window_number)->type)));
 				break;
 
 			case WID_VR_INFO:
 				size->width = WD_FRAMERECT_LEFT + this->information_width + WD_FRAMERECT_RIGHT;
+				size->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 				break;
 		}
 	}
@@ -732,7 +733,7 @@ struct RefitWindow : public Window {
 			case WID_VR_VEHICLE_PANEL_DISPLAY: {
 				Vehicle *v = Vehicle::Get(this->window_number);
 				DrawVehicleImage(v, this->sprite_left + WD_FRAMERECT_LEFT, this->sprite_right - WD_FRAMERECT_RIGHT,
-					r.top + WD_FRAMERECT_TOP, INVALID_VEHICLE, EIT_IN_DETAILS, this->hscroll != NULL ? this->hscroll->GetPosition() : 0);
+					r.top, INVALID_VEHICLE, EIT_IN_DETAILS, this->hscroll != NULL ? this->hscroll->GetPosition() : 0);
 
 				/* Highlight selected vehicles. */
 				if (this->order != INVALID_VEH_ORDER_ID) break;

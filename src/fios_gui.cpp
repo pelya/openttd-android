@@ -35,11 +35,15 @@
 #include "table/strings.h"
 
 #include "safeguards.h"
+#ifdef __ANDROID__
+#include <SDL_android.h>
+#endif
 
 LoadCheckData _load_check_data;    ///< Data loaded from save during SL_LOAD_CHECK.
 
 static bool _fios_path_changed;
 static bool _savegame_sort_dirty;
+static const char *NETWORK_SAVE_FILENAME = "network-save.sav";
 
 
 /**
@@ -106,6 +110,9 @@ static const NWidgetPart _nested_load_dialog_widgets[] = {
 					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SL_NEWGRF_INFO), SetDataTip(STR_INTRO_NEWGRF_SETTINGS, STR_NULL), SetFill(1, 0), SetResize(1, 0),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SL_LOAD_BUTTON), SetDataTip(STR_SAVELOAD_LOAD_BUTTON, STR_SAVELOAD_LOAD_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
 				EndContainer(),
+			EndContainer(),
+			NWidget(NWID_HORIZONTAL),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SL_LOAD_NETWORK_BUTTON), SetDataTip(STR_SAVELOAD_LOAD_NETWORK_BUTTON, STR_SAVELOAD_LOAD_NETWORK_TOOLTIP), SetFill(1, 0), SetResize(1, 0),
 				NWidget(WWT_RESIZEBOX, COLOUR_GREY),
 			EndContainer(),
 		EndContainer(),
@@ -179,7 +186,7 @@ static const NWidgetPart _nested_save_dialog_widgets[] = {
 		NWidget(WWT_PANEL, COLOUR_GREY),
 			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_SL_DETAILS), SetResize(1, 1), SetFill(1, 1),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(NWID_SPACER), SetResize(1, 0), SetFill(1, 1),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_SL_SAVE_NETWORK_BUTTON), SetDataTip(STR_SAVELOAD_SAVE_NETWORK_BUTTON, STR_SAVELOAD_SAVE_NETWORK_TOOLTIP), SetFill(1, 1), SetResize(1, 0),
 				NWidget(WWT_RESIZEBOX, COLOUR_GREY),
 			EndContainer(),
 		EndContainer(),
@@ -296,6 +303,7 @@ public:
 		this->FinishInitNested(0);
 
 		this->LowerWidget(WID_SL_DRIVES_DIRECTORIES_LIST);
+		if (mode == SLD_SAVE_GAME) this->SetWidgetLoweredState(WID_SL_SAVE_NETWORK_BUTTON, _settings_client.gui.save_to_network);
 
 		/* pause is only used in single-player, non-editor mode, non-menu mode. It
 		 * will be unpaused in the WE_DESTROY event handler. */
@@ -375,7 +383,7 @@ public:
 					if (item == this->selected) {
 						GfxFillRect(r.left + 1, y, r.right, y + this->resize.step_height, PC_DARK_BLUE);
 					}
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, item->title, _fios_colours[GetDetailedFileType(item->type)]);
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, this->resize.step_height), item->title, _fios_colours[GetDetailedFileType(item->type)]);
 					y += this->resize.step_height;
 					if (y >= this->vscroll->GetCapacity() * this->resize.step_height + r.top + WD_FRAMERECT_TOP) break;
 				}
@@ -486,8 +494,8 @@ public:
 				break;
 
 			case WID_SL_DRIVES_DIRECTORIES_LIST:
-				resize->height = FONT_HEIGHT_NORMAL;
-				size->height = resize->height * 10 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				size->height = resize->height * 5 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				break;
 			case WID_SL_SORT_BYNAME:
 			case WID_SL_SORT_BYDATE: {
@@ -638,6 +646,32 @@ public:
 				/* Note, this is also called via the OSK; and we need to lower the button. */
 				this->HandleButtonClick(WID_SL_SAVE_GAME);
 				break;
+
+			case WID_SL_SAVE_NETWORK_BUTTON:
+				_settings_client.gui.save_to_network = !_settings_client.gui.save_to_network;
+				this->SetWidgetLoweredState(WID_SL_SAVE_NETWORK_BUTTON, _settings_client.gui.save_to_network);
+				this->SetDirty();
+				break;
+
+			case WID_SL_LOAD_NETWORK_BUTTON: {
+					char savePath[PATH_MAX];
+					FiosMakeSavegameName(savePath, NETWORK_SAVE_FILENAME, lastof(savePath));
+#ifdef __ANDROID__
+					if (!SDL_ANDROID_CloudLoad(savePath, NULL, "OpenTTD")) {
+						break;
+					}
+#endif
+					_load_check_data.Clear();
+					SaveOrLoadResult res = SaveOrLoad(savePath, SL_LOAD_CHECK, SAVE_DIR, false);
+					if (res == SL_OK && !_load_check_data.HasErrors()) {
+						strecpy(_file_to_saveload.name, savePath, lastof(_file_to_saveload.name));
+						strecpy(_file_to_saveload.title, "", lastof(_file_to_saveload.title));
+						if (!_load_check_data.HasNewGrfs() || _load_check_data.grf_compatibility != GLC_NOT_FOUND || _settings_client.gui.UserIsAllowedToChangeNewGRFs()) {
+							_switch_mode = (_game_mode == GM_EDITOR) ? SM_LOAD_SCENARIO : SM_LOAD_GAME;
+						}
+					}
+					break;
+				}
 		}
 	}
 

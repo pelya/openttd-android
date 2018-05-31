@@ -46,6 +46,7 @@
 #include "game/game.hpp"
 #include "goal_base.h"
 #include "story_base.h"
+#include "tutorial_gui.h"
 #include "toolbar_gui.h"
 
 #include "widgets/toolbar_widget.h"
@@ -64,6 +65,7 @@ RailType _last_built_railtype;
 RoadType _last_built_roadtype;
 
 static ScreenshotType _confirmed_screenshot_type; ///< Screenshot type the current query is about to confirm.
+int _last_clicked_toolbar_idx = 0;
 
 /** Toobar modes */
 enum ToolbarMode {
@@ -106,9 +108,9 @@ public:
 	{
 		bool rtl = _current_text_dir == TD_RTL;
 		if (this->checked) {
-			DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top, STR_JUST_CHECKMARK, sel ? TC_WHITE : TC_BLACK);
+			DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, Center(top, bottom - top), STR_JUST_CHECKMARK, sel ? TC_WHITE : TC_BLACK);
 		}
-		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : this->checkmark_width), right - WD_FRAMERECT_RIGHT - (rtl ? this->checkmark_width : 0), top, this->String(), sel ? TC_WHITE : TC_BLACK);
+		DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : this->checkmark_width), right - WD_FRAMERECT_RIGHT - (rtl ? this->checkmark_width : 0), Center(top, bottom - top), this->String(), sel ? TC_WHITE : TC_BLACK);
 	}
 };
 
@@ -142,7 +144,7 @@ public:
 
 	uint Height(uint width) const
 	{
-		return max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
+		return GetMinSizing(NWST_STEP, max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL));
 	}
 
 	void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const
@@ -179,7 +181,17 @@ public:
  */
 static void PopupMainToolbMenu(Window *w, int widget, DropDownList *list, int def)
 {
-	ShowDropDownList(w, list, def, widget, 0, true, true);
+	if (!_settings_client.gui.vertical_toolbar) {
+		ShowDropDownList(w, list, def, widget, 0, true, list->Length() <= 1);
+	} else {
+		Rect wi_rect;
+		NWidgetCore *nwi = w->GetWidget<NWidgetCore>(widget);
+		wi_rect.left   = nwi->pos_x;
+		wi_rect.right  = nwi->pos_x + nwi->current_x;
+		wi_rect.top    = nwi->pos_y;
+		wi_rect.bottom = nwi->pos_y + nwi->current_y;
+		ShowDropDownListAt(w, list, def, widget, wi_rect, nwi->colour, true, list->Length() <= 1);
+	}
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 }
 
@@ -332,7 +344,7 @@ static CallBackFunction ToolbarOptionsClick(Window *w)
 	*list->Append() = new DropDownListCheckedItem(STR_SETTINGS_MENU_TRANSPARENT_BUILDINGS,   OME_TRANSPARENTBUILDINGS, false, IsTransparencySet(TO_HOUSES));
 	*list->Append() = new DropDownListCheckedItem(STR_SETTINGS_MENU_TRANSPARENT_SIGNS,       OME_SHOW_STATIONSIGNS, false, IsTransparencySet(TO_SIGNS));
 
-	ShowDropDownList(w, list, 0, WID_TN_SETTINGS, 140, true, true);
+	ShowDropDownList(w, list, 0, WID_TN_SETTINGS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -868,7 +880,7 @@ static CallBackFunction ToolbarZoomOutClick(Window *w)
 
 static CallBackFunction ToolbarBuildRailClick(Window *w)
 {
-	ShowDropDownList(w, GetRailTypeDropDownList(), _last_built_railtype, WID_TN_RAILS, 140, true, true);
+	ShowDropDownList(w, GetRailTypeDropDownList(), _last_built_railtype, WID_TN_RAILS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -905,7 +917,7 @@ static CallBackFunction ToolbarBuildRoadClick(Window *w)
 		*list->Append() = new DropDownListStringItem(STR_ROAD_MENU_TRAM_CONSTRUCTION, ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM));
 		break;
 	}
-	ShowDropDownList(w, list, _last_built_roadtype, WID_TN_ROADS, 140, true, true);
+	ShowDropDownList(w, list, _last_built_roadtype, WID_TN_ROADS, 140, true, list->Length() <= 1);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -1038,7 +1050,7 @@ static CallBackFunction PlaceLandBlockInfo()
 		ResetObjectToPlace();
 		return CBF_NONE;
 	} else {
-		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, WC_MAIN_TOOLBAR, 0);
+		SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_RECT, _settings_client.gui.vertical_toolbar ? WC_MAIN_TOOLBAR_RIGHT : WC_MAIN_TOOLBAR, 0);
 		return CBF_PLACE_LANDINFO;
 	}
 }
@@ -1141,6 +1153,7 @@ static CallBackFunction MenuClickHelp(int index)
 {
 	switch (index) {
 		case  0: return PlaceLandBlockInfo();
+		case  1: ShowTutorialWindow();             break;
 		case  2: IConsoleSwitch();                 break;
 		case  3: ShowAIDebugWindow();              break;
 		case  4: MenuClickSmallScreenshot();       break;
@@ -1167,6 +1180,40 @@ static CallBackFunction ToolbarSwitchClick(Window *w)
 
 	w->ReInit();
 	w->SetWidgetLoweredState(WID_TN_SWITCH_BAR, _toolbar_mode == TB_LOWER);
+	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+	return CBF_NONE;
+}
+
+static CallBackFunction ToolbarCtrlClick(Window *w)
+{
+	_ctrl_pressed = !_ctrl_pressed;
+	//DEBUG(misc, 1, "ToolbarCtrlClick: pressed %d", _ctrl_pressed);
+	w->SetWidgetLoweredState(WID_TN_CTRL, _ctrl_pressed);
+	w->SetWidgetDirty(WID_TN_CTRL);
+	HandleCtrlChanged();
+	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+	return CBF_NONE;
+}
+
+static CallBackFunction ToolbarShiftClick(Window *w)
+{
+	_shift_pressed = !_shift_pressed;
+	//DEBUG(misc, 1, "ToolbarShiftClick: pressed %d", _shift_pressed);
+	w->SetWidgetLoweredState(WID_TN_SHIFT, _shift_pressed);
+	w->SetWidgetDirty(WID_TN_SHIFT);
+	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+	return CBF_NONE;
+}
+
+static CallBackFunction ToolbarDeleteClick(Window *w)
+{
+	DeleteNonVitalWindows();
+	_ctrl_pressed = false;
+	w->SetWidgetLoweredState(WID_TN_CTRL, _ctrl_pressed);
+	w->SetWidgetDirty(WID_TN_CTRL);
+	_shift_pressed = false;
+	w->SetWidgetLoweredState(WID_TN_SHIFT, _shift_pressed);
+	w->SetWidgetDirty(WID_TN_SHIFT);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -1313,7 +1360,7 @@ protected:
 	uint spacers;          ///< Number of spacer widgets in this toolbar
 
 public:
-	NWidgetToolbarContainer() : NWidgetContainer(NWID_HORIZONTAL)
+	NWidgetToolbarContainer(WidgetType widgetType = NWID_HORIZONTAL) : NWidgetContainer(widgetType)
 	{
 	}
 
@@ -1324,27 +1371,35 @@ public:
 	 */
 	bool IsButton(WidgetType type) const
 	{
-		return type == WWT_IMGBTN || type == WWT_IMGBTN_2 || type == WWT_PUSHIMGBTN;
+		return type == WWT_IMGBTN || type == WWT_IMGBTN_2 || type == WWT_PUSHIMGBTN || type == WWT_PUSHTXTBTN || type == WWT_TEXTBTN;
 	}
 
 	void SetupSmallestSize(Window *w, bool init_array)
 	{
 		this->smallest_x = 0; // Biggest child
 		this->smallest_y = 0; // Biggest child
-		this->fill_x = 1;
-		this->fill_y = 0;
-		this->resize_x = 1; // We only resize in this direction
-		this->resize_y = 0; // We never resize in this direction
+		this->fill_x = (type == NWID_HORIZONTAL);
+		this->fill_y = (type == NWID_VERTICAL);
+		this->resize_x = (type == NWID_HORIZONTAL); // We only resize in this direction
+		this->resize_y = (type == NWID_VERTICAL); // We never resize in this direction
 		this->spacers = 0;
 
 		uint nbuttons = 0;
 		/* First initialise some variables... */
 		for (NWidgetBase *child_wid = this->head; child_wid != NULL; child_wid = child_wid->next) {
 			child_wid->SetupSmallestSize(w, init_array);
-			this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+			if (type == NWID_HORIZONTAL) {
+				this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+			} else {
+				this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+			}
 			if (this->IsButton(child_wid->type)) {
 				nbuttons++;
-				this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+				if (type == NWID_HORIZONTAL) {
+					this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+				} else {
+					this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+				}
 			} else if (child_wid->type == NWID_SPACER) {
 				this->spacers++;
 			}
@@ -1352,10 +1407,24 @@ public:
 
 		/* ... then in a second pass make sure the 'current' heights are set. Won't change ever. */
 		for (NWidgetBase *child_wid = this->head; child_wid != NULL; child_wid = child_wid->next) {
-			child_wid->current_y = this->smallest_y;
-			if (!this->IsButton(child_wid->type)) {
-				child_wid->current_x = child_wid->smallest_x;
+			if (type == NWID_HORIZONTAL) {
+				child_wid->current_y = this->smallest_y;
+				if (!this->IsButton(child_wid->type)) {
+					child_wid->current_x = child_wid->smallest_x;
+				}
+			} else {
+				child_wid->current_x = this->smallest_x;
+				if (!this->IsButton(child_wid->type)) {
+					child_wid->current_y = child_wid->smallest_y;
+				}
 			}
+		}
+		if (type == NWID_HORIZONTAL) {
+			//w->window_desc->default_width_trad = nbuttons * this->smallest_x;
+			w->window_desc->pref_width = nbuttons * this->smallest_x;
+		} else {
+			//w->window_desc->default_height_trad = nbuttons * this->smallest_y;
+			w->window_desc->pref_height = nbuttons * this->smallest_y;
 		}
 		_toolbar_width = nbuttons * this->smallest_x;
 	}
@@ -1388,6 +1457,10 @@ public:
 		uint position = 0; // Place to put next child relative to origin of the container.
 		uint spacer_space = max(0, (int)given_width - (int)(button_count * this->smallest_x)); // Remaining spacing for 'spacer' widgets
 		uint button_space = given_width - spacer_space; // Remaining spacing for the buttons
+		if (type == NWID_VERTICAL) {
+			spacer_space = max(0, (int)given_height - (int)(button_count * this->smallest_y));
+			button_space = given_height - spacer_space;
+		}
 		uint spacer_i = 0;
 		uint button_i = 0;
 
@@ -1408,12 +1481,22 @@ public:
 
 			/* Buttons can be scaled, the others not. */
 			if (this->IsButton(child_wid->type)) {
-				child_wid->current_x = button_space / (button_count - button_i);
-				button_space -= child_wid->current_x;
+				if (type == NWID_HORIZONTAL) {
+					child_wid->current_x = button_space / (button_count - button_i);
+					button_space -= child_wid->current_x;
+				} else {
+					child_wid->current_y = button_space / (button_count - button_i);
+					button_space -= child_wid->current_y;
+				}
 				button_i++;
 			}
-			child_wid->AssignSizePosition(sizing, x + position, y, child_wid->current_x, this->current_y, rtl);
-			position += child_wid->current_x;
+			if (type == NWID_HORIZONTAL) {
+				child_wid->AssignSizePosition(sizing, x + position, y, child_wid->current_x, this->current_y, rtl);
+				position += child_wid->current_x;
+			} else {
+				child_wid->AssignSizePosition(sizing, x, y + position, this->current_x, child_wid->current_y, rtl);
+				position += child_wid->current_y;
+			}
 
 			if (rtl) {
 				cur_wid--;
@@ -1784,6 +1867,54 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 	}
 };
 
+/** Container for the vertical main toolbar */
+class NWidgetVerticalToolbarContainer : public NWidgetToolbarContainer {
+	int side;
+
+	public:
+	NWidgetVerticalToolbarContainer(int side) : NWidgetToolbarContainer(NWID_VERTICAL), side(side)
+	{
+	}
+
+	/* virtual */ const byte *GetButtonArrangement(uint &width, uint &arrangable_count, uint &button_count, uint &spacer_count) const
+	{
+		// TODO: replace with WID_TN_XXX
+		static const byte arrange_left[] = {
+			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,
+		};
+		// Some rather artistic button arrangement, I'm proud of myself
+		static const byte arrange_right[] = {
+			29, 21, 22, 23, 24, 25,  7,  8,  9, 12, 14, 28,
+			29, 15, 16, 17, 18, 13,  7, 10, 11, 26, 27, 28,
+		};
+		// Full-length toolbar without switch button, if enough space
+		static const byte arrange_left_all[] = {
+			32, 30, 31, 19, 20,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 13,
+		};
+		static const byte arrange_right_all[] = {
+			10, 11, 12, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28,
+		};
+
+		spacer_count = 0;
+
+		if (_screen.height / this->smallest_y >= lengthof(arrange_left_all))
+		{
+			button_count = arrangable_count = lengthof(arrange_left_all);
+			if (side == 0) {
+				return arrange_left_all;
+			}
+			return arrange_right_all;
+		}
+
+		if (side == 0) {
+			button_count = arrangable_count = lengthof(arrange_left);
+			return arrange_left;
+		}
+		button_count = arrangable_count = lengthof(arrange_right) / 2;
+		return &arrange_right[((_toolbar_mode == TB_LOWER) ? button_count : 0)];
+	}
+};
+
 /** Container for the scenario editor's toolbar */
 class NWidgetScenarioToolbarContainer : public NWidgetToolbarContainer {
 	uint panel_widths[2]; ///< The width of the two panels (the text panel and date panel)
@@ -1931,6 +2062,9 @@ static ToolbarButtonProc * const _toolbar_button_procs[] = {
 	ToolbarNewspaperClick,
 	ToolbarHelpClick,
 	ToolbarSwitchClick,
+	ToolbarCtrlClick,
+	ToolbarShiftClick,
+	ToolbarDeleteClick,
 };
 
 enum MainToolbarHotkeys {
@@ -1976,7 +2110,10 @@ enum MainToolbarHotkeys {
 
 /** Main toolbar. */
 struct MainToolbarWindow : Window {
-	MainToolbarWindow(WindowDesc *desc) : Window(desc)
+	int *clickedFlag;
+	int clickedValue;
+
+	MainToolbarWindow(WindowDesc *desc, int *clickedFlag = NULL, int clickedValue = 0) : Window(desc), clickedFlag(clickedFlag), clickedValue(clickedValue)
 	{
 		this->InitNested(0);
 
@@ -2013,11 +2150,15 @@ struct MainToolbarWindow : Window {
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
+		if (clickedFlag)
+			*clickedFlag = clickedValue;
 		if (_game_mode != GM_MENU && !this->IsWidgetDisabled(widget)) _toolbar_button_procs[widget](this);
 	}
 
 	virtual void OnDropdownSelect(int widget, int index)
 	{
+		if (clickedFlag)
+			*clickedFlag = clickedValue;
 		CallBackFunction cbf = _menu_clicked_procs[widget](index);
 		if (cbf != CBF_NONE) _last_started_action = cbf;
 	}
@@ -2081,7 +2222,7 @@ struct MainToolbarWindow : Window {
 				ShowLandInfo(tile);
 				break;
 
-			default: NOT_REACHED();
+			default: return; //NOT_REACHED();
 		}
 	}
 
@@ -2179,44 +2320,44 @@ static Hotkey maintoolbar_hotkeys[] = {
 };
 HotkeyList MainToolbarWindow::hotkeys("maintoolbar", maintoolbar_hotkeys);
 
+/** Sprites to use for the different toolbar buttons */
+static const SpriteID _toolbar_button_sprites[] = {
+	SPR_IMG_PAUSE,           // WID_TN_PAUSE
+	SPR_IMG_FASTFORWARD,     // WID_TN_FAST_FORWARD
+	SPR_IMG_SETTINGS,        // WID_TN_SETTINGS
+	SPR_IMG_SAVE,            // WID_TN_SAVE
+	SPR_IMG_SMALLMAP,        // WID_TN_SMALL_MAP
+	SPR_IMG_TOWN,            // WID_TN_TOWNS
+	SPR_IMG_SUBSIDIES,       // WID_TN_SUBSIDIES
+	SPR_IMG_COMPANY_LIST,    // WID_TN_STATIONS
+	SPR_IMG_COMPANY_FINANCE, // WID_TN_FINANCES
+	SPR_IMG_COMPANY_GENERAL, // WID_TN_COMPANIES
+	SPR_IMG_STORY_BOOK,      // WID_TN_STORY
+	SPR_IMG_GOAL,            // WID_TN_GOAL
+	SPR_IMG_GRAPHS,          // WID_TN_GRAPHS
+	SPR_IMG_COMPANY_LEAGUE,  // WID_TN_LEAGUE
+	SPR_IMG_INDUSTRY,        // WID_TN_INDUSTRIES
+	SPR_IMG_TRAINLIST,       // WID_TN_TRAINS
+	SPR_IMG_TRUCKLIST,       // WID_TN_ROADVEHS
+	SPR_IMG_SHIPLIST,        // WID_TN_SHIPS
+	SPR_IMG_AIRPLANESLIST,   // WID_TN_AIRCRAFT
+	SPR_IMG_ZOOMIN,          // WID_TN_ZOOMIN
+	SPR_IMG_ZOOMOUT,         // WID_TN_ZOOMOUT
+	SPR_IMG_BUILDRAIL,       // WID_TN_RAILS
+	SPR_IMG_BUILDROAD,       // WID_TN_ROADS
+	SPR_IMG_BUILDWATER,      // WID_TN_WATER
+	SPR_IMG_BUILDAIR,        // WID_TN_AIR
+	SPR_IMG_LANDSCAPING,     // WID_TN_LANDSCAPE
+	SPR_IMG_MUSIC,           // WID_TN_MUSIC_SOUND
+	SPR_IMG_MESSAGES,        // WID_TN_MESSAGES
+	SPR_IMG_QUERY,           // WID_TN_HELP
+	SPR_IMG_SWITCH_TOOLBAR,  // WID_TN_SWITCH_BAR
+};
+
 static NWidgetBase *MakeMainToolbar(int *biggest_index)
 {
-	/** Sprites to use for the different toolbar buttons */
-	static const SpriteID toolbar_button_sprites[] = {
-		SPR_IMG_PAUSE,           // WID_TN_PAUSE
-		SPR_IMG_FASTFORWARD,     // WID_TN_FAST_FORWARD
-		SPR_IMG_SETTINGS,        // WID_TN_SETTINGS
-		SPR_IMG_SAVE,            // WID_TN_SAVE
-		SPR_IMG_SMALLMAP,        // WID_TN_SMALL_MAP
-		SPR_IMG_TOWN,            // WID_TN_TOWNS
-		SPR_IMG_SUBSIDIES,       // WID_TN_SUBSIDIES
-		SPR_IMG_COMPANY_LIST,    // WID_TN_STATIONS
-		SPR_IMG_COMPANY_FINANCE, // WID_TN_FINANCES
-		SPR_IMG_COMPANY_GENERAL, // WID_TN_COMPANIES
-		SPR_IMG_STORY_BOOK,      // WID_TN_STORY
-		SPR_IMG_GOAL,            // WID_TN_GOAL
-		SPR_IMG_GRAPHS,          // WID_TN_GRAPHS
-		SPR_IMG_COMPANY_LEAGUE,  // WID_TN_LEAGUE
-		SPR_IMG_INDUSTRY,        // WID_TN_INDUSTRIES
-		SPR_IMG_TRAINLIST,       // WID_TN_TRAINS
-		SPR_IMG_TRUCKLIST,       // WID_TN_ROADVEHS
-		SPR_IMG_SHIPLIST,        // WID_TN_SHIPS
-		SPR_IMG_AIRPLANESLIST,   // WID_TN_AIRCRAFT
-		SPR_IMG_ZOOMIN,          // WID_TN_ZOOMIN
-		SPR_IMG_ZOOMOUT,         // WID_TN_ZOOMOUT
-		SPR_IMG_BUILDRAIL,       // WID_TN_RAILS
-		SPR_IMG_BUILDROAD,       // WID_TN_ROADS
-		SPR_IMG_BUILDWATER,      // WID_TN_WATER
-		SPR_IMG_BUILDAIR,        // WID_TN_AIR
-		SPR_IMG_LANDSCAPING,     // WID_TN_LANDSCAPE
-		SPR_IMG_MUSIC,           // WID_TN_MUSIC_SOUND
-		SPR_IMG_MESSAGES,        // WID_TN_MESSAGES
-		SPR_IMG_QUERY,           // WID_TN_HELP
-		SPR_IMG_SWITCH_TOOLBAR,  // WID_TN_SWITCH_BAR
-	};
-
 	NWidgetMainToolbarContainer *hor = new NWidgetMainToolbarContainer();
-	for (uint i = 0; i < WID_TN_END; i++) {
+	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
 		switch (i) {
 			case WID_TN_SMALL_MAP:
 			case WID_TN_FINANCES:
@@ -2227,10 +2368,15 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 				hor->Add(new NWidgetSpacer(0, 0));
 				break;
 		}
-		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
 
-	*biggest_index = max<int>(*biggest_index, WID_TN_SWITCH_BAR);
+	hor->Add(new NWidgetSpacer(0, 0));
+	hor->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));
+	hor->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
+	hor->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
 	return hor;
 }
 
@@ -2246,6 +2392,59 @@ static WindowDesc _toolb_normal_desc(
 	&MainToolbarWindow::hotkeys
 );
 
+static NWidgetBase *MakeVerticalLeftToolbar(int *biggest_index)
+{
+	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(0);
+	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
+		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+	}
+
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
+	return tb;
+}
+
+static const NWidgetPart _nested_toolbar_vertical_left_widgets[] = {
+	NWidgetFunction(MakeVerticalLeftToolbar),
+};
+
+static WindowDesc _toolb_vertical_left_desc(
+	WDP_MANUAL, NULL, 22, 480,
+	WC_MAIN_TOOLBAR, WC_NONE,
+	WDF_NO_FOCUS,
+	_nested_toolbar_vertical_left_widgets, lengthof(_nested_toolbar_vertical_left_widgets),
+	&MainToolbarWindow::hotkeys
+);
+
+static NWidgetBase *MakeVerticalRightToolbar(int *biggest_index)
+{
+	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(1);
+	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
+		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+	}
+
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
+	tb->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
+
+	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
+	return tb;
+}
+
+static const NWidgetPart _nested_toolbar_vertical_right_widgets[] = {
+	NWidgetFunction(MakeVerticalRightToolbar),
+};
+
+static WindowDesc _toolb_vertical_right_desc(
+	WDP_MANUAL, NULL, 22, 480,
+	WC_MAIN_TOOLBAR_RIGHT, WC_NONE,
+	WDF_NO_FOCUS,
+	_nested_toolbar_vertical_right_widgets, lengthof(_nested_toolbar_vertical_right_widgets),
+	&MainToolbarWindow::hotkeys
+);
 
 /* --- Toolbar handling for the scenario editor */
 
@@ -2574,6 +2773,14 @@ void AllocateToolbar()
 	if (_game_mode == GM_EDITOR) {
 		new ScenarioEditorToolbarWindow(&_toolb_scen_desc);
 	} else {
-		new MainToolbarWindow(&_toolb_normal_desc);
+		if (_settings_client.gui.vertical_toolbar) {
+			MainToolbarWindow *w = new MainToolbarWindow(&_toolb_vertical_left_desc, &_last_clicked_toolbar_idx, 0);
+			w->left = 0;
+			w = new MainToolbarWindow(&_toolb_vertical_right_desc, &_last_clicked_toolbar_idx, 1);
+			w->left = _screen.width - w->width;
+			SetDirtyBlocks(0, w->top, _screen.width, w->top + w->height);
+		} else {
+			new MainToolbarWindow(&_toolb_normal_desc);
+		}
 	}
 }

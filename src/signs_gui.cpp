@@ -196,7 +196,7 @@ struct SignListWindow : Window, SignList {
 	{
 		switch (widget) {
 			case WID_SIL_LIST: {
-				uint y = r.top + WD_FRAMERECT_TOP; // Offset from top of widget.
+				uint y = Center(r.top + WD_FRAMERECT_TOP, this->resize.step_height); // Offset from top of widget.
 				/* No signs? */
 				if (this->vscroll->GetCount() == 0) {
 					DrawString(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, y, STR_STATION_LIST_NONE);
@@ -267,7 +267,7 @@ struct SignListWindow : Window, SignList {
 			case WID_SIL_LIST: {
 				Dimension spr_dim = GetSpriteSize(SPR_COMPANY_ICON);
 				this->text_offset = WD_FRAMETEXT_LEFT + spr_dim.width + 2; // 2 pixels space between icon and the sign text.
-				resize->height = max<uint>(FONT_HEIGHT_NORMAL, spr_dim.height);
+				resize->height = max<uint>(GetMinSizing(NWST_STEP), spr_dim.height);
 				Dimension d = {(uint)(this->text_offset + WD_FRAMETEXT_RIGHT), WD_FRAMERECT_TOP + 5 * resize->height + WD_FRAMERECT_BOTTOM};
 				*size = maxdim(*size, d);
 				break;

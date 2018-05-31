@@ -46,6 +46,9 @@ enum ToolbarNormalWidgets {
 	WID_TN_MESSAGES,      ///< Messages menu.
 	WID_TN_HELP,          ///< Help menu.
 	WID_TN_SWITCH_BAR,    ///< Only available when toolbar has been split to switch between different subsets.
+	WID_TN_CTRL,          ///< Press CTRL.
+	WID_TN_SHIFT,         ///< Press SHIFT.
+	WID_TN_DELETE,        ///< Press DELETE.
 	WID_TN_END,           ///< Helper for knowing the amount of widgets.
 };
 

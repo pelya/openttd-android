@@ -70,7 +70,11 @@ ROOT_DIR=`pwd`
 # Determine if we are using a modified version
 # Assume the dir is not modified
 MODIFIED="0"
-if [ -d "$ROOT_DIR/.svn" ] || [ -d "$ROOT_DIR/../.svn" ]; then
+if [ -f "$ROOT_DIR/.ottdrev" ]; then
+	# We are an exported source bundle
+	cat $ROOT_DIR/.ottdrev
+	exit
+elif [ -d "$ROOT_DIR/.svn" ] || [ -d "$ROOT_DIR/../.svn" ]; then
 	# We are an svn checkout
 	if [ -n "`svnversion | grep 'M'`" ]; then
 		MODIFIED="2"
@@ -84,7 +88,7 @@ if [ -d "$ROOT_DIR/.svn" ] || [ -d "$ROOT_DIR/../.svn" ]; then
 	else
 		REV="r$REV_NR"
 	fi
-elif [ -d "$ROOT_DIR/.git" ]; then
+elif [ -e "$ROOT_DIR/.git" ]; then
 	# We are a git checkout
 	# Refresh the index to make sure file stat info is in sync, then look for modifications
 	git update-index --refresh >/dev/null
@@ -122,10 +126,6 @@ elif [ -d "$ROOT_DIR/.hg" ]; then
 		# No rev? Maybe it is a custom hgsubversion clone
 		REV_NR=`LC_ALL=C HGPLAIN= hg parent --template="{svnrev}"`
 	fi
-elif [ -f "$ROOT_DIR/.ottdrev" ]; then
-	# We are an exported source bundle
-	cat $ROOT_DIR/.ottdrev
-	exit
 else
 	# We don't know
 	MODIFIED="1"
@@ -134,6 +134,7 @@ else
 	REV_NR=""
 fi
 
+MODIFIED="0" # This prevents Andorid build from connecting to a public servers
 if [ "$MODIFIED" -eq "2" ]; then
 	REV="${REV}M"
 fi

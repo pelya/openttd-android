@@ -555,13 +555,16 @@ private:
 		assert(type > OPOS_NONE && type < OPOS_END);
 
 		static const HighLightStyle goto_place_style[OPOS_END - 1] = {
-			HT_RECT | HT_VEHICLE, // OPOS_GOTO
+			HT_RECT | HT_VEHICLE | HT_SCROLL_VIEWPORT, // OPOS_GOTO
 			HT_NONE,              // OPOS_CONDITIONAL
-			HT_VEHICLE,           // OPOS_SHARE
+			HT_VEHICLE | HT_SCROLL_VIEWPORT,           // OPOS_SHARE
 		};
 		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, goto_place_style[type - 1], this);
 		this->goto_type = type;
 		this->SetWidgetDirty(WID_O_GOTO);
+		if (type == OPOS_GOTO) {
+			MoveAllWindowsOffScreen();
+		}
 	}
 
 	/**
@@ -799,8 +802,8 @@ public:
 	{
 		switch (widget) {
 			case WID_O_ORDER_LIST:
-				resize->height = FONT_HEIGHT_NORMAL;
-				size->height = 6 * resize->height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				size->height = 4 * resize->height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				break;
 
 			case WID_O_COND_VARIABLE: {
@@ -1086,8 +1089,8 @@ public:
 		int index_column_width = GetStringBoundingBox(STR_ORDER_INDEX).width + 2 * GetSpriteSize(rtl ? SPR_ARROW_RIGHT : SPR_ARROW_LEFT).width + 3;
 		int middle = rtl ? r.right - WD_FRAMETEXT_RIGHT - index_column_width : r.left + WD_FRAMETEXT_LEFT + index_column_width;
 
-		int y = r.top + WD_FRAMERECT_TOP;
 		int line_height = this->GetWidget<NWidgetBase>(WID_O_ORDER_LIST)->resize_y;
+		int y = Center(r.top + WD_FRAMERECT_TOP, line_height);
 
 		int i = this->vscroll->GetPosition();
 		const Order *order = this->vehicle->GetOrder(i);
@@ -1112,7 +1115,7 @@ public:
 			}
 
 			/* Reset counters for drawing the orders. */
-			y = r.top + WD_FRAMERECT_TOP;
+			y = Center(r.top + WD_FRAMERECT_TOP, line_height);
 			i = this->vscroll->GetPosition();
 			order = this->vehicle->GetOrder(i);
 		}

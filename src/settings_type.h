@@ -77,6 +77,10 @@ struct GUISettings {
 	bool   lost_vehicle_warn;                ///< if a vehicle can't find its destination, show a warning
 	uint8  order_review_system;              ///< perform order reviews on vehicles
 	bool   vehicle_income_warn;              ///< if a vehicle isn't generating income, show a warning
+	bool   vertical_toolbar;                 ///< main toolbar is split into two vertical toolbars
+	bool   build_confirmation;               ///< show confirmation dialog when building roads and stations
+	uint   min_button;                       ///< min size of most button widgets
+	uint   min_step;                         ///< min size of scrollbar/dropdown elements
 	bool   show_finances;                    ///< show finances at end of year
 	bool   sg_new_nonstop;                   ///< ttdpatch compatible nonstop handling read from pre v93 savegames
 	bool   new_nonstop;                      ///< ttdpatch compatible nonstop handling
@@ -102,6 +106,7 @@ struct GUISettings {
 	ZoomLevelByte zoom_max;                  ///< maximum zoom out level
 	bool   disable_unsuitable_building;      ///< disable infrastructure building when no suitable vehicles are available
 	byte   autosave;                         ///< how often should we do autosaves?
+	byte   save_to_network;                  ///< backup all savegames to network
 	bool   threaded_saves;                   ///< should we do threaded saves?
 	bool   keep_all_autosave;                ///< name the autosave in a different way
 	bool   autosave_on_exit;                 ///< save an autosave when you quit the game, but do not ask "Do you really want to quit?"
