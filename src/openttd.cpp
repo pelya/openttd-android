@@ -499,7 +499,11 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 		if (!checked &&
 			_settings_newgame.vehicle.max_trains == 0 && _settings_newgame.vehicle.max_roadveh == 0 &&
 			_settings_newgame.vehicle.max_aircraft == 0 && _settings_newgame.vehicle.max_ships == 0) {
-			unlink("libsdl-DownloadFinished-1.flag");
+			if (access(".openttd/openttd-backup.cfg", F_OK) == 0) {
+				system("mv -f .openttd/openttd-backup.cfg .openttd/openttd.cfg");
+			} else {
+				unlink("libsdl-DownloadFinished-1.flag");
+			}
 			//_exit_game = true;
 			//_restart_game = true;
 			_exit(0); // kill(getpid(), SIG_KILL); //abort(); // Kill myself with contempt, user will restart the app, because otherwise we enter infinite restart loop
