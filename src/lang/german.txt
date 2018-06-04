@@ -4994,10 +4994,12 @@ STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Schriftg
 STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Größe aller Schriftarten
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Aktionen bestätigen: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Zeige Bestätigungsdialog bei Straßen- und Haltenstellebau
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Titelleisten
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Zeige in allen Fenstern die Titelleiste an oder verbirg sie, um Platz zu sparen.
 STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
 STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Setzt die Farbtiefe auf 8 Bits per Pixel. Dieser Modus unterstützt Wasseranimation
 STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
-STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Setzt die Farbtiefe auf 16 Bit per Pixel. Erfordert Neustart und dieser Modus unterstützt keine Wasseranimation
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Setzt die Farbtiefe auf 16 Bit per Pixel. Erfordert einen Neustart. Dieser Modus unterstützt keine Wasseranimation
 STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
 STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Setzt die Farbtiefe auf 24 Bits per Pixel. Dieser Modus unterstützt Wasseranimation
 STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Schließe alle offene Fenster (außer festgepinnte)
