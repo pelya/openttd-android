@@ -11,4 +11,4 @@
 
 - New game crashes with AdmiralAI enabled.
 
-- 'Title bars' text should be black, and the button should be bigger.
+- Create auto-save when the app is put to background, and load it on the next start.
