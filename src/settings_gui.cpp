@@ -653,9 +653,13 @@ struct GameOptionsWindow : Window {
 	{
 		if (!gui_scope) return;
 		this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
+#ifdef WIN32
+		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
+#else
 		this->SetWidgetLoweredState(WID_GO_8BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "8bpp-optimized") == 0);
 		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == NULL || strcmp(_ini_blitter, "16bpp-simple") == 0);
 		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "32bpp-anim") == 0);
+#endif
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);
@@ -688,9 +692,14 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_RESOLUTION, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_RESOLUTION_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_RESOLUTION_TOOLTIP), SetFill(1, 0), SetPadding(0, 0, 3, 0),
 					NWidget(NWID_HORIZONTAL),
+#ifdef WIN32
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_GAME_OPTIONS_FULLSCREEN, STR_NULL),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_FULLSCREEN_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP),
+#else
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_8BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_8BPP, STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT),
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_16BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_16BPP, STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT),
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_32BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_24BPP, STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT),
+#endif
 					EndContainer(),
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_GUI_ZOOM_FRAME, STR_NULL),
