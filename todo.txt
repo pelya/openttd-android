@@ -9,6 +9,4 @@
 
 - Draggable combo boxes.
 
-- New game crashes with AdmiralAI enabled.
-
 - Create auto-save when the app is put to background, and load it on the next start.
