@@ -27,6 +27,7 @@
 #include "language.h"
 #include "rev.h"
 #include "highscore.h"
+#include "tutorial_gui.h"
 
 #include "widgets/intro_widget.h"
 
@@ -61,9 +62,13 @@ struct SelectGameWindow : public Window {
 	virtual void OnInit()
 	{
 		bool missing_sprites = _missing_extra_graphics > 0 && !IsReleasedVersion();
+		missing_sprites = false;
 		this->GetWidget<NWidgetStacked>(WID_SGI_BASESET_SELECTION)->SetDisplayedPlane(missing_sprites ? 0 : SZSP_NONE);
 
 		bool missing_lang = _current_language->missing >= _settings_client.gui.missing_strings_threshold && !IsReleasedVersion();
+#ifdef __ANDROID__
+		missing_lang = false;
+#endif
 		this->GetWidget<NWidgetStacked>(WID_SGI_TRANSLATION_SELECTION)->SetDisplayedPlane(missing_lang ? 0 : SZSP_NONE);
 	}
 
@@ -158,13 +163,14 @@ struct SelectGameWindow : public Window {
 				}
 				break;
 			case WID_SGI_AI_SETTINGS:     ShowAIConfigWindow(); break;
+			case WID_SGI_TUTORIAL:        ShowTutorialWindow(); break;
 			case WID_SGI_EXIT:            HandleExitGameRequest(); break;
 		}
 	}
 };
 
 static const NWidgetPart _nested_select_game_widgets[] = {
-	NWidget(WWT_CAPTION, COLOUR_BROWN), SetDataTip(STR_INTRO_CAPTION, STR_NULL),
+	NWidget(WWT_CAPTION, COLOUR_BROWN), SetSizingType(NWST_BUTTON), SetDataTip(STR_INTRO_CAPTION, STR_NULL),
 	NWidget(WWT_PANEL, COLOUR_BROWN),
 	NWidget(NWID_SPACER), SetMinimalSize(0, 8),
 
@@ -258,11 +264,11 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
 
 	/* 'exit program' button */
-	NWidget(NWID_HORIZONTAL),
-		NWidget(NWID_SPACER), SetFill(1, 0),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_EXIT), SetMinimalSize(128, 12),
-							SetDataTip(STR_INTRO_QUIT, STR_INTRO_TOOLTIP_QUIT),
-		NWidget(NWID_SPACER), SetFill(1, 0),
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_TUTORIAL), SetMinimalSize(158, 12),
+							SetDataTip(STR_ABOUT_MENU_TUTORIAL, STR_TUTORIAL_WINDOW_TOOLTIP), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_EXIT), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_QUIT, STR_INTRO_TOOLTIP_QUIT), SetPadding(0, 10, 0, 0), SetFill(1, 0),
 	EndContainer(),
 
 	NWidget(NWID_SPACER), SetMinimalSize(0, 8),

@@ -70,6 +70,12 @@
 #include <stdarg.h>
 
 #include "safeguards.h"
+#ifdef __ANDROID__
+#include <unistd.h>
+#include <SDL_android.h>
+#endif
+#include <limits.h>
+#include <string>
 
 void CallLandscapeTick();
 void IncreaseDate();
@@ -82,6 +88,8 @@ bool HandleBootstrap();
 extern Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY);
 extern void ShowOSErrorBox(const char *buf, bool system);
 extern char *_config_file;
+const char *NETWORK_SAVE_SCREENSHOT_FILE = "OpenTTD-network-save";
+const char *NETWORK_SAVE_SCREENSHOT_FILE_PNG = "OpenTTD-network-save.png";
 
 /**
  * Error handling for fatal user errors.
@@ -492,6 +500,24 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 		}
 #endif /* ENABLE_NETWORK */
 
+		// TODO: remove this hack in one year
+		// Check if OpenTTD config is broken by blitter changing code
+		static bool checked = false;
+		DEBUG(misc, 0, "========= Limits for vehicles: %d %d %d %d", _settings_newgame.vehicle.max_trains, _settings_newgame.vehicle.max_roadveh, _settings_newgame.vehicle.max_aircraft, _settings_newgame.vehicle.max_ships);
+		if (!checked &&
+			_settings_newgame.vehicle.max_trains == 0 && _settings_newgame.vehicle.max_roadveh == 0 &&
+			_settings_newgame.vehicle.max_aircraft == 0 && _settings_newgame.vehicle.max_ships == 0) {
+			if (access(".openttd/openttd-backup.cfg", F_OK) == 0) {
+				system("mv -f .openttd/openttd-backup.cfg .openttd/openttd.cfg");
+			} else {
+				unlink("libsdl-DownloadFinished-1.flag");
+			}
+			//_exit_game = true;
+			//_restart_game = true;
+			_exit(0); // kill(getpid(), SIG_KILL); //abort(); // Kill myself with contempt, user will restart the app, because otherwise we enter infinite restart loop
+		}
+		checked = true;
+
 		/* After the scan we're not used anymore. */
 		delete this;
 	}
@@ -732,6 +758,16 @@ int openttd_main(int argc, char *argv[])
 	 * just be out of the bounds of the window. */
 	_cursor.in_window = true;
 
+	{
+#ifndef WIN32
+		// Configure local font path on Android
+		//char curdir[PATH_MAX];
+		//getcwd(curdir, sizeof(curdir));
+		//setenv("FONTCONFIG_FONTS", (std::string(curdir) + "/fonts").c_str(), 1);
+		setenv("FONTCONFIG_FONTS", "fonts", 1);
+		DEBUG(misc, 1, "Set FONTCONFIG_FONTS to %s", getenv("FONTCONFIG_FONTS"));
+#endif
+	}
 	/* enumerate language files */
 	InitializeLanguagePacks();
 
@@ -758,7 +794,7 @@ int openttd_main(int argc, char *argv[])
 	GfxInitPalettes();
 
 	DEBUG(misc, 1, "Loading blitter...");
-	if (blitter == NULL && _ini_blitter != NULL) blitter = stredup(_ini_blitter);
+	if (_ini_blitter != NULL) blitter = stredup(_ini_blitter);
 	_blitter_autodetected = StrEmpty(blitter);
 	/* Activate the initial blitter.
 	 * This is only some initial guess, after NewGRFs have been loaded SwitchNewGRFBlitter may switch to a different one.
@@ -863,7 +899,15 @@ int openttd_main(int argc, char *argv[])
 	ScanNewGRFFiles(scanner);
 	scanner = NULL;
 
-	VideoDriver::GetInstance()->MainLoop();
+	try {
+		VideoDriver::GetInstance()->MainLoop();
+	} catch (const std::exception & e) {
+		DEBUG(misc, 0, "Main thread got exception: %s", e.what());
+		throw;
+	} catch (...) {
+		DEBUG(misc, 0, "Main thread got unknown exception");
+		throw;
+	}
 
 	WaitTillSaved();
 
@@ -893,6 +937,14 @@ exit_bootstrap:
 	free(sounddriver);
 
 exit_normal:
+
+	if (_restart_game) {
+#ifdef __ANDROID__
+		// This makes OpenTTD reset all it's settings for some reason, because the process is not killed and shared libraries are not unloaded.
+		exit(0);
+#endif
+	}
+
 	free(BaseGraphics::ini_set);
 	free(BaseSounds::ini_set);
 	free(BaseMusic::ini_set);
@@ -1173,6 +1225,24 @@ void SwitchToMode(SwitchMode new_mode)
 				ShowErrorMessage(STR_JUST_RAW_STRING, INVALID_STRING_ID, WL_ERROR);
 			} else {
 				DeleteWindowById(WC_SAVELOAD, 0);
+#ifdef __ANDROID__
+				if (_settings_client.gui.save_to_network) {
+					char screenshotFile[PATH_MAX] = "";
+					const char* lastPart = strrchr(_file_to_saveload.name, PATHSEPCHAR);
+					if (!lastPart) {
+						lastPart = _file_to_saveload.name;
+					} else {
+						lastPart++;
+					}
+					MakeScreenshot(SC_VIEWPORT, NETWORK_SAVE_SCREENSHOT_FILE);
+					FioFindFullPath(screenshotFile, lastof(screenshotFile), SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
+					uint64_t playedTime = abs(_date - DAYS_TILL(_settings_newgame.game_creation.starting_year)) * 1000;
+					int ret = SDL_ANDROID_CloudSave(_file_to_saveload.name, lastPart, "OpenTTD", lastPart, screenshotFile, playedTime);
+					if (_settings_client.gui.save_to_network == 2) {
+						_settings_client.gui.save_to_network = ret ? 1 : 0;
+					}
+				}
+#endif
 			}
 			break;
 

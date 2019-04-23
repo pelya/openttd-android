@@ -278,7 +278,7 @@ public:
 	 */
 	virtual void SetFontNames(struct FreeTypeSettings *settings, const char *font_name) = 0;
 
-	bool FindMissingGlyphs(const char **str);
+	int FindMissingGlyphs(const char **str);
 };
 
 void CheckForMissingGlyphs(bool base_font = true, MissingGlyphSearcher *search = NULL);

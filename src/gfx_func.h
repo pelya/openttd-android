@@ -45,6 +45,7 @@
 #include "gfx_type.h"
 #include "strings_type.h"
 #include "string_type.h"
+#include "core/math_func.hpp"
 
 void GameLoop();
 
@@ -56,12 +57,15 @@ extern byte _support8bpp;
 extern CursorVars _cursor;
 extern bool _ctrl_pressed;   ///< Is Ctrl pressed?
 extern bool _shift_pressed;  ///< Is Shift pressed?
+extern bool _move_pressed;
+
 extern byte _fast_forward;
 
 extern bool _left_button_down;
 extern bool _left_button_clicked;
 extern bool _right_button_down;
 extern bool _right_button_clicked;
+extern Point _right_button_down_pos;
 
 extern DrawPixelInfo _screen;
 extern bool _screen_disable_anim;   ///< Disable palette animation (important for 32bpp-anim blitter during giant screenshot)
@@ -92,6 +96,9 @@ void GfxScroll(int left, int top, int width, int height, int xo, int yo);
 Dimension GetSpriteSize(SpriteID sprid, Point *offset = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
 void DrawSpriteViewport(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL);
 void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &r, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
 
 /** How to align the to-be drawn text. */
 enum StringAlignment {
@@ -184,6 +191,39 @@ int GetCharacterHeight(FontSize size);
 
 /** Height of characters in the large (#FS_MONO) font. @note Some characters may be oversized. */
 #define FONT_HEIGHT_MONO  (GetCharacterHeight(FS_MONO))
+
+int InitTempMargin(int left, int right, bool to_end_line);
+void AddSpace(int space, int &here, bool to_end_line);
+
+void UpdateMarginEnd(int end, int &margin, bool to_end_line);
+void UpdateMarginWidth(int adding, int &margin, bool to_end_line);
+void UpdateMarginsEnd(int end, int &left, int &right, bool to_end_line);
+void UpdateMarginsWidth(int width, int &left, int &right, bool to_end_line);
+
+void DrawString2(int left, int right, int top, int &margin, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false);
+void DrawSprite2(int width, int left, int right, int top, int &margin, SpriteID img, PaletteID pal, bool to_end_line = false, SubSprite *sub = NULL);
+
+/**
+ * Return where to start drawing a centered object inside a widget.
+ * @param top The top coordinate (or the left coordinate) of the widget.
+ * @param height The height (or width) of the widget.
+ * @param size The height (or width) of the object to draw.
+ * @return The coordinate where to start drawing the centered object.
+ */
+static inline int Center(int top, int height, uint size = FONT_HEIGHT_NORMAL)
+{
+	return top + (height - size) / 2;
+}
+
+/**
+ * Returns fint/button size, rescaled to current screen resolution from the base Android resolution, which is 854x480
+ * @param value The value to rescale
+ * @return Rescaled value, using lesser of the curret screen coordinates
+ */
+static inline int RescaleFrom854x480(int value)
+{
+	return min(value * _cur_resolution.width / 854, value * _cur_resolution.height / 480);
+}
 
 extern DrawPixelInfo *_cur_dpi;
 

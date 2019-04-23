@@ -71,9 +71,11 @@ protected:
 	static const uint FORCE_REFRESH_PERIOD = 930; ///< map is redrawn after that many milliseconds.
 	static const uint BLINK_PERIOD         = 450; ///< highlight blinking interval in milliseconds.
 
+	bool show_legend;              ///< Display legend.
 	uint min_number_of_columns;    ///< Minimal number of columns in legends.
 	uint min_number_of_fixed_rows; ///< Minimal number of rows in the legends for the fixed layouts only (all except #SMT_INDUSTRY).
 	uint column_width;             ///< Width of a column in the #WID_SM_LEGEND widget.
+	const uint row_height;         ///< Heigth of each row in the #WID_SM_LEGEND widget.
 
 	int32 scroll_x;  ///< Horizontal world coordinate of the base tile left of the top-left corner of the smallmap display.
 	int32 scroll_y;  ///< Vertical world coordinate of the base tile left of the top-left corner of the smallmap display.
@@ -116,7 +118,7 @@ protected:
 	 */
 	inline uint GetMinLegendWidth() const
 	{
-		return WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width;
+		return show_legend ? WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width : 0;
 	}
 
 	/**
@@ -135,8 +137,8 @@ protected:
 	 */
 	inline uint GetLegendHeight(uint num_columns) const
 	{
-		return WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
-				this->GetNumberRowsLegend(num_columns) * FONT_HEIGHT_SMALL;
+		return show_legend ? WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
+				this->min_number_of_fixed_rows * this->row_height : 0;
 	}
 
 	/**
@@ -191,6 +193,7 @@ public:
 	virtual void OnRealtimeTick(uint delta_ms);
 	virtual void OnScroll(Point delta);
 	virtual void OnMouseOver(Point pt, int widget);
+	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize);
 };
 
 #endif /* SMALLMAP_GUI_H */

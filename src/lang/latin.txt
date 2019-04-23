@@ -5345,3 +5345,35 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+# Android strings
+STR_ABOUT_MENU_TUTORIAL                                         :Rudimentum
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Monstrare formulam graphicam / descriptionem tabulae
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Arca instrumentorum directa: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Si vis, arca instrumentorum prima dividitur in partes duas apud margines scrinii
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Magnitudo globulorum
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Magnitudo omnium elementorum interfaciei
+STR_CONFIG_SETTING_FONT_SIZE                                    :Magnitudo fontis typographici
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Magnitudo omnium fontium typographicorum in ludo
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Confirmare: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Monstrare confirmationem dum struuntur stationes viaeque
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8bpp
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Eligere modum coloris 8bpp; hic sinit colores aquae moventes
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16bpp
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Eligere modum coloris 16bpp (necesse erit programma exire et resumere); hic NON sinit colores aquae moventes
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24bpp
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Eligere modum coloris 24bpp; hic sinit colores aquae moventes
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Claudere omnes fenestras (sed non glutinosas)
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Preme ut aestimatio actionis monstretur
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Utendum est ad actiones cum "CTRL"
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Rudimenta visifica
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Aperire programma visificum ad rudimenta videnda
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Viae stationesque, emptio vehiculorum
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Ferriviae traminaque
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Vehicula viaria
+STR_TUTORIAL_SHIPS                                              :{BLACK}Naves navaliaque
+STR_TUTORIAL_CARGO                                              :{BLACK}Genera onerum
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Legere e nebula
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Arcessere ludum "e nebula" (i.e. ex Interreti)
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Servare in nebula
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Conservare ludum "in nebula" (i.e. in Interreti)

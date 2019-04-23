@@ -35,14 +35,19 @@ byte _support8bpp;
 CursorVars _cursor;
 bool _ctrl_pressed;   ///< Is Ctrl pressed?
 bool _shift_pressed;  ///< Is Shift pressed?
+bool _move_pressed;
+
 byte _fast_forward;
 bool _left_button_down;     ///< Is left mouse button pressed?
 bool _left_button_clicked;  ///< Is left mouse button clicked?
 bool _right_button_down;    ///< Is right mouse button pressed?
 bool _right_button_clicked; ///< Is right mouse button clicked?
+Point _right_button_down_pos; ///< Pos of right mouse button click, for drag and drop
+
 DrawPixelInfo _screen;
 bool _screen_disable_anim = false;   ///< Disable palette animation (important for 32bpp-anim blitter during giant screenshot)
 bool _exit_game;
+bool _restart_game;
 GameMode _game_mode;
 SwitchMode _switch_mode;  ///< The next mainloop command.
 PauseModeByte _pause_mode;
@@ -850,6 +855,50 @@ void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub,
 }
 
 /**
+ * Draw a sprite, centered at x:y, not in a viewport
+ * @param img  Image number to draw
+ * @param pal  Palette to use.
+ * @param x    Left coordinate of image in pixels
+ * @param y    Top coordinate of image in pixels
+ * @param sub  If available, draw only specified part of the sprite
+ * @param zoom Zoom level of sprite
+ */
+void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub, ZoomLevel zoom)
+{
+	Dimension size = GetSpriteSize(img, NULL, zoom);
+	DrawSprite(img, pal, x - size.width / 2, y - size.height / 2, sub, zoom);
+}
+
+/**
+ * Draw a sprite, centered in rect, not in a viewport
+ * @param img    Image number to draw
+ * @param pal    Palette to use.
+ * @param left   Left coordinate of image bounding box in pixels
+ * @param top    Top coordinate of image bounding box in pixels
+ * @param right  Right coordinate of image bounding box in pixels
+ * @param bottom Bottom coordinate of image bounding box in pixels
+ * @param sub    If available, draw only specified part of the sprite
+ * @param zoom   Zoom level of sprite
+ */
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub, ZoomLevel zoom)
+{
+	DrawSpriteCentered(img, pal, (left + right) / 2, (top + bottom) / 2, sub, zoom);
+}
+
+/**
+ * Draw a sprite, centered in rect, not in a viewport
+ * @param img    Image number to draw
+ * @param pal    Palette to use.
+ * @param rect   Image bounding box in pixels
+ * @param sub    If available, draw only specified part of the sprite
+ * @param zoom   Zoom level of sprite
+ */
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &rect, const SubSprite *sub, ZoomLevel zoom)
+{
+	DrawSpriteCenteredRect(img, pal, rect.left, rect.top, rect.right, rect.bottom, sub, zoom);
+}
+
+/**
  * The code for setting up the blitter mode and sprite information before finally drawing the sprite.
  * @param sprite The sprite to draw.
  * @param x      The X location to draw.
@@ -1200,6 +1249,8 @@ void ScreenSizeChanged()
 
 	/* screen size changed and the old bitmap is invalid now, so we don't want to undraw it */
 	_cursor.visible = false;
+
+	CheckWindowMinSizings();
 }
 
 void UndrawMouseCursor()
@@ -1711,4 +1762,105 @@ static int CDECL compare_res(const Dimension *pa, const Dimension *pb)
 void SortResolutions(int count)
 {
 	QSortT(_resolutions, count, &compare_res);
+}
+
+
+/**
+ * Returns the initial value for a margin, after telling where are the left and right margins and where we want to draw/write (begining/end of line)
+ * @param left is the left margin of the horizontal space we want to draw to
+ * @param right: right margin
+ * @param to_end_line: 0 if working at the begining of the line, 1 if working at the end
+ * @return the margin we asked
+ */
+int InitTempMargin(int left, int right, bool to_end_line)
+{
+	return to_end_line ^ (_current_text_dir == TD_RTL) ? right :left;
+}
+
+/**
+ * Consumes a space in an horizontal margin
+ * @param space: amount of space used
+ * @param here: the margin where to add the space
+ * @param to_end_line: 0 if working at the begining of the line, 1 if working at the end
+ */
+void AddSpace(int space, int &here, bool to_end_line)
+{
+	here += to_end_line ^ (_current_text_dir == TD_RTL) ? -space : space;
+}
+
+/**
+ * After drawing something, update a margin
+ * @param end is where we ended drawing (usually the return value of a DrawString function)
+ * @param margin is the margin we want to update
+ * @param to_end_line: 0 if working at the begining of the line, 1 if working at the end
+ */
+void UpdateMarginEnd(int end, int &margin, bool to_end_line)
+{
+	margin = to_end_line ^ (_current_text_dir == TD_RTL) ? min(end, margin) : max(end, margin);
+}
+
+/**
+ * After drawing something, horizontal margins are updated
+ * @param end: last position drawn
+ * @param left is the left margin of the horizontal space drawn
+ * @param right: right margin
+ * @param to_end_line: 0 if working at the begining of the line, 1 if working at the end
+ */
+void UpdateMarginsEnd(int end, int &left, int &right, bool to_end_line)
+{
+	if (to_end_line ^ (_current_text_dir == TD_RTL)) {
+		right = end;
+	} else {
+		left = end;
+	}
+}
+
+/**
+ * After drawing something of a certain width, update margins
+ * @param width: used space
+ * @param initial left margin
+ * @param initial right margin
+ * @param to_end_line: 0 if working at the begining of the line, 1 if working at the end
+ */
+void UpdateMarginsWidth(int width, int &left, int &right, bool to_end_line)
+{
+	if (to_end_line ^ (_current_text_dir == TD_RTL)) {
+		right -= width;
+	} else {
+		left += width;
+	}
+}
+
+/**
+ * Draws a string in a delimited space; temporal margin gets updated
+ * @param left is the left margin of the horizontal space we want to draw to
+ * @param right: right margin of the horizontal space we want to draw to
+ * @param top: vertical position
+ * @param margin keeps the most extreme limit used of the line (this should be previously initialized with InitTempLimit)
+ * @param string to draw
+ * @param colour for the string
+ * @param alignment of the string (only left or right alignment)
+ * @param underline
+ */
+void DrawString2(int left, int right, int top, int &margin, StringID str, TextColour colour, StringAlignment align, bool underline)
+{
+	int end = DrawString(left, right, top, str, colour, align, underline);
+	UpdateMarginEnd(end, margin, align == SA_RIGHT);
+}
+
+/**
+ * Draws a sprite in a delimited space; temporal margin gets updated
+ * @param width of the sprite
+ * @param left is the left margin of the horizontal space we want to draw to
+ * @param right: right margin of the horizontal space
+ * @param top: vertical position
+ * @param margin keeps the most extreme limit used of the line (this should be previously initialized with InitTempLimit)
+ * @param sprite
+ * @param palette
+ * @param to_end_line: 0 if working at the begining of the line, 1 if working at the end
+ */
+void DrawSprite2(int width, int left, int right, int top, int &margin, SpriteID img, PaletteID pal, bool to_end_line, SubSprite *sub)
+{
+	DrawSprite(img, pal, to_end_line ^ (_current_text_dir == TD_RTL) ? right - width : left, top, sub);
+	margin = to_end_line ^ (_current_text_dir == TD_RTL) ? min(right - width, margin): max(margin, left + width);
 }

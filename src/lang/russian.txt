@@ -5295,3 +5295,35 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+# Android strings
+STR_ABOUT_MENU_TUTORIAL                                         :Учебник
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Показывать миникарту / легенду
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Вертикальное меню: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Меню разделено на два вертикальных меню по краям экрата
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Размер кнопок
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Размер элементов интерфейса
+STR_CONFIG_SETTING_FONT_SIZE                                    :Размер шрифта
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :Размер всех шрифтов в игре
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Подтверждать действия: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Показывать окно подтверждения при постройки дорог и станций
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 бит
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Установить глубину цвета в 16 бит на точку. Этот режим поддерживает анимацию воды
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 бит
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Установить глубину цвета в 16 бит на точку. Это потребует перезапуска программы. Этот режим не поддерживает анимацию воды
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 бит
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Установить глубину цвета в 24 бит на точку. Этот режим поддерживает анимацию воды
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Закрыть все открытые окна (кроме закреплённых)
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Использовать в качестве кнопки "SHIFT" (оценка стоимости)
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Использовать в качестве кнопки "CTRL"
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Учебные видео
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Открыть видеоплеер для просмотра учебного видео
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Постройка дорог и терминалов, покупка автомобилей
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Железные дороги и поезда
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Автомобили
+STR_TUTORIAL_SHIPS                                              :{BLACK}Корабли и пристани
+STR_TUTORIAL_CARGO                                              :{BLACK}Грузы
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Загрузка из сети
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Загрузить игру из сетевого хранилища
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Сохранение в сети
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Сохранить игру в сетевое хранилище

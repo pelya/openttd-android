@@ -4989,3 +4989,41 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+# Android strings
+STR_ABOUT_MENU_TUTORIAL                                         :教程
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}在地图上显示图例/描述
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :垂直工具栏: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :将主工具栏分为屏幕两侧的两个垂直工具栏
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :紧凑型垂直工具栏: {STRING}
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :隐藏垂直工具栏中的“切换工具栏”按钮，以显示更多子菜单
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :按键大小
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :用户界面大小
+STR_CONFIG_SETTING_FONT_SIZE                                    :字体大小
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :游戏字体大小
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :确认操作: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :建立道路和车站时显示确认对话框
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}标题栏
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}显示所有窗口的标题栏，或者隐藏它们以节省屏幕空间
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :窗口装饰: {STRING}
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :窗口边缘装饰
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :将视频颜色深度设置为8位像素，此模式支持水面动态涟漪
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :将视频颜色深度设置为16位像素，这需要重新启动，此模式不支持水面动态涟漪
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :将视频颜色深度设置为24位像素，此模式支持水面动态涟漪
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}关闭所有打开的窗口（已固定的窗口除外）
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}按住显示预计费用
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}将其用于“CTRL”键的操作
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}教程视频
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}使用视频播放器观看教程视频
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}建设道路和车站，购买车辆
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}铁路和火车
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}公路车辆
+STR_TUTORIAL_SHIPS                                              :{BLACK}船只和码头
+STR_TUTORIAL_CARGO                                              :{BLACK}货物类型
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}读取云端存档
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}从云端储存读取游戏
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}保存到云端储存
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}备份游戏到云端储存

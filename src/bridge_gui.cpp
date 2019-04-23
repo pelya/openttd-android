@@ -24,6 +24,7 @@
 #include "cmd_helper.h"
 #include "tunnelbridge_map.h"
 #include "road_gui.h"
+#include "tilehighlight_func.h"
 
 #include "widgets/bridge_widget.h"
 
@@ -198,6 +199,7 @@ public:
 				sprite_dim.height++; // Sprite is rendered one pixel down in the matrix field.
 				text_dim.height++; // Allowing the bottom row pixels to be rendered on the edge of the matrix field.
 				resize->height = max(sprite_dim.height, text_dim.height) + 2; // Max of both sizes + account for matrix edges.
+				resize->height = GetMinSizing(NWST_STEP, resize->height);
 
 				this->bridgetext_offset = WD_MATRIX_LEFT + sprite_dim.width + 1; // Left edge of text, 1 pixel distance from the sprite.
 				size->width = this->bridgetext_offset + text_dim.width + WD_MATRIX_RIGHT;
@@ -233,7 +235,8 @@ public:
 					SetDParam(1, b->speed);
 					SetDParam(0, b->material);
 
-					DrawSprite(b->sprite, b->pal, r.left + WD_MATRIX_LEFT, y + this->resize.step_height - 1 - GetSpriteSize(b->sprite).height);
+					uint y_sprite = Center(y, this->resize.step_height, GetSpriteSize(b->sprite).height);
+					DrawSprite(b->sprite, b->pal, r.left + WD_MATRIX_LEFT, y_sprite);
 					DrawStringMultiLine(r.left + this->bridgetext_offset, r.right, y + 2, y + this->resize.step_height,
 							_game_mode == GM_EDITOR ? STR_SELECT_BRIDGE_SCENEDIT_INFO : STR_SELECT_BRIDGE_INFO);
 					y += this->resize.step_height;
@@ -430,6 +433,8 @@ void ShowBuildBridgeWindow(TileIndex start, TileIndex end, TransportType transpo
 		new BuildBridgeWindow(&_build_bridge_desc, start, end, type, bl);
 	} else {
 		delete bl;
+		SetSelectionTilesDirty();
+		_thd.Reset();
 		ShowErrorMessage(STR_ERROR_CAN_T_BUILD_BRIDGE_HERE, errmsg, WL_INFO, TileX(end) * TILE_SIZE, TileY(end) * TILE_SIZE);
 	}
 }

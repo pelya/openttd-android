@@ -137,6 +137,13 @@ public:
 		WC_MAIN_TOOLBAR                              = ::WC_MAIN_TOOLBAR,
 
 		/**
+		 * Main toolbar (the long bar at the top); %Window numbers:
+		 *   - 0 = #ToolbarNormalWidgets
+		 *   - 0 = #ToolbarEditorWidgets
+		 */
+		WC_MAIN_TOOLBAR_RIGHT                        = ::WC_MAIN_TOOLBAR_RIGHT,
+
+		/**
 		 * Statusbar (at the bottom of your screen); %Window numbers:
 		 *   - 0 = #StatusbarWidgets
 		 */
@@ -1625,8 +1632,10 @@ public:
 	enum MusicTrackSelectionWidgets {
 		WID_MTS_CAPTION                              = ::WID_MTS_CAPTION,                              ///< Window caption.
 		WID_MTS_LIST_LEFT                            = ::WID_MTS_LIST_LEFT,                            ///< Left button.
+		WID_MTS_LEFT_SCROLLBAR                       = ::WID_MTS_LEFT_SCROLLBAR,                       ///< Scrollbar of left list.
 		WID_MTS_PLAYLIST                             = ::WID_MTS_PLAYLIST,                             ///< Playlist.
 		WID_MTS_LIST_RIGHT                           = ::WID_MTS_LIST_RIGHT,                           ///< Right button.
+		WID_MTS_RIGHT_SCROLLBAR                      = ::WID_MTS_RIGHT_SCROLLBAR,                      ///< Scrollbar of right list.
 		WID_MTS_MUSICSET                             = ::WID_MTS_MUSICSET,                             ///< Music set selection.
 		WID_MTS_ALL                                  = ::WID_MTS_ALL,                                  ///< All button.
 		WID_MTS_OLD                                  = ::WID_MTS_OLD,                                  ///< Old button.
@@ -2439,6 +2448,9 @@ public:
 		WID_TN_MESSAGES                              = ::WID_TN_MESSAGES,                              ///< Messages menu.
 		WID_TN_HELP                                  = ::WID_TN_HELP,                                  ///< Help menu.
 		WID_TN_SWITCH_BAR                            = ::WID_TN_SWITCH_BAR,                            ///< Only available when toolbar has been split to switch between different subsets.
+		WID_TN_CTRL                                  = ::WID_TN_CTRL,                                  ///< On-screen Ctrl key
+		WID_TN_SHIFT                                 = ::WID_TN_SHIFT,                                 ///< On-screen Sgift key
+		WID_TN_DELETE                                = ::WID_TN_DELETE,                                ///< Close all windows
 		WID_TN_END                                   = ::WID_TN_END,                                   ///< Helper for knowing the amount of widgets.
 	};
 

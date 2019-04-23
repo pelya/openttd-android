@@ -261,7 +261,7 @@ static const NWidgetPart _nested_build_industry_widgets[] = {
 
 /** Window definition of the dynamic place industries gui */
 static WindowDesc _build_industry_desc(
-	WDP_AUTO, "build_industry", 170, 212,
+	WDP_ALIGN_TOOLBAR, "build_industry", 170, 212,
 	WC_BUILD_INDUSTRY, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_build_industry_widgets, lengthof(_nested_build_industry_widgets)
@@ -278,8 +278,6 @@ class BuildIndustryWindow : public Window {
 	bool enabled[NUM_INDUSTRYTYPES + 1];        ///< availability state, coming from CBID_INDUSTRY_PROBABILITY (if ever)
 	Scrollbar *vscroll;
 
-	/** The offset for the text in the matrix. */
-	static const int MATRIX_TEXT_OFFSET = 17;
 	/** The largest allowed minimum-width of the window, given in line heights */
 	static const int MAX_MINWIDTH_LINEHEIGHTS = 20;
 
@@ -403,6 +401,10 @@ public:
 		this->SetButtons();
 	}
 
+	~BuildIndustryWindow() {
+		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
+	}
+
 	virtual void OnInit()
 	{
 		this->SetupArrays();
@@ -417,8 +419,8 @@ public:
 					if (this->index[i] == INVALID_INDUSTRYTYPE) continue;
 					d = maxdim(d, GetStringBoundingBox(GetIndustrySpec(this->index[i])->name));
 				}
-				resize->height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				d.width += MATRIX_TEXT_OFFSET + padding.width;
+				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				d.width += FONT_HEIGHT_NORMAL * 5 / 4 + padding.width;
 				d.height = 5 * resize->height;
 				*size = maxdim(*size, d);
 				break;
@@ -499,20 +501,22 @@ public:
 		switch (widget) {
 			case WID_DPI_MATRIX_WIDGET: {
 				uint text_left, text_right, icon_left, icon_right;
+				uint square_size = FONT_HEIGHT_NORMAL - 2;
+				uint text_offset = FONT_HEIGHT_NORMAL * 5 / 4;
 				if (_current_text_dir == TD_RTL) {
 					icon_right = r.right    - WD_MATRIX_RIGHT;
-					icon_left  = icon_right - 10;
-					text_right = icon_right - BuildIndustryWindow::MATRIX_TEXT_OFFSET;
+					icon_left  = icon_right - square_size;
+					text_right = icon_right - text_offset;
 					text_left  = r.left     + WD_MATRIX_LEFT;
 				} else {
 					icon_left  = r.left     + WD_MATRIX_LEFT;
-					icon_right = icon_left  + 10;
-					text_left  = icon_left  + BuildIndustryWindow::MATRIX_TEXT_OFFSET;
+					icon_right = icon_left  + square_size;
+					text_left  = icon_left  + text_offset;
 					text_right = r.right    - WD_MATRIX_RIGHT;
 				}
 
-				for (byte i = 0; i < this->vscroll->GetCapacity() && i + this->vscroll->GetPosition() < this->count; i++) {
-					int y = r.top + WD_MATRIX_TOP + i * this->resize.step_height;
+				int y = Center(r.top, this->resize.step_height);
+				for (byte i = 0; i < this->vscroll->GetCapacity() && i + this->vscroll->GetPosition() < this->count; i++, y += this->resize.step_height) {
 					bool selected = this->selected_index == i + this->vscroll->GetPosition();
 
 					if (this->index[i + this->vscroll->GetPosition()] == INVALID_INDUSTRYTYPE) {
@@ -523,8 +527,8 @@ public:
 
 					/* Draw the name of the industry in white is selected, otherwise, in orange */
 					DrawString(text_left, text_right, y, indsp->name, selected ? TC_WHITE : TC_ORANGE);
-					GfxFillRect(icon_left,     y + 1, icon_right,     y + 7, selected ? PC_WHITE : PC_BLACK);
-					GfxFillRect(icon_left + 1, y + 2, icon_right - 1, y + 6, indsp->map_colour);
+					GfxFillRect(icon_left,     y + 1, icon_right,     y + square_size, selected ? PC_WHITE : PC_BLACK);
+					GfxFillRect(icon_left + 1, y + 2, icon_right - 1, y + square_size - 1, indsp->map_colour);
 				}
 				break;
 			}
@@ -643,6 +647,21 @@ public:
 
 	virtual void OnPlaceObject(Point pt, TileIndex tile)
 	{
+		VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
+		MoveAllWindowsOffScreen();
+	}
+
+	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	{
+		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
+	}
+
+	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
+	{
+		if (pt.x == -1) return;
+		assert(end_tile == start_tile);
+
+		MoveAllHiddenWindowsBackToScreen();
 		bool success = true;
 		/* We do not need to protect ourselves against "Random Many Industries" in this mode */
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
@@ -660,14 +679,14 @@ public:
 			_generating_world = true;
 			_ignore_restrictions = true;
 
-			DoCommandP(tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed,
+			DoCommandP(end_tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed,
 					CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY), &CcBuildIndustry);
 
 			cur_company.Restore();
 			_ignore_restrictions = false;
 			_generating_world = false;
 		} else {
-			success = DoCommandP(tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed, CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
+			success = DoCommandP(end_tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed, CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
 		}
 
 		/* If an industry has been built, just reset the cursor and the system */
@@ -704,6 +723,7 @@ public:
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 	}
 
@@ -726,7 +746,7 @@ public:
 void ShowBuildIndustryWindow()
 {
 	if (_game_mode != GM_EDITOR && !Company::IsValidID(_local_company)) return;
-	if (BringWindowToFrontById(WC_BUILD_INDUSTRY, 0)) return;
+	DeleteToolbarLinkedWindows();
 	new BuildIndustryWindow();
 }
 
@@ -869,7 +889,7 @@ public:
 			if (first) {
 				if (has_accept) y += WD_PAR_VSEP_WIDE;
 				DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE);
-				y += FONT_HEIGHT_NORMAL;
+				y += this->editable == EA_RATE ? GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) : FONT_HEIGHT_NORMAL;
 				if (this->editable == EA_RATE) this->production_offset_y = y;
 				first = false;
 			}
@@ -884,8 +904,10 @@ public:
 			if (this->editable == EA_RATE) {
 				DrawArrowButtons(left + WD_FRAMETEXT_LEFT, y, COLOUR_YELLOW, (this->clicked_line == IL_RATE1 + j) ? this->clicked_button : 0,
 						i->production_rate[j] > 0, i->production_rate[j] < 255);
+				y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+			} else {
+				y += FONT_HEIGHT_NORMAL;
 			}
-			y += FONT_HEIGHT_NORMAL;
 		}
 
 		/* Display production multiplier if editable */
@@ -897,7 +919,7 @@ public:
 			DrawString(x, right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_VIEW_PRODUCTION_LEVEL);
 			DrawArrowButtons(left + WD_FRAMETEXT_LEFT, y, COLOUR_YELLOW, (this->clicked_line == IL_MULTIPLIER) ? this->clicked_button : 0,
 					i->prod_level > PRODLEVEL_MINIMUM, i->prod_level < PRODLEVEL_MAXIMUM);
-			y += FONT_HEIGHT_NORMAL;
+			y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 		}
 
 		/* Get the extra message for the GUI */
@@ -945,12 +967,14 @@ public:
 					case EA_NONE: break;
 
 					case EA_MULTIPLIER:
-						if (IsInsideBS(pt.y, this->production_offset_y, FONT_HEIGHT_NORMAL)) line = IL_MULTIPLIER;
+						if (IsInsideBS(pt.y, this->production_offset_y, SETTING_BUTTON_HEIGHT)) line = IL_MULTIPLIER;
 						break;
 
 					case EA_RATE:
 						if (pt.y >= this->production_offset_y) {
-							int row = (pt.y - this->production_offset_y) / FONT_HEIGHT_NORMAL;
+							if ((pt.y - this->production_offset_y) % GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) > (uint)SETTING_BUTTON_HEIGHT) break;;
+
+							int row = (pt.y - this->production_offset_y) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 							for (uint j = 0; j < lengthof(i->produced_cargo); j++) {
 								if (i->produced_cargo[j] == CT_INVALID) continue;
 								row--;
@@ -1166,7 +1190,7 @@ static const NWidgetPart _nested_industry_directory_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_VERTICAL),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
+				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetSizingType(NWST_STEP), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_CRITERIA), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
 				NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0), EndContainer(),
 			EndContainer(),
@@ -1371,7 +1395,7 @@ public:
 
 			case WID_ID_INDUSTRY_LIST: {
 				int n = 0;
-				int y = r.top + WD_FRAMERECT_TOP;
+				int y = Center(r.top, this->resize.step_height);
 				if (this->industries.Length() == 0) {
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_DIRECTORY_NONE);
 					break;
@@ -1414,7 +1438,7 @@ public:
 				for (uint i = 0; i < this->industries.Length(); i++) {
 					d = maxdim(d, GetStringBoundingBox(this->GetIndustryString(this->industries[i])));
 				}
-				resize->height = d.height;
+				resize->height = d.height = GetMinSizing(NWST_STEP, d.height);
 				d.height *= 5;
 				d.width += padding.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 				d.height += padding.height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;

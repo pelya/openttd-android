@@ -5404,3 +5404,41 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
+
+# Android strings
+STR_ABOUT_MENU_TUTORIAL                                         :Oideachadh
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Seall treòir a' mhapa / tuairisgeulan air samhlaidhean a' mhapa
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Bàr-inneal inghearach: {STRING}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Thèid am prìomh bhàr-inneal a sgoltadh 'na bhàraichean-inneal inghearach ri dà thaobh an sgrìn
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :Bàr-inneal inghearach dùmhlaichte: {STRING}
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :Cha bhi putan air a' bhàr-inneal inghearach gus leum a ghearradh gu bàr-inneal eile ach bidh barrachd fo-chlàran-taice aige
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :Meud nam putan
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :Meud aig a h-uile nì an eadar-aghaidh
+STR_CONFIG_SETTING_FONT_SIZE                                    :Meud a' chrutha-chlò
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Am meud air gach cruth-clò a' gheama
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Dearbhaich na gnìomhan: {STRING}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Seall còmhradh dearbhaidh le togail rathaidean is stèiseanan
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Bàraichean-tiotail
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Seall bàr-tiotail air gach uinneag no falaich iad gus rum a shàbhaladh air an sgrìn
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Sgeadachadh nan uinneagan: {STRING}
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Sgeadachadh air oirean nan uinneagan
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :8 biod
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :Suidhich doimhneachd nan dath aig a' video gu 8 biod gach piogsail. Cuiridh am modh video sin taic ri beòthachadh uisge
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :16 biod
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :Suidhich doimhneachd nan dath aig a' video gu 16 biod gach piogsail. Bidh feum air ath-thòiseachadh. Cha chuir am modh video sin taic ri beòthachadh uisge
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :24 biod
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :Suidhich doimhneachd nan dath aig a' video gu 24 biod gach piogsail. Cuiridh am modh video sin taic ri beòthachadh uisge
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Dùin a h-uile uinneag (seach an fheadhainn phrìnichte)
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Brùth air gus tuairmse air cosgaisean gnìomha fhaighinn
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Cleachd e airson gnìomhan a chleachdas an iuchair "CTRL"
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Videothan oideachaidh
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Fosgail cluicheadair video gus coimhead air videothan oideachaidh
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Togail rathaidean is stèiseanan, ceannach charbadan
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Slighean rèile is trèanaichean
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Carbadan-rathaid
+STR_TUTORIAL_SHIPS                                              :{BLACK}Longan is puirt
+STR_TUTORIAL_CARGO                                              :{BLACK}Seòrsaichean carago
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Luchdaich on lìonra
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Luchdaich geama o stòras an lìonraidh
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Sàbhail dhan lìonra
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Cuir lethbhreac-glèidhidh dhen gheama gu stòras an lìonraidh

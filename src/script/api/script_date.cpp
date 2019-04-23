@@ -9,8 +9,8 @@
 
 /** @file script_date.cpp Implementation of ScriptDate. */
 
+#include "../../stdafx.h" /* Have to be included before time.h, if we want UINT32_MAX macro defined on Android */
 #include <time.h>
-#include "../../stdafx.h"
 #include "script_date.hpp"
 #include "../../date_func.h"
 

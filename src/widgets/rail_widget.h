@@ -71,6 +71,7 @@ enum BuildRailStationWidgets {
 	WID_BRAS_SHOW_NEWST_TYPE,      ///< Display of selected station type.
 	WID_BRAS_NEWST_LIST,           ///< List with available newstation classes.
 	WID_BRAS_NEWST_SCROLL,         ///< Scrollbar of the #WID_BRAS_NEWST_LIST.
+	WID_BRAS_NEWST_SPACER,         ///< Spacer to make newst list fit the screen
 
 	WID_BRAS_PLATFORM_NUM_BEGIN = WID_BRAS_PLATFORM_NUM_1 - 1, ///< Helper for determining the chosen platform width.
 	WID_BRAS_PLATFORM_LEN_BEGIN = WID_BRAS_PLATFORM_LEN_1 - 1, ///< Helper for determining the chosen platform length.

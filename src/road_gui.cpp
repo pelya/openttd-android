@@ -29,6 +29,7 @@
 #include "hotkeys.h"
 #include "road_gui.h"
 #include "zoom_func.h"
+#include "build_confirmation_func.h"
 
 #include "widgets/road_widget.h"
 
@@ -67,21 +68,6 @@ static DiagDirection _road_station_picker_orientation;
 void CcPlaySound_SPLAT_OTHER(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
 {
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_SPLAT_OTHER, tile);
-}
-
-/**
- * Callback to start placing a bridge.
- * @param tile Start tile of the bridge.
- */
-static void PlaceRoad_Bridge(TileIndex tile, Window *w)
-{
-	if (IsBridgeTile(tile)) {
-		TileIndex other_tile = GetOtherTunnelBridgeEnd(tile);
-		Point pt = {0, 0};
-		w->OnPlaceMouseUp(VPM_X_OR_Y, DDSP_BUILD_BRIDGE, pt, other_tile, tile);
-	} else {
-		VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_BUILD_BRIDGE);
-	}
 }
 
 /**
@@ -297,12 +283,15 @@ static bool RoadToolbar_CtrlChanged(Window *w)
 	if (w->IsWidgetDisabled(WID_ROT_REMOVE)) return false;
 
 	/* allow ctrl to switch remove mode only for these widgets */
+	// This breaks joining stations functionality on Android
+	/*
 	for (uint i = WID_ROT_ROAD_X; i <= WID_ROT_AUTOROAD; i++) {
 		if (w->IsWidgetLowered(i)) {
 			ToggleRoadButton_Remove(w);
 			return true;
 		}
 	}
+	*/
 
 	return false;
 }
@@ -310,6 +299,8 @@ static bool RoadToolbar_CtrlChanged(Window *w)
 /** Road toolbar window handler. */
 struct BuildRoadToolbarWindow : Window {
 	int last_started_action; ///< Last started user action.
+	bool last_started_action_remove; ///< Use bulldozer button with last action
+	bool last_started_action_oneway; ///< Use 'one way road' button with last action
 
 	BuildRoadToolbarWindow(WindowDesc *desc, WindowNumber window_number) : Window(desc)
 	{
@@ -321,12 +312,15 @@ struct BuildRoadToolbarWindow : Window {
 
 		this->OnInvalidateData();
 		this->last_started_action = WIDGET_LIST_END;
+		this->last_started_action_remove = false;
+		this->last_started_action_oneway = false;
 
-		if (_settings_client.gui.link_terraform_toolbar) ShowTerraformToolbar(this);
+		if (_settings_client.gui.link_terraform_toolbar || _settings_client.gui.compact_vertical_toolbar) ShowTerraformToolbar();
 	}
 
 	~BuildRoadToolbarWindow()
 	{
+		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
 	}
 
@@ -430,7 +424,7 @@ struct BuildRoadToolbarWindow : Window {
 
 			case WID_ROT_DEPOT:
 				if (_game_mode == GM_EDITOR || !CanBuildVehicleInfrastructure(VEH_ROAD)) return;
-				if (HandlePlacePushButton(this, WID_ROT_DEPOT, SPR_CURSOR_ROAD_DEPOT, HT_RECT)) {
+				if (HandlePlacePushButton(this, WID_ROT_DEPOT, SPR_CURSOR_ROAD_DEPOT, HT_RECT | HT_SCROLL_VIEWPORT)) {
 					ShowRoadDepotPicker(this);
 					this->last_started_action = widget;
 				}
@@ -518,8 +512,7 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_DEPOT:
-				DoCommandP(tile, _cur_roadtype << 2 | _road_depot_orientation, 0,
-						CMD_BUILD_ROAD_DEPOT | CMD_MSG(_road_type_infos[_cur_roadtype].err_depot), CcRoadDepot);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
 				break;
 
 			case WID_ROT_BUS_STATION:
@@ -531,20 +524,21 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case WID_ROT_BUILD_BRIDGE:
-				PlaceRoad_Bridge(tile, this);
+				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_BUILD_BRIDGE);
 				break;
 
 			case WID_ROT_BUILD_TUNNEL:
-				DoCommandP(tile, RoadTypeToRoadTypes(_cur_roadtype) | (TRANSPORT_ROAD << 8), 0,
-						CMD_BUILD_TUNNEL | CMD_MSG(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE), CcBuildRoadTunnel);
+				VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_BUILD_BRIDGE);
 				break;
 
 			default: NOT_REACHED();
 		}
+		MoveAllWindowsOffScreen();
 	}
 
 	virtual void OnPlaceObjectAbort()
 	{
+		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 		this->SetWidgetsDisabledState(true,
 				WID_ROT_REMOVE,
@@ -553,6 +547,7 @@ struct BuildRoadToolbarWindow : Window {
 		this->SetWidgetDirty(WID_ROT_REMOVE);
 		this->SetWidgetDirty(WID_ROT_ONE_WAY);
 
+		if (ConfirmationWindowShown() && (this->last_started_action == WID_ROT_BUILD_BRIDGE || _ctrl_pressed)) return;
 		DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
 		DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
 		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
@@ -560,8 +555,26 @@ struct BuildRoadToolbarWindow : Window {
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
 	}
 
+	virtual void SelectLastTool()
+	{
+		// User misplaced something - activate last selected tool again
+		if (this->last_started_action == WIDGET_LIST_END)
+			return;
+		Point dummy = {0, 0};
+		this->RaiseWidget(this->last_started_action);
+		this->OnClick(dummy, this->last_started_action, 0);
+		if (this->last_started_action_remove) ToggleRoadButton_Remove(this);
+		if (this->last_started_action_oneway) this->LowerWidget(WID_ROT_ONE_WAY);
+		_one_way_button_clicked = this->last_started_action_oneway;
+	}
+
 	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
 	{
+		if (this->last_started_action == WID_ROT_BUILD_TUNNEL) {
+			this->OnPlacePresize(pt, TileVirtXY(pt.x, pt.y));
+			return;
+		}
+
 		/* Here we update the end tile flags
 		 * of the road placement actions.
 		 * At first we reset the end halfroad
@@ -593,7 +606,6 @@ struct BuildRoadToolbarWindow : Window {
 					/* Set dir = Y */
 					_place_road_flag |= RF_DIR_Y;
 				}
-
 				break;
 
 			default:
@@ -606,11 +618,24 @@ struct BuildRoadToolbarWindow : Window {
 	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
 	{
 		if (pt.x != -1) {
+			this->last_started_action_remove = _remove_button_clicked;
+			this->last_started_action_oneway = _one_way_button_clicked;
 			switch (select_proc) {
 				default: NOT_REACHED();
 				case DDSP_BUILD_BRIDGE:
-					if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
-					ShowBuildBridgeWindow(start_tile, end_tile, TRANSPORT_ROAD, RoadTypeToRoadTypes(_cur_roadtype));
+					switch (last_started_action) {
+						case WID_ROT_BUILD_TUNNEL:
+							if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
+							else VpStartPreSizing();
+							DoCommandP(end_tile, RoadTypeToRoadTypes(_cur_roadtype) | (TRANSPORT_ROAD << 8), 0,
+									CMD_BUILD_TUNNEL | CMD_MSG(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE), CcBuildRoadTunnel);
+							break;
+						case WID_ROT_BUILD_BRIDGE:
+							if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
+							ShowBuildBridgeWindow(start_tile, end_tile, TRANSPORT_ROAD, RoadTypeToRoadTypes(_cur_roadtype));
+							break;
+						default: NOT_REACHED();
+					}
 					break;
 
 				case DDSP_DEMOLISH_AREA:
@@ -655,7 +680,16 @@ struct BuildRoadToolbarWindow : Window {
 						}
 					}
 					break;
+
+				case DDSP_SINGLE_TILE:
+					/* Build depot. */
+					assert(start_tile == end_tile);
+					assert(last_started_action == WID_ROT_DEPOT);
+					DoCommandP(start_tile, _cur_roadtype << 2 | _road_depot_orientation, 0,
+						CMD_BUILD_ROAD_DEPOT | CMD_MSG(_road_type_infos[_cur_roadtype].err_depot), CcRoadDepot);
+				break;
 			}
+			MoveAllHiddenWindowsBackToScreen();
 		}
 	}
 
@@ -811,7 +845,7 @@ Window *ShowBuildRoadToolbar(RoadType roadtype)
 	if (!Company::IsValidID(_local_company)) return NULL;
 	_cur_roadtype = roadtype;
 
-	DeleteWindowByClass(WC_BUILD_TOOLBAR);
+	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(roadtype == ROADTYPE_ROAD ? &_build_road_desc : &_build_tramway_desc, TRANSPORT_ROAD);
 }
 
@@ -843,7 +877,7 @@ static const NWidgetPart _nested_build_road_scen_widgets[] = {
 };
 
 static WindowDesc _build_road_scen_desc(
-	WDP_AUTO, "toolbar_road_scen", 0, 0,
+	WDP_ALIGN_TOOLBAR, "toolbar_road_scen", 0, 0,
 	WC_SCEN_BUILD_TOOLBAR, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_build_road_scen_widgets, lengthof(_nested_build_road_scen_widgets),
@@ -856,6 +890,7 @@ static WindowDesc _build_road_scen_desc(
  */
 Window *ShowBuildRoadScenToolbar()
 {
+	DeleteToolbarLinkedWindows();
 	_cur_roadtype = ROADTYPE_ROAD;
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(&_build_road_scen_desc, TRANSPORT_ROAD);
 }
@@ -919,18 +954,18 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 		NWidget(NWID_HORIZONTAL_LTR),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
 			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NW), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
 				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SW), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(2, 0),
 			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NE), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
 				EndContainer(),
 				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SE), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
 				EndContainer(),
 			EndContainer(),
 			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
@@ -1069,17 +1104,17 @@ static const NWidgetPart _nested_road_station_picker_widgets[] = {
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
 			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NW), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NE), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
 		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
 			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SW), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SE), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 1),
@@ -1116,8 +1151,8 @@ static const NWidgetPart _nested_tram_station_picker_widgets[] = {
 		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
 			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 1),

@@ -29,6 +29,7 @@ int PositionNetworkChatWindow(Window *w);
 int GetMainViewTop();
 int GetMainViewBottom();
 
+void CheckWindowMinSizings();
 void InitWindowSystem();
 void UnInitWindowSystem();
 void ResetWindowSystem();
@@ -42,6 +43,7 @@ void DeleteNonVitalWindows();
 void DeleteAllNonVitalWindows();
 void DeleteAllMessages();
 void DeleteConstructionWindows();
+void DeleteToolbarLinkedWindows();
 void HideVitalWindows();
 void ShowVitalWindows();
 

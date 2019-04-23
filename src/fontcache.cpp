@@ -398,7 +398,7 @@ static void LoadFreeTypeFont(FontSize fs)
 	return;
 
 found_face:
-	new FreeTypeFontCache(fs, face, settings->size);
+	new FreeTypeFontCache(fs, face, RescaleFrom854x480(settings->size));
 }
 
 
@@ -479,7 +479,7 @@ static void *AllocateFont(size_t size)
 static bool GetFontAAState(FontSize size)
 {
 	/* AA is only supported for 32 bpp */
-	if (BlitterFactory::GetCurrentBlitter()->GetScreenDepth() != 32) return false;
+	if (BlitterFactory::GetCurrentBlitter()->GetScreenDepth() != 32 && BlitterFactory::GetCurrentBlitter()->GetScreenDepth() != 16) return false;
 
 	switch (size) {
 		default: NOT_REACHED();

@@ -90,6 +90,7 @@ tgp.cpp
 tile_map.cpp
 tilearea.cpp
 townname.cpp
+tutorial_gui.cpp
 #if WIN32
 #else
 	#if OS2
@@ -137,6 +138,7 @@ base_media_func.h
 base_station_base.h
 bmp.h
 bridge.h
+build_confirmation_func.h
 cargo_type.h
 cargoaction.h
 cargomonitor.h
@@ -363,6 +365,7 @@ tilehighlight_func.h
 tilehighlight_type.h
 tilematrix_type.hpp
 timetable.h
+toolbar_type.h
 toolbar_gui.h
 town.h
 town_type.h
@@ -452,6 +455,7 @@ airport_gui.cpp
 autoreplace_gui.cpp
 bootstrap_gui.cpp
 bridge_gui.cpp
+build_confirmation_gui.cpp
 build_vehicle_gui.cpp
 cheat_gui.cpp
 company_gui.cpp
@@ -913,6 +917,12 @@ script/api/script_window.cpp
 # Blitters
 #if DEDICATED
 #else
+blitter/16bpp_base.cpp
+blitter/16bpp_base.hpp
+blitter/16bpp_anim.cpp
+blitter/16bpp_anim.hpp
+blitter/16bpp_simple.cpp
+blitter/16bpp_simple.hpp
 blitter/32bpp_anim.cpp
 blitter/32bpp_anim.hpp
 #if SSE

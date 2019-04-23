@@ -1099,7 +1099,7 @@ check_params() {
 		# of the tags folder, the folder of the tag does not have a .svn folder
 		# anymore and this fails to detect the subversion repository checkout.
 		log 1 "checking revision... svn detection (tag)"
-	elif [ -d "$ROOT_DIR/.git" ] && [ -n "`git help 2>/dev/null`" ]; then
+	elif [ -e "$ROOT_DIR/.git" ] && [ -n "`git help 2>/dev/null`" ]; then
 		log 1 "checking revision... git detection"
 	elif [ -d "$ROOT_DIR/.hg" ] && [ -n "`HGPLAIN= hg help 2>/dev/null`" ]; then
 		log 1 "checking revision... hg detection"
@@ -1823,14 +1823,14 @@ make_cflags_and_ldflags() {
 		CFLAGS="$CFLAGS -DWITH_XAUDIO2"
 	fi
 
-	if [ -n "$libtimidity_config" ]; then
+	if [ -n "$libtimidity" ]; then
 		CFLAGS="$CFLAGS -DLIBTIMIDITY"
-		CFLAGS="$CFLAGS `$libtimidity_config --cflags | tr '\n\r' '  '`"
+		CFLAGS="$CFLAGS `$libtimidity --cflags | tr '\n\r' '  '`"
 
 		if [ "$enable_static" != "0" ]; then
-			LIBS="$LIBS `$libtimidity_config --libs --static | tr '\n\r' '  '`"
+			LIBS="$LIBS `$libtimidity --libs --static | tr '\n\r' '  '`"
 		else
-			LIBS="$LIBS `$libtimidity_config --libs | tr '\n\r' '  '`"
+			LIBS="$LIBS `$libtimidity --libs | tr '\n\r' '  '`"
 		fi
 	fi
 
@@ -2772,7 +2772,7 @@ detect_lzo2() {
 }
 
 detect_libtimidity() {
-	detect_pkg_config "$with_libtimidity" "libtimidity" "libtimidity_config" "0.1" "1"
+	detect_pkg_config "$with_libtimidity" "libtimidity" "libtimidity" "0.1" "1"
 }
 
 detect_fluidsynth() {

@@ -109,7 +109,7 @@ void CDECL NetworkAddChatMessage(TextColour colour, uint duration, const char *m
 /** Initialize all font-dependent chat box sizes. */
 void NetworkReInitChatBoxSize()
 {
-	_chatmsg_box.y       = 3 * FONT_HEIGHT_NORMAL;
+	_chatmsg_box.y       = GetMinSizing(NWST_STEP, 10) + 5;
 	_chatmsg_box.height  = MAX_CHAT_MESSAGES * (FONT_HEIGHT_NORMAL + NETWORK_CHAT_LINE_SPACING) + 4;
 	_chatmessage_backup  = ReallocT(_chatmessage_backup, _chatmsg_box.width * _chatmsg_box.height * BlitterFactory::GetCurrentBlitter()->GetBytesPerPixel());
 }
@@ -120,7 +120,7 @@ void NetworkInitChatMessage()
 	MAX_CHAT_MESSAGES    = _settings_client.gui.network_chat_box_height;
 
 	_chatmsg_list        = ReallocT(_chatmsg_list, _settings_client.gui.network_chat_box_height);
-	_chatmsg_box.x       = 10;
+	_chatmsg_box.x       = GetMinSizing(NWST_STEP, 10) + 5;
 	_chatmsg_box.width   = _settings_client.gui.network_chat_box_width_pct * _screen.width / 100;
 	NetworkReInitChatBoxSize();
 	_chatmessage_visible = false;
@@ -462,7 +462,7 @@ struct NetworkChatWindow : public Window {
 
 	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
 	{
-		Point pt = { 0, _screen.height - sm_height - FindWindowById(WC_STATUS_BAR, 0)->height };
+		Point pt = { (int)GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) * 2, _screen.height - sm_height - FindWindowById(WC_STATUS_BAR, 0)->height };
 		return pt;
 	}
 
@@ -486,7 +486,7 @@ struct NetworkChatWindow : public Window {
 		if (this->dtype == DESTTYPE_CLIENT) {
 			SetDParamStr(0, NetworkClientInfo::GetByClientID((ClientID)this->dest)->client_name);
 		}
-		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, this->dest_string, TC_BLACK, SA_RIGHT);
+		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(r.top, r.bottom - r.top), this->dest_string, TC_BLACK, SA_RIGHT);
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)

@@ -37,7 +37,10 @@ static const NWidgetPart _nested_errmsg_widgets[] = {
 		NWidget(WWT_CAPTION, COLOUR_RED, WID_EM_CAPTION), SetDataTip(STR_ERROR_MESSAGE_CAPTION, STR_NULL),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_RED),
-		NWidget(WWT_EMPTY, COLOUR_RED, WID_EM_MESSAGE), SetPadding(0, 2, 0, 2), SetMinimalSize(236, 32),
+		NWidget(WWT_TEXT, COLOUR_RED), SetDataTip(STR_EMPTY, STR_NULL), // Add some borders
+		NWidget(WWT_EMPTY, COLOUR_RED, WID_EM_MESSAGE), SetPadding(4, 4, 4, 4), SetMinimalSize(236, 32),
+		NWidget(WWT_TEXT, COLOUR_RED), SetDataTip(STR_EMPTY, STR_NULL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_RED, WID_EM_CLOSE), SetPadding(4, 4, 4, 4), SetDataTip(STR_BUTTON_OK, STR_NULL),
 	EndContainer(),
 };
 
@@ -54,10 +57,13 @@ static const NWidgetPart _nested_errmsg_face_widgets[] = {
 		NWidget(WWT_CAPTION, COLOUR_RED, WID_EM_CAPTION), SetDataTip(STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY, STR_NULL),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_RED),
+		NWidget(WWT_TEXT, COLOUR_RED), SetDataTip(STR_EMPTY, STR_NULL), // Add some borders
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 1, 2),
-			NWidget(WWT_EMPTY, COLOUR_RED, WID_EM_FACE), SetMinimalSize(92, 119), SetFill(0, 1), SetPadding(2, 0, 1, 0),
-			NWidget(WWT_EMPTY, COLOUR_RED, WID_EM_MESSAGE), SetFill(0, 1), SetMinimalSize(238, 123),
+			NWidget(WWT_EMPTY, COLOUR_RED, WID_EM_FACE), SetMinimalSize(92, 119), SetFill(0, 1), SetPadding(4, 4, 4, 4),
+			NWidget(WWT_EMPTY, COLOUR_RED, WID_EM_MESSAGE), SetFill(0, 1), SetMinimalSize(238, 123), SetPadding(4, 4, 4, 4),
 		EndContainer(),
+		NWidget(WWT_TEXT, COLOUR_RED), SetDataTip(STR_EMPTY, STR_NULL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_RED, WID_EM_CLOSE), SetPadding(4, 4, 4, 4), SetDataTip(STR_BUTTON_OK, STR_NULL),
 	EndContainer(),
 };
 
@@ -318,6 +324,18 @@ public:
 		if (keycode != WKC_SPACE) return ES_NOT_HANDLED;
 		delete this;
 		return ES_HANDLED;
+	}
+
+	virtual void OnClick(Point pt, int widget, int click_count)
+	{
+		switch (widget) {
+			case WID_EM_CLOSE:
+				delete this;
+				break;
+
+			default:
+				break;
+		}
 	}
 
 	/**

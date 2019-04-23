@@ -32,6 +32,7 @@
 #include "../genworld.h"
 #include "../map_type.h"
 #include "../guitimer_func.h"
+#include "../settings_gui.h"
 
 #include "../widgets/network_widget.h"
 
@@ -509,17 +510,17 @@ public:
 		switch (widget) {
 			case WID_NG_CONN_BTN:
 				*size = maxdim(*size, maxdim(GetStringBoundingBox(_lan_internet_types_dropdown[0]), GetStringBoundingBox(_lan_internet_types_dropdown[1])));
-				size->width += padding.width;
+				size->width += padding.width + GetMinSizing(NWST_STEP, 11U);;
 				size->height += padding.height;
 				break;
 
 			case WID_NG_MATRIX:
-				resize->height = WD_MATRIX_TOP + max(GetSpriteSize(SPR_BLOT).height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
-				size->height = 10 * resize->height;
+				resize->height = SETTING_BUTTON_HEIGHT;
+				size->height = 5 * resize->height;
 				break;
 
 			case WID_NG_LASTJOINED:
-				size->height = WD_MATRIX_TOP + max(GetSpriteSize(SPR_BLOT).height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
+				size->height = SETTING_BUTTON_HEIGHT;
 				break;
 
 			case WID_NG_LASTJOINED_SPACER:
@@ -554,7 +555,7 @@ public:
 				break;
 
 			case WID_NG_DETAILS_SPACER:
-				size->height = 20 + 12 * FONT_HEIGHT_NORMAL;
+				size->height = 20 + 10 * FONT_HEIGHT_NORMAL;
 				break;
 		}
 	}
@@ -949,12 +950,9 @@ static const NWidgetPart _nested_network_game_widgets[] = {
 				/* LEFT SIDE */
 				NWidget(NWID_VERTICAL), SetPIP(0, 7, 0),
 					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
-						NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NG_CONNECTION), SetDataTip(STR_NETWORK_SERVER_LIST_ADVERTISED, STR_NULL),
+						NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NG_CONNECTION), SetSizingType(NWST_STEP), SetDataTip(STR_NETWORK_SERVER_LIST_ADVERTISED, STR_NULL),
 						NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NG_CONN_BTN),
 											SetDataTip(STR_BLACK_STRING, STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP),
-						NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-					EndContainer(),
-					NWidget(NWID_HORIZONTAL), SetPIP(0, 7, 0),
 						NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NG_FILTER_LABEL), SetDataTip(STR_LIST_FILTER_TITLE, STR_NULL),
 						NWidget(WWT_EDITBOX, COLOUR_LIGHT_BLUE, WID_NG_FILTER), SetMinimalSize(251, 12), SetFill(1, 0), SetResize(1, 0),
 											SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
@@ -1098,8 +1096,8 @@ struct NetworkStartServerWindow : public Window {
 		switch (widget) {
 			case WID_NSS_CONNTYPE_BTN:
 				*size = maxdim(GetStringBoundingBox(_connection_types_dropdown[0]), GetStringBoundingBox(_connection_types_dropdown[1]));
-				size->width += padding.width;
-				size->height += padding.height;
+				size->width = GetMinSizing(NWST_BUTTON, size->width + padding.width);
+				size->height = GetMinSizing(NWST_BUTTON, size->height + padding.height);
 				break;
 		}
 	}
@@ -1282,15 +1280,15 @@ static const NWidgetPart _nested_network_start_server_window_widgets[] = {
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(10, 6, 10),
 				NWidget(NWID_VERTICAL), SetPIP(0, 1, 0),
 					NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NSS_CONNTYPE_LABEL), SetFill(1, 0), SetDataTip(STR_NETWORK_SERVER_LIST_ADVERTISED, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NSS_CONNTYPE_BTN), SetFill(1, 0), SetDataTip(STR_BLACK_STRING, STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP),
+					NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NSS_CONNTYPE_BTN), SetSizingType(NWST_BUTTON), SetFill(1, 0), SetDataTip(STR_BLACK_STRING, STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP),
 				EndContainer(),
 				NWidget(NWID_VERTICAL), SetPIP(0, 1, 0),
 					NWidget(WWT_TEXT, COLOUR_LIGHT_BLUE, WID_NSS_LANGUAGE_LABEL), SetFill(1, 0), SetDataTip(STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NSS_LANGUAGE_BTN), SetFill(1, 0), SetDataTip(STR_BLACK_STRING, STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP),
+					NWidget(WWT_DROPDOWN, COLOUR_LIGHT_BLUE, WID_NSS_LANGUAGE_BTN), SetSizingType(NWST_BUTTON), SetFill(1, 0), SetDataTip(STR_BLACK_STRING, STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP),
 				EndContainer(),
 				NWidget(NWID_VERTICAL), SetPIP(0, 1, 0),
 					NWidget(NWID_SPACER), SetFill(1, 1),
-					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NSS_SETPWD), SetFill(1, 0), SetDataTip(STR_NETWORK_START_SERVER_SET_PASSWORD, STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP),
+					NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NSS_SETPWD), SetSizingType(NWST_BUTTON), SetFill(1, 0), SetDataTip(STR_NETWORK_START_SERVER_SET_PASSWORD, STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP),
 				EndContainer(),
 			EndContainer(),
 
@@ -1393,8 +1391,8 @@ struct NetworkLobbyWindow : public Window {
 				break;
 
 			case WID_NL_MATRIX:
-				resize->height = WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM;
-				size->height = 10 * resize->height;
+				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
+				size->height = 6 * resize->height;
 				break;
 
 			case WID_NL_DETAILS:
@@ -1461,7 +1459,7 @@ struct NetworkLobbyWindow : public Window {
 		uint profit_left = rtl ? left : right - profit_width;
 		uint lock_left   = rtl ? left + profit_width + 2 : right - profit_width - lock_width - 2;
 
-		int y = r.top + WD_MATRIX_TOP;
+		int y = r.top + WD_MATRIX_TOP + this->resize.step_height / 4;
 		/* Draw company list */
 		int pos = this->vscroll->GetPosition();
 		while (pos < this->server->info.companies_on) {
@@ -1726,7 +1724,7 @@ struct NetworkClientListPopupWindow : Window {
 		ClientList_Action_Proc *proc; ///< Action to execute
 	};
 
-	uint sel_index;
+	int sel_index;
 	ClientID client_id;
 	Point desired_location;
 	SmallVector<ClientListAction, 2> actions; ///< Actions to execute
@@ -1745,10 +1743,10 @@ struct NetworkClientListPopupWindow : Window {
 
 	NetworkClientListPopupWindow(WindowDesc *desc, int x, int y, ClientID client_id) :
 			Window(desc),
-			sel_index(0), client_id(client_id)
+			sel_index(-1), client_id(client_id)
 	{
-		this->desired_location.x = x;
-		this->desired_location.y = y;
+		this->desired_location.x = x - GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+		this->desired_location.y = y + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) / 2;
 
 		const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(client_id);
 
@@ -1790,6 +1788,7 @@ struct NetworkClientListPopupWindow : Window {
 			d = maxdim(GetStringBoundingBox(action->name), d);
 		}
 
+		d.height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 		d.height *= this->actions.Length();
 		d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
@@ -1801,37 +1800,29 @@ struct NetworkClientListPopupWindow : Window {
 		/* Draw the actions */
 		int sel = this->sel_index;
 		int y = r.top + WD_FRAMERECT_TOP;
-		for (const ClientListAction *action = this->actions.Begin(); action != this->actions.End(); action++, y += FONT_HEIGHT_NORMAL) {
+		for (const ClientListAction *action = this->actions.Begin(); action != this->actions.End(); action++, y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)) {
 			TextColour colour;
 			if (sel-- == 0) { // Selected item, highlight it
-				GfxFillRect(r.left + 1, y, r.right - 1, y + FONT_HEIGHT_NORMAL - 1, PC_BLACK);
+				GfxFillRect(r.left + 1, y, r.right - 1, y + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) - 1, PC_BLACK);
 				colour = TC_WHITE;
 			} else {
 				colour = TC_BLACK;
 			}
 
-			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, action->name, colour);
+			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)), action->name, colour);
 		}
 	}
 
-	virtual void OnMouseLoop()
+	virtual void OnClick(Point pt, int widget, int click_count)
 	{
-		/* We selected an action */
-		uint index = (_cursor.pos.y - this->top - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
+		int index = (pt.y - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 
-		if (_left_button_down) {
-			if (index == this->sel_index || index >= this->actions.Length()) return;
-
-			this->sel_index = index;
-			this->SetDirty();
-		} else {
-			if (index < this->actions.Length() && _cursor.pos.y >= this->top) {
-				const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(this->client_id);
-				if (ci != NULL) this->actions[index].proc(ci);
-			}
-
-			DeleteWindowByClass(WC_CLIENT_LIST_POPUP);
+		if (index >= 0 && index < (int)this->actions.Length()) {
+			const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(this->client_id);
+			if (ci != NULL) this->actions[index].proc(ci);
 		}
+
+		DeleteWindowByClass(WC_CLIENT_LIST_POPUP);
 	}
 };
 
@@ -1853,7 +1844,7 @@ static const NWidgetPart _nested_client_list_widgets[] = {
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
-	NWidget(WWT_PANEL, COLOUR_GREY, WID_CL_PANEL), SetMinimalSize(250, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM), SetResize(1, 1), EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_CL_PANEL), SetMinimalSize(100, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM), SetResize(1, 1), EndContainer(),
 };
 
 static WindowDesc _client_list_desc(
@@ -1871,6 +1862,8 @@ struct NetworkClientListWindow : Window {
 
 	uint server_client_width;
 	uint line_height;
+	uint line_width;
+	enum { MAX_ROWS = 6 }; // Split the list in two if it does not fit the screen
 
 	Dimension icon_size;
 
@@ -1894,12 +1887,16 @@ struct NetworkClientListWindow : Window {
 			if (ci->client_playas != COMPANY_INACTIVE_CLIENT) num++;
 		}
 
+		int cols = 1 + (num - 1) / MAX_ROWS;
+		cols *= this->line_width;
+		num = min(num, MAX_ROWS);
 		num *= this->line_height;
 
-		int diff = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
+		int diffx = (cols + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_x);
+		int diffy = (num + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y);
 		/* If height is changed */
-		if (diff != 0) {
-			ResizeWindow(this, 0, diff, false);
+		if (diffx > 0 || diffy != 0) { // Width can only grow, also title bar can be wider than content
+			ResizeWindow(this, diffx, diffy, false);
 			return false;
 		}
 		return true;
@@ -1912,6 +1909,7 @@ struct NetworkClientListWindow : Window {
 		this->server_client_width = max(GetStringBoundingBox(STR_NETWORK_SERVER).width, GetStringBoundingBox(STR_NETWORK_CLIENT).width) + WD_FRAMERECT_RIGHT;
 		this->icon_size = GetSpriteSize(SPR_COMPANY_ICON);
 		this->line_height = max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
+		this->line_height = GetMinSizing(NWST_STEP, this->line_height);
 
 		uint width = 100; // Default width
 		const NetworkClientInfo *ci;
@@ -1919,7 +1917,7 @@ struct NetworkClientListWindow : Window {
 			width = max(width, GetStringBoundingBox(ci->client_name).width);
 		}
 
-		size->width = WD_FRAMERECT_LEFT + this->server_client_width + this->icon_size.width + WD_FRAMERECT_LEFT + width + WD_FRAMERECT_RIGHT;
+		this->line_width = this->server_client_width + this->icon_size.width + WD_FRAMERECT_LEFT + width + WD_FRAMERECT_RIGHT;
 	}
 
 	virtual void OnPaint()
@@ -1943,19 +1941,21 @@ struct NetworkClientListWindow : Window {
 		uint right = r.right - WD_FRAMERECT_RIGHT;
 		uint type_icon_width = this->server_client_width + this->icon_size.width + WD_FRAMERECT_LEFT;
 
-
-		uint type_left  = rtl ? right - this->server_client_width : left;
-		uint type_right = rtl ? right : left + this->server_client_width - 1;
-		uint icon_left  = rtl ? right - type_icon_width + WD_FRAMERECT_LEFT : left + this->server_client_width;
-		uint name_left  = rtl ? left : left + type_icon_width;
-		uint name_right = rtl ? right - type_icon_width : right;
-
 		int i = 0;
 		const NetworkClientInfo *ci;
 		FOR_ALL_CLIENT_INFOS(ci) {
+			uint type_left  = rtl ? right - this->server_client_width : left;
+			uint type_right = rtl ? right : left + this->server_client_width - 1;
+			uint icon_left  = rtl ? right - type_icon_width + WD_FRAMERECT_LEFT : left + this->server_client_width;
+			uint name_left  = rtl ? right - this->line_width : left + type_icon_width;
+			uint name_right = rtl ? right - type_icon_width : left + this->line_width;
 			TextColour colour;
 			if (this->selected_item == i++) { // Selected item, highlight it
-				GfxFillRect(r.left + 1, y, r.right - 1, y + this->line_height - 1, PC_BLACK);
+				if (rtl) {
+					GfxFillRect(right - this->line_width, y, right + WD_FRAMERECT_RIGHT - 1, y + this->line_height - 1, PC_BLACK);
+				} else {
+					GfxFillRect(left - WD_FRAMERECT_LEFT + 1, y, left + this->line_width, y + this->line_height - 1, PC_BLACK);
+				}
 				colour = TC_WHITE;
 			} else {
 				colour = TC_BLACK;
@@ -1973,6 +1973,14 @@ struct NetworkClientListWindow : Window {
 			DrawString(name_left, name_right, y + text_offset, ci->client_name, colour);
 
 			y += line_height;
+			if (i % MAX_ROWS == 0 && i > 1) {
+				y = r.top + WD_FRAMERECT_TOP;
+				if (rtl) {
+					right -= this->line_width;
+				} else {
+					left += this->line_width;
+				}
+			}
 		}
 	}
 
@@ -2005,7 +2013,7 @@ struct NetworkClientListWindow : Window {
 		pt.y -= this->GetWidget<NWidgetBase>(WID_CL_PANEL)->pos_y;
 		int item = -1;
 		if (IsInsideMM(pt.y, WD_FRAMERECT_TOP, this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_y - WD_FRAMERECT_BOTTOM)) {
-			item = (pt.y - WD_FRAMERECT_TOP) / this->line_height;
+			item = (pt.y - WD_FRAMERECT_TOP) / this->line_height + ((pt.x - WD_FRAMERECT_LEFT) / this->line_width) * MAX_ROWS;
 		}
 
 		/* It did not change.. no update! */

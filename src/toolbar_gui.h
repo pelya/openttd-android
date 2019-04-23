@@ -16,6 +16,7 @@ void AllocateToolbar();
 void ToggleBoundingBoxes();
 void ToggleDirtyBlocks();
 
+extern int _last_clicked_toolbar_idx;
 extern uint _toolbar_width;
 
 #endif /* TOOLBAR_GUI_H */

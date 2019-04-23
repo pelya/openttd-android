@@ -911,7 +911,10 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			Game::NewEvent(new ScriptEventCompanyBankrupt(c_index));
 			CompanyAdminRemove(c_index, (CompanyRemoveReason)reason);
 
-			if (StoryPage::GetNumItems() == 0 || Goal::GetNumItems() == 0) InvalidateWindowData(WC_MAIN_TOOLBAR, 0);
+			if (StoryPage::GetNumItems() == 0 || Goal::GetNumItems() == 0) {
+				InvalidateWindowData(WC_MAIN_TOOLBAR, 0);
+				InvalidateWindowData(WC_MAIN_TOOLBAR_RIGHT, 0);
+			}
 			break;
 		}
 

@@ -62,8 +62,8 @@ static const NWidgetPart _nested_train_depot_widgets[] = {
 			NWidget(NWID_SELECTION, INVALID_COLOUR, WID_D_SHOW_SELL_CHAIN),
 				NWidget(WWT_IMGBTN, COLOUR_GREY, WID_D_SELL_CHAIN), SetDataTip(SPR_SELL_CHAIN_TRAIN, STR_DEPOT_DRAG_WHOLE_TRAIN_TO_SELL_TOOLTIP), SetResize(0, 1), SetFill(0, 1),
 			EndContainer(),
-			NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_SELL_ALL), SetDataTip(0x0, STR_NULL),
-			NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_AUTOREPLACE), SetDataTip(0x0, STR_NULL),
+			NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_SELL_ALL), SetResize(0, 1), SetFill(0, 1), SetDataTip(0x0, STR_NULL),
+			NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_AUTOREPLACE), SetResize(0, 1), SetFill(0, 1), SetDataTip(0x0, STR_NULL),
 		EndContainer(),
 		NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_D_V_SCROLL),
 	EndContainer(),
@@ -331,7 +331,7 @@ struct DepotWindow : Window {
 				/* Length of consist in tiles with 1 fractional digit (rounded up) */
 				SetDParam(0, CeilDiv(u->gcache.cached_total_length * 10, TILE_SIZE));
 				SetDParam(1, 1);
-				DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, y + (this->resize.step_height - FONT_HEIGHT_SMALL) / 2, STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
+				DrawString(rtl ? left + WD_FRAMERECT_LEFT : right - this->count_width, rtl ? left + this->count_width : right - WD_FRAMERECT_RIGHT, Center(y, this->resize.step_height, FONT_HEIGHT_SMALL), STR_TINY_BLACK_DECIMAL, TC_FROMSTRING, SA_RIGHT); // Draw the counter
 				break;
 			}
 
@@ -341,26 +341,28 @@ struct DepotWindow : Window {
 			default: NOT_REACHED();
 		}
 
-		uint diff_x, diff_y;
+		uint diff_x, y_sprite, y_num;
 		if (v->IsGroundVehicle()) {
 			/* Arrange unitnumber and flag horizontally */
 			diff_x = this->flag_width + WD_FRAMERECT_LEFT;
-			diff_y = (this->resize.step_height - this->flag_height) / 2 - 2;
+			y_sprite = Center(y, this->resize.step_height, this->flag_height);
+			y_num = Center(y, this->resize.step_height);
 		} else {
 			/* Arrange unitnumber and flag vertically */
 			diff_x = WD_FRAMERECT_LEFT;
-			diff_y = FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL;
+			y_num = Center(y, this->resize.step_height, FONT_HEIGHT_NORMAL + this->flag_height + 2);
+			y_sprite = y_num + FONT_HEIGHT_NORMAL;
 		}
 		int text_left  = rtl ? right - this->header_width - 1 : left + diff_x;
 		int text_right = rtl ? right - diff_x : left + this->header_width - 1;
 
 		if (free_wagon) {
-			DrawString(text_left, text_right, y + 2, STR_DEPOT_NO_ENGINE);
+			DrawString(text_left, text_right, Center(y, this->resize.step_height), STR_DEPOT_NO_ENGINE);
 		} else {
-			DrawSprite((v->vehstatus & VS_STOPPED) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING, PAL_NONE, rtl ? right - this->flag_width : left + WD_FRAMERECT_LEFT, y + diff_y);
+			DrawSprite((v->vehstatus & VS_STOPPED) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING, PAL_NONE, rtl ? right - this->flag_width : left + WD_FRAMERECT_LEFT, y_sprite);
 
 			SetDParam(0, v->unitnumber);
-			DrawString(text_left, text_right, y + 2, (uint16)(v->max_age - DAYS_IN_LEAP_YEAR) >= v->age ? STR_BLACK_COMMA : STR_RED_COMMA);
+			DrawString(text_left, text_right, y_num, (uint16)(v->max_age - DAYS_IN_LEAP_YEAR) >= v->age ? STR_BLACK_COMMA : STR_RED_COMMA);
 		}
 	}
 
@@ -400,7 +402,7 @@ struct DepotWindow : Window {
 		uint16 num = this->vscroll->GetPosition() * this->num_columns;
 		int maxval = min(this->vehicle_list.Length(), num + (rows_in_display * this->num_columns));
 		int y;
-		for (y = r.top + 1; num < maxval; y += this->resize.step_height) { // Draw the rows
+		for (y = r.top; num < maxval; y += this->resize.step_height) { // Draw the rows
 			for (byte i = 0; i < this->num_columns && num < maxval; i++, num++) {
 				/* Draw all vehicles in the current row */
 				const Vehicle *v = this->vehicle_list[num];
@@ -680,6 +682,7 @@ struct DepotWindow : Window {
 				int base_width = this->count_width + this->header_width;
 
 				resize->height = max<uint>(GetVehicleImageCellSize(this->type, EIT_IN_DEPOT).height, min_height);
+				resize->height = GetMinSizing(NWST_STEP, resize->height);
 				if (this->type == VEH_TRAIN) {
 					resize->width = 1;
 					size->width = base_width + 2 * ScaleGUITrad(29); // about 2 parts

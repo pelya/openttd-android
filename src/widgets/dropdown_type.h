@@ -13,6 +13,7 @@
 #define WIDGETS_DROPDOWN_TYPE_H
 
 #include "../window_type.h"
+#include "../widget_type.h"
 #include "../gfx_func.h"
 #include "../core/smallvec_type.hpp"
 #include "table/strings.h"
@@ -30,7 +31,7 @@ public:
 	virtual ~DropDownListItem() {}
 
 	virtual bool Selectable() const { return false; }
-	virtual uint Height(uint width) const { return FONT_HEIGHT_NORMAL; }
+	virtual uint Height(uint width) const { return GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL); }
 	virtual uint Width() const { return 0; }
 	virtual void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const;
 };

@@ -405,11 +405,11 @@ STR_MAP_MENU_SIGN_LIST                                          :Sign list
 
 ############ range for town menu starts
 STR_TOWN_MENU_TOWN_DIRECTORY                                    :Town directory
-STR_TOWN_MENU_FOUND_TOWN                                        :Found town
-############ range ends here
-
-############ range for subsidies menu starts
 STR_SUBSIDIES_MENU_SUBSIDIES                                    :Subsidies
+STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY                            :Industry directory
+STR_INDUSTRY_MENU_INDUSTRY_CHAIN                                :Industry chains
+STR_INDUSTRY_MENU_FUND_NEW_INDUSTRY                             :Fund new industry
+STR_TOWN_MENU_FOUND_TOWN                                        :Found town
 ############ range ends here
 
 ############ range for graph menu starts
@@ -425,12 +425,6 @@ STR_GRAPH_MENU_CARGO_PAYMENT_RATES                              :Cargo payment r
 STR_GRAPH_MENU_COMPANY_LEAGUE_TABLE                             :Company league table
 STR_GRAPH_MENU_DETAILED_PERFORMANCE_RATING                      :Detailed performance rating
 STR_GRAPH_MENU_HIGHSCORE                                        :Highscore table
-############ range ends here
-
-############ range for industry menu starts
-STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY                            :Industry directory
-STR_INDUSTRY_MENU_INDUSTRY_CHAIN                                :Industry chains
-STR_INDUSTRY_MENU_FUND_NEW_INDUSTRY                             :Fund new industry
 ############ range ends here
 
 ############ range for railway construction menu starts
@@ -472,6 +466,7 @@ STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :Delete all mess
 ############ range for about menu starts
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :Land area information
 STR_ABOUT_MENU_SEPARATOR                                        :
+STR_ABOUT_MENU_TUTORIAL                                         :{BLACK}Tutorial
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
@@ -722,6 +717,7 @@ STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP                    :{BLACK}Show lan
 STR_SMALLMAP_TOOLTIP_INDUSTRY_SELECTION                         :{BLACK}Click on an industry type to toggle displaying it. Ctrl+Click disables all types except the selected one. Ctrl+Click on it again to enable all industry types
 STR_SMALLMAP_TOOLTIP_COMPANY_SELECTION                          :{BLACK}Click on a company to toggle displaying its property. Ctrl+Click disables all companies except the selected one. Ctrl+Click on it again to enable all companies
 STR_SMALLMAP_TOOLTIP_CARGO_SELECTION                            :{BLACK}Click on a cargo to toggle displaying its property. Ctrl+Click disables all cargoes except the selected one. Ctrl+Click on it again to enable all cargoes
+STR_SMALLMAP_TOOLTIP_SHOW_LEGEND                                :{BLACK}Show map legend / description of map symbols
 
 STR_SMALLMAP_LEGENDA_ROADS                                      :{TINY_FONT}{BLACK}Roads
 STR_SMALLMAP_LEGENDA_RAILROADS                                  :{TINY_FONT}{BLACK}Railways
@@ -1226,6 +1222,26 @@ STR_CONFIG_SETTING_SIGNALSIDE_HELPTEXT                          :Select on which
 STR_CONFIG_SETTING_SIGNALSIDE_LEFT                              :On the left
 STR_CONFIG_SETTING_SIGNALSIDE_DRIVING_SIDE                      :On the driving side
 STR_CONFIG_SETTING_SIGNALSIDE_RIGHT                             :On the right
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR                             :Vertical toolbar: {STRING2}
+STR_CONFIG_SETTING_VERTICAL_TOOLBAR_HELPTEXT                    :Main toolbar is split into two vertical toolbars on the sides of the screen
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :Compact vertical toolbar: {STRING2}
+STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :No 'Switch toolbars' button in the vertical toolbar, but more sub-menus
+STR_CONFIG_SETTING_BUTTON_SIZE                                  :{BLACK}Button size
+STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          :{BLACK}Size of all user interface elements
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}Font size
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}Size of all game fonts
+STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :Confirm actions: {STRING2}
+STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :Show confirmation dialog when building roads and stations
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :{BLACK}Title bars
+STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT                   :{BLACK}Show title bars for all windows, or hide them to save screen space
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS                          :Window decorations: {STRING2}
+STR_CONFIG_SETTING_WINDOWS_DECORATIONS_HELPTEXT                 :Ornaments on window edges
+STR_CONFIG_SETTING_VIDEO_8BPP                                   :{BLACK}8 bit
+STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT                          :{BLACK}Set video color depth to 8 bits per pixel, this video mode supports water animation
+STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
+STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Set video color depth to 16 bits per pixel, this requires restart, this video mode does not support water animation
+STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
+STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Set video color depth to 24 bits per pixel, this video mode supports water animation
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}
@@ -2500,6 +2516,13 @@ STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND                  :{BLACK}Raise a 
 STR_LANDSCAPING_LEVEL_LAND_TOOLTIP                              :{BLACK}Level an area of land to the height of the first selected corner. Ctrl selects the area diagonally. Shift toggles building/showing cost estimate
 STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Purchase land for future use. Shift toggles building/showing cost estimate
 
+STR_TABLET_CLOSE                                                :{BLACK}X
+STR_TABLET_CLOSE_TOOLTIP                                        :{BLACK}Close all opened windows (except pinned ones)
+STR_TABLET_SHIFT                                                :{BLACK}{TINY_FONT}Shft
+STR_TABLET_SHIFT_TOOLTIP                                        :{BLACK}Press it for getting an estimated cost of executing an action
+STR_TABLET_CTRL                                                 :{BLACK}{TINY_FONT}Ctrl
+STR_TABLET_CTRL_TOOLTIP                                         :{BLACK}Use it for actions that use the "CTRL" key
+
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Object Selection
 STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Select object to build. Shift toggles building/showing cost estimate
@@ -2770,6 +2793,14 @@ STR_FRAMETIME_CAPTION_AI                                        :AI {NUM} {RAW_S
 ############ End of leave-in-this-order
 
 
+STR_TUTORIAL_WINDOW_TITLE                                       :{BLACK}Tutorial videos
+STR_TUTORIAL_WINDOW_TOOLTIP                                     :{BLACK}Open a video player to watch tutorial videos
+STR_TUTORIAL_ROADS_AND_STATIONS                                 :{BLACK}Building roads and stations, buying vehicles
+STR_TUTORIAL_RAILWAYS                                           :{BLACK}Railways and trains
+STR_TUTORIAL_ROAD_VEHICLES                                      :{BLACK}Road vehicles
+STR_TUTORIAL_SHIPS                                              :{BLACK}Ships and docks
+STR_TUTORIAL_CARGO                                              :{BLACK}Cargo types
+
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Save Game
 STR_SAVELOAD_LOAD_CAPTION                                       :{WHITE}Load Game
@@ -2788,6 +2819,10 @@ STR_SAVELOAD_SAVE_TOOLTIP                                       :{BLACK}Save the
 STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}Load
 STR_SAVELOAD_LOAD_TOOLTIP                                       :{BLACK}Load the selected game
 STR_SAVELOAD_LOAD_HEIGHTMAP_TOOLTIP                             :{BLACK}Load the selected heightmap
+STR_SAVELOAD_LOAD_NETWORK_BUTTON                                :{BLACK}Load from network
+STR_SAVELOAD_LOAD_NETWORK_TOOLTIP                               :{BLACK}Load a game from the network storage
+STR_SAVELOAD_SAVE_NETWORK_BUTTON                                :{BLACK}Save to network
+STR_SAVELOAD_SAVE_NETWORK_TOOLTIP                               :{BLACK}Back up the game to the network storage
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Game Details
 STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}No information available
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}: {WHITE}{STRING1}
