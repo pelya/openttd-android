@@ -131,7 +131,6 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 			if (_scrollbar_size > button_size * 2)
 				_scrollbar_size -= button_size;
 			w->mouse_capture_widget = sb->index;
-			w->scrolling_scrollbar = sb->index;
 			_cursorpos_drag_start = _cursor.pos;
 		}
 	}

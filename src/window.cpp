@@ -2469,9 +2469,9 @@ static EventState HandleWindowDragging()
 
 			w->SetDirty();
 			if (GetWindowDraggedOffScreen(w)) {
-				GuiShowTooltips(w, STR_TOOLTIP_CLOSE_WINDOW, 0, NULL, TCC_LEFT_CLICK);
+				GuiShowTooltips(w, STR_TOOLTIP_CLOSE_WINDOW, 0, NULL, TCC_NONE);
 			} else {
-				GuiShowTooltips(w, STR_NULL, 0, NULL, TCC_LEFT_CLICK); // Hide tooltip
+				GuiShowTooltips(w, STR_NULL, 0, NULL, TCC_NONE); // Hide tooltip
 			}
 
 			return ES_HANDLED;
