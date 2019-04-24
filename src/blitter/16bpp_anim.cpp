@@ -7,7 +7,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file 16bpp_anim.cpp Implementation of the optimized 32 bpp blitter with animation support. */
+/** @file 16bpp_anim.cpp Implementation of the optimized 16 bpp blitter with animation support, currently broken. */
 
 #include "../stdafx.h"
 #include "../video/video_driver.hpp"

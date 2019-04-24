@@ -7,10 +7,11 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file 16bpp_base.cpp Implementation of base for 32 bpp blitters. */
+/** @file 16bpp_base.cpp Implementation of base for 16 bpp blitters. */
 
 #include "../stdafx.h"
 #include "16bpp_base.hpp"
+#include "common.hpp"
 
 void *Blitter_16bppBase::MoveTo(void *video, int x, int y)
 {
@@ -20,6 +21,14 @@ void *Blitter_16bppBase::MoveTo(void *video, int x, int y)
 void Blitter_16bppBase::SetPixel(void *video, int x, int y, uint8 colour)
 {
 	*((Colour16 *)video + x + y * _screen.pitch) = LookupColourInPalette(colour);
+}
+
+void Blitter_16bppBase::DrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width, int dash)
+{
+	const Colour16 c = LookupColourInPalette(colour);
+	this->DrawLineGeneric(x, y, x2, y2, screen_width, screen_height, width, dash, [=](int x, int y) {
+		*((Colour16 *)video + x + y * _screen.pitch) = c;
+	});
 }
 
 void Blitter_16bppBase::DrawRect(void *video, int width, int height, uint8 colour)

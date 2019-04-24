@@ -7,7 +7,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file 32bpp_simple.cpp Implementation of the simple 32 bpp blitter. */
+/** @file 32bpp_simple.cpp Implementation of the simple 16 bpp blitter. */
 
 #include "../stdafx.h"
 #include "../zoom_func.h"
