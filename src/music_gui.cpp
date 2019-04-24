@@ -457,7 +457,7 @@ struct MusicTrackSelectionWindow : public Window {
 	uint GetNumberOfTracksOfTracklist() const
 	{
 		uint i = 0;
-		for (; _playlists[_settings_client.music.playlist][i] > 0; i++) {}
+		for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song, ++i) {}
 		return i;
 	}
 
@@ -549,8 +549,10 @@ struct MusicTrackSelectionWindow : public Window {
 
 				int y = r.top + WD_FRAMERECT_TOP;
 				uint vscroll_max = min(this->left_sb->GetPosition() + this->left_sb->GetCapacity(), NUM_SONGS_AVAILABLE);
-
-				for (uint i = this->left_sb->GetPosition(); i < vscroll_max; i++) {
+				uint i = 0;
+				for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song, i++) {
+					if (i < this->left_sb->GetPosition()) continue;
+					if (i >= vscroll_max) break;
 					SetDParam(0, song->tracknr);
 					SetDParam(1, 2);
 					SetDParamStr(2, song->songname);
@@ -565,9 +567,10 @@ struct MusicTrackSelectionWindow : public Window {
 
 				int y = r.top + WD_FRAMERECT_TOP;
 				uint vscroll_max = min(this->right_sb->GetPosition() + this->right_sb->GetCapacity(), this->GetNumberOfTracksOfTracklist());
-
-				for (uint i = this->right_sb->GetPosition(); i < vscroll_max; i++) {
-					uint j = _playlists[_settings_client.music.playlist][i] - 1;
+				uint i = 0;
+				for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song, i++) {
+					if (i < this->right_sb->GetPosition()) continue;
+					if (i >= vscroll_max) break;
 					SetDParam(0, song->tracknr);
 					SetDParam(1, 2);
 					SetDParamStr(2, song->songname);
@@ -843,11 +846,7 @@ struct MusicWindow : public Window {
 				if (new_vol < 3) new_vol = 0;
 				if (new_vol != *vol) {
 					*vol = new_vol;
-<<<<<<< HEAD
 					if (widget == WID_M_MUSIC_VOL) MusicDriver::GetInstance()->SetVolume(new_vol);
-=======
-					if (widget == WID_M_MUSIC_VOL) MusicVolumeChanged((new_vol * new_vol) / 127); // Kinda logarithmic scale
->>>>>>> origin/master
 					this->SetDirty();
 				}
 
