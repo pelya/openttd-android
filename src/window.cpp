@@ -2354,6 +2354,7 @@ bool GetWindowDraggedOffScreen(const Window *w)
 	if (w->left + w->width > edge.right && w->left > visible.left) return true;
 	if (w->top < edge.top && w->top + w->height < visible.bottom) return true;
 	if (w->top + w->height > edge.bottom && w->top > visible.top) return true;
+	if (w->window_class == WC_NEWS_WINDOW && abs(w->left + w->width / 2 - _screen.width / 2) > 3) return true; // News window closes with a light flick to the side
 	return false;
 }
 
