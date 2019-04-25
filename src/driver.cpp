@@ -20,7 +20,7 @@
 
 char *_ini_videodriver;     ///< The video driver a stored in the configuration file.
 int _num_resolutions;       ///< The number of resolutions.
-Dimension _resolutions[32]; ///< List of resolutions.
+Dimension _resolutions[100]; ///< List of resolutions.
 Dimension _cur_resolution;  ///< The current resolution.
 bool _rightclick_emulate;   ///< Whether right clicking is emulated.
 
