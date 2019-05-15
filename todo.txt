@@ -12,3 +12,5 @@
 - Create auto-save when the app is put to background, and load it on the next start.
 
 - Select native screen width x 480 resolution on first run.
+
+- Minimap scrolling is broken.
