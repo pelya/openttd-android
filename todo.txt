@@ -14,3 +14,6 @@
 - Select native screen width x 480 resolution on first run.
 
 - Minimap scrolling is broken.
+
+- Scrollable lists open scrolled to bottom.
+
