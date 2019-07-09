@@ -1132,6 +1132,38 @@ bool AfterLoadGame()
 		}
 	}
 
+	/* Railtype moved from m3 to m8 in version SLV_EXTEND_RAILTYPES. */
+	if (IsSavegameVersionBefore(SLV_EXTEND_RAILTYPES)) {
+		for (TileIndex t = 0; t < map_size; t++) {
+			switch (GetTileType(t)) {
+				case MP_RAILWAY:
+					SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
+					break;
+
+				case MP_ROAD:
+					if (IsLevelCrossing(t)) {
+						SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
+					}
+					break;
+
+				case MP_STATION:
+					if (HasStationRail(t)) {
+						SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
+					}
+					break;
+
+				case MP_TUNNELBRIDGE:
+					if (GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL) {
+						SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
+					}
+					break;
+
+				default:
+					break;
+			}
+		}
+	}
+
 	if (IsSavegameVersionBefore(SLV_42)) {
 		Vehicle *v;
 
@@ -1209,38 +1241,6 @@ bool AfterLoadGame()
 				Train::From(v)->track = TRACK_BIT_WORMHOLE;
 			} else {
 				RoadVehicle::From(v)->state = RVSB_WORMHOLE;
-			}
-		}
-	}
-
-	/* Railtype moved from m3 to m8 in version SLV_EXTEND_RAILTYPES. */
-	if (IsSavegameVersionBefore(SLV_EXTEND_RAILTYPES)) {
-		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
-				case MP_RAILWAY:
-					SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
-					break;
-
-				case MP_ROAD:
-					if (IsLevelCrossing(t)) {
-						SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
-					}
-					break;
-
-				case MP_STATION:
-					if (HasStationRail(t)) {
-						SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
-					}
-					break;
-
-				case MP_TUNNELBRIDGE:
-					if (GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL) {
-						SetRailType(t, (RailType)GB(_m[t].m3, 0, 4));
-					}
-					break;
-
-				default:
-					break;
 			}
 		}
 	}
@@ -1893,6 +1893,7 @@ bool AfterLoadGame()
 	}
 
 	if (IsSavegameVersionBefore(SLV_62)) {
+		GroupStatistics::UpdateAfterLoad(); // Ensure statistics pool is initialised before trying to delete vehicles
 		/* Remove all trams from savegames without tram support.
 		 * There would be trams without tram track under causing crashes sooner or later. */
 		RoadVehicle *v;
@@ -2304,6 +2305,14 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_128)) {
 		const Depot *d;
 		FOR_ALL_DEPOTS(d) {
+			/* At some point, invalid depots were saved into the game (possibly those removed in the past?)
+			 * Remove them here, so they don't cause issues further down the line */
+			if (!IsDepotTile(d->xy)) {
+				DEBUG(sl, 0, "Removing invalid depot %d at %d, %d", d->index, TileX(d->xy), TileY(d->xy));
+				delete d;
+				d = nullptr;
+				continue;
+			}
 			_m[d->xy].m2 = d->index;
 			if (IsTileType(d->xy, MP_WATER)) _m[GetOtherShipDepotTile(d->xy)].m2 = d->index;
 		}

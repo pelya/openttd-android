@@ -28,6 +28,7 @@
 #include "core/geometry_func.hpp"
 #include "guitimer_func.h"
 #include "settings_gui.h"
+#include "zoom_func.h"
 
 #include "widgets/statusbar_widget.h"
 
@@ -179,7 +180,7 @@ struct StatusBarWindow : Window {
 					str = STR_STATUSBAR_PAUSED;
 				} else if (this->ticker_scroll < TICKER_STOP && FindWindowById(WC_NEWS_WINDOW, 0) == NULL && _statusbar_news_item != NULL && _statusbar_news_item->string_id != 0) {
 					/* Draw the scrolling news text */
-					if (!DrawScrollingStatusText(_statusbar_news_item, this->ticker_scroll, r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, r.bottom)) {
+					if (!DrawScrollingStatusText(_statusbar_news_item, ScaleGUITrad(this->ticker_scroll), r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, r.bottom)) {
 						InvalidateWindowData(WC_STATUS_BAR, 0, SBI_NEWS_DELETED);
 						if (Company::IsValidID(_local_company)) {
 							/* This is the default text */
