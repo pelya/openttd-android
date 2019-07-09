@@ -698,7 +698,7 @@ struct TooltipsWindow : public Window
 		if (_settings_client.gui.windows_titlebars) {
 			// Move it to the top of the screen, away from mouse cursor, so it won't steal screen taps on Android
 			pt.y = GetMainViewTop();
-			if (_cursor.pos.y < pt.y + GetMinSizing(NWST_STEP)) {
+			if (_cursor.pos.y < pt.y + (int)GetMinSizing(NWST_STEP)) {
 				pt.x = _cursor.pos.x > _screen.width / 2 ? GetMinSizing(NWST_STEP) : _screen.width - sm_width - GetMinSizing(NWST_STEP);
 			}
 		}
