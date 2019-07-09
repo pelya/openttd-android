@@ -17,3 +17,5 @@
 
 - Scrollable lists open scrolled to bottom.
 
+- Two-finger scroll when building road is broken.
+
