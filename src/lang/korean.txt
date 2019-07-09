@@ -5079,8 +5079,8 @@ STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR                     :소형 수직 �
 STR_CONFIG_SETTING_COMPACT_VERTICAL_TOOLBAR_HELPTEXT            :수직 작업창에 '작업창 바꾸기'메뉴가 없지만, 부 메뉴가 추가로 있음
 STR_CONFIG_SETTING_BUTTON_SIZE                                  : {BLACK}버튼 크기
 STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP                          : {BLACK}모든 사용자 인터페이스의 크기
-STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}폰트 크기
-STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}모든 게임 폰트의 크기
+STR_CONFIG_SETTING_FONT_SIZE                                    :{BLACK}글씨 크기
+STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP                            :{BLACK}모든 게임 글씨의 크기
 STR_CONFIG_SETTING_BUILD_CONFIRMATION                           :명령 확인: {STRING}
 STR_CONFIG_SETTING_BUILD_CONFIRMATION_HELPTEXT                  :도로와 정류장을 건설시 확인 팝업을 보임
 STR_CONFIG_SETTING_WINDOWS_TITLEBARS                            :이름 창
