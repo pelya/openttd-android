@@ -1063,7 +1063,6 @@ void SmallMapWindow::SetupWidgetData()
 
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 		Window(desc),
-		show_legend(true),
 		row_height(max(GetMinSizing(NWST_STEP, FONT_HEIGHT_SMALL) * 2 / 3, uint(FONT_HEIGHT_SMALL))), // Default spacing makes legend too tall - shrink it by 1/3
 		refresh(GUITimer(FORCE_REFRESH_PERIOD))
 {
@@ -1077,7 +1076,6 @@ SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 	//this->SetWidgetLoweredState(WID_SM_SHOW_HEIGHT, _smallmap_show_heightmap);
 
 	this->SetWidgetLoweredState(WID_SM_TOGGLETOWNNAME, this->show_towns);
-	//this->SetWidgetLoweredState(WID_SM_SHOW_LEGEND, this->show_legend);
 
 	this->SetupWidgetData();
 
@@ -1158,17 +1156,17 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 					str = tbl->legend;
 				}
 			} else {
-				if (tbl->col_break) {
-					//this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
-					height = 0;
-					num_columns++;
-				}
-				height++;
 				str = tbl->legend;
 			}
+			if (tbl->col_break) {
+				this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
+				height = 0;
+				num_columns++;
+			}
+			height++;
 			min_width = max(GetStringBoundingBox(str).width, min_width);
 		}
-		//this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
+		this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
 		this->min_number_of_columns = max(this->min_number_of_columns, num_columns);
 	}
 
@@ -1458,14 +1456,6 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 			if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 			break;
 
-		case WID_SM_SHOW_LEGEND: {
-				int oldHeight = this->GetLegendHeight(this->min_number_of_columns);
-				this->show_legend = !this->show_legend;
-				this->SetWidgetLoweredState(WID_SM_SHOW_LEGEND, this->show_legend);
-				this->ReInit(0, this->GetLegendHeight(this->min_number_of_columns) - oldHeight);
-				break;
-			}
-
 		case WID_SM_LEGEND: // Legend
 			if (this->map_type == SMT_INDUSTRY || this->map_type == SMT_LINKSTATS || this->map_type == SMT_OWNER) {
 				int click_pos = this->GetPositionOnLegend(pt);
@@ -1688,7 +1678,7 @@ Point SmallMapWindow::GetStationMiddle(const Station *st) const
 {
 	if (widget != WID_SM_LEGEND) return;
 
-	size->width = this->GetMinLegendWidth();
+	size->width = WD_FRAMERECT_LEFT + this->column_width;
 	size->height = this->GetLegendHeight(this->min_number_of_columns);
 }
 
@@ -1723,7 +1713,7 @@ public:
 		this->smallmap_window = dynamic_cast<SmallMapWindow *>(w);
 
 		assert(this->smallmap_window != NULL);
-		this->smallest_x = max(display->smallest_x, max(bar->smallest_x, smallmap_window->GetMinLegendWidth()));
+		this->smallest_x = max(display->smallest_x, max(bar->smallest_x, WD_FRAMERECT_LEFT + smallmap_window->column_width));
 		this->smallest_y = display->smallest_y + max(bar->smallest_y, smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
 		this->fill_x = max(display->fill_x, bar->fill_x);
 		this->fill_y = (display->fill_y == 0 && bar->fill_y == 0) ? 0 : min(display->fill_y, bar->fill_y);
@@ -1774,7 +1764,7 @@ public:
 /** Widget parts of the smallmap display. */
 static const NWidgetPart _nested_smallmap_display[] = {
 	NWidget(WWT_PANEL, COLOUR_BROWN, WID_SM_MAP_BORDER),
-		NWidget(WWT_INSET, COLOUR_BROWN, WID_SM_MAP), SetMinimalSize(140, 140), SetResize(1, 1), SetPadding(2, 2, 2, 2), EndContainer(),
+		NWidget(WWT_INSET, COLOUR_BROWN, WID_SM_MAP), SetMinimalSize(100, 140), SetResize(1, 1), SetPadding(2, 2, 2, 2), EndContainer(),
 	EndContainer(),
 };
 
@@ -1782,15 +1772,11 @@ static const NWidgetPart _nested_smallmap_display[] = {
 static const NWidgetPart _nested_smallmap_bar[] = {
 	NWidget(WWT_PANEL, COLOUR_BROWN),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(NWID_HORIZONTAL),
+			NWidget(NWID_VERTICAL),
 				/* Top button row. */
 				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
-					//NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_SHOW_LEGEND),
-					//		SetDataTip(SPR_IMG_QUERY, STR_SMALLMAP_TOOLTIP_SHOW_LEGEND), SetFill(1, 1),
 					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_ZOOM_IN),
 							SetDataTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN), SetFill(1, 1),
-					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_ZOOM_OUT),
-							SetDataTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT), SetFill(1, 1),
 					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_CENTERMAP),
 							SetDataTip(SPR_IMG_SMALLMAP, STR_SMALLMAP_CENTER), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_CONTOUR),
@@ -1801,6 +1787,12 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 							SetDataTip(SPR_IMG_INDUSTRY, STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRIES_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_TOGGLETOWNNAME),
 							SetDataTip(SPR_IMG_TOWN, STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF), SetFill(1, 1),
+					NWidget(NWID_SPACER), SetResize(1, 0), SetMinimalSize(0, 1),
+				EndContainer(),
+				/* Bottom button row. */
+				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_ZOOM_OUT),
+							SetDataTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_LINKSTATS),
 							SetDataTip(SPR_IMG_CARGOFLOW, STR_SMALLMAP_TOOLTIP_SHOW_LINK_STATS_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_ROUTES),
@@ -1869,6 +1861,10 @@ static WindowDesc _smallmap_desc(
 void ShowSmallMap()
 {
 	AllocateWindowDescFront<SmallMapWindow>(&_smallmap_desc, 0);
+	SmallMapWindow *w = dynamic_cast<SmallMapWindow *>(FindWindowByClass(WC_SMALLMAP));
+	if (w && w->GetMinLegendWidth() > w->width) {
+		ResizeWindow(w, w->GetMinLegendWidth() - w->width, 0);
+	}
 }
 
 /**
