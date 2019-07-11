@@ -178,7 +178,6 @@ public:
 	 */
 	inline int GetMinLegendWidth() const
 	{
-		printf("GetMinLegendWidth: this->min_number_of_columns %d this->column_width %d\n", this->min_number_of_columns, this->column_width);
 		return WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width;
 	}
 
