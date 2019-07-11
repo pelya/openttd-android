@@ -1,8 +1,6 @@
 
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
-- Smallmap UI won't fit all FIRS industries.
-
 - Add 'Goal' menu item somewhere to compact toolbar.
 
 - Misclicking station from orders dialog should hide the dialog for 3 times.
