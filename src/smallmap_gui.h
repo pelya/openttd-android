@@ -75,6 +75,7 @@ protected:
 	uint min_number_of_fixed_rows; ///< Minimal number of rows in the legends for the fixed layouts only (all except #SMT_INDUSTRY).
 	uint column_width;             ///< Width of a column in the #WID_SM_LEGEND widget.
 	const uint row_height;         ///< Heigth of each row in the #WID_SM_LEGEND widget.
+	Point lmb_scroll_pt;           ///< Starting point for scrolling minimap with left mouse button.
 
 	int32 scroll_x;  ///< Horizontal world coordinate of the base tile left of the top-left corner of the smallmap display.
 	int32 scroll_y;  ///< Vertical world coordinate of the base tile left of the top-left corner of the smallmap display.
