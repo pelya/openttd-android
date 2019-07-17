@@ -149,6 +149,7 @@ struct DropdownWindow : Window {
 		/* Capacity is the average number of items visible */
 		this->vscroll->SetCapacity(size.height * (uint16)list->Length() / list_height);
 		this->vscroll->SetCount((uint16)list->Length());
+		this->vscroll->SetPosition(Clamp(selected, 0, list->Length()));
 
 		this->parent_wnd_class = parent->window_class;
 		this->parent_wnd_num   = parent->window_number;
@@ -427,7 +428,7 @@ void ShowDropDownListAt(Window *w, const DropDownList *list, int selected, int b
 	/* The dropdown starts scrolling downwards when opening it towards
 	 * the top and holding down the mouse button. It can be fooled by
 	 * opening the dropdown scrolled to the very bottom.  */
-	if (above && scroll) dropdown->vscroll->UpdatePosition(INT_MAX);
+	//if (above && scroll) dropdown->vscroll->UpdatePosition(INT_MAX);
 }
 
 /**
