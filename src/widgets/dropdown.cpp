@@ -149,7 +149,7 @@ struct DropdownWindow : Window {
 		/* Capacity is the average number of items visible */
 		this->vscroll->SetCapacity(size.height * (uint16)list->Length() / list_height);
 		this->vscroll->SetCount((uint16)list->Length());
-		this->vscroll->SetPosition(Clamp(selected, 0, list->Length()));
+		this->vscroll->UpdatePosition(0);
 
 		this->parent_wnd_class = parent->window_class;
 		this->parent_wnd_num   = parent->window_number;
@@ -159,6 +159,7 @@ struct DropdownWindow : Window {
 		this->click_delay      = 0;
 		this->drag_mode        = instant_close;
 		this->instant_close    = instant_close;
+		this->scrolling        = 0;
 		this->scrolling_timer  = GUITimer(MILLISECONDS_PER_TICK);
 		this->left_button_state = _left_button_down;
 	}
