@@ -100,6 +100,8 @@ struct DropdownWindow : Window {
 	bool left_button_state;       ///< Close the window when the mouse button is clicked outside the window.
 	int scrolling;                ///< If non-zero, auto-scroll the item list (one time).
 	GUITimer scrolling_timer;     ///< Timer for auto-scroll of the item list.
+	bool left_button_scrolling;   ///< The list is scrolled with left mouse button
+	int left_button_scroll_pos;   ///< Initial mouse position for left button scrolling
 	Point position;               ///< Position of the topleft corner of the window.
 	Scrollbar *vscroll;
 
@@ -141,14 +143,18 @@ struct DropdownWindow : Window {
 
 		/* Total length of list */
 		int list_height = 0;
+		int scroll_pos = 0;
+		int count = 0;
 		for (const DropDownListItem * const *it = list->Begin(); it != list->End(); ++it) {
 			const DropDownListItem *item = *it;
 			list_height += item->Height(items_width);
+			if (item->result == selected) scroll_pos = count;
+			count++;
 		}
-
 		/* Capacity is the average number of items visible */
 		this->vscroll->SetCapacity(size.height * (uint16)list->Length() / list_height);
 		this->vscroll->SetCount((uint16)list->Length());
+		this->vscroll->SetPosition(scroll_pos);
 		this->vscroll->UpdatePosition(0);
 
 		this->parent_wnd_class = parent->window_class;
@@ -161,6 +167,8 @@ struct DropdownWindow : Window {
 		this->instant_close    = instant_close;
 		this->scrolling        = 0;
 		this->scrolling_timer  = GUITimer(MILLISECONDS_PER_TICK);
+		this->left_button_scrolling = false;
+		this->left_button_scroll_pos = -1;
 		this->left_button_state = _left_button_down;
 	}
 
@@ -252,6 +260,7 @@ struct DropdownWindow : Window {
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
+		if (this->left_button_scrolling) return;
 		if (widget != WID_DM_ITEMS) return;
 		int item;
 		if (this->GetDropDownItem(item)) {
@@ -269,11 +278,8 @@ struct DropdownWindow : Window {
 		if (this->scrolling != 0) {
 			int pos = this->vscroll->GetPosition();
 
-			if (_scroller_click_timeout <= 1) {
-				_scroller_click_timeout = SCROLLER_CLICK_DELAY;
-				this->vscroll->UpdatePosition(this->scrolling);
-				this->scrolling = 0;
-			}
+			this->vscroll->UpdatePosition(this->scrolling);
+			this->scrolling = 0;
 
 			if (pos != this->vscroll->GetPosition()) {
 				this->SetDirty();
@@ -337,7 +343,36 @@ struct DropdownWindow : Window {
 			delete this;
 			return;
 		} else {
+			if (_left_button_down && !this->left_button_state) {
+				if (GetWidgetFromPos(this, _cursor.pos.x - this->left, _cursor.pos.y - this->top) == WID_DM_ITEMS) {
+					this->left_button_scroll_pos = _cursor.pos.y;
+				} else {
+					this->left_button_scroll_pos = -1;
+				}
+			}
+			if (!_left_button_down && this->left_button_state) {
+				this->left_button_scrolling = false;
+				this->left_button_scroll_pos = -1;
+				this->mouse_capture_widget = -1;
+			}
 			this->left_button_state = _left_button_down;
+		}
+
+		// Scroll item list with left mouse button
+		if (!this->left_button_scrolling &&
+			_left_button_down &&
+			this->left_button_scroll_pos != -1 &&
+			abs(this->left_button_scroll_pos - _cursor.pos.y) > (int)(*list)[0]->Height(this->width)) {
+			this->left_button_scrolling = true;
+			this->mouse_capture_widget = WID_DM_ITEMS;
+		}
+		if (this->left_button_scrolling) {
+			int height = (*list)[0]->Height(this->width);
+			int pos = (this->left_button_scroll_pos - _cursor.pos.y) / height;
+			if (pos != 0) {
+				this->scrolling = pos;
+				this->left_button_scroll_pos = _cursor.pos.y;
+			}
 		}
 	}
 };
