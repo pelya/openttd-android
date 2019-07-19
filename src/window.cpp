@@ -2103,15 +2103,16 @@ static void HandlePlacePresize()
 static void HandleMouseDragNoTitlebars()
 {
 	if (_settings_client.gui.windows_titlebars || _dragging_window ||
-		!_left_button_down || _focused_window == NULL || _dragging_widget) return;
+		!_left_button_down || _focused_window == NULL ||
+		_dragging_widget || _focused_window->mouse_capture_widget != -1) return;
 	unsigned distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
 	if (distance * 2 > GetMinSizing(NWST_STEP) &&
 		_focused_window->window_class != WC_SELECT_GAME &&
 		_focused_window->window_class != WC_STATUS_BAR &&
 		_focused_window->window_class != WC_MAIN_TOOLBAR &&
 		_focused_window->window_class != WC_MAIN_TOOLBAR_RIGHT &&
-		_focused_window->window_class != WC_BUILD_CONFIRMATION) {
-		//SendLeftClickEventToWindow(_focused_window, _left_button_down_pos.x, _left_button_down_pos.y, 1);
+		_focused_window->window_class != WC_BUILD_CONFIRMATION &&
+		FindWindowByClass(WC_DROPDOWN_MENU) == NULL) {
 		StartWindowDrag(_focused_window);
 		_drag_delta.x += _cursor.pos.x - _left_button_down_pos.x;
 		_drag_delta.y += _cursor.pos.y - _left_button_down_pos.y;
