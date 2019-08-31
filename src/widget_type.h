@@ -520,7 +520,9 @@ public:
 	void SetColour(Colours colour);
 	void SetClicked(int clicked);
 	void SetCount(int count);
-	void SetScrollbar(Scrollbar *sb);
+	void SetScrollbar(Scrollbar *sb, int index);
+	Scrollbar *GetScrollbar();
+	int GetScrollbarWidget();
 
 	void SetupSmallestSize(Window *w, bool init_array);
 	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl);
@@ -534,6 +536,7 @@ protected:
 	int clicked;    ///< The currently clicked widget.
 	int count;      ///< Amount of valid widgets.
 	Scrollbar *sb;  ///< The scrollbar we're associated with.
+	int sb_index;   ///< The scrollbar widget index.
 private:
 	int widget_w;   ///< The width of the child widget including inter spacing.
 	int widget_h;   ///< The height of the child widget including inter spacing.
