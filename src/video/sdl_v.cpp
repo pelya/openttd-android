@@ -576,11 +576,6 @@ int VideoDriver_SDL::PollEvent()
 					_right_button_clicked = true;
 					_right_button_down_pos.x = ev.motion.x;
 					_right_button_down_pos.y = ev.motion.y;
-#ifdef __ANDROID__
-					// Right button click on Android - cancel whatever action we were doing
-					ResetObjectToPlace();
-					ToolbarSelectLastTool();
-#endif
 					break;
 
 #ifdef __ANDROID__
