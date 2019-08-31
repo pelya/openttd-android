@@ -101,6 +101,17 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		pos = y;
 		button_size = NWidgetScrollbar::GetVerticalDimension().height;
 	}
+
+	if (_scrollbar_finger_drag) {
+		w->mouse_capture_widget = sb->index;
+		_cursorpos_drag_start.x = x;
+		_cursorpos_drag_start.y = y;
+		_scrollbar_size = max(1, (int) sb->current_y * sb->GetCount() / sb->GetCapacity());
+		_scrollbar_start_pos = sb->GetPosition() * _scrollbar_size / sb->GetCount();
+		w->SetDirty();
+		return;
+	}
+
 	if (pos < mi + button_size) {
 		/* Pressing the upper button? */
 		SetBit(sb->disp_flags, NDB_SCROLLBAR_UP);
@@ -1748,9 +1759,20 @@ void NWidgetMatrix::SetCount(int count)
  * Assign a scrollbar to this matrix.
  * @param sb The scrollbar to assign to us.
  */
-void NWidgetMatrix::SetScrollbar(Scrollbar *sb)
+void NWidgetMatrix::SetScrollbar(Scrollbar *sb, int index)
 {
 	this->sb = sb;
+	this->sb_index = index;
+}
+
+Scrollbar *NWidgetMatrix::GetScrollbar()
+{
+	return this->sb;
+}
+
+int NWidgetMatrix::GetScrollbarWidget()
+{
+	return this->sb_index;
 }
 
 void NWidgetMatrix::SetupSmallestSize(Window *w, bool init_array)

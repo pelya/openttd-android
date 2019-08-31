@@ -78,6 +78,7 @@ Point _cursorpos_drag_start;
 
 int _scrollbar_start_pos;
 int _scrollbar_size;
+bool _scrollbar_finger_drag;
 byte _scroller_click_timeout = 0;
 
 bool _scrolling_viewport;  ///< A viewport is being scrolled with the mouse.
@@ -2113,9 +2114,34 @@ static void HandleMouseDragNoTitlebars()
 		_focused_window->window_class != WC_MAIN_TOOLBAR_RIGHT &&
 		_focused_window->window_class != WC_BUILD_CONFIRMATION &&
 		FindWindowByClass(WC_DROPDOWN_MENU) == NULL) {
-		StartWindowDrag(_focused_window);
-		_drag_delta.x += _cursor.pos.x - _left_button_down_pos.x;
-		_drag_delta.y += _cursor.pos.y - _left_button_down_pos.y;
+		if (abs(_cursor.pos.x - _left_button_down_pos.x) < abs(_cursor.pos.y - _left_button_down_pos.y)) {
+			int widgetId = GetWidgetFromPos(_focused_window, _left_button_down_pos.x - _focused_window->left, _left_button_down_pos.y - _focused_window->top);
+			if (widgetId >= 0) {
+				NWidgetBase *widget = _focused_window->GetWidget<NWidgetBase>(widgetId);
+				NWidgetScrollbar *scroll = NULL;
+				if (widget && widget->type == WWT_MATRIX) {
+					NWidgetLeaf *list = _focused_window->GetWidget<NWidgetLeaf>(widgetId);
+					if (list && list->scrollbar_index >= 0) {
+						scroll = _focused_window->GetWidget<NWidgetScrollbar>(list->scrollbar_index);
+					}
+				}
+				if (widget && widget->type == NWID_MATRIX) {
+					NWidgetMatrix *list = _focused_window->GetWidget<NWidgetMatrix>(widgetId);
+					if (list && list->GetScrollbar() && list->GetScrollbarWidget() >= 0) {
+						scroll = _focused_window->GetWidget<NWidgetScrollbar>(list->GetScrollbarWidget());
+					}
+				}
+				if (scroll && scroll->IsVertical() && scroll->GetCount() > scroll->GetCapacity()) {
+					_scrollbar_finger_drag = true;
+					ScrollbarClickHandler(_focused_window, scroll, _left_button_down_pos.x, _left_button_down_pos.y);
+				}
+			}
+		}
+		if (_focused_window->mouse_capture_widget == -1) {
+			StartWindowDrag(_focused_window);
+			_drag_delta.x += _cursor.pos.x - _left_button_down_pos.x;
+			_drag_delta.y += _cursor.pos.y - _left_button_down_pos.y;
+		}
 	}
 }
 
@@ -2593,6 +2619,9 @@ static void HandleScrollbarScrolling(Window *w)
 	} else {
 		i = _cursor.pos.y - _cursorpos_drag_start.y;
 	}
+	if (_scrollbar_finger_drag) {
+		i = -i;
+	}
 
 	if (sb->disp_flags & ND_SCROLLBAR_BTN) {
 		if (_scroller_click_timeout == 1) {
@@ -2624,6 +2653,7 @@ static EventState HandleActiveWidget()
 			/* Abort if no button is clicked any more. */
 			if (!_left_button_down) {
 				w->mouse_capture_widget = -1;
+				_scrollbar_finger_drag = false;
 				w->SetDirty();
 				return ES_HANDLED;
 			}
