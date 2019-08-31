@@ -3244,6 +3244,11 @@ void HandleMouseEvents()
 		_right_button_clicked = false;
 		click = MC_RIGHT;
 		_input_events_this_tick++;
+#if defined(__ANDROID__) || 1
+		// Two-finger touch on Android - cancel whatever action we were doing
+		ResetObjectToPlace();
+		ToolbarSelectLastTool();
+#endif
 	} else if(!_left_button_down && !left_button_released) {
 		click = MC_LEFT_UP;
 		left_button_released = true;
