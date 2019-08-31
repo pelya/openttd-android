@@ -642,12 +642,6 @@ struct GameOptionsWindow : Window {
 			case WID_GO_GUI_ZOOM_DROPDOWN:
 				GfxClearSpriteCache();
 				_gui_zoom = (ZoomLevel)(ZOOM_LVL_OUT_4X - index);
-				switch (_gui_zoom) {
-					case ZOOM_LVL_OUT_4X - ZOOM_LVL_NORMAL: ChangeResInGame(854, 480); break;
-					case ZOOM_LVL_OUT_4X - ZOOM_LVL_OUT_2X: ChangeResInGame(1280, 720); break;
-					case ZOOM_LVL_OUT_4X - ZOOM_LVL_OUT_4X: ChangeResInGame(1920, 1080); break;
-					default: break;
-				}
 				UpdateCursorSize();
 				UpdateAllVirtCoords();
 				ReInitAllWindows();

@@ -251,7 +251,9 @@ static void GetVideoModes()
 			}
 		}
 		_num_resolutions = n;
+#if !defined(__ANDROID__) // Android has native screen sizes first, do not sort them
 		SortResolutions(_num_resolutions);
+#endif
 	}
 }
 
@@ -268,8 +270,14 @@ static void GetAvailableVideoMode(uint *w, uint *h)
 	/* Use the closest possible resolution */
 	int best = 0;
 	uint delta = Delta(_resolutions[0].width, *w) * Delta(_resolutions[0].height, *h);
+	if (*w <= 1) {
+		delta = Delta(_resolutions[0].height, *h);
+	}
 	for (int i = 1; i != _num_resolutions; ++i) {
 		uint newdelta = Delta(_resolutions[i].width, *w) * Delta(_resolutions[i].height, *h);
+		if (*w <= 1) {
+			newdelta = Delta(_resolutions[i].height, *h);
+		}
 		if (newdelta < delta) {
 			best = i;
 			delta = newdelta;
