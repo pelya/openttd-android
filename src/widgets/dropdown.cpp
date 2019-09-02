@@ -154,6 +154,9 @@ struct DropdownWindow : Window {
 		/* Capacity is the average number of items visible */
 		this->vscroll->SetCapacity(size.height * (uint16)list->Length() / list_height);
 		this->vscroll->SetCount((uint16)list->Length());
+		if (this->vscroll->GetCount() <= this->vscroll->GetCapacity()) {
+			scroll_pos = 0;
+		}
 		this->vscroll->SetPosition(scroll_pos);
 		this->vscroll->UpdatePosition(0);
 
