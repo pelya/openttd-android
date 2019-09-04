@@ -615,14 +615,6 @@ int VideoDriver_SDL::PollEvent()
 			} else if (ev.button.button == SDL_BUTTON_LEFT) {
 				_left_button_down = false;
 				_left_button_clicked = false;
-#ifdef __ANDROID__
-				if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_RMASK) {
-					// Two-finger click - hacky way to determine if the right mouse button is already pressed without processing the left button event
-					// Cancel whatever action we were doing, to allow two finger scrolling
-					ResetObjectToPlace();
-					ToolbarSelectLastTool();
-				}
-#endif
 			} else if (ev.button.button == SDL_BUTTON_RIGHT) {
 				_right_button_down = false;
 			}
