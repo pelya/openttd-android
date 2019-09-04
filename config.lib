@@ -1823,14 +1823,14 @@ make_cflags_and_ldflags() {
 		CFLAGS="$CFLAGS -DWITH_XAUDIO2"
 	fi
 
-	if [ -n "$libtimidity" ]; then
+	if [ -n "$libtimidity_config" ]; then
 		CFLAGS="$CFLAGS -DLIBTIMIDITY"
-		CFLAGS="$CFLAGS `$libtimidity --cflags | tr '\n\r' '  '`"
+		CFLAGS="$CFLAGS `$libtimidity_config --cflags | tr '\n\r' '  '`"
 
 		if [ "$enable_static" != "0" ]; then
-			LIBS="$LIBS `$libtimidity --libs --static | tr '\n\r' '  '`"
+			LIBS="$LIBS `$libtimidity_config --libs --static | tr '\n\r' '  '`"
 		else
-			LIBS="$LIBS `$libtimidity --libs | tr '\n\r' '  '`"
+			LIBS="$LIBS `$libtimidity_config --libs | tr '\n\r' '  '`"
 		fi
 	fi
 
@@ -2772,7 +2772,7 @@ detect_lzo2() {
 }
 
 detect_libtimidity() {
-	detect_pkg_config "$with_libtimidity" "libtimidity" "libtimidity" "0.1" "1"
+	detect_pkg_config "$with_libtimidity" "libtimidity" "libtimidity_config" "0.1" "1"
 }
 
 detect_fluidsynth() {
