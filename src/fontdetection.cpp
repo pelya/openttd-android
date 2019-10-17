@@ -705,7 +705,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 
 			callback->SetFontNames(settings, (const char*)file);
 
-			missing = callback->FindMissingGlyphs(NULL);
+			missing += callback->FindMissingGlyphs(NULL);
 			DEBUG(freetype, 1, "Font \"%s\" misses %d glyphs for lang %s", file, missing, lang);
 
 			if (missing < best_missing_glypths) {
