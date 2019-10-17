@@ -138,20 +138,17 @@ static WindowDesc _tutorial_desc(
 
 struct TutorialWindow : public Window {
 	VideoLink_t *video;
-	int counter;
 
 	TutorialWindow() : Window(&_tutorial_desc)
 	{
 		this->InitNested(WN_GAME_OPTIONS_ABOUT);
 		this->video = NULL;
-		this->counter = 0;
 	}
 
 	virtual void OnClick(Point pt, int widget, int click_count)
 	{
 		showTutorialMainMenu = false;
-		this->counter = 5;
-		this->LowerWidget(widget);
+		this->video = NULL;
 		this->SetDirty();
 		switch (widget) {
 			case WID_STL_BUS:
@@ -173,29 +170,9 @@ struct TutorialWindow : public Window {
 				this->video = cargoTutorial;
 				break;
 		}
-	}
-
-	virtual void OnTick()
-	{
-		// Open video with delay, to make visual feedback of button pressing,
-		// because youtube app freezes a screen for a second before launching.
-		if (this->counter > 0) {
-			this->counter--;
-			if (this->counter == 1) {
-				this->RaiseWidget(WID_STL_BUS);
-				this->RaiseWidget(WID_STL_TRUCK);
-				this->RaiseWidget(WID_STL_TRAIN);
-				this->RaiseWidget(WID_STL_SHIP);
-				//this->RaiseWidget(WID_STL_AIRPLANE);
-				this->RaiseWidget(WID_STL_FACILALL);
-				this->SetDirty();
-			}
-			if (this->counter == 0) {
-				if (this->video) {
-					OpenExternTutorialVideo(this->video);
-					this->video = NULL;
-				}
-			}
+		if (this->video) {
+			OpenExternTutorialVideo(this->video);
+			this->video = NULL;
 		}
 	}
 };
