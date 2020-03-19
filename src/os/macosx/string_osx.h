@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -30,10 +28,10 @@ class OSXStringIterator : public StringIterator {
 	size_t cur_pos; ///< Current iteration position.
 
 public:
-	virtual void SetString(const char *s);
-	virtual size_t SetCurPosition(size_t pos);
-	virtual size_t Next(IterType what);
-	virtual size_t Prev(IterType what);
+	void SetString(const char *s) override;
+	size_t SetCurPosition(size_t pos) override;
+	size_t Next(IterType what) override;
+	size_t Prev(IterType what) override;
 
 	static StringIterator *Create();
 };

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -164,11 +162,9 @@ public:
 	/** Gets the ScriptScanner instance that is used to find AI Libraries */
 	static AIScannerLibrary *GetScannerLibrary();
 
-#if defined(ENABLE_NETWORK)
 	/** Wrapper function for AIScanner::HasAI */
 	static bool HasAI(const struct ContentInfo *ci, bool md5sum);
 	static bool HasAILibrary(const ContentInfo *ci, bool md5sum);
-#endif
 private:
 	static uint frame_counter;                      ///< Tick counter for the AI code
 	static class AIScannerInfo *scanner_info;       ///< ScriptScanner instance that is used to find AIs

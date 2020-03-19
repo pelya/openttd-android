@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -266,8 +264,8 @@ enum SaveLoadVersion : uint16 {
 	SLV_185,                                ///< 185   25620 Storybooks
 	SLV_186,                                ///< 186   25833 Objects storage
 	SLV_187,                                ///< 187   25899 Linkgraph - restricted flows
-	SLV_188,                                ///< 188   26169 FS#5831 Unify RV travel time
-	SLV_189,                                ///< 189   26450 Heirarchical vehicle subgroups
+	SLV_188,                                ///< 188   26169 v1.4  FS#5831 Unify RV travel time
+	SLV_189,                                ///< 189   26450 Hierarchical vehicle subgroups
 
 	SLV_190,                                ///< 190   26547 Separate order travel and wait times
 	SLV_191,                                ///< 191   26636 FS#6026 Fix disaster vehicle storage (No bump)
@@ -283,14 +281,27 @@ enum SaveLoadVersion : uint16 {
 	SLV_EXTEND_CARGOTYPES,                  ///< 199  PR#6802 Extend cargotypes to 64
 
 	SLV_EXTEND_RAILTYPES,                   ///< 200  PR#6805 Extend railtypes to 64, adding uint16 to map array.
-	SLV_EXTEND_PERSISTENT_STORAGE,          ///< 201  PR#6885 Extend NewGRF persistant storages.
+	SLV_EXTEND_PERSISTENT_STORAGE,          ///< 201  PR#6885 Extend NewGRF persistent storages.
 	SLV_EXTEND_INDUSTRY_CARGO_SLOTS,        ///< 202  PR#6867 Increase industry cargo slots to 16 in, 16 out
 	SLV_SHIP_PATH_CACHE,                    ///< 203  PR#7072 Add path cache for ships
 	SLV_SHIP_ROTATION,                      ///< 204  PR#7065 Add extra rotation stages for ships.
 
 	SLV_GROUP_LIVERIES,                     ///< 205  PR#7108 Livery storage change and group liveries.
 	SLV_SHIPS_STOP_IN_LOCKS,                ///< 206  PR#7150 Ship/lock movement changes.
-	SLV_FIX_CARGO_MONITOR,                  ///< 207  PR#7175 Cargo monitor data packing fix to support 64 cargotypes.
+	SLV_FIX_CARGO_MONITOR,                  ///< 207  PR#7175 v1.9  Cargo monitor data packing fix to support 64 cargotypes.
+	SLV_TOWN_CARGOGEN,                      ///< 208  PR#6965 New algorithms for town building cargo generation.
+	SLV_SHIP_CURVE_PENALTY,                 ///< 209  PR#7289 Configurable ship curve penalties.
+
+	SLV_SERVE_NEUTRAL_INDUSTRIES,           ///< 210  PR#7234 Company stations can serve industries with attached neutral stations.
+	SLV_ROADVEH_PATH_CACHE,                 ///< 211  PR#7261 Add path cache for road vehicles.
+	SLV_REMOVE_OPF,                         ///< 212  PR#7245 Remove OPF.
+	SLV_TREES_WATER_CLASS,                  ///< 213  PR#7405 WaterClass update for tree tiles.
+	SLV_ROAD_TYPES,                         ///< 214  PR#6811 NewGRF road types.
+
+	SLV_SCRIPT_MEMLIMIT,                    ///< 215  PR#7516 Limit on AI/GS memory consumption.
+	SLV_MULTITILE_DOCKS,                    ///< 216  PR#7380 Multiple docks per station.
+	SLV_TRADING_AGE,                        ///< 217  PR#7780 Configurable company trading age.
+	SLV_ENDING_YEAR,                        ///< 218  PR#7747 Configurable ending year.
 
 	SL_MAX_VERSION,                         ///< Highest possible saveload version
 };
@@ -460,7 +471,8 @@ enum VarTypes {
 	SLF_NO_NETWORK_SYNC = 1 << 10, ///< do not synchronize over network (but it is saved if SLF_NOT_IN_SAVE is not set)
 	SLF_ALLOW_CONTROL   = 1 << 11, ///< allow control codes in the strings
 	SLF_ALLOW_NEWLINE   = 1 << 12, ///< allow new lines in the strings
-	/* 3 more possible flags */
+	SLF_HEX             = 1 << 13, ///< print numbers as hex in the config file (only useful for unsigned)
+	/* 2 more possible flags */
 };
 
 typedef uint32 VarType;
@@ -634,11 +646,11 @@ typedef SaveLoad SaveLoadGlobVarList;
 /** Translate values ingame to different values in the savegame and vv. */
 #define SLE_WRITEBYTE(base, variable) SLE_GENERAL(SL_WRITEBYTE, base, variable, 0, 0, SL_MIN_VERSION, SL_MAX_VERSION)
 
-#define SLE_VEH_INCLUDE() {false, SL_VEH_INCLUDE, 0, 0, SL_MIN_VERSION, SL_MAX_VERSION, NULL, 0}
-#define SLE_ST_INCLUDE() {false, SL_ST_INCLUDE, 0, 0, SL_MIN_VERSION, SL_MAX_VERSION, NULL, 0}
+#define SLE_VEH_INCLUDE() {false, SL_VEH_INCLUDE, 0, 0, SL_MIN_VERSION, SL_MAX_VERSION, nullptr, 0}
+#define SLE_ST_INCLUDE() {false, SL_ST_INCLUDE, 0, 0, SL_MIN_VERSION, SL_MAX_VERSION, nullptr, 0}
 
 /** End marker of a struct/class save or load. */
-#define SLE_END() {false, SL_END, 0, 0, SL_MIN_VERSION, SL_MIN_VERSION, NULL, 0}
+#define SLE_END() {false, SL_END, 0, 0, SL_MIN_VERSION, SL_MIN_VERSION, nullptr, 0}
 
 /**
  * Storage of global simple variables, references (pointers), and arrays.
@@ -739,10 +751,10 @@ typedef SaveLoad SaveLoadGlobVarList;
  * @param from   First savegame version that has the empty space.
  * @param to     Last savegame version that has the empty space.
  */
-#define SLEG_CONDNULL(length, from, to) {true, SL_ARR, SLE_FILE_U8 | SLE_VAR_NULL | SLF_NOT_IN_CONFIG, length, from, to, (void*)NULL}
+#define SLEG_CONDNULL(length, from, to) {true, SL_ARR, SLE_FILE_U8 | SLE_VAR_NULL | SLF_NOT_IN_CONFIG, length, from, to, (void*)nullptr}
 
 /** End marker of global variables save or load. */
-#define SLEG_END() {true, SL_END, 0, 0, SL_MIN_VERSION, SL_MIN_VERSION, NULL, 0}
+#define SLEG_END() {true, SL_END, 0, 0, SL_MIN_VERSION, SL_MIN_VERSION, nullptr, 0}
 
 /**
  * Checks whether the savegame is below \a major.\a minor.
@@ -806,13 +818,13 @@ static inline bool IsNumericType(VarType conv)
 
 /**
  * Get the address of the variable. Which one to pick depends on the object
- * pointer. If it is NULL we are dealing with global variables so the address
+ * pointer. If it is nullptr we are dealing with global variables so the address
  * is taken. If non-null only the offset is stored in the union and we need
  * to add this to the address of the object
  */
 static inline void *GetVariableAddress(const void *object, const SaveLoad *sld)
 {
-	return const_cast<byte *>((const byte*)(sld->global ? NULL : object) + (ptrdiff_t)sld->address);
+	return const_cast<byte *>((const byte*)(sld->global ? nullptr : object) + (ptrdiff_t)sld->address);
 }
 
 int64 ReadValue(const void *ptr, VarType conv);
@@ -834,7 +846,7 @@ void SlGlobList(const SaveLoadGlobVarList *sldg);
 void SlArray(void *array, size_t length, VarType conv);
 void SlObject(void *object, const SaveLoad *sld);
 bool SlObjectMember(void *object, const SaveLoad *sld);
-void NORETURN SlError(StringID string, const char *extra_msg = NULL);
+void NORETURN SlError(StringID string, const char *extra_msg = nullptr);
 void NORETURN SlErrorCorrupt(const char *msg);
 void NORETURN SlErrorCorruptFmt(const char *format, ...);
 

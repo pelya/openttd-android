@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -38,14 +36,13 @@ struct SubsidyListWindow : Window {
 		this->OnInvalidateData(0);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		if (widget != WID_SUL_PANEL) return;
 
 		int y = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_SUL_PANEL, WD_FRAMERECT_TOP);
 		int num = 0;
-		const Subsidy *s;
-		FOR_ALL_SUBSIDIES(s) {
+		for (const Subsidy *s : Subsidy::Iterate()) {
 			if (!s->IsAwarded()) {
 				y--;
 				if (y == 0) {
@@ -64,7 +61,7 @@ struct SubsidyListWindow : Window {
 		y -= 2; // "Services already subsidised:"
 		if (y < 0) return;
 
-		FOR_ALL_SUBSIDIES(s) {
+		for (const Subsidy *s : Subsidy::Iterate()) {
 			if (s->IsAwarded()) {
 				y--;
 				if (y == 0) {
@@ -112,8 +109,7 @@ struct SubsidyListWindow : Window {
 		/* Count number of (non) awarded subsidies */
 		uint num_awarded = 0;
 		uint num_not_awarded = 0;
-		const Subsidy *s;
-		FOR_ALL_SUBSIDIES(s) {
+		for (const Subsidy *s : Subsidy::Iterate()) {
 			if (!s->IsAwarded()) {
 				num_not_awarded++;
 			} else {
@@ -129,7 +125,7 @@ struct SubsidyListWindow : Window {
 		return 3 + num_awarded + num_not_awarded;
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_SUL_PANEL) return;
 		Dimension d = maxdim(GetStringBoundingBox(STR_SUBSIDIES_OFFERED_TITLE), GetStringBoundingBox(STR_SUBSIDIES_SUBSIDISED_TITLE));
@@ -143,7 +139,7 @@ struct SubsidyListWindow : Window {
 		*size = maxdim(*size, d);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_SUL_PANEL) return;
 
@@ -163,8 +159,7 @@ struct SubsidyListWindow : Window {
 		pos++;
 
 		uint num = 0;
-		const Subsidy *s;
-		FOR_ALL_SUBSIDIES(s) {
+		for (const Subsidy *s : Subsidy::Iterate()) {
 			if (!s->IsAwarded()) {
 				if (IsInsideMM(pos, 0, cap)) {
 					/* Displays the two offered towns */
@@ -188,7 +183,7 @@ struct SubsidyListWindow : Window {
 		pos++;
 		num = 0;
 
-		FOR_ALL_SUBSIDIES(s) {
+		for (const Subsidy *s : Subsidy::Iterate()) {
 			if (s->IsAwarded()) {
 				if (IsInsideMM(pos, 0, cap)) {
 					SetupSubsidyDecodeParam(s, true);
@@ -209,7 +204,7 @@ struct SubsidyListWindow : Window {
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_SUL_PANEL);
 	}
@@ -219,7 +214,7 @@ struct SubsidyListWindow : Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		this->vscroll->SetCount(this->CountLines());

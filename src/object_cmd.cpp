@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -90,7 +88,7 @@ void BuildObject(ObjectType type, TileIndex tile, CompanyID owner, Town *town, u
 	Object *o = new Object();
 	o->type          = type;
 	o->location      = ta;
-	o->town          = town == NULL ? CalcClosestTownFromTile(tile) : town;
+	o->town          = town == nullptr ? CalcClosestTownFromTile(tile) : town;
 	o->build_date    = _date;
 	o->view          = view;
 
@@ -114,7 +112,7 @@ void BuildObject(ObjectType type, TileIndex tile, CompanyID owner, Town *town, u
 		}
 	}
 
-	assert(o->town != NULL);
+	assert(o->town != nullptr);
 
 	TILE_AREA_LOOP(t, ta) {
 		WaterClass wc = (IsWaterTile(t) ? GetWaterClass(t) : WATER_CLASS_INVALID);
@@ -158,12 +156,11 @@ void UpdateCompanyHQ(TileIndex tile, uint score)
 {
 	if (tile == INVALID_TILE) return;
 
-	byte val;
-	(val = 0, score < 170) ||
-	(val++, score < 350) ||
-	(val++, score < 520) ||
-	(val++, score < 720) ||
-	(val++, true);
+	byte val = 0;
+	if (score >= 170) val++;
+	if (score >= 350) val++;
+	if (score >= 520) val++;
+	if (score >= 720) val++;
 
 	while (GetCompanyHQSize(tile) < val) {
 		IncreaseCompanyHQSize(tile);
@@ -176,8 +173,7 @@ void UpdateCompanyHQ(TileIndex tile, uint score)
  */
 void UpdateObjectColours(const Company *c)
 {
-	Object *obj;
-	FOR_ALL_OBJECTS(obj) {
+	for (Object *obj : Object::Iterate()) {
 		Owner owner = GetTileOwner(obj->location.tile);
 		/* Not the current owner, so colour doesn't change. */
 		if (owner != c->index) continue;
@@ -264,7 +260,7 @@ CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			uint16 callback = CALLBACK_FAILED;
 			if (HasBit(spec->callback_mask, CBM_OBJ_SLOPE_CHECK)) {
 				TileIndex diff = t - tile;
-				callback = GetObjectCallback(CBID_OBJECT_LAND_SLOPE_CHECK, GetTileSlope(t), TileY(diff) << 4 | TileX(diff), spec, NULL, t, view);
+				callback = GetObjectCallback(CBID_OBJECT_LAND_SLOPE_CHECK, GetTileSlope(t), TileY(diff) << 4 | TileX(diff), spec, nullptr, t, view);
 			}
 
 			if (callback == CALLBACK_FAILED) {
@@ -343,7 +339,7 @@ CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 	}
 
 	if (flags & DC_EXEC) {
-		BuildObject(type, tile, _current_company, NULL, view);
+		BuildObject(type, tile, _current_company, nullptr, view);
 
 		/* Make sure the HQ starts at the right size. */
 		if (type == OBJECT_HQ) UpdateCompanyHQ(tile, hq_score);
@@ -367,7 +363,7 @@ static void DrawTile_Object(TileInfo *ti)
 	if ((spec->flags & OBJECT_FLAG_HAS_NO_FOUNDATION) == 0) DrawFoundation(ti, GetFoundation_Object(ti->tile, ti->tileh));
 
 	if (type < NEW_OBJECT_OFFSET) {
-		const DrawTileSprites *dts = NULL;
+		const DrawTileSprites *dts = nullptr;
 		Owner to = GetTileOwner(ti->tile);
 		PaletteID palette = to == OWNER_NONE ? PAL_NONE : COMPANY_SPRITE_COLOUR(to);
 
@@ -443,23 +439,22 @@ static void ReallyClearObjectTile(Object *o)
 	delete o;
 }
 
-SmallVector<ClearedObjectArea, 4> _cleared_object_areas;
+std::vector<ClearedObjectArea> _cleared_object_areas;
 
 /**
  * Find the entry in _cleared_object_areas which occupies a certain tile.
  * @param tile Tile of interest
- * @return Occupying entry, or NULL if none
+ * @return Occupying entry, or nullptr if none
  */
 ClearedObjectArea *FindClearedObject(TileIndex tile)
 {
 	TileArea ta = TileArea(tile, 1, 1);
 
-	const ClearedObjectArea *end = _cleared_object_areas.End();
-	for (ClearedObjectArea *coa = _cleared_object_areas.Begin(); coa != end; coa++) {
-		if (coa->area.Intersects(ta)) return coa;
+	for (ClearedObjectArea &coa : _cleared_object_areas) {
+		if (coa.area.Intersects(ta)) return &coa;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
@@ -531,9 +526,7 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlag flags)
 			break;
 	}
 
-	ClearedObjectArea *cleared_area = _cleared_object_areas.Append();
-	cleared_area->first_tile = tile;
-	cleared_area->area = ta;
+	_cleared_object_areas.push_back({tile, ta});
 
 	if (flags & DC_EXEC) ReallyClearObjectTile(o);
 
@@ -563,6 +556,14 @@ static void AddAcceptedCargo_Object(TileIndex tile, CargoArray &acceptance, Carg
 	SetBit(*always_accepted, CT_MAIL);
 }
 
+static void AddProducedCargo_Object(TileIndex tile, CargoArray &produced)
+{
+	if (!IsObjectType(tile, OBJECT_HQ)) return;
+
+	produced[CT_PASSENGERS]++;
+	produced[CT_MAIL]++;
+}
+
 
 static void GetTileDesc_Object(TileIndex tile, TileDesc *td)
 {
@@ -571,7 +572,7 @@ static void GetTileDesc_Object(TileIndex tile, TileDesc *td)
 	td->owner[0] = GetTileOwner(tile);
 	td->build_date = Object::GetByTile(tile)->build_date;
 
-	if (spec->grf_prop.grffile != NULL) {
+	if (spec->grf_prop.grffile != nullptr) {
 		td->grf = GetGRFConfig(spec->grf_prop.grffile->grfid)->GetName();
 	}
 }
@@ -698,7 +699,7 @@ static bool TryBuildTransmitter()
 	int h;
 	if (IsTileType(tile, MP_CLEAR) && IsTileFlat(tile, &h) && h >= 4 && !IsBridgeAbove(tile)) {
 		TileIndex t = tile;
-		if (CircularTileSearch(&t, 9, HasTransmitter, NULL)) return false;
+		if (CircularTileSearch(&t, 9, HasTransmitter, nullptr)) return false;
 
 		BuildObject(OBJECT_TRANSMITTER, tile);
 		return true;
@@ -758,7 +759,7 @@ void GenerateObjects()
 
 				default:
 					uint8 view = RandomRange(spec->views);
-					if (CmdBuildObject(RandomTile(), DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, i, view, NULL).Succeeded()) amount--;
+					if (CmdBuildObject(RandomTile(), DC_EXEC | DC_AUTO | DC_NO_TEST_TOWN_RATING | DC_NO_MODIFY_TOWN_RATING, i, view, nullptr).Succeeded()) amount--;
 					break;
 			}
 		}
@@ -772,9 +773,10 @@ static void ChangeTileOwner_Object(TileIndex tile, Owner old_owner, Owner new_ow
 
 	bool do_clear = false;
 
-	if (IsObjectType(tile, OBJECT_OWNED_LAND) && new_owner != INVALID_OWNER) {
+	ObjectType type = GetObjectType(tile);
+	if ((type == OBJECT_OWNED_LAND || type >= NEW_OBJECT_OFFSET) && new_owner != INVALID_OWNER) {
 		SetTileOwner(tile, new_owner);
-	} else if (IsObjectType(tile, OBJECT_STATUE)) {
+	} else if (type == OBJECT_STATUE) {
 		Town *t = Object::GetByTile(tile)->town;
 		ClrBit(t->statues, old_owner);
 		if (new_owner != INVALID_OWNER && !HasBit(t->statues, new_owner)) {
@@ -792,7 +794,7 @@ static void ChangeTileOwner_Object(TileIndex tile, Owner old_owner, Owner new_ow
 
 	if (do_clear) {
 		ReallyClearObjectTile(Object::GetByTile(tile));
-		/* When clearing objects, they may turn into canal, which may require transfering ownership. */
+		/* When clearing objects, they may turn into canal, which may require transferring ownership. */
 		ChangeTileOwner(tile, old_owner, new_owner);
 	}
 }
@@ -843,8 +845,8 @@ extern const TileTypeProcs _tile_type_object_procs = {
 	AnimateTile_Object,          // animate_tile_proc
 	TileLoop_Object,             // tile_loop_proc
 	ChangeTileOwner_Object,      // change_tile_owner_proc
-	NULL,                        // add_produced_cargo_proc
-	NULL,                        // vehicle_enter_tile_proc
+	AddProducedCargo_Object,     // add_produced_cargo_proc
+	nullptr,                        // vehicle_enter_tile_proc
 	GetFoundation_Object,        // get_foundation_proc
 	TerraformTile_Object,        // terraform_tile_proc
 };

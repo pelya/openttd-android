@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -38,12 +36,6 @@ HRESULT OTTDSHGetFolderPath(HWND, int, HANDLE, DWORD, LPTSTR);
 #if defined(__MINGW32__) && !defined(__MINGW64__)
 #define SHGFP_TYPE_CURRENT 0
 #endif /* __MINGW32__ */
-
-#ifdef _MSC_VER
-void SetWin32ThreadName(DWORD dwThreadID, const char* threadName);
-#else
-static inline void SetWin32ThreadName(DWORD dwThreadID, const char* threadName) {}
-#endif
 
 void Win32SetCurrentLocaleName(const char *iso_code);
 int OTTDStringCompare(const char *s1, const char *s2);

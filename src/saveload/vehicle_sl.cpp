@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -33,13 +31,11 @@
  */
 void ConnectMultiheadedTrains()
 {
-	Train *v;
-
-	FOR_ALL_TRAINS(v) {
-		v->other_multiheaded_part = NULL;
+	for (Train *v : Train::Iterate()) {
+		v->other_multiheaded_part = nullptr;
 	}
 
-	FOR_ALL_TRAINS(v) {
+	for (Train *v : Train::Iterate()) {
 		if (v->IsFrontEngine() || v->IsFreeWagon()) {
 			/* Two ways to associate multiheaded parts to each other:
 			 * sequential-matching: Trains shall be arranged to look like <..>..<..>..<..>..
@@ -56,8 +52,8 @@ void ConnectMultiheadedTrains()
 
 			bool sequential_matching = v->IsFrontEngine();
 
-			for (Train *u = v; u != NULL; u = u->GetNextVehicle()) {
-				if (u->other_multiheaded_part != NULL) continue; // we already linked this one
+			for (Train *u = v; u != nullptr; u = u->GetNextVehicle()) {
+				if (u->other_multiheaded_part != nullptr) continue; // we already linked this one
 
 				if (u->IsMultiheaded()) {
 					if (!u->IsEngine()) {
@@ -70,8 +66,8 @@ void ConnectMultiheadedTrains()
 					EngineID eid = u->engine_type;
 					Train *w;
 					if (sequential_matching) {
-						for (w = u->GetNextVehicle(); w != NULL; w = w->GetNextVehicle()) {
-							if (w->engine_type != eid || w->other_multiheaded_part != NULL || !w->IsMultiheaded()) continue;
+						for (w = u->GetNextVehicle(); w != nullptr; w = w->GetNextVehicle()) {
+							if (w->engine_type != eid || w->other_multiheaded_part != nullptr || !w->IsMultiheaded()) continue;
 
 							/* we found a car to partner with this engine. Now we will make sure it face the right way */
 							if (w->IsEngine()) {
@@ -82,8 +78,8 @@ void ConnectMultiheadedTrains()
 						}
 					} else {
 						uint stack_pos = 0;
-						for (w = u->GetNextVehicle(); w != NULL; w = w->GetNextVehicle()) {
-							if (w->engine_type != eid || w->other_multiheaded_part != NULL || !w->IsMultiheaded()) continue;
+						for (w = u->GetNextVehicle(); w != nullptr; w = w->GetNextVehicle()) {
+							if (w->engine_type != eid || w->other_multiheaded_part != nullptr || !w->IsMultiheaded()) continue;
 
 							if (w->IsEngine()) {
 								stack_pos++;
@@ -94,7 +90,7 @@ void ConnectMultiheadedTrains()
 						}
 					}
 
-					if (w != NULL) {
+					if (w != nullptr) {
 						w->other_multiheaded_part = u;
 						u->other_multiheaded_part = w;
 					} else {
@@ -113,12 +109,11 @@ void ConnectMultiheadedTrains()
  */
 void ConvertOldMultiheadToNew()
 {
-	Train *t;
-	FOR_ALL_TRAINS(t) SetBit(t->subtype, 7); // indicates that it's the old format and needs to be converted in the next loop
+	for (Train *t : Train::Iterate()) SetBit(t->subtype, 7); // indicates that it's the old format and needs to be converted in the next loop
 
-	FOR_ALL_TRAINS(t) {
+	for (Train *t : Train::Iterate()) {
 		if (HasBit(t->subtype, 7) && ((t->subtype & ~0x80) == 0 || (t->subtype & ~0x80) == 4)) {
-			for (Train *u = t; u != NULL; u = u->Next()) {
+			for (Train *u = t; u != nullptr; u = u->Next()) {
 				const RailVehicleInfo *rvi = RailVehInfo(u->engine_type);
 
 				ClrBit(u->subtype, 7);
@@ -167,13 +162,11 @@ void ConvertOldMultiheadToNew()
 void UpdateOldAircraft()
 {
 	/* set airport_flags to 0 for all airports just to be sure */
-	Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (Station *st : Station::Iterate()) {
 		st->airport.flags = 0; // reset airport
 	}
 
-	Aircraft *a;
-	FOR_ALL_AIRCRAFT(a) {
+	for (Aircraft *a : Aircraft::Iterate()) {
 		/* airplane has another vehicle with subtype 4 (shadow), helicopter also has 3 (rotor)
 		 * skip those */
 		if (a->IsNormalAircraft()) {
@@ -200,7 +193,7 @@ void UpdateOldAircraft()
 			if (a->subtype == AIR_HELICOPTER) a->Next()->Next()->cur_speed = 32;
 
 			/* set new position x,y,z */
-			GetAircraftFlightLevelBounds(a, &a->z_pos, NULL);
+			GetAircraftFlightLevelBounds(a, &a->z_pos, nullptr);
 			SetAircraftPosition(a, gp.x, gp.y, GetAircraftFlightLevel(a));
 		}
 	}
@@ -218,14 +211,12 @@ static void CheckValidVehicles()
 	size_t total_engines = Engine::GetPoolSize();
 	EngineID first_engine[4] = { INVALID_ENGINE, INVALID_ENGINE, INVALID_ENGINE, INVALID_ENGINE };
 
-	Engine *e;
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_TRAIN) { first_engine[VEH_TRAIN] = e->index; break; }
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_ROAD) { first_engine[VEH_ROAD] = e->index; break; }
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_SHIP) { first_engine[VEH_SHIP] = e->index; break; }
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_AIRCRAFT) { first_engine[VEH_AIRCRAFT] = e->index; break; }
+	for (const Engine *e : Engine::IterateType(VEH_TRAIN)) { first_engine[VEH_TRAIN] = e->index; break; }
+	for (const Engine *e : Engine::IterateType(VEH_ROAD)) { first_engine[VEH_ROAD] = e->index; break; }
+	for (const Engine *e : Engine::IterateType(VEH_SHIP)) { first_engine[VEH_SHIP] = e->index; break; }
+	for (const Engine *e : Engine::IterateType(VEH_AIRCRAFT)) { first_engine[VEH_AIRCRAFT] = e->index; break; }
 
-	Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		/* Test if engine types match */
 		switch (v->type) {
 			case VEH_TRAIN:
@@ -248,15 +239,13 @@ extern byte _age_cargo_skip_counter; // From misc_sl.cpp
 /** Called after load to update coordinates */
 void AfterLoadVehicles(bool part_of_load)
 {
-	Vehicle *v;
-
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		/* Reinstate the previous pointer */
-		if (v->Next() != NULL) v->Next()->previous = v;
-		if (v->NextShared() != NULL) v->NextShared()->previous_shared = v;
+		if (v->Next() != nullptr) v->Next()->previous = v;
+		if (v->NextShared() != nullptr) v->NextShared()->previous_shared = v;
 
 		if (part_of_load) v->fill_percent_te_id = INVALID_TE_ID;
-		v->first = NULL;
+		v->first = nullptr;
 		if (v->IsGroundVehicle()) v->GetGroundVehicleCache()->first_engine = INVALID_ENGINE;
 	}
 
@@ -271,10 +260,10 @@ void AfterLoadVehicles(bool part_of_load)
 		 */
 		std::map<Order*, OrderList*> mapping;
 
-		FOR_ALL_VEHICLES(v) {
-			if (v->orders.old != NULL) {
+		for (Vehicle *v : Vehicle::Iterate()) {
+			if (v->orders.old != nullptr) {
 				if (IsSavegameVersionBefore(SLV_105)) { // Pre-105 didn't save an OrderList
-					if (mapping[v->orders.old] == NULL) {
+					if (mapping[v->orders.old] == nullptr) {
 						/* This adds the whole shared vehicle chain for case b */
 
 						/* Creating an OrderList here is safe because the number of vehicles
@@ -290,7 +279,7 @@ void AfterLoadVehicles(bool part_of_load)
 						}
 					}
 				} else { // OrderList was saved as such, only recalculate not saved values
-					if (v->PreviousShared() == NULL) {
+					if (v->PreviousShared() == nullptr) {
 						v->orders.list->Initialize(v->orders.list->first, v);
 					}
 				}
@@ -298,10 +287,10 @@ void AfterLoadVehicles(bool part_of_load)
 		}
 	}
 
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		/* Fill the first pointers */
-		if (v->Previous() == NULL) {
-			for (Vehicle *u = v; u != NULL; u = u->Next()) {
+		if (v->Previous() == nullptr) {
+			for (Vehicle *u = v; u != nullptr; u = u->Next()) {
 				u->first = v;
 			}
 		}
@@ -310,13 +299,13 @@ void AfterLoadVehicles(bool part_of_load)
 	if (part_of_load) {
 		if (IsSavegameVersionBefore(SLV_105)) {
 			/* Before 105 there was no order for shared orders, thus it messed up horribly */
-			FOR_ALL_VEHICLES(v) {
-				if (v->First() != v || v->orders.list != NULL || v->previous_shared != NULL || v->next_shared == NULL) continue;
+			for (Vehicle *v : Vehicle::Iterate()) {
+				if (v->First() != v || v->orders.list != nullptr || v->previous_shared != nullptr || v->next_shared == nullptr) continue;
 
 				/* As above, allocating OrderList here is safe. */
 				assert(OrderList::CanAllocateItem());
-				v->orders.list = new OrderList(NULL, v);
-				for (Vehicle *u = v; u != NULL; u = u->next_shared) {
+				v->orders.list = new OrderList(nullptr, v);
+				for (Vehicle *u = v; u != nullptr; u = u->next_shared) {
 					u->orders.list = v->orders.list;
 				}
 			}
@@ -324,8 +313,7 @@ void AfterLoadVehicles(bool part_of_load)
 
 		if (IsSavegameVersionBefore(SLV_157)) {
 			/* The road vehicle subtype was converted to a flag. */
-			RoadVehicle *rv;
-			FOR_ALL_ROADVEHICLES(rv) {
+			for (RoadVehicle *rv : RoadVehicle::Iterate()) {
 				if (rv->subtype == 0) {
 					/* The road vehicle is at the front. */
 					rv->SetFrontEngine();
@@ -341,7 +329,7 @@ void AfterLoadVehicles(bool part_of_load)
 
 		if (IsSavegameVersionBefore(SLV_160)) {
 			/* In some old savegames there might be some "crap" stored. */
-			FOR_ALL_VEHICLES(v) {
+			for (Vehicle *v : Vehicle::Iterate()) {
 				if (!v->IsPrimaryVehicle() && v->type != VEH_DISASTER) {
 					v->current_order.Free();
 					v->unitnumber = 0;
@@ -351,14 +339,14 @@ void AfterLoadVehicles(bool part_of_load)
 
 		if (IsSavegameVersionBefore(SLV_162)) {
 			/* Set the vehicle-local cargo age counter from the old global counter. */
-			FOR_ALL_VEHICLES(v) {
+			for (Vehicle *v : Vehicle::Iterate()) {
 				v->cargo_age_counter = _age_cargo_skip_counter;
 			}
 		}
 
 		if (IsSavegameVersionBefore(SLV_180)) {
 			/* Set service interval flags */
-			FOR_ALL_VEHICLES(v) {
+			for (Vehicle *v : Vehicle::Iterate()) {
 				if (!v->IsPrimaryVehicle()) continue;
 
 				const Company *c = Company::Get(v->owner);
@@ -371,13 +359,11 @@ void AfterLoadVehicles(bool part_of_load)
 
 		if (IsSavegameVersionBefore(SLV_SHIP_ROTATION)) {
 			/* Ship rotation added */
-			Ship *s;
-			FOR_ALL_SHIPS(s) {
+			for (Ship *s : Ship::Iterate()) {
 				s->rotation = s->direction;
 			}
 		} else {
-			Ship *s;
-			FOR_ALL_SHIPS(s) {
+			for (Ship *s : Ship::Iterate()) {
 				if (s->rotation == s->direction) continue;
 				/* In case we are rotating on gameload, set the rotation position to
 				 * the current position, otherwise the applied workaround offset would
@@ -391,10 +377,10 @@ void AfterLoadVehicles(bool part_of_load)
 
 	CheckValidVehicles();
 
-	FOR_ALL_VEHICLES(v) {
-		assert(v->first != NULL);
+	for (Vehicle *v : Vehicle::Iterate()) {
+		assert(v->first != nullptr);
 
-		v->trip_occupancy = CalcPercentVehicleFilled(v, NULL);
+		v->trip_occupancy = CalcPercentVehicleFilled(v, nullptr);
 
 		switch (v->type) {
 			case VEH_TRAIN: {
@@ -410,6 +396,14 @@ void AfterLoadVehicles(bool part_of_load)
 				RoadVehicle *rv = RoadVehicle::From(v);
 				if (rv->IsFrontEngine()) {
 					rv->gcache.last_speed = rv->cur_speed; // update displayed road vehicle speed
+
+					rv->roadtype = Engine::Get(rv->engine_type)->u.road.roadtype;
+					rv->compatible_roadtypes = GetRoadTypeInfo(rv->roadtype)->powered_roadtypes;
+					for (RoadVehicle *u = rv; u != nullptr; u = u->Next()) {
+						u->roadtype = rv->roadtype;
+						u->compatible_roadtypes = rv->compatible_roadtypes;
+					}
+
 					RoadVehUpdateCache(rv);
 					if (_settings_game.vehicle.roadveh_acceleration_model != AM_ORIGINAL) {
 						rv->CargoChanged();
@@ -428,7 +422,7 @@ void AfterLoadVehicles(bool part_of_load)
 
 	/* Stop non-front engines */
 	if (part_of_load && IsSavegameVersionBefore(SLV_112)) {
-		FOR_ALL_VEHICLES(v) {
+		for (Vehicle *v : Vehicle::Iterate()) {
 			if (v->type == VEH_TRAIN) {
 				Train *t = Train::From(v);
 				if (!t->IsFrontEngine()) {
@@ -446,15 +440,9 @@ void AfterLoadVehicles(bool part_of_load)
 		}
 	}
 
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		switch (v->type) {
-			case VEH_ROAD: {
-				RoadVehicle *rv = RoadVehicle::From(v);
-				rv->roadtype = HasBit(EngInfo(v->First()->engine_type)->misc_flags, EF_ROAD_TRAM) ? ROADTYPE_TRAM : ROADTYPE_ROAD;
-				rv->compatible_roadtypes = RoadTypeToRoadTypes(rv->roadtype);
-				FALLTHROUGH;
-			}
-
+			case VEH_ROAD:
 			case VEH_TRAIN:
 			case VEH_SHIP:
 				v->GetImage(v->direction, EIT_ON_MAP, &v->sprite_seq);
@@ -496,13 +484,12 @@ void FixupTrainLengths()
 {
 	/* Vehicle center was moved from 4 units behind the front to half the length
 	 * behind the front. Move vehicles so they end up on the same spot. */
-	Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		if (v->type == VEH_TRAIN && v->IsPrimaryVehicle()) {
 			/* The vehicle center is now more to the front depending on vehicle length,
 			 * so we need to move all vehicles forward to cover the difference to the
 			 * old center, otherwise wagon spacing in trains would be broken upon load. */
-			for (Train *u = Train::From(v); u != NULL; u = u->Next()) {
+			for (Train *u = Train::From(v); u != nullptr; u = u->Next()) {
 				if (u->track == TRACK_BIT_DEPOT || (u->vehstatus & VS_CRASHED)) continue;
 
 				Train *next = u->Next();
@@ -514,7 +501,7 @@ void FixupTrainLengths()
 					if (!TrainController(u, next, false)) break;
 				}
 
-				if (next != NULL && done < diff && u->IsFrontEngine()) {
+				if (next != nullptr && done < diff && u->IsFrontEngine()) {
 					/* Pulling the front vehicle forwards failed, we either encountered a dead-end
 					 * or a red signal. To fix this, we try to move the whole train the required
 					 * space backwards and re-do the fix up of the front vehicle. */
@@ -530,14 +517,14 @@ void FixupTrainLengths()
 
 					/* We moved the first vehicle which is now the last. Move it back to the
 					 * original position as we will fix up the last vehicle later in the loop. */
-					for (int i = 0; i < done; i++) TrainController(u->Last(), NULL);
+					for (int i = 0; i < done; i++) TrainController(u->Last(), nullptr);
 
 					/* Move the train backwards to get space for the first vehicle. As the stopping
 					 * distance from a line end is rounded up, move the train one unit more to cater
 					 * for front vehicles with odd lengths. */
 					int moved;
 					for (moved = 0; moved < diff + 1; moved++) {
-						if (!TrainController(u, NULL, false)) break;
+						if (!TrainController(u, nullptr, false)) break;
 					}
 
 					/* Swap start<>end, start+1<>end-1, ... again. */
@@ -556,17 +543,17 @@ void FixupTrainLengths()
 
 					/* We moved one unit more backwards than needed for even-length front vehicles,
 					 * try to move that unit forward again. We don't care if this step fails. */
-					TrainController(u, NULL, false);
+					TrainController(u, nullptr, false);
 				}
 
 				/* If the next wagon is still in a depot, check if it shouldn't be outside already. */
-				if (next != NULL && next->track == TRACK_BIT_DEPOT) {
+				if (next != nullptr && next->track == TRACK_BIT_DEPOT) {
 					int d = TicksToLeaveDepot(u);
 					if (d <= 0) {
 						/* Next vehicle should have left the depot already, show it and pull forward. */
 						next->vehstatus &= ~VS_HIDDEN;
 						next->track = TrackToTrackBits(GetRailDepotTrack(next->tile));
-						for (int i = 0; i >= d; i--) TrainController(next, NULL);
+						for (int i = 0; i >= d; i--) TrainController(next, nullptr);
 					}
 				}
 			}
@@ -752,21 +739,23 @@ const SaveLoad *GetVehicleDescription(VehicleType vt)
 	static const SaveLoad _roadveh_desc[] = {
 		SLE_WRITEBYTE(Vehicle, type),
 		SLE_VEH_INCLUDE(),
-		     SLE_VAR(RoadVehicle, state,                SLE_UINT8),
-		     SLE_VAR(RoadVehicle, frame,                SLE_UINT8),
-		     SLE_VAR(RoadVehicle, blocked_ctr,          SLE_UINT16),
-		     SLE_VAR(RoadVehicle, overtaking,           SLE_UINT8),
-		     SLE_VAR(RoadVehicle, overtaking_ctr,       SLE_UINT8),
-		     SLE_VAR(RoadVehicle, crashed_ctr,          SLE_UINT16),
-		     SLE_VAR(RoadVehicle, reverse_ctr,          SLE_UINT8),
+		      SLE_VAR(RoadVehicle, state,                SLE_UINT8),
+		      SLE_VAR(RoadVehicle, frame,                SLE_UINT8),
+		      SLE_VAR(RoadVehicle, blocked_ctr,          SLE_UINT16),
+		      SLE_VAR(RoadVehicle, overtaking,           SLE_UINT8),
+		      SLE_VAR(RoadVehicle, overtaking_ctr,       SLE_UINT8),
+		      SLE_VAR(RoadVehicle, crashed_ctr,          SLE_UINT16),
+		      SLE_VAR(RoadVehicle, reverse_ctr,          SLE_UINT8),
+		SLE_CONDDEQUE(RoadVehicle, path.td,              SLE_UINT8,                  SLV_ROADVEH_PATH_CACHE, SL_MAX_VERSION),
+		SLE_CONDDEQUE(RoadVehicle, path.tile,            SLE_UINT32,                 SLV_ROADVEH_PATH_CACHE, SL_MAX_VERSION),
 
-		SLE_CONDNULL(2,                                                               SLV_6,  SLV_69),
-		 SLE_CONDVAR(RoadVehicle, gv_flags,             SLE_UINT16,                 SLV_139, SL_MAX_VERSION),
-		SLE_CONDNULL(4,                                                              SLV_69, SLV_131),
-		SLE_CONDNULL(2,                                                               SLV_6, SLV_131),
-		SLE_CONDNULL(16,                                                              SLV_2, SLV_144), // old reserved space
+		 SLE_CONDNULL(2,                                                               SLV_6,  SLV_69),
+		  SLE_CONDVAR(RoadVehicle, gv_flags,             SLE_UINT16,                 SLV_139, SL_MAX_VERSION),
+		 SLE_CONDNULL(4,                                                              SLV_69, SLV_131),
+		 SLE_CONDNULL(2,                                                               SLV_6, SLV_131),
+		 SLE_CONDNULL(16,                                                              SLV_2, SLV_144), // old reserved space
 
-		     SLE_END()
+		      SLE_END()
 	};
 
 	static const SaveLoad _ship_desc[] = {
@@ -892,9 +881,8 @@ const SaveLoad *GetVehicleDescription(VehicleType vt)
 /** Will be called when the vehicles need to be saved. */
 static void Save_VEHS()
 {
-	Vehicle *v;
 	/* Write the vehicles */
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		SlSetArrayIndex(v->index);
 		SlObject(v, GetVehicleDescription(v->type));
 	}
@@ -951,12 +939,11 @@ void Load_VEHS()
 
 static void Ptrs_VEHS()
 {
-	Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		SlObject(v, GetVehicleDescription(v->type));
 	}
 }
 
 extern const ChunkHandler _veh_chunk_handlers[] = {
-	{ 'VEHS', Save_VEHS, Load_VEHS, Ptrs_VEHS, NULL, CH_SPARSE_ARRAY | CH_LAST},
+	{ 'VEHS', Save_VEHS, Load_VEHS, Ptrs_VEHS, nullptr, CH_SPARSE_ARRAY | CH_LAST},
 };

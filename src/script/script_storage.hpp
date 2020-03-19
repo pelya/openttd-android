@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -46,6 +44,11 @@ private:
 	uint last_error;                 ///< The last error of the command.
 	bool last_command_res;           ///< The last result of the command.
 
+	TileIndex last_tile;             ///< The last tile passed to a command.
+	uint32 last_p1;                  ///< The last p1 passed to a command.
+	uint32 last_p2;                  ///< The last p2 passed to a command.
+	uint32 last_cmd;                 ///< The last cmd passed to a command.
+
 	VehicleID new_vehicle_id;        ///< The ID of the new Vehicle.
 	SignID new_sign_id;              ///< The ID of the new Sign.
 	GroupID new_group_id;            ///< The ID of the new Group.
@@ -63,8 +66,8 @@ private:
 
 public:
 	ScriptStorage() :
-		mode              (NULL),
-		mode_instance     (NULL),
+		mode              (nullptr),
+		mode_instance     (nullptr),
 		root_company      (INVALID_OWNER),
 		company           (INVALID_OWNER),
 		delay             (1),
@@ -73,6 +76,10 @@ public:
 		last_cost         (0),
 		last_error        (STR_NULL),
 		last_command_res  (true),
+		last_tile         (INVALID_TILE),
+		last_p1           (0),
+		last_p2           (0),
+		last_cmd          (CMD_END),
 		new_vehicle_id    (0),
 		new_sign_id       (0),
 		new_group_id      (0),
@@ -82,8 +89,8 @@ public:
 		/* calback_value (can't be set) */
 		road_type         (INVALID_ROADTYPE),
 		rail_type         (INVALID_RAILTYPE),
-		event_data        (NULL),
-		log_data          (NULL)
+		event_data        (nullptr),
+		log_data          (nullptr)
 	{ }
 
 	~ScriptStorage();

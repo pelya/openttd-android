@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -16,8 +14,6 @@
 
 #include "tcp.h"
 
-#ifdef ENABLE_NETWORK
-
 /** Callback for when the HTTP handler has something to tell us. */
 struct HTTPCallback {
 	/**
@@ -28,9 +24,9 @@ struct HTTPCallback {
 
 	/**
 	 * We're receiving data.
-	 * @param data   the received data, NULL when all data has been received.
+	 * @param data   the received data, nullptr when all data has been received.
 	 * @param length the amount of received data, 0 when all data has been received.
-	 * @note When NULL is sent the HTTP socket handler is closed/freed.
+	 * @note When nullptr is sent the HTTP socket handler is closed/freed.
 	 */
 	virtual void OnReceiveData(const char *data, size_t length) = 0;
 
@@ -62,7 +58,7 @@ public:
 		return this->sock != INVALID_SOCKET;
 	}
 
-	virtual NetworkRecvStatus CloseConnection(bool error = true);
+	NetworkRecvStatus CloseConnection(bool error = true) override;
 
 	NetworkHTTPSocketHandler(SOCKET sock, HTTPCallback *callback,
 			const char *host, const char *url, const char *data, int depth);
@@ -70,7 +66,7 @@ public:
 	~NetworkHTTPSocketHandler();
 
 	static int Connect(char *uri, HTTPCallback *callback,
-			const char *data = NULL, int depth = 0);
+			const char *data = nullptr, int depth = 0);
 
 	static void HTTPReceive();
 };
@@ -93,7 +89,7 @@ public:
 	 */
 	NetworkHTTPContentConnecter(const NetworkAddress &address,
 			HTTPCallback *callback, const char *url,
-			const char *data = NULL, int depth = 0) :
+			const char *data = nullptr, int depth = 0) :
 		TCPConnecter(address),
 		callback(callback),
 		url(stredup(url)),
@@ -108,20 +104,18 @@ public:
 		free(this->url);
 	}
 
-	virtual void OnFailure()
+	void OnFailure() override
 	{
 		this->callback->OnFailure();
 		free(this->data);
 	}
 
-	virtual void OnConnect(SOCKET s)
+	void OnConnect(SOCKET s) override
 	{
 		new NetworkHTTPSocketHandler(s, this->callback, this->address.GetHostname(), this->url, this->data, this->depth);
 		/* We've relinquished control of data now. */
-		this->data = NULL;
+		this->data = nullptr;
 	}
 };
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_TCP_HTTP_H */

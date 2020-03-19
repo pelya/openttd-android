@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -61,10 +59,10 @@ protected:
 
 public:
 	ScriptConfig() :
-		name(NULL),
+		name(nullptr),
 		version(-1),
-		info(NULL),
-		config_list(NULL),
+		info(nullptr),
+		config_list(nullptr),
 		is_random(false)
 	{}
 
@@ -178,7 +176,7 @@ public:
 	 * Search a textfile file next to this script.
 	 * @param type The type of the textfile to search for.
 	 * @param slot #CompanyID to check status of.
-	 * @return The filename for the textfile, \c NULL otherwise.
+	 * @return The filename for the textfile, \c nullptr otherwise.
 	 */
 	const char *GetTextfile(TextfileType type, CompanyID slot) const;
 

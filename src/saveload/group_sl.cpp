@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -33,9 +31,7 @@ static const SaveLoad _group_desc[] = {
 
 static void Save_GRPS()
 {
-	Group *g;
-
-	FOR_ALL_GROUPS(g) {
+	for (Group *g : Group::Iterate()) {
 		SlSetArrayIndex(g->index);
 		SlObject(g, _group_desc);
 	}
@@ -61,5 +57,5 @@ static void Load_GRPS()
 }
 
 extern const ChunkHandler _group_chunk_handlers[] = {
-	{ 'GRPS', Save_GRPS, Load_GRPS, NULL, NULL, CH_ARRAY | CH_LAST},
+	{ 'GRPS', Save_GRPS, Load_GRPS, nullptr, nullptr, CH_ARRAY | CH_LAST},
 };

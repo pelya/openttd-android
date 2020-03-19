@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -15,7 +13,7 @@
 #include "gfx_type.h"
 
 struct BmpInfo {
-	uint32 offset;       ///< offset of bitmap data from .bmp file begining
+	uint32 offset;       ///< offset of bitmap data from .bmp file beginning
 	uint32 width;        ///< bitmap width
 	uint32 height;       ///< bitmap height
 	bool os2_bmp;        ///< true if OS/2 1.x or windows 2.x bitmap

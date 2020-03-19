@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -44,7 +42,7 @@ static void ShowBuildAirportPicker(Window *parent);
 
 SpriteID GetCustomAirportSprite(const AirportSpec *as, byte layout);
 
-void CcBuildAirport(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+void CcBuildAirport(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	if (result.Failed()) return;
 
@@ -82,6 +80,7 @@ struct BuildAirToolbarWindow : Window {
 	~BuildAirToolbarWindow()
 	{
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
+		if (this->IsWidgetLowered(WID_AT_AIRPORT)) SetViewportCatchmentStation(nullptr, true);
 		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
 	}
 
@@ -90,14 +89,14 @@ struct BuildAirToolbarWindow : Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 
 		if (!CanBuildVehicleInfrastructure(VEH_AIRCRAFT)) delete this;
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_AT_AIRPORT:
@@ -116,7 +115,8 @@ struct BuildAirToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		switch (this->last_user_action) {
 			case WID_AT_AIRPORT: {
@@ -133,12 +133,12 @@ struct BuildAirToolbarWindow : Window {
 		MoveAllWindowsOffScreen();
 	}
 
-	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
 	{
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
 
-	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
+	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (pt.x == -1) return;
 		MoveAllHiddenWindowsBackToScreen();
@@ -154,8 +154,10 @@ struct BuildAirToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
+		if (this->IsWidgetLowered(WID_AT_AIRPORT)) SetViewportCatchmentStation(nullptr, true);
+
 		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 		if (!ConfirmationWindowShown()) {
@@ -177,7 +179,7 @@ static EventState AirportToolbarGlobalHotkeys(int hotkey)
 {
 	if (_game_mode != GM_NORMAL || !CanBuildVehicleInfrastructure(VEH_AIRCRAFT)) return ES_NOT_HANDLED;
 	Window *w = ShowBuildAirToolbar();
-	if (w == NULL) return ES_NOT_HANDLED;
+	if (w == nullptr) return ES_NOT_HANDLED;
 	return w->OnHotkey(hotkey);
 }
 
@@ -214,11 +216,11 @@ static WindowDesc _air_toolbar_desc(
  *
  * If the terraform toolbar is linked to the toolbar, that window is also opened.
  *
- * @return newly opened airport toolbar, or NULL if the toolbar could not be opened.
+ * @return newly opened airport toolbar, or nullptr if the toolbar could not be opened.
  */
 Window *ShowBuildAirToolbar()
 {
-	if (!Company::IsValidID(_local_company)) return NULL;
+	if (!Company::IsValidID(_local_company)) return nullptr;
 
 	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildAirToolbarWindow>(&_air_toolbar_desc, TRANSPORT_AIR);
@@ -230,12 +232,12 @@ class BuildAirportWindow : public PickerWindowBase {
 	Scrollbar *vscroll;
 
 	/** Build a dropdown list of available airport classes */
-	static DropDownList *BuildAirportClassDropDown()
+	static DropDownList BuildAirportClassDropDown()
 	{
-		DropDownList *list = new DropDownList();
+		DropDownList list;
 
 		for (uint i = 0; i < AirportClass::GetClassCount(); i++) {
-			*list->Append() = new DropDownListStringItem(AirportClass::Get((AirportClassID)i)->name, i, false);
+			list.emplace_back(new DropDownListStringItem(AirportClass::Get((AirportClassID)i)->name, i, false));
 		}
 
 		return list;
@@ -284,7 +286,7 @@ public:
 		DeleteWindowById(WC_SELECT_STATION, 0);
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_AP_CLASS_DROPDOWN:
@@ -309,7 +311,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_AP_CLASS_DROPDOWN: {
@@ -374,7 +376,7 @@ public:
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_AP_AIRPORT_LIST: {
@@ -413,7 +415,7 @@ public:
 		}
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->DrawWidgets();
 
@@ -481,7 +483,7 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_AP_CLASS_DROPDOWN:
@@ -554,7 +556,7 @@ public:
 		this->SelectOtherAirport(-1);
 	}
 
-	virtual void OnDropdownSelect(int widget, int index)
+	void OnDropdownSelect(int widget, int index) override
 	{
 		assert(widget == WID_AP_CLASS_DROPDOWN);
 		_selected_airport_class = (AirportClassID)index;
@@ -562,7 +564,7 @@ public:
 		this->SelectFirstAvailableAirport(false);
 	}
 
-	virtual void OnRealtimeTick(uint delta_ms)
+	void OnRealtimeTick(uint delta_ms) override
 	{
 		CheckRedrawStationCoverage(this);
 	}

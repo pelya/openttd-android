@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -29,7 +27,7 @@
 /* static */ bool ScriptVehicle::IsValidVehicle(VehicleID vehicle_id)
 {
 	const Vehicle *v = ::Vehicle::GetIfValid(vehicle_id);
-	return v != NULL && (v->owner == ScriptObject::GetCompany() || ScriptObject::GetCompany() == OWNER_DEITY) && (v->IsPrimaryVehicle() || (v->type == VEH_TRAIN && ::Train::From(v)->IsFreeWagon()));
+	return v != nullptr && (v->owner == ScriptObject::GetCompany() || ScriptObject::GetCompany() == OWNER_DEITY) && (v->IsPrimaryVehicle() || (v->type == VEH_TRAIN && ::Train::From(v)->IsFreeWagon()));
 }
 
 /* static */ ScriptCompany::CompanyID ScriptVehicle::GetOwner(VehicleID vehicle_id)
@@ -46,8 +44,8 @@
 	int num = 1;
 
 	const Train *v = ::Train::GetIfValid(vehicle_id);
-	if (v != NULL) {
-		while ((v = v->GetNextUnit()) != NULL) num++;
+	if (v != nullptr) {
+		while ((v = v->GetNextUnit()) != nullptr) num++;
 	}
 
 	return num;
@@ -61,19 +59,42 @@
 	return v->IsGroundVehicle() ? v->GetGroundVehicleCache()->cached_total_length : -1;
 }
 
-/* static */ VehicleID ScriptVehicle::BuildVehicle(TileIndex depot, EngineID engine_id)
+/* static */ VehicleID ScriptVehicle::_BuildVehicleInternal(TileIndex depot, EngineID engine_id, CargoID cargo)
 {
-	EnforcePrecondition(false, ScriptObject::GetCompany() != OWNER_DEITY);
+	EnforcePrecondition(VEHICLE_INVALID, ScriptObject::GetCompany() != OWNER_DEITY);
 	EnforcePrecondition(VEHICLE_INVALID, ScriptEngine::IsBuildable(engine_id));
+	EnforcePrecondition(VEHICLE_INVALID, cargo == CT_INVALID || ScriptCargo::IsValidCargo(cargo));
 
 	::VehicleType type = ::Engine::Get(engine_id)->type;
 
 	EnforcePreconditionCustomError(VEHICLE_INVALID, !ScriptGameSettings::IsDisabledVehicleType((ScriptVehicle::VehicleType)type), ScriptVehicle::ERR_VEHICLE_BUILD_DISABLED);
 
-	if (!ScriptObject::DoCommand(depot, engine_id, 0, ::GetCmdBuildVeh(type), NULL, &ScriptInstance::DoCommandReturnVehicleID)) return VEHICLE_INVALID;
+	if (!ScriptObject::DoCommand(depot, engine_id | (cargo << 24), 0, ::GetCmdBuildVeh(type), nullptr, &ScriptInstance::DoCommandReturnVehicleID)) return VEHICLE_INVALID;
 
 	/* In case of test-mode, we return VehicleID 0 */
 	return 0;
+}
+
+/* static */ VehicleID ScriptVehicle::BuildVehicle(TileIndex depot, EngineID engine_id)
+{
+	return _BuildVehicleInternal(depot, engine_id, CT_INVALID);
+}
+
+/* static */ VehicleID ScriptVehicle::BuildVehicleWithRefit(TileIndex depot, EngineID engine_id, CargoID cargo)
+{
+	EnforcePrecondition(VEHICLE_INVALID, ScriptCargo::IsValidCargo(cargo));
+	return _BuildVehicleInternal(depot, engine_id, cargo);
+}
+
+/* static */ int ScriptVehicle::GetBuildWithRefitCapacity(TileIndex depot, EngineID engine_id, CargoID cargo)
+{
+	if (!ScriptEngine::IsBuildable(engine_id)) return -1;
+	if (!ScriptCargo::IsValidCargo(cargo)) return -1;
+
+	::VehicleType type = ::Engine::Get(engine_id)->type;
+
+	CommandCost res = ::DoCommand(depot, engine_id | (cargo << 24), 0, DC_QUERY_COST, ::GetCmdBuildVeh(type));
+	return res.Succeeded() ? _returned_refit_capacity : -1;
 }
 
 /* static */ VehicleID ScriptVehicle::CloneVehicle(TileIndex depot, VehicleID vehicle_id, bool share_orders)
@@ -81,7 +102,7 @@
 	EnforcePrecondition(false, ScriptObject::GetCompany() != OWNER_DEITY);
 	EnforcePrecondition(false, IsValidVehicle(vehicle_id));
 
-	if (!ScriptObject::DoCommand(depot, vehicle_id, share_orders, CMD_CLONE_VEHICLE, NULL, &ScriptInstance::DoCommandReturnVehicleID)) return VEHICLE_INVALID;
+	if (!ScriptObject::DoCommand(depot, vehicle_id, share_orders, CMD_CLONE_VEHICLE, nullptr, &ScriptInstance::DoCommandReturnVehicleID)) return VEHICLE_INVALID;
 
 	/* In case of test-mode, we return VehicleID 0 */
 	return 0;
@@ -97,13 +118,13 @@
 
 	const Train *v = ::Train::Get(source_vehicle_id);
 	while (source_wagon-- > 0) v = v->GetNextUnit();
-	const Train *w = NULL;
+	const Train *w = nullptr;
 	if (dest_vehicle_id != -1) {
 		w = ::Train::Get(dest_vehicle_id);
 		while (dest_wagon-- > 0) w = w->GetNextUnit();
 	}
 
-	return ScriptObject::DoCommand(0, v->index | (move_attached_wagons ? 1 : 0) << 20, w == NULL ? ::INVALID_VEHICLE : w->index, CMD_MOVE_RAIL_VEHICLE);
+	return ScriptObject::DoCommand(0, v->index | (move_attached_wagons ? 1 : 0) << 20, w == nullptr ? ::INVALID_VEHICLE : w->index, CMD_MOVE_RAIL_VEHICLE);
 }
 
 /* static */ bool ScriptVehicle::MoveWagon(VehicleID source_vehicle_id, int source_wagon, int dest_vehicle_id, int dest_wagon)
@@ -220,7 +241,7 @@
 
 	EnforcePrecondition(false, ScriptObject::GetCompany() != OWNER_DEITY);
 	EnforcePrecondition(false, IsValidVehicle(vehicle_id));
-	EnforcePrecondition(false, name != NULL);
+	EnforcePrecondition(false, name != nullptr);
 	const char *text = name->GetDecodedText();
 	EnforcePreconditionEncodedText(false, text);
 	EnforcePreconditionCustomError(false, ::Utf8StringLength(text) < MAX_LENGTH_VEHICLE_NAME_CHARS, ScriptError::ERR_PRECONDITION_STRING_TOO_LONG);
@@ -270,7 +291,7 @@
 
 /* static */ char *ScriptVehicle::GetName(VehicleID vehicle_id)
 {
-	if (!IsValidVehicle(vehicle_id)) return NULL;
+	if (!IsValidVehicle(vehicle_id)) return nullptr;
 
 	::SetDParam(0, vehicle_id);
 	return GetString(STR_VEHICLE_NAME);
@@ -378,7 +399,7 @@
 	if (!IsValidVehicle(vehicle_id)) return ScriptRoad::ROADTYPE_INVALID;
 	if (GetVehicleType(vehicle_id) != VT_ROAD) return ScriptRoad::ROADTYPE_INVALID;
 
-	return (ScriptRoad::RoadType)(::RoadVehicle::Get(vehicle_id))->roadtype;
+	return (ScriptRoad::RoadType)(int)(::RoadVehicle::Get(vehicle_id))->roadtype;
 }
 
 /* static */ int32 ScriptVehicle::GetCapacity(VehicleID vehicle_id, CargoID cargo)
@@ -387,7 +408,7 @@
 	if (!ScriptCargo::IsValidCargo(cargo)) return -1;
 
 	uint32 amount = 0;
-	for (const Vehicle *v = ::Vehicle::Get(vehicle_id); v != NULL; v = v->Next()) {
+	for (const Vehicle *v = ::Vehicle::Get(vehicle_id); v != nullptr; v = v->Next()) {
 		if (v->cargo_type == cargo) amount += v->cargo_cap;
 	}
 
@@ -400,7 +421,7 @@
 	if (!ScriptCargo::IsValidCargo(cargo)) return -1;
 
 	uint32 amount = 0;
-	for (const Vehicle *v = ::Vehicle::Get(vehicle_id); v != NULL; v = v->Next()) {
+	for (const Vehicle *v = ::Vehicle::Get(vehicle_id); v != nullptr; v = v->Next()) {
 		if (v->cargo_type == cargo) amount += v->cargo.StoredCount();
 	}
 
@@ -432,7 +453,7 @@
 	if (!IsValidVehicle(vehicle_id)) return false;
 
 	Vehicle *v = ::Vehicle::Get(vehicle_id);
-	return v->orders.list != NULL && v->orders.list->GetNumVehicles() > 1;
+	return v->orders.list != nullptr && v->orders.list->GetNumVehicles() > 1;
 }
 
 /* static */ int ScriptVehicle::GetReliability(VehicleID vehicle_id)
@@ -449,9 +470,6 @@
 
 	const ::Vehicle *v = ::Vehicle::Get(vehicle_id);
 	switch (v->type) {
-		case VEH_SHIP:
-			return _settings_game.pf.pathfinder_for_ships != VPF_NPF ? 129 : 0;
-
 		case VEH_AIRCRAFT:
 			return ::Aircraft::From(v)->acache.cached_max_range_sqr;
 

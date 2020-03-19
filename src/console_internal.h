@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -69,7 +67,7 @@ extern IConsoleAlias *_iconsole_aliases; ///< List of registered aliases.
 void IConsoleClearBuffer();
 
 /* Commands */
-void IConsoleCmdRegister(const char *name, IConsoleCmdProc *proc, IConsoleHook *hook = NULL);
+void IConsoleCmdRegister(const char *name, IConsoleCmdProc *proc, IConsoleHook *hook = nullptr);
 void IConsoleAliasRegister(const char *name, const char *cmd);
 IConsoleCmd *IConsoleCmdGet(const char *name);
 IConsoleAlias *IConsoleAliasGet(const char *name);

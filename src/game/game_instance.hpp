@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,14 +23,14 @@ public:
 	 */
 	void Initialize(class GameInfo *info);
 
-	/* virtual */ int GetSetting(const char *name);
-	/* virtual */ ScriptInfo *FindLibrary(const char *library, int version);
+	int GetSetting(const char *name) override;
+	ScriptInfo *FindLibrary(const char *library, int version) override;
 
 private:
-	/* virtual */ void RegisterAPI();
-	/* virtual */ void Died();
-	/* virtual */ CommandCallback *GetDoCommandCallback();
-	/* virtual */ void LoadDummyScript() {}
+	void RegisterAPI() override;
+	void Died() override;
+	CommandCallback *GetDoCommandCallback() override;
+	void LoadDummyScript() override {}
 };
 
 #endif /* GAME_INSTANCE_HPP */

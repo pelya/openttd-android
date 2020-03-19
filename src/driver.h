@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -26,7 +24,7 @@ public:
 	/**
 	 * Start this driver.
 	 * @param parm Parameters passed to the driver.
-	 * @return NULL if everything went okay, otherwise an error message.
+	 * @return nullptr if everything went okay, otherwise an error message.
 	 */
 	virtual const char *Start(const char * const *parm) = 0;
 
@@ -86,7 +84,7 @@ private:
 	 */
 	static Driver **GetActiveDriver(Driver::Type type)
 	{
-		static Driver *s_driver[3] = { NULL, NULL, NULL };
+		static Driver *s_driver[3] = { nullptr, nullptr, nullptr };
 		return &s_driver[type];
 	}
 
@@ -116,7 +114,7 @@ public:
 	{
 		for (Driver::Type dt = Driver::DT_BEGIN; dt < Driver::DT_END; dt++) {
 			Driver *driver = *GetActiveDriver(dt);
-			if (driver != NULL) driver->Stop();
+			if (driver != nullptr) driver->Stop();
 		}
 	}
 

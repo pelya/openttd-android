@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -13,8 +11,6 @@
 #define NETWORK_TYPE_H
 
 #include "core/game.h"
-
-#ifdef ENABLE_NETWORK
 
 /** How many clients can we have */
 static const uint MAX_CLIENTS = 255;
@@ -40,7 +36,7 @@ enum NetworkVehicleType {
 };
 
 /** 'Unique' identifier to be given to clients */
-enum ClientID {
+enum ClientID : uint32 {
 	INVALID_CLIENT_ID = 0, ///< Client is not part of anything
 	CLIENT_ID_SERVER  = 1, ///< Servers always have this ID
 	CLIENT_ID_FIRST   = 2, ///< The first client ID
@@ -89,6 +85,7 @@ enum DestType {
 enum NetworkAction {
 	NETWORK_ACTION_JOIN,
 	NETWORK_ACTION_LEAVE,
+	NETWORK_ACTION_KICKED,
 	NETWORK_ACTION_SERVER_MESSAGE,
 	NETWORK_ACTION_CHAT,
 	NETWORK_ACTION_CHAT_COMPANY,
@@ -130,5 +127,4 @@ enum NetworkErrorCode {
 	NETWORK_ERROR_END,
 };
 
-#endif /* ENABLE_NETWORK */
 #endif /* NETWORK_TYPE_H */

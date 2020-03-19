@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -16,8 +14,6 @@
 
 #include "address.h"
 #include "packet.h"
-
-#ifdef ENABLE_NETWORK
 
 /** The states of sending the packets. */
 enum SendPacketsState {
@@ -42,7 +38,7 @@ public:
 	 */
 	bool IsConnected() const { return this->sock != INVALID_SOCKET; }
 
-	virtual NetworkRecvStatus CloseConnection(bool error = true);
+	NetworkRecvStatus CloseConnection(bool error = true) override;
 	virtual void SendPacket(Packet *packet);
 	SendPacketsState SendPackets(bool closing_down = false);
 
@@ -54,7 +50,7 @@ public:
 	 * Whether there is something pending in the send queue.
 	 * @return true when something is pending in the send queue.
 	 */
-	bool HasSendQueue() { return this->packet_queue != NULL; }
+	bool HasSendQueue() { return this->packet_queue != nullptr; }
 
 	NetworkTCPSocketHandler(SOCKET s = INVALID_SOCKET);
 	~NetworkTCPSocketHandler();
@@ -65,7 +61,6 @@ public:
  */
 class TCPConnecter {
 private:
-	class ThreadObject *thread; ///< Thread used to create the TCP connection
 	bool connected;             ///< Whether we succeeded in making the connection
 	bool aborted;               ///< Whether we bailed out (i.e. connection making failed)
 	bool killed;                ///< Whether we got killed
@@ -73,7 +68,7 @@ private:
 
 	void Connect();
 
-	static void ThreadEntry(void *param);
+	static void ThreadEntry(TCPConnecter *param);
 
 protected:
 	/** Address we're connecting to */
@@ -98,7 +93,5 @@ public:
 	static void CheckCallbacks();
 	static void KillAll();
 };
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_TCP_H */

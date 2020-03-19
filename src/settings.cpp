@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -24,6 +22,7 @@
  */
 
 #include "stdafx.h"
+#include <limits>
 #include "currency.h"
 #include "screenshot.h"
 #include "network/network.h"
@@ -39,7 +38,7 @@
 #include "sound_func.h"
 #include "company_func.h"
 #include "rev.h"
-#ifdef WITH_FREETYPE
+#if defined(WITH_FREETYPE) || defined(_WIN32)
 #include "fontcache.h"
 #endif
 #include "textbuf_gui.h"
@@ -70,6 +69,10 @@
 #include "void_map.h"
 #include "station_base.h"
 
+#if defined(WITH_FREETYPE) || defined(_WIN32)
+#define HAS_TRUETYPE_FONT
+#endif
+
 #include "table/strings.h"
 #include "table/settings.h"
 
@@ -86,7 +89,7 @@ static ErrorList _settings_error_list; ///< Errors while loading minimal setting
 
 
 typedef void SettingDescProc(IniFile *ini, const SettingDesc *desc, const char *grpname, void *object);
-typedef void SettingDescProcList(IniFile *ini, const char *grpname, StringList *list);
+typedef void SettingDescProcList(IniFile *ini, const char *grpname, StringList &list);
 
 static bool IsSignedVarMemType(VarType vt);
 
@@ -98,7 +101,7 @@ static const char * const _list_group_names[] = {
 	"newgrf",
 	"servers",
 	"server_bind_addresses",
-	NULL
+	nullptr
 };
 
 /**
@@ -116,7 +119,7 @@ static size_t LookupOneOfMany(const char *many, const char *one, size_t onelen =
 	if (onelen == 0) onelen = strlen(one);
 
 	/* check if it's an integer */
-	if (*one >= '0' && *one <= '9') return strtoul(one, NULL, 0);
+	if (*one >= '0' && *one <= '9') return strtoul(one, nullptr, 0);
 
 	idx = 0;
 	for (;;) {
@@ -169,7 +172,8 @@ static size_t LookupManyOfMany(const char *many, const char *str)
  * @param maxitems the maximum number of elements the integerlist-array has
  * @return returns the number of items found, or -1 on an error
  */
-static int ParseIntList(const char *p, int *items, int maxitems)
+template<typename T>
+static int ParseIntList(const char *p, T *items, int maxitems)
 {
 	int n = 0; // number of items read so far
 	bool comma = false; // do we accept comma?
@@ -189,9 +193,9 @@ static int ParseIntList(const char *p, int *items, int maxitems)
 			default: {
 				if (n == maxitems) return -1; // we don't accept that many numbers
 				char *end;
-				long v = strtol(p, &end, 0);
+				unsigned long v = strtoul(p, &end, 0);
 				if (p == end) return -1; // invalid character (not a number)
-				if (sizeof(int) < sizeof(long)) v = ClampToI32(v);
+				if (sizeof(T) < sizeof(v)) v = Clamp<unsigned long>(v, std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
 				items[n++] = v;
 				p = end; // first non-number
 				comma = true; // we accept comma now
@@ -217,10 +221,10 @@ static int ParseIntList(const char *p, int *items, int maxitems)
  */
 static bool LoadIntList(const char *str, void *array, int nelems, VarType type)
 {
-	int items[64];
+	unsigned long items[64];
 	int i, nitems;
 
-	if (str == NULL) {
+	if (str == nullptr) {
 		memset(items, 0, sizeof(items));
 		nitems = nelems;
 	} else {
@@ -266,7 +270,7 @@ static void MakeIntList(char *buf, const char *last, const void *array, int nele
 	const byte *p = (const byte *)array;
 
 	for (i = 0; i != nelems; i++) {
-		switch (type) {
+		switch (GetVarMemType(type)) {
 			case SLE_VAR_BL:
 			case SLE_VAR_I8:  v = *(const   int8 *)p; p += 1; break;
 			case SLE_VAR_U8:  v = *(const  uint8 *)p; p += 1; break;
@@ -276,7 +280,13 @@ static void MakeIntList(char *buf, const char *last, const void *array, int nele
 			case SLE_VAR_U32: v = *(const uint32 *)p; p += 4; break;
 			default: NOT_REACHED();
 		}
-		buf += seprintf(buf, last, (i == 0) ? "%d" : ",%d", v);
+		if (IsSignedVarMemType(type)) {
+			buf += seprintf(buf, last, (i == 0) ? "%d" : ",%d", v);
+		} else if (type & SLF_HEX) {
+			buf += seprintf(buf, last, (i == 0) ? "0x%X" : ",0x%X", v);
+		} else {
+			buf += seprintf(buf, last, (i == 0) ? "%u" : ",%u", v);
+		}
 	}
 }
 
@@ -350,7 +360,7 @@ static void MakeManyOfMany(char *buf, const char *last, const char *many, uint32
  */
 static const void *StringToVal(const SettingDescBase *desc, const char *orig_str)
 {
-	const char *str = orig_str == NULL ? "" : orig_str;
+	const char *str = orig_str == nullptr ? "" : orig_str;
 
 	switch (desc->cmd) {
 		case SDT_NUMX: {
@@ -375,7 +385,7 @@ static const void *StringToVal(const SettingDescBase *desc, const char *orig_str
 			size_t r = LookupOneOfMany(desc->many, str);
 			/* if the first attempt of conversion from string to the appropriate value fails,
 			 * look if we have defined a converter from old value to new value. */
-			if (r == (size_t)-1 && desc->proc_cnvt != NULL) r = desc->proc_cnvt(str);
+			if (r == (size_t)-1 && desc->proc_cnvt != nullptr) r = desc->proc_cnvt(str);
 			if (r != (size_t)-1) return (void*)r; // and here goes converted value
 
 			ErrorMessageData msg(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_VALUE);
@@ -411,7 +421,7 @@ static const void *StringToVal(const SettingDescBase *desc, const char *orig_str
 		default: break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -450,13 +460,30 @@ static void Write_ValidateSetting(void *ptr, const SettingDesc *sd, int32 val)
 			case SLE_VAR_U16:
 			case SLE_VAR_I32: {
 				/* Override the minimum value. No value below sdb->min, except special value 0 */
-				if (!(sdb->flags & SGF_0ISDISABLED) || val != 0) val = Clamp(val, sdb->min, sdb->max);
+				if (!(sdb->flags & SGF_0ISDISABLED) || val != 0) {
+					if (!(sdb->flags & SGF_MULTISTRING)) {
+						/* Clamp value-type setting to its valid range */
+						val = Clamp(val, sdb->min, sdb->max);
+					} else if (val < sdb->min || val > (int32)sdb->max) {
+						/* Reset invalid discrete setting (where different values change gameplay) to its default value */
+						val = (int32)(size_t)sdb->def;
+					}
+				}
 				break;
 			}
 			case SLE_VAR_U32: {
 				/* Override the minimum value. No value below sdb->min, except special value 0 */
-				uint min = ((sdb->flags & SGF_0ISDISABLED) && (uint)val <= (uint)sdb->min) ? 0 : sdb->min;
-				WriteValue(ptr, SLE_VAR_U32, (int64)ClampU(val, min, sdb->max));
+				uint32 uval = (uint32)val;
+				if (!(sdb->flags & SGF_0ISDISABLED) || uval != 0) {
+					if (!(sdb->flags & SGF_MULTISTRING)) {
+						/* Clamp value-type setting to its valid range */
+						uval = ClampU(uval, sdb->min, sdb->max);
+					} else if (uval < (uint)sdb->min || uval > sdb->max) {
+						/* Reset invalid discrete setting to its default value */
+						uval = (uint32)(size_t)sdb->def;
+					}
+				}
+				WriteValue(ptr, SLE_VAR_U32, (int64)uval);
 				return;
 			}
 			case SLE_VAR_I64:
@@ -493,7 +520,7 @@ static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 
 		/* For settings.xx.yy load the settings from [xx] yy = ? */
 		s = strchr(sdb->name, '.');
-		if (s != NULL) {
+		if (s != nullptr) {
 			group = ini->GetGroup(sdb->name, s - sdb->name);
 			s++;
 		} else {
@@ -502,19 +529,19 @@ static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 		}
 
 		item = group->GetItem(s, false);
-		if (item == NULL && group != group_def) {
+		if (item == nullptr && group != group_def) {
 			/* For settings.xx.yy load the settings from [settingss] yy = ? in case the previous
 			 * did not exist (e.g. loading old config files with a [settings] section */
 			item = group_def->GetItem(s, false);
 		}
-		if (item == NULL) {
+		if (item == nullptr) {
 			/* For settings.xx.zz.yy load the settings from [zz] yy = ? in case the previous
 			 * did not exist (e.g. loading old config files with a [yapf] section */
 			const char *sc = strchr(s, '.');
-			if (sc != NULL) item = ini->GetGroup(s, sc - s)->GetItem(sc + 1, false);
+			if (sc != nullptr) item = ini->GetGroup(s, sc - s)->GetItem(sc + 1, false);
 		}
 
-		p = (item == NULL) ? sdb->def : StringToVal(sdb, item->value);
+		p = (item == nullptr) ? sdb->def : StringToVal(sdb, item->value);
 		ptr = GetVariableAddress(object, sld);
 
 		switch (sdb->cmd) {
@@ -529,16 +556,16 @@ static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 				switch (GetVarMemType(sld->conv)) {
 					case SLE_VAR_STRB:
 					case SLE_VAR_STRBQ:
-						if (p != NULL) strecpy((char*)ptr, (const char*)p, (char*)ptr + sld->length - 1);
+						if (p != nullptr) strecpy((char*)ptr, (const char*)p, (char*)ptr + sld->length - 1);
 						break;
 
 					case SLE_VAR_STR:
 					case SLE_VAR_STRQ:
 						free(*(char**)ptr);
-						*(char**)ptr = p == NULL ? NULL : stredup((const char*)p);
+						*(char**)ptr = p == nullptr ? nullptr : stredup((const char*)p);
 						break;
 
-					case SLE_VAR_CHAR: if (p != NULL) *(char *)ptr = *(const char *)p; break;
+					case SLE_VAR_CHAR: if (p != nullptr) *(char *)ptr = *(const char *)p; break;
 
 					default: NOT_REACHED();
 				}
@@ -552,7 +579,7 @@ static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 
 					/* Use default */
 					LoadIntList((const char*)sdb->def, ptr, sld->length, GetVarMemType(sld->conv));
-				} else if (sd->desc.proc_cnvt != NULL) {
+				} else if (sd->desc.proc_cnvt != nullptr) {
 					sd->desc.proc_cnvt((const char*)p);
 				}
 				break;
@@ -576,7 +603,7 @@ static void IniLoadSettings(IniFile *ini, const SettingDesc *sd, const char *grp
  */
 static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grpname, void *object)
 {
-	IniGroup *group_def = NULL, *group;
+	IniGroup *group_def = nullptr, *group;
 	IniItem *item;
 	char buf[512];
 	const char *s;
@@ -593,11 +620,11 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 
 		/* XXX - wtf is this?? (group override?) */
 		s = strchr(sdb->name, '.');
-		if (s != NULL) {
+		if (s != nullptr) {
 			group = ini->GetGroup(sdb->name, s - sdb->name);
 			s++;
 		} else {
-			if (group_def == NULL) group_def = ini->GetGroup(grpname);
+			if (group_def == nullptr) group_def = ini->GetGroup(grpname);
 			s = sdb->name;
 			group = group_def;
 		}
@@ -605,7 +632,7 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 		item = group->GetItem(s, true);
 		ptr = GetVariableAddress(object, sld);
 
-		if (item->value != NULL) {
+		if (item->value != nullptr) {
 			/* check if the value is the same as the old value */
 			const void *p = StringToVal(sdb, item->value);
 
@@ -618,7 +645,7 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 				case SDT_MANYOFMANY:
 					switch (GetVarMemType(sld->conv)) {
 						case SLE_VAR_BL:
-							if (*(bool*)ptr == (p != NULL)) continue;
+							if (*(bool*)ptr == (p != nullptr)) continue;
 							break;
 
 						case SLE_VAR_I8:
@@ -654,7 +681,7 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 
 				switch (sdb->cmd) {
 					case SDT_BOOLX:      strecpy(buf, (i != 0) ? "true" : "false", lastof(buf)); break;
-					case SDT_NUMX:       seprintf(buf, lastof(buf), IsSignedVarMemType(sld->conv) ? "%d" : "%u", i); break;
+					case SDT_NUMX:       seprintf(buf, lastof(buf), IsSignedVarMemType(sld->conv) ? "%d" : (sld->conv & SLF_HEX) ? "%X" : "%u", i); break;
 					case SDT_ONEOFMANY:  MakeOneOfMany(buf, lastof(buf), sdb->many, i); break;
 					case SDT_MANYOFMANY: MakeManyOfMany(buf, lastof(buf), sdb->many, i); break;
 					default: NOT_REACHED();
@@ -669,7 +696,7 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 					case SLE_VAR_STR:  strecpy(buf, *(char**)ptr, lastof(buf)); break;
 
 					case SLE_VAR_STRQ:
-						if (*(char**)ptr == NULL) {
+						if (*(char**)ptr == nullptr) {
 							buf[0] = '\0';
 						} else {
 							seprintf(buf, lastof(buf), "\"%s\"", *(char**)ptr);
@@ -682,7 +709,7 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 				break;
 
 			case SDT_INTLIST:
-				MakeIntList(buf, lastof(buf), ptr, sld->length, GetVarMemType(sld->conv));
+				MakeIntList(buf, lastof(buf), ptr, sld->length, sld->conv);
 				break;
 
 			default: NOT_REACHED();
@@ -696,44 +723,44 @@ static void IniSaveSettings(IniFile *ini, const SettingDesc *sd, const char *grp
 
 /**
  * Loads all items from a 'grpname' section into a list
- * The list parameter can be a NULL pointer, in this case nothing will be
+ * The list parameter can be a nullptr pointer, in this case nothing will be
  * saved and a callback function should be defined that will take over the
  * list-handling and store the data itself somewhere.
  * @param ini IniFile handle to the ini file with the source data
  * @param grpname character string identifying the section-header of the ini file that will be parsed
  * @param list new list with entries of the given section
  */
-static void IniLoadSettingList(IniFile *ini, const char *grpname, StringList *list)
+static void IniLoadSettingList(IniFile *ini, const char *grpname, StringList &list)
 {
 	IniGroup *group = ini->GetGroup(grpname);
 
-	if (group == NULL || list == NULL) return;
+	if (group == nullptr) return;
 
-	list->Clear();
+	list.clear();
 
-	for (const IniItem *item = group->item; item != NULL; item = item->next) {
-		if (item->name != NULL) *list->Append() = stredup(item->name);
+	for (const IniItem *item = group->item; item != nullptr; item = item->next) {
+		if (item->name != nullptr) list.emplace_back(item->name);
 	}
 }
 
 /**
  * Saves all items from a list into the 'grpname' section
- * The list parameter can be a NULL pointer, in this case a callback function
+ * The list parameter can be a nullptr pointer, in this case a callback function
  * should be defined that will provide the source data to be saved.
  * @param ini IniFile handle to the ini file where the destination data is saved
  * @param grpname character string identifying the section-header of the ini file
  * @param list pointer to an string(pointer) array that will be used as the
  *             source to be saved into the relevant ini section
  */
-static void IniSaveSettingList(IniFile *ini, const char *grpname, StringList *list)
+static void IniSaveSettingList(IniFile *ini, const char *grpname, StringList &list)
 {
 	IniGroup *group = ini->GetGroup(grpname);
 
-	if (group == NULL || list == NULL) return;
+	if (group == nullptr) return;
 	group->Clear();
 
-	for (char **iter = list->Begin(); iter != list->End(); iter++) {
-		group->GetItem(*iter, true)->SetValue("");
+	for (const auto &iter : list) {
+		group->GetItem(iter.c_str(), true)->SetValue("");
 	}
 }
 
@@ -790,7 +817,7 @@ SettingType SettingDesc::GetType() const
 /** Reposition the main toolbar as the setting changed. */
 static bool v_PositionMainToolbar(int32 p1)
 {
-	if (_game_mode != GM_MENU) PositionMainToolbar(NULL);
+	if (_game_mode != GM_MENU) PositionMainToolbar(nullptr);
 	return true;
 }
 
@@ -798,9 +825,9 @@ static bool v_PositionMainToolbar(int32 p1)
 static bool v_PositionStatusbar(int32 p1)
 {
 	if (_game_mode != GM_MENU) {
-		PositionStatusbar(NULL);
-		PositionNewsMessage(NULL);
-		PositionNetworkChatWindow(NULL);
+		PositionStatusbar(nullptr);
+		PositionNewsMessage(nullptr);
+		PositionNetworkChatWindow(nullptr);
 	}
 	return true;
 }
@@ -871,8 +898,7 @@ static bool DeleteSelectStationWindow(int32 p1)
 
 static bool UpdateConsists(int32 p1)
 {
-	Train *t;
-	FOR_ALL_TRAINS(t) {
+	for (Train *t : Train::Iterate()) {
 		/* Update the consist of all trains so the maximum speed is set correctly. */
 		if (t->IsFrontEngine() || t->IsFreeWagon()) t->ConsistChanged(CCF_TRACK);
 	}
@@ -907,8 +933,7 @@ static bool CheckInterval(int32 p1)
 
 	if (update_vehicles) {
 		const Company *c = Company::Get(_current_company);
-		Vehicle *v;
-		FOR_ALL_VEHICLES(v) {
+		for (Vehicle *v : Vehicle::Iterate()) {
 			if (v->owner == _current_company && v->IsPrimaryVehicle() && !v->ServiceIntervalIsCustom()) {
 				v->SetServiceInterval(CompanyServiceInterval(c, v->type));
 				v->SetServiceIntervalIsPercent(p1 != 0);
@@ -938,8 +963,7 @@ static bool UpdateInterval(VehicleType type, int32 p1)
 	if (interval != p1) return false;
 
 	if (update_vehicles) {
-		Vehicle *v;
-		FOR_ALL_VEHICLES(v) {
+		for (Vehicle *v : Vehicle::Iterate()) {
 			if (v->owner == _current_company && v->type == type && v->IsPrimaryVehicle() && !v->ServiceIntervalIsCustom()) {
 				v->SetServiceInterval(p1);
 			}
@@ -973,8 +997,7 @@ static bool UpdateIntervalAircraft(int32 p1)
 
 static bool TrainAccelerationModelChanged(int32 p1)
 {
-	Train *t;
-	FOR_ALL_TRAINS(t) {
+	for (Train *t : Train::Iterate()) {
 		if (t->IsFrontEngine()) {
 			t->tcache.cached_max_curve_speed = t->GetCurveSpeedLimit();
 			t->UpdateAcceleration();
@@ -996,8 +1019,7 @@ static bool TrainAccelerationModelChanged(int32 p1)
  */
 static bool TrainSlopeSteepnessChanged(int32 p1)
 {
-	Train *t;
-	FOR_ALL_TRAINS(t) {
+	for (Train *t : Train::Iterate()) {
 		if (t->IsFrontEngine()) t->CargoChanged();
 	}
 
@@ -1012,8 +1034,7 @@ static bool TrainSlopeSteepnessChanged(int32 p1)
 static bool RoadVehAccelerationModelChanged(int32 p1)
 {
 	if (_settings_game.vehicle.roadveh_acceleration_model != AM_ORIGINAL) {
-		RoadVehicle *rv;
-		FOR_ALL_ROADVEHICLES(rv) {
+		for (RoadVehicle *rv : RoadVehicle::Iterate()) {
 			if (rv->IsFrontEngine()) {
 				rv->CargoChanged();
 			}
@@ -1035,8 +1056,7 @@ static bool RoadVehAccelerationModelChanged(int32 p1)
  */
 static bool RoadVehSlopeSteepnessChanged(int32 p1)
 {
-	RoadVehicle *rv;
-	FOR_ALL_ROADVEHICLES(rv) {
+	for (RoadVehicle *rv : RoadVehicle::Iterate()) {
 		if (rv->IsFrontEngine()) rv->CargoChanged();
 	}
 
@@ -1218,16 +1238,14 @@ static bool CheckFreeformEdges(int32 p1)
 {
 	if (_game_mode == GM_MENU) return true;
 	if (p1 != 0) {
-		Ship *s;
-		FOR_ALL_SHIPS(s) {
+		for (Ship *s : Ship::Iterate()) {
 			/* Check if there is a ship on the northern border. */
 			if (TileX(s->tile) == 0 || TileY(s->tile) == 0) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_EMPTY, INVALID_STRING_ID, WL_ERROR);
 				return false;
 			}
 		}
-		BaseStation *st;
-		FOR_ALL_BASE_STATIONS(st) {
+		for (const BaseStation *st : BaseStation::Iterate()) {
 			/* Check if there is a non-deleted buoy on the northern border. */
 			if (st->IsInUse() && (TileX(st->xy) == 0 || TileY(st->xy) == 0)) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_EMPTY, INVALID_STRING_ID, WL_ERROR);
@@ -1314,7 +1332,8 @@ static bool ChangeMaxHeightLevel(int32 p1)
 
 static bool StationCatchmentChanged(int32 p1)
 {
-	Station::RecomputeIndustriesNearForAll();
+	Station::RecomputeCatchmentForAll();
+	MarkWholeScreenDirty();
 	return true;
 }
 
@@ -1327,15 +1346,11 @@ static bool MaxVehiclesChanged(int32 p1)
 
 static bool InvalidateShipPathCache(int32 p1)
 {
-	Ship *s;
-	FOR_ALL_SHIPS(s) {
+	for (Ship *s : Ship::Iterate()) {
 		s->path.clear();
 	}
 	return true;
 }
-
-
-#ifdef ENABLE_NETWORK
 
 static bool UpdateClientName(int32 p1)
 {
@@ -1367,9 +1382,6 @@ static bool UpdateClientConfigValues(int32 p1)
 
 	return true;
 }
-
-#endif /* ENABLE_NETWORK */
-
 
 /* End - Callback Functions */
 
@@ -1417,14 +1429,14 @@ static void AILoadConfig(IniFile *ini, const char *grpname)
 
 	/* Clean any configured AI */
 	for (CompanyID c = COMPANY_FIRST; c < MAX_COMPANIES; c++) {
-		AIConfig::GetConfig(c, AIConfig::SSS_FORCE_NEWGAME)->Change(NULL);
+		AIConfig::GetConfig(c, AIConfig::SSS_FORCE_NEWGAME)->Change(nullptr);
 	}
 
 	/* If no group exists, return */
-	if (group == NULL) return;
+	if (group == nullptr) return;
 
 	CompanyID c = COMPANY_FIRST;
-	for (item = group->item; c < MAX_COMPANIES && item != NULL; c++, item = item->next) {
+	for (item = group->item; c < MAX_COMPANIES && item != nullptr; c++, item = item->next) {
 		AIConfig *config = AIConfig::GetConfig(c, AIConfig::SSS_FORCE_NEWGAME);
 
 		config->Change(item->name);
@@ -1434,7 +1446,7 @@ static void AILoadConfig(IniFile *ini, const char *grpname)
 				continue;
 			}
 		}
-		if (item->value != NULL) config->StringToSettings(item->value);
+		if (item->value != nullptr) config->StringToSettings(item->value);
 	}
 }
 
@@ -1444,13 +1456,13 @@ static void GameLoadConfig(IniFile *ini, const char *grpname)
 	IniItem *item;
 
 	/* Clean any configured GameScript */
-	GameConfig::GetConfig(GameConfig::SSS_FORCE_NEWGAME)->Change(NULL);
+	GameConfig::GetConfig(GameConfig::SSS_FORCE_NEWGAME)->Change(nullptr);
 
 	/* If no group exists, return */
-	if (group == NULL) return;
+	if (group == nullptr) return;
 
 	item = group->item;
-	if (item == NULL) return;
+	if (item == nullptr) return;
 
 	GameConfig *config = GameConfig::GetConfig(AIConfig::SSS_FORCE_NEWGAME);
 
@@ -1461,7 +1473,7 @@ static void GameLoadConfig(IniFile *ini, const char *grpname)
 			return;
 		}
 	}
-	if (item->value != NULL) config->StringToSettings(item->value);
+	if (item->value != nullptr) config->StringToSettings(item->value);
 }
 
 /**
@@ -1508,13 +1520,13 @@ static GRFConfig *GRFLoadConfig(IniFile *ini, const char *grpname, bool is_stati
 {
 	IniGroup *group = ini->GetGroup(grpname);
 	IniItem *item;
-	GRFConfig *first = NULL;
+	GRFConfig *first = nullptr;
 	GRFConfig **curr = &first;
 
-	if (group == NULL) return NULL;
+	if (group == nullptr) return nullptr;
 
-	for (item = group->item; item != NULL; item = item->next) {
-		GRFConfig *c = NULL;
+	for (item = group->item; item != nullptr; item = item->next) {
+		GRFConfig *c = nullptr;
 
 		uint8 grfid_buf[4], md5sum[16];
 		char *filename = item->name;
@@ -1531,18 +1543,18 @@ static GRFConfig *GRFLoadConfig(IniFile *ini, const char *grpname, bool is_stati
 			uint32 grfid = grfid_buf[0] | (grfid_buf[1] << 8) | (grfid_buf[2] << 16) | (grfid_buf[3] << 24);
 			if (has_md5sum) {
 				const GRFConfig *s = FindGRFConfig(grfid, FGCM_EXACT, md5sum);
-				if (s != NULL) c = new GRFConfig(*s);
+				if (s != nullptr) c = new GRFConfig(*s);
 			}
-			if (c == NULL && !FioCheckFileExists(filename, NEWGRF_DIR)) {
+			if (c == nullptr && !FioCheckFileExists(filename, NEWGRF_DIR)) {
 				const GRFConfig *s = FindGRFConfig(grfid, FGCM_NEWEST_VALID);
-				if (s != NULL) c = new GRFConfig(*s);
+				if (s != nullptr) c = new GRFConfig(*s);
 			}
 		}
-		if (c == NULL) c = new GRFConfig(filename);
+		if (c == nullptr) c = new GRFConfig(filename);
 
 		/* Parse parameters */
 		if (!StrEmpty(item->value)) {
-			int count = ParseIntList(item->value, (int*)c->param, lengthof(c->param));
+			int count = ParseIntList(item->value, c->param, lengthof(c->param));
 			if (count < 0) {
 				SetDParamStr(0, filename);
 				ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_ARRAY, WL_CRITICAL);
@@ -1573,7 +1585,7 @@ static GRFConfig *GRFLoadConfig(IniFile *ini, const char *grpname, bool is_stati
 
 		/* Check for duplicate GRFID (will also check for duplicate filenames) */
 		bool duplicate = false;
-		for (const GRFConfig *gc = first; gc != NULL; gc = gc->next) {
+		for (const GRFConfig *gc = first; gc != nullptr; gc = gc->next) {
 			if (gc->ident.grfid == c->ident.grfid) {
 				SetDParamStr(0, c->filename);
 				SetDParamStr(1, gc->filename);
@@ -1602,7 +1614,7 @@ static void AISaveConfig(IniFile *ini, const char *grpname)
 {
 	IniGroup *group = ini->GetGroup(grpname);
 
-	if (group == NULL) return;
+	if (group == nullptr) return;
 	group->Clear();
 
 	for (CompanyID c = COMPANY_FIRST; c < MAX_COMPANIES; c++) {
@@ -1626,7 +1638,7 @@ static void GameSaveConfig(IniFile *ini, const char *grpname)
 {
 	IniGroup *group = ini->GetGroup(grpname);
 
-	if (group == NULL) return;
+	if (group == nullptr) return;
 	group->Clear();
 
 	GameConfig *config = GameConfig::GetConfig(AIConfig::SSS_FORCE_NEWGAME);
@@ -1672,7 +1684,7 @@ static void GRFSaveConfig(IniFile *ini, const char *grpname, const GRFConfig *li
 	IniGroup *group = ini->GetGroup(grpname);
 	const GRFConfig *c;
 
-	for (c = list; c != NULL; c = c->next) {
+	for (c = list; c != nullptr; c = c->next) {
 		/* Hex grfid (4 bytes in nibbles), "|", hex md5sum (16 bytes in nibbles), "|", file system path. */
 		char key[4 * 2 + 1 + 16 * 2 + 1 + MAX_PATH];
 		char params[512];
@@ -1689,9 +1701,9 @@ static void GRFSaveConfig(IniFile *ini, const char *grpname, const GRFConfig *li
 static void HandleSettingDescs(IniFile *ini, SettingDescProc *proc, SettingDescProcList *proc_list, bool basic_settings = true, bool other_settings = true)
 {
 	if (basic_settings) {
-		proc(ini, (const SettingDesc*)_misc_settings,    "misc",  NULL);
+		proc(ini, (const SettingDesc*)_misc_settings,    "misc",  nullptr);
 #if defined(_WIN32) && !defined(DEDICATED)
-		proc(ini, (const SettingDesc*)_win32_settings,   "win32", NULL);
+		proc(ini, (const SettingDesc*)_win32_settings,   "win32", nullptr);
 #endif /* _WIN32 */
 	}
 
@@ -1700,11 +1712,9 @@ static void HandleSettingDescs(IniFile *ini, SettingDescProc *proc, SettingDescP
 		proc(ini, _currency_settings,"currency", &_custom_currency);
 		proc(ini, _company_settings, "company",  &_settings_client.company);
 
-#ifdef ENABLE_NETWORK
-		proc_list(ini, "server_bind_addresses", &_network_bind_list);
-		proc_list(ini, "servers", &_network_host_list);
-		proc_list(ini, "bans",    &_network_ban_list);
-#endif /* ENABLE_NETWORK */
+		proc_list(ini, "server_bind_addresses", _network_bind_list);
+		proc_list(ini, "servers", _network_host_list);
+		proc_list(ini, "bans",    _network_ban_list);
 	}
 }
 
@@ -1739,10 +1749,10 @@ void LoadFromConfig(bool minimal)
 
 		ValidateSettings();
 
-		/* Display sheduled errors */
+		/* Display scheduled errors */
 		extern void ScheduleErrorMessage(ErrorList &datas);
 		ScheduleErrorMessage(_settings_error_list);
-		if (FindWindowById(WC_ERRMSG, 0) == NULL) ShowFirstError();
+		if (FindWindowById(WC_ERRMSG, 0) == nullptr) ShowFirstError();
 	}
 
 	delete ini;
@@ -1770,21 +1780,20 @@ void SaveToConfig()
 
 /**
  * Get the list of known NewGrf presets.
- * @param[in,out] list Pointer to list for storing the preset names.
+ * @returns List of preset names.
  */
-void GetGRFPresetList(GRFPresetList *list)
+StringList GetGRFPresetList()
 {
-	list->Clear();
+	StringList list;
 
-	IniFile *ini = IniLoadConfig();
-	IniGroup *group;
-	for (group = ini->group; group != NULL; group = group->next) {
+	std::unique_ptr<IniFile> ini(IniLoadConfig());
+	for (IniGroup *group = ini->group; group != nullptr; group = group->next) {
 		if (strncmp(group->name, "preset-", 7) == 0) {
-			*list->Append() = stredup(group->name + 7);
+			list.emplace_back(group->name + 7);
 		}
 	}
 
-	delete ini;
+	return list;
 }
 
 /**
@@ -1842,7 +1851,7 @@ void DeleteGRFPresetFromConfig(const char *config_name)
 
 const SettingDesc *GetSettingDescription(uint index)
 {
-	if (index >= lengthof(_settings)) return NULL;
+	if (index >= lengthof(_settings)) return nullptr;
 	return &_settings[index];
 }
 
@@ -1861,7 +1870,7 @@ CommandCost CmdChangeSetting(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 {
 	const SettingDesc *sd = GetSettingDescription(p1);
 
-	if (sd == NULL) return CMD_ERROR;
+	if (sd == nullptr) return CMD_ERROR;
 	if (!SlIsObjectCurrentlyValid(sd->save.version_from, sd->save.version_to)) return CMD_ERROR;
 
 	if (!sd->IsEditable(true)) return CMD_ERROR;
@@ -1877,7 +1886,7 @@ CommandCost CmdChangeSetting(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 
 		if (oldval == newval) return CommandCost();
 
-		if (sd->desc.proc != NULL && !sd->desc.proc(newval)) {
+		if (sd->desc.proc != nullptr && !sd->desc.proc(newval)) {
 			WriteValue(var, sd->save.conv, (int64)oldval);
 			return CommandCost();
 		}
@@ -1920,7 +1929,7 @@ CommandCost CmdChangeCompanySetting(TileIndex tile, DoCommandFlag flags, uint32 
 
 		if (oldval == newval) return CommandCost();
 
-		if (sd->desc.proc != NULL && !sd->desc.proc(newval)) {
+		if (sd->desc.proc != nullptr && !sd->desc.proc(newval)) {
 			WriteValue(var, sd->save.conv, (int64)oldval);
 			return CommandCost();
 		}
@@ -1953,7 +1962,7 @@ bool SetSettingValue(uint index, int32 value, bool force_newgame)
 			void *var2 = GetVariableAddress(&_settings_newgame, &sd->save);
 			Write_ValidateSetting(var2, sd, value);
 		}
-		if (sd->desc.proc != NULL) sd->desc.proc((int32)ReadValue(var, sd->save.conv));
+		if (sd->desc.proc != nullptr) sd->desc.proc((int32)ReadValue(var, sd->save.conv));
 
 		SetWindowClassesDirty(WC_GAME_OPTIONS);
 
@@ -1987,7 +1996,7 @@ void SetCompanySetting(uint index, int32 value)
 	} else {
 		void *var = GetVariableAddress(&_settings_client.company, &sd->save);
 		Write_ValidateSetting(var, sd, value);
-		if (sd->desc.proc != NULL) sd->desc.proc((int32)ReadValue(var, sd->save.conv));
+		if (sd->desc.proc != nullptr) sd->desc.proc((int32)ReadValue(var, sd->save.conv));
 	}
 }
 
@@ -2004,7 +2013,6 @@ void SetDefaultCompanySettings(CompanyID cid)
 	}
 }
 
-#if defined(ENABLE_NETWORK)
 /**
  * Sync all company settings in a multiplayer game.
  */
@@ -2017,10 +2025,9 @@ void SyncCompanySettings()
 		const void *new_var = GetVariableAddress(&_settings_client.company, &sd->save);
 		uint32 old_value = (uint32)ReadValue(old_var, sd->save.conv);
 		uint32 new_value = (uint32)ReadValue(new_var, sd->save.conv);
-		if (old_value != new_value) NetworkSendCommand(0, i, new_value, CMD_CHANGE_COMPANY_SETTING, NULL, NULL, _local_company);
+		if (old_value != new_value) NetworkSendCommand(0, i, new_value, CMD_CHANGE_COMPANY_SETTING, nullptr, nullptr, _local_company);
 	}
 }
-#endif /* ENABLE_NETWORK */
 
 /**
  * Get the index in the _company_settings array of a setting
@@ -2031,7 +2038,7 @@ uint GetCompanySettingIndex(const char *name)
 {
 	uint i;
 	const SettingDesc *sd = GetSettingFromName(name, &i);
-	assert(sd != NULL && (sd->desc.flags & SGF_PER_COMPANY) != 0);
+	assert(sd != nullptr && (sd->desc.flags & SGF_PER_COMPANY) != 0);
 	return i;
 }
 
@@ -2050,12 +2057,12 @@ bool SetSettingValue(uint index, const char *value, bool force_newgame)
 	if (GetVarMemType(sd->save.conv) == SLE_VAR_STRQ) {
 		char **var = (char**)GetVariableAddress((_game_mode == GM_MENU || force_newgame) ? &_settings_newgame : &_settings_game, &sd->save);
 		free(*var);
-		*var = strcmp(value, "(null)") == 0 ? NULL : stredup(value);
+		*var = strcmp(value, "(null)") == 0 ? nullptr : stredup(value);
 	} else {
-		char *var = (char*)GetVariableAddress(NULL, &sd->save);
+		char *var = (char*)GetVariableAddress(nullptr, &sd->save);
 		strecpy(var, value, &var[sd->save.length - 1]);
 	}
-	if (sd->desc.proc != NULL) sd->desc.proc(0);
+	if (sd->desc.proc != nullptr) sd->desc.proc(0);
 
 	return true;
 }
@@ -2065,7 +2072,7 @@ bool SetSettingValue(uint index, const char *value, bool force_newgame)
  * @param name  Name of the setting to return a setting description of
  * @param i     Pointer to an integer that will contain the index of the setting after the call, if it is successful.
  * @return Pointer to the setting description of setting \a name if it can be found,
- *         \c NULL indicates failure to obtain the description
+ *         \c nullptr indicates failure to obtain the description
  */
 const SettingDesc *GetSettingFromName(const char *name, uint *i)
 {
@@ -2081,7 +2088,7 @@ const SettingDesc *GetSettingFromName(const char *name, uint *i)
 	for (*i = 0, sd = _settings; sd->save.cmd != SL_END; sd++, (*i)++) {
 		if (!SlIsObjectCurrentlyValid(sd->save.version_from, sd->save.version_to)) continue;
 		const char *short_name = strchr(sd->desc.name, '.');
-		if (short_name != NULL) {
+		if (short_name != nullptr) {
 			short_name++;
 			if (strcmp(short_name, name) == 0) return sd;
 		}
@@ -2094,7 +2101,7 @@ const SettingDesc *GetSettingFromName(const char *name, uint *i)
 		if (strcmp(sd->desc.name, name) == 0) return sd;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /* Those 2 functions need to be here, else we have to make some stuff non-static
@@ -2104,7 +2111,7 @@ void IConsoleSetSetting(const char *name, const char *value, bool force_newgame)
 	uint index;
 	const SettingDesc *sd = GetSettingFromName(name, &index);
 
-	if (sd == NULL) {
+	if (sd == nullptr) {
 		IConsolePrintF(CC_WARNING, "'%s' is an unknown setting.", name);
 		return;
 	}
@@ -2137,7 +2144,7 @@ void IConsoleSetSetting(const char *name, int value)
 {
 	uint index;
 	const SettingDesc *sd = GetSettingFromName(name, &index);
-	assert(sd != NULL);
+	assert(sd != nullptr);
 	SetSettingValue(index, value);
 }
 
@@ -2153,7 +2160,7 @@ void IConsoleGetSetting(const char *name, bool force_newgame)
 	const SettingDesc *sd = GetSettingFromName(name, &index);
 	const void *ptr;
 
-	if (sd == NULL) {
+	if (sd == nullptr) {
 		IConsolePrintF(CC_WARNING, "'%s' is an unknown setting.", name);
 		return;
 	}
@@ -2177,7 +2184,7 @@ void IConsoleGetSetting(const char *name, bool force_newgame)
 /**
  * List all settings and their value to the console
  *
- * @param prefilter  If not \c NULL, only list settings with names that begin with \a prefilter prefix
+ * @param prefilter  If not \c nullptr, only list settings with names that begin with \a prefilter prefix
  */
 void IConsoleListSettings(const char *prefilter)
 {
@@ -2185,7 +2192,7 @@ void IConsoleListSettings(const char *prefilter)
 
 	for (const SettingDesc *sd = _settings; sd->save.cmd != SL_END; sd++) {
 		if (!SlIsObjectCurrentlyValid(sd->save.version_from, sd->save.version_to)) continue;
-		if (prefilter != NULL && strstr(sd->desc.name, prefilter) == NULL) continue;
+		if (prefilter != nullptr && strstr(sd->desc.name, prefilter) == nullptr) continue;
 		char value[80];
 		const void *ptr = GetVariableAddress(&GetGameSettings(), &sd->save);
 
@@ -2205,7 +2212,7 @@ void IConsoleListSettings(const char *prefilter)
 /**
  * Save and load handler for settings
  * @param osd SettingDesc struct containing all information
- * @param object can be either NULL in which case we load global variables or
+ * @param object can be either nullptr in which case we load global variables or
  * a pointer to a struct which is getting saved
  */
 static void LoadSettings(const SettingDesc *osd, void *object)
@@ -2222,7 +2229,7 @@ static void LoadSettings(const SettingDesc *osd, void *object)
 /**
  * Save and load handler for settings
  * @param sd SettingDesc struct containing all information
- * @param object can be either NULL in which case we load global variables or
+ * @param object can be either nullptr in which case we load global variables or
  * a pointer to a struct which is getting saved
  */
 static void SaveSettings(const SettingDesc *sd, void *object)
@@ -2270,21 +2277,9 @@ static void Save_PATS()
 	SaveSettings(_settings, &_settings_game);
 }
 
-void CheckConfig()
-{
-	/*
-	 * Increase old default values for pf_maxdepth and pf_maxlength
-	 * to support big networks.
-	 */
-	if (_settings_newgame.pf.opf.pf_maxdepth == 16 && _settings_newgame.pf.opf.pf_maxlength == 512) {
-		_settings_newgame.pf.opf.pf_maxdepth = 48;
-		_settings_newgame.pf.opf.pf_maxlength = 4096;
-	}
-}
-
 extern const ChunkHandler _setting_chunk_handlers[] = {
-	{ 'OPTS', NULL,      Load_OPTS, NULL, NULL,       CH_RIFF},
-	{ 'PATS', Save_PATS, Load_PATS, NULL, Check_PATS, CH_RIFF | CH_LAST},
+	{ 'OPTS', nullptr,      Load_OPTS, nullptr, nullptr,       CH_RIFF},
+	{ 'PATS', Save_PATS, Load_PATS, nullptr, Check_PATS, CH_RIFF | CH_LAST},
 };
 
 static bool IsSignedVarMemType(VarType vt)

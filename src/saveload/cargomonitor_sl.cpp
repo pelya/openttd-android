@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -121,6 +119,6 @@ static void LoadPickup()
 
 /** Chunk definition of the cargomonitoring maps. */
 extern const ChunkHandler _cargomonitor_chunk_handlers[] = {
-	{ 'CMDL', SaveDelivery, LoadDelivery, NULL, NULL, CH_ARRAY},
-	{ 'CMPU', SavePickup,   LoadPickup,   NULL, NULL, CH_ARRAY | CH_LAST},
+	{ 'CMDL', SaveDelivery, LoadDelivery, nullptr, nullptr, CH_ARRAY},
+	{ 'CMPU', SavePickup,   LoadPickup,   nullptr, nullptr, CH_ARRAY | CH_LAST},
 };

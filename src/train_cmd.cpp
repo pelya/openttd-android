@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -73,12 +71,11 @@ byte FreightWagonMult(CargoID cargo)
 /** Checks if lengths of all rail vehicles are valid. If not, shows an error message. */
 void CheckTrainsLengths()
 {
-	const Train *v;
 	bool first = true;
 
-	FOR_ALL_TRAINS(v) {
+	for (const Train *v : Train::Iterate()) {
 		if (v->First() == v && !(v->vehstatus & VS_CRASHED)) {
-			for (const Train *u = v, *w = v->Next(); w != NULL; u = w, w = w->Next()) {
+			for (const Train *u = v, *w = v->Next(); w != nullptr; u = w, w = w->Next()) {
 				if (u->track != TRACK_BIT_DEPOT) {
 					if ((w->track != TRACK_BIT_DEPOT &&
 							max(abs(u->x_pos - w->x_pos), abs(u->y_pos - w->y_pos)) != u->CalcNextVehicleOffset()) ||
@@ -119,7 +116,7 @@ void Train::ConsistChanged(ConsistChangeFlags allowed_changes)
 
 	bool train_can_tilt = true;
 
-	for (Train *u = this; u != NULL; u = u->Next()) {
+	for (Train *u = this; u != nullptr; u = u->Next()) {
 		const RailVehicleInfo *rvi_u = RailVehInfo(u->engine_type);
 
 		/* Check the this->first cache. */
@@ -137,20 +134,20 @@ void Train::ConsistChanged(ConsistChangeFlags allowed_changes)
 		u->InvalidateNewGRFCache();
 	}
 
-	for (Train *u = this; u != NULL; u = u->Next()) {
+	for (Train *u = this; u != nullptr; u = u->Next()) {
 		/* Update user defined data (must be done before other properties) */
 		u->tcache.user_def_data = GetVehicleProperty(u, PROP_TRAIN_USER_DATA, u->tcache.user_def_data);
 		this->InvalidateNewGRFCache();
 		u->InvalidateNewGRFCache();
 	}
 
-	for (Train *u = this; u != NULL; u = u->Next()) {
+	for (Train *u = this; u != nullptr; u = u->Next()) {
 		const Engine *e_u = u->GetEngine();
 		const RailVehicleInfo *rvi_u = &e_u->u.rail;
 
 		if (!HasBit(e_u->info.misc_flags, EF_RAIL_TILTS)) train_can_tilt = false;
 
-		/* Cache wagon override sprite group. NULL is returned if there is none */
+		/* Cache wagon override sprite group. nullptr is returned if there is none */
 		u->tcache.cached_override = GetWagonOverrideSpriteSet(u->engine_type, u->cargo_type, u->gcache.first_engine);
 
 		/* Reset colour map */
@@ -202,7 +199,7 @@ void Train::ConsistChanged(ConsistChangeFlags allowed_changes)
 
 		/* check the vehicle length (callback) */
 		uint16 veh_len = CALLBACK_FAILED;
-		if (e_u->GetGRF() != NULL && e_u->GetGRF()->grf_version >= 8) {
+		if (e_u->GetGRF() != nullptr && e_u->GetGRF()->grf_version >= 8) {
 			/* Use callback 36 */
 			veh_len = GetVehicleProperty(u, PROP_TRAIN_SHORTEN_FACTOR, CALLBACK_FAILED);
 
@@ -316,7 +313,7 @@ int Train::GetCurveSpeedLimit() const
 	int sum = 0;
 	int pos = 0;
 	int lastpos = -1;
-	for (const Vehicle *u = this; u->Next() != NULL; u = u->Next(), pos++) {
+	for (const Vehicle *u = this; u->Next() != nullptr; u = u->Next(), pos++) {
 		Direction this_dir = u->direction;
 		Direction next_dir = u->Next()->direction;
 
@@ -400,7 +397,7 @@ int Train::GetCurrentMaxSpeed() const
 		}
 	}
 
-	for (const Train *u = this; u != NULL; u = u->Next()) {
+	for (const Train *u = this; u != nullptr; u = u->Next()) {
 		if (_settings_game.vehicle.train_acceleration_model == AM_REALISTIC && u->track == TRACK_BIT_DEPOT) {
 			max_speed = min(max_speed, 61);
 			break;
@@ -429,7 +426,7 @@ void Train::UpdateAcceleration()
 
 /**
  * Get the width of a train vehicle image in the GUI.
- * @param offset Additional offset for positioning the sprite; set to NULL if not needed
+ * @param offset Additional offset for positioning the sprite; set to nullptr if not needed
  * @return Width in pixels
  */
 int Train::GetDisplayImageWidth(Point *offset) const
@@ -438,12 +435,12 @@ int Train::GetDisplayImageWidth(Point *offset) const
 	int vehicle_pitch = 0;
 
 	const Engine *e = this->GetEngine();
-	if (e->GetGRF() != NULL && is_custom_sprite(e->u.rail.image_index)) {
+	if (e->GetGRF() != nullptr && is_custom_sprite(e->u.rail.image_index)) {
 		reference_width = e->GetGRF()->traininfo_vehicle_width;
 		vehicle_pitch = e->GetGRF()->traininfo_vehicle_pitch;
 	}
 
-	if (offset != NULL) {
+	if (offset != nullptr) {
 		offset->x = ScaleGUITrad(reference_width) / 2;
 		offset->y = ScaleGUITrad(vehicle_pitch);
 	}
@@ -492,7 +489,7 @@ static void GetRailIcon(EngineID engine, bool rear_head, int &y, EngineImageType
 	if (is_custom_sprite(spritenum)) {
 		GetCustomVehicleIcon(engine, dir, image_type, result);
 		if (result->IsValid()) {
-			if (e->GetGRF() != NULL) {
+			if (e->GetGRF() != nullptr) {
 				y += ScaleGUITrad(e->GetGRF()->traininfo_vehicle_pitch);
 			}
 			return;
@@ -643,8 +640,7 @@ static CommandCost CmdBuildRailWagon(TileIndex tile, DoCommandFlag flags, const 
 		CheckConsistencyOfArticulatedVehicle(v);
 
 		/* Try to connect the vehicle to one of free chains of wagons. */
-		Train *w;
-		FOR_ALL_TRAINS(w) {
+		for (Train *w : Train::Iterate()) {
 			if (w->tile == tile &&              ///< Same depot
 					w->IsFreeWagon() &&             ///< A free wagon chain
 					w->engine_type == e->index &&   ///< Same type
@@ -662,8 +658,7 @@ static CommandCost CmdBuildRailWagon(TileIndex tile, DoCommandFlag flags, const 
 /** Move all free vehicles in the depot to the train */
 static void NormalizeTrainVehInDepot(const Train *u)
 {
-	const Train *v;
-	FOR_ALL_TRAINS(v) {
+	for (const Train *v : Train::Iterate()) {
 		if (v->IsFreeWagon() && v->tile == u->tile &&
 				v->track == TRACK_BIT_DEPOT) {
 			if (DoCommand(0, v->index | 1 << 20, u->index, DC_EXEC,
@@ -798,23 +793,22 @@ static Train *FindGoodVehiclePos(const Train *src)
 	EngineID eng = src->engine_type;
 	TileIndex tile = src->tile;
 
-	Train *dst;
-	FOR_ALL_TRAINS(dst) {
+	for (Train *dst : Train::Iterate()) {
 		if (dst->IsFreeWagon() && dst->tile == tile && !(dst->vehstatus & VS_CRASHED)) {
 			/* check so all vehicles in the line have the same engine. */
 			Train *t = dst;
 			while (t->engine_type == eng) {
 				t = t->Next();
-				if (t == NULL) return dst;
+				if (t == nullptr) return dst;
 			}
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /** Helper type for lists/vectors of trains */
-typedef SmallVector<Train *, 16> TrainList;
+typedef std::vector<Train *> TrainList;
 
 /**
  * Make a backup of a train into a train list.
@@ -823,7 +817,7 @@ typedef SmallVector<Train *, 16> TrainList;
  */
 static void MakeTrainBackup(TrainList &list, Train *t)
 {
-	for (; t != NULL; t = t->Next()) *list.Append() = t;
+	for (; t != nullptr; t = t->Next()) list.push_back(t);
 }
 
 /**
@@ -833,17 +827,16 @@ static void MakeTrainBackup(TrainList &list, Train *t)
 static void RestoreTrainBackup(TrainList &list)
 {
 	/* No train, nothing to do. */
-	if (list.Length() == 0) return;
+	if (list.size() == 0) return;
 
-	Train *prev = NULL;
+	Train *prev = nullptr;
 	/* Iterate over the list and rebuild it. */
-	for (Train **iter = list.Begin(); iter != list.End(); iter++) {
-		Train *t = *iter;
-		if (prev != NULL) {
+	for (Train *t : list) {
+		if (prev != nullptr) {
 			prev->SetNext(t);
-		} else if (t->Previous() != NULL) {
+		} else if (t->Previous() != nullptr) {
 			/* Make sure the head of the train is always the first in the chain. */
-			t->Previous()->SetNext(NULL);
+			t->Previous()->SetNext(nullptr);
 		}
 		prev = t;
 	}
@@ -860,10 +853,10 @@ static void RemoveFromConsist(Train *part, bool chain = false)
 
 	/* Unlink at the front, but make it point to the next
 	 * vehicle after the to be remove part. */
-	if (part->Previous() != NULL) part->Previous()->SetNext(tail->Next());
+	if (part->Previous() != nullptr) part->Previous()->SetNext(tail->Next());
 
 	/* Unlink at the back */
-	tail->SetNext(NULL);
+	tail->SetNext(nullptr);
 }
 
 /**
@@ -874,7 +867,7 @@ static void RemoveFromConsist(Train *part, bool chain = false)
 static void InsertInConsist(Train *dst, Train *chain)
 {
 	/* We do not want to add something in the middle of an articulated part. */
-	assert(dst != NULL && (dst->Next() == NULL || !dst->Next()->IsArticulatedPart()));
+	assert(dst != nullptr && (dst->Next() == nullptr || !dst->Next()->IsArticulatedPart()));
 
 	chain->Last()->SetNext(dst->Next());
 	dst->SetNext(chain);
@@ -887,12 +880,12 @@ static void InsertInConsist(Train *dst, Train *chain)
  */
 static void NormaliseDualHeads(Train *t)
 {
-	for (; t != NULL; t = t->GetNextVehicle()) {
+	for (; t != nullptr; t = t->GetNextVehicle()) {
 		if (!t->IsMultiheaded() || !t->IsEngine()) continue;
 
 		/* Make sure that there are no free cars before next engine */
 		Train *u;
-		for (u = t; u->Next() != NULL && !u->Next()->IsEngine(); u = u->Next()) {}
+		for (u = t; u->Next() != nullptr && !u->Next()->IsEngine(); u = u->Next()) {}
 
 		if (u == t->other_multiheaded_part) continue;
 
@@ -910,10 +903,10 @@ static void NormaliseDualHeads(Train *t)
 static void NormaliseSubtypes(Train *chain)
 {
 	/* Nothing to do */
-	if (chain == NULL) return;
+	if (chain == nullptr) return;
 
 	/* We must be the first in the chain. */
-	assert(chain->Previous() == NULL);
+	assert(chain->Previous() == nullptr);
 
 	/* Set the appropriate bits for the first in the chain. */
 	if (chain->IsWagon()) {
@@ -924,7 +917,7 @@ static void NormaliseSubtypes(Train *chain)
 	}
 
 	/* Now clear the bits for the rest of the chain */
-	for (Train *t = chain->Next(); t != NULL; t = t->Next()) {
+	for (Train *t = chain->Next(); t != nullptr; t = t->Next()) {
 		t->ClearFreeWagon();
 		t->ClearFrontEngine();
 	}
@@ -944,10 +937,10 @@ static CommandCost CheckNewTrain(Train *original_dst, Train *dst, Train *origina
 	/* Just add 'new' engines and subtract the original ones.
 	 * If that's less than or equal to 0 we can be sure we did
 	 * not add any engines (read: trains) along the way. */
-	if ((src          != NULL && src->IsEngine()          ? 1 : 0) +
-			(dst          != NULL && dst->IsEngine()          ? 1 : 0) -
-			(original_src != NULL && original_src->IsEngine() ? 1 : 0) -
-			(original_dst != NULL && original_dst->IsEngine() ? 1 : 0) <= 0) {
+	if ((src          != nullptr && src->IsEngine()          ? 1 : 0) +
+			(dst          != nullptr && dst->IsEngine()          ? 1 : 0) -
+			(original_src != nullptr && original_src->IsEngine() ? 1 : 0) -
+			(original_dst != nullptr && original_dst->IsEngine() ? 1 : 0) <= 0) {
 		return CommandCost();
 	}
 
@@ -966,7 +959,7 @@ static CommandCost CheckNewTrain(Train *original_dst, Train *dst, Train *origina
 static CommandCost CheckTrainAttachment(Train *t)
 {
 	/* No multi-part train, no need to check. */
-	if (t == NULL || t->Next() == NULL || !t->IsEngine()) return CommandCost();
+	if (t == nullptr || t->Next() == nullptr || !t->IsEngine()) return CommandCost();
 
 	/* The maximum length for a train. For each part we decrease this by one
 	 * and if the result is negative the train is simply too long. */
@@ -977,19 +970,19 @@ static CommandCost CheckTrainAttachment(Train *t)
 
 	/* Break the prev -> t link so it always holds within the loop. */
 	t = t->Next();
-	prev->SetNext(NULL);
+	prev->SetNext(nullptr);
 
 	/* Make sure the cache is cleared. */
 	head->InvalidateNewGRFCache();
 
-	while (t != NULL) {
+	while (t != nullptr) {
 		allowed_len -= t->gcache.cached_veh_length;
 
 		Train *next = t->Next();
 
 		/* Unlink the to-be-added piece; it is already unlinked from the previous
 		 * part due to the fact that the prev -> t link is broken. */
-		t->SetNext(NULL);
+		t->SetNext(nullptr);
 
 		/* Don't check callback for articulated or rear dual headed parts */
 		if (!t->IsArticulatedPart() && !t->IsRearDualheaded()) {
@@ -1085,8 +1078,8 @@ static void ArrangeTrains(Train **dst_head, Train *dst, Train **src_head, Train 
 	if (*src_head == *dst_head) {
 		/* If we aren't moving part(s) to a new train, we are just moving the
 		 * front back and there is not destination head. */
-		*dst_head = NULL;
-	} else if (*dst_head == NULL) {
+		*dst_head = nullptr;
+	} else if (*dst_head == nullptr) {
 		/* If we are moving to a new train the head of the move train would become
 		 * the head of the new vehicle. */
 		*dst_head = src;
@@ -1099,7 +1092,7 @@ static void ArrangeTrains(Train **dst_head, Train *dst, Train **src_head, Train 
 		 * In case we are a multiheaded part we want the complete thing to come
 		 * with us, so src->GetNextUnit(), however... when we are e.g. a wagon
 		 * that is followed by a rear multihead we do not want to include that. */
-		*src_head = move_chain ? NULL :
+		*src_head = move_chain ? nullptr :
 				(src->IsMultiheaded() ? src->GetNextUnit() : src->GetNextVehicle());
 	}
 
@@ -1123,7 +1116,7 @@ static void ArrangeTrains(Train **dst_head, Train *dst, Train **src_head, Train 
 static void NormaliseTrainHead(Train *head)
 {
 	/* Not much to do! */
-	if (head == NULL) return;
+	if (head == nullptr) return;
 
 	/* Tell the 'world' the train changed. */
 	head->ConsistChanged(CCF_ARRANGE);
@@ -1160,7 +1153,7 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	bool move_chain = HasBit(p1, 20);
 
 	Train *src = Train::GetIfValid(s);
-	if (src == NULL) return CMD_ERROR;
+	if (src == nullptr) return CMD_ERROR;
 
 	CommandCost ret = CheckOwnership(src->owner);
 	if (ret.Failed()) return ret;
@@ -1171,10 +1164,10 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	/* if nothing is selected as destination, try and find a matching vehicle to drag to. */
 	Train *dst;
 	if (d == INVALID_VEHICLE) {
-		dst = src->IsEngine() ? NULL : FindGoodVehiclePos(src);
+		dst = src->IsEngine() ? nullptr : FindGoodVehiclePos(src);
 	} else {
 		dst = Train::GetIfValid(d);
-		if (dst == NULL) return CMD_ERROR;
+		if (dst == nullptr) return CMD_ERROR;
 
 		CommandCost ret = CheckOwnership(dst->owner);
 		if (ret.Failed()) return ret;
@@ -1185,7 +1178,7 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 
 	/* if an articulated part is being handled, deal with its parent vehicle */
 	src = src->GetFirstEnginePart();
-	if (dst != NULL) {
+	if (dst != nullptr) {
 		dst = dst->GetFirstEnginePart();
 	}
 
@@ -1195,13 +1188,13 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	/* locate the head of the two chains */
 	Train *src_head = src->First();
 	Train *dst_head;
-	if (dst != NULL) {
+	if (dst != nullptr) {
 		dst_head = dst->First();
 		if (dst_head->tile != src_head->tile) return CMD_ERROR;
 		/* Now deal with articulated part of destination wagon */
 		dst = dst->GetLastEnginePart();
 	} else {
-		dst_head = NULL;
+		dst_head = nullptr;
 	}
 
 	if (src->IsRearDualheaded()) return_cmd_error(STR_ERROR_REAR_ENGINE_FOLLOW_FRONT);
@@ -1210,13 +1203,13 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	if (move_chain && src_head == dst_head) return CommandCost();
 
 	/* When moving a multiheaded part to be place after itself, bail out. */
-	if (!move_chain && dst != NULL && dst->IsRearDualheaded() && src == dst->other_multiheaded_part) return CommandCost();
+	if (!move_chain && dst != nullptr && dst->IsRearDualheaded() && src == dst->other_multiheaded_part) return CommandCost();
 
 	/* Check if all vehicles in the source train are stopped inside a depot. */
 	if (!src_head->IsStoppedInDepot()) return_cmd_error(STR_ERROR_TRAINS_CAN_ONLY_BE_ALTERED_INSIDE_A_DEPOT);
 
 	/* Check if all vehicles in the destination train are stopped inside a depot. */
-	if (dst_head != NULL && !dst_head->IsStoppedInDepot()) return_cmd_error(STR_ERROR_TRAINS_CAN_ONLY_BE_ALTERED_INSIDE_A_DEPOT);
+	if (dst_head != nullptr && !dst_head->IsStoppedInDepot()) return_cmd_error(STR_ERROR_TRAINS_CAN_ONLY_BE_ALTERED_INSIDE_A_DEPOT);
 
 	/* First make a backup of the order of the trains. That way we can do
 	 * whatever we want with the order and later on easily revert. */
@@ -1230,13 +1223,13 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	 * For the destination head we do not care if it is the same as the source
 	 * head because in that case it's just a copy. */
 	Train *original_src_head = src_head;
-	Train *original_dst_head = (dst_head == src_head ? NULL : dst_head);
+	Train *original_dst_head = (dst_head == src_head ? nullptr : dst_head);
 
 	/* We want this information from before the rearrangement, but execute this after the validation.
-	 * original_src_head can't be NULL; src is by definition != NULL, so src_head can't be NULL as
-	 * src->GetFirst() always yields non-NULL, so eventually original_src_head != NULL as well. */
+	 * original_src_head can't be nullptr; src is by definition != nullptr, so src_head can't be nullptr as
+	 * src->GetFirst() always yields non-nullptr, so eventually original_src_head != nullptr as well. */
 	bool original_src_head_front_engine = original_src_head->IsFrontEngine();
-	bool original_dst_head_front_engine = original_dst_head != NULL && original_dst_head->IsFrontEngine();
+	bool original_dst_head_front_engine = original_dst_head != nullptr && original_dst_head->IsFrontEngine();
 
 	/* (Re)arrange the trains in the wanted arrangement. */
 	ArrangeTrains(&dst_head, dst, &src_head, src, move_chain);
@@ -1281,7 +1274,7 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		 *     b) the 'next' part is an engine that becomes a front engine.
 		 *     c) there is no 'next' part, nothing else happens
 		 *  5) non front engine gets moved and becomes a new train, nothing else happens
-		 *  6) non front engine gets moved within a train / to another train, nothing hapens
+		 *  6) non front engine gets moved within a train / to another train, nothing happens
 		 *  7) wagon gets moved, nothing happens
 		 */
 		if (src == original_src_head && src->IsEngine() && !src->IsFrontEngine()) {
@@ -1309,8 +1302,8 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		}
 
 		/* Add new heads to statistics */
-		if (src_head != NULL && src_head->IsFrontEngine()) GroupStatistics::CountVehicle(src_head, 1);
-		if (dst_head != NULL && dst_head->IsFrontEngine()) GroupStatistics::CountVehicle(dst_head, 1);
+		if (src_head != nullptr && src_head->IsFrontEngine()) GroupStatistics::CountVehicle(src_head, 1);
+		if (dst_head != nullptr && dst_head->IsFrontEngine()) GroupStatistics::CountVehicle(dst_head, 1);
 
 		/* Handle 'new engine' part of cases #1b, #2b, #3b, #4b and #5 in NormaliseTrainHead. */
 		NormaliseTrainHead(src_head);
@@ -1321,8 +1314,8 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 			CheckCargoCapacity(dst_head);
 		}
 
-		if (src_head != NULL) src_head->First()->MarkDirty();
-		if (dst_head != NULL) dst_head->First()->MarkDirty();
+		if (src_head != nullptr) src_head->First()->MarkDirty();
+		if (dst_head != nullptr) dst_head->First()->MarkDirty();
 
 		/* We are undoubtedly changing something in the depot and train list. */
 		InvalidateWindowData(WC_VEHICLE_DEPOT, src->tile);
@@ -1364,34 +1357,34 @@ CommandCost CmdSellRailWagon(DoCommandFlag flags, Vehicle *t, uint16 data, uint3
 
 	/* We need to keep track of the new head and the head of what we're going to sell. */
 	Train *new_head = first;
-	Train *sell_head = NULL;
+	Train *sell_head = nullptr;
 
 	/* Split the train in the wanted way. */
-	ArrangeTrains(&sell_head, NULL, &new_head, v, sell_chain);
+	ArrangeTrains(&sell_head, nullptr, &new_head, v, sell_chain);
 
 	/* We don't need to validate the second train; it's going to be sold. */
-	CommandCost ret = ValidateTrains(NULL, NULL, first, new_head, (flags & DC_AUTOREPLACE) == 0);
+	CommandCost ret = ValidateTrains(nullptr, nullptr, first, new_head, (flags & DC_AUTOREPLACE) == 0);
 	if (ret.Failed()) {
 		/* Restore the train we had. */
 		RestoreTrainBackup(original);
 		return ret;
 	}
 
-	if (first->orders.list == NULL && !OrderList::CanAllocateItem()) {
+	if (first->orders.list == nullptr && !OrderList::CanAllocateItem()) {
 		/* Restore the train we had. */
 		RestoreTrainBackup(original);
 		return_cmd_error(STR_ERROR_NO_MORE_SPACE_FOR_ORDERS);
 	}
 
 	CommandCost cost(EXPENSES_NEW_VEHICLES);
-	for (Train *t = sell_head; t != NULL; t = t->Next()) cost.AddCost(-t->value);
+	for (Train *t = sell_head; t != nullptr; t = t->Next()) cost.AddCost(-t->value);
 
 	/* do it? */
 	if (flags & DC_EXEC) {
 		/* First normalise the sub types of the chain. */
 		NormaliseSubtypes(new_head);
 
-		if (v == first && v->IsEngine() && !sell_chain && new_head != NULL && new_head->IsFrontEngine()) {
+		if (v == first && v->IsEngine() && !sell_chain && new_head != nullptr && new_head->IsFrontEngine()) {
 			/* We are selling the front engine. In this case we want to
 			 * 'give' the order, unit number and such to the new head. */
 			new_head->orders.list = first->orders.list;
@@ -1619,11 +1612,11 @@ void ReverseTrainSwapVeh(Train *v, int l, int r)
 /**
  * Check if the vehicle is a train
  * @param v vehicle on tile
- * @return v if it is a train, NULL otherwise
+ * @return v if it is a train, nullptr otherwise
  */
 static Vehicle *TrainOnTileEnum(Vehicle *v, void *)
 {
-	return (v->type == VEH_TRAIN) ? v : NULL;
+	return (v->type == VEH_TRAIN) ? v : nullptr;
 }
 
 
@@ -1631,18 +1624,18 @@ static Vehicle *TrainOnTileEnum(Vehicle *v, void *)
  * Checks if a train is approaching a rail-road crossing
  * @param v vehicle on tile
  * @param data tile with crossing we are testing
- * @return v if it is approaching a crossing, NULL otherwise
+ * @return v if it is approaching a crossing, nullptr otherwise
  */
 static Vehicle *TrainApproachingCrossingEnum(Vehicle *v, void *data)
 {
-	if (v->type != VEH_TRAIN || (v->vehstatus & VS_CRASHED)) return NULL;
+	if (v->type != VEH_TRAIN || (v->vehstatus & VS_CRASHED)) return nullptr;
 
 	Train *t = Train::From(v);
-	if (!t->IsFrontEngine()) return NULL;
+	if (!t->IsFrontEngine()) return nullptr;
 
 	TileIndex tile = *(TileIndex *)data;
 
-	if (TrainApproachingCrossingTile(t) != tile) return NULL;
+	if (TrainApproachingCrossingTile(t) != tile) return nullptr;
 
 	return t;
 }
@@ -1681,7 +1674,7 @@ void UpdateLevelCrossing(TileIndex tile, bool sound)
 	assert(IsLevelCrossingTile(tile));
 
 	/* reserved || train on crossing || train approaching crossing */
-	bool new_state = HasCrossingReservation(tile) || HasVehicleOnPos(tile, NULL, &TrainOnTileEnum) || TrainApproachingCrossing(tile);
+	bool new_state = HasCrossingReservation(tile) || HasVehicleOnPos(tile, nullptr, &TrainOnTileEnum) || TrainApproachingCrossing(tile);
 
 	if (new_state != IsCrossingBarred(tile)) {
 		if (new_state && sound) {
@@ -1745,23 +1738,23 @@ static void AdvanceWagonsAfterSwap(Train *v)
 {
 	/* first of all, fix the situation when the train was entering a depot */
 	Train *dep = v; // last vehicle in front of just left depot
-	while (dep->Next() != NULL && (dep->track == TRACK_BIT_DEPOT || dep->Next()->track != TRACK_BIT_DEPOT)) {
+	while (dep->Next() != nullptr && (dep->track == TRACK_BIT_DEPOT || dep->Next()->track != TRACK_BIT_DEPOT)) {
 		dep = dep->Next(); // find first vehicle outside of a depot, with next vehicle inside a depot
 	}
 
 	Train *leave = dep->Next(); // first vehicle in a depot we are leaving now
 
-	if (leave != NULL) {
+	if (leave != nullptr) {
 		/* 'pull' next wagon out of the depot, so we won't miss it (it could stay in depot forever) */
 		int d = TicksToLeaveDepot(dep);
 
 		if (d <= 0) {
 			leave->vehstatus &= ~VS_HIDDEN; // move it out of the depot
 			leave->track = TrackToTrackBits(GetRailDepotTrack(leave->tile));
-			for (int i = 0; i >= d; i--) TrainController(leave, NULL); // maybe move it, and maybe let another wagon leave
+			for (int i = 0; i >= d; i--) TrainController(leave, nullptr); // maybe move it, and maybe let another wagon leave
 		}
 	} else {
-		dep = NULL; // no vehicle in a depot, so no vehicle leaving a depot
+		dep = nullptr; // no vehicle in a depot, so no vehicle leaving a depot
 	}
 
 	Train *base = v;
@@ -1771,7 +1764,7 @@ static void AdvanceWagonsAfterSwap(Train *v)
 
 	/* We have to make sure all wagons that leave a depot because of train reversing are moved correctly
 	 * they have already correct spacing, so we have to make sure they are moved how they should */
-	bool nomove = (dep == NULL); // If there is no vehicle leaving a depot, limit the number of wagons moved immediately.
+	bool nomove = (dep == nullptr); // If there is no vehicle leaving a depot, limit the number of wagons moved immediately.
 
 	while (length > 2) {
 		/* we reached vehicle (originally) in front of a depot, stop now
@@ -1787,7 +1780,7 @@ static void AdvanceWagonsAfterSwap(Train *v)
 		int differential = last->CalcNextVehicleOffset() - base->CalcNextVehicleOffset();
 
 		/* do not update images now */
-		for (int i = 0; i < differential; i++) TrainController(first, (nomove ? last->Next() : NULL));
+		for (int i = 0; i < differential; i++) TrainController(first, (nomove ? last->Next() : nullptr));
 
 		base = first; // == base->Next()
 		length -= 2;
@@ -1835,7 +1828,7 @@ void ReverseTrainDirection(Train *v)
 	v->ConsistChanged(CCF_TRACK);
 
 	/* update all images */
-	for (Train *u = v; u != NULL; u = u->Next()) u->UpdateViewport(false, false);
+	for (Train *u = v; u != nullptr; u = u->Next()) u->UpdateViewport(false, false);
 
 	/* update crossing we were approaching */
 	if (crossing != INVALID_TILE) UpdateLevelCrossing(crossing);
@@ -1894,7 +1887,7 @@ void ReverseTrainDirection(Train *v)
 CommandCost CmdReverseTrainDirection(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
 {
 	Train *v = Train::GetIfValid(p1);
-	if (v == NULL) return CMD_ERROR;
+	if (v == nullptr) return CMD_ERROR;
 
 	CommandCost ret = CheckOwnership(v->owner);
 	if (ret.Failed()) return ret;
@@ -1930,7 +1923,7 @@ CommandCost CmdReverseTrainDirection(TileIndex tile, DoCommandFlag flags, uint32
 			/* Properly leave the station if we are loading and won't be loading anymore */
 			if (v->current_order.IsType(OT_LOADING)) {
 				const Vehicle *last = v;
-				while (last->Next() != NULL) last = last->Next();
+				while (last->Next() != nullptr) last = last->Next();
 
 				/* not a station || different station --> leave the station */
 				if (!IsTileType(last->tile, MP_STATION) || GetStationIndex(last->tile) != GetStationIndex(v->tile)) {
@@ -1967,7 +1960,7 @@ CommandCost CmdReverseTrainDirection(TileIndex tile, DoCommandFlag flags, uint32
 CommandCost CmdForceTrainProceed(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
 {
 	Train *t = Train::GetIfValid(p1);
-	if (t == NULL) return CMD_ERROR;
+	if (t == nullptr) return CMD_ERROR;
 
 	if (!t->IsPrimaryVehicle()) return CMD_ERROR;
 
@@ -2014,9 +2007,9 @@ static FindDepotData FindClosestTrainDepot(Train *v, int max_distance)
 
 /**
  * Locate the closest depot for this consist, and return the information to the caller.
- * @param[out] location    If not \c NULL and a depot is found, store its location in the given address.
- * @param[out] destination If not \c NULL and a depot is found, store its index in the given address.
- * @param[out] reverse     If not \c NULL and a depot is found, store reversal information in the given address.
+ * @param[out] location    If not \c nullptr and a depot is found, store its location in the given address.
+ * @param[out] destination If not \c nullptr and a depot is found, store its index in the given address.
+ * @param[out] reverse     If not \c nullptr and a depot is found, store reversal information in the given address.
  * @return A depot has been found.
  */
 bool Train::FindClosestDepot(TileIndex *location, DestinationID *destination, bool *reverse)
@@ -2024,9 +2017,9 @@ bool Train::FindClosestDepot(TileIndex *location, DestinationID *destination, bo
 	FindDepotData tfdd = FindClosestTrainDepot(this, 0);
 	if (tfdd.best_length == UINT_MAX) return false;
 
-	if (location    != NULL) *location    = tfdd.tile;
-	if (destination != NULL) *destination = GetDepotIndex(tfdd.tile);
-	if (reverse     != NULL) *reverse     = tfdd.reverse;
+	if (location    != nullptr) *location    = tfdd.tile;
+	if (destination != nullptr) *destination = GetDepotIndex(tfdd.tile);
+	if (reverse     != nullptr) *reverse     = tfdd.reverse;
 
 	return true;
 }
@@ -2100,10 +2093,10 @@ static void CheckNextTrainTile(Train *v)
 			if (HasPbsSignalOnTrackdir(ft.m_new_tile, FindFirstTrackdir(ft.m_new_td_bits))) {
 				/* If the next tile is a PBS signal, try to make a reservation. */
 				TrackBits tracks = TrackdirBitsToTrackBits(ft.m_new_td_bits);
-				if (_settings_game.pf.forbid_90_deg) {
+				if (Rail90DegTurnDisallowed(GetTileRailType(ft.m_old_tile), GetTileRailType(ft.m_new_tile))) {
 					tracks &= ~TrackCrossesTracks(TrackdirToTrack(ft.m_old_td));
 				}
-				ChooseTrainTrack(v, ft.m_new_tile, ft.m_exitdir, tracks, false, NULL, false);
+				ChooseTrainTrack(v, ft.m_new_tile, ft.m_exitdir, tracks, false, nullptr, false);
 			}
 		}
 	}
@@ -2117,7 +2110,7 @@ static void CheckNextTrainTile(Train *v)
 static bool CheckTrainStayInDepot(Train *v)
 {
 	/* bail out if not all wagons are in the same depot or not in a depot at all */
-	for (const Train *u = v; u != NULL; u = u->Next()) {
+	for (const Train *u = v; u != nullptr; u = u->Next()) {
 		if (u->track != TRACK_BIT_DEPOT || u->tile != v->tile) return false;
 	}
 
@@ -2246,7 +2239,7 @@ void FreeTrainTrackReservation(const Train *v)
 	if (IsRailDepotTile(tile) && TrackdirToExitdir(td) != GetRailDepotDirection(tile)) return;
 	if (v->track == TRACK_BIT_DEPOT) {
 		/* Front engine is in a depot. We enter if some part is not in the depot. */
-		for (const Train *u = v; u != NULL; u = u->Next()) {
+		for (const Train *u = v; u != nullptr; u = u->Next()) {
 			if (u->track != TRACK_BIT_DEPOT || u->tile != v->tile) return;
 		}
 	}
@@ -2339,7 +2332,7 @@ static PBSTileInfo ExtendTrainReservation(const Train *v, TrackBits *new_tracks,
 			if (HasOnewaySignalBlockingTrackdir(ft.m_new_tile, FindFirstTrackdir(ft.m_new_td_bits))) break;
 		}
 
-		if (_settings_game.pf.forbid_90_deg) {
+		if (Rail90DegTurnDisallowed(GetTileRailType(ft.m_old_tile), GetTileRailType(ft.m_new_tile))) {
 			ft.m_new_td_bits &= ~TrackdirCrossesTrackdirs(ft.m_old_td);
 			if (ft.m_new_td_bits == TRACKDIR_BIT_NONE) break;
 		}
@@ -2360,8 +2353,8 @@ static PBSTileInfo ExtendTrainReservation(const Train *v, TrackBits *new_tracks,
 			if (ft.m_tiles_skipped != 0) ft.m_new_tile -= TileOffsByDiagDir(ft.m_exitdir) * ft.m_tiles_skipped;
 
 			/* Choice found, path valid but not okay. Save info about the choice tile as well. */
-			if (new_tracks != NULL) *new_tracks = TrackdirBitsToTrackBits(ft.m_new_td_bits);
-			if (enterdir != NULL) *enterdir = ft.m_exitdir;
+			if (new_tracks != nullptr) *new_tracks = TrackdirBitsToTrackBits(ft.m_new_td_bits);
+			if (enterdir != nullptr) *enterdir = ft.m_exitdir;
 			return PBSTileInfo(ft.m_new_tile, ft.m_old_td, false);
 		}
 
@@ -2391,7 +2384,7 @@ static PBSTileInfo ExtendTrainReservation(const Train *v, TrackBits *new_tracks,
 	while (tile != stopped || cur_td != stopped_td) {
 		if (!ft.Follow(tile, cur_td)) break;
 
-		if (_settings_game.pf.forbid_90_deg) {
+		if (Rail90DegTurnDisallowed(GetTileRailType(ft.m_old_tile), GetTileRailType(ft.m_new_tile))) {
 			ft.m_new_td_bits &= ~TrackdirCrossesTrackdirs(ft.m_old_td);
 			assert(ft.m_new_td_bits != TRACKDIR_BIT_NONE);
 		}
@@ -2474,7 +2467,7 @@ public:
 			if (this->index >= this->v->GetNumOrders()) this->index = 0;
 
 			Order *order = this->v->GetOrder(this->index);
-			assert(order != NULL);
+			assert(order != nullptr);
 
 			switch (order->GetType()) {
 				case OT_GOTO_DEPOT:
@@ -2517,7 +2510,7 @@ static Track ChooseTrainTrack(Train *v, TileIndex tile, DiagDirection enterdir, 
 
 	assert((tracks & ~TRACK_BIT_MASK) == 0);
 
-	if (got_reservation != NULL) *got_reservation = false;
+	if (got_reservation != nullptr) *got_reservation = false;
 
 	/* Don't use tracks here as the setting to forbid 90 deg turns might have been switched between reservation and now. */
 	TrackBits res_tracks = (TrackBits)(GetReservedTrackbits(tile) & DiagdirReachesTracks(enterdir));
@@ -2550,7 +2543,7 @@ static Track ChooseTrainTrack(Train *v, TileIndex tile, DiagDirection enterdir, 
 		}
 		if (res_dest.okay) {
 			/* Got a valid reservation that ends at a safe target, quick exit. */
-			if (got_reservation != NULL) *got_reservation = true;
+			if (got_reservation != nullptr) *got_reservation = true;
 			if (changed_signal) MarkTileDirtyByTile(tile);
 			TryReserveRailTrack(v->tile, TrackdirToTrack(v->GetVehicleTrackdir()));
 			return best_track;
@@ -2609,7 +2602,7 @@ static Track ChooseTrainTrack(Train *v, TileIndex tile, DiagDirection enterdir, 
 			TrackBits res = GetReservedTrackbits(tile) & DiagdirReachesTracks(enterdir);
 			best_track = FindFirstTrack(res);
 			TryReserveRailTrack(v->tile, TrackdirToTrack(v->GetVehicleTrackdir()));
-			if (got_reservation != NULL) *got_reservation = true;
+			if (got_reservation != nullptr) *got_reservation = true;
 			if (changed_signal) MarkTileDirtyByTile(tile);
 		} else {
 			FreeTrainTrackReservation(v);
@@ -2618,7 +2611,7 @@ static Track ChooseTrainTrack(Train *v, TileIndex tile, DiagDirection enterdir, 
 		return best_track;
 	}
 
-	if (got_reservation != NULL) *got_reservation = true;
+	if (got_reservation != nullptr) *got_reservation = true;
 
 	/* Reservation target found and free, check if it is safe. */
 	while (!IsSafeWaitingPosition(v, res_dest.tile, res_dest.trackdir, true, _settings_game.pf.forbid_90_deg)) {
@@ -2626,7 +2619,7 @@ static Track ChooseTrainTrack(Train *v, TileIndex tile, DiagDirection enterdir, 
 		DiagDirection exitdir = TrackdirToExitdir(res_dest.trackdir);
 		TileIndex     next_tile = TileAddByDiagDir(res_dest.tile, exitdir);
 		TrackBits     reachable = TrackdirBitsToTrackBits((TrackdirBits)(GetTileTrackStatus(next_tile, TRANSPORT_RAIL, 0))) & DiagdirReachesTracks(exitdir);
-		if (_settings_game.pf.forbid_90_deg) {
+		if (Rail90DegTurnDisallowed(GetTileRailType(res_dest.tile), GetTileRailType(next_tile))) {
 			reachable &= ~TrackCrossesTracks(TrackdirToTrack(res_dest.trackdir));
 		}
 
@@ -2641,7 +2634,7 @@ static Track ChooseTrainTrack(Train *v, TileIndex tile, DiagDirection enterdir, 
 				/* Path found, but could not be reserved. */
 				FreeTrainTrackReservation(v);
 				if (mark_stuck) MarkTrainAsStuck(v);
-				if (got_reservation != NULL) *got_reservation = false;
+				if (got_reservation != nullptr) *got_reservation = false;
 				changed_signal = false;
 				break;
 			}
@@ -2650,7 +2643,7 @@ static Track ChooseTrainTrack(Train *v, TileIndex tile, DiagDirection enterdir, 
 		if (!TryReserveSafeTrack(v, res_dest.tile, res_dest.trackdir, true)) {
 			FreeTrainTrackReservation(v);
 			if (mark_stuck) MarkTrainAsStuck(v);
-			if (got_reservation != NULL) *got_reservation = false;
+			if (got_reservation != nullptr) *got_reservation = false;
 			changed_signal = false;
 		}
 		break;
@@ -2689,14 +2682,14 @@ bool TryPathReserve(Train *v, bool mark_as_stuck, bool first_tile_okay)
 		}
 	}
 
-	Vehicle *other_train = NULL;
+	Vehicle *other_train = nullptr;
 	PBSTileInfo origin = FollowTrainReservation(v, &other_train);
 	/* The path we are driving on is already blocked by some other train.
 	 * This can only happen in certain situations when mixing path and
 	 * block signals or when changing tracks and/or signals.
 	 * Exit here as doing any further reservations will probably just
 	 * make matters worse. */
-	if (other_train != NULL && other_train->index != v->index) {
+	if (other_train != nullptr && other_train->index != v->index) {
 		if (mark_as_stuck) MarkTrainAsStuck(v);
 		return false;
 	}
@@ -2718,7 +2711,7 @@ bool TryPathReserve(Train *v, bool mark_as_stuck, bool first_tile_okay)
 	TileIndex     new_tile = TileAddByDiagDir(origin.tile, exitdir);
 	TrackBits     reachable = TrackdirBitsToTrackBits(TrackStatusToTrackdirBits(GetTileTrackStatus(new_tile, TRANSPORT_RAIL, 0)) & DiagdirReachesTrackdirs(exitdir));
 
-	if (_settings_game.pf.forbid_90_deg) reachable &= ~TrackCrossesTracks(TrackdirToTrack(origin.trackdir));
+	if (Rail90DegTurnDisallowed(GetTileRailType(origin.tile), GetTileRailType(new_tile))) reachable &= ~TrackCrossesTracks(TrackdirToTrack(origin.trackdir));
 
 	bool res_made = false;
 	ChooseTrainTrack(v, new_tile, exitdir, reachable, true, &res_made, mark_as_stuck);
@@ -2782,7 +2775,7 @@ void Train::MarkDirty()
 	do {
 		v->colourmap = PAL_NONE;
 		v->UpdateViewport(true, false);
-	} while ((v = v->Next()) != NULL);
+	} while ((v = v->Next()) != nullptr);
 
 	/* need to update acceleration and cached values since the goods on the train changed. */
 	this->CargoChanged();
@@ -2900,7 +2893,7 @@ static bool TrainMovedChangeSignals(TileIndex tile, DiagDirection dir)
 /** Tries to reserve track under whole train consist. */
 void Train::ReserveTrackUnderConsist() const
 {
-	for (const Train *u = this; u != NULL; u = u->Next()) {
+	for (const Train *u = this; u != nullptr; u = u->Next()) {
 		switch (u->track) {
 			case TRACK_BIT_WORMHOLE:
 				TryReserveRailTrack(u->tile, DiagDirToDiagTrack(GetTunnelBridgeDirection(u->tile)));
@@ -2929,7 +2922,7 @@ uint Train::Crash(bool flooded)
 		/* Remove the reserved path in front of the train if it is not stuck.
 		 * Also clear all reserved tracks the train is currently on. */
 		if (!HasBit(this->flags, VRF_TRAIN_STUCK)) FreeTrainTrackReservation(this);
-		for (const Train *v = this; v != NULL; v = v->Next()) {
+		for (const Train *v = this; v != nullptr; v = v->Next()) {
 			ClearPathReservation(v, v->tile, v->GetVehicleTrackdir());
 			if (IsTileType(v->tile, MP_TUNNELBRIDGE)) {
 				/* ClearPathReservation will not free the wormhole exit
@@ -2987,23 +2980,23 @@ struct TrainCollideChecker {
  * Collision test function.
  * @param v %Train vehicle to test collision with.
  * @param data %Train being examined.
- * @return \c NULL (always continue search)
+ * @return \c nullptr (always continue search)
  */
 static Vehicle *FindTrainCollideEnum(Vehicle *v, void *data)
 {
 	TrainCollideChecker *tcc = (TrainCollideChecker*)data;
 
 	/* not a train or in depot */
-	if (v->type != VEH_TRAIN || Train::From(v)->track == TRACK_BIT_DEPOT) return NULL;
+	if (v->type != VEH_TRAIN || Train::From(v)->track == TRACK_BIT_DEPOT) return nullptr;
 
 	/* do not crash into trains of another company. */
-	if (v->owner != tcc->v->owner) return NULL;
+	if (v->owner != tcc->v->owner) return nullptr;
 
 	/* get first vehicle now to make most usual checks faster */
 	Train *coll = Train::From(v)->First();
 
 	/* can't collide with own wagons */
-	if (coll == tcc->v) return NULL;
+	if (coll == tcc->v) return nullptr;
 
 	int x_diff = v->x_pos - tcc->v->x_pos;
 	int y_diff = v->y_pos - tcc->v->y_pos;
@@ -3013,20 +3006,20 @@ static Vehicle *FindTrainCollideEnum(Vehicle *v, void *data)
 	 * Differences are shifted by 7, mapping range [-7 .. 8] into [0 .. 15]
 	 * Differences are then ORed and then we check for any higher bits */
 	uint hash = (y_diff + 7) | (x_diff + 7);
-	if (hash & ~15) return NULL;
+	if (hash & ~15) return nullptr;
 
 	/* Slower check using multiplication */
 	int min_diff = (Train::From(v)->gcache.cached_veh_length + 1) / 2 + (tcc->v->gcache.cached_veh_length + 1) / 2 - 1;
-	if (x_diff * x_diff + y_diff * y_diff > min_diff * min_diff) return NULL;
+	if (x_diff * x_diff + y_diff * y_diff > min_diff * min_diff) return nullptr;
 
 	/* Happens when there is a train under bridge next to bridge head */
-	if (abs(v->z_pos - tcc->v->z_pos) > 5) return NULL;
+	if (abs(v->z_pos - tcc->v->z_pos) > 5) return nullptr;
 
 	/* crash both trains */
 	tcc->num += TrainCrashed(tcc->v);
 	tcc->num += TrainCrashed(coll);
 
-	return NULL; // continue searching
+	return nullptr; // continue searching
 }
 
 /**
@@ -3068,15 +3061,15 @@ static bool CheckTrainCollision(Train *v)
 
 static Vehicle *CheckTrainAtSignal(Vehicle *v, void *data)
 {
-	if (v->type != VEH_TRAIN || (v->vehstatus & VS_CRASHED)) return NULL;
+	if (v->type != VEH_TRAIN || (v->vehstatus & VS_CRASHED)) return nullptr;
 
 	Train *t = Train::From(v);
 	DiagDirection exitdir = *(DiagDirection *)data;
 
 	/* not front engine of a train, inside wormhole or depot, crashed */
-	if (!t->IsFrontEngine() || !(t->track & TRACK_BIT_MASK)) return NULL;
+	if (!t->IsFrontEngine() || !(t->track & TRACK_BIT_MASK)) return nullptr;
 
-	if (t->cur_speed > 5 || VehicleExitDir(t->direction, t->track) != exitdir) return NULL;
+	if (t->cur_speed > 5 || VehicleExitDir(t->direction, t->track) != exitdir) return nullptr;
 
 	return t;
 }
@@ -3139,7 +3132,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 				TrackBits red_signals = TrackdirBitsToTrackBits(TrackStatusToRedSignals(ts) & reachable_trackdirs);
 
 				TrackBits bits = TrackdirBitsToTrackBits(trackdirbits);
-				if (_settings_game.pf.forbid_90_deg && prev == NULL) {
+				if (Rail90DegTurnDisallowed(GetTileRailType(gp.old_tile), GetTileRailType(gp.new_tile)) && prev == nullptr) {
 					/* We allow wagons to make 90 deg turns, because forbid_90_deg
 					 * can be switched on halfway a turn */
 					bits &= ~TrackCrossesTracks(FindFirstTrack(v->track));
@@ -3152,10 +3145,10 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 				if (!CheckCompatibleRail(v, gp.new_tile)) goto invalid_rail;
 
 				TrackBits chosen_track;
-				if (prev == NULL) {
+				if (prev == nullptr) {
 					/* Currently the locomotive is active. Determine which one of the
 					 * available tracks to choose */
-					chosen_track = TrackToTrackBits(ChooseTrainTrack(v, gp.new_tile, enterdir, bits, false, NULL, true));
+					chosen_track = TrackToTrackBits(ChooseTrainTrack(v, gp.new_tile, enterdir, bits, false, nullptr, true));
 					assert(chosen_track & (bits | GetReservedTrackbits(gp.new_tile)));
 
 					if (v->force_proceed != TFP_NONE && IsPlainRailTile(gp.new_tile) && HasSignals(gp.new_tile)) {
@@ -3275,7 +3268,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 					}
 
 					/* Clear any track reservation when the last vehicle leaves the tile */
-					if (v->Next() == NULL) ClearPathReservation(v, v->tile, v->GetVehicleTrackdir());
+					if (v->Next() == nullptr) ClearPathReservation(v, v->tile, v->GetVehicleTrackdir());
 
 					v->tile = gp.new_tile;
 
@@ -3292,7 +3285,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 				update_signals_crossing = true;
 
 				if (chosen_dir != v->direction) {
-					if (prev == NULL && _settings_game.vehicle.train_acceleration_model == AM_ORIGINAL) {
+					if (prev == nullptr && _settings_game.vehicle.train_acceleration_model == AM_ORIGINAL) {
 						const AccelerationSlowdownParams *asp = &_accel_slowdown[GetRailTypeInfo(v->railtype)->acceleration_type];
 						DirDiff diff = DirDifference(v->direction, chosen_dir);
 						v->cur_speed -= (diff == DIRDIFF_45RIGHT || diff == DIRDIFF_45LEFT ? asp->small_turn : asp->large_turn) * v->cur_speed >> 8;
@@ -3348,7 +3341,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 		/* update the Z position of the vehicle */
 		int old_z = v->UpdateInclination(gp.new_tile != gp.old_tile, false);
 
-		if (prev == NULL) {
+		if (prev == nullptr) {
 			/* This is the first vehicle in the train */
 			AffectSpeedByZChange(v, old_z);
 		}
@@ -3374,7 +3367,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 
 			/* Signals can only change when the first
 			 * (above) or the last vehicle moves. */
-			if (v->Next() == NULL) {
+			if (v->Next() == nullptr) {
 				TrainMovedChangeSignals(gp.old_tile, ReverseDiagDir(enterdir));
 				if (IsLevelCrossingTile(gp.old_tile)) UpdateLevelCrossing(gp.old_tile);
 			}
@@ -3390,7 +3383,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 
 invalid_rail:
 	/* We've reached end of line?? */
-	if (prev != NULL) error("Disconnecting train");
+	if (prev != nullptr) error("Disconnecting train");
 
 reverse_train_direction:
 	if (reverse) {
@@ -3407,7 +3400,7 @@ reverse_train_direction:
  * Collect trackbits of all crashed train vehicles on a tile
  * @param v Vehicle passed from Find/HasVehicleOnPos()
  * @param data trackdirbits for the result
- * @return NULL to iterate over all vehicles on the tile.
+ * @return nullptr to iterate over all vehicles on the tile.
  */
 static Vehicle *CollectTrackbitsFromCrashedVehiclesEnum(Vehicle *v, void *data)
 {
@@ -3423,7 +3416,7 @@ static Vehicle *CollectTrackbitsFromCrashedVehiclesEnum(Vehicle *v, void *data)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -3441,8 +3434,8 @@ static void DeleteLastWagon(Train *v)
 	 * *u is then the one-before-last wagon, and *v the last
 	 * one which will physically be removed */
 	Train *u = v;
-	for (; v->Next() != NULL; v = v->Next()) u = v;
-	u->SetNext(NULL);
+	for (; v->Next() != nullptr; v = v->Next()) u = v;
+	u->SetNext(nullptr);
 
 	if (first != v) {
 		/* Recalculate cached train properties */
@@ -3461,7 +3454,7 @@ static void DeleteLastWagon(Train *v)
 	Owner owner = v->owner;
 
 	delete v;
-	v = NULL; // make sure nobody will try to read 'v' anymore
+	v = nullptr; // make sure nobody will try to read 'v' anymore
 
 	if (trackbits == TRACK_BIT_WORMHOLE) {
 		/* Vehicle is inside a wormhole, v->track contains no useful value then. */
@@ -3517,7 +3510,7 @@ static void ChangeTrainDirRandomly(Train *v)
 				v->UpdateViewport(false, true);
 			}
 		}
-	} while ((v = v->Next()) != NULL);
+	} while ((v = v->Next()) != nullptr);
 }
 
 /**
@@ -3549,13 +3542,13 @@ static bool HandleCrashedTrain(Train *v)
 					EV_EXPLOSION_SMALL);
 				break;
 			}
-		} while ((u = u->Next()) != NULL);
+		} while ((u = u->Next()) != nullptr);
 	}
 
 	if (state <= 240 && !(v->tick_counter & 3)) ChangeTrainDirRandomly(v);
 
 	if (state >= 4440 && !(v->tick_counter & 0x1F)) {
-		bool ret = v->Next() != NULL;
+		bool ret = v->Next() != nullptr;
 		DeleteLastWagon(v);
 		return ret;
 	}
@@ -3711,7 +3704,7 @@ static bool TrainCheckIfLineEnds(Train *v, bool reverse)
 
 	/* mask unreachable track bits if we are forbidden to do 90deg turns */
 	TrackBits bits = TrackdirBitsToTrackBits(trackdirbits);
-	if (_settings_game.pf.forbid_90_deg) {
+	if (Rail90DegTurnDisallowed(GetTileRailType(v->tile), GetTileRailType(tile))) {
 		bits &= ~TrackCrossesTracks(FindFirstTrack(v->track));
 	}
 
@@ -3838,7 +3831,7 @@ static bool TrainLocoHandler(Train *v, bool mode)
 		/* Loop until the train has finished moving. */
 		for (;;) {
 			j -= adv_spd;
-			TrainController(v, NULL);
+			TrainController(v, nullptr);
 			/* Don't continue to move if the train crashed. */
 			if (CheckTrainCollision(v)) break;
 			/* Determine distance to next map position */
@@ -3859,7 +3852,7 @@ static bool TrainLocoHandler(Train *v, bool mode)
 		v->SetLastSpeed();
 	}
 
-	for (Train *u = v; u != NULL; u = u->Next()) {
+	for (Train *u = v; u != nullptr; u = u->Next()) {
 		if ((u->vehstatus & VS_HIDDEN) != 0) continue;
 
 		u->UpdateViewport(false, false);
@@ -3890,7 +3883,7 @@ Money Train::GetRunningCost() const
 		if (v->IsMultiheaded()) cost_factor /= 2;
 
 		cost += GetPrice(e->u.rail.running_cost_class, cost_factor, e->GetGRF());
-	} while ((v = v->GetNextVehicle()) != NULL);
+	} while ((v = v->GetNextVehicle()) != nullptr);
 
 	return cost;
 }

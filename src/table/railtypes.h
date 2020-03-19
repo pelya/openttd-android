@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -112,8 +110,8 @@ static const RailtypeInfo _original_railtypes[] = {
 		/* sort order */
 		0 << 4 | 7,
 
-		{ NULL },
-		{ NULL },
+		{ nullptr },
+		{ nullptr },
 	},
 
 	/** Electrified railway */
@@ -156,7 +154,7 @@ static const RailtypeInfo _original_railtypes[] = {
 			STR_RAIL_MENU_ELRAIL_CONSTRUCTION,
 			STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION,
 			STR_REPLACE_ELRAIL_VEHICLES,
-			STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE,
+			STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE,
 		},
 
 		/* Offset of snow tiles */
@@ -213,8 +211,8 @@ static const RailtypeInfo _original_railtypes[] = {
 		/* sort order */
 		1 << 4 | 7,
 
-		{ NULL },
-		{ NULL },
+		{ nullptr },
+		{ nullptr },
 	},
 
 	/** Monorail */
@@ -310,8 +308,8 @@ static const RailtypeInfo _original_railtypes[] = {
 		/* sort order */
 		2 << 4 | 7,
 
-		{ NULL },
-		{ NULL },
+		{ nullptr },
+		{ nullptr },
 	},
 
 	/** Maglev */
@@ -407,8 +405,8 @@ static const RailtypeInfo _original_railtypes[] = {
 		/* sort order */
 		3 << 4 | 7,
 
-		{ NULL },
-		{ NULL },
+		{ nullptr },
+		{ nullptr },
 	},
 };
 

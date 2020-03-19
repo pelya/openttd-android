@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -10,17 +8,19 @@
 /** @file progress.cpp Functions for modal progress windows. */
 
 #include "stdafx.h"
-#include "thread/thread.h"
+#include "progress.h"
 
 #include "safeguards.h"
 
 /** Are we in a modal progress or not? */
 bool _in_modal_progress = false;
 bool _first_in_modal_loop = false;
+/** Threading usable for modal progress? */
+bool _use_threaded_modal_progress = true;
 /** Rights for the performing work. */
-ThreadMutex *_modal_progress_work_mutex = ThreadMutex::New();
+std::mutex _modal_progress_work_mutex;
 /** Rights for the painting. */
-ThreadMutex *_modal_progress_paint_mutex = ThreadMutex::New();
+std::mutex _modal_progress_paint_mutex;
 
 /**
  * Set the modal progress state.

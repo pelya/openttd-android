@@ -11,8 +11,6 @@
 ##case n
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -466,9 +464,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Baskuligi Konzolon
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Ludo skripto sencimigo
 STR_ABOUT_MENU_SCREENSHOT                                       :Ekranfoto
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Pligrandiga ekranfoto
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Ekranfoto defaŭlte zoma
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Tuta karto ekranfoto
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Pri 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Bildeto-liniigilo
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Montri/ne montri limigujo
@@ -638,9 +633,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Propra 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Muzika Volumeno
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Efekta Volumeno
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAKS
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -845,6 +837,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Aŭtoren
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}Nova {STRING} nun haveblas!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Nova {STRING} nun haveblas!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} ne plu akceptas {STRING.n}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} ne plu akceptas {STRING.n} aŭ {STRING.n}
@@ -1368,7 +1361,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industr
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Konkurantoj
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Komputil-ludantoj
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Originale
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Rekomendite)
 
@@ -1427,13 +1419,9 @@ STR_QUIT_NO                                                     :{BLACK}Ne
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Vindozo
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unikso
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2005,6 +1993,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_BRIDGE                   :{BLACK}Konstrui
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Konstruu vojtunelon. Baskulu inter konstrui/(kosto)taksi per maljuskliga klavo
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Konstrui tramtunelon. Baskulu inter konstrui/(kosto)taksi per maljuskliga klavo
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Ĉu konstrui ĉu forigi por vojkonstruado
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Direkto de la stratveturila garaĝo
@@ -2715,8 +2704,6 @@ STR_BUY_COMPANY_MESSAGE                                         :{WHITE}Ni serĉ
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industrioj
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Neniu -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% transportite)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% transportite)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Industrionomoj - klaku nomon por centri vidon ĉe la industrio. Ctrl+Klak por malfermi novan vidujon ĉe la loko
 
@@ -2777,6 +2764,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Sengrupaj strat
 STR_GROUP_DEFAULT_SHIPS                                         :Sengrupaj ŝipoj
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Sengrupaj aviadiloj
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupoj - klaku grupon por listigi ĉiujn veturilojn de tiu ĉi grupo. Trenu/faligu grupojn por ordigi ĝin
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klaku por krei grupon
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Viŝu la selektitan grupon
@@ -2795,10 +2783,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Novaj Elektraj 
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Novaj Unurelaj Veturiloj
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Novaj Maglevaj Veturiloj
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Novaj stratveturiloj
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Novaj stratveturiloj
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Novaj stratveturiloj
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Novaj Ŝipoj
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Novaj Aviadiloj
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Kosto: {GOLD}{CURRENCY_LONG}{BLACK} Pezo: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Rapido: {GOLD}{VELOCITY}{BLACK} Forto: {GOLD}{POWER}
@@ -2830,10 +2821,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Aĉeti V
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Aĉeti Ŝipon
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Aĉeti Aviadilon
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Aĉeti la emfazitan trajnveturilon. Montri taksitaj kostoj sen aĉeti per maljuskliga klavo + Klaki
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Aĉeti la emfazitan stratveturilon. Montri taksitaj kostoj sen aĉeti per maljuskliga klavo + Klaki
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Aĉeti la emfazitan ŝipon. Montri taksitaj kostoj sen aĉeti per maljuskliga klavo + Klaki
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Aĉeti la emfazitan aviadilon. Montri taksitaj kostoj sen aĉeti per maljuskliga klavo + Klaki
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Alinomi
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Alinomi
@@ -2938,12 +2931,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Vi vend
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Mesaĝo de veturil-produktanto
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Nova {STRING} estas inventita - ĉu vi ŝatus jaron ekskluzive uzi la veturilon, por ke ni povu vidi ĝian funkciadon antaŭ ol ĝi estos plene havebla?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :fervoja lokomotivo
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :stratveturilo
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :aviadilo
-STR_ENGINE_PREVIEW_SHIP                                         :ŝipo
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :unurellokomotivo
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :magleva lokomotivo
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :stratveturilo
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :aviadilo
+STR_ENGINE_PREVIEW_SHIP                                         :ŝipo
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kosto: {CURRENCY_LONG} Pezo: {WEIGHT_SHORT}{}Rapido: {VELOCITY}  Forto: {POWER}{}Irkosto: po {CURRENCY_LONG} jare{}Kapablo: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Kosto: {CURRENCY_LONG} Pezo: {WEIGHT_SHORT}{}Rapido: {VELOCITY}  Povo: {POWER}  Maks. T.E.: {6:FORCE}{}Irkosto: {4:CURRENCY_LONG}/jaro{}Kapacito: {5:CARGO_LONG}
@@ -2977,6 +2973,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Relaj Veturiloj
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektraj Relaj Veturiloj
 STR_REPLACE_MONORAIL_VEHICLES                                   :Unurelaj Veturiloj
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglevaj Veturiloj
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vagonforigo: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ĉe aŭtomata anstataŭigo tenu saman longecon de la trajno per forigo de vagonoj (defronte), se per nova maŝino la trajno plilongiĝas
@@ -3384,6 +3381,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Elekti e
 STR_AI_LIST_CANCEL                                              :{BLACK}Nuligi
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ne ŝanĝu AI-on
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametroj
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -3647,7 +3645,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Unue vi 
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Nekonvena fervojtrako
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Antaŭe devas la trako esti detruita
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Strato estas unudirekta aŭ blokita
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Traknivelaj pasejoj ne permesa por ĉi tio fervojtipo
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Traknivelaj pasejoj ne permesa por ĉi tio fervojtipo
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Ne povas konstrui signalojn ĉi tie...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Ne povas konstrui trakon ĉi tie...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Ne povas forigi trakon de ĉi tie...

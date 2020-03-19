@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,7 +23,7 @@
 {
 	CCountedPtr<Text> counter(text);
 
-	EnforcePrecondition(false, text != NULL);
+	EnforcePrecondition(false, text != nullptr);
 	const char *encoded = text->GetEncodedText();
 	EnforcePreconditionEncodedText(false, encoded);
 	EnforcePrecondition(false, type == NT_ECONOMY || type == NT_SUBSIDIES || type == NT_GENERAL);

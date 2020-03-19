@@ -12,8 +12,6 @@
 ##case nom big gen dat aku vok lok ins
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -660,9 +658,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Uključi/isključi konzolu
 STR_ABOUT_MENU_AI_DEBUG                                         :Korekcija veštačke inteligencije / skripte partije
 STR_ABOUT_MENU_SCREENSHOT                                       :Sačuvaj sliku
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Čuva sliku skroz približenog terena
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Podrazumevani nivo zuma za sliku ekrana
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Sačuvaj sliku celog terena
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :O OpenTTD-u
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Poravnjavanje sprajta
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Uključi/isključi granične linije
@@ -832,9 +827,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Lični raspored 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Jačina muzike
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Jačina ambijenta
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}Tiho
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}Glasno
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -1056,6 +1048,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Automats
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}Nov{G "" a o} {STRING} od sada u prodaji!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Nov{G "" a o} {STRING} od sada u prodaji!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} više ne prihvata {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} više ne prihvata ni {STRING} ni {STRING}
@@ -1891,7 +1884,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distrib
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Suparnici
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Računar
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Originalno
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Preporučuje se)
 
@@ -1974,13 +1966,9 @@ STR_QUIT_NO                                                     :{BLACK}Ne
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2608,6 +2596,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Izgradnj
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Izgradnja tramvajskog tunela. Shift prebacuje između izgradnje i prikaza procene troškova
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Uključi građenje/rušenje drumskih puteva
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Uključi građenje/rušenje tramvajskih građevina
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Orijentacija drumskog depoa
@@ -3471,8 +3460,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Delova pruge:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signalizacija
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Delova druma:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Drum
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tramvajska pruga
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Pločica sa vodom:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanali
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stanice:
@@ -3483,8 +3470,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Fabrike
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Nema -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% prevezeno)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% prevezeno)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Imena fabrika - klikom na ime premešta se glavni pogled na fabriku. Ctrl+Klik otvara novi pogled na lokaciju fabrike
 
@@ -3549,6 +3534,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Negrupisana dru
 STR_GROUP_DEFAULT_SHIPS                                         :Negrupisani brodovi
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Negrupisane letilice
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupe - klikom na grupu se prikazuje spisak vozila u grupi. Hijerarhija grupa se uređuje metodom "prevuci i pusti"
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klikom se pravi nova grupa
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Briše se označena grupa
@@ -3574,10 +3560,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Nova Železnič
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Nova Jednošinska Vozila
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Nova Maglev Vozila
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Šinska Vozila
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Nova Drumska Vozila
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Šinska Vozila
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Novi Brodovi
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Nove Letilice
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Cena: {GOLD}{CURRENCY_LONG}{BLACK} Težina: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Brzina: {GOLD}{VELOCITY}{BLACK} Snaga: {GOLD}{POWER}
@@ -3611,10 +3600,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Kupi Voz
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Kupi Brod
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Kupi Letelicu
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Kupuje označeno šinsko vozilo. Shift+Klik prikazuje procenu troškova bez kupovine
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Kupuje označeno drumsko vozilo. Shift+Klik prikazuje procenu troškova bez kupovine
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Kupuje označeni brod. Shift+Klik prikazuje procenu troškova bez kupovine
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Kupuje označenu letilicu. Shift+Klik prikazuje procenu troškova bez kupovine
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Preimenuj
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Promena naziva
@@ -3724,18 +3715,21 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Upravo 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Poruka od proizvođača vozila
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Upravo smo završili projektovanje nov{G og e og} {STRING.aku} - da li ste zainteresovani za jednogodišnja eksluzivna prava upotrebe ovog vozila, kako bi smo proverili radne osobine pre puštanja u masovnu proizvodnju?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=srednji}železničko vučno vozilo
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE.aku                      :železničkog vučnog vozila
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=srednji}drumsko vozilo
-STR_ENGINE_PREVIEW_ROAD_VEHICLE.aku                             :drumskog vozila
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=ženski}letilica
-STR_ENGINE_PREVIEW_AIRCRAFT.aku                                 :letilice
-STR_ENGINE_PREVIEW_SHIP                                         :{G=muški}brod
-STR_ENGINE_PREVIEW_SHIP.aku                                     :broda
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :{G=srednji}jednopružno žel. vučno vozilo
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE.aku                      :jednopružnog žel. vučnog vozila
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :{G=srednji}megnetno žel. vučno vozilo
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE.aku                        :magnetnog žel. vučnog vozila
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=srednji}drumsko vozilo
+STR_ENGINE_PREVIEW_ROAD_VEHICLE.aku                             :drumskog vozila
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=ženski}letilica
+STR_ENGINE_PREVIEW_AIRCRAFT.aku                                 :letilice
+STR_ENGINE_PREVIEW_SHIP                                         :{G=muški}brod
+STR_ENGINE_PREVIEW_SHIP.aku                                     :broda
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Cena: {CURRENCY_LONG} Težina: {WEIGHT_SHORT}{}Brzina: {VELOCITY}  Snaga: {POWER}{}Cena Održavanja: {CURRENCY_LONG}/god.{}Nosivost: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Cena: {CURRENCY_LONG} Težina: {WEIGHT_SHORT}{}Brzina: {VELOCITY}  Snaga: {POWER}  Najveća vučna snaga: {6:FORCE}{}Cena Održavanja: {4:CURRENCY_LONG}/god{}Nosivost: {5:CARGO_LONG}
@@ -3791,6 +3785,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Šinska Vozila
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektrošinska Vozila
 STR_REPLACE_MONORAIL_VEHICLES                                   :Jednošinska Vozila
 STR_REPLACE_MAGLEV_VEHICLES                                     :Magnetnošinska Vozila
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Ukanjanje vagona: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ukoliko bi se zamenom kompozicija produžila, automatska obnova će ukloniti vagone (sa početka) kako bi se zadržala dužina kompozicije
@@ -4241,6 +4236,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Izabira 
 STR_AI_LIST_CANCEL                                              :{BLACK}Otkaži
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ne menja skriptu
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametri
 STR_AI_SETTINGS_CAPTION_AI                                      :VI
@@ -4443,7 +4439,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... ova 
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... ulica je okrenuta u drugom pravcu
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... stajalište ne može biti na krivini
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... stajalište ne može biti na raskrsnici
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}...  put je jednosmeran ili blokiran.
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}Deo stanice se ne može ukloniti...
@@ -4513,7 +4508,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Neophodn
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Nedostaje odgovarajuća železnička pruga
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Potrebno je prvo ukloniti železničku prugu
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Put je jednosmeran ili je blokiran
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Putni prelaz nije dozvoljen za ovu vrstu pruge
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Putni prelaz nije dozvoljen za ovu vrstu pruge
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Izgradnja signalizacije ovde nije moguća...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Izgradnja železničke pruge ovde nije moguća...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Nemoguće je ukloniti železničku prugu odatle...

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -27,11 +25,12 @@ extern uint _sprite_cache_size;
 
 typedef void *AllocatorProc(size_t size);
 
-void *GetRawSprite(SpriteID sprite, SpriteType type, AllocatorProc *allocator = NULL);
+void *GetRawSprite(SpriteID sprite, SpriteType type, AllocatorProc *allocator = nullptr);
 bool SpriteExists(SpriteID sprite);
 
 SpriteType GetSpriteType(SpriteID sprite);
 uint GetOriginFileSlot(SpriteID sprite);
+uint32 GetSpriteLocalID(SpriteID sprite);
 uint GetSpriteCountForSlot(uint file_slot, SpriteID begin, SpriteID end);
 uint GetMaxSpriteID();
 

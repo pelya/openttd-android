@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -42,7 +40,7 @@ inline void Blitter_32bppAnim::Draw(const Blitter::BlitterParams *bp, ZoomLevel 
 	Colour *dst = (Colour *)bp->dst + bp->top * bp->pitch + bp->left;
 	uint16 *anim = this->anim_buf + this->ScreenToAnimOffset((uint32 *)bp->dst) + bp->top * this->anim_buf_pitch + bp->left;
 
-	const byte *remap = bp->remap; // store so we don't have to access it via bp everytime
+	const byte *remap = bp->remap; // store so we don't have to access it via bp every time
 
 	for (int y = 0; y < bp->height; y++) {
 		Colour *dst_ln = dst + bp->pitch;
@@ -414,7 +412,7 @@ void Blitter_32bppAnim::CopyToBuffer(const void *video, void *dst, int width, in
 	uint32 *udst = (uint32 *)dst;
 	const uint32 *src = (const uint32 *)video;
 
-	if (this->anim_buf == NULL) return;
+	if (this->anim_buf == nullptr) return;
 
 	const uint16 *anim_line = this->ScreenToAnimOffset((const uint32 *)video) + this->anim_buf;
 

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -112,11 +110,9 @@ public:
 	 */
 	static class GameInstance *GetInstance() { return Game::instance; }
 
-#if defined(ENABLE_NETWORK)
 	/** Wrapper function for GameScanner::HasGame */
 	static bool HasGame(const struct ContentInfo *ci, bool md5sum);
 	static bool HasGameLibrary(const ContentInfo *ci, bool md5sum);
-#endif
 	/** Gets the ScriptScanner instance that is used to find Game scripts */
 	static GameScannerInfo *GetScannerInfo();
 	/** Gets the ScriptScanner instance that is used to find Game Libraries */

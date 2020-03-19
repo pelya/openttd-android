@@ -12,8 +12,6 @@
 ##case small
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -474,9 +472,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Syne/gøym konsoll
 STR_ABOUT_MENU_AI_DEBUG                                         :AI- / Spelscriptfeilsøking
 STR_ABOUT_MENU_SCREENSHOT                                       :Skjermdump
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Fullt forstørra skjermbilete
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Normalt skjermbilete
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Stort skjermfoto
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Om 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Spriteforskyver
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Syne/gøym markeringsramme
@@ -646,9 +641,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Eigendefinert 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Musikkvolum
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Lydeffektvolum
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAKS.
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -859,6 +851,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Automati
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}Ny {STRING}type er tilgjengeleg!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Ny {STRING}type er tilgjengeleg!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} godtek ikkje lenger {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} godtek ikkje lenger {STRING} eller {STRING}
@@ -1607,7 +1600,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Varefor
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Motstandarar
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Datamaskinspelarar
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Anbefalt)
 
@@ -1690,13 +1682,9 @@ STR_QUIT_NO                                                     :{BLACK}Nei
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2323,6 +2311,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Bygg tun
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Bygg trikkesportunell. Skift vekslar mellom byggjing/syning av prisoverslag.
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Byt mellom bygging/fjerning for vegbygging
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Byt mellom bygge/fjerne for trikkesporbygging
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Garasjens retning
@@ -3179,8 +3168,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Togsporbitar:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signal
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Vegstubbar:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Veg
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Trikkespor
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Vannruter:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanalar
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stasjonar:
@@ -3191,8 +3178,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industriar
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ingen -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}{NBSP}% transportert)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}{NBSP}%/{COMMA}{NBSP}% transportert)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Industrinamn - Klikk på namnet for å syne industrien i hovedvisninga. CTRL+klikk syner industrien i eit tilleggsvindauge
 
@@ -3254,6 +3239,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :køyretøy utan
 STR_GROUP_DEFAULT_SHIPS                                         :Ugrupperte skip
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Luftfartøy utan gruppe
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupper - Klikk på ei gruppe for å få ei liste over alle køyretøya i den
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klikk for å lage ei gruppe
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Slett den valde gruppa
@@ -3275,10 +3261,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Nytt elektrisk 
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Nye tog/vogner for monorail
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Nye tog/vogner for maglev
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nye tog/vogner
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Nye køyretøy
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nye tog/vogner
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Nye skip
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Nytt luftfartøy
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Kostnad: {GOLD}{CURRENCY_LONG}{BLACK} Vekt: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Hastigheit: {GOLD}{VELOCITY}{BLACK} Kraft: {GOLD}{POWER}
@@ -3311,10 +3300,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Kjøp k�
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Bygg skip
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Bygg luftfartøy
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Bygg den valde farkosten. Skift-klikk viser prisoverslag utan å kjøpe.
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Bygg det valde køyretøyet. Skift-klikk viser prisoverslag utan å kjøpe.
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Bygg det valde skipet. Skift-klikk viser prisoverslag utan å kjøpe.
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Bygg det valde luftfartøyet. Skift-klikk viser prisoverslag utan å kjøpe.
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Gje nytt namn
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Endre namn
@@ -3424,12 +3415,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Du er i
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Melding frå køyretøysprodusent
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Me har nyleg designa eit nytt {STRING} - er du interessert i å teste denne farkosten i eit år, slik at me kan sjå korleis det verkar før me gjer han tilgjengeleg på markedet?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :lokomotiv
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :køyretøy
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :luftfartøy
-STR_ENGINE_PREVIEW_SHIP                                         :skip
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :monorail-lokomotiv
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :maglev-lokomotiv
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :køyretøy
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :luftfartøy
+STR_ENGINE_PREVIEW_SHIP                                         :skip
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kostnad: {CURRENCY_LONG} Vekt: {WEIGHT_SHORT}{}Hastigheit: {VELOCITY}  Kraft: {POWER}{}Driftskostnader: {CURRENCY_LONG}/år{}Kapasitet: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Pris: {CURRENCY_LONG} Vekt: {WEIGHT_SHORT}{}Hastigheit: {VELOCITY}  Kraft: {POWER}  Maks. trekkraft: {6:FORCE}{}Driftskostnad: {4:CURRENCY_LONG}/yr{}Kapasitet: {5:CARGO_LONG}
@@ -3470,6 +3464,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Jernbanekøyret
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektriske jernbanekøyretøy
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monorail-køyretøy
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev-køyretøy
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vognfjerning: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Lat den automatiske utskiftinga behalde lengda på toget ved å fjerne vogner (frå første vogn), dersom utskiftinga gjer toget lenger.
@@ -3915,6 +3910,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Merk uth
 STR_AI_LIST_CANCEL                                              :{BLACK}Avbryt
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ikkje endre AI
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parameter
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4186,7 +4182,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Må fjer
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Upassande jernbanespor
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Må fjerne jernbanespor først
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Vegen er einvegskøyrd eller blokkert
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Overgang ikkje tillate for denne typen jernbane
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Overgang ikkje tillate for denne typen jernbane
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Kan ikkje byggje signaler her...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Kan ikkje byggje jernbanespor her...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Kan ikkje fjerne jernbanespor herfrå...

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,7 +16,7 @@
 
 /* rdtsc for MSC_VER, uses simple inline assembly, or _rdtsc
  * from external win64.asm because VS2005 does not support inline assembly */
-#if defined(_MSC_VER) && !defined(RDTSC_AVAILABLE)
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64)) && !defined(RDTSC_AVAILABLE)
 #include <intrin.h>
 uint64 ottd_rdtsc()
 {
@@ -35,7 +33,7 @@ unsigned __int64 ottd_rdtsc();
 #endif
 
 /* rdtsc for all other *nix-en (hopefully). Use GCC syntax */
-#if (defined(__i386__) || defined(__x86_64__)) && !defined(__DJGPP__) && !defined(RDTSC_AVAILABLE)
+#if (defined(__i386__) || defined(__x86_64__)) && !defined(RDTSC_AVAILABLE)
 uint64 ottd_rdtsc()
 {
 	uint32 high, low;
@@ -87,7 +85,7 @@ uint64 ottd_rdtsc() {return 0;}
  * Other platforms/architectures don't have CPUID, so zero the info and then
  * most (if not all) of the features are set as if they do not exist.
  */
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
 void ottd_cpuid(int info[4], int type)
 {
 	__cpuid(info, type);

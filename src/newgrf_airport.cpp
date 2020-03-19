@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -21,7 +19,7 @@
 
 /** Resolver for the airport scope. */
 struct AirportScopeResolver : public ScopeResolver {
-	struct Station *st; ///< Station of the airport for which the callback is run, or \c NULL for build gui.
+	struct Station *st; ///< Station of the airport for which the callback is run, or \c nullptr for build gui.
 	byte airport_id;    ///< Type of airport for which the callback is run.
 	byte layout;        ///< Layout of the airport to build.
 	TileIndex tile;     ///< Tile for the callback, only valid for airporttile callbacks.
@@ -30,7 +28,7 @@ struct AirportScopeResolver : public ScopeResolver {
 	 * Constructor of the scope resolver for an airport.
 	 * @param ro Surrounding resolver.
 	 * @param tile %Tile for the callback, only valid for airporttile callbacks.
-	 * @param st %Station of the airport for which the callback is run, or \c NULL for build gui.
+	 * @param st %Station of the airport for which the callback is run, or \c nullptr for build gui.
 	 * @param airport_id Type of airport for which the callback is run.
 	 * @param layout Layout of the airport to build.
 	 */
@@ -39,9 +37,9 @@ struct AirportScopeResolver : public ScopeResolver {
 	{
 	}
 
-	/* virtual */ uint32 GetRandomBits() const;
-	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
-	/* virtual */ void StorePSA(uint pos, int32 value);
+	uint32 GetRandomBits() const override;
+	uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override;
+	void StorePSA(uint pos, int32 value) override;
 };
 
 /** Resolver object for airports. */
@@ -51,7 +49,7 @@ struct AirportResolverObject : public ResolverObject {
 	AirportResolverObject(TileIndex tile, Station *st, byte airport_id, byte layout,
 			CallbackID callback = CBID_NO_CALLBACK, uint32 callback_param1 = 0, uint32 callback_param2 = 0);
 
-	/* virtual */ ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0)
+	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override
 	{
 		switch (scope) {
 			case VSG_SCOPE_SELF: return &this->airport_scope;
@@ -59,7 +57,10 @@ struct AirportResolverObject : public ResolverObject {
 		}
 	}
 
-	/* virtual */ const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
+	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
+
+	GrfSpecFeature GetFeature() const override;
+	uint32 GetDebugID() const override;
 };
 
 /**
@@ -100,6 +101,7 @@ AirportSpec AirportSpec::specs[NUM_AIRPORTS]; ///< Airport specifications.
 	assert(type < lengthof(AirportSpec::specs));
 	const AirportSpec *as = &AirportSpec::specs[type];
 	if (type >= NEW_AIRPORT_OFFSET && !as->enabled) {
+		if (_airport_mngr.GetGRFID(type) == 0) return as;
 		byte subst_id = _airport_mngr.GetSubstituteID(type);
 		if (subst_id == AT_INVALID) return as;
 		as = &AirportSpec::specs[subst_id];
@@ -127,6 +129,24 @@ bool AirportSpec::IsAvailable() const
 	if (_cur_year < this->min_year) return false;
 	if (_settings_game.station.never_expire_airports) return true;
 	return _cur_year <= this->max_year;
+}
+
+/**
+ * Check if the airport would be within the map bounds at the given tile.
+ * @param table Selected layout table. This affects airport rotation, and therefore dimensions.
+ * @param tile Top corner of the airport.
+ * @return true iff the airport would be within the map bounds at the given tile.
+ */
+bool AirportSpec::IsWithinMapBounds(byte table, TileIndex tile) const
+{
+	if (table >= this->num_table) return false;
+
+	byte w = this->size_x;
+	byte h = this->size_y;
+	if (this->rotation[table] == DIR_E || this->rotation[table] == DIR_W) Swap(w, h);
+
+	return TileX(tile) + w < MapSizeX() &&
+		TileY(tile) + h < MapSizeY();
 }
 
 /**
@@ -183,14 +203,14 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
 		case 0x40: return this->layout;
 	}
 
-	if (this->st == NULL) {
+	if (this->st == nullptr) {
 		*available = false;
 		return UINT_MAX;
 	}
 
 	switch (variable) {
 		/* Get a variable from the persistent storage */
-		case 0x7C: return (this->st->airport.psa != NULL) ? this->st->airport.psa->GetValue(parameter) : 0;
+		case 0x7C: return (this->st->airport.psa != nullptr) ? this->st->airport.psa->GetValue(parameter) : 0;
 
 		case 0xF0: return this->st->facilities;
 		case 0xFA: return Clamp(this->st->build_date - DAYS_TILL_ORIGINAL_BASE_YEAR, 0, 65535);
@@ -206,12 +226,22 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
 	if (group->num_loaded > 0) return group->loaded[0];
 	if (group->num_loading > 0) return group->loading[0];
 
-	return NULL;
+	return nullptr;
+}
+
+GrfSpecFeature AirportResolverObject::GetFeature() const
+{
+	return GSF_AIRPORTS;
+}
+
+uint32 AirportResolverObject::GetDebugID() const
+{
+	return AirportSpec::Get(this->airport_scope.airport_id)->grf_prop.local_id;
 }
 
 /* virtual */ uint32 AirportScopeResolver::GetRandomBits() const
 {
-	return this->st == NULL ? 0 : this->st->random_bits;
+	return this->st == nullptr ? 0 : this->st->random_bits;
 }
 
 /**
@@ -221,14 +251,14 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
  */
 /* virtual */ void AirportScopeResolver::StorePSA(uint pos, int32 value)
 {
-	if (this->st == NULL) return;
+	if (this->st == nullptr) return;
 
-	if (this->st->airport.psa == NULL) {
+	if (this->st->airport.psa == nullptr) {
 		/* There is no need to create a storage if the value is zero. */
 		if (value == 0) return;
 
 		/* Create storage on first modification. */
-		uint32 grfid = (this->ro.grffile != NULL) ? this->ro.grffile->grfid : 0;
+		uint32 grfid = (this->ro.grffile != nullptr) ? this->ro.grffile->grfid : 0;
 		assert(PersistentStorage::CanAllocateItem());
 		this->st->airport.psa = new PersistentStorage(grfid, GSF_AIRPORTS, this->st->airport.tile);
 	}
@@ -238,7 +268,7 @@ void AirportOverrideManager::SetEntitySpec(AirportSpec *as)
 /**
  * Constructor of the airport resolver.
  * @param tile %Tile for the callback, only valid for airporttile callbacks.
- * @param st %Station of the airport for which the callback is run, or \c NULL for build gui.
+ * @param st %Station of the airport for which the callback is run, or \c nullptr for build gui.
  * @param airport_id Type of airport for which the callback is run.
  * @param layout Layout of the airport to build.
  * @param callback Callback ID.
@@ -254,9 +284,9 @@ AirportResolverObject::AirportResolverObject(TileIndex tile, Station *st, byte a
 
 SpriteID GetCustomAirportSprite(const AirportSpec *as, byte layout)
 {
-	AirportResolverObject object(INVALID_TILE, NULL, as->GetIndex(), layout);
+	AirportResolverObject object(INVALID_TILE, nullptr, as->GetIndex(), layout);
 	const SpriteGroup *group = object.Resolve();
-	if (group == NULL) return as->preview_sprite;
+	if (group == nullptr) return as->preview_sprite;
 
 	return group->GetResult();
 }
@@ -276,7 +306,7 @@ uint16 GetAirportCallback(CallbackID callback, uint32 param1, uint32 param2, Sta
  */
 StringID GetAirportTextCallback(const AirportSpec *as, byte layout, uint16 callback)
 {
-	AirportResolverObject object(INVALID_TILE, NULL, as->GetIndex(), layout, (CallbackID)callback);
+	AirportResolverObject object(INVALID_TILE, nullptr, as->GetIndex(), layout, (CallbackID)callback);
 	uint16 cb_res = object.ResolveCallback();
 	if (cb_res == CALLBACK_FAILED || cb_res == 0x400) return STR_UNDEFINED;
 	if (cb_res > 0x400) {

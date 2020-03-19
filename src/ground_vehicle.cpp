@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -28,9 +26,9 @@ void GroundVehicle<T, Type>::PowerChanged()
 	uint32 total_power = 0;
 	uint32 max_te = 0;
 	uint32 number_of_parts = 0;
-	uint16 max_track_speed = v->GetDisplayMaxSpeed();
+	uint16 max_track_speed = this->vcache.cached_max_speed; // Max track speed in internal units.
 
-	for (const T *u = v; u != NULL; u = u->Next()) {
+	for (const T *u = v; u != nullptr; u = u->Next()) {
 		uint32 current_power = u->GetPower() + u->GetPoweredPartPower(u);
 		total_power += current_power;
 
@@ -83,7 +81,7 @@ void GroundVehicle<T, Type>::CargoChanged()
 	assert(this->First() == this);
 	uint32 weight = 0;
 
-	for (T *u = T::From(this); u != NULL; u = u->Next()) {
+	for (T *u = T::From(this); u != nullptr; u = u->Next()) {
 		uint32 current_weight = u->GetWeight();
 		weight += current_weight;
 		/* Slope steepness is in percent, result in N. */
@@ -116,7 +114,7 @@ int GroundVehicle<T, Type>::GetAcceleration() const
 
 	/* Power is stored in HP, we need it in watts.
 	 * Each vehicle can have U16 power, 128 vehicles, HP -> watt
-	 * and km/h to m/s conversion below result in a maxium of
+	 * and km/h to m/s conversion below result in a maximum of
 	 * about 1.1E11, way more than 4.3E9 of int32. */
 	int64 power = this->gcache.cached_power * 746ll;
 
@@ -198,7 +196,7 @@ bool GroundVehicle<T, Type>::IsChainInDepot() const
 	if (!IsDepotTypeTile(v->tile, (TransportType)Type) || v->cur_speed != 0) return false;
 
 	/* Check whether the rest is also already trying to enter the depot. */
-	for (; v != NULL; v = v->Next()) {
+	for (; v != nullptr; v = v->Next()) {
 		if (!v->T::IsInDepot() || v->tile != this->tile) return false;
 	}
 

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -76,7 +74,7 @@ static void ShowIndustryCargoesWindow(IndustryType id);
  * Gets the string to display after the cargo name (using callback 37)
  * @param cargo the cargo for which the suffix is requested, meaning depends on presence of flag 18 in prop 1A
  * @param cst the cargo suffix type (for which window is it requested). @see CargoSuffixType
- * @param ind the industry (NULL if in fund window)
+ * @param ind the industry (nullptr if in fund window)
  * @param ind_type the industry type
  * @param indspec the industry spec
  * @param suffix is filled with the string to display
@@ -138,7 +136,7 @@ enum CargoSuffixInOut {
  * Gets all strings to display after the cargoes of industries (using callback 37)
  * @param use_input get suffixes for output cargoes or input cargoes?
  * @param cst the cargo suffix type (for which window is it requested). @see CargoSuffixType
- * @param ind the industry (NULL if in fund window)
+ * @param ind the industry (nullptr if in fund window)
  * @param ind_type the industry type
  * @param indspec the industry spec
  * @param cargoes array with cargotypes. for CT_INVALID no suffix will be determined
@@ -183,23 +181,23 @@ static inline void GetAllCargoSuffixes(CargoSuffixInOut use_input, CargoSuffixTy
 	}
 }
 
-IndustryType _sorted_industry_types[NUM_INDUSTRYTYPES]; ///< Industry types sorted by name.
+std::array<IndustryType, NUM_INDUSTRYTYPES> _sorted_industry_types; ///< Industry types sorted by name.
 
 /** Sort industry types by their name. */
-static int CDECL IndustryTypeNameSorter(const IndustryType *a, const IndustryType *b)
+static bool IndustryTypeNameSorter(const IndustryType &a, const IndustryType &b)
 {
 	static char industry_name[2][64];
 
-	const IndustrySpec *indsp1 = GetIndustrySpec(*a);
+	const IndustrySpec *indsp1 = GetIndustrySpec(a);
 	GetString(industry_name[0], indsp1->name, lastof(industry_name[0]));
 
-	const IndustrySpec *indsp2 = GetIndustrySpec(*b);
+	const IndustrySpec *indsp2 = GetIndustrySpec(b);
 	GetString(industry_name[1], indsp2->name, lastof(industry_name[1]));
 
 	int r = strnatcmp(industry_name[0], industry_name[1]); // Sort by name (natural sorting).
 
 	/* If the names are equal, sort by industry type. */
-	return (r != 0) ? r : (*a - *b);
+	return (r != 0) ? r < 0 : (a < b);
 }
 
 /**
@@ -213,7 +211,7 @@ void SortIndustryTypes()
 	}
 
 	/* Sort industry types by name. */
-	QSortT(_sorted_industry_types, NUM_INDUSTRYTYPES, &IndustryTypeNameSorter);
+	std::sort(_sorted_industry_types.begin(), _sorted_industry_types.end(), IndustryTypeNameSorter);
 }
 
 /**
@@ -222,8 +220,9 @@ void SortIndustryTypes()
  * @param tile   Tile where the industry is placed.
  * @param p1     Additional data of the #CMD_BUILD_INDUSTRY command.
  * @param p2     Additional data of the #CMD_BUILD_INDUSTRY command.
+ * @param cmd    Unused.
  */
-void CcBuildIndustry(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+void CcBuildIndustry(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	if (result.Succeeded()) return;
 
@@ -300,8 +299,7 @@ class BuildIndustryWindow : public Window {
 		 * The tests performed after the enabled allow to load the industries
 		 * In the same way they are inserted by grf (if any)
 		 */
-		for (uint i = 0; i < NUM_INDUSTRYTYPES; i++) {
-			IndustryType ind = _sorted_industry_types[i];
+		for (IndustryType ind : _sorted_industry_types) {
 			const IndustrySpec *indsp = GetIndustrySpec(ind);
 			if (indsp->enabled) {
 				/* Rule is that editor mode loads all industries.
@@ -405,12 +403,12 @@ public:
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 	}
 
-	virtual void OnInit()
+	void OnInit() override
 	{
 		this->SetupArrays();
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_DPI_MATRIX_WIDGET: {
@@ -440,7 +438,7 @@ public:
 					CargoSuffix cargo_suffix[lengthof(indsp->accepts_cargo)];
 
 					/* Measure the accepted cargoes, if any. */
-					GetAllCargoSuffixes(CARGOSUFFIX_IN, CST_FUND, NULL, this->index[i], indsp, indsp->accepts_cargo, cargo_suffix);
+					GetAllCargoSuffixes(CARGOSUFFIX_IN, CST_FUND, nullptr, this->index[i], indsp, indsp->accepts_cargo, cargo_suffix);
 					std::string cargostring = this->MakeCargoListString(indsp->accepts_cargo, cargo_suffix, lengthof(indsp->accepts_cargo), STR_INDUSTRY_VIEW_REQUIRES_N_CARGO);
 					Dimension strdim = GetStringBoundingBox(cargostring.c_str());
 					if (strdim.width > max_minwidth) {
@@ -450,7 +448,7 @@ public:
 					d = maxdim(d, strdim);
 
 					/* Measure the produced cargoes, if any. */
-					GetAllCargoSuffixes(CARGOSUFFIX_OUT, CST_FUND, NULL, this->index[i], indsp, indsp->produced_cargo, cargo_suffix);
+					GetAllCargoSuffixes(CARGOSUFFIX_OUT, CST_FUND, nullptr, this->index[i], indsp, indsp->produced_cargo, cargo_suffix);
 					cargostring = this->MakeCargoListString(indsp->produced_cargo, cargo_suffix, lengthof(indsp->produced_cargo), STR_INDUSTRY_VIEW_PRODUCES_N_CARGO);
 					strdim = GetStringBoundingBox(cargostring.c_str());
 					if (strdim.width > max_minwidth) {
@@ -479,7 +477,7 @@ public:
 		}
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_DPI_FUND_WIDGET:
@@ -496,7 +494,7 @@ public:
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_DPI_MATRIX_WIDGET: {
@@ -555,18 +553,18 @@ public:
 				CargoSuffix cargo_suffix[lengthof(indsp->accepts_cargo)];
 
 				/* Draw the accepted cargoes, if any. Otherwise, will print "Nothing". */
-				GetAllCargoSuffixes(CARGOSUFFIX_IN, CST_FUND, NULL, this->selected_type, indsp, indsp->accepts_cargo, cargo_suffix);
+				GetAllCargoSuffixes(CARGOSUFFIX_IN, CST_FUND, nullptr, this->selected_type, indsp, indsp->accepts_cargo, cargo_suffix);
 				std::string cargostring = this->MakeCargoListString(indsp->accepts_cargo, cargo_suffix, lengthof(indsp->accepts_cargo), STR_INDUSTRY_VIEW_REQUIRES_N_CARGO);
 				y = DrawStringMultiLine(left, right, y, bottom, cargostring.c_str());
 
 				/* Draw the produced cargoes, if any. Otherwise, will print "Nothing". */
-				GetAllCargoSuffixes(CARGOSUFFIX_OUT, CST_FUND, NULL, this->selected_type, indsp, indsp->produced_cargo, cargo_suffix);
+				GetAllCargoSuffixes(CARGOSUFFIX_OUT, CST_FUND, nullptr, this->selected_type, indsp, indsp->produced_cargo, cargo_suffix);
 				cargostring = this->MakeCargoListString(indsp->produced_cargo, cargo_suffix, lengthof(indsp->produced_cargo), STR_INDUSTRY_VIEW_PRODUCES_N_CARGO);
 				y = DrawStringMultiLine(left, right, y, bottom, cargostring.c_str());
 
 				/* Get the additional purchase info text, if it has not already been queried. */
 				if (HasBit(indsp->callback_mask, CBM_IND_FUND_MORE_TEXT)) {
-					uint16 callback_res = GetIndustryCallback(CBID_INDUSTRY_FUND_MORE_TEXT, 0, 0, NULL, this->selected_type, INVALID_TILE);
+					uint16 callback_res = GetIndustryCallback(CBID_INDUSTRY_FUND_MORE_TEXT, 0, 0, nullptr, this->selected_type, INVALID_TILE);
 					if (callback_res != CALLBACK_FAILED && callback_res != 0x400) {
 						if (callback_res > 0x400) {
 							ErrorUnknownCallbackResult(indsp->grf_prop.grffile->grfid, CBID_INDUSTRY_FUND_MORE_TEXT, callback_res);
@@ -585,7 +583,7 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_DPI_MATRIX_WIDGET: {
@@ -593,12 +591,12 @@ public:
 				if (y < this->count) { // Is it within the boundaries of available data?
 					this->selected_index = y;
 					this->selected_type = this->index[y];
-					const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? NULL : GetIndustrySpec(this->selected_type);
+					const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? nullptr : GetIndustrySpec(this->selected_type);
 
 					this->SetDirty();
 
 					if (_thd.GetCallbackWnd() == this &&
-							((_game_mode != GM_EDITOR && _settings_game.construction.raw_industry_construction == 2 && indsp != NULL && indsp->IsRawIndustry()) ||
+							((_game_mode != GM_EDITOR && _settings_game.construction.raw_industry_construction == 2 && indsp != nullptr && indsp->IsRawIndustry()) ||
 							this->selected_type == INVALID_INDUSTRYTYPE ||
 							!this->enabled[this->selected_index])) {
 						/* Reset the button state if going to prospecting or "build many industries" */
@@ -639,13 +637,13 @@ public:
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		/* Adjust the number of items in the matrix depending of the resize */
 		this->vscroll->SetCapacityFromWidget(this, WID_DPI_MATRIX_WIDGET);
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		VpStartPlaceSizing(tile, VPM_SINGLE_TILE, DDSP_SINGLE_TILE);
 		MoveAllWindowsOffScreen();
@@ -666,6 +664,7 @@ public:
 		/* We do not need to protect ourselves against "Random Many Industries" in this mode */
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
 		uint32 seed = InteractiveRandom();
+		uint32 layout_index = InteractiveRandomRange((uint32)indsp->layouts.size());
 
 		if (_game_mode == GM_EDITOR) {
 			/* Show error if no town exists at all */
@@ -675,25 +674,25 @@ public:
 				return;
 			}
 
-			Backup<CompanyByte> cur_company(_current_company, OWNER_NONE, FILE_LINE);
+			Backup<CompanyID> cur_company(_current_company, OWNER_NONE, FILE_LINE);
 			_generating_world = true;
 			_ignore_restrictions = true;
 
-			DoCommandP(end_tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed,
+			DoCommandP(end_tile, (layout_index << 8) | this->selected_type, seed,
 					CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY), &CcBuildIndustry);
 
 			cur_company.Restore();
 			_ignore_restrictions = false;
 			_generating_world = false;
 		} else {
-			success = DoCommandP(end_tile, (InteractiveRandomRange(indsp->num_table) << 8) | this->selected_type, seed, CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
+			success = DoCommandP(end_tile, (layout_index << 8) | this->selected_type, seed, CMD_BUILD_INDUSTRY | CMD_MSG(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY));
 		}
 
 		/* If an industry has been built, just reset the cursor and the system */
 		if (success && !_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 	}
 
-	virtual void OnGameTick()
+	void OnGameTick() override
 	{
 		if (!this->timer_enabled) return;
 		if (--this->callback_timer == 0) {
@@ -716,12 +715,12 @@ public:
 		}
 	}
 
-	virtual void OnTimeout()
+	void OnTimeout() override
 	{
 		this->RaiseButtons();
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
 		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
@@ -732,13 +731,13 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		this->SetupArrays();
 
-		const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? NULL : GetIndustrySpec(this->selected_type);
-		if (indsp == NULL) this->enabled[this->selected_index] = _settings_game.difficulty.industry_density != ID_FUND_ONLY;
+		const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? nullptr : GetIndustrySpec(this->selected_type);
+		if (indsp == nullptr) this->enabled[this->selected_index] = _settings_game.difficulty.industry_density != ID_FUND_ONLY;
 		this->SetButtons();
 	}
 };
@@ -807,7 +806,7 @@ public:
 		this->InvalidateData();
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->DrawWidgets();
 
@@ -946,17 +945,17 @@ public:
 		return y + WD_FRAMERECT_BOTTOM;
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_IV_CAPTION) SetDParam(0, this->window_number);
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget == WID_IV_INFO) size->height = this->info_height;
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_IV_INFO: {
@@ -1063,16 +1062,16 @@ public:
 		}
 	}
 
-	virtual void OnTimeout()
+	void OnTimeout() override
 	{
 		this->clicked_line = IL_NONE;
 		this->clicked_button = 0;
 		this->SetDirty();
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
-		if (this->viewport != NULL) {
+		if (this->viewport != nullptr) {
 			NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_IV_VIEWPORT);
 			nvp->UpdateViewportCoordinates(this);
 
@@ -1080,7 +1079,7 @@ public:
 		}
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
 		if (StrEmpty(str)) return;
 
@@ -1106,7 +1105,7 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		const Industry *i = Industry::Get(this->window_number);
@@ -1118,12 +1117,12 @@ public:
 		}
 	}
 
-	virtual bool IsNewGRFInspectable() const
+	bool IsNewGRFInspectable() const override
 	{
 		return ::IsNewGRFInspectable(GSF_INDUSTRIES, this->window_number);
 	}
 
-	virtual void ShowNewGRFInspectWindow() const
+	void ShowNewGRFInspectWindow() const override
 	{
 		::ShowNewGRFInspectWindow(GSF_INDUSTRIES, this->window_number);
 	}
@@ -1192,6 +1191,8 @@ static const NWidgetPart _nested_industry_directory_widgets[] = {
 			NWidget(NWID_HORIZONTAL),
 				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetSizingType(NWST_STEP), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_CRITERIA), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
+				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_FILTER_BY_ACC_CARGO), SetMinimalSize(225, 12), SetFill(0, 1), SetDataTip(STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER, STR_TOOLTIP_FILTER_CRITERIA),
+				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_FILTER_BY_PROD_CARGO), SetMinimalSize(225, 12), SetFill(0, 1), SetDataTip(STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER, STR_TOOLTIP_FILTER_CRITERIA),
 				NWidget(WWT_PANEL, COLOUR_BROWN), SetResize(1, 0), EndContainer(),
 			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_BROWN, WID_ID_INDUSTRY_LIST), SetDataTip(0x0, STR_INDUSTRY_DIRECTORY_LIST_CAPTION), SetResize(1, 1), SetScrollbar(WID_ID_SCROLLBAR), EndContainer(),
@@ -1203,7 +1204,68 @@ static const NWidgetPart _nested_industry_directory_widgets[] = {
 	EndContainer(),
 };
 
-typedef GUIList<const Industry*> GUIIndustryList;
+typedef GUIList<const Industry *, const std::pair<CargoID, CargoID> &> GUIIndustryList;
+
+/** Special cargo filter criteria */
+enum CargoFilterSpecialType {
+	CF_ANY  = CT_NO_REFIT, ///< Show all industries (i.e. no filtering)
+	CF_NONE = CT_INVALID,  ///< Show only industries which do not produce/accept cargo
+};
+
+/** Cargo filter functions */
+/**
+ * Check whether an industry accepts and produces a certain cargo pair.
+ * @param industry The industry whose cargoes will being checked.
+ * @param cargoes The accepted and produced cargo pair to look for.
+ * @return bool Whether the given cargoes accepted and produced by the industry.
+ */
+static bool CDECL CargoFilter(const Industry * const *industry, const std::pair<CargoID, CargoID> &cargoes)
+{
+	auto accepted_cargo = cargoes.first;
+	auto produced_cargo = cargoes.second;
+
+	bool accepted_cargo_matches;
+
+	switch (accepted_cargo) {
+		case CF_ANY:
+			accepted_cargo_matches = true;
+			break;
+
+		case CF_NONE:
+			accepted_cargo_matches = std::all_of(std::begin((*industry)->accepts_cargo), std::end((*industry)->accepts_cargo), [](CargoID cargo) {
+				return cargo == CT_INVALID;
+			});
+			break;
+
+		default:
+			const auto &ac = (*industry)->accepts_cargo;
+			accepted_cargo_matches = std::find(std::begin(ac), std::end(ac), accepted_cargo) != std::end(ac);
+			break;
+	}
+
+	bool produced_cargo_matches;
+
+	switch (produced_cargo) {
+		case CF_ANY:
+			produced_cargo_matches = true;
+			break;
+
+		case CF_NONE:
+			produced_cargo_matches = std::all_of(std::begin((*industry)->produced_cargo), std::end((*industry)->produced_cargo), [](CargoID cargo) {
+				return cargo == CT_INVALID;
+			});
+			break;
+
+		default:
+			const auto &pc = (*industry)->produced_cargo;
+			produced_cargo_matches = std::find(std::begin(pc), std::end(pc), produced_cargo) != std::end(pc);
+			break;
+	}
+
+	return accepted_cargo_matches && produced_cargo_matches;
+}
+
+static GUIIndustryList::FilterFunction * const _filter_funcs[] = { &CargoFilter };
 
 
 /**
@@ -1213,7 +1275,6 @@ class IndustryDirectoryWindow : public Window {
 protected:
 	/* Runtime saved values */
 	static Listing last_sorting;
-	static const Industry *last_industry;
 
 	/* Constants for sorting stations */
 	static const StringID sorter_names[];
@@ -1222,25 +1283,105 @@ protected:
 	GUIIndustryList industries;
 	Scrollbar *vscroll;
 
+	CargoID cargo_filter[NUM_CARGO + 2];        ///< Available cargo filters; CargoID or CF_ANY or CF_NONE
+	StringID cargo_filter_texts[NUM_CARGO + 3]; ///< Texts for filter_cargo, terminated by INVALID_STRING_ID
+	CargoID produced_cargo_filter_criteria;     ///< Selected produced cargo filter
+	CargoID accepted_cargo_filter_criteria;     ///< Selected accepted cargo filter
+
+	/**
+	 * Set cargo filter list item index.
+	 * @param index The index of the cargo to be set
+	 */
+	void SetProducedCargoFilterIndex(int index)
+	{
+		if (this->produced_cargo_filter_criteria != index) {
+			this->produced_cargo_filter_criteria = index;
+			/* deactivate filter if criteria is 'Show All', activate it otherwise */
+			bool is_filtering_necessary = this->cargo_filter[this->produced_cargo_filter_criteria] != CF_ANY || this->cargo_filter[this->accepted_cargo_filter_criteria] != CF_ANY;
+
+			this->industries.SetFilterState(is_filtering_necessary);
+			this->industries.SetFilterType(0);
+			this->industries.ForceRebuild();
+		}
+	}
+
+	/**
+	 * Set cargo filter list item index.
+	 * @param index The index of the cargo to be set
+	 */
+	void SetAcceptedCargoFilterIndex(int index)
+	{
+		if (this->accepted_cargo_filter_criteria != index) {
+			this->accepted_cargo_filter_criteria = index;
+			/* deactivate filter if criteria is 'Show All', activate it otherwise */
+			bool is_filtering_necessary = this->cargo_filter[this->produced_cargo_filter_criteria] != CF_ANY || this->cargo_filter[this->accepted_cargo_filter_criteria] != CF_ANY;
+
+			this->industries.SetFilterState(is_filtering_necessary);
+			this->industries.SetFilterType(0);
+			this->industries.ForceRebuild();
+		}
+	}
+
+	/**
+	 * Populate the filter list and set the cargo filter criteria.
+	 */
+	void SetCargoFilterArray()
+	{
+		uint filter_items = 0;
+
+		/* Add item for disabling filtering. */
+		this->cargo_filter[filter_items] = CF_ANY;
+		this->cargo_filter_texts[filter_items] = STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES;
+		this->produced_cargo_filter_criteria = filter_items;
+		this->accepted_cargo_filter_criteria = filter_items;
+		filter_items++;
+
+		/* Add item for industries not producing anything, e.g. power plants */
+		this->cargo_filter[filter_items] = CF_NONE;
+		this->cargo_filter_texts[filter_items] = STR_INDUSTRY_DIRECTORY_FILTER_NONE;
+		filter_items++;
+
+		/* Collect available cargo types for filtering. */
+		const CargoSpec *cs;
+		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+			this->cargo_filter[filter_items] = cs->Index();
+			this->cargo_filter_texts[filter_items] = cs->name;
+			filter_items++;
+		}
+
+		/* Terminate the filter list. */
+		this->cargo_filter_texts[filter_items] = INVALID_STRING_ID;
+
+		this->industries.SetFilterFuncs(_filter_funcs);
+
+		bool is_filtering_necessary = this->cargo_filter[this->produced_cargo_filter_criteria] != CF_ANY || this->cargo_filter[this->accepted_cargo_filter_criteria] != CF_ANY;
+
+		this->industries.SetFilterState(is_filtering_necessary);
+	}
+
 	/** (Re)Build industries list */
 	void BuildSortIndustriesList()
 	{
 		if (this->industries.NeedRebuild()) {
-			this->industries.Clear();
+			this->industries.clear();
 
-			const Industry *i;
-			FOR_ALL_INDUSTRIES(i) {
-				*this->industries.Append() = i;
+			for (const Industry *i : Industry::Iterate()) {
+				this->industries.push_back(i);
 			}
 
-			this->industries.Compact();
+			this->industries.shrink_to_fit();
 			this->industries.RebuildDone();
-			this->vscroll->SetCount(this->industries.Length()); // Update scrollbar as well.
 		}
 
-		if (!this->industries.Sort()) return;
-		IndustryDirectoryWindow::last_industry = NULL; // Reset name sorter sort cache
-		this->SetWidgetDirty(WID_ID_INDUSTRY_LIST); // Set the modified widget dirty
+		auto filter = std::make_pair(this->cargo_filter[this->accepted_cargo_filter_criteria],
+		                             this->cargo_filter[this->produced_cargo_filter_criteria]);
+
+		this->industries.Filter(filter);
+		this->industries.Sort();
+
+		this->vscroll->SetCount((uint)this->industries.size()); // Update scrollbar as well.
+
+		this->SetDirty();
 	}
 
 	/**
@@ -1276,52 +1417,42 @@ protected:
 	}
 
 	/** Sort industries by name */
-	static int CDECL IndustryNameSorter(const Industry * const *a, const Industry * const *b)
+	static bool IndustryNameSorter(const Industry * const &a, const Industry * const &b)
 	{
-		static char buf_cache[96];
-		static char buf[96];
-
-		SetDParam(0, (*a)->index);
-		GetString(buf, STR_INDUSTRY_NAME, lastof(buf));
-
-		if (*b != last_industry) {
-			last_industry = *b;
-			SetDParam(0, (*b)->index);
-			GetString(buf_cache, STR_INDUSTRY_NAME, lastof(buf_cache));
-		}
-
-		return strnatcmp(buf, buf_cache); // Sort by name (natural sorting).
+		int r = strnatcmp(a->GetCachedName(), b->GetCachedName()); // Sort by name (natural sorting).
+		if (r == 0) return a->index < b->index;
+		return r < 0;
 	}
 
 	/** Sort industries by type and name */
-	static int CDECL IndustryTypeSorter(const Industry * const *a, const Industry * const *b)
+	static bool IndustryTypeSorter(const Industry * const &a, const Industry * const &b)
 	{
 		int it_a = 0;
-		while (it_a != NUM_INDUSTRYTYPES && (*a)->type != _sorted_industry_types[it_a]) it_a++;
+		while (it_a != NUM_INDUSTRYTYPES && a->type != _sorted_industry_types[it_a]) it_a++;
 		int it_b = 0;
-		while (it_b != NUM_INDUSTRYTYPES && (*b)->type != _sorted_industry_types[it_b]) it_b++;
+		while (it_b != NUM_INDUSTRYTYPES && b->type != _sorted_industry_types[it_b]) it_b++;
 		int r = it_a - it_b;
-		return (r == 0) ? IndustryNameSorter(a, b) : r;
+		return (r == 0) ? IndustryNameSorter(a, b) : r < 0;
 	}
 
 	/** Sort industries by production and name */
-	static int CDECL IndustryProductionSorter(const Industry * const *a, const Industry * const *b)
+	static bool IndustryProductionSorter(const Industry * const &a, const Industry * const &b)
 	{
 		uint prod_a = 0, prod_b = 0;
-		for (uint i = 0; i < lengthof((*a)->produced_cargo); i++) {
-			if ((*a)->produced_cargo[i] != CT_INVALID) prod_a += (*a)->last_month_production[i];
-			if ((*b)->produced_cargo[i] != CT_INVALID) prod_b += (*b)->last_month_production[i];
+		for (uint i = 0; i < lengthof(a->produced_cargo); i++) {
+			if (a->produced_cargo[i] != CT_INVALID) prod_a += a->last_month_production[i];
+			if (b->produced_cargo[i] != CT_INVALID) prod_b += b->last_month_production[i];
 		}
 		int r = prod_a - prod_b;
 
-		return (r == 0) ? IndustryTypeSorter(a, b) : r;
+		return (r == 0) ? IndustryTypeSorter(a, b) : r < 0;
 	}
 
 	/** Sort industries by transported cargo and name */
-	static int CDECL IndustryTransportedCargoSorter(const Industry * const *a, const Industry * const *b)
+	static bool IndustryTransportedCargoSorter(const Industry * const &a, const Industry * const &b)
 	{
-		int r = GetCargoTransportedSortValue(*a) - GetCargoTransportedSortValue(*b);
-		return (r == 0) ? IndustryNameSorter(a, b) : r;
+		int r = GetCargoTransportedSortValue(a) - GetCargoTransportedSortValue(b);
+		return (r == 0) ? IndustryNameSorter(a, b) : r < 0;
 	}
 
 	/**
@@ -1340,25 +1471,53 @@ protected:
 		static CargoSuffix cargo_suffix[lengthof(i->produced_cargo)];
 		GetAllCargoSuffixes(CARGOSUFFIX_OUT, CST_DIR, i, i->type, indsp, i->produced_cargo, cargo_suffix);
 
-		/* Industry productions */
+		/* Get industry productions (CargoID, production, suffix, transported) */
+		typedef std::tuple<CargoID, uint16, const char*, uint> CargoInfo;
+		std::vector<CargoInfo> cargos;
+
 		for (byte j = 0; j < lengthof(i->produced_cargo); j++) {
 			if (i->produced_cargo[j] == CT_INVALID) continue;
-			SetDParam(p++, i->produced_cargo[j]);
-			SetDParam(p++, i->last_month_production[j]);
-			SetDParamStr(p++, cargo_suffix[j].text);
+			cargos.emplace_back(i->produced_cargo[j], i->last_month_production[j], cargo_suffix[j].text, ToPercent8(i->last_month_pct_transported[j]));
 		}
 
-		/* Transported productions */
-		for (byte j = 0; j < lengthof(i->produced_cargo); j++) {
-			if (i->produced_cargo[j] == CT_INVALID) continue;
-			SetDParam(p++, ToPercent8(i->last_month_pct_transported[j]));
+		/* Sort by descending production, then descending transported */
+		std::sort(cargos.begin(), cargos.end(), [](const CargoInfo a, const CargoInfo b) {
+			if (std::get<1>(a) != std::get<1>(b)) return std::get<1>(a) > std::get<1>(b);
+			return std::get<3>(a) > std::get<3>(b);
+		});
+
+		/* If the produced cargo filter is active then move the filtered cargo to the beginning of the list,
+		 * because this is the one the player interested in, and that way it is not hidden in the 'n' more cargos */
+		const CargoID cid = this->cargo_filter[this->produced_cargo_filter_criteria];
+		if (cid != CF_ANY && cid != CF_NONE) {
+			auto filtered_ci = std::find_if(cargos.begin(), cargos.end(), [cid](const CargoInfo& ci) -> bool {
+				return std::get<0>(ci) == cid;
+			});
+			if (filtered_ci != cargos.end()) {
+				std::rotate(cargos.begin(), filtered_ci, filtered_ci + 1);
+			}
 		}
+
+		/* Display first 3 cargos */
+		for (size_t j = 0; j < min<size_t>(3, cargos.size()); j++) {
+			CargoInfo ci = cargos[j];
+			SetDParam(p++, STR_INDUSTRY_DIRECTORY_ITEM_INFO);
+			SetDParam(p++, std::get<0>(ci));
+			SetDParam(p++, std::get<1>(ci));
+			SetDParamStr(p++, std::get<2>(ci));
+			SetDParam(p++, std::get<3>(ci));
+		}
+
+		/* Undisplayed cargos if any */
+		SetDParam(p++, cargos.size() - 3);
 
 		/* Drawing the right string */
-		switch (p) {
-			case 1:  return STR_INDUSTRY_DIRECTORY_ITEM_NOPROD;
-			case 5:  return STR_INDUSTRY_DIRECTORY_ITEM;
-			default: return STR_INDUSTRY_DIRECTORY_ITEM_TWO;
+		switch (cargos.size()) {
+			case 0: return STR_INDUSTRY_DIRECTORY_ITEM_NOPROD;
+			case 1: return STR_INDUSTRY_DIRECTORY_ITEM_PROD1;
+			case 2: return STR_INDUSTRY_DIRECTORY_ITEM_PROD2;
+			case 3: return STR_INDUSTRY_DIRECTORY_ITEM_PROD3;
+			default: return STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE;
 		}
 	}
 
@@ -1381,12 +1540,29 @@ public:
 		this->last_sorting = this->industries.GetListing();
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void OnInit() override
 	{
-		if (widget == WID_ID_DROPDOWN_CRITERIA) SetDParam(0, IndustryDirectoryWindow::sorter_names[this->industries.SortType()]);
+		this->SetCargoFilterArray();
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void SetStringParameters(int widget) const override
+	{
+		switch (widget) {
+			case WID_ID_DROPDOWN_CRITERIA:
+				SetDParam(0, IndustryDirectoryWindow::sorter_names[this->industries.SortType()]);
+				break;
+
+			case WID_ID_FILTER_BY_ACC_CARGO:
+				SetDParam(0, this->cargo_filter_texts[this->accepted_cargo_filter_criteria]);
+				break;
+
+			case WID_ID_FILTER_BY_PROD_CARGO:
+				SetDParam(0, this->cargo_filter_texts[this->produced_cargo_filter_criteria]);
+				break;
+		}
+	}
+
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_ID_DROPDOWN_ORDER:
@@ -1396,12 +1572,21 @@ public:
 			case WID_ID_INDUSTRY_LIST: {
 				int n = 0;
 				int y = Center(r.top, this->resize.step_height);
-				if (this->industries.Length() == 0) {
+				if (this->industries.size() == 0) {
 					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_DIRECTORY_NONE);
 					break;
 				}
-				for (uint i = this->vscroll->GetPosition(); i < this->industries.Length(); i++) {
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, this->GetIndustryString(this->industries[i]));
+				TextColour tc;
+				const CargoID acf_cid = this->cargo_filter[this->accepted_cargo_filter_criteria];
+				for (uint i = this->vscroll->GetPosition(); i < this->industries.size(); i++) {
+					tc = TC_FROMSTRING;
+					if (acf_cid != CF_ANY && acf_cid != CF_NONE) {
+						Industry *ind = const_cast<Industry *>(this->industries[i]);
+						if (IndustryTemporarilyRefusesCargo(ind, acf_cid)) {
+							tc = TC_GREY | TC_FORCED;
+						}
+					}
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, this->GetIndustryString(this->industries[i]), tc);
 
 					y += this->resize.step_height;
 					if (++n == this->vscroll->GetCapacity()) break; // max number of industries in 1 window
@@ -1411,7 +1596,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_ID_DROPDOWN_ORDER: {
@@ -1435,7 +1620,7 @@ public:
 
 			case WID_ID_INDUSTRY_LIST: {
 				Dimension d = GetStringBoundingBox(STR_INDUSTRY_DIRECTORY_NONE);
-				for (uint i = 0; i < this->industries.Length(); i++) {
+				for (uint i = 0; i < this->industries.size(); i++) {
 					d = maxdim(d, GetStringBoundingBox(this->GetIndustryString(this->industries[i])));
 				}
 				resize->height = d.height = GetMinSizing(NWST_STEP, d.height);
@@ -1449,7 +1634,7 @@ public:
 	}
 
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_ID_DROPDOWN_ORDER:
@@ -1461,9 +1646,17 @@ public:
 				ShowDropDownMenu(this, IndustryDirectoryWindow::sorter_names, this->industries.SortType(), WID_ID_DROPDOWN_CRITERIA, 0, 0);
 				break;
 
+			case WID_ID_FILTER_BY_ACC_CARGO: // Cargo filter dropdown
+				ShowDropDownMenu(this, this->cargo_filter_texts, this->accepted_cargo_filter_criteria, WID_ID_FILTER_BY_ACC_CARGO, 0, 0);
+				break;
+
+			case WID_ID_FILTER_BY_PROD_CARGO: // Cargo filter dropdown
+				ShowDropDownMenu(this, this->cargo_filter_texts, this->produced_cargo_filter_criteria, WID_ID_FILTER_BY_PROD_CARGO, 0, 0);
+				break;
+
 			case WID_ID_INDUSTRY_LIST: {
 				uint p = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_ID_INDUSTRY_LIST, WD_FRAMERECT_TOP);
-				if (p < this->industries.Length()) {
+				if (p < this->industries.size()) {
 					if (_ctrl_pressed) {
 						ShowExtraViewPortWindow(this->industries[p]->location.tile);
 					} else {
@@ -1475,26 +1668,43 @@ public:
 		}
 	}
 
-	virtual void OnDropdownSelect(int widget, int index)
+	void OnDropdownSelect(int widget, int index) override
 	{
-		if (this->industries.SortType() != index) {
-			this->industries.SetSortType(index);
-			this->BuildSortIndustriesList();
+		switch (widget) {
+			case WID_ID_DROPDOWN_CRITERIA: {
+				if (this->industries.SortType() != index) {
+					this->industries.SetSortType(index);
+					this->BuildSortIndustriesList();
+				}
+				break;
+			}
+
+			case WID_ID_FILTER_BY_ACC_CARGO: {
+				this->SetAcceptedCargoFilterIndex(index);
+				this->BuildSortIndustriesList();
+				break;
+			}
+
+			case WID_ID_FILTER_BY_PROD_CARGO: {
+				this->SetProducedCargoFilterIndex(index);
+				this->BuildSortIndustriesList();
+				break;
+			}
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_ID_INDUSTRY_LIST);
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		if (this->industries.NeedRebuild()) this->BuildSortIndustriesList();
 		this->DrawWidgets();
 	}
 
-	virtual void OnHundredthTick()
+	void OnHundredthTick() override
 	{
 		this->industries.ForceResort();
 		this->BuildSortIndustriesList();
@@ -1505,19 +1715,26 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
-		if (data == 0) {
-			/* This needs to be done in command-scope to enforce rebuilding before resorting invalid data */
-			this->industries.ForceRebuild();
-		} else {
-			this->industries.ForceResort();
+		switch (data) {
+			case IDIWD_FORCE_REBUILD:
+				/* This needs to be done in command-scope to enforce rebuilding before resorting invalid data */
+				this->industries.ForceRebuild();
+				break;
+
+			case IDIWD_PRODUCTION_CHANGE:
+				if (this->industries.SortType() == 2) this->industries.ForceResort();
+				break;
+
+			default:
+				this->industries.ForceResort();
+				break;
 		}
 	}
 };
 
 Listing IndustryDirectoryWindow::last_sorting = {false, 0};
-const Industry *IndustryDirectoryWindow::last_industry = NULL;
 
 /* Available station sorting functions. */
 GUIIndustryList::SortFunction * const IndustryDirectoryWindow::sorter_funcs[] = {
@@ -1922,8 +2139,8 @@ struct CargoesField {
 
 	/**
 	 * Decide which cargo was clicked at in a #CFT_CARGO field.
-	 * @param left  Left industry neighbour if available (else \c NULL should be supplied).
-	 * @param right Right industry neighbour if available (else \c NULL should be supplied).
+	 * @param left  Left industry neighbour if available (else \c nullptr should be supplied).
+	 * @param right Right industry neighbour if available (else \c nullptr should be supplied).
 	 * @param pt    Click position in the cargo field.
 	 * @return Cargo clicked at, or #INVALID_CARGO if none.
 	 */
@@ -1953,7 +2170,7 @@ struct CargoesField {
 		/* row = 0 -> at first horizontal row, row = 1 -> second horizontal row, 2 = 3rd horizontal row. */
 		if (col == 0) {
 			if (this->u.cargo.supp_cargoes[row] != INVALID_CARGO) return this->u.cargo.vertical_cargoes[this->u.cargo.supp_cargoes[row]];
-			if (left != NULL) {
+			if (left != nullptr) {
 				if (left->type == CFT_INDUSTRY) return left->u.industry.other_produced[row];
 				if (left->type == CFT_CARGO_LABEL && !left->u.cargo_label.left_align) return left->u.cargo_label.cargoes[row];
 			}
@@ -1961,7 +2178,7 @@ struct CargoesField {
 		}
 		if (col == this->u.cargo.num_cargoes) {
 			if (this->u.cargo.cust_cargoes[row] != INVALID_CARGO) return this->u.cargo.vertical_cargoes[this->u.cargo.cust_cargoes[row]];
-			if (right != NULL) {
+			if (right != nullptr) {
 				if (right->type == CFT_INDUSTRY) return right->u.industry.other_accepted[row];
 				if (right->type == CFT_CARGO_LABEL && right->u.cargo_label.left_align) return right->u.cargo_label.cargoes[row];
 			}
@@ -2179,7 +2396,7 @@ next_cargo: ;
 struct IndustryCargoesWindow : public Window {
 	static const int HOR_TEXT_PADDING, VERT_TEXT_PADDING;
 
-	typedef SmallVector<CargoesRow, 4> Fields;
+	typedef std::vector<CargoesRow> Fields;
 
 	Fields fields;  ///< Fields to display in the #WID_IC_PANEL.
 	uint ind_cargo; ///< If less than #NUM_INDUSTRYTYPES, an industry type, else a cargo id + NUM_INDUSTRYTYPES.
@@ -2196,7 +2413,7 @@ struct IndustryCargoesWindow : public Window {
 		this->OnInvalidateData(id);
 	}
 
-	virtual void OnInit()
+	void OnInit() override
 	{
 		/* Initialize static CargoesField size variables. */
 		Dimension d = GetStringBoundingBox(STR_INDUSTRY_CARGOES_PRODUCERS);
@@ -2243,7 +2460,7 @@ struct IndustryCargoesWindow : public Window {
 		CargoesField::cargo_field_width = CargoesField::HOR_CARGO_BORDER_SPACE * 2 + CargoesField::HOR_CARGO_WIDTH * CargoesField::max_cargoes + CargoesField::HOR_CARGO_SPACE * (CargoesField::max_cargoes - 1);
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_IC_PANEL:
@@ -2262,7 +2479,7 @@ struct IndustryCargoesWindow : public Window {
 
 
 	CargoesFieldType type; ///< Type of field.
-	virtual void SetStringParameters  (int widget) const
+	void SetStringParameters  (int widget) const override
 	{
 		if (widget != WID_IC_CAPTION) return;
 
@@ -2438,13 +2655,14 @@ struct IndustryCargoesWindow : public Window {
 		_displayed_industries.reset();
 		_displayed_industries.set(it);
 
-		this->fields.Clear();
-		CargoesRow *row = this->fields.Append();
-		row->columns[0].MakeHeader(STR_INDUSTRY_CARGOES_PRODUCERS);
-		row->columns[1].MakeEmpty(CFT_SMALL_EMPTY);
-		row->columns[2].MakeEmpty(CFT_SMALL_EMPTY);
-		row->columns[3].MakeEmpty(CFT_SMALL_EMPTY);
-		row->columns[4].MakeHeader(STR_INDUSTRY_CARGOES_CUSTOMERS);
+		this->fields.clear();
+		/*C++17: CargoesRow &row = */ this->fields.emplace_back();
+		CargoesRow &row = this->fields.back();
+		row.columns[0].MakeHeader(STR_INDUSTRY_CARGOES_PRODUCERS);
+		row.columns[1].MakeEmpty(CFT_SMALL_EMPTY);
+		row.columns[2].MakeEmpty(CFT_SMALL_EMPTY);
+		row.columns[3].MakeEmpty(CFT_SMALL_EMPTY);
+		row.columns[4].MakeHeader(STR_INDUSTRY_CARGOES_CUSTOMERS);
 
 		const IndustrySpec *central_sp = GetIndustrySpec(it);
 		bool houses_supply = HousesCanSupply(central_sp->accepts_cargo, lengthof(central_sp->accepts_cargo));
@@ -2454,12 +2672,13 @@ struct IndustryCargoesWindow : public Window {
 		int num_cust = CountMatchingAcceptingIndustries(central_sp->produced_cargo, lengthof(central_sp->produced_cargo)) + houses_accept;
 		int num_indrows = max(3, max(num_supp, num_cust)); // One is needed for the 'it' industry, and 2 for the cargo labels.
 		for (int i = 0; i < num_indrows; i++) {
-			CargoesRow *row = this->fields.Append();
-			row->columns[0].MakeEmpty(CFT_EMPTY);
-			row->columns[1].MakeCargo(central_sp->accepts_cargo, lengthof(central_sp->accepts_cargo));
-			row->columns[2].MakeEmpty(CFT_EMPTY);
-			row->columns[3].MakeCargo(central_sp->produced_cargo, lengthof(central_sp->produced_cargo));
-			row->columns[4].MakeEmpty(CFT_EMPTY);
+			/*C++17: CargoesRow &row = */ this->fields.emplace_back();
+			CargoesRow &row = this->fields.back();
+			row.columns[0].MakeEmpty(CFT_EMPTY);
+			row.columns[1].MakeCargo(central_sp->accepts_cargo, lengthof(central_sp->accepts_cargo));
+			row.columns[2].MakeEmpty(CFT_EMPTY);
+			row.columns[3].MakeCargo(central_sp->produced_cargo, lengthof(central_sp->produced_cargo));
+			row.columns[4].MakeEmpty(CFT_EMPTY);
 		}
 		/* Add central industry. */
 		int central_row = 1 + num_indrows / 2;
@@ -2516,13 +2735,14 @@ struct IndustryCargoesWindow : public Window {
 		this->ind_cargo = cid + NUM_INDUSTRYTYPES;
 		_displayed_industries.reset();
 
-		this->fields.Clear();
-		CargoesRow *row = this->fields.Append();
-		row->columns[0].MakeHeader(STR_INDUSTRY_CARGOES_PRODUCERS);
-		row->columns[1].MakeEmpty(CFT_SMALL_EMPTY);
-		row->columns[2].MakeHeader(STR_INDUSTRY_CARGOES_CUSTOMERS);
-		row->columns[3].MakeEmpty(CFT_SMALL_EMPTY);
-		row->columns[4].MakeEmpty(CFT_SMALL_EMPTY);
+		this->fields.clear();
+		/*C++17: CargoesRow &row = */ this->fields.emplace_back();
+		CargoesRow &row = this->fields.back();
+		row.columns[0].MakeHeader(STR_INDUSTRY_CARGOES_PRODUCERS);
+		row.columns[1].MakeEmpty(CFT_SMALL_EMPTY);
+		row.columns[2].MakeHeader(STR_INDUSTRY_CARGOES_CUSTOMERS);
+		row.columns[3].MakeEmpty(CFT_SMALL_EMPTY);
+		row.columns[4].MakeEmpty(CFT_SMALL_EMPTY);
 
 		bool houses_supply = HousesCanSupply(&cid, 1);
 		bool houses_accept = HousesCanAccept(&cid, 1);
@@ -2530,12 +2750,13 @@ struct IndustryCargoesWindow : public Window {
 		int num_cust = CountMatchingAcceptingIndustries(&cid, 1) + houses_accept;
 		int num_indrows = max(num_supp, num_cust);
 		for (int i = 0; i < num_indrows; i++) {
-			CargoesRow *row = this->fields.Append();
-			row->columns[0].MakeEmpty(CFT_EMPTY);
-			row->columns[1].MakeCargo(&cid, 1);
-			row->columns[2].MakeEmpty(CFT_EMPTY);
-			row->columns[3].MakeEmpty(CFT_EMPTY);
-			row->columns[4].MakeEmpty(CFT_EMPTY);
+			/*C++17: CargoesRow &row = */ this->fields.emplace_back();
+			CargoesRow &row = this->fields.back();
+			row.columns[0].MakeEmpty(CFT_EMPTY);
+			row.columns[1].MakeCargo(&cid, 1);
+			row.columns[2].MakeEmpty(CFT_EMPTY);
+			row.columns[3].MakeEmpty(CFT_EMPTY);
+			row.columns[4].MakeEmpty(CFT_EMPTY);
 		}
 
 		this->fields[num_indrows].MakeCargoLabel(0, false); // Add cargo labels at the left bottom.
@@ -2581,7 +2802,7 @@ struct IndustryCargoesWindow : public Window {
 	 * - data = NUM_INDUSTRYTYPES: Stop sending updates to the smallmap window.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		if (data == NUM_INDUSTRYTYPES) {
@@ -2596,7 +2817,7 @@ struct IndustryCargoesWindow : public Window {
 		this->ComputeIndustryDisplay(data);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_IC_PANEL) return;
 
@@ -2613,7 +2834,7 @@ struct IndustryCargoesWindow : public Window {
 
 		const NWidgetBase *nwp = this->GetWidget<NWidgetBase>(WID_IC_PANEL);
 		int vpos = -this->vscroll->GetPosition() * nwp->resize_y;
-		for (uint i = 0; i < this->fields.Length(); i++) {
+		for (uint i = 0; i < this->fields.size(); i++) {
 			int row_height = (i == 0) ? CargoesField::small_height : CargoesField::normal_height;
 			if (vpos + row_height >= 0) {
 				int xpos = left_pos;
@@ -2655,7 +2876,7 @@ struct IndustryCargoesWindow : public Window {
 		if (pt.y < vpos) return false;
 
 		int row = (pt.y - vpos) / CargoesField::normal_height; // row is relative to row 1.
-		if (row + 1 >= (int)this->fields.Length()) return false;
+		if (row + 1 >= (int)this->fields.size()) return false;
 		vpos = pt.y - vpos - row * CargoesField::normal_height; // Position in the row + 1 field
 		row++; // rebase row to match index of this->fields.
 
@@ -2684,7 +2905,7 @@ struct IndustryCargoesWindow : public Window {
 		return true;
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_IC_PANEL: {
@@ -2698,8 +2919,8 @@ struct IndustryCargoesWindow : public Window {
 						break;
 
 					case CFT_CARGO: {
-						CargoesField *lft = (fieldxy.x > 0) ? this->fields[fieldxy.y].columns + fieldxy.x - 1 : NULL;
-						CargoesField *rgt = (fieldxy.x < 4) ? this->fields[fieldxy.y].columns + fieldxy.x + 1 : NULL;
+						CargoesField *lft = (fieldxy.x > 0) ? this->fields[fieldxy.y].columns + fieldxy.x - 1 : nullptr;
+						CargoesField *rgt = (fieldxy.x < 4) ? this->fields[fieldxy.y].columns + fieldxy.x + 1 : nullptr;
 						CargoID cid = fld->CargoClickedAt(lft, rgt, xy);
 						if (cid != INVALID_CARGO) this->ComputeCargoDisplay(cid);
 						break;
@@ -2723,46 +2944,41 @@ struct IndustryCargoesWindow : public Window {
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 
 				if (this->IsWidgetLowered(WID_IC_NOTIFY)) {
-					if (FindWindowByClass(WC_SMALLMAP) == NULL) ShowSmallMap();
+					if (FindWindowByClass(WC_SMALLMAP) == nullptr) ShowSmallMap();
 					this->NotifySmallmap();
 				}
 				break;
 
 			case WID_IC_CARGO_DROPDOWN: {
-				DropDownList *lst = new DropDownList;
+				DropDownList lst;
 				const CargoSpec *cs;
 				FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
-					*lst->Append() = new DropDownListStringItem(cs->name, cs->Index(), false);
+					lst.emplace_back(new DropDownListStringItem(cs->name, cs->Index(), false));
 				}
-				if (lst->Length() == 0) {
-					delete lst;
-					break;
+				if (!lst.empty()) {
+					int selected = (this->ind_cargo >= NUM_INDUSTRYTYPES) ? (int)(this->ind_cargo - NUM_INDUSTRYTYPES) : -1;
+					ShowDropDownList(this, std::move(lst), selected, WID_IC_CARGO_DROPDOWN, 0, true);
 				}
-				int selected = (this->ind_cargo >= NUM_INDUSTRYTYPES) ? (int)(this->ind_cargo - NUM_INDUSTRYTYPES) : -1;
-				ShowDropDownList(this, lst, selected, WID_IC_CARGO_DROPDOWN, 0, true);
 				break;
 			}
 
 			case WID_IC_IND_DROPDOWN: {
-				DropDownList *lst = new DropDownList;
-				for (uint i = 0; i < NUM_INDUSTRYTYPES; i++) {
-					IndustryType ind = _sorted_industry_types[i];
+				DropDownList lst;
+				for (IndustryType ind : _sorted_industry_types) {
 					const IndustrySpec *indsp = GetIndustrySpec(ind);
 					if (!indsp->enabled) continue;
-					*lst->Append() = new DropDownListStringItem(indsp->name, ind, false);
+					lst.emplace_back(new DropDownListStringItem(indsp->name, ind, false));
 				}
-				if (lst->Length() == 0) {
-					delete lst;
-					break;
+				if (!lst.empty()) {
+					int selected = (this->ind_cargo < NUM_INDUSTRYTYPES) ? (int)this->ind_cargo : -1;
+					ShowDropDownList(this, std::move(lst), selected, WID_IC_IND_DROPDOWN, 0, true);
 				}
-				int selected = (this->ind_cargo < NUM_INDUSTRYTYPES) ? (int)this->ind_cargo : -1;
-				ShowDropDownList(this, lst, selected, WID_IC_IND_DROPDOWN, 0, true);
 				break;
 			}
 		}
 	}
 
-	virtual void OnDropdownSelect(int widget, int index)
+	void OnDropdownSelect(int widget, int index) override
 	{
 		if (index < 0) return;
 
@@ -2777,7 +2993,7 @@ struct IndustryCargoesWindow : public Window {
 		}
 	}
 
-	bool OnTooltip(Point pt, int widget, TooltipCloseCondition close_cond)
+	bool OnTooltip(Point pt, int widget, TooltipCloseCondition close_cond) override
 	{
 		if (widget != WID_IC_PANEL) return false;
 
@@ -2788,8 +3004,8 @@ struct IndustryCargoesWindow : public Window {
 		CargoID cid = INVALID_CARGO;
 		switch (fld->type) {
 			case CFT_CARGO: {
-				CargoesField *lft = (fieldxy.x > 0) ? this->fields[fieldxy.y].columns + fieldxy.x - 1 : NULL;
-				CargoesField *rgt = (fieldxy.x < 4) ? this->fields[fieldxy.y].columns + fieldxy.x + 1 : NULL;
+				CargoesField *lft = (fieldxy.x > 0) ? this->fields[fieldxy.y].columns + fieldxy.x - 1 : nullptr;
+				CargoesField *rgt = (fieldxy.x < 4) ? this->fields[fieldxy.y].columns + fieldxy.x + 1 : nullptr;
 				cid = fld->CargoClickedAt(lft, rgt, xy);
 				break;
 			}
@@ -2801,7 +3017,7 @@ struct IndustryCargoesWindow : public Window {
 
 			case CFT_INDUSTRY:
 				if (fld->u.industry.ind_type < NUM_INDUSTRYTYPES && (this->ind_cargo >= NUM_INDUSTRYTYPES || fieldxy.x != 2)) {
-					GuiShowTooltips(this, STR_INDUSTRY_CARGOES_INDUSTRY_TOOLTIP, 0, NULL, close_cond);
+					GuiShowTooltips(this, STR_INDUSTRY_CARGOES_INDUSTRY_TOOLTIP, 0, nullptr, close_cond);
 				}
 				return true;
 
@@ -2819,7 +3035,7 @@ struct IndustryCargoesWindow : public Window {
 		return false;
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_IC_PANEL);
 	}
@@ -2835,10 +3051,10 @@ const int IndustryCargoesWindow::VERT_TEXT_PADDING = 5; ///< Vertical padding ar
 static void ShowIndustryCargoesWindow(IndustryType id)
 {
 	if (id >= NUM_INDUSTRYTYPES) {
-		for (uint i = 0; i < NUM_INDUSTRYTYPES; i++) {
-			const IndustrySpec *indsp = GetIndustrySpec(_sorted_industry_types[i]);
+		for (IndustryType ind : _sorted_industry_types) {
+			const IndustrySpec *indsp = GetIndustrySpec(ind);
 			if (indsp->enabled) {
-				id = _sorted_industry_types[i];
+				id = ind;
 				break;
 			}
 		}
@@ -2846,7 +3062,7 @@ static void ShowIndustryCargoesWindow(IndustryType id)
 	}
 
 	Window *w = BringWindowToFrontById(WC_INDUSTRY_CARGOES, 0);
-	if (w != NULL) {
+	if (w != nullptr) {
 		w->InvalidateData(id);
 		return;
 	}

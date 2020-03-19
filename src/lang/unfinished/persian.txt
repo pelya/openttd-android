@@ -10,8 +10,6 @@
 ##grflangid 0x62
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -461,9 +459,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :باز و بسته کردن کنسول
 STR_ABOUT_MENU_AI_DEBUG                                         :خطایابی هوش مصنوعی
 STR_ABOUT_MENU_SCREENSHOT                                       :تصویر از بازی
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :عکس از صفحه تمام بزرگنمایی شده
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :اندازه پیش فرض عکس برداری از صفحه
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :تصویر از همه نقشه
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :'OpenTTD' درباره
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :تراز کردن تصویر گرافیکی
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :باز/بسته کردن محدوده جعبه ها
@@ -633,9 +628,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}انتخابی 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}شدت صدای موسیقی
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}شدت صدای محیط
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}کمینه
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}بیشینه
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -846,6 +838,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}نوسا
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK} {STRING} جدید هم اکنون قابل دسترسی است!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK} {STRING} جدید هم اکنون قابل دسترسی است!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} دیگر {STRING} قبول نمی کند
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} دیگر {STRING} و {STRING} قبول نمی کند
@@ -1414,7 +1407,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}توز�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}رقیبان
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}بازیگران رایانه
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :اصلی
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(توصیه می گردد)
 
@@ -1484,13 +1476,9 @@ STR_QUIT_NO                                                     :{BLACK}خیر
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :هایکو
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2108,6 +2096,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}ساخت
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}ساخت تونل تراموا.دکمه شیفت برآورد قیمت را نشان می دهد
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK} تغییر بین ساخت/حذف جاده
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}تغییر حالت بین ساخت/جذف برای ساخت و ساز تراموا
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}جهت گاراژ خودروی جاده ای
@@ -2881,8 +2870,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}زیرس
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}قطعه های ریل:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}نشانگرها
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}قطعه های راه:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}راه
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}تراموا
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}قسمتهای زیر آب:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}کانال ها
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}ایستگاه ها:
@@ -2893,7 +2880,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :کارخانه ها
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- هیچ -
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% انتقال داده شده)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 
 # Industry view
@@ -2943,14 +2929,18 @@ STR_VEHICLE_LIST_SEND_AIRCRAFT_TO_HANGAR                        :فرستادن 
 
 
 
+
 # Build vehicle window
 STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :قطار جدید
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :قطار جدید مونوریل
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :قطار جدید ریل مغناطیسی
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :وسایل ریل خط آهن
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :ماشین های جدید
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :وسایل ریل خط آهن
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :هواپیمای جدید
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}سرعت در اقیانوس: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_CANAL                                   :{BLACK}سرعت در کانال/رودخانه: {GOLD}{VELOCITY}
@@ -2965,9 +2955,11 @@ STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_BUTTON                        :{BLACK}ساخت
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}خرید وسیله نقلیه
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}خرید هواپیما
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}خرید قطار مشخص شده. Shift+Click کنید تا قبل از خرید، مبلغ تقریبی آنرا نمایش دهد
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}خرید کشتی مشخص شده . Shift+Click کنید تا هزینه تقریبی نمایش داده شود
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}خرید هواپیمای مشخص شده. برای مشاهده هزینه تقریبی Shift+Click کنید
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}تغییر نام
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}تغییر نام
@@ -3039,12 +3031,15 @@ STR_DEPOT_AIRCRAFT_LOCATION_TOOLTIP                             :{BLACK}نمای
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}پیغام از سازنده ی وسیله نقلیه
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}ما به تازگی {STRING} را طراحی کرده ایم- آیا مایلید در یک سال اولان را به شگل انحصاری مورد تست قرار دهید تا نحوه عملکرد وسیله را قبل از عرضه ی جهانی مورد بررسی قرار دهیم؟
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :لوکوموتیو راه آهن
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :ماشین جاده ای
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :هواپیما
-STR_ENGINE_PREVIEW_SHIP                                         :کشتی
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :لوکوموتیو مونوریل
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :لوکوموتیو ریل مغناطیسی
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :ماشین جاده ای
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :هواپیما
+STR_ENGINE_PREVIEW_SHIP                                         :کشتی
 
 
 # Autoreplace window
@@ -3063,6 +3058,7 @@ STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}برای
 
 
 STR_REPLACE_ELRAIL_VEHICLES                                     :وسایل نقلیه ریلی برقی
+
 
 
 # Vehicle view
@@ -3287,6 +3283,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}قبول
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}انتخاب کد مشخص شده
 STR_AI_LIST_CANCEL                                              :{BLACK}لغو
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}کد را تغییر نده
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} پارامترها

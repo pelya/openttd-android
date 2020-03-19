@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -16,24 +14,24 @@
 
 class MusicDriver_Cocoa : public MusicDriver {
 public:
-	/* virtual */ const char *Start(const char * const *param);
+	const char *Start(const char * const *param) override;
 
-	/* virtual */ void Stop();
+	void Stop() override;
 
-	/* virtual */ void PlaySong(const MusicSongInfo &song);
+	void PlaySong(const MusicSongInfo &song) override;
 
-	/* virtual */ void StopSong();
+	void StopSong() override;
 
-	/* virtual */ bool IsSongPlaying();
+	bool IsSongPlaying() override;
 
-	/* virtual */ void SetVolume(byte vol);
-	/* virtual */ const char *GetName() const { return "cocoa"; }
+	void SetVolume(byte vol) override;
+	const char *GetName() const override { return "cocoa"; }
 };
 
 class FMusicDriver_Cocoa : public DriverFactoryBase {
 public:
 	FMusicDriver_Cocoa() : DriverFactoryBase(Driver::DT_MUSIC, 10, "cocoa", "Cocoa MIDI Driver") {}
-	/* virtual */ Driver *CreateInstance() const { return new MusicDriver_Cocoa(); }
+	Driver *CreateInstance() const override { return new MusicDriver_Cocoa(); }
 };
 
 #endif /* MUSIC_MACOSX_COCOA_H */

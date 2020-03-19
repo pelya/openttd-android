@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -50,7 +48,7 @@ struct GoalListWindow : public Window {
 		this->OnInvalidateData(0);
 	}
 
-	/* virtual */ void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		if (widget != WID_GOAL_CAPTION) return;
 
@@ -62,14 +60,13 @@ struct GoalListWindow : public Window {
 		}
 	}
 
-	/* virtual */ void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		if (widget != WID_GOAL_LIST) return;
 
 		int y = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_GOAL_LIST, WD_FRAMERECT_TOP);
 		int num = 0;
-		const Goal *s;
-		FOR_ALL_GOALS(s) {
+		for (const Goal *s : Goal::Iterate()) {
 			if (s->company == INVALID_COMPANY) {
 				y--;
 				if (y == 0) {
@@ -88,7 +85,7 @@ struct GoalListWindow : public Window {
 		y -= 2; // "Company specific goals:" line.
 		if (y < 0) return;
 
-		FOR_ALL_GOALS(s) {
+		for (const Goal *s : Goal::Iterate()) {
 			if (s->company == this->window_number) {
 				y--;
 				if (y == 0) {
@@ -160,8 +157,7 @@ struct GoalListWindow : public Window {
 		/* Count number of (non) awarded goals. */
 		uint num_global = 0;
 		uint num_company = 0;
-		const Goal *s;
-		FOR_ALL_GOALS(s) {
+		for (const Goal *s : Goal::Iterate()) {
 			if (s->company == INVALID_COMPANY) {
 				num_global++;
 			} else if (s->company == this->window_number) {
@@ -177,7 +173,7 @@ struct GoalListWindow : public Window {
 		return 3 + num_global + num_company;
 	}
 
-	/* virtual */ void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_GOAL_LIST) return;
 		Dimension d = maxdim(GetStringBoundingBox(STR_GOALS_GLOBAL_TITLE), GetStringBoundingBox(STR_GOALS_COMPANY_TITLE));
@@ -209,8 +205,7 @@ struct GoalListWindow : public Window {
 		bool rtl = _current_text_dir == TD_RTL;
 
 		uint num = 0;
-		const Goal *s;
-		FOR_ALL_GOALS(s) {
+		for (const Goal *s : Goal::Iterate()) {
 			if (global_section ? s->company == INVALID_COMPANY : (s->company == this->window_number && s->company != INVALID_COMPANY)) {
 				if (IsInsideMM(pos, 0, cap)) {
 					switch (column) {
@@ -223,7 +218,7 @@ struct GoalListWindow : public Window {
 						}
 
 						case GC_PROGRESS:
-							if (s->progress != NULL) {
+							if (s->progress != nullptr) {
 								SetDParamStr(0, s->progress);
 								StringID str = s->completed ? STR_GOALS_PROGRESS_COMPLETE : STR_GOALS_PROGRESS;
 								int progress_x = x;
@@ -272,7 +267,7 @@ struct GoalListWindow : public Window {
 		DrawPartialGoalList(pos, cap, x, y, right, progress_col_width, false, column);
 	}
 
-	/* virtual */ void OnPaint()
+	void OnPaint() override
 	{
 		this->DrawWidgets();
 
@@ -280,9 +275,8 @@ struct GoalListWindow : public Window {
 
 		/* Calculate progress column width. */
 		uint max_width = 0;
-		Goal *s;
-		FOR_ALL_GOALS(s) {
-			if (s->progress != NULL) {
+		for (const Goal *s : Goal::Iterate()) {
+			if (s->progress != nullptr) {
 				SetDParamStr(0, s->progress);
 				StringID str = s->completed ? STR_GOALS_PROGRESS_COMPLETE : STR_GOALS_PROGRESS;
 				uint str_width = GetStringBoundingBox(str).width;
@@ -299,7 +293,7 @@ struct GoalListWindow : public Window {
 
 	}
 
-	/* virtual */ void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_GOAL_LIST);
 	}
@@ -309,7 +303,7 @@ struct GoalListWindow : public Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	/* virtual */ void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		this->vscroll->SetCount(this->CountLines());
@@ -388,7 +382,7 @@ struct GoalQuestionWindow : public Window {
 		free(this->question);
 	}
 
-	/* virtual */ void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_GQ_CAPTION:
@@ -409,7 +403,7 @@ struct GoalQuestionWindow : public Window {
 		}
 	}
 
-	/* virtual */ void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_GQ_BUTTON_1:
@@ -429,7 +423,7 @@ struct GoalQuestionWindow : public Window {
 		}
 	}
 
-	/* virtual */ void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_GQ_QUESTION) return;
 
@@ -437,7 +431,7 @@ struct GoalQuestionWindow : public Window {
 		size->height = GetStringHeight(STR_JUST_RAW_STRING, size->width) + WD_PAR_VSEP_WIDE;
 	}
 
-	/* virtual */ void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_GQ_QUESTION) return;
 
@@ -473,7 +467,7 @@ static const NWidgetPart _nested_goal_question_widgets[] = {
 };
 
 static WindowDesc _goal_question_list_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_GOAL_QUESTION, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_goal_question_widgets, lengthof(_nested_goal_question_widgets)

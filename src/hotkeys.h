@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -29,10 +27,10 @@ struct Hotkey {
 
 	const char *name;
 	int num;
-	SmallVector<uint16, 1> keycodes;
+	std::vector<uint16> keycodes;
 };
 
-#define HOTKEY_LIST_END Hotkey((uint16)0, NULL, -1)
+#define HOTKEY_LIST_END Hotkey((uint16)0, nullptr, -1)
 
 struct IniFile;
 
@@ -42,7 +40,7 @@ struct IniFile;
 struct HotkeyList {
 	typedef EventState (*GlobalHotkeyHandlerFunc)(int hotkey);
 
-	HotkeyList(const char *ini_group, Hotkey *items, GlobalHotkeyHandlerFunc global_hotkey_handler = NULL);
+	HotkeyList(const char *ini_group, Hotkey *items, GlobalHotkeyHandlerFunc global_hotkey_handler = nullptr);
 	~HotkeyList();
 
 	void Load(IniFile *ini);

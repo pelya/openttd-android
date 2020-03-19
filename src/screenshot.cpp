@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,6 +16,7 @@
 #include "zoom_func.h"
 #include "core/endian_func.hpp"
 #include "saveload/saveload.h"
+#include "company_base.h"
 #include "company_func.h"
 #include "strings_func.h"
 #include "error.h"
@@ -68,6 +67,8 @@ struct ScreenshotFormat {
 	const char *extension;       ///< File extension.
 	ScreenshotHandlerProc *proc; ///< Function for writing the screenshot.
 };
+
+#define MKCOLOUR(x)         TO_LE32X(x)
 
 /*************************************************
  **** SCREENSHOT CODE FOR WINDOWS BITMAP (.BMP)
@@ -121,7 +122,7 @@ static bool MakeBMPImage(const char *name, ScreenshotCallback *callb, void *user
 	}
 
 	FILE *f = fopen(name, "wb");
-	if (f == NULL) return false;
+	if (f == nullptr) return false;
 
 	/* Each scanline must be aligned on a 32bit boundary */
 	uint bytewidth = Align(w * bpp, 4); // bytes per line in file
@@ -270,18 +271,18 @@ static bool MakePNGImage(const char *name, ScreenshotCallback *callb, void *user
 	if (pixelformat == 16) bpp = 3;
 
 	f = fopen(name, "wb");
-	if (f == NULL) return false;
+	if (f == nullptr) return false;
 
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, const_cast<char *>(name), png_my_error, png_my_warning);
 
-	if (png_ptr == NULL) {
+	if (png_ptr == nullptr) {
 		fclose(f);
 		return false;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
-		png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+	if (info_ptr == nullptr) {
+		png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
 		fclose(f);
 		return false;
 	}
@@ -313,15 +314,14 @@ static bool MakePNGImage(const char *name, ScreenshotCallback *callb, void *user
 	char *p = buf;
 	p += seprintf(p, lastof(buf), "Graphics set: %s (%u)\n", BaseGraphics::GetUsedSet()->name, BaseGraphics::GetUsedSet()->version);
 	p = strecpy(p, "NewGRFs:\n", lastof(buf));
-	for (const GRFConfig *c = _game_mode == GM_MENU ? NULL : _grfconfig; c != NULL; c = c->next) {
+	for (const GRFConfig *c = _game_mode == GM_MENU ? nullptr : _grfconfig; c != nullptr; c = c->next) {
 		p += seprintf(p, lastof(buf), "%08X ", BSWAP32(c->ident.grfid));
 		p = md5sumToString(p, lastof(buf), c->ident.md5sum);
 		p += seprintf(p, lastof(buf), " %s\n", c->filename);
 	}
 	p = strecpy(p, "\nCompanies:\n", lastof(buf));
-	const Company *c;
-	FOR_ALL_COMPANIES(c) {
-		if (c->ai_info == NULL) {
+	for (const Company *c : Company::Iterate()) {
+		if (c->ai_info == nullptr) {
 			p += seprintf(p, lastof(buf), "%2i: Human\n", (int)c->index);
 		} else {
 			p += seprintf(p, lastof(buf), "%2i: %s (v%d)\n", (int)c->index, c->ai_info->GetName(), c->ai_info->GetVersion());
@@ -460,7 +460,7 @@ static bool MakePCXImage(const char *name, ScreenshotCallback *callb, void *user
 	if (pixelformat != 8 || w == 0) return false;
 
 	f = fopen(name, "wb");
-	if (f == NULL) return false;
+	if (f == nullptr) return false;
 
 	memset(&pcx, 0, sizeof(pcx));
 
@@ -714,7 +714,7 @@ static const char *MakeScreenshotName(const char *default_fn, const char *ext, b
 static bool MakeSmallScreenshot(bool crashlog)
 {
 	const ScreenshotFormat *sf = _screenshot_formats + _cur_screenshot_format;
-	return sf->proc(MakeScreenshotName(SCREENSHOT_NAME, sf->extension, crashlog), CurrentScreenCallback, NULL, _screen.width, _screen.height,
+	return sf->proc(MakeScreenshotName(SCREENSHOT_NAME, sf->extension, crashlog), CurrentScreenCallback, nullptr, _screen.width, _screen.height,
 			BlitterFactory::GetCurrentBlitter()->GetScreenDepth(), _cur_palette.palette);
 }
 
@@ -725,38 +725,66 @@ static bool MakeSmallScreenshot(bool crashlog)
  */
 void SetupScreenshotViewport(ScreenshotType t, ViewPort *vp)
 {
-	/* Determine world coordinates of screenshot */
-	if (t == SC_WORLD) {
-		vp->zoom = ZOOM_LVL_WORLD_SCREENSHOT;
+	switch(t) {
+		case SC_VIEWPORT:
+		case SC_CRASHLOG: {
+			Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
+			vp->virtual_left   = w->viewport->virtual_left;
+			vp->virtual_top    = w->viewport->virtual_top;
+			vp->virtual_width  = w->viewport->virtual_width;
+			vp->virtual_height = w->viewport->virtual_height;
 
-		TileIndex north_tile = _settings_game.construction.freeform_edges ? TileXY(1, 1) : TileXY(0, 0);
-		TileIndex south_tile = MapSize() - 1;
+			/* Compute pixel coordinates */
+			vp->left = 0;
+			vp->top = 0;
+			vp->width  = _screen.width;
+			vp->height = _screen.height;
+			vp->overlay = w->viewport->overlay;
+			break;
+		}
+		case SC_WORLD: {
+			/* Determine world coordinates of screenshot */
+			vp->zoom = ZOOM_LVL_WORLD_SCREENSHOT;
 
-		/* We need to account for a hill or high building at tile 0,0. */
-		int extra_height_top = TilePixelHeight(north_tile) + 150;
-		/* If there is a hill at the bottom don't create a large black area. */
-		int reclaim_height_bottom = TilePixelHeight(south_tile);
+			TileIndex north_tile = _settings_game.construction.freeform_edges ? TileXY(1, 1) : TileXY(0, 0);
+			TileIndex south_tile = MapSize() - 1;
 
-		vp->virtual_left   = RemapCoords(TileX(south_tile) * TILE_SIZE, TileY(north_tile) * TILE_SIZE, 0).x;
-		vp->virtual_top    = RemapCoords(TileX(north_tile) * TILE_SIZE, TileY(north_tile) * TILE_SIZE, extra_height_top).y;
-		vp->virtual_width  = RemapCoords(TileX(north_tile) * TILE_SIZE, TileY(south_tile) * TILE_SIZE, 0).x                     - vp->virtual_left + 1;
-		vp->virtual_height = RemapCoords(TileX(south_tile) * TILE_SIZE, TileY(south_tile) * TILE_SIZE, reclaim_height_bottom).y - vp->virtual_top  + 1;
-	} else {
-		vp->zoom = (t == SC_ZOOMEDIN) ? _settings_client.gui.zoom_min : ZOOM_LVL_VIEWPORT;
+			/* We need to account for a hill or high building at tile 0,0. */
+			int extra_height_top = TilePixelHeight(north_tile) + 150;
+			/* If there is a hill at the bottom don't create a large black area. */
+			int reclaim_height_bottom = TilePixelHeight(south_tile);
 
-		Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
-		vp->virtual_left   = w->viewport->virtual_left;
-		vp->virtual_top    = w->viewport->virtual_top;
-		vp->virtual_width  = w->viewport->virtual_width;
-		vp->virtual_height = w->viewport->virtual_height;
+			vp->virtual_left   = RemapCoords(TileX(south_tile) * TILE_SIZE, TileY(north_tile) * TILE_SIZE, 0).x;
+			vp->virtual_top    = RemapCoords(TileX(north_tile) * TILE_SIZE, TileY(north_tile) * TILE_SIZE, extra_height_top).y;
+			vp->virtual_width  = RemapCoords(TileX(north_tile) * TILE_SIZE, TileY(south_tile) * TILE_SIZE, 0).x                     - vp->virtual_left + 1;
+			vp->virtual_height = RemapCoords(TileX(south_tile) * TILE_SIZE, TileY(south_tile) * TILE_SIZE, reclaim_height_bottom).y - vp->virtual_top  + 1;
+
+			/* Compute pixel coordinates */
+			vp->left = 0;
+			vp->top = 0;
+			vp->width  = UnScaleByZoom(vp->virtual_width,  vp->zoom);
+			vp->height = UnScaleByZoom(vp->virtual_height, vp->zoom);
+			vp->overlay = nullptr;
+			break;
+		}
+		default: {
+			vp->zoom = (t == SC_ZOOMEDIN) ? _settings_client.gui.zoom_min : ZOOM_LVL_VIEWPORT;
+
+			Window *w = FindWindowById(WC_MAIN_WINDOW, 0);
+			vp->virtual_left   = w->viewport->virtual_left;
+			vp->virtual_top    = w->viewport->virtual_top;
+			vp->virtual_width  = w->viewport->virtual_width;
+			vp->virtual_height = w->viewport->virtual_height;
+
+			/* Compute pixel coordinates */
+			vp->left = 0;
+			vp->top = 0;
+			vp->width  = UnScaleByZoom(vp->virtual_width,  vp->zoom);
+			vp->height = UnScaleByZoom(vp->virtual_height, vp->zoom);
+			vp->overlay = nullptr;
+			break;
+		}
 	}
-
-	/* Compute pixel coordinates */
-	vp->left = 0;
-	vp->top = 0;
-	vp->width  = UnScaleByZoom(vp->virtual_width,  vp->zoom);
-	vp->height = UnScaleByZoom(vp->virtual_height, vp->zoom);
-	vp->overlay = NULL;
 }
 
 /**
@@ -813,7 +841,7 @@ bool MakeHeightmapScreenshot(const char *filename)
 		palette[i].b = i;
 	}
 	const ScreenshotFormat *sf = _screenshot_formats + _cur_screenshot_format;
-	return sf->proc(filename, HeightmapCallback, NULL, MapSizeX(), MapSizeY(), 8, palette);
+	return sf->proc(filename, HeightmapCallback, nullptr, MapSizeX(), MapSizeY(), 8, palette);
 }
 
 /**
@@ -834,7 +862,7 @@ bool MakeScreenshot(ScreenshotType t, const char *name)
 	}
 
 	_screenshot_name[0] = '\0';
-	if (name != NULL) strecpy(_screenshot_name, name, lastof(_screenshot_name));
+	if (name != nullptr) strecpy(_screenshot_name, name, lastof(_screenshot_name));
 
 	bool ret;
 	switch (t) {
@@ -858,6 +886,10 @@ bool MakeScreenshot(ScreenshotType t, const char *name)
 			break;
 		}
 
+		case SC_MINIMAP:
+			ret = MakeMinimapWorldScreenshot();
+			break;
+
 		default:
 			NOT_REACHED();
 	}
@@ -870,4 +902,76 @@ bool MakeScreenshot(ScreenshotType t, const char *name)
 	}
 
 	return ret;
+}
+
+
+/**
+ * Return the owner of a tile to display it with in the small map in mode "Owner".
+ *
+ * @param tile The tile of which we would like to get the colour.
+ * @return The owner of tile in the small map in mode "Owner"
+ */
+static Owner GetMinimapOwner(TileIndex tile)
+{
+	Owner o;
+
+	if (IsTileType(tile, MP_VOID)) {
+		return OWNER_END;
+	} else {
+		switch (GetTileType(tile)) {
+		case MP_INDUSTRY: o = OWNER_DEITY;        break;
+		case MP_HOUSE:    o = OWNER_TOWN;         break;
+		default:          o = GetTileOwner(tile); break;
+			/* FIXME: For MP_ROAD there are multiple owners.
+			 * GetTileOwner returns the rail owner (level crossing) resp. the owner of ROADTYPE_ROAD (normal road),
+			 * even if there are no ROADTYPE_ROAD bits on the tile.
+			 */
+		}
+
+		return o;
+	}
+}
+
+static void MinimapScreenCallback(void *userdata, void *buf, uint y, uint pitch, uint n)
+{
+	/* Fill with the company colours */
+	byte owner_colours[OWNER_END + 1];
+	for (const Company *c : Company::Iterate()) {
+		owner_colours[c->index] = MKCOLOUR(_colour_gradient[c->colour][5]);
+	}
+
+	/* Fill with some special colours */
+	owner_colours[OWNER_TOWN]    = PC_DARK_RED;
+	owner_colours[OWNER_NONE]    = PC_GRASS_LAND;
+	owner_colours[OWNER_WATER]   = PC_WATER;
+	owner_colours[OWNER_DEITY]   = PC_DARK_GREY; // industry
+	owner_colours[OWNER_END]     = PC_BLACK;
+
+	uint32 *ubuf = (uint32 *)buf;
+	uint num = (pitch * n);
+	for (uint i = 0; i < num; i++) {
+		uint row = y + (int)(i / pitch);
+		uint col = (MapSizeX() - 1) - (i % pitch);
+
+		TileIndex tile = TileXY(col, row);
+		Owner o = GetMinimapOwner(tile);
+		byte val = owner_colours[o];
+
+		uint32 colour_buf = 0;
+		colour_buf  = (_cur_palette.palette[val].b << 0);
+		colour_buf |= (_cur_palette.palette[val].g << 8);
+		colour_buf |= (_cur_palette.palette[val].r << 16);
+
+		*ubuf = colour_buf;
+		ubuf++;   // Skip alpha
+	}
+}
+
+/**
+ * Make a minimap screenshot.
+ */
+bool MakeMinimapWorldScreenshot()
+{
+	const ScreenshotFormat *sf = _screenshot_formats + _cur_screenshot_format;
+	return sf->proc(MakeScreenshotName(SCREENSHOT_NAME, sf->extension), MinimapScreenCallback, nullptr, MapSizeX(), MapSizeY(), 32, _cur_palette.palette);
 }

@@ -1,5 +1,3 @@
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -34,7 +32,7 @@ function dump_class_templates(name)
 	print "	template <> inline const " name " *GetParam(ForceType<const " name " *>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return  (" name " *)instance; }" CR
 	print "	template <> inline const " name " &GetParam(ForceType<const " name " &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(" name " *)instance; }" CR
 	if (name == "ScriptEvent") {
-		print "	template <> inline int Return<" name " *>(HSQUIRRELVM vm, " name " *res) { if (res == NULL) { sq_pushnull(vm); return 1; } Squirrel::CreateClassInstanceVM(vm, \"" realname "\", res, NULL, DefSQDestructorCallback<" name ">, true); return 1; }" CR
+		print "	template <> inline int Return<" name " *>(HSQUIRRELVM vm, " name " *res) { if (res == nullptr) { sq_pushnull(vm); return 1; } Squirrel::CreateClassInstanceVM(vm, \"" realname "\", res, nullptr, DefSQDestructorCallback<" name ">, true); return 1; }" CR
 	} else if (name == "ScriptText") {
 		print "" CR
 		print "	template <> inline Text *GetParam(ForceType<Text *>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) {" CR
@@ -44,18 +42,15 @@ function dump_class_templates(name)
 		print "		if (sq_gettype(vm, index) == OT_STRING) {" CR
 		print "			return new RawText(GetParam(ForceType<const char *>(), vm, index, ptr));" CR
 		print "		}" CR
-		print "		return NULL;" CR
+		print "		return nullptr;" CR
 		print "	}" CR
 	} else {
-		print "	template <> inline int Return<" name " *>(HSQUIRRELVM vm, " name " *res) { if (res == NULL) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, \"" realname "\", res, NULL, DefSQDestructorCallback<" name ">, true); return 1; }" CR
+		print "	template <> inline int Return<" name " *>(HSQUIRRELVM vm, " name " *res) { if (res == nullptr) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, \"" realname "\", res, nullptr, DefSQDestructorCallback<" name ">, true); return 1; }" CR
 	}
 }
 
 function dump_fileheader()
 {
-	# Break the Id tag, so SVN doesn't replace it
-	print "/* $I" "d$ */" CR
-	print "" CR
 	print "/*" CR
 	print " * This file is part of OpenTTD." CR
 	print " * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2." CR

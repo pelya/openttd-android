@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -27,17 +25,17 @@
 /** The SSSE3 32 bpp blitter (without palette animation). */
 class Blitter_32bppSSSE3 : public Blitter_32bppSSE2 {
 public:
-	/* virtual */ void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom);
+	void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom) override;
 	template <BlitterMode mode, Blitter_32bppSSE_Base::ReadMode read_mode, Blitter_32bppSSE_Base::BlockType bt_last, bool translucent>
 	void Draw(const Blitter::BlitterParams *bp, ZoomLevel zoom);
-	/* virtual */ const char *GetName() { return "32bpp-ssse3"; }
+	const char *GetName() override { return "32bpp-ssse3"; }
 };
 
 /** Factory for the SSSE3 32 bpp blitter (without palette animation). */
 class FBlitter_32bppSSSE3: public BlitterFactory {
 public:
 	FBlitter_32bppSSSE3() : BlitterFactory("32bpp-ssse3", "32bpp SSSE3 Blitter (no palette animation)", HasCPUIDFlag(1, 2, 9)) {}
-	/* virtual */ Blitter *CreateInstance() { return new Blitter_32bppSSSE3(); }
+	Blitter *CreateInstance() override { return new Blitter_32bppSSSE3(); }
 };
 
 #endif /* WITH_SSE */

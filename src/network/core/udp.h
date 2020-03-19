@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,8 +15,6 @@
 #include "address.h"
 #include "game.h"
 #include "packet.h"
-
-#ifdef ENABLE_NETWORK
 
 /** Enum with all types of UDP packets. The order MUST not be changed **/
 enum PacketUDPType {
@@ -54,7 +50,7 @@ protected:
 	/** The opened sockets. */
 	SocketList sockets;
 
-	NetworkRecvStatus CloseConnection(bool error = true);
+	NetworkRecvStatus CloseConnection(bool error = true) override;
 
 	void ReceiveInvalidPacket(PacketUDPType, NetworkAddress *client_addr);
 
@@ -231,13 +227,13 @@ protected:
 	 */
 	virtual void HandleIncomingNetworkGameInfoGRFConfig(GRFConfig *config) { NOT_REACHED(); }
 public:
-	NetworkUDPSocketHandler(NetworkAddressList *bind = NULL);
+	NetworkUDPSocketHandler(NetworkAddressList *bind = nullptr);
 
 	/** On destructing of this class, the socket needs to be closed */
 	virtual ~NetworkUDPSocketHandler() { this->Close(); }
 
 	bool Listen();
-	void Close();
+	void Close() override;
 
 	void SendPacket(Packet *p, NetworkAddress *recv, bool all = false, bool broadcast = false);
 	void ReceivePackets();
@@ -245,7 +241,5 @@ public:
 	void SendNetworkGameInfo(Packet *p, const NetworkGameInfo *info);
 	void ReceiveNetworkGameInfo(Packet *p, NetworkGameInfo *info);
 };
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_UDP_H */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -11,8 +9,6 @@
 
 #ifndef NETWORK_ADMIN_H
 #define NETWORK_ADMIN_H
-
-#ifdef ENABLE_NETWORK
 
 #include "network_internal.h"
 #include "core/tcp_listen.h"
@@ -28,14 +24,14 @@ extern NetworkAdminSocketPool _networkadminsocket_pool;
 /** Class for handling the server side of the game connection. */
 class ServerNetworkAdminSocketHandler : public NetworkAdminSocketPool::PoolItem<&_networkadminsocket_pool>, public NetworkAdminSocketHandler, public TCPListenHandler<ServerNetworkAdminSocketHandler, ADMIN_PACKET_SERVER_FULL, ADMIN_PACKET_SERVER_BANNED> {
 protected:
-	virtual NetworkRecvStatus Receive_ADMIN_JOIN(Packet *p);
-	virtual NetworkRecvStatus Receive_ADMIN_QUIT(Packet *p);
-	virtual NetworkRecvStatus Receive_ADMIN_UPDATE_FREQUENCY(Packet *p);
-	virtual NetworkRecvStatus Receive_ADMIN_POLL(Packet *p);
-	virtual NetworkRecvStatus Receive_ADMIN_CHAT(Packet *p);
-	virtual NetworkRecvStatus Receive_ADMIN_RCON(Packet *p);
-	virtual NetworkRecvStatus Receive_ADMIN_GAMESCRIPT(Packet *p);
-	virtual NetworkRecvStatus Receive_ADMIN_PING(Packet *p);
+	NetworkRecvStatus Receive_ADMIN_JOIN(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_QUIT(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_UPDATE_FREQUENCY(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_POLL(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_CHAT(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_RCON(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_GAMESCRIPT(Packet *p) override;
+	NetworkRecvStatus Receive_ADMIN_PING(Packet *p) override;
 
 	NetworkRecvStatus SendProtocol();
 	NetworkRecvStatus SendPong(uint32 d1);
@@ -86,28 +82,21 @@ public:
 	{
 		return "admin";
 	}
+
+	struct ServerNetworkAdminSocketHandlerFilter {
+		bool operator() (size_t index) { return ServerNetworkAdminSocketHandler::Get(index)->GetAdminStatus() == ADMIN_STATUS_ACTIVE; }
+	};
+
+	/**
+	 * Returns an iterable ensemble of all active admin sockets
+	 * @param from index of the first socket to consider
+	 * @return an iterable ensemble of all active admin sockets
+	 */
+	static Pool::IterateWrapperFiltered<ServerNetworkAdminSocketHandler, ServerNetworkAdminSocketHandlerFilter> IterateActive(size_t from = 0)
+	{
+		return Pool::IterateWrapperFiltered<ServerNetworkAdminSocketHandler, ServerNetworkAdminSocketHandlerFilter>(from, ServerNetworkAdminSocketHandlerFilter{});
+	}
 };
-
-/**
- * Iterate over all the sockets from a given starting point.
- * @param var The variable to iterate with.
- * @param start The start of the iteration.
- */
-#define FOR_ALL_ADMIN_SOCKETS_FROM(var, start) FOR_ALL_ITEMS_FROM(ServerNetworkAdminSocketHandler, adminsocket_index, var, start)
-
-/**
- * Iterate over all the sockets.
- * @param var The variable to iterate with.
- */
-#define FOR_ALL_ADMIN_SOCKETS(var) FOR_ALL_ADMIN_SOCKETS_FROM(var, 0)
-
-/**
- * Iterate over all the active sockets.
- * @param var The variable to iterate with.
- */
-#define FOR_ALL_ACTIVE_ADMIN_SOCKETS(var) \
-	FOR_ALL_ADMIN_SOCKETS(var) \
-		if (var->GetAdminStatus() == ADMIN_STATUS_ACTIVE)
 
 void NetworkAdminClientInfo(const NetworkClientSocket *cs, bool new_client = false);
 void NetworkAdminClientUpdate(const NetworkClientInfo *ci);
@@ -124,5 +113,4 @@ void NetworkAdminConsole(const char *origin, const char *string);
 void NetworkAdminGameScript(const char *json);
 void NetworkAdminCmdLogging(const NetworkClientSocket *owner, const CommandPacket *cp);
 
-#endif /* ENABLE_NETWORK */
 #endif /* NETWORK_ADMIN_H */

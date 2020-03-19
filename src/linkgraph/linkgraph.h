@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -435,7 +433,7 @@ public:
 		void RemoveEdge(NodeID to);
 	};
 
-	typedef SmallVector<BaseNode, 16> NodeVector;
+	typedef std::vector<BaseNode> NodeVector;
 	typedef SmallMatrix<BaseEdge> EdgeMatrix;
 
 	/** Minimum effective distance for timeout calculation. */
@@ -496,7 +494,7 @@ public:
 	 * Get the current size of the component.
 	 * @return Size.
 	 */
-	inline uint Size() const { return this->nodes.Length(); }
+	inline uint Size() const { return (uint)this->nodes.size(); }
 
 	/**
 	 * Get date of last compression.
@@ -535,7 +533,5 @@ protected:
 	NodeVector nodes;      ///< Nodes in the component.
 	EdgeMatrix edges;      ///< Edges in the component.
 };
-
-#define FOR_ALL_LINK_GRAPHS(var) FOR_ALL_ITEMS_FROM(LinkGraph, link_graph_index, var, 0)
 
 #endif /* LINKGRAPH_H */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -45,6 +43,10 @@ void SQAIGroup_Register(Squirrel *engine)
 	SQAIGroup.DefSQStaticMethod(engine, &ScriptGroup::GetProfitThisYear,           "GetProfitThisYear",           2, ".i");
 	SQAIGroup.DefSQStaticMethod(engine, &ScriptGroup::GetProfitLastYear,           "GetProfitLastYear",           2, ".i");
 	SQAIGroup.DefSQStaticMethod(engine, &ScriptGroup::GetCurrentUsage,             "GetCurrentUsage",             2, ".i");
+	SQAIGroup.DefSQStaticMethod(engine, &ScriptGroup::SetPrimaryColour,            "SetPrimaryColour",            3, ".ii");
+	SQAIGroup.DefSQStaticMethod(engine, &ScriptGroup::SetSecondaryColour,          "SetSecondaryColour",          3, ".ii");
+	SQAIGroup.DefSQStaticMethod(engine, &ScriptGroup::GetPrimaryColour,            "GetPrimaryColour",            2, ".i");
+	SQAIGroup.DefSQStaticMethod(engine, &ScriptGroup::GetSecondaryColour,          "GetSecondaryColour",          2, ".i");
 
 	SQAIGroup.PostRegister(engine);
 }

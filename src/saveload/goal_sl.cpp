@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -28,8 +26,7 @@ static const SaveLoad _goals_desc[] = {
 
 static void Save_GOAL()
 {
-	Goal *s;
-	FOR_ALL_GOALS(s) {
+	for (Goal *s : Goal::Iterate()) {
 		SlSetArrayIndex(s->index);
 		SlObject(s, _goals_desc);
 	}
@@ -45,5 +42,5 @@ static void Load_GOAL()
 }
 
 extern const ChunkHandler _goal_chunk_handlers[] = {
-	{ 'GOAL', Save_GOAL, Load_GOAL, NULL, NULL, CH_ARRAY | CH_LAST},
+	{ 'GOAL', Save_GOAL, Load_GOAL, nullptr, nullptr, CH_ARRAY | CH_LAST},
 };

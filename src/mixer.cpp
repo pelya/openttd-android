@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -39,7 +37,7 @@ struct MixerChannel {
 static MixerChannel _channels[8];
 static uint32 _play_rate = 11025;
 static uint32 _max_size = UINT_MAX;
-static MxStreamCallback _music_stream = NULL;
+static MxStreamCallback _music_stream = nullptr;
 
 /**
  * The theoretical maximum volume for a single sound sample. Multiple sound
@@ -175,11 +173,11 @@ MixerChannel *MxAllocateChannel()
 	for (mc = _channels; mc != endof(_channels); mc++) {
 		if (!mc->active) {
 			free(mc->memory);
-			mc->memory = NULL;
+			mc->memory = nullptr;
 			return mc;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MxSetChannelRawSrc(MixerChannel *mc, int8 *mem, size_t size, uint rate, bool is16bit)
@@ -238,6 +236,6 @@ bool MxInitialize(uint rate)
 {
 	_play_rate = rate;
 	_max_size  = UINT_MAX / _play_rate;
-	_music_stream = NULL; /* rate may have changed, any music source is now invalid */
+	_music_stream = nullptr; /* rate may have changed, any music source is now invalid */
 	return true;
 }

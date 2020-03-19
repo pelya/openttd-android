@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -86,34 +84,35 @@ public:
 		int num_glyphs;
 		Font *font;
 
-		mutable int *glyph_to_char = NULL;
+		mutable int *glyph_to_char = nullptr;
 
 	public:
 		UniscribeVisualRun(const UniscribeRun &range, int x);
-		virtual ~UniscribeVisualRun()
+		UniscribeVisualRun(UniscribeVisualRun &&other) noexcept;
+		~UniscribeVisualRun() override
 		{
 			free(this->glyph_to_char);
 		}
 
-		virtual const GlyphID *GetGlyphs() const { return &this->glyphs[0]; }
-		virtual const float *GetPositions() const { return &this->positions[0]; }
-		virtual const int *GetGlyphToCharMap() const;
+		const GlyphID *GetGlyphs() const override { return &this->glyphs[0]; }
+		const float *GetPositions() const override { return &this->positions[0]; }
+		const int *GetGlyphToCharMap() const override;
 
-		virtual const Font *GetFont() const { return this->font;  }
-		virtual int GetLeading() const { return this->font->fc->GetHeight(); }
-		virtual int GetGlyphCount() const { return this->num_glyphs; }
+		const Font *GetFont() const override { return this->font;  }
+		int GetLeading() const override { return this->font->fc->GetHeight(); }
+		int GetGlyphCount() const override { return this->num_glyphs; }
 		int GetAdvance() const { return this->total_advance; }
 	};
 
 	/** A single line worth of VisualRuns. */
-	class UniscribeLine : public AutoDeleteSmallVector<UniscribeVisualRun *, 4>, public ParagraphLayouter::Line {
+	class UniscribeLine : public std::vector<UniscribeVisualRun>, public ParagraphLayouter::Line {
 	public:
-		virtual int GetLeading() const;
-		virtual int GetWidth() const;
-		virtual int CountRuns() const { return this->Length();  }
-		virtual const VisualRun *GetVisualRun(int run) const { return *this->Get(run);  }
+		int GetLeading() const override;
+		int GetWidth() const override;
+		int CountRuns() const override { return (uint)this->size();  }
+		const VisualRun &GetVisualRun(int run) const override { return this->at(run);  }
 
-		int GetInternalCharLength(WChar c) const
+		int GetInternalCharLength(WChar c) const override
 		{
 			/* Uniscribe uses UTF-16 internally which means we need to account for surrogate pairs. */
 			return c >= 0x010000U ? 2 : 1;
@@ -125,28 +124,30 @@ public:
 		this->Reflow();
 	}
 
-	virtual ~UniscribeParagraphLayout() {}
+	~UniscribeParagraphLayout() override {}
 
-	virtual void Reflow()
+	void Reflow() override
 	{
 		this->cur_range = this->ranges.begin();
 		this->cur_range_offset = 0;
 	}
 
-	virtual const Line *NextLine(int max_width);
+	std::unique_ptr<const Line> NextLine(int max_width) override;
 };
 
 void UniscribeResetScriptCache(FontSize size)
 {
-	if (_script_cache[size] != NULL) {
+	if (_script_cache[size] != nullptr) {
 		ScriptFreeCache(&_script_cache[size]);
-		_script_cache[size] = NULL;
+		_script_cache[size] = nullptr;
 	}
 }
 
 /** Load the matching native Windows font. */
 static HFONT HFontFromFont(Font *font)
 {
+	if (font->fc->GetOSHandle() != nullptr) return CreateFontIndirect((PLOGFONT)font->fc->GetOSHandle());
+
 	LOGFONT logfont;
 	ZeroMemory(&logfont, sizeof(LOGFONT));
 	logfont.lfHeight = font->fc->GetHeight();
@@ -167,9 +168,9 @@ static bool UniscribeShapeRun(const UniscribeParagraphLayoutFactory::CharType *b
 	/* The char-to-glyph array is the same size as the input. */
 	range.char_to_glyph.resize(range.len);
 
-	HDC temp_dc = NULL;
-	HFONT old_font = NULL;
-	HFONT cur_font = NULL;
+	HDC temp_dc = nullptr;
+	HFONT old_font = nullptr;
+	HFONT cur_font = nullptr;
 
 	while (true) {
 		/* Shape the text run by determining the glyphs needed for display. */
@@ -194,15 +195,19 @@ static bool UniscribeShapeRun(const UniscribeParagraphLayoutFactory::CharType *b
 				}
 				for (int i = 0; i < range.len; i++) {
 					if (buff[range.pos + i] >= SCC_SPRITE_START && buff[range.pos + i] <= SCC_SPRITE_END) {
-						range.ft_glyphs[range.char_to_glyph[i]] = range.font->fc->MapCharToGlyph(buff[range.pos + i]);
-						range.offsets[range.char_to_glyph[i]].dv = range.font->fc->GetAscender() - range.font->fc->GetGlyph(range.ft_glyphs[range.char_to_glyph[i]])->height - 1; // Align sprite glyphs to font baseline.
+						auto pos = range.char_to_glyph[i];
+						range.ft_glyphs[pos] = range.font->fc->MapCharToGlyph(buff[range.pos + i]);
+						range.offsets[pos].dv = range.font->fc->GetAscender() - range.font->fc->GetGlyph(range.ft_glyphs[pos])->height - 1; // Align sprite glyphs to font baseline.
+						range.advances[pos] = range.font->fc->GetGlyphWidth(range.ft_glyphs[pos]);
 					}
 				}
 
-				/* FreeType and GDI/Uniscribe seems to occasionally disagree over the width of a glyph. */
 				range.total_advance = 0;
 				for (size_t i = 0; i < range.advances.size(); i++) {
+#ifdef WITH_FREETYPE
+					/* FreeType and GDI/Uniscribe seems to occasionally disagree over the width of a glyph. */
 					if (range.advances[i] > 0 && range.ft_glyphs[i] != 0xFFFF) range.advances[i] = range.font->fc->GetGlyphWidth(range.ft_glyphs[i]);
+#endif
 					range.total_advance += range.advances[i];
 				}
 				break;
@@ -216,9 +221,9 @@ static bool UniscribeShapeRun(const UniscribeParagraphLayoutFactory::CharType *b
 		} else if (hr == E_PENDING) {
 			/* Glyph data is not in cache, load native font. */
 			cur_font = HFontFromFont(range.font);
-			if (cur_font == NULL) return false; // Sorry, no dice.
+			if (cur_font == nullptr) return false; // Sorry, no dice.
 
-			temp_dc = CreateCompatibleDC(NULL);
+			temp_dc = CreateCompatibleDC(nullptr);
 			SetMapMode(temp_dc, MM_TEXT);
 			old_font = (HFONT)SelectObject(temp_dc, cur_font);
 		} else if (hr == USP_E_SCRIPT_NOT_IN_FONT && range.sa.eScript != SCRIPT_UNDEFINED) {
@@ -226,19 +231,19 @@ static bool UniscribeShapeRun(const UniscribeParagraphLayoutFactory::CharType *b
 			range.sa.eScript = SCRIPT_UNDEFINED;
 		} else {
 			/* Some unknown other error. */
-			if (temp_dc != NULL) {
+			if (temp_dc != nullptr) {
 				SelectObject(temp_dc, old_font);
 				DeleteObject(cur_font);
-				ReleaseDC(NULL, temp_dc);
+				ReleaseDC(nullptr, temp_dc);
 			}
 			return false;
 		}
 	}
 
-	if (temp_dc != NULL) {
+	if (temp_dc != nullptr) {
 		SelectObject(temp_dc, old_font);
 		DeleteObject(cur_font);
-		ReleaseDC(NULL, temp_dc);
+		ReleaseDC(nullptr, temp_dc);
 	}
 
 	return true;
@@ -279,16 +284,16 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 {
 	int32 length = buff_end - buff;
 	/* Can't layout an empty string. */
-	if (length == 0) return NULL;
+	if (length == 0) return nullptr;
 
 	/* Can't layout our in-built sprite fonts. */
-	for (FontMap::const_iterator i = fontMapping.Begin(); i != fontMapping.End(); i++) {
-		if (i->second->fc->IsBuiltInFont()) return NULL;
+	for (auto const &pair : fontMapping) {
+		if (pair.second->fc->IsBuiltInFont()) return nullptr;
 	}
 
 	/* Itemize text. */
 	std::vector<SCRIPT_ITEM> items = UniscribeItemizeString(buff, length);
-	if (items.size() == 0) return NULL;
+	if (items.size() == 0) return nullptr;
 
 	/* Build ranges from the items and the font map. A range is a run of text
 	 * that is part of a single item and formatted using a single font style. */
@@ -296,16 +301,16 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 
 	int cur_pos = 0;
 	std::vector<SCRIPT_ITEM>::iterator cur_item = items.begin();
-	for (FontMap::const_iterator i = fontMapping.Begin(); i != fontMapping.End(); i++) {
-		while (cur_pos < i->first && cur_item != items.end() - 1) {
+	for (auto const &i : fontMapping) {
+		while (cur_pos < i.first && cur_item != items.end() - 1) {
 			/* Add a range that spans the intersection of the remaining item and font run. */
-			int stop_pos = min(i->first, (cur_item + 1)->iCharPos);
+			int stop_pos = min(i.first, (cur_item + 1)->iCharPos);
 			assert(stop_pos - cur_pos > 0);
-			ranges.push_back(UniscribeRun(cur_pos, stop_pos - cur_pos, i->second, cur_item->a));
+			ranges.push_back(UniscribeRun(cur_pos, stop_pos - cur_pos, i.second, cur_item->a));
 
 			/* Shape the range. */
 			if (!UniscribeShapeRun(buff, ranges.back())) {
-				return NULL;
+				return nullptr;
 			}
 
 			/* If we are at the end of the current item, advance to the next item. */
@@ -317,12 +322,12 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 	return new UniscribeParagraphLayout(ranges, buff);
 }
 
-/* virtual */ const ParagraphLayouter::Line *UniscribeParagraphLayout::NextLine(int max_width)
+/* virtual */ std::unique_ptr<const ParagraphLayouter::Line> UniscribeParagraphLayout::NextLine(int max_width)
 {
 	std::vector<UniscribeRun>::iterator start_run = this->cur_range;
 	std::vector<UniscribeRun>::iterator last_run = this->cur_range;
 
-	if (start_run == this->ranges.end()) return NULL;
+	if (start_run == this->ranges.end()) return nullptr;
 
 	/* Add remaining width of the first run if it is a broken run. */
 	int cur_width = 0;
@@ -354,7 +359,7 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 		int last_cluster = this->cur_range_offset + 1;
 		for (std::vector<UniscribeRun>::iterator r = start_run; r != last_run; r++) {
 			log_attribs.resize(r->pos - start_run->pos + r->len);
-			if (FAILED(ScriptBreak(this->text_buffer + r->pos + start_offs, r->len - start_offs, &r->sa, &log_attribs[r->pos - start_run->pos + start_offs]))) return NULL;
+			if (FAILED(ScriptBreak(this->text_buffer + r->pos + start_offs, r->len - start_offs, &r->sa, &log_attribs[r->pos - start_run->pos + start_offs]))) return nullptr;
 
 			std::vector<int> dx(r->len);
 			ScriptGetLogicalWidths(&r->sa, r->len, (int)r->glyphs.size(), &r->advances[0], &r->char_to_glyph[0], &r->vis_attribs[0], &dx[0]);
@@ -400,10 +405,10 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 		bidi_level.push_back(r->sa.s.uBidiLevel);
 	}
 	std::vector<INT> vis_to_log(bidi_level.size());
-	if (FAILED(ScriptLayout((int)bidi_level.size(), &bidi_level[0], &vis_to_log[0], NULL))) return NULL;
+	if (FAILED(ScriptLayout((int)bidi_level.size(), &bidi_level[0], &vis_to_log[0], nullptr))) return nullptr;
 
 	/* Create line. */
-	UniscribeLine *line = new UniscribeLine();
+	std::unique_ptr<UniscribeLine> line(new UniscribeLine());
 
 	int cur_pos = 0;
 	for (std::vector<INT>::iterator l = vis_to_log.begin(); l != vis_to_log.end(); l++) {
@@ -414,17 +419,17 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 		if (i_run == last_run - 1 && remaing_offset < (last_run - 1)->len) {
 			run.len = remaing_offset - 1;
 
-			if (!UniscribeShapeRun(this->text_buffer, run)) return NULL;
+			if (!UniscribeShapeRun(this->text_buffer, run)) return nullptr;
 		}
 		if (i_run == start_run && this->cur_range_offset > 0) {
 			assert(run.len - this->cur_range_offset > 0);
 			run.pos += this->cur_range_offset;
 			run.len -= this->cur_range_offset;
 
-			if (!UniscribeShapeRun(this->text_buffer, run)) return NULL;
+			if (!UniscribeShapeRun(this->text_buffer, run)) return nullptr;
 		}
 
-		*line->Append() = new UniscribeVisualRun(run, cur_pos);
+		line->emplace_back(run, cur_pos);
 		cur_pos += run.total_advance;
 	}
 
@@ -448,8 +453,8 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 int UniscribeParagraphLayout::UniscribeLine::GetLeading() const
 {
 	int leading = 0;
-	for (const UniscribeVisualRun * const *run = this->Begin(); run != this->End(); run++) {
-		leading = max(leading, (*run)->GetLeading());
+	for (const auto &run : *this) {
+		leading = max(leading, run.GetLeading());
 	}
 
 	return leading;
@@ -462,8 +467,8 @@ int UniscribeParagraphLayout::UniscribeLine::GetLeading() const
 int UniscribeParagraphLayout::UniscribeLine::GetWidth() const
 {
 	int length = 0;
-	for (const UniscribeVisualRun * const *run = this->Begin(); run != this->End(); run++) {
-		length += (*run)->GetAdvance();
+	for (const auto &run : *this) {
+		length += run.GetAdvance();
 	}
 
 	return length;
@@ -484,9 +489,17 @@ UniscribeParagraphLayout::UniscribeVisualRun::UniscribeVisualRun(const Uniscribe
 	this->positions[this->num_glyphs * 2] = advance + x;
 }
 
+UniscribeParagraphLayout::UniscribeVisualRun::UniscribeVisualRun(UniscribeVisualRun&& other) noexcept
+								: glyphs(std::move(other.glyphs)), positions(std::move(other.positions)), char_to_glyph(std::move(other.char_to_glyph)),
+								  start_pos(other.start_pos), total_advance(other.total_advance), num_glyphs(other.num_glyphs), font(other.font)
+{
+	this->glyph_to_char = other.glyph_to_char;
+	other.glyph_to_char = nullptr;
+}
+
 const int *UniscribeParagraphLayout::UniscribeVisualRun::GetGlyphToCharMap() const
 {
-	if (this->glyph_to_char == NULL) {
+	if (this->glyph_to_char == nullptr) {
 		this->glyph_to_char = CallocT<int>(this->GetGlyphCount());
 
 		/* The char to glyph array contains the first glyph index of the cluster that is associated

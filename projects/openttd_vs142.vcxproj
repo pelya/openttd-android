@@ -78,16 +78,16 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\objs\$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\objs\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\objs\$(Platform)\$(Configuration)\</OutDir>
@@ -107,7 +107,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <AdditionalIncludeDirectories>..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;WITH_PNG;WITH_FREETYPE;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";WITH_ASSERT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -172,7 +172,7 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <AdditionalIncludeDirectories>..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;WITH_PNG;WITH_FREETYPE;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
@@ -230,7 +230,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <AdditionalIncludeDirectories>..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;WITH_PNG;WITH_FREETYPE;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;WITH_ASSERT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -293,7 +293,7 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <AdditionalIncludeDirectories>..\objs\langs;..\objs\settings;..\src\3rdparty\squirrel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LZMA;WITH_PNG;WITH_FREETYPE;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_ENABLE_DIRECTMUSIC_SUPPORT;WITH_XAUDIO2;WITH_SSE;WITH_ZLIB;WITH_LZO;WITH_LIBLZMA;WITH_PNG;WITH_UNISCRIBE;ENABLE_NETWORK;WITH_PERSONAL_DIR;PERSONAL_DIR="OpenTTD";_SQ64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
@@ -409,6 +409,7 @@
     <ClCompile Include="..\src\rev.cpp" />
     <ClCompile Include="..\src\road.cpp" />
     <ClCompile Include="..\src\roadstop.cpp" />
+    <ClCompile Include="..\src\screenshot_gui.cpp" />
     <ClCompile Include="..\src\screenshot.cpp" />
     <ClCompile Include="..\src\settings.cpp" />
     <ClCompile Include="..\src\signal.cpp" />
@@ -448,6 +449,7 @@
     <ClInclude Include="..\src\base_media_base.h" />
     <ClInclude Include="..\src\base_media_func.h" />
     <ClInclude Include="..\src\base_station_base.h" />
+    <ClInclude Include="..\src\bitmap_type.h" />
     <ClInclude Include="..\src\bmp.h" />
     <ClInclude Include="..\src\bridge.h" />
     <ClInclude Include="..\src\cargo_type.h" />
@@ -581,8 +583,10 @@
     <ClInclude Include="..\src\newgrf_industries.h" />
     <ClInclude Include="..\src\newgrf_industrytiles.h" />
     <ClInclude Include="..\src\newgrf_object.h" />
+    <ClInclude Include="..\src\newgrf_profiling.h" />
     <ClInclude Include="..\src\newgrf_properties.h" />
     <ClInclude Include="..\src\newgrf_railtype.h" />
+    <ClInclude Include="..\src\newgrf_roadtype.h" />
     <ClInclude Include="..\src\newgrf_sound.h" />
     <ClInclude Include="..\src\newgrf_spritegroup.h" />
     <ClInclude Include="..\src\newgrf_station.h" />
@@ -613,6 +617,7 @@
     <ClInclude Include="..\src\rail_gui.h" />
     <ClInclude Include="..\src\rail_type.h" />
     <ClInclude Include="..\src\rev.h" />
+    <ClInclude Include="..\src\road.h" />
     <ClInclude Include="..\src\road_cmd.h" />
     <ClInclude Include="..\src\road_func.h" />
     <ClInclude Include="..\src\road_gui.h" />
@@ -622,8 +627,10 @@
     <ClInclude Include="..\src\roadveh.h" />
     <ClInclude Include="..\src\safeguards.h" />
     <ClInclude Include="..\src\screenshot.h" />
+    <ClInclude Include="..\src\screenshot_gui.h" />
     <ClInclude Include="..\src\sound\sdl_s.h" />
     <ClInclude Include="..\src\video\sdl_v.h" />
+    <ClInclude Include="..\src\video\sdl2_v.h" />
     <ClInclude Include="..\src\settings_func.h" />
     <ClInclude Include="..\src\settings_gui.h" />
     <ClInclude Include="..\src\settings_internal.h" />
@@ -645,6 +652,7 @@
     <ClInclude Include="..\src\station_base.h" />
     <ClInclude Include="..\src\station_func.h" />
     <ClInclude Include="..\src\station_gui.h" />
+    <ClInclude Include="..\src\station_kdtree.h" />
     <ClInclude Include="..\src\station_type.h" />
     <ClInclude Include="..\src\statusbar_gui.h" />
     <ClInclude Include="..\src\stdafx.h" />
@@ -676,10 +684,10 @@
     <ClInclude Include="..\src\tilehighlight_type.h" />
     <ClInclude Include="..\src\tilematrix_type.hpp" />
     <ClInclude Include="..\src\timetable.h" />
-    <ClInclude Include="..\src\toolbar_type.h" />
     <ClInclude Include="..\src\toolbar_gui.h" />
     <ClInclude Include="..\src\town.h" />
     <ClInclude Include="..\src\town_type.h" />
+    <ClInclude Include="..\src\town_kdtree.h" />
     <ClInclude Include="..\src\townname_func.h" />
     <ClInclude Include="..\src\townname_type.h" />
     <ClInclude Include="..\src\track_func.h" />
@@ -696,6 +704,7 @@
     <ClInclude Include="..\src\vehicle_type.h" />
     <ClInclude Include="..\src\vehiclelist.h" />
     <ClInclude Include="..\src\viewport_func.h" />
+    <ClInclude Include="..\src\viewport_kdtree.h" />
     <ClInclude Include="..\src\viewport_sprite_sorter.h" />
     <ClInclude Include="..\src\viewport_type.h" />
     <ClInclude Include="..\src\water.h" />
@@ -724,6 +733,7 @@
     <ClCompile Include="..\src\core\geometry_func.cpp" />
     <ClInclude Include="..\src\core\geometry_func.hpp" />
     <ClInclude Include="..\src\core\geometry_type.hpp" />
+    <ClInclude Include="..\src\core\kdtree.hpp" />
     <ClCompile Include="..\src\core\math_func.cpp" />
     <ClInclude Include="..\src\core\math_func.hpp" />
     <ClInclude Include="..\src\core\mem_func.hpp" />
@@ -738,7 +748,6 @@
     <ClInclude Include="..\src\core\smallmatrix_type.hpp" />
     <ClInclude Include="..\src\core\smallstack_type.hpp" />
     <ClInclude Include="..\src\core\smallvec_type.hpp" />
-    <ClInclude Include="..\src\core\sort_func.hpp" />
     <ClInclude Include="..\src\core\string_compare_type.hpp" />
     <ClCompile Include="..\src\aircraft_gui.cpp" />
     <ClCompile Include="..\src\airport_gui.cpp" />
@@ -840,6 +849,7 @@
     <ClInclude Include="..\src\widgets\osk_widget.h" />
     <ClInclude Include="..\src\widgets\rail_widget.h" />
     <ClInclude Include="..\src\widgets\road_widget.h" />
+    <ClInclude Include="..\src\widgets\screenshot_widget.h" />
     <ClInclude Include="..\src\widgets\settings_widget.h" />
     <ClInclude Include="..\src\widgets\sign_widget.h" />
     <ClInclude Include="..\src\widgets\smallmap_widget.h" />
@@ -948,6 +958,7 @@
     <ClInclude Include="..\src\table\railtypes.h" />
     <ClInclude Include="..\src\table\road_land.h" />
     <ClInclude Include="..\src\table\roadveh_movement.h" />
+    <ClInclude Include="..\src\table\roadtypes.h" />
     <ClInclude Include="..\src\..\objs\settings\table\settings.h" />
     <ClInclude Include="..\src\table\sprites.h" />
     <ClInclude Include="..\src\table\station_land.h" />
@@ -1086,6 +1097,7 @@
     <ClInclude Include="..\src\script\api\script_rail.hpp" />
     <ClInclude Include="..\src\script\api\script_railtypelist.hpp" />
     <ClInclude Include="..\src\script\api\script_road.hpp" />
+    <ClInclude Include="..\src\script\api\script_roadtypelist.hpp" />
     <ClInclude Include="..\src\script\api\script_sign.hpp" />
     <ClInclude Include="..\src\script\api\script_signlist.hpp" />
     <ClInclude Include="..\src\script\api\script_station.hpp" />
@@ -1152,6 +1164,7 @@
     <ClCompile Include="..\src\script\api\script_rail.cpp" />
     <ClCompile Include="..\src\script\api\script_railtypelist.cpp" />
     <ClCompile Include="..\src\script\api\script_road.cpp" />
+    <ClCompile Include="..\src\script\api\script_roadtypelist.cpp" />
     <ClCompile Include="..\src\script\api\script_sign.cpp" />
     <ClCompile Include="..\src\script\api\script_signlist.cpp" />
     <ClCompile Include="..\src\script\api\script_station.cpp" />
@@ -1224,7 +1237,9 @@
     <ClCompile Include="..\src\newgrf_industries.cpp" />
     <ClCompile Include="..\src\newgrf_industrytiles.cpp" />
     <ClCompile Include="..\src\newgrf_object.cpp" />
+    <ClCompile Include="..\src\newgrf_profiling.cpp" />
     <ClCompile Include="..\src\newgrf_railtype.cpp" />
+    <ClCompile Include="..\src\newgrf_roadtype.cpp" />
     <ClCompile Include="..\src\newgrf_sound.cpp" />
     <ClCompile Include="..\src\newgrf_spritegroup.cpp" />
     <ClCompile Include="..\src\newgrf_station.cpp" />
@@ -1287,8 +1302,6 @@
     <ClCompile Include="..\src\network\core\udp.cpp" />
     <ClInclude Include="..\src\network\core\udp.h" />
     <ClInclude Include="..\src\pathfinder\follow_track.hpp" />
-    <ClCompile Include="..\src\pathfinder\opf\opf_ship.cpp" />
-    <ClInclude Include="..\src\pathfinder\opf\opf_ship.h" />
     <ClInclude Include="..\src\pathfinder\pathfinder_func.h" />
     <ClInclude Include="..\src\pathfinder\pathfinder_type.h" />
     <ClInclude Include="..\src\pathfinder\pf_performance_timer.hpp" />
@@ -1319,6 +1332,7 @@
     <ClCompile Include="..\src\video\dedicated_v.cpp" />
     <ClCompile Include="..\src\video\null_v.cpp" />
     <ClCompile Include="..\src\video\sdl_v.cpp" />
+    <ClCompile Include="..\src\video\sdl2_v.cpp" />
     <ClCompile Include="..\src\video\win32_v.cpp" />
     <ClCompile Include="..\src\music\dmusic.cpp" />
     <ClCompile Include="..\src\music\null_m.cpp" />
@@ -1326,14 +1340,14 @@
     <ClCompile Include="..\src\music\win32_m.cpp" />
     <ClCompile Include="..\src\sound\null_s.cpp" />
     <ClCompile Include="..\src\sound\sdl_s.cpp" />
+    <ClCompile Include="..\src\sound\sdl2_s.cpp" />
     <ClCompile Include="..\src\sound\win32_s.cpp" />
     <ClCompile Include="..\src\sound\xaudio2_s.cpp" />
     <ClCompile Include="..\src\os\windows\crashlog_win.cpp" />
     <ResourceCompile Include="..\src\os\windows\ottdres.rc" />
     <ClCompile Include="..\src\os\windows\string_uniscribe.cpp" />
     <ClCompile Include="..\src\os\windows\win32.cpp" />
-    <ClInclude Include="..\src\thread\thread.h" />
-    <ClCompile Include="..\src\thread\thread_win32.cpp" />
+    <ClInclude Include="..\src\thread.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\media\openttd.ico" />

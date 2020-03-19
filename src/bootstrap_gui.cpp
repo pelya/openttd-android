@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -13,7 +11,7 @@
 #include "base_media_base.h"
 #include "blitter/factory.hpp"
 
-#if defined(ENABLE_NETWORK) && defined(WITH_FREETYPE)
+#if defined(WITH_FREETYPE) || defined(WITH_UNISCRIBE)
 
 #include "core/geometry_func.hpp"
 #include "fontcache.h"
@@ -40,7 +38,7 @@ static const struct NWidgetPart _background_widgets[] = {
  * Window description for the background window to prevent smearing.
  */
 static WindowDesc _background_desc(
-	WDP_MANUAL, NULL, 0, 0,
+	WDP_MANUAL, nullptr, 0, 0,
 	WC_BOOTSTRAP, WC_NONE,
 	0,
 	_background_widgets, lengthof(_background_widgets)
@@ -56,7 +54,7 @@ public:
 		ResizeWindow(this, _screen.width, _screen.height);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		GfxFillRect(r.left, r.top, r.right, r.bottom, 4, FILLRECT_OPAQUE);
 		GfxFillRect(r.left, r.top, r.right, r.bottom, 0, FILLRECT_CHECKER);
@@ -73,7 +71,7 @@ static const NWidgetPart _nested_boostrap_download_status_window_widgets[] = {
 
 /** Window description for the download window */
 static WindowDesc _bootstrap_download_status_window_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_NETWORK_STATUS_WINDOW, WC_NONE,
 	WDF_MODAL,
 	_nested_boostrap_download_status_window_widgets, lengthof(_nested_boostrap_download_status_window_widgets)
@@ -88,7 +86,7 @@ public:
 	{
 	}
 
-	virtual void OnDownloadComplete(ContentID cid)
+	void OnDownloadComplete(ContentID cid) override
 	{
 		/* We have completed downloading. We can trigger finding the right set now. */
 		BaseGraphics::FindSets();
@@ -118,7 +116,7 @@ static const NWidgetPart _bootstrap_query_widgets[] = {
 
 /** The window description for the query. */
 static WindowDesc _bootstrap_query_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_CONFIRM_POPUP_QUERY, WC_NONE,
 	0,
 	_bootstrap_query_widgets, lengthof(_bootstrap_query_widgets)
@@ -142,7 +140,7 @@ public:
 		_network_content_client.RemoveCallback(this);
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		/* We cache the button size. This is safe as no reinit can happen here. */
 		if (this->button_size.width == 0) {
@@ -165,14 +163,14 @@ public:
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != 0) return;
 
 		DrawStringMultiLine(r.left + WD_FRAMETEXT_LEFT, r.right - WD_FRAMETEXT_RIGHT, r.top + WD_FRAMETEXT_TOP, r.bottom - WD_FRAMETEXT_BOTTOM, STR_MISSING_GRAPHICS_SET_MESSAGE, TC_FROMSTRING, SA_CENTER);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_BAFD_YES:
@@ -189,13 +187,13 @@ public:
 		}
 	}
 
-	virtual void OnConnect(bool success)
+	void OnConnect(bool success) override
 	{
 		/* Once connected, request the metadata. */
 		_network_content_client.RequestContentList(CONTENT_TYPE_BASE_GRAPHICS);
 	}
 
-	virtual void OnReceiveContentInfo(const ContentInfo *ci)
+	void OnReceiveContentInfo(const ContentInfo *ci) override
 	{
 		/* And once the meta data is received, start downloading it. */
 		_network_content_client.Select(ci->id);
@@ -204,7 +202,7 @@ public:
 	}
 };
 
-#endif /* defined(ENABLE_NETWORK) && defined(WITH_FREETYPE) */
+#endif /* defined(WITH_FREETYPE) */
 
 /**
  * Handle all procedures for bootstrapping OpenTTD without a base graphics set.
@@ -214,13 +212,13 @@ public:
  */
 bool HandleBootstrap()
 {
-	if (BaseGraphics::GetUsedSet() != NULL) return true;
+	if (BaseGraphics::GetUsedSet() != nullptr) return true;
 
 	/* No user interface, bail out with an error. */
 	if (BlitterFactory::GetCurrentBlitter()->GetScreenDepth() == 0) goto failure;
 
 	/* If there is no network or no freetype, then there is nothing we can do. Go straight to failure. */
-#if defined(ENABLE_NETWORK) && defined(WITH_FREETYPE) && (defined(WITH_FONTCONFIG) || defined(_WIN32) || defined(__APPLE__))
+#if (defined(_WIN32) && defined(WITH_UNISCRIBE)) || (defined(WITH_FREETYPE) && (defined(WITH_FONTCONFIG) || defined(__APPLE__)))
 	if (!_network_available) goto failure;
 
 	/* First tell the game we're bootstrapping. */
@@ -255,7 +253,7 @@ bool HandleBootstrap()
 	if (_exit_game) return false;
 
 	/* Try to probe the graphics. Should work this time. */
-	if (!BaseGraphics::SetSet(NULL)) goto failure;
+	if (!BaseGraphics::SetSet(nullptr)) goto failure;
 
 	/* Finally we can continue heading for the menu. */
 	_game_mode = GM_MENU;
@@ -264,6 +262,6 @@ bool HandleBootstrap()
 
 	/* Failure to get enough working to get a graphics set. */
 failure:
-	usererror("Failed to find a graphics set. Please acquire a graphics set for OpenTTD. See section 4.1 of README.md.");
+	usererror("Failed to find a graphics set. Please acquire a graphics set for OpenTTD. See section 1.4 of README.md.");
 	return false;
 }

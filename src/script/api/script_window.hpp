@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -54,6 +52,7 @@
 #include "../../widgets/osk_widget.h"
 #include "../../widgets/rail_widget.h"
 #include "../../widgets/road_widget.h"
+#include "../../widgets/screenshot_widget.h"
 #include "../../widgets/settings_widget.h"
 #include "../../widgets/sign_widget.h"
 #include "../../widgets/smallmap_widget.h"
@@ -784,6 +783,12 @@ public:
 		 */
 		WC_FRAMETIME_GRAPH                           = ::WC_FRAMETIME_GRAPH,
 
+		/**
+		 * Screenshot window; %Window numbers:
+		 *   - 0 = #ScreenshotWidgets
+		 */
+		WC_SCREENSHOT                                = ::WC_SCREENSHOT,
+
 		WC_INVALID                                   = ::WC_INVALID,                                   ///< Invalid window.
 	};
 
@@ -961,9 +966,11 @@ public:
 		WID_RV_INFO_TAB                              = ::WID_RV_INFO_TAB,                              ///< Info tab.
 		WID_RV_STOP_REPLACE                          = ::WID_RV_STOP_REPLACE,                          ///< Stop Replacing button.
 
+		/* Train/road only widgets */
+		WID_RV_RAIL_ROAD_TYPE_DROPDOWN               = ::WID_RV_RAIL_ROAD_TYPE_DROPDOWN,               ///< Dropdown menu about the rail/roadtype.
+
 		/* Train only widgets. */
 		WID_RV_TRAIN_ENGINEWAGON_DROPDOWN            = ::WID_RV_TRAIN_ENGINEWAGON_DROPDOWN,            ///< Dropdown to select engines and/or wagons.
-		WID_RV_TRAIN_RAILTYPE_DROPDOWN               = ::WID_RV_TRAIN_RAILTYPE_DROPDOWN,               ///< Dropdown menu about the railtype.
 		WID_RV_TRAIN_WAGONREMOVE_TOGGLE              = ::WID_RV_TRAIN_WAGONREMOVE_TOGGLE,              ///< Button to toggle removing wagons.
 	};
 
@@ -1177,6 +1184,8 @@ public:
 		WID_CI_RAIL_COUNT                            = ::WID_CI_RAIL_COUNT,                            ///< Count of rail.
 		WID_CI_ROAD_DESC                             = ::WID_CI_ROAD_DESC,                             ///< Description of road.
 		WID_CI_ROAD_COUNT                            = ::WID_CI_ROAD_COUNT,                            ///< Count of road.
+		WID_CI_TRAM_DESC                             = ::WID_CI_TRAM_DESC,                             ///< Description of tram.
+		WID_CI_TRAM_COUNT                            = ::WID_CI_TRAM_COUNT,                            ///< Count of tram.
 		WID_CI_WATER_DESC                            = ::WID_CI_WATER_DESC,                            ///< Description of water.
 		WID_CI_WATER_COUNT                           = ::WID_CI_WATER_COUNT,                           ///< Count of water.
 		WID_CI_STATION_DESC                          = ::WID_CI_STATION_DESC,                          ///< Description of station.
@@ -1312,6 +1321,8 @@ public:
 		WID_FRW_TIMES_NAMES                          = ::WID_FRW_TIMES_NAMES,
 		WID_FRW_TIMES_CURRENT                        = ::WID_FRW_TIMES_CURRENT,
 		WID_FRW_TIMES_AVERAGE                        = ::WID_FRW_TIMES_AVERAGE,
+		WID_FRW_ALLOCSIZE                            = ::WID_FRW_ALLOCSIZE,
+		WID_FRW_SEL_MEMORY                           = ::WID_FRW_SEL_MEMORY,
 		WID_FRW_SCROLLBAR                            = ::WID_FRW_SCROLLBAR,
 	};
 
@@ -1519,6 +1530,8 @@ public:
 	enum IndustryDirectoryWidgets {
 		WID_ID_DROPDOWN_ORDER                        = ::WID_ID_DROPDOWN_ORDER,                        ///< Dropdown for the order of the sort.
 		WID_ID_DROPDOWN_CRITERIA                     = ::WID_ID_DROPDOWN_CRITERIA,                     ///< Dropdown for the criteria of the sort.
+		WID_ID_FILTER_BY_ACC_CARGO                   = ::WID_ID_FILTER_BY_ACC_CARGO,                   ///< Accepted cargo filter dropdown list.
+		WID_ID_FILTER_BY_PROD_CARGO                  = ::WID_ID_FILTER_BY_PROD_CARGO,                  ///< Produced cargo filter dropdown list.
 		WID_ID_INDUSTRY_LIST                         = ::WID_ID_INDUSTRY_LIST,                         ///< Industry list.
 		WID_ID_SCROLLBAR                             = ::WID_ID_SCROLLBAR,                             ///< Scrollbar of the list.
 	};
@@ -1605,6 +1618,7 @@ public:
 	enum QueryStringWidgets {
 		WID_QS_CAPTION                               = ::WID_QS_CAPTION,                               ///< Caption of the window.
 		WID_QS_TEXT                                  = ::WID_QS_TEXT,                                  ///< Text of the query.
+		WID_QS_WARNING                               = ::WID_QS_WARNING,                               ///< Warning label about password security
 		WID_QS_DEFAULT                               = ::WID_QS_DEFAULT,                               ///< Default button.
 		WID_QS_CANCEL                                = ::WID_QS_CANCEL,                                ///< Cancel button.
 		WID_QS_OK                                    = ::WID_QS_OK,                                    ///< OK button.
@@ -1826,6 +1840,7 @@ public:
 		WID_NCP_LABEL                                = ::WID_NCP_LABEL,                                ///< Label in front of the password field.
 		WID_NCP_PASSWORD                             = ::WID_NCP_PASSWORD,                             ///< Input field for the password.
 		WID_NCP_SAVE_AS_DEFAULT_PASSWORD             = ::WID_NCP_SAVE_AS_DEFAULT_PASSWORD,             ///< Toggle 'button' for saving the current password as default password.
+		WID_NCP_WARNING                              = ::WID_NCP_WARNING,                              ///< Warning text about password security
 		WID_NCP_CANCEL                               = ::WID_NCP_CANCEL,                               ///< Close the window without changing anything.
 		WID_NCP_OK                                   = ::WID_NCP_OK,                                   ///< Safe the password etc.
 	};
@@ -1943,6 +1958,7 @@ public:
 		WID_N_VEH_NAME                               = ::WID_N_VEH_NAME,                               ///< Name of the new vehicle.
 		WID_N_VEH_SPR                                = ::WID_N_VEH_SPR,                                ///< Graphical display of the new vehicle.
 		WID_N_VEH_INFO                               = ::WID_N_VEH_INFO,                               ///< Some technical data of the new vehicle.
+		WID_N_SHOW_GROUP                             = ::WID_N_SHOW_GROUP,                             ///< Show vehicle's group
 	};
 
 	/** Widgets of the #MessageHistoryWindow class. */
@@ -2132,6 +2148,7 @@ public:
 	/** Widgets of the #BuildRoadToolbarWindow class. */
 	enum RoadToolbarWidgets {
 		/* Name starts with RO instead of R, because of collision with RailToolbarWidgets */
+		WID_ROT_CAPTION                              = ::WID_ROT_CAPTION,                              ///< Caption of the window
 		WID_ROT_ROAD_X                               = ::WID_ROT_ROAD_X,                               ///< Build road in x-direction.
 		WID_ROT_ROAD_Y                               = ::WID_ROT_ROAD_Y,                               ///< Build road in y-direction.
 		WID_ROT_AUTOROAD                             = ::WID_ROT_AUTOROAD,                             ///< Autorail.
@@ -2143,6 +2160,7 @@ public:
 		WID_ROT_BUILD_BRIDGE                         = ::WID_ROT_BUILD_BRIDGE,                         ///< Build bridge.
 		WID_ROT_BUILD_TUNNEL                         = ::WID_ROT_BUILD_TUNNEL,                         ///< Build tunnel.
 		WID_ROT_REMOVE                               = ::WID_ROT_REMOVE,                               ///< Remove road.
+		WID_ROT_CONVERT_ROAD                         = ::WID_ROT_CONVERT_ROAD,                         ///< Convert road.
 	};
 
 	/** Widgets of the #BuildRoadDepotWindow class. */
@@ -2169,6 +2187,17 @@ public:
 		WID_BROS_LT_OFF                              = ::WID_BROS_LT_OFF,                              ///< Turn off area highlight.
 		WID_BROS_LT_ON                               = ::WID_BROS_LT_ON,                               ///< Turn on area highlight.
 		WID_BROS_INFO                                = ::WID_BROS_INFO,                                ///< Station acceptance info.
+	};
+
+	/* automatically generated from ../../widgets/screenshot_widget.h */
+	/** Widgets of the #ScreenshotWindow class. */
+	enum ScreenshotWindowWidgets {
+		WID_SC_TAKE                                  = ::WID_SC_TAKE,                                  ///< Button for taking a normal screenshot
+		WID_SC_TAKE_ZOOMIN                           = ::WID_SC_TAKE_ZOOMIN,                           ///< Button for taking a zoomed in screenshot
+		WID_SC_TAKE_DEFAULTZOOM                      = ::WID_SC_TAKE_DEFAULTZOOM,                      ///< Button for taking a screenshot at normal zoom
+		WID_SC_TAKE_WORLD                            = ::WID_SC_TAKE_WORLD,                            ///< Button for taking a screenshot of the whole world
+		WID_SC_TAKE_HEIGHTMAP                        = ::WID_SC_TAKE_HEIGHTMAP,                        ///< Button for taking a heightmap "screenshot"
+		WID_SC_TAKE_MINIMAP                          = ::WID_SC_TAKE_MINIMAP,                          ///< Button for taking a minimap screenshot
 	};
 
 	/* automatically generated from ../../widgets/settings_widget.h */
@@ -2296,6 +2325,7 @@ public:
 		WID_SV_ROADVEHS                              = ::WID_SV_ROADVEHS,                              ///< List of scheduled road vehs button.
 		WID_SV_SHIPS                                 = ::WID_SV_SHIPS,                                 ///< List of scheduled ships button.
 		WID_SV_PLANES                                = ::WID_SV_PLANES,                                ///< List of scheduled planes button.
+		WID_SV_CATCHMENT                             = ::WID_SV_CATCHMENT,                             ///< Toggle catchment area highlight.
 	};
 
 	/** Widgets of the #CompanyStationsWindow class. */
@@ -2441,6 +2471,7 @@ public:
 		WID_TN_BUILDING_TOOLS_START                  = ::WID_TN_BUILDING_TOOLS_START,                  ///< Helper for the offset of the building tools
 		WID_TN_RAILS                                 = ::WID_TN_RAILS,                                 ///< Rail building menu.
 		WID_TN_ROADS                                 = ::WID_TN_ROADS,                                 ///< Road building menu.
+		WID_TN_TRAMS                                 = ::WID_TN_TRAMS,                                 ///< Tram building menu.
 		WID_TN_WATER                                 = ::WID_TN_WATER,                                 ///< Water building toolbar.
 		WID_TN_AIR                                   = ::WID_TN_AIR,                                   ///< Airport building toolbar.
 		WID_TN_LANDSCAPE                             = ::WID_TN_LANDSCAPE,                             ///< Landscaping toolbar.
@@ -2471,11 +2502,11 @@ public:
 		WID_TE_TOWN_GENERATE                         = ::WID_TE_TOWN_GENERATE,                         ///< Town building window.
 		WID_TE_INDUSTRY                              = ::WID_TE_INDUSTRY,                              ///< Industry building window.
 		WID_TE_ROADS                                 = ::WID_TE_ROADS,                                 ///< Road building menu.
+		WID_TE_TRAMS                                 = ::WID_TE_TRAMS,                                 ///< Tram building menu.
 		WID_TE_WATER                                 = ::WID_TE_WATER,                                 ///< Water building toolbar.
 		WID_TE_TREES                                 = ::WID_TE_TREES,                                 ///< Tree building toolbar.
 		WID_TE_SIGNS                                 = ::WID_TE_SIGNS,                                 ///< Sign building.
 		WID_TE_DATE_PANEL                            = ::WID_TE_DATE_PANEL,                            ///< Container for the date widgets.
-		/* The following three need to have the same actual widget number as the normal toolbar due to shared code. */
 		WID_TE_MUSIC_SOUND                           = ::WID_TE_MUSIC_SOUND,                           ///< Music/sound configuration menu.
 		WID_TE_HELP                                  = ::WID_TE_HELP,                                  ///< Help menu.
 		WID_TE_SWITCH_BAR                            = ::WID_TE_SWITCH_BAR,                            ///< Only available when toolbar has been split to switch between different subsets.
@@ -2486,6 +2517,7 @@ public:
 	enum TownDirectoryWidgets {
 		WID_TD_SORT_ORDER                            = ::WID_TD_SORT_ORDER,                            ///< Direction of sort dropdown.
 		WID_TD_SORT_CRITERIA                         = ::WID_TD_SORT_CRITERIA,                         ///< Criteria of sort dropdown.
+		WID_TD_FILTER                                = ::WID_TD_FILTER,                                ///< Filter of name.
 		WID_TD_LIST                                  = ::WID_TD_LIST,                                  ///< List of towns.
 		WID_TD_SCROLLBAR                             = ::WID_TD_SCROLLBAR,                             ///< Scrollbar for the town list.
 		WID_TD_WORLD_POPULATION                      = ::WID_TD_WORLD_POPULATION,                      ///< The world's population.
@@ -2494,6 +2526,7 @@ public:
 	/** Widgets of the #TownAuthorityWindow class. */
 	enum TownAuthorityWidgets {
 		WID_TA_CAPTION                               = ::WID_TA_CAPTION,                               ///< Caption of window.
+		WID_TA_ZONE_BUTTON                           = ::WID_TA_ZONE_BUTTON,                           ///< Turn on/off showing local authority zone.
 		WID_TA_RATING_INFO                           = ::WID_TA_RATING_INFO,                           ///< Overview with ratings for each company.
 		WID_TA_COMMAND_LIST                          = ::WID_TA_COMMAND_LIST,                          ///< List of commands for the player.
 		WID_TA_SCROLLBAR                             = ::WID_TA_SCROLLBAR,                             ///< Scrollbar of the list of commands.
@@ -2509,6 +2542,7 @@ public:
 		WID_TV_CENTER_VIEW                           = ::WID_TV_CENTER_VIEW,                           ///< Center the main view on this town.
 		WID_TV_SHOW_AUTHORITY                        = ::WID_TV_SHOW_AUTHORITY,                        ///< Show the town authority window.
 		WID_TV_CHANGE_NAME                           = ::WID_TV_CHANGE_NAME,                           ///< Change the name of this town.
+		WID_TV_CATCHMENT                             = ::WID_TV_CATCHMENT,                             ///< Toggle catchment area highlight.
 		WID_TV_EXPAND                                = ::WID_TV_EXPAND,                                ///< Expand this town (scenario editor only).
 		WID_TV_DELETE                                = ::WID_TV_DELETE,                                ///< Delete this town (scenario editor only).
 	};

@@ -10,8 +10,6 @@
 ##grflangid 0x09
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -340,7 +338,6 @@ STR_PERFORMANCE_DETAIL_PERCENT                                  :{WHITE}{NUM}%
 ############ End of order list
 
 # Music window
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -382,6 +379,7 @@ STR_STATUSBAR_COMPANY_NAME                                      :{SILVER}- -  {C
 # Order review system / warnings
 
 STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE} mitluf
+
 
 
 
@@ -628,6 +626,7 @@ STR_SELECT_BRIDGE_SCENEDIT_INFO                                 :{GOLD}{STRING},
 
 # Road construction toolbar
 
+
 # Road depot construction window
 
 # Road vehicle station construction window
@@ -844,7 +843,13 @@ STR_FINANCES_POSITIVE_INCOME                                    :{BLACK}+{CURREN
 
 
 
+
 # Build vehicle window
+
+
+############ range for vehicle availability starts
+############ range for vehicle availability ends
+
 
 
 
@@ -884,7 +889,11 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 # Engine preview window
 
 
+
+
+
 # Autoreplace window
+
 
 
 
@@ -1009,6 +1018,7 @@ STR_TIMETABLE_CLEAR_SPEED_TOOLTIP                               :{BLACK}Исчи
 STR_AI_CONFIG_CHANGE_NONE                                       :
 
 # Available AIs window
+
 
 
 

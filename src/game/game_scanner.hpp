@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -16,44 +14,44 @@
 
 class GameScannerInfo : public ScriptScanner {
 public:
-	/* virtual */ void Initialize();
+	void Initialize() override;
 
 	/**
 	 * Check if we have a game by name and version available in our list.
 	 * @param nameParam The name of the game script.
 	 * @param versionParam The version of the game script, or -1 if you want the latest.
 	 * @param force_exact_match Only match name+version, never latest.
-	 * @return NULL if no match found, otherwise the game script that matched.
+	 * @return nullptr if no match found, otherwise the game script that matched.
 	 */
 	class GameInfo *FindInfo(const char *nameParam, int versionParam, bool force_exact_match);
 
 protected:
-	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, const char *last);
-	/* virtual */ const char *GetFileName() const { return PATHSEP "info.nut"; }
-	/* virtual */ Subdirectory GetDirectory() const { return GAME_DIR; }
-	/* virtual */ const char *GetScannerName() const { return "Game Scripts"; }
-	/* virtual */ void RegisterAPI(class Squirrel *engine);
+	void GetScriptName(ScriptInfo *info, char *name, const char *last) override;
+	const char *GetFileName() const override { return PATHSEP "info.nut"; }
+	Subdirectory GetDirectory() const override { return GAME_DIR; }
+	const char *GetScannerName() const override { return "Game Scripts"; }
+	void RegisterAPI(class Squirrel *engine) override;
 };
 
 
 class GameScannerLibrary : public ScriptScanner {
 public:
-	/* virtual */ void Initialize();
+	void Initialize() override;
 
 	/**
 	 * Find a library in the pool.
 	 * @param library The library name to find.
 	 * @param version The version the library should have.
-	 * @return The library if found, NULL otherwise.
+	 * @return The library if found, nullptr otherwise.
 	 */
 	class GameLibrary *FindLibrary(const char *library, int version);
 
 protected:
-	/* virtual */ void GetScriptName(ScriptInfo *info, char *name, const char *last);
-	/* virtual */ const char *GetFileName() const { return PATHSEP "library.nut"; }
-	/* virtual */ Subdirectory GetDirectory() const { return GAME_LIBRARY_DIR; }
-	/* virtual */ const char *GetScannerName() const { return "GS Libraries"; }
-	/* virtual */ void RegisterAPI(class Squirrel *engine);
+	void GetScriptName(ScriptInfo *info, char *name, const char *last) override;
+	const char *GetFileName() const override { return PATHSEP "library.nut"; }
+	Subdirectory GetDirectory() const override { return GAME_LIBRARY_DIR; }
+	const char *GetScannerName() const override { return "GS Libraries"; }
+	void RegisterAPI(class Squirrel *engine) override;
 };
 
 #endif /* GAME_SCANNER_HPP */

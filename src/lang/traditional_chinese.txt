@@ -10,8 +10,6 @@
 ##grflangid 0x0c
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -472,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :切換主控台
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/遊戲腳本除錯
 STR_ABOUT_MENU_SCREENSHOT                                       :擷取畫面
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :最近鏡截圖
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :在預設的縮放範圍截圖
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :擷取全場景畫面
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :關於「OpenTTD」
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :子畫面定位工具
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :切換邊界框
@@ -644,9 +639,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}自訂二
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}背景音樂音量
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}音效音量
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}最小
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}最大
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -857,6 +849,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}無法�
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING} 問世了！
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}{STRING} 問世了！ -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} 不再接受 {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} 不再接受 {STRING} 或 {STRING}
@@ -1684,7 +1677,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}貨物�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}競爭對手
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}電腦玩家
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :預設
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(建議)
 
@@ -1767,13 +1759,9 @@ STR_QUIT_NO                                                     :{BLACK}否
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -1802,6 +1790,7 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}變更�
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}允許修改產量：{ORANGE}{STRING}
 
 # Livery window
+STR_LIVERY_CAPTION                                              :{WHITE}{COMPANY} 的配色
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}顯示通用配色
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}顯示列車配色
@@ -2400,6 +2389,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}挖掘�
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}挖掘電車隧道。按 Shift 可切換建造／顯示預估的建造費用
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}切換鋪設／移除公路
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}切換鋪設電車軌
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}車廠方向
@@ -3260,8 +3250,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}鐵路區塊：
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}號誌
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}道路區塊：
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}道路
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}路面電車
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}水道或海運設施：
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}運河
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}車站：
@@ -3272,8 +3260,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}每年{C
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}工業
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- 無 -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} (已運送 {COMMA}%)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} (已運送 {COMMA}%/{COMMA}%)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}工業名稱 - 點選名稱可將工業置於畫面中央。 按住 Ctrl 點選可於工業位置開啟新視窗視野
 
@@ -3335,6 +3321,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :未分組的車
 STR_GROUP_DEFAULT_SHIPS                                         :未分組的船舶
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :未分組的飛機
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}群組 - 點選群組以顯示其中的運輸工具清單。拖曳群組標籤以排列群組的次序和層級。
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}點選可建立群組
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}移除所選群組
@@ -3356,10 +3343,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :新購電氣化
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :新購單軌車輛
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :新購磁浮車輛
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :新購鐵路列車
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :新購車輛
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :新購鐵路列車
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :新購船舶
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :新購飛機
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}費用：{GOLD}{CURRENCY_LONG}{BLACK} 載重：{GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}速度：{GOLD}{VELOCITY}{BLACK} 功率：{GOLD}{POWER}
@@ -3392,10 +3382,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}購買�
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}購買船舶
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}購買飛機
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}購買選定的列車。按住 Shift 點選則只會顯示預估的購買費用
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}購買選定的車輛。按住 Shift 點選則只會顯示預估的購買費用
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}購買選定的船舶。按住 Shift 點選則只會顯示預估的購買費用
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}購買選定的飛機。按住 Shift 點選則只會顯示預估的購買費用
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}重新命名
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}重新命名
@@ -3505,12 +3497,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}您正�
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}運輸工具製造商的訊息
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}我們剛設計了一種新{STRING} - 您有興趣獨家使用它一年，讓我們在正式上市之前先 觀察它的表現嗎？
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :鐵路機車頭
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :車輛
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :飛機
-STR_ENGINE_PREVIEW_SHIP                                         :船舶
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :單軌機車頭
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :磁浮機車頭
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :車輛
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :飛機
+STR_ENGINE_PREVIEW_SHIP                                         :船舶
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}費用：{CURRENCY_LONG} 載重：{WEIGHT_SHORT}{}速度：{VELOCITY}  功率：{POWER}{}營運成本：{CURRENCY_LONG} / 年{}容量：{CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}費用：{CURRENCY_LONG} 載重：{WEIGHT_SHORT}{}速度：{VELOCITY}  功率：{POWER}  最大牽引力：{6:FORCE}{}營運成本：{4:CURRENCY_LONG}/年{}容量：{5:CARGO_LONG}
@@ -3551,6 +3546,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :列車
 STR_REPLACE_ELRAIL_VEHICLES                                     :電氣化列車
 STR_REPLACE_MONORAIL_VEHICLES                                   :單軌列車
 STR_REPLACE_MAGLEV_VEHICLES                                     :磁浮列車
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}移除車廂：{ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}如果替換後的車廂較長的話，讓自動替換功能移除多餘的車廂 (從頭開始) 以便維持列車長度
@@ -3999,6 +3995,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}選擇�
 STR_AI_LIST_CANCEL                                              :{BLACK}取消
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}不改變腳本
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} 參數
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4270,7 +4267,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}必須�
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}沒有適合的鐵軌
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}必須先移除鐵路
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}道路是單行道或已封閉
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}這種軌道不能建設平交道
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}這種軌道不能建設平交道
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}無法在此興建號誌...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}無法在此鋪設鐵路...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}不能從這邊移除鐵路...

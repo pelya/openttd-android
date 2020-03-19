@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -37,6 +35,6 @@ static void Load_ATID()
 }
 
 extern const ChunkHandler _airport_chunk_handlers[] = {
-	{ 'ATID', Save_ATID, Load_ATID, NULL, NULL, CH_ARRAY },
-	{ 'APID', Save_APID, Load_APID, NULL, NULL, CH_ARRAY | CH_LAST },
+	{ 'ATID', Save_ATID, Load_ATID, nullptr, nullptr, CH_ARRAY },
+	{ 'APID', Save_APID, Load_APID, nullptr, nullptr, CH_ARRAY | CH_LAST },
 };

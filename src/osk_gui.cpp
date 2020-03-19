@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -46,10 +44,10 @@ struct OskWindow : public Window {
 	OskWindow(WindowDesc *desc, Window *parent, int button) : Window(desc)
 	{
 		this->parent = parent;
-		assert(parent != NULL);
+		assert(parent != nullptr);
 
 		NWidgetCore *par_wid = parent->GetWidget<NWidgetCore>(button);
-		assert(par_wid != NULL);
+		assert(par_wid != nullptr);
 
 		assert(parent->querystrings.Contains(button));
 		this->qs         = parent->querystrings.Find(button)->second;
@@ -94,12 +92,12 @@ struct OskWindow : public Window {
 		this->SetWidgetLoweredState(WID_OSK_CAPS, HasBit(_keystate, KEYS_CAPS));
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_OSK_CAPTION) SetDParam(0, this->caption);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget < WID_OSK_LETTERS) return;
 
@@ -110,7 +108,7 @@ struct OskWindow : public Window {
 			TC_BLACK);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		/* clicked a letter */
 		if (widget >= WID_OSK_LETTERS) {
@@ -166,7 +164,7 @@ struct OskWindow : public Window {
 				break;
 
 			case WID_OSK_OK:
-				if (this->qs->orig == NULL || strcmp(this->qs->text.buf, this->qs->orig) != 0) {
+				if (this->qs->orig == nullptr || strcmp(this->qs->text.buf, this->qs->orig) != 0) {
 					/* pass information by simulating a button press on parent window */
 					if (this->qs->ok_button >= 0) {
 						this->parent->OnClick(pt, this->qs->ok_button, 1);
@@ -192,21 +190,21 @@ struct OskWindow : public Window {
 		}
 	}
 
-	virtual void OnEditboxChanged(int widget)
+	void OnEditboxChanged(int widget) override
 	{
 		this->SetWidgetDirty(WID_OSK_TEXT);
 		this->parent->OnEditboxChanged(this->text_btn);
 		this->parent->SetWidgetDirty(this->text_btn);
 	}
 
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		this->SetWidgetDirty(WID_OSK_TEXT);
 		this->parent->SetWidgetDirty(this->text_btn);
 	}
 
-	virtual void OnFocusLost()
+	void OnFocusLost() override
 	{
 		VideoDriver::GetInstance()->EditBoxLostFocus();
 		delete this;
@@ -422,13 +420,13 @@ void ShowOnScreenKeyboard(Window *parent, int button)
  * Updates the original text of the OSK so when the 'parent' changes the
  * original and you press on cancel you won't get the 'old' original text
  * but the updated one.
- * @param parent window that just updated its orignal text
+ * @param parent window that just updated its original text
  * @param button widget number of parent's textbox to update
  */
 void UpdateOSKOriginalText(const Window *parent, int button)
 {
 	OskWindow *osk = dynamic_cast<OskWindow *>(FindWindowById(WC_OSK, 0));
-	if (osk == NULL || osk->parent != parent || osk->text_btn != button) return;
+	if (osk == nullptr || osk->parent != parent || osk->text_btn != button) return;
 
 	free(osk->orig_str_buf);
 	osk->orig_str_buf = stredup(osk->qs->text.buf);
@@ -445,5 +443,5 @@ void UpdateOSKOriginalText(const Window *parent, int button)
 bool IsOSKOpenedFor(const Window *w, int button)
 {
 	OskWindow *osk = dynamic_cast<OskWindow *>(FindWindowById(WC_OSK, 0));
-	return osk != NULL && osk->parent == w && osk->text_btn == button;
+	return osk != nullptr && osk->parent == w && osk->text_btn == button;
 }

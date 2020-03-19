@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -211,21 +209,6 @@ bool ValParamRailtype(const RailType rail)
 }
 
 /**
- * Returns the "best" railtype a company can build.
- * As the AI doesn't know what the BEST one is, we have our own priority list
- * here. When adding new railtypes, modify this function
- * @param company the company "in action"
- * @return The "best" railtype a company has available
- */
-RailType GetBestRailtype(const CompanyID company)
-{
-	if (HasRailtypeAvail(company, RAILTYPE_MAGLEV)) return RAILTYPE_MAGLEV;
-	if (HasRailtypeAvail(company, RAILTYPE_MONO)) return RAILTYPE_MONO;
-	if (HasRailtypeAvail(company, RAILTYPE_ELECTRIC)) return RAILTYPE_ELECTRIC;
-	return RAILTYPE_RAIL;
-}
-
-/**
  * Add the rail types that are to be introduced at the given date.
  * @param current The currently available railtypes.
  * @param date    The date for the introduction comparisons.
@@ -262,14 +245,14 @@ RailTypes AddDateIntroducedRailTypes(RailTypes current, Date date)
 /**
  * Get the rail types the given company can build.
  * @param company the company to get the rail types for.
+ * @param introduces If true, include rail types introduced by other rail types
  * @return the rail types.
  */
-RailTypes GetCompanyRailtypes(CompanyID company)
+RailTypes GetCompanyRailtypes(CompanyID company, bool introduces)
 {
 	RailTypes rts = RAILTYPES_NONE;
 
-	Engine *e;
-	FOR_ALL_ENGINES_OF_TYPE(e, VEH_TRAIN) {
+	for (const Engine *e : Engine::IterateType(VEH_TRAIN)) {
 		const EngineInfo *ei = &e->info;
 
 		if (HasBit(ei->climates, _settings_game.game_creation.landscape) &&
@@ -278,12 +261,45 @@ RailTypes GetCompanyRailtypes(CompanyID company)
 
 			if (rvi->railveh_type != RAILVEH_WAGON) {
 				assert(rvi->railtype < RAILTYPE_END);
-				rts |= GetRailTypeInfo(rvi->railtype)->introduces_railtypes;
+				if (introduces) {
+					rts |= GetRailTypeInfo(rvi->railtype)->introduces_railtypes;
+				} else {
+					SetBit(rts, rvi->railtype);
+				}
 			}
 		}
 	}
 
-	return AddDateIntroducedRailTypes(rts, _date);
+	if (introduces) return AddDateIntroducedRailTypes(rts, _date);
+	return rts;
+}
+
+/**
+ * Get list of rail types, regardless of company availability.
+ * @param introduces If true, include rail types introduced by other rail types
+ * @return the rail types.
+ */
+RailTypes GetRailTypes(bool introduces)
+{
+	RailTypes rts = RAILTYPES_NONE;
+
+	for (const Engine *e : Engine::IterateType(VEH_TRAIN)) {
+		const EngineInfo *ei = &e->info;
+		if (!HasBit(ei->climates, _settings_game.game_creation.landscape)) continue;
+
+		const RailVehicleInfo *rvi = &e->u.rail;
+		if (rvi->railveh_type != RAILVEH_WAGON) {
+			assert(rvi->railtype < RAILTYPE_END);
+			if (introduces) {
+				rts |= GetRailTypeInfo(rvi->railtype)->introduces_railtypes;
+			} else {
+				SetBit(rts, rvi->railtype);
+			}
+		}
+	}
+
+	if (introduces) return AddDateIntroducedRailTypes(rts, MAX_DAY);
+	return rts;
 }
 
 /**
@@ -304,7 +320,7 @@ RailType GetRailTypeByLabel(RailTypeLabel label, bool allow_alternate_labels)
 		/* Test if any rail type defines the label as an alternate. */
 		for (RailType r = RAILTYPE_BEGIN; r != RAILTYPE_END; r++) {
 			const RailtypeInfo *rti = GetRailTypeInfo(r);
-			if (rti->alternate_labels.Contains(label)) return r;
+			if (std::find(rti->alternate_labels.begin(), rti->alternate_labels.end(), label) != rti->alternate_labels.end()) return r;
 		}
 	}
 

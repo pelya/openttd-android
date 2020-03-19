@@ -12,8 +12,6 @@
 ##case kas
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -472,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Atvērt/aizvērt konsoli
 STR_ABOUT_MENU_AI_DEBUG                                         :MI/spēles skriptu atkļūdošana
 STR_ABOUT_MENU_SCREENSHOT                                       :Ekrānuzņēmums
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Pilnībā pietuvināts ekrānuzņēmums
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Noklusējuma mēroga ekrānuzņēmums
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Visas kartes ekrānuzņēmums
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Rādīt kadru ātrumu
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Par 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Gariņu līdzinātājs
@@ -645,9 +640,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Pielāgotā 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Mūzikas skaļums
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Efektu skaļums
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAKS
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -856,6 +848,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Automāt
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}Tagad ir pieejams jauns {STRING}!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Tagad ir pieejams jauns {STRING}!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} vairs nepieņem {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} vairs nepieņem {STRING} vai {STRING}
@@ -1632,7 +1625,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Kravu s
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Sāncenši
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Nespēlētāju tēli (datora vadīti)
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Sākotnējais
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(ieteicamais)
 
@@ -1714,13 +1706,9 @@ STR_QUIT_NO                                                     :{BLACK}Nē
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2345,6 +2333,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Būvēt 
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Būvēt tramvaju tuneli. Shift pārslēdz būvēšanu/izmaksu tāmes rādīšanu
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Pārslēgties starp ceļa būvēšanas/nojaukšanas režīmiem
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Pārslēgt būvēt/novākt tramvaju būvei
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Autotransporta depo virziens
@@ -3203,8 +3192,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Sliežu gabali:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signālierīces
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Ceļa gabali:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Ceļš
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tramvajs
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Ūdens lauciņi:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanāli
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stacijas:
@@ -3216,8 +3203,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Ražotnes
 STR_INDUSTRY_DIRECTORY_NONE                                     :{G=m}{ORANGE}- Neviens -
 STR_INDUSTRY_DIRECTORY_NONE.kas                                 :{ORANGE}- Neviena -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% pārvadāts)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% pārvadāts)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Ražotņu nosaukumi - klikšķināt uz nosaukuma, lai centrētu skatu uz ražotni. Ctrl+klikšķis atvērs jaunu skatvietu pie ražotnes
 
@@ -3279,6 +3264,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Negrupēti auto
 STR_GROUP_DEFAULT_SHIPS                                         :Negrupēti kuģi
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Negrupēti lidaparāti
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupas - klikšķināt uz grupas, lai iegūtu tās transportlīdzekļu sarakstu
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klikšķināt, lai izveidotu grupu
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Dzēst izvēlēto grupu
@@ -3300,10 +3286,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Jauni elektrifi
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Jauni viensliedes vilcieni
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Jauni magleva vilcieni
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Jauni vilcieni
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Jauni autotransporta līdzekļi
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Jauni vilcieni
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Jauni kuģi
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Jauns lidaparāts
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Cena: {GOLD}{CURRENCY_LONG}{BLACK} Svars: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Ātrums: {GOLD}{VELOCITY}{BLACK} Jauda: {GOLD}{POWER}
@@ -3336,10 +3325,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Pirkt au
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Pirkt kuģi
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Pirkt lidaparātu
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Pirkt atzīmēto vilciena vagonu. Shift+klikšķis rāda izmaksu novērtējumu, neveicot pirkumu
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Pirkt atzīmēto transportlīdzekli. Shift+klikšķis rāda izmaksu novērtējumu, neveicot pirkumu
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Pirkt atzīmēto kuģi. Shift+klikšķis rāda izmaksu novērtējumu, neveicot pirkumu
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Pirkt izvēlēto lidaparātu. Shift+klikšķis rāda izmaksu novērtējumu, neveicot pirkumu
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Pārdēvēt
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Pārdēvēt
@@ -3449,12 +3440,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Jūs gr
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Ziņojums no transportlīdzekļu ražotāja
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Mēs tikko esam izstrādājuši jaunu transportlīdzekli - {STRING}. Vai esat ieinteresēts iegūt izņēmuma tiesības izmantot šo transportlīdzekli uz vienu gadu, lai mēs redzētu tā iespējas pirms padaram pieejamu visiem?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :dzelzceļa lokomotīve
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :autotransporta līdzeklis
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :lidaparāts
-STR_ENGINE_PREVIEW_SHIP                                         :kuģis
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :viensliedes lokomotīve
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :magleva lokomotīve
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :autotransporta līdzeklis
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :lidaparāts
+STR_ENGINE_PREVIEW_SHIP                                         :kuģis
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Cena: {CURRENCY_LONG} Svars: {WEIGHT_SHORT}{}Ātrums: {VELOCITY} Jauda: {POWER}{}Kārtējās izmaksas: {CURRENCY_LONG} gadā{}Ietilpība:  {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Cena: {CURRENCY_LONG} Svars: {WEIGHT_SHORT}{}Ātrums: {VELOCITY}  Jauda: {POWER}  Maks. spēks: {6:FORCE}{}Kārtējās izmaksas: {4:CURRENCY_LONG} gadā{}Ietilpība: {5:CARGO_LONG}
@@ -3493,6 +3487,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Sliežu transpo
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektrificētā dzelzceļa transportlīdzekļi
 STR_REPLACE_MONORAIL_VEHICLES                                   :Viensliedes transportlīdzekļi
 STR_REPLACE_MAGLEV_VEHICLES                                     :Magleva transportlīdzekļi
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vagona noņemšana: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Automātiskā aizvietošana saglabās esošo vilciena garumu noņemot vagonus (sākot no priekšgala), ja mainot lokomotīvi tas kļūtu garāks
@@ -3936,6 +3931,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Izvēlē
 STR_AI_LIST_CANCEL                                              :{BLACK}Atcelt
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Nemainīt skriptu
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} parametri
 STR_AI_SETTINGS_CAPTION_AI                                      :MI
@@ -4201,7 +4197,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Vispirms
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Nav piemērota sliežu ceļa
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Vispirms ir jānoņem dzelzceļa sliedes
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Ceļs ir bloķēts vai vienvirziena
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Vienlīmeņa krustojumi šīm sliedēm nav atļauti
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Vienlīmeņa krustojumi šīm sliedēm nav atļauti
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Šeit nevar būvēt signālierīces...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Šeit nevar būvēt dzelzceļa posmu...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Šeit nevar nojaukt dzelzceļa posmu...

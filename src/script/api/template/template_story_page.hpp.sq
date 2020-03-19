@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,5 +23,5 @@ namespace SQConvert {
 	template <> inline ScriptStoryPage &GetParam(ForceType<ScriptStoryPage &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptStoryPage *)instance; }
 	template <> inline const ScriptStoryPage *GetParam(ForceType<const ScriptStoryPage *>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return  (ScriptStoryPage *)instance; }
 	template <> inline const ScriptStoryPage &GetParam(ForceType<const ScriptStoryPage &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptStoryPage *)instance; }
-	template <> inline int Return<ScriptStoryPage *>(HSQUIRRELVM vm, ScriptStoryPage *res) { if (res == NULL) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "StoryPage", res, NULL, DefSQDestructorCallback<ScriptStoryPage>, true); return 1; }
+	template <> inline int Return<ScriptStoryPage *>(HSQUIRRELVM vm, ScriptStoryPage *res) { if (res == nullptr) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "StoryPage", res, nullptr, DefSQDestructorCallback<ScriptStoryPage>, true); return 1; }
 } // namespace SQConvert

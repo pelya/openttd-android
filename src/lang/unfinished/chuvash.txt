@@ -10,8 +10,6 @@
 ##grflangid 0x0b
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -274,7 +272,6 @@ STR_TOOLBAR_SOUND_MUSIC                                         :Сасӑ/Юрӑ
 ############ range for about menu starts
 STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_SCREENSHOT                                       :Экран сӑнӗ
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Яланхилле экран сӑнӗ
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :'OpenTTD' çинчен
 ############ range ends here
 
@@ -393,9 +390,6 @@ STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}Пурӗ
 ############ End of order list
 
 # Music window
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}ЧИ САХ(MIN)
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}ЧИ НУМ(MAX)
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -461,6 +455,7 @@ STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Пӗлт
 
 
 # Order review system / warnings
+
 
 
 
@@ -662,13 +657,9 @@ STR_QUIT_NO                                                     :{BLACK}Ҫук
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -863,6 +854,7 @@ STR_CONTENT_DETAIL_VERSION                                      :{SILVER}Вер�
 
 
 # Road construction toolbar
+
 
 # Road depot construction window
 
@@ -1138,7 +1130,13 @@ STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ҫу�
 
 
 
+
 # Build vehicle window
+
+
+############ range for vehicle availability starts
+############ range for vehicle availability ends
+
 
 
 
@@ -1176,7 +1174,11 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 # Engine preview window
 
 
+
+
+
 # Autoreplace window
+
 
 
 
@@ -1294,6 +1296,7 @@ STR_AI_CONFIG_CHANGE_NONE                                       :
 # Available AIs window
 
 STR_AI_LIST_VERSION                                             :{LTBLUE}Верси: {ORANGE}{NUM}
+
 
 
 # AI Parameters

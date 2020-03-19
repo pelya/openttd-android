@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,8 +23,10 @@
 #include "../core/random_func.hpp"
 #include "../core/math_func.hpp"
 #include "../framerate_type.h"
+#include "../thread.h"
 #include "allegro_v.h"
 #include <allegro.h>
+#include <algorithm>
 
 #include "../safeguards.h"
 
@@ -138,34 +138,25 @@ static void GetVideoModes()
 	 * cards ourselves... and we need a card to get the modes. */
 	set_gfx_mode(_fullscreen ? GFX_AUTODETECT_FULLSCREEN : GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
 
+	_resolutions.clear();
+
 	GFX_MODE_LIST *mode_list = get_gfx_mode_list(gfx_driver->id);
-	if (mode_list == NULL) {
-		memcpy(_resolutions, default_resolutions, sizeof(default_resolutions));
-		_num_resolutions = lengthof(default_resolutions);
+	if (mode_list == nullptr) {
+		_resolutions.assign(std::begin(default_resolutions), std::end(default_resolutions));
 		return;
 	}
 
 	GFX_MODE *modes = mode_list->mode;
 
-	int n = 0;
 	for (int i = 0; modes[i].bpp != 0; i++) {
 		uint w = modes[i].width;
 		uint h = modes[i].height;
-		if (w >= 640 && h >= 480) {
-			int j;
-			for (j = 0; j < n; j++) {
-				if (_resolutions[j].width == w && _resolutions[j].height == h) break;
-			}
-
-			if (j == n) {
-				_resolutions[j].width  = w;
-				_resolutions[j].height = h;
-				if (++n == lengthof(_resolutions)) break;
-			}
-		}
+		if (w < 640 || h < 480) continue;
+		if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(w, h)) != _resolutions.end()) continue;
+		_resolutions.emplace_back(w, h);
 	}
-	_num_resolutions = n;
-	SortResolutions(_num_resolutions);
+
+	SortResolutions();
 
 	destroy_gfx_mode_list(mode_list);
 }
@@ -173,17 +164,15 @@ static void GetVideoModes()
 static void GetAvailableVideoMode(uint *w, uint *h)
 {
 	/* No video modes, so just try it and see where it ends */
-	if (_num_resolutions == 0) return;
+	if (_resolutions.empty()) return;
 
 	/* is the wanted mode among the available modes? */
-	for (int i = 0; i != _num_resolutions; i++) {
-		if (*w == _resolutions[i].width && *h == _resolutions[i].height) return;
-	}
+	if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(*w, *h)) != _resolutions.end()) return;
 
 	/* use the closest possible resolution */
-	int best = 0;
+	uint best = 0;
 	uint delta = Delta(_resolutions[0].width, *w) * Delta(_resolutions[0].height, *h);
-	for (int i = 1; i != _num_resolutions; ++i) {
+	for (uint i = 1; i != _resolutions.size(); ++i) {
 		uint newdelta = Delta(_resolutions[i].width, *w) * Delta(_resolutions[i].height, *h);
 		if (newdelta < delta) {
 			best = i;
@@ -242,7 +231,7 @@ static bool CreateMainSurface(uint w, uint h)
 bool VideoDriver_Allegro::ClaimMousePointer()
 {
 	select_mouse_cursor(MOUSE_CURSOR_NONE);
-	show_mouse(NULL);
+	show_mouse(nullptr);
 	disable_hardware_cursor();
 	return true;
 }
@@ -423,7 +412,7 @@ int _allegro_instance_count = 0;
 
 const char *VideoDriver_Allegro::Start(const char * const *parm)
 {
-	if (_allegro_instance_count == 0 && install_allegro(SYSTEM_AUTODETECT, &errno, NULL)) {
+	if (_allegro_instance_count == 0 && install_allegro(SYSTEM_AUTODETECT, &errno, nullptr)) {
 		DEBUG(driver, 0, "allegro: install_allegro failed '%s'", allegro_error);
 		return "Failed to set up Allegro";
 	}
@@ -436,14 +425,8 @@ const char *VideoDriver_Allegro::Start(const char * const *parm)
 #if defined _DEBUG
 /* Allegro replaces SEGV/ABRT signals meaning that the debugger will never
  * be triggered, so rereplace the signals and make the debugger useful. */
-	signal(SIGABRT, NULL);
-	signal(SIGSEGV, NULL);
-#endif
-
-#if defined(DOS)
-	/* Force DOS builds to ALWAYS use full screen as
-	 * it can't do windowed. */
-	_fullscreen = true;
+	signal(SIGABRT, nullptr);
+	signal(SIGSEGV, nullptr);
 #endif
 
 	GetVideoModes();
@@ -453,7 +436,7 @@ const char *VideoDriver_Allegro::Start(const char * const *parm)
 	MarkWholeScreenDirty();
 	set_close_button_callback(HandleExitGameRequest);
 
-	return NULL;
+	return nullptr;
 }
 
 void VideoDriver_Allegro::Stop()
@@ -461,14 +444,14 @@ void VideoDriver_Allegro::Stop()
 	if (--_allegro_instance_count == 0) allegro_exit();
 }
 
-#if defined(UNIX) || defined(__OS2__) || defined(DOS)
+#if defined(UNIX) || defined(__OS2__)
 # include <sys/time.h> /* gettimeofday */
 
 static uint32 GetTime()
 {
 	struct timeval tim;
 
-	gettimeofday(&tim, NULL);
+	gettimeofday(&tim, nullptr);
 	return tim.tv_usec / 1000 + tim.tv_sec * 1000;
 }
 #else
@@ -548,18 +531,14 @@ bool VideoDriver_Allegro::ChangeResolution(int w, int h)
 
 bool VideoDriver_Allegro::ToggleFullscreen(bool fullscreen)
 {
-#ifdef DOS
-	return false;
-#else
 	_fullscreen = fullscreen;
 	GetVideoModes(); // get the list of available video modes
-	if (_num_resolutions == 0 || !this->ChangeResolution(_cur_resolution.width, _cur_resolution.height)) {
+	if (_resolutions.empty() || !this->ChangeResolution(_cur_resolution.width, _cur_resolution.height)) {
 		/* switching resolution failed, put back full_screen to original status */
 		_fullscreen ^= true;
 		return false;
 	}
 	return true;
-#endif
 }
 
 bool VideoDriver_Allegro::AfterBlitterChange()

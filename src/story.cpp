@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -45,7 +43,7 @@ INSTANTIATE_POOL_METHODS(StoryPage)
  * @param tile The tile parameter of the DoCommand proc
  * @param reference The reference parameter of the DoCommand proc (p2)
  * @param text The text parameter of the DoCommand proc
- * @return true, if and only if the given parameters are valid for the given page elment type and page id.
+ * @return true, if and only if the given parameters are valid for the given page element type and page id.
  */
 static bool VerifyElementContentParameters(StoryPageID page_id, StoryPageElementType type, TileIndex tile, uint32 reference, const char *text)
 {
@@ -124,7 +122,7 @@ CommandCost CmdCreateStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		s->date = _date;
 		s->company = company;
 		if (StrEmpty(text)) {
-			s->title = NULL;
+			s->title = nullptr;
 		} else {
 			s->title = stredup(text);
 		}
@@ -154,13 +152,12 @@ CommandCost CmdCreateStoryPageElement(TileIndex tile, DoCommandFlag flags, uint3
 {
 	if (!StoryPageElement::CanAllocateItem()) return CMD_ERROR;
 
-	StoryPageID page_id = (CompanyID)GB(p1, 0, 16);
+	StoryPageID page_id = (StoryPageID)GB(p1, 0, 16);
 	StoryPageElementType type = Extract<StoryPageElementType, 16, 8>(p1);
 
 	/* Allow at most 128 elements per page. */
 	uint16 element_count = 0;
-	StoryPageElement *iter;
-	FOR_ALL_STORY_PAGE_ELEMENTS(iter) {
+	for (StoryPageElement *iter : StoryPageElement::Iterate()) {
 		if (iter->page == page_id) element_count++;
 	}
 	if (element_count >= 128) return CMD_ERROR;
@@ -241,7 +238,7 @@ CommandCost CmdSetStoryPageTitle(TileIndex tile, DoCommandFlag flags, uint32 p1,
 		StoryPage *p = StoryPage::Get(page_id);
 		free(p->title);
 		if (StrEmpty(text)) {
-			p->title = NULL;
+			p->title = nullptr;
 		} else {
 			p->title = stredup(text);
 		}
@@ -319,8 +316,7 @@ CommandCost CmdRemoveStoryPage(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	if (flags & DC_EXEC) {
 		StoryPage *p = StoryPage::Get(page_id);
 
-		StoryPageElement *pe;
-		FOR_ALL_STORY_PAGE_ELEMENTS(pe) {
+		for (StoryPageElement *pe : StoryPageElement::Iterate()) {
 			if (pe->page == p->index) {
 				delete pe;
 			}

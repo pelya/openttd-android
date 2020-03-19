@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -46,7 +44,7 @@
  * @param delta_z Height of the airport above the land.
  */
 #define HELIPORT(name, num_helipads, delta_z) \
-	AIRPORT_GENERIC(name, NULL, num_helipads, AirportFTAClass::HELICOPTERS, delta_z)
+	AIRPORT_GENERIC(name, nullptr, num_helipads, AirportFTAClass::HELICOPTERS, delta_z)
 
 AIRPORT(country, 0, true)
 AIRPORT(city, 0, false)
@@ -58,7 +56,7 @@ HELIPORT(helidepot, 1, 0)
 AIRPORT(intercontinental, 2, false)
 HELIPORT(helistation, 3, 0)
 HELIPORT(oilrig, 1, 54)
-AIRPORT_GENERIC(dummy, NULL, 0, AirportFTAClass::ALL, 0)
+AIRPORT_GENERIC(dummy, nullptr, 0, AirportFTAClass::ALL, 0)
 
 #undef HELIPORT
 #undef AIRPORT
@@ -135,7 +133,7 @@ AirportFTAClass::~AirportFTAClass()
 {
 	for (uint i = 0; i < nofelements; i++) {
 		AirportFTA *current = layout[i].next;
-		while (current != NULL) {
+		while (current != nullptr) {
 			AirportFTA *next = current->next;
 			free(current);
 			current = next;
@@ -195,7 +193,7 @@ static AirportFTA *AirportBuildAutomata(uint nofelements, const AirportFTAbuildu
 			current = current->next;
 			internalcounter++;
 		}
-		current->next = NULL;
+		current->next = nullptr;
 		internalcounter++;
 	}
 	return FAutomata;

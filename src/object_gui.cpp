@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -99,18 +97,18 @@ public:
 		this->GetWidget<NWidgetMatrix>(WID_BO_OBJECT_MATRIX)->SetCount(4);
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_BO_OBJECT_NAME: {
 				const ObjectSpec *spec = ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index);
-				SetDParam(0, spec != NULL ? spec->name : STR_EMPTY);
+				SetDParam(0, spec != nullptr ? spec->name : STR_EMPTY);
 				break;
 			}
 
 			case WID_BO_OBJECT_SIZE: {
 				const ObjectSpec *spec = ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index);
-				int size = spec == NULL ? 0 : spec->size;
+				int size = spec == nullptr ? 0 : spec->size;
 				SetDParam(0, GB(size, HasBit(_selected_object_view, 0) ? 4 : 0, 4));
 				SetDParam(1, GB(size, HasBit(_selected_object_view, 0) ? 0 : 4, 4));
 				break;
@@ -120,7 +118,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_BO_CLASS_LIST: {
@@ -145,7 +143,7 @@ public:
 			case WID_BO_OBJECT_MATRIX: {
 				/* Get the right amount of buttons based on the current spec. */
 				const ObjectSpec *spec = ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index);
-				if (spec != NULL) {
+				if (spec != nullptr) {
 					if (spec->views >= 2) size->width  += resize->width;
 					if (spec->views >= 4) size->height += resize->height;
 				}
@@ -185,7 +183,7 @@ public:
 
 				/* Get the right size for the single widget based on the current spec. */
 				const ObjectSpec *spec = ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index);
-				if (spec != NULL) {
+				if (spec != nullptr) {
 					if (spec->views >= 2) size->width  = size->width  / 2 - 1;
 					if (spec->views >= 4) size->height = size->height / 2 - 1;
 				}
@@ -210,7 +208,7 @@ public:
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (GB(widget, 0, 16)) {
 			case WID_BO_CLASS_LIST: {
@@ -229,7 +227,7 @@ public:
 
 			case WID_BO_OBJECT_SPRITE: {
 				const ObjectSpec *spec = ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index);
-				if (spec == NULL) break;
+				if (spec == nullptr) break;
 
 				/* Height of the selection matrix.
 				 * Depending on the number of views, the matrix has a 1x1, 1x2, 2x1 or 2x2 layout. To make the previews
@@ -243,7 +241,7 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.right - r.left + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					if (spec->grf_prop.grffile == NULL) {
+					if (spec->grf_prop.grffile == nullptr) {
 						extern const DrawTileSprites _objects[];
 						const DrawTileSprites *dts = &_objects[spec->grf_prop.local_id];
 						DrawOrigTileSeqInGUI((r.right - r.left) / 2 - 1, (r.bottom - r.top + matrix_height / 2) / 2 - OBJECT_MARGIN - ScaleGUITrad(TILE_PIXELS), dts, PAL_NONE);
@@ -260,7 +258,7 @@ public:
 				int obj_index = objclass->GetIndexFromUI(GB(widget, 16, 16));
 				if (obj_index < 0) break;
 				const ObjectSpec *spec = objclass->GetSpec(obj_index);
-				if (spec == NULL) break;
+				if (spec == nullptr) break;
 
 				if (!spec->IsAvailable()) {
 					GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK, FILLRECT_CHECKER);
@@ -270,7 +268,7 @@ public:
 				if (FillDrawPixelInfo(&tmp_dpi, r.left + 1, r.top, (r.right - 1) - (r.left + 1) + 1, r.bottom - r.top + 1)) {
 					DrawPixelInfo *old_dpi = _cur_dpi;
 					_cur_dpi = &tmp_dpi;
-					if (spec->grf_prop.grffile == NULL) {
+					if (spec->grf_prop.grffile == nullptr) {
 						extern const DrawTileSprites _objects[];
 						const DrawTileSprites *dts = &_objects[spec->grf_prop.local_id];
 						DrawOrigTileSeqInGUI((r.right - r.left) / 2 - 1, r.bottom - r.top - OBJECT_MARGIN - ScaleGUITrad(TILE_PIXELS), dts, PAL_NONE);
@@ -285,11 +283,11 @@ public:
 
 			case WID_BO_INFO: {
 				const ObjectSpec *spec = ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index);
-				if (spec == NULL) break;
+				if (spec == nullptr) break;
 
 				/* Get the extra message for the GUI */
 				if (HasBit(spec->callback_mask, CBM_OBJ_FUND_MORE_TEXT)) {
-					uint16 callback_res = GetObjectCallback(CBID_OBJECT_FUND_MORE_TEXT, 0, 0, spec, NULL, INVALID_TILE, _selected_object_view);
+					uint16 callback_res = GetObjectCallback(CBID_OBJECT_FUND_MORE_TEXT, 0, 0, spec, nullptr, INVALID_TILE, _selected_object_view);
 					if (callback_res != CALLBACK_FAILED && callback_res != 0x400) {
 						if (callback_res > 0x400) {
 							ErrorUnknownCallbackResult(spec->grf_prop.grffile->grfid, CBID_OBJECT_FUND_MORE_TEXT, callback_res);
@@ -382,12 +380,12 @@ public:
 		this->SetDirty();
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_BO_CLASS_LIST);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (GB(widget, 0, 16)) {
 			case WID_BO_CLASS_LIST: {
@@ -415,13 +413,13 @@ public:
 		}
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		DoCommandP(tile, ObjectClass::Get(_selected_object_class)->GetSpec(_selected_object_index)->Index(),
 				_selected_object_view, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_OBJECT), CcTerraform);
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
 		this->UpdateButtons(_selected_object_class, -1, _selected_object_view);
 	}

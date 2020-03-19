@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,8 +16,6 @@
 #include "config.h"
 #include "../../newgrf_config.h"
 #include "../../date_type.h"
-
-#ifdef ENABLE_NETWORK
 
 /**
  * The game information that is not generated on-the-fly and has to
@@ -57,7 +53,5 @@ struct NetworkGameInfo : NetworkServerGameInfo {
 };
 
 const char * GetNetworkRevisionString();
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_GAME_H */

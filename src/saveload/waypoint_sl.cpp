@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -11,6 +9,7 @@
 
 #include "../stdafx.h"
 #include "../waypoint_base.h"
+#include "../debug.h"
 #include "../newgrf_station.h"
 #include "../vehicle_base.h"
 #include "../town.h"
@@ -36,13 +35,13 @@ struct OldWaypoint {
 	uint8 localidx;
 	uint32 grfid;
 	const StationSpec *spec;
-	OwnerByte owner;
+	Owner owner;
 
 	size_t new_index;
 };
 
 /** Temporary array with old waypoints. */
-static SmallVector<OldWaypoint, 16> _old_waypoints;
+static std::vector<OldWaypoint> _old_waypoints;
 
 /**
  * Update the waypoint orders to get the new waypoint ID.
@@ -52,10 +51,10 @@ static void UpdateWaypointOrder(Order *o)
 {
 	if (!o->IsType(OT_GOTO_WAYPOINT)) return;
 
-	for (OldWaypoint *wp = _old_waypoints.Begin(); wp != _old_waypoints.End(); wp++) {
-		if (wp->index != o->GetDestination()) continue;
+	for (OldWaypoint &wp : _old_waypoints) {
+		if (wp.index != o->GetDestination()) continue;
 
-		o->SetDestination((DestinationID)wp->new_index);
+		o->SetDestination((DestinationID)wp.new_index);
 		return;
 	}
 }
@@ -71,82 +70,98 @@ void MoveWaypointsToBaseStations()
 	 * id which was stored in m4 is now saved as a grf/id reference in the
 	 * waypoint struct. */
 	if (IsSavegameVersionBefore(SLV_17)) {
-		for (OldWaypoint *wp = _old_waypoints.Begin(); wp != _old_waypoints.End(); wp++) {
-			if (wp->delete_ctr != 0) continue; // The waypoint was deleted
+		for (OldWaypoint &wp : _old_waypoints) {
+			if (wp.delete_ctr != 0) continue; // The waypoint was deleted
 
 			/* Waypoint indices were not added to the map prior to this. */
-			_m[wp->xy].m2 = (StationID)wp->index;
+			_m[wp.xy].m2 = (StationID)wp.index;
 
-			if (HasBit(_m[wp->xy].m3, 4)) {
-				wp->spec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(_m[wp->xy].m4 + 1);
+			if (HasBit(_m[wp.xy].m3, 4)) {
+				wp.spec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(_m[wp.xy].m4 + 1);
 			}
 		}
 	} else {
 		/* As of version 17, we recalculate the custom graphic ID of waypoints
 		 * from the GRF ID / station index. */
-		for (OldWaypoint *wp = _old_waypoints.Begin(); wp != _old_waypoints.End(); wp++) {
+		for (OldWaypoint &wp : _old_waypoints) {
 			StationClass* stclass = StationClass::Get(STAT_CLASS_WAYP);
 			for (uint i = 0; i < stclass->GetSpecCount(); i++) {
 				const StationSpec *statspec = stclass->GetSpec(i);
-				if (statspec != NULL && statspec->grf_prop.grffile->grfid == wp->grfid && statspec->grf_prop.local_id == wp->localidx) {
-					wp->spec = statspec;
+				if (statspec != nullptr && statspec->grf_prop.grffile->grfid == wp.grfid && statspec->grf_prop.local_id == wp.localidx) {
+					wp.spec = statspec;
 					break;
 				}
 			}
 		}
 	}
 
-	if (!Waypoint::CanAllocateItem(_old_waypoints.Length())) SlError(STR_ERROR_TOO_MANY_STATIONS_LOADING);
+	if (!Waypoint::CanAllocateItem(_old_waypoints.size())) SlError(STR_ERROR_TOO_MANY_STATIONS_LOADING);
 
 	/* All saveload conversions have been done. Create the new waypoints! */
-	for (OldWaypoint *wp = _old_waypoints.Begin(); wp != _old_waypoints.End(); wp++) {
-		Waypoint *new_wp = new Waypoint(wp->xy);
-		new_wp->town       = wp->town;
-		new_wp->town_cn    = wp->town_cn;
-		new_wp->name       = wp->name;
-		new_wp->delete_ctr = 0; // Just reset delete counter for once.
-		new_wp->build_date = wp->build_date;
-		new_wp->owner      = wp->owner;
-
-		new_wp->string_id = STR_SV_STNAME_WAYPOINT;
-
-		TileIndex t = wp->xy;
-		if (IsTileType(t, MP_RAILWAY) && GetRailTileType(t) == 2 /* RAIL_TILE_WAYPOINT */ && _m[t].m2 == wp->index) {
-			/* The tile might've been reserved! */
-			bool reserved = !IsSavegameVersionBefore(SLV_100) && HasBit(_m[t].m5, 4);
-
-			/* The tile really has our waypoint, so reassign the map array */
-			MakeRailWaypoint(t, GetTileOwner(t), new_wp->index, (Axis)GB(_m[t].m5, 0, 1), 0, GetRailType(t));
-			new_wp->facilities |= FACIL_TRAIN;
-			new_wp->owner = GetTileOwner(t);
-
-			SetRailStationReservation(t, reserved);
-
-			if (wp->spec != NULL) {
-				SetCustomStationSpecIndex(t, AllocateSpecToStation(wp->spec, new_wp, true));
+	for (OldWaypoint &wp : _old_waypoints) {
+		TileIndex t = wp.xy;
+		/* Sometimes waypoint (sign) locations became disconnected from their actual location in
+		 * the map array. If this is the case, try to locate the actual location in the map array */
+		if (!IsTileType(t, MP_RAILWAY) || GetRailTileType(t) != 2 /* RAIL_TILE_WAYPOINT */ || _m[t].m2 != wp.index) {
+			DEBUG(sl, 0, "Found waypoint tile %u with invalid position", t);
+			for (t = 0; t < MapSize(); t++) {
+				if (IsTileType(t, MP_RAILWAY) && GetRailTileType(t) == 2 /* RAIL_TILE_WAYPOINT */ && _m[t].m2 == wp.index) {
+					DEBUG(sl, 0, "Found actual waypoint position at %u", t);
+					break;
+				}
 			}
-			new_wp->rect.BeforeAddTile(t, StationRect::ADD_FORCE);
+		}
+		if (t == MapSize()) {
+			SlErrorCorrupt("Waypoint with invalid tile");
 		}
 
-		wp->new_index = new_wp->index;
+		Waypoint *new_wp = new Waypoint(t);
+		new_wp->town       = wp.town;
+		new_wp->town_cn    = wp.town_cn;
+		new_wp->name       = wp.name;
+		new_wp->delete_ctr = 0; // Just reset delete counter for once.
+		new_wp->build_date = wp.build_date;
+		new_wp->owner      = wp.owner;
+		new_wp->string_id  = STR_SV_STNAME_WAYPOINT;
+
+		/* The tile might've been reserved! */
+		bool reserved = !IsSavegameVersionBefore(SLV_100) && HasBit(_m[t].m5, 4);
+
+		/* The tile really has our waypoint, so reassign the map array */
+		MakeRailWaypoint(t, GetTileOwner(t), new_wp->index, (Axis)GB(_m[t].m5, 0, 1), 0, GetRailType(t));
+		new_wp->facilities |= FACIL_TRAIN;
+		new_wp->owner = GetTileOwner(t);
+
+		SetRailStationReservation(t, reserved);
+
+		if (wp.spec != nullptr) {
+			SetCustomStationSpecIndex(t, AllocateSpecToStation(wp.spec, new_wp, true));
+		}
+		new_wp->rect.BeforeAddTile(t, StationRect::ADD_FORCE);
+
+		wp.new_index = new_wp->index;
 	}
 
 	/* Update the orders of vehicles */
-	OrderList *ol;
-	FOR_ALL_ORDER_LISTS(ol) {
+	for (OrderList *ol : OrderList::Iterate()) {
 		if (ol->GetFirstSharedVehicle()->type != VEH_TRAIN) continue;
 
-		for (Order *o = ol->GetFirstOrder(); o != NULL; o = o->next) UpdateWaypointOrder(o);
+		for (Order *o = ol->GetFirstOrder(); o != nullptr; o = o->next) UpdateWaypointOrder(o);
 	}
 
-	Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		if (v->type != VEH_TRAIN) continue;
 
 		UpdateWaypointOrder(&v->current_order);
 	}
 
-	_old_waypoints.Reset();
+	ResetOldWaypoints();
+}
+
+void ResetOldWaypoints()
+{
+	_old_waypoints.clear();
+	_old_waypoints.shrink_to_fit();
 }
 
 static const SaveLoad _old_waypoint_desc[] = {
@@ -172,12 +187,13 @@ static const SaveLoad _old_waypoint_desc[] = {
 static void Load_WAYP()
 {
 	/* Precaution for when loading failed and it didn't get cleared */
-	_old_waypoints.Clear();
+	ResetOldWaypoints();
 
 	int index;
 
 	while ((index = SlIterateArray()) != -1) {
-		OldWaypoint *wp = _old_waypoints.Append();
+		/*C++17: OldWaypoint *wp = &*/ _old_waypoints.emplace_back();
+		OldWaypoint *wp = &_old_waypoints.back();
 		memset(wp, 0, sizeof(*wp));
 
 		wp->index = index;
@@ -187,31 +203,31 @@ static void Load_WAYP()
 
 static void Ptrs_WAYP()
 {
-	for (OldWaypoint *wp = _old_waypoints.Begin(); wp != _old_waypoints.End(); wp++) {
-		SlObject(wp, _old_waypoint_desc);
+	for (OldWaypoint &wp : _old_waypoints) {
+		SlObject(&wp, _old_waypoint_desc);
 
 		if (IsSavegameVersionBefore(SLV_12)) {
-			wp->town_cn = (wp->string_id & 0xC000) == 0xC000 ? (wp->string_id >> 8) & 0x3F : 0;
-			wp->town = ClosestTownFromTile(wp->xy, UINT_MAX);
+			wp.town_cn = (wp.string_id & 0xC000) == 0xC000 ? (wp.string_id >> 8) & 0x3F : 0;
+			wp.town = ClosestTownFromTile(wp.xy, UINT_MAX);
 		} else if (IsSavegameVersionBefore(SLV_122)) {
 			/* Only for versions 12 .. 122 */
-			if (!Town::IsValidID(wp->town_index)) {
+			if (!Town::IsValidID(wp.town_index)) {
 				/* Upon a corrupted waypoint we'll likely get here. The next step will be to
-				 * loop over all Ptrs procs to NULL the pointers. However, we don't know
-				 * whether we're in the NULL or "normal" Ptrs proc. So just clear the list
+				 * loop over all Ptrs procs to nullptr the pointers. However, we don't know
+				 * whether we're in the nullptr or "normal" Ptrs proc. So just clear the list
 				 * of old waypoints we constructed and then this waypoint (and the other
-				 * possibly corrupt ones) will not be queried in the NULL Ptrs proc run. */
-				_old_waypoints.Clear();
+				 * possibly corrupt ones) will not be queried in the nullptr Ptrs proc run. */
+				_old_waypoints.clear();
 				SlErrorCorrupt("Referencing invalid Town");
 			}
-			wp->town = Town::Get(wp->town_index);
+			wp.town = Town::Get(wp.town_index);
 		}
 		if (IsSavegameVersionBefore(SLV_84)) {
-			wp->name = CopyFromOldName(wp->string_id);
+			wp.name = CopyFromOldName(wp.string_id);
 		}
 	}
 }
 
 extern const ChunkHandler _waypoint_chunk_handlers[] = {
-	{ 'CHKP', NULL, Load_WAYP, Ptrs_WAYP, NULL, CH_ARRAY | CH_LAST},
+	{ 'CHKP', nullptr, Load_WAYP, Ptrs_WAYP, nullptr, CH_ARRAY | CH_LAST},
 };

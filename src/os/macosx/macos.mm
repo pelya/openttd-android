@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -205,23 +203,6 @@ bool GetClipboardContents(char *buffer, const char *last)
 	return true;
 }
 #endif
-
-uint GetCPUCoreCount()
-{
-	uint count = 1;
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
-	if (MacOSVersionIsAtLeast(10, 5, 0)) {
-		count = (uint)[ [ NSProcessInfo processInfo ] activeProcessorCount ];
-	} else
-#endif
-	{
-#if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5)
-		count = MPProcessorsScheduled();
-#endif
-	}
-
-	return count;
-}
 
 /**
  * Check if a font is a monospace font.

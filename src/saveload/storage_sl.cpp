@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -38,10 +36,8 @@ static void Load_PSAC()
 /** Save persistent storage data. */
 static void Save_PSAC()
 {
-	PersistentStorage *ps;
-
 	/* Write the industries */
-	FOR_ALL_STORAGES(ps) {
+	for (PersistentStorage *ps : PersistentStorage::Iterate()) {
 		ps->ClearChanges();
 		SlSetArrayIndex(ps->index);
 		SlObject(ps, _storage_desc);
@@ -50,5 +46,5 @@ static void Save_PSAC()
 
 /** Chunk handler for persistent storages. */
 extern const ChunkHandler _persistent_storage_chunk_handlers[] = {
-	{ 'PSAC', Save_PSAC, Load_PSAC, NULL, NULL, CH_ARRAY | CH_LAST},
+	{ 'PSAC', Save_PSAC, Load_PSAC, nullptr, nullptr, CH_ARRAY | CH_LAST},
 };

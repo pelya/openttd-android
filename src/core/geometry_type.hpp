@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -11,11 +9,6 @@
 
 #ifndef GEOMETRY_TYPE_HPP
 #define GEOMETRY_TYPE_HPP
-
-#if defined(__AMIGA__)
-	/* AmigaOS already has a Point declared */
-	#define Point OTTD_Point
-#endif /* __AMIGA__ */
 
 #if defined(__APPLE__)
 	/* Mac OS X already has both Rect and Point declared */
@@ -34,6 +27,20 @@ struct Point {
 struct Dimension {
 	uint width;
 	uint height;
+
+	Dimension(uint w = 0, uint h = 0) : width(w), height(h) {};
+
+	bool operator< (const Dimension &other) const
+	{
+		int x = (*this).width - other.width;
+		if (x != 0) return x < 0;
+		return (*this).height < other.height;
+	}
+
+	bool operator== (const Dimension &other) const
+	{
+		return (*this).width == other.width && (*this).height == other.height;
+	}
 };
 
 /** Specification of a rectangle with absolute coordinates of all edges */

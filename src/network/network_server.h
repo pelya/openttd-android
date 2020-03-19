@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,11 +10,8 @@
 #ifndef NETWORK_SERVER_H
 #define NETWORK_SERVER_H
 
-#ifdef ENABLE_NETWORK
-
 #include "network_internal.h"
 #include "core/tcp_listen.h"
-#include "../thread/thread.h"
 
 class ServerNetworkGameSocketHandler;
 /** Make the code look slightly nicer/simpler. */
@@ -28,22 +23,22 @@ extern NetworkClientSocketPool _networkclientsocket_pool;
 /** Class for handling the server side of the game connection. */
 class ServerNetworkGameSocketHandler : public NetworkClientSocketPool::PoolItem<&_networkclientsocket_pool>, public NetworkGameSocketHandler, public TCPListenHandler<ServerNetworkGameSocketHandler, PACKET_SERVER_FULL, PACKET_SERVER_BANNED> {
 protected:
-	virtual NetworkRecvStatus Receive_CLIENT_JOIN(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_COMPANY_INFO(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_GAME_PASSWORD(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_COMPANY_PASSWORD(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_GETMAP(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_MAP_OK(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_ACK(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_COMMAND(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_CHAT(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_SET_PASSWORD(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_SET_NAME(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_QUIT(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_ERROR(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_RCON(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_NEWGRFS_CHECKED(Packet *p);
-	virtual NetworkRecvStatus Receive_CLIENT_MOVE(Packet *p);
+	NetworkRecvStatus Receive_CLIENT_JOIN(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_COMPANY_INFO(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_GAME_PASSWORD(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_COMPANY_PASSWORD(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_GETMAP(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_MAP_OK(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_ACK(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_COMMAND(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_CHAT(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_SET_PASSWORD(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_SET_NAME(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_QUIT(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_ERROR(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_RCON(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_NEWGRFS_CHECKED(Packet *p) override;
+	NetworkRecvStatus Receive_CLIENT_MOVE(Packet *p) override;
 
 	NetworkRecvStatus SendCompanyInfo();
 	NetworkRecvStatus SendNewGRFCheck();
@@ -81,8 +76,8 @@ public:
 	ServerNetworkGameSocketHandler(SOCKET s);
 	~ServerNetworkGameSocketHandler();
 
-	virtual Packet *ReceivePacket();
-	NetworkRecvStatus CloseConnection(NetworkRecvStatus status);
+	virtual Packet *ReceivePacket() override;
+	NetworkRecvStatus CloseConnection(NetworkRecvStatus status) override;
 	void GetClientName(char *client_name, const char *last) const;
 
 	NetworkRecvStatus SendMap();
@@ -94,7 +89,7 @@ public:
 	NetworkRecvStatus SendMove(ClientID client_id, CompanyID company_id);
 
 	NetworkRecvStatus SendClientInfo(NetworkClientInfo *ci);
-	NetworkRecvStatus SendError(NetworkErrorCode error);
+	NetworkRecvStatus SendError(NetworkErrorCode error, const char *reason = nullptr);
 	NetworkRecvStatus SendChat(NetworkAction action, ClientID client_id, bool self_send, const char *msg, int64 data);
 	NetworkRecvStatus SendJoin(ClientID client_id);
 	NetworkRecvStatus SendFrame();
@@ -124,26 +119,5 @@ public:
 void NetworkServer_Tick(bool send_frame);
 void NetworkServerSetCompanyPassword(CompanyID company_id, const char *password, bool already_hashed = true);
 void NetworkServerUpdateCompanyPassworded(CompanyID company_id, bool passworded);
-
-/**
- * Iterate over all the sockets from a given starting point.
- * @param var The variable to iterate with.
- * @param start The start of the iteration.
- */
-#define FOR_ALL_CLIENT_SOCKETS_FROM(var, start) FOR_ALL_ITEMS_FROM(NetworkClientSocket, clientsocket_index, var, start)
-
-/**
- * Iterate over all the sockets.
- * @param var The variable to iterate with.
- */
-#define FOR_ALL_CLIENT_SOCKETS(var) FOR_ALL_CLIENT_SOCKETS_FROM(var, 0)
-
-#else /* ENABLE_NETWORK */
-/* Network function stubs when networking is disabled */
-
-static inline void NetworkServerMonthlyLoop() {}
-static inline void NetworkServerYearlyLoop() {}
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_SERVER_H */

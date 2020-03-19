@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -26,7 +24,7 @@ class ScriptClient : public ScriptObject {
 public:
 
 	/** Different constants related to ClientID. */
-	enum ClientID {
+	enum ClientID : uint32 {
 		CLIENT_INVALID = 0,  ///< Client is not part of anything
 		CLIENT_SERVER  = 1,  ///< Servers always have this ID
 		CLIENT_FIRST   = 2,  ///< The first client ID

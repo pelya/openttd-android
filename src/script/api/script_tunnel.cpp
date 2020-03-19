@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -90,7 +88,7 @@ static void _DoCommandReturnBuildTunnel1(class ScriptInstance *instance)
 	uint type = 0;
 	if (vehicle_type == ScriptVehicle::VT_ROAD) {
 		type |= (TRANSPORT_ROAD << 8);
-		type |= ::RoadTypeToRoadTypes((::RoadType)ScriptObject::GetRoadType());
+		type |= ScriptRoad::GetCurrentRoadType();
 	} else {
 		type |= (TRANSPORT_RAIL << 8);
 		type |= ScriptRail::GetCurrentRailType();
@@ -102,7 +100,7 @@ static void _DoCommandReturnBuildTunnel1(class ScriptInstance *instance)
 	}
 
 	ScriptObject::SetCallbackVariable(0, start);
-	return ScriptObject::DoCommand(start, type, 0, CMD_BUILD_TUNNEL, NULL, &::_DoCommandReturnBuildTunnel1);
+	return ScriptObject::DoCommand(start, type, 0, CMD_BUILD_TUNNEL, nullptr, &::_DoCommandReturnBuildTunnel1);
 }
 
 /* static */ bool ScriptTunnel::_BuildTunnelRoad1()
@@ -114,7 +112,7 @@ static void _DoCommandReturnBuildTunnel1(class ScriptInstance *instance)
 	DiagDirection dir_1 = ::DiagdirBetweenTiles(end, start);
 	DiagDirection dir_2 = ::ReverseDiagDir(dir_1);
 
-	return ScriptObject::DoCommand(start + ::TileOffsByDiagDir(dir_1), ::DiagDirToRoadBits(dir_2) | (ScriptObject::GetRoadType() << 4), 0, CMD_BUILD_ROAD, NULL, &::_DoCommandReturnBuildTunnel2);
+	return ScriptObject::DoCommand(start + ::TileOffsByDiagDir(dir_1), ::DiagDirToRoadBits(dir_2) | (ScriptObject::GetRoadType() << 4), 0, CMD_BUILD_ROAD, nullptr, &::_DoCommandReturnBuildTunnel2);
 }
 
 /* static */ bool ScriptTunnel::_BuildTunnelRoad2()

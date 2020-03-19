@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -48,9 +46,9 @@ private:
 	uint16 max_speed;    ///< How fast the vehicle may go on the way to the destination.
 
 public:
-	Order *next;          ///< Pointer to next order. If NULL, end of list
+	Order *next;          ///< Pointer to next order. If nullptr, end of list
 
-	Order() : refit_cargo(CT_NO_REFIT), max_speed(UINT16_MAX) {}
+	Order() : flags(0), refit_cargo(CT_NO_REFIT), max_speed(UINT16_MAX) {}
 	~Order();
 
 	Order(uint32 packed);
@@ -268,7 +266,7 @@ private:
 public:
 	/** Default constructor producing an invalid order list. */
 	OrderList(VehicleOrderID num_orders = INVALID_VEH_ORDER_ID)
-		: first(NULL), num_orders(num_orders), num_manual_orders(0), num_vehicles(0), first_shared(NULL),
+		: first(nullptr), num_orders(num_orders), num_manual_orders(0), num_vehicles(0), first_shared(nullptr),
 		  timetable_duration(0), total_duration(0) { }
 
 	/**
@@ -282,6 +280,8 @@ public:
 	~OrderList() {}
 
 	void Initialize(Order *chain, Vehicle *v);
+
+	void RecalculateTimetableDuration();
 
 	/**
 	 * Get the first order of the order chain.
@@ -303,7 +303,7 @@ public:
 	 * @param curr Order to find the next one for.
 	 * @return Next order.
 	 */
-	inline const Order *GetNext(const Order *curr) const { return (curr->next == NULL) ? this->GetFirstOrder() : curr->next; }
+	inline const Order *GetNext(const Order *curr) const { return (curr->next == nullptr) ? this->GetFirstOrder() : curr->next; }
 
 	/**
 	 * Get number of orders in the order list.
@@ -317,7 +317,7 @@ public:
 	 */
 	inline VehicleOrderID GetNumManualOrders() const { return this->num_manual_orders; }
 
-	StationIDStack GetNextStoppingStation(const Vehicle *v, const Order *first = NULL, uint hops = 0) const;
+	StationIDStack GetNextStoppingStation(const Vehicle *v, const Order *first = nullptr, uint hops = 0) const;
 	const Order *GetNextDecisionNode(const Order *next, uint hops) const;
 
 	void InsertOrderAt(Order *new_order, int index);
@@ -392,14 +392,6 @@ public:
 	void DebugCheckSanity() const;
 };
 
-#define FOR_ALL_ORDERS_FROM(var, start) FOR_ALL_ITEMS_FROM(Order, order_index, var, start)
-#define FOR_ALL_ORDERS(var) FOR_ALL_ORDERS_FROM(var, 0)
-
-
-#define FOR_VEHICLE_ORDERS(v, order) for (order = (v->orders.list == NULL) ? NULL : v->orders.list->GetFirstOrder(); order != NULL; order = order->next)
-
-
-#define FOR_ALL_ORDER_LISTS_FROM(var, start) FOR_ALL_ITEMS_FROM(OrderList, orderlist_index, var, start)
-#define FOR_ALL_ORDER_LISTS(var) FOR_ALL_ORDER_LISTS_FROM(var, 0)
+#define FOR_VEHICLE_ORDERS(v, order) for (order = (v->orders.list == nullptr) ? nullptr : v->orders.list->GetFirstOrder(); order != nullptr; order = order->next)
 
 #endif /* ORDER_BASE_H */

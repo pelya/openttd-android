@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -22,6 +20,8 @@ enum FramerateWindowWidgets {
 	WID_FRW_TIMES_NAMES,
 	WID_FRW_TIMES_CURRENT,
 	WID_FRW_TIMES_AVERAGE,
+	WID_FRW_ALLOCSIZE,
+	WID_FRW_SEL_MEMORY,
 	WID_FRW_SCROLLBAR,
 };
 

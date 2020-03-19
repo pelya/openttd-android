@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -75,7 +73,7 @@ void DrawCommonTileSeq(const TileInfo *ti, const DrawTileSprites *dts, Transpare
 					SetBit(image, PALETTE_MODIFIER_TRANSPARENT);
 					pal = PALETTE_TO_TRANSPARENT;
 				}
-				DrawGroundSprite(image, pal, NULL, offs_x, offs_y);
+				DrawGroundSprite(image, pal, nullptr, offs_x, offs_y);
 			}
 		}
 	}

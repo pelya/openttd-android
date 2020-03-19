@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -31,8 +29,7 @@ static const SaveLoad _subsidies_desc[] = {
 
 static void Save_SUBS()
 {
-	Subsidy *s;
-	FOR_ALL_SUBSIDIES(s) {
+	for (Subsidy *s : Subsidy::Iterate()) {
 		SlSetArrayIndex(s->index);
 		SlObject(s, _subsidies_desc);
 	}
@@ -48,5 +45,5 @@ static void Load_SUBS()
 }
 
 extern const ChunkHandler _subsidy_chunk_handlers[] = {
-	{ 'SUBS', Save_SUBS, Load_SUBS, NULL, NULL, CH_ARRAY | CH_LAST},
+	{ 'SUBS', Save_SUBS, Load_SUBS, nullptr, nullptr, CH_ARRAY | CH_LAST},
 };

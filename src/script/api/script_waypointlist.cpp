@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -19,8 +17,7 @@
 
 ScriptWaypointList::ScriptWaypointList(ScriptWaypoint::WaypointType waypoint_type)
 {
-	const Waypoint *wp;
-	FOR_ALL_WAYPOINTS(wp) {
+	for (const Waypoint *wp : Waypoint::Iterate()) {
 		if ((wp->facilities & waypoint_type) &&
 				(wp->owner == ScriptObject::GetCompany() || ScriptObject::GetCompany() == OWNER_DEITY || wp->owner == OWNER_NONE)) this->AddItem(wp->index);
 	}
@@ -32,7 +29,7 @@ ScriptWaypointList_Vehicle::ScriptWaypointList_Vehicle(VehicleID vehicle_id)
 
 	const Vehicle *v = ::Vehicle::Get(vehicle_id);
 
-	for (const Order *o = v->GetFirstOrder(); o != NULL; o = o->next) {
+	for (const Order *o = v->GetFirstOrder(); o != nullptr; o = o->next) {
 		if (o->IsType(OT_GOTO_WAYPOINT)) this->AddItem(o->GetDestination());
 	}
 }

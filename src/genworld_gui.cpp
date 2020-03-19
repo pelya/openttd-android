@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -263,14 +261,14 @@ static void LandscapeGenerationCallback(Window *w, bool confirmed)
 	if (confirmed) StartGeneratingLandscape((GenerateLandscapeWindowMode)w->window_number);
 }
 
-static DropDownList *BuildMapsizeDropDown()
+static DropDownList BuildMapsizeDropDown()
 {
-	DropDownList *list = new DropDownList();
+	DropDownList list;
 
 	for (uint i = MIN_MAP_SIZE_BITS; i <= MAX_MAP_SIZE_BITS; i++) {
 		DropDownListParamStringItem *item = new DropDownListParamStringItem(STR_JUST_INT, i, false);
 		item->SetParam(0, 1LL << i);
-		*list->Append() = item;
+		list.emplace_back(item);
 	}
 
 	return list;
@@ -313,7 +311,7 @@ struct GenerateLandscapeWindow : public Window {
 	}
 
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_GL_START_DATE_TEXT:      SetDParam(0, ConvertYMDToDate(_settings_newgame.game_creation.starting_year, 0, 1)); break;
@@ -374,7 +372,7 @@ struct GenerateLandscapeWindow : public Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		/* Update the climate buttons */
@@ -421,9 +419,9 @@ struct GenerateLandscapeWindow : public Window {
 
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
-		const StringID *strs = NULL;
+		const StringID *strs = nullptr;
 		switch (widget) {
 			case WID_GL_MAX_HEIGHTLEVEL_TEXT:
 				SetDParam(0, MAX_TILE_HEIGHT);
@@ -493,7 +491,7 @@ struct GenerateLandscapeWindow : public Window {
 			default:
 				return;
 		}
-		if (strs != NULL) {
+		if (strs != nullptr) {
 			while (*strs != INVALID_STRING_ID) {
 				*size = maxdim(*size, GetStringBoundingBox(*strs++));
 			}
@@ -502,7 +500,7 @@ struct GenerateLandscapeWindow : public Window {
 		size->height = max(size->height, (uint)(FONT_HEIGHT_NORMAL + WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM));
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_GL_HEIGHTMAP_NAME_TEXT: {
@@ -512,7 +510,7 @@ struct GenerateLandscapeWindow : public Window {
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_GL_TEMPERATE:
@@ -687,7 +685,7 @@ struct GenerateLandscapeWindow : public Window {
 		}
 	}
 
-	virtual void OnTimeout()
+	void OnTimeout() override
 	{
 		static const int raise_widgets[] = {WID_GL_MAX_HEIGHTLEVEL_DOWN, WID_GL_MAX_HEIGHTLEVEL_UP, WID_GL_START_DATE_DOWN, WID_GL_START_DATE_UP, WID_GL_SNOW_LEVEL_UP, WID_GL_SNOW_LEVEL_DOWN, WIDGET_LIST_END};
 		for (const int *widget = raise_widgets; *widget != WIDGET_LIST_END; widget++) {
@@ -698,7 +696,7 @@ struct GenerateLandscapeWindow : public Window {
 		}
 	}
 
-	virtual void OnDropdownSelect(int widget, int index)
+	void OnDropdownSelect(int widget, int index) override
 	{
 		switch (widget) {
 			case WID_GL_MAPSIZE_X_PULLDOWN:     _settings_newgame.game_creation.map_x = index; break;
@@ -742,10 +740,10 @@ struct GenerateLandscapeWindow : public Window {
 		this->InvalidateData();
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
 		/* Was 'cancel' pressed? */
-		if (str == NULL) return;
+		if (str == nullptr) return;
 
 		int32 value;
 		if (!StrEmpty(str)) {
@@ -792,14 +790,14 @@ struct GenerateLandscapeWindow : public Window {
 };
 
 static WindowDesc _generate_landscape_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_GENERATE_LANDSCAPE, WC_NONE,
 	0,
 	_nested_generate_landscape_widgets, lengthof(_nested_generate_landscape_widgets)
 );
 
 static WindowDesc _heightmap_load_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_GENERATE_LANDSCAPE, WC_NONE,
 	0,
 	_nested_heightmap_load_widgets, lengthof(_nested_heightmap_load_widgets)
@@ -872,7 +870,7 @@ struct CreateScenarioWindow : public Window
 		this->LowerWidget(_settings_newgame.game_creation.landscape + WID_CS_TEMPERATE);
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_CS_START_DATE_TEXT:
@@ -893,7 +891,7 @@ struct CreateScenarioWindow : public Window
 		}
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->SetWidgetDisabledState(WID_CS_START_DATE_DOWN,       _settings_newgame.game_creation.starting_year <= MIN_YEAR);
 		this->SetWidgetDisabledState(WID_CS_START_DATE_UP,         _settings_newgame.game_creation.starting_year >= MAX_YEAR);
@@ -908,7 +906,7 @@ struct CreateScenarioWindow : public Window
 		this->DrawWidgets();
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		StringID str = STR_JUST_INT;
 		switch (widget) {
@@ -936,7 +934,7 @@ struct CreateScenarioWindow : public Window
 		size->height = GetMinSizing(NWST_BUTTON, size->height);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_CS_TEMPERATE:
@@ -1001,7 +999,7 @@ struct CreateScenarioWindow : public Window
 		}
 	}
 
-	virtual void OnTimeout()
+	void OnTimeout() override
 	{
 		static const int raise_widgets[] = {WID_CS_START_DATE_DOWN, WID_CS_START_DATE_UP, WID_CS_FLAT_LAND_HEIGHT_DOWN, WID_CS_FLAT_LAND_HEIGHT_UP, WIDGET_LIST_END};
 		for (const int *widget = raise_widgets; *widget != WIDGET_LIST_END; widget++) {
@@ -1012,7 +1010,7 @@ struct CreateScenarioWindow : public Window
 		}
 	}
 
-	virtual void OnDropdownSelect(int widget, int index)
+	void OnDropdownSelect(int widget, int index) override
 	{
 		switch (widget) {
 			case WID_CS_MAPSIZE_X_PULLDOWN: _settings_newgame.game_creation.map_x = index; break;
@@ -1021,7 +1019,7 @@ struct CreateScenarioWindow : public Window
 		this->SetDirty();
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
 		if (!StrEmpty(str)) {
 			int32 value = atoi(str);
@@ -1101,7 +1099,7 @@ static const NWidgetPart _nested_create_scenario_widgets[] = {
 };
 
 static WindowDesc _create_scenario_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_GENERATE_LANDSCAPE, WC_NONE,
 	0,
 	_nested_create_scenario_widgets, lengthof(_nested_create_scenario_widgets)
@@ -1129,7 +1127,7 @@ static const NWidgetPart _nested_generate_progress_widgets[] = {
 
 
 static WindowDesc _generate_progress_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_MODAL_PROGRESS, WC_NONE,
 	0,
 	_nested_generate_progress_widgets, lengthof(_nested_generate_progress_widgets)
@@ -1178,7 +1176,7 @@ struct GenerateProgressWindow : public Window {
 		this->InitNested();
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_GP_ABORT:
@@ -1193,7 +1191,7 @@ struct GenerateProgressWindow : public Window {
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_GP_PROGRESS_BAR: {
@@ -1214,7 +1212,7 @@ struct GenerateProgressWindow : public Window {
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_GP_PROGRESS_BAR:
@@ -1312,10 +1310,10 @@ static void _SetGeneratingWorldProgress(GenWorldProgress cls, uint progress, uin
 	 * paint thread. The 'other' thread already has the paint thread rights so
 	 * this ensures us that we are waiting until the paint thread is done
 	 * before we reacquire the mapgen rights */
-	_modal_progress_work_mutex->EndCritical();
-	_modal_progress_paint_mutex->BeginCritical();
-	_modal_progress_work_mutex->BeginCritical();
-	_modal_progress_paint_mutex->EndCritical();
+	_modal_progress_work_mutex.unlock();
+	_modal_progress_paint_mutex.lock();
+	_modal_progress_work_mutex.lock();
+	_modal_progress_paint_mutex.unlock();
 
 	_gws.timer = _realtime_tick;
 }

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -190,8 +188,8 @@ public:
 	uint current_x;       ///< Current horizontal size (after resizing).
 	uint current_y;       ///< Current vertical size (after resizing).
 
-	uint pos_x;           ///< Horizontal position of top-left corner of the widget in the window.
-	uint pos_y;           ///< Vertical position of top-left corner of the widget in the window.
+	int pos_x;            ///< Horizontal position of top-left corner of the widget in the window.
+	int pos_y;            ///< Vertical position of top-left corner of the widget in the window.
 
 	NWidgetBase *next;    ///< Pointer to next widget in container. Managed by parent container widget.
 	NWidgetBase *prev;    ///< Pointer to previous widget in container. Managed by parent container widget.
@@ -263,7 +261,7 @@ public:
 	uint min_y; ///< Minimal vertical size of only this widget.
 };
 
-/** Nested widget flags that affect display and interaction withe 'real' widgets. */
+/** Nested widget flags that affect display and interaction with 'real' widgets. */
 enum NWidgetDisplay {
 	/* Generic. */
 	NDB_LOWERED         = 0, ///< Widget is lowered (pressed down) bit.
@@ -315,11 +313,11 @@ public:
 	inline void DrawEdgeOrnamentT() const;
 	inline void DrawEdgeOrnamentB() const;
 
-	/* virtual */ void FillNestedArray(NWidgetBase **array, uint length);
-	/* virtual */ NWidgetCore *GetWidgetFromPos(int x, int y);
-	/* virtual */ bool IsHighlighted() const;
-	/* virtual */ TextColour GetHighlightColour() const;
-	/* virtual */ void SetHighlighted(TextColour highlight_colour);
+	void FillNestedArray(NWidgetBase **array, uint length) override;
+	NWidgetCore *GetWidgetFromPos(int x, int y) override;
+	bool IsHighlighted() const override;
+	TextColour GetHighlightColour() const override;
+	void SetHighlighted(TextColour highlight_colour) override;
 
 	NWidgetDisplay disp_flags; ///< Flags that affect display and interaction with the widget.
 	Colours colour;            ///< Colour of this widget.
@@ -393,12 +391,12 @@ public:
 	~NWidgetContainer();
 
 	void Add(NWidgetBase *wid);
-	/* virtual */ void FillNestedArray(NWidgetBase **array, uint length);
+	void FillNestedArray(NWidgetBase **array, uint length) override;
 
 	/** Return whether the container is empty. */
-	inline bool IsEmpty() { return head == NULL; }
+	inline bool IsEmpty() { return head == nullptr; }
 
-	/* virtual */ NWidgetBase *GetWidgetOfType(WidgetType tp);
+	NWidgetBase *GetWidgetOfType(WidgetType tp) override;
 
 protected:
 	NWidgetBase *head; ///< Pointer to first widget in container.
@@ -430,12 +428,12 @@ public:
 
 	void SetIndex(int index);
 
-	void SetupSmallestSize(Window *w, bool init_array);
-	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl);
-	/* virtual */ void FillNestedArray(NWidgetBase **array, uint length);
+	void SetupSmallestSize(Window *w, bool init_array) override;
+	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl) override;
+	void FillNestedArray(NWidgetBase **array, uint length) override;
 
-	/* virtual */ void Draw(const Window *w);
-	/* virtual */ NWidgetCore *GetWidgetFromPos(int x, int y);
+	void Draw(const Window *w) override;
+	NWidgetCore *GetWidgetFromPos(int x, int y) override;
 
 	void SetDisplayedPlane(int plane);
 
@@ -459,8 +457,8 @@ public:
 
 	void SetPIP(uint8 pip_pre, uint8 pip_inter, uint8 pip_post);
 
-	/* virtual */ void Draw(const Window *w);
-	/* virtual */ NWidgetCore *GetWidgetFromPos(int x, int y);
+	void Draw(const Window *w) override;
+	NWidgetCore *GetWidgetFromPos(int x, int y) override;
 
 protected:
 	NWidContainerFlags flags; ///< Flags of the container.
@@ -524,12 +522,12 @@ public:
 	Scrollbar *GetScrollbar();
 	int GetScrollbarWidget();
 
-	void SetupSmallestSize(Window *w, bool init_array);
-	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl);
-	/* virtual */ void FillNestedArray(NWidgetBase **array, uint length);
+	void SetupSmallestSize(Window *w, bool init_array) override;
+	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl) override;
+	void FillNestedArray(NWidgetBase **array, uint length) override;
 
-	/* virtual */ NWidgetCore *GetWidgetFromPos(int x, int y);
-	/* virtual */ void Draw(const Window *w);
+	NWidgetCore *GetWidgetFromPos(int x, int y) override;
+	void Draw(const Window *w) override;
 protected:
 	int index;      ///< If non-negative, index in the #Window::nested_array.
 	Colours colour; ///< Colour of this widget.
@@ -555,12 +553,12 @@ class NWidgetSpacer : public NWidgetResizeBase {
 public:
 	NWidgetSpacer(int length, int height);
 
-	void SetupSmallestSize(Window *w, bool init_array);
-	/* virtual */ void FillNestedArray(NWidgetBase **array, uint length);
+	void SetupSmallestSize(Window *w, bool init_array) override;
+	void FillNestedArray(NWidgetBase **array, uint length) override;
 
-	/* virtual */ void Draw(const Window *w);
-	/* virtual */ void SetDirty(const Window *w) const;
-	/* virtual */ NWidgetCore *GetWidgetFromPos(int x, int y);
+	void Draw(const Window *w) override;
+	void SetDirty(const Window *w) const override;
+	NWidgetCore *GetWidgetFromPos(int x, int y) override;
 };
 
 /**
@@ -569,20 +567,20 @@ public:
  */
 class NWidgetBackground : public NWidgetCore {
 public:
-	NWidgetBackground(WidgetType tp, Colours colour, int index, NWidgetPIPContainer *child = NULL);
+	NWidgetBackground(WidgetType tp, Colours colour, int index, NWidgetPIPContainer *child = nullptr);
 	~NWidgetBackground();
 
 	void Add(NWidgetBase *nwid);
 	void SetPIP(uint8 pip_pre, uint8 pip_inter, uint8 pip_post);
 
-	void SetupSmallestSize(Window *w, bool init_array);
-	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl);
+	void SetupSmallestSize(Window *w, bool init_array) override;
+	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl) override;
 
-	/* virtual */ void FillNestedArray(NWidgetBase **array, uint length);
+	void FillNestedArray(NWidgetBase **array, uint length) override;
 
-	/* virtual */ void Draw(const Window *w);
-	/* virtual */ NWidgetCore *GetWidgetFromPos(int x, int y);
-	/* virtual */ NWidgetBase *GetWidgetOfType(WidgetType tp);
+	void Draw(const Window *w) override;
+	NWidgetCore *GetWidgetFromPos(int x, int y) override;
+	NWidgetBase *GetWidgetOfType(WidgetType tp) override;
 
 private:
 	NWidgetPIPContainer *child; ///< Child widget.
@@ -601,8 +599,8 @@ class NWidgetViewport : public NWidgetCore {
 public:
 	NWidgetViewport(int index);
 
-	/* virtual */ void SetupSmallestSize(Window *w, bool init_array);
-	/* virtual */ void Draw(const Window *w);
+	void SetupSmallestSize(Window *w, bool init_array) override;
+	void Draw(const Window *w) override;
 
 	void InitializeViewport(Window *w, uint32 follow_flags, ZoomLevel zoom);
 	void UpdateViewportCoordinates(Window *w);
@@ -776,8 +774,8 @@ class NWidgetScrollbar : public NWidgetCore, public Scrollbar {
 public:
 	NWidgetScrollbar(WidgetType tp, Colours colour, int index);
 
-	/* virtual */ void SetupSmallestSize(Window *w, bool init_array);
-	/* virtual */ void Draw(const Window *w);
+	void SetupSmallestSize(Window *w, bool init_array) override;
+	void Draw(const Window *w) override;
 
 	static void InvalidateDimensionCache();
 	static Dimension GetVerticalDimension();
@@ -796,8 +794,8 @@ class NWidgetLeaf : public NWidgetCore {
 public:
 	NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, StringID tip);
 
-	/* virtual */ void SetupSmallestSize(Window *w, bool init_array);
-	/* virtual */ void Draw(const Window *w);
+	void SetupSmallestSize(Window *w, bool init_array) override;
+	void Draw(const Window *w) override;
 
 	bool ButtonHit(const Point &pt);
 

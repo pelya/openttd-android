@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -45,7 +43,7 @@ static long CDECL MidiSendCommand(const char *cmd, ...)
 	va_start(va, cmd);
 	vseprintf(buf, lastof(buf), cmd, va);
 	va_end(va);
-	return mciSendString(buf, NULL, 0, NULL, 0);
+	return mciSendString(buf, nullptr, 0, nullptr, 0);
 }
 
 /** OS/2's music player's factory. */
@@ -78,7 +76,7 @@ void MusicDriver_OS2::SetVolume(byte vol)
 bool MusicDriver_OS2::IsSongPlaying()
 {
 	char buf[16];
-	mciSendString("status song mode", buf, sizeof(buf), NULL, 0);
+	mciSendString("status song mode", buf, sizeof(buf), nullptr, 0);
 	return strcmp(buf, "playing") == 0 || strcmp(buf, "seeking") == 0;
 }
 

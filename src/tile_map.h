@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -37,8 +35,8 @@ static inline uint TileHeight(TileIndex tile)
 /**
  * Returns the height of a tile, also for tiles outside the map (virtual "black" tiles).
  *
- * @param x X coordinate of the tile, may be ouside the map.
- * @param y Y coordinate of the tile, may be ouside the map.
+ * @param x X coordinate of the tile, may be outside the map.
+ * @param y Y coordinate of the tile, may be outside the map.
  * @return The height in the same unit as TileHeight.
  */
 static inline uint TileHeightOutsideMap(int x, int y)
@@ -79,8 +77,8 @@ static inline uint TilePixelHeight(TileIndex tile)
 /**
  * Returns the height of a tile in pixels, also for tiles outside the map (virtual "black" tiles).
  *
- * @param x X coordinate of the tile, may be ouside the map.
- * @param y Y coordinate of the tile, may be ouside the map.
+ * @param x X coordinate of the tile, may be outside the map.
+ * @param y Y coordinate of the tile, may be outside the map.
  * @return The height in pixels in the same unit as TilePixelHeight.
  */
 static inline uint TilePixelHeightOutsideMap(int x, int y)
@@ -267,22 +265,22 @@ static inline void SetAnimationFrame(TileIndex t, byte frame)
 	_me[t].m7 = frame;
 }
 
-Slope GetTileSlope(TileIndex tile, int *h = NULL);
+Slope GetTileSlope(TileIndex tile, int *h = nullptr);
 int GetTileZ(TileIndex tile);
 int GetTileMaxZ(TileIndex tile);
 
-bool IsTileFlat(TileIndex tile, int *h = NULL);
+bool IsTileFlat(TileIndex tile, int *h = nullptr);
 
 /**
  * Return the slope of a given tile
  * @param tile Tile to compute slope of
- * @param h    If not \c NULL, pointer to storage of z height
+ * @param h    If not \c nullptr, pointer to storage of z height
  * @return Slope of the tile, except for the HALFTILE part
  */
 static inline Slope GetTilePixelSlope(TileIndex tile, int *h)
 {
 	Slope s = GetTileSlope(tile, h);
-	if (h != NULL) *h *= TILE_HEIGHT;
+	if (h != nullptr) *h *= TILE_HEIGHT;
 	return s;
 }
 

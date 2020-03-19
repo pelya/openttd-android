@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -36,7 +34,7 @@ struct GroundVehicleCache {
 	uint16 cached_axle_resistance;  ///< Resistance caused by the axles of the vehicle (valid only for the first engine).
 
 	/* Cached acceleration values, recalculated on load and each time a vehicle is added to/removed from the consist. */
-	uint16 cached_max_track_speed;  ///< Maximum consist speed limited by track type (valid only for the first engine).
+	uint16 cached_max_track_speed;  ///< Maximum consist speed (in internal units) limited by track type (valid only for the first engine).
 	uint32 cached_power;            ///< Total power of the consist (valid only for the first engine).
 	uint32 cached_air_drag;         ///< Air drag coefficient of the vehicle (valid only for the first engine).
 
@@ -92,17 +90,17 @@ struct GroundVehicle : public SpecializedVehicle<T, Type> {
 	void PowerChanged();
 	void CargoChanged();
 	int GetAcceleration() const;
-	bool IsChainInDepot() const;
+	bool IsChainInDepot() const override;
 
 	/**
 	 * Common code executed for crashed ground vehicles
 	 * @param flooded was this vehicle flooded?
 	 * @return number of victims
 	 */
-	/* virtual */ uint Crash(bool flooded)
+	uint Crash(bool flooded) override
 	{
 		/* Crashed vehicles aren't going up or down */
-		for (T *v = T::From(this); v != NULL; v = v->Next()) {
+		for (T *v = T::From(this); v != nullptr; v = v->Next()) {
 			ClrBit(v->gv_flags, GVF_GOINGUP_BIT);
 			ClrBit(v->gv_flags, GVF_GOINGDOWN_BIT);
 		}
@@ -117,7 +115,7 @@ struct GroundVehicle : public SpecializedVehicle<T, Type> {
 	{
 		int64 incl = 0;
 
-		for (const T *u = T::From(this); u != NULL; u = u->Next()) {
+		for (const T *u = T::From(this); u != nullptr; u = u->Next()) {
 			if (HasBit(u->gv_flags, GVF_GOINGUP_BIT)) {
 				incl += u->gcache.cached_slope_resistance;
 			} else if (HasBit(u->gv_flags, GVF_GOINGDOWN_BIT)) {

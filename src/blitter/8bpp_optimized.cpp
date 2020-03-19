@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -167,7 +165,7 @@ Sprite *Blitter_8bppOptimized::Encode(const SpriteLoader::Sprite *sprite, Alloca
 			uint trans = 0;
 			uint pixels = 0;
 			uint last_colour = 0;
-			byte *count_dst = NULL;
+			byte *count_dst = nullptr;
 
 			/* Store the scaled image */
 			const SpriteLoader::CommonPixel *src = &sprite[i].data[y * sprite[i].width];
@@ -176,11 +174,11 @@ Sprite *Blitter_8bppOptimized::Encode(const SpriteLoader::Sprite *sprite, Alloca
 				uint colour = src++->m;
 
 				if (last_colour == 0 || colour == 0 || pixels == 255) {
-					if (count_dst != NULL) {
+					if (count_dst != nullptr) {
 						/* Write how many non-transparent bytes we get */
 						*count_dst = pixels;
 						pixels = 0;
-						count_dst = NULL;
+						count_dst = nullptr;
 					}
 					/* As long as we find transparency bytes, keep counting */
 					if (colour == 0 && trans != 255) {
@@ -206,7 +204,7 @@ Sprite *Blitter_8bppOptimized::Encode(const SpriteLoader::Sprite *sprite, Alloca
 				}
 			}
 
-			if (count_dst != NULL) *count_dst = pixels;
+			if (count_dst != nullptr) *count_dst = pixels;
 
 			/* Write line-ending */
 			*dst = 0; dst++;

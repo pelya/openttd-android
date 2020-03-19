@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -86,11 +84,11 @@ void Script_CreateDummy(HSQUIRRELVM vm, StringID string, const char *type)
 	char *p = safe_error_message;
 	do {
 		newline = strchr(p, '\n');
-		if (newline != NULL) *newline = '\0';
+		if (newline != nullptr) *newline = '\0';
 
 		dp += seprintf(dp, lastof(dummy_script), "    %sLog.Error(\"%s\");\n", type, p);
 		p = newline + 1;
-	} while (newline != NULL);
+	} while (newline != nullptr);
 
 	strecpy(dp, "  }\n}\n", lastof(dummy_script));
 

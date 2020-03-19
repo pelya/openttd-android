@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -126,7 +124,7 @@
 #define QZ_KP0          0x52
 #define QZ_KP_PERIOD    0x41
 
-/* Wierd, these keys are on my iBook under MacOS X */
+/* Weird, these keys are on my iBook under MacOS X */
 #define QZ_IBOOK_ENTER  0x34
 #define QZ_IBOOK_LEFT   0x3B
 #define QZ_IBOOK_RIGHT  0x3C

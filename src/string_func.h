@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -33,7 +31,7 @@
 
 char *strecat(char *dst, const char *src, const char *last);
 char *strecpy(char *dst, const char *src, const char *last);
-char *stredup(const char *src, const char *last = NULL);
+char *stredup(const char *src, const char *last = nullptr);
 
 int CDECL seprintf(char *str, const char *last, const char *format, ...) WARN_FORMAT(3, 4);
 int CDECL vseprintf(char *str, const char *last, const char *format, va_list ap);
@@ -54,11 +52,11 @@ bool StrValid(const char *str, const char *last);
  *
  * @param s The pointer to the first element of the buffer
  * @return true if the buffer starts with the terminating null-character or
- *         if the given pointer points to NULL else return false
+ *         if the given pointer points to nullptr else return false
  */
 static inline bool StrEmpty(const char *s)
 {
-	return s == NULL || s[0] == '\0';
+	return s == nullptr || s[0] == '\0';
 }
 
 /**

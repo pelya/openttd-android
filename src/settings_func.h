@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -14,6 +12,7 @@
 
 #include "core/smallvec_type.hpp"
 #include "company_type.h"
+#include "string_type.h"
 
 struct IniFile;
 
@@ -24,16 +23,11 @@ void IConsoleListSettings(const char *prefilter);
 
 void LoadFromConfig(bool minimal = false);
 void SaveToConfig();
-void CheckConfig();
 
 void IniLoadWindowSettings(IniFile *ini, const char *grpname, void *desc);
 void IniSaveWindowSettings(IniFile *ini, const char *grpname, void *desc);
 
-/* Functions to load and save NewGRF settings to a separate
- * configuration file, used for presets. */
-typedef AutoFreeSmallVector<char *, 4> GRFPresetList;
-
-void GetGRFPresetList(GRFPresetList *list);
+StringList GetGRFPresetList();
 struct GRFConfig *LoadGRFPresetFromConfig(const char *config_name);
 void SaveGRFPresetToConfig(const char *config_name, struct GRFConfig *config);
 void DeleteGRFPresetFromConfig(const char *config_name);
@@ -41,10 +35,6 @@ void DeleteGRFPresetFromConfig(const char *config_name);
 uint GetCompanySettingIndex(const char *name);
 void SetDefaultCompanySettings(CompanyID cid);
 
-#if defined(ENABLE_NETWORK)
 void SyncCompanySettings();
-#else /* ENABLE_NETWORK */
-static inline void SyncCompanySettings() {}
-#endif /* ENABLE_NETWORK */
 
 #endif /* SETTINGS_FUNC_H */

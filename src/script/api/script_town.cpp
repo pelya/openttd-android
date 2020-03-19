@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -35,7 +33,7 @@
 
 /* static */ char *ScriptTown::GetName(TownID town_id)
 {
-	if (!IsValidTown(town_id)) return NULL;
+	if (!IsValidTown(town_id)) return nullptr;
 
 	::SetDParam(0, town_id);
 	return GetString(STR_TOWN_NAME);
@@ -45,8 +43,8 @@
 {
 	CCountedPtr<Text> counter(name);
 
-	const char *text = NULL;
-	if (name != NULL) {
+	const char *text = nullptr;
+	if (name != nullptr) {
 		text = name->GetDecodedText();
 		EnforcePreconditionEncodedText(false, text);
 		EnforcePreconditionCustomError(false, ::Utf8StringLength(text) < MAX_LENGTH_TOWN_NAME_CHARS, ScriptError::ERR_PRECONDITION_STRING_TOO_LONG);
@@ -60,9 +58,11 @@
 {
 	CCountedPtr<Text> counter(text);
 
-	EnforcePrecondition(false, text != NULL);
-	const char *encoded_text = text->GetEncodedText();
-	EnforcePreconditionEncodedText(false, encoded_text);
+	const char *encoded_text = nullptr;
+	if (text != nullptr) {
+		encoded_text = text->GetEncodedText();
+		EnforcePreconditionEncodedText(false, encoded_text);
+	}
 	EnforcePrecondition(false, IsValidTown(town_id));
 
 	return ScriptObject::DoCommand(::Town::Get(town_id)->xy, town_id, 0, CMD_TOWN_SET_TEXT, encoded_text);
@@ -257,7 +257,7 @@
 	if (ScriptObject::GetCompany() == OWNER_DEITY) return false;
 	if (!IsValidTown(town_id)) return false;
 
-	return HasBit(::GetMaskOfTownActions(NULL, ScriptObject::GetCompany(), ::Town::Get(town_id)), town_action);
+	return HasBit(::GetMaskOfTownActions(nullptr, ScriptObject::GetCompany(), ::Town::Get(town_id)), town_action);
 }
 
 /* static */ bool ScriptTown::PerformTownAction(TownID town_id, TownAction town_action)
@@ -293,8 +293,8 @@
 		layout = (RoadLayout) (byte)_settings_game.economy.town_layout;
 	}
 
-	const char *text = NULL;
-	if (name != NULL) {
+	const char *text = nullptr;
+	if (name != nullptr) {
 		text = name->GetDecodedText();
 		EnforcePreconditionEncodedText(false, text);
 		EnforcePreconditionCustomError(false, ::Utf8StringLength(text) < MAX_LENGTH_TOWN_NAME_CHARS, ScriptError::ERR_PRECONDITION_STRING_TOO_LONG);
@@ -336,6 +336,33 @@
 	}
 }
 
+/* static */ int ScriptTown::GetDetailedRating(TownID town_id, ScriptCompany::CompanyID company_id)
+{
+	if (!IsValidTown(town_id)) return TOWN_RATING_INVALID;
+	ScriptCompany::CompanyID company = ScriptCompany::ResolveCompanyID(company_id);
+	if (company == ScriptCompany::COMPANY_INVALID) return TOWN_RATING_INVALID;
+
+	const Town *t = ::Town::Get(town_id);
+	return t->ratings[company];
+}
+
+/* static */ bool ScriptTown::ChangeRating(TownID town_id, ScriptCompany::CompanyID company_id, int delta)
+{
+	EnforcePrecondition(false, ScriptObject::GetCompany() == OWNER_DEITY);
+	EnforcePrecondition(false, IsValidTown(town_id));
+	ScriptCompany::CompanyID company = ScriptCompany::ResolveCompanyID(company_id);
+	EnforcePrecondition(false, company != ScriptCompany::COMPANY_INVALID);
+
+	const Town *t = ::Town::Get(town_id);
+	int16 new_rating = Clamp(t->ratings[company] + delta, RATING_MINIMUM, RATING_MAXIMUM);
+	if (new_rating == t->ratings[company]) return false;
+
+	uint16 p2 = 0;
+	memcpy(&p2, &new_rating, sizeof(p2));
+
+	return ScriptObject::DoCommand(0, town_id | (company_id << 16), p2, CMD_TOWN_RATING);
+}
+
 /* static */ int ScriptTown::GetAllowedNoise(TownID town_id)
 {
 	if (!IsValidTown(town_id)) return -1;
@@ -346,8 +373,7 @@
 	}
 
 	int num = 0;
-	const Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (const Station *st : Station::Iterate()) {
 		if (st->town == t && (st->facilities & FACIL_AIRPORT) && st->airport.type != AT_OILRIG) num++;
 	}
 	return max(0, 2 - num);

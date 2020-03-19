@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -35,7 +33,7 @@ public:
 	void DefSQMethod(Squirrel *engine, Func function_proc, const char *function_name)
 	{
 		using namespace SQConvert;
-		engine->AddMethod(function_name, DefSQNonStaticCallback<CL, Func, ST>, 0, NULL, &function_proc, sizeof(function_proc));
+		engine->AddMethod(function_name, DefSQNonStaticCallback<CL, Func, ST>, 0, nullptr, &function_proc, sizeof(function_proc));
 	}
 
 	/**
@@ -45,7 +43,7 @@ public:
 	void DefSQAdvancedMethod(Squirrel *engine, Func function_proc, const char *function_name)
 	{
 		using namespace SQConvert;
-		engine->AddMethod(function_name, DefSQAdvancedNonStaticCallback<CL, Func, ST>, 0, NULL, &function_proc, sizeof(function_proc));
+		engine->AddMethod(function_name, DefSQAdvancedNonStaticCallback<CL, Func, ST>, 0, nullptr, &function_proc, sizeof(function_proc));
 	}
 
 	/**
@@ -68,7 +66,7 @@ public:
 	void DefSQStaticMethod(Squirrel *engine, Func function_proc, const char *function_name)
 	{
 		using namespace SQConvert;
-		engine->AddMethod(function_name, DefSQStaticCallback<CL, Func>, 0, NULL, &function_proc, sizeof(function_proc));
+		engine->AddMethod(function_name, DefSQStaticCallback<CL, Func>, 0, nullptr, &function_proc, sizeof(function_proc));
 	}
 
 	/**
@@ -78,7 +76,7 @@ public:
 	void DefSQAdvancedStaticMethod(Squirrel *engine, Func function_proc, const char *function_name)
 	{
 		using namespace SQConvert;
-		engine->AddMethod(function_name, DefSQAdvancedStaticCallback<CL, Func>, 0, NULL, &function_proc, sizeof(function_proc));
+		engine->AddMethod(function_name, DefSQAdvancedStaticCallback<CL, Func>, 0, nullptr, &function_proc, sizeof(function_proc));
 	}
 
 	/**
@@ -120,7 +118,7 @@ public:
 	void AddSQAdvancedConstructor(Squirrel *engine)
 	{
 		using namespace SQConvert;
-		engine->AddMethod("constructor", DefSQAdvancedConstructorCallback<CL>, 0, NULL);
+		engine->AddMethod("constructor", DefSQAdvancedConstructorCallback<CL>, 0, nullptr);
 	}
 
 	void PostRegister(Squirrel *engine)

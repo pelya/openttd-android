@@ -10,8 +10,6 @@
 ##grflangid 0x08
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -472,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Scoránaigh consól
 STR_ABOUT_MENU_AI_DEBUG                                         :Dífhabhtú AI/Scripteanna Cluiche
 STR_ABOUT_MENU_SCREENSHOT                                       :Seat scáileáin
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Seat scáileáin zúmáilte isteach go hiomlán
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Seat scáileáin le zúm réamhshocraithe
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Seat scáileáin den léarscáil ar fad
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Maidir le 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Ailínóir spriteanna
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Scoránaigh boscaí imill
@@ -644,9 +639,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Saincheaptha 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Airde Ceoil
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Airde na maisíochtaí
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}ÍOSTA
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}UASTA
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -857,6 +849,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Theip ar
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}Tá {STRING} nua ar fáil anois!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Tá {STRING} nua ar fáil anois!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}Ní ghlacann {STATION} le {STRING} a thuilleadh
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}Ní ghlacann {STATION} le {STRING} ná le {STRING} a thuilleadh
@@ -1684,7 +1677,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Dáilea
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Iomaitheoirí
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Ríomh-imreoirí
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Bunaidh
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Molta)
 
@@ -1767,13 +1759,9 @@ STR_QUIT_NO                                                     :{BLACK}Níl
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2400,6 +2388,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Tóg tol
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Tóg tollán trambhealaigh
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Athraigh idir tógáil/baint agus bóithre á dtógáil
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Athraigh idir tógáil/baint agus trambhealaí á dtógáil
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Treosuíomh an Iosta Bhóthair
@@ -3260,8 +3249,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Bonneaga
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Píosaí iarnróid:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Comharthaí
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Píosaí bóthair:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Bóthar
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Trambhealach
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Tíleanna uisce:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Canálacha
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stáisiúin:
@@ -3272,8 +3259,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Tionscail
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ceann ar bith -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} (iompraíodh {COMMA}%)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} (iompraíodh {COMMA}%/{COMMA}%)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Ainmneacha na dtionscal - cliceáil ar ainm chun an príomh-amharc a lárú ar thionscal. Osclaítear amharc nua ar shuíomh an tionscail le Ctrl+Cliceáil
 
@@ -3335,6 +3320,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Feithiclí bót
 STR_GROUP_DEFAULT_SHIPS                                         :Longa nach bhfuil i ngrúpa
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Aerárthaigh nach bhfuil i ngrúpa
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grúpaí - cliceáil ar ghrúpa le gach feithicil sa ghrúpa seo a liostú
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Cliceáil le grúpa a chruthú
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Scrios an grúpa roghnaithe
@@ -3356,10 +3342,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Feithiclí Iarn
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Feithiclí Aonráille Nua
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Feithiclí Maglev Nua
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Feithiclí Iarnróid Nua
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Feithiclí Bóthair Nua
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Feithiclí Iarnróid Nua
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Longa Nua
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Aerárthaigh Nua
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Costas: {GOLD}{CURRENCY_LONG}{BLACK} Meáchan: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Luas: {GOLD}{VELOCITY}{BLACK} Cumhacht: {GOLD}{POWER}
@@ -3392,10 +3381,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Ceannaig
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Ceannaigh Long
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Ceannaigh Aerárthach
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Ceannaigh an fheithicil traenach aibhsithe
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Ceannaigh an fheithicil bóthair aibhsithe
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Ceannaigh an long aibhsithe
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Ceannaigh an t-aerárthach aibhsithe
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Athainmnigh
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Athainmnigh
@@ -3505,12 +3496,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Tá tú
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Teachtaireacht ó dhéantóir feithiclí
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Táimid díreach tar éis {STRING} nua a dhearadh - an mbeadh suim agat úsáid eisiach a bhaint as ar feadh bliana, le go mbeimid in ann a fheiceáil mar a fheidhmíonn sé sula gcuirfimid ar fáil do chách é?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :inneall gluaiste iarnróid
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :feithicil bóthair
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :aerárthach
-STR_ENGINE_PREVIEW_SHIP                                         :long
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :inneall gluaiste aonráille
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :inneall gluaiste maglev
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :feithicil bóthair
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :aerárthach
+STR_ENGINE_PREVIEW_SHIP                                         :long
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Costas {CURRENCY_LONG} Meáchan: {WEIGHT_SHORT}{}Luas: {VELOCITY}  Cumhacht: {POWER}{}Costas Coinneála {CURRENCY_LONG}/bl{}Toilleadh: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Costas: {CURRENCY_LONG} Meáchan: {WEIGHT_SHORT}{}Luas: {VELOCITY}  Cumhacht: {POWER}  T.E. uasta: {6:FORCE}{}Costas Coinneála: {4:CURRENCY_LONG}/bl{}Toilleadh: {5:CARGO_LONG}
@@ -3551,6 +3545,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Feithiclí Iarn
 STR_REPLACE_ELRAIL_VEHICLES                                     :Feithiclí Iarnróid Leictreacha
 STR_REPLACE_MONORAIL_VEHICLES                                   :Feithiclí Aonráille
 STR_REPLACE_MAGLEV_VEHICLES                                     :Feithiclí Maglev
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vaigíní a bhaint: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ceangail ar uath-athsholáthar fad na traenach a choinneáil mar an gcéanna trí vaigíní a bhaint (ag tosú ag an tosach), má tharlaíonn sé go mbeadh an traein níos faide tar éis an t-inneall a athsholáthar.
@@ -3999,6 +3994,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Roghnaig
 STR_AI_LIST_CANCEL                                              :{BLACK}Cuir ar ceal
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ná hathraigh an AI
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}Paraiméadair {STRING}
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4270,7 +4266,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Ní mór
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Níl ráillí iarnróid feiliúnacha ann
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Ní mór na ráillí iarnróid a bhaint ar dtús
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Is bóthar aonbhealaigh nó blocáilte é
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Ní cheadaítear crosairí comhréidh don chineál ráille seo
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Ní cheadaítear crosairí comhréidh don chineál ráille seo
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Ní féidir comharthaí a thógáil anseo...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Ní féidir ráillí iarnróid a thógáil anseo...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Ní féidir ráillí iarnróid a bhaint as seo...

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -13,69 +11,6 @@
 #define ALLOC_TYPE_HPP
 
 #include "alloc_func.hpp"
-
-/**
- * A small 'wrapper' for allocations that can be done on most OSes on the
- * stack, but are just too large to fit in the stack on devices with a small
- * stack such as the NDS.
- * So when it is possible a stack allocation is made, otherwise a heap
- * allocation is made and this is freed once the struct goes out of scope.
- * @param T      the type to make the allocation for
- * @param length the amount of items to allocate
- */
-template <typename T, size_t length>
-struct SmallStackSafeStackAlloc {
-#if !defined(__NDS__)
-	/** Storing the data on the stack */
-	T data[length];
-#else
-	/** Storing it on the heap */
-	T *data;
-	/** The length (in elements) of data in this allocator. */
-	size_t len;
-
-	/** Allocating the memory */
-	SmallStackSafeStackAlloc() : data(MallocT<T>(length)), len(length) {}
-
-	/** And freeing when it goes out of scope */
-	~SmallStackSafeStackAlloc()
-	{
-		free(data);
-	}
-#endif
-
-	/**
-	 * Gets a pointer to the data stored in this wrapper.
-	 * @return the pointer.
-	 */
-	inline operator T *()
-	{
-		return data;
-	}
-
-	/**
-	 * Gets a pointer to the data stored in this wrapper.
-	 * @return the pointer.
-	 */
-	inline T *operator -> ()
-	{
-		return data;
-	}
-
-	/**
-	 * Gets a pointer to the last data element stored in this wrapper.
-	 * @note needed because endof does not work properly for pointers.
-	 * @return the 'endof' pointer.
-	 */
-	inline T *EndOf()
-	{
-#if !defined(__NDS__)
-		return endof(data);
-#else
-		return &data[len];
-#endif
-	}
-};
 
 /**
  * A reusable buffer that can be used for places that temporary allocate
@@ -93,7 +28,7 @@ private:
 
 public:
 	/** Create a new buffer */
-	ReusableBuffer() : buffer(NULL), count(0) {}
+	ReusableBuffer() : buffer(nullptr), count(0) {}
 	/** Clear the buffer */
 	~ReusableBuffer() { free(this->buffer); }
 
@@ -178,40 +113,6 @@ public:
 	 * @param ptr  the memory to free.
 	 */
 	inline void operator delete[](void *ptr) { free(ptr); }
-};
-
-/**
- * A smart pointer class that free()'s the pointer on destruction.
- * @tparam T Storage type.
- */
-template <typename T>
-class AutoFreePtr
-{
-	T *ptr; ///< Stored pointer.
-
-public:
-	AutoFreePtr(T *ptr) : ptr(ptr) {}
-	~AutoFreePtr() { free(this->ptr); }
-
-	/**
-	 * Take ownership of a new pointer and free the old one if needed.
-	 * @param ptr NEw pointer.
-	 */
-	inline void Assign(T *ptr)
-	{
-		free(this->ptr);
-		this->ptr = ptr;
-	}
-
-	/** Dereference pointer. */
-	inline T *operator ->() { return this->ptr; }
-	/** Dereference pointer. */
-	inline const T *operator ->() const { return this->ptr; }
-
-	/** Cast to underlaying regular pointer. */
-	inline operator T *() { return this->ptr; }
-	/** Cast to underlaying regular pointer. */
-	inline operator const T *() const { return this->ptr; }
 };
 
 #endif /* ALLOC_TYPE_HPP */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -48,7 +46,7 @@ inline void Blitter_32bppOptimized::Draw(const Blitter::BlitterParams *bp, ZoomL
 	/* skip lines in dst */
 	Colour *dst = (Colour *)bp->dst + bp->top * bp->pitch + bp->left;
 
-	/* store so we don't have to access it via bp everytime (compiler assumes pointer aliasing) */
+	/* store so we don't have to access it via bp every time (compiler assumes pointer aliasing) */
 	const byte *remap = bp->remap;
 
 	for (int y = 0; y < bp->height; y++) {
@@ -66,7 +64,7 @@ inline void Blitter_32bppOptimized::Draw(const Blitter::BlitterParams *bp, ZoomL
 		/* we will end this line when we reach this point */
 		Colour *dst_end = dst + bp->skip_left;
 
-		/* number of pixels with the same aplha channel class */
+		/* number of pixels with the same alpha channel class */
 		uint n;
 
 		while (dst < dst_end) {

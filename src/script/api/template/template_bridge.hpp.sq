@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -21,5 +19,5 @@ namespace SQConvert {
 	template <> inline ScriptBridge &GetParam(ForceType<ScriptBridge &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptBridge *)instance; }
 	template <> inline const ScriptBridge *GetParam(ForceType<const ScriptBridge *>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return  (ScriptBridge *)instance; }
 	template <> inline const ScriptBridge &GetParam(ForceType<const ScriptBridge &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptBridge *)instance; }
-	template <> inline int Return<ScriptBridge *>(HSQUIRRELVM vm, ScriptBridge *res) { if (res == NULL) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "Bridge", res, NULL, DefSQDestructorCallback<ScriptBridge>, true); return 1; }
+	template <> inline int Return<ScriptBridge *>(HSQUIRRELVM vm, ScriptBridge *res) { if (res == nullptr) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "Bridge", res, nullptr, DefSQDestructorCallback<ScriptBridge>, true); return 1; }
 } // namespace SQConvert

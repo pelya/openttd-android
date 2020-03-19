@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -184,7 +182,7 @@ struct HeightMap
 };
 
 /** Global height map instance */
-static HeightMap _height_map = {NULL, 0, 0, 0, 0};
+static HeightMap _height_map = {nullptr, 0, 0, 0, 0};
 
 /** Conversion: int to height_t */
 #define I2H(i) ((i) << height_decimal_bits)
@@ -325,7 +323,7 @@ static inline bool AllocHeightMap()
 static inline void FreeHeightMap()
 {
 	free(_height_map.h);
-	_height_map.h = NULL;
+	_height_map.h = nullptr;
 }
 
 /**
@@ -349,7 +347,7 @@ static inline height_t RandomHeight(amplitude_t rMax)
 static void HeightMapGenerate()
 {
 	/* Trying to apply noise to uninitialized height map */
-	assert(_height_map.h != NULL);
+	assert(_height_map.h != nullptr);
 
 	int start = max(MAX_TGP_FREQUENCIES - (int)min(MapLogX(), MapLogY()), 0);
 	bool first = true;
@@ -423,9 +421,9 @@ static void HeightMapGetMinMaxAvg(height_t *min_ptr, height_t *max_ptr, height_t
 	h_avg = (height_t)(h_accu / (_height_map.size_x * _height_map.size_y));
 
 	/* Return required results */
-	if (min_ptr != NULL) *min_ptr = h_min;
-	if (max_ptr != NULL) *max_ptr = h_max;
-	if (avg_ptr != NULL) *avg_ptr = h_avg;
+	if (min_ptr != nullptr) *min_ptr = h_min;
+	if (max_ptr != nullptr) *max_ptr = h_max;
+	if (avg_ptr != nullptr) *avg_ptr = h_avg;
 }
 
 /** Dill histogram and return pointer to its base point - to the count of zero heights */
@@ -1011,5 +1009,5 @@ void GenerateTerrainPerlin()
 	IncreaseGeneratingWorldProgress(GWP_LANDSCAPE);
 
 	FreeHeightMap();
-	GenerateWorldSetAbortCallback(NULL);
+	GenerateWorldSetAbortCallback(nullptr);
 }

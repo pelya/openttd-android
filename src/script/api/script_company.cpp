@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -45,7 +43,7 @@
 {
 	CCountedPtr<Text> counter(name);
 
-	EnforcePrecondition(false, name != NULL);
+	EnforcePrecondition(false, name != nullptr);
 	const char *text = name->GetDecodedText();
 	EnforcePreconditionEncodedText(false, text);
 	EnforcePreconditionCustomError(false, ::Utf8StringLength(text) < MAX_LENGTH_COMPANY_NAME_CHARS, ScriptError::ERR_PRECONDITION_STRING_TOO_LONG);
@@ -56,7 +54,7 @@
 /* static */ char *ScriptCompany::GetName(ScriptCompany::CompanyID company)
 {
 	company = ResolveCompanyID(company);
-	if (company == COMPANY_INVALID) return NULL;
+	if (company == COMPANY_INVALID) return nullptr;
 
 	::SetDParam(0, company);
 	return GetString(STR_COMPANY_NAME);
@@ -66,7 +64,7 @@
 {
 	CCountedPtr<Text> counter(name);
 
-	EnforcePrecondition(false, name != NULL);
+	EnforcePrecondition(false, name != nullptr);
 	const char *text = name->GetDecodedText();
 	EnforcePreconditionEncodedText(false, text);
 	EnforcePreconditionCustomError(false, ::Utf8StringLength(text) < MAX_LENGTH_PRESIDENT_NAME_CHARS, ScriptError::ERR_PRECONDITION_STRING_TOO_LONG);
@@ -312,7 +310,7 @@
 	if ((::LiveryScheme)scheme < LS_BEGIN || (::LiveryScheme)scheme >= LS_END) return COLOUR_INVALID;
 
 	const Company *c = ::Company::GetIfValid(_current_company);
-	if (c == NULL) return COLOUR_INVALID;
+	if (c == nullptr) return COLOUR_INVALID;
 
 	return (ScriptCompany::Colours)c->livery[scheme].colour1;
 }
@@ -322,7 +320,7 @@
 	if ((::LiveryScheme)scheme < LS_BEGIN || (::LiveryScheme)scheme >= LS_END) return COLOUR_INVALID;
 
 	const Company *c = ::Company::GetIfValid(_current_company);
-	if (c == NULL) return COLOUR_INVALID;
+	if (c == nullptr) return COLOUR_INVALID;
 
 	return (ScriptCompany::Colours)c->livery[scheme].colour2;
 }

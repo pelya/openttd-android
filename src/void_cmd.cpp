@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -28,7 +26,7 @@ static void DrawTile_Void(TileInfo *ti)
 
 static int GetSlopePixelZ_Void(TileIndex tile, uint x, uint y)
 {
-	/* This function may be called on tiles outside the map, don't asssume
+	/* This function may be called on tiles outside the map, don't assume
 	 * that 'tile' is a valid tile index. See GetSlopePixelZOutsideMap. */
 	int z;
 	Slope tileh = GetTilePixelSlopeOutsideMap(x >> 4, y >> 4, &z);
@@ -77,15 +75,15 @@ extern const TileTypeProcs _tile_type_void_procs = {
 	DrawTile_Void,            // draw_tile_proc
 	GetSlopePixelZ_Void,      // get_slope_z_proc
 	ClearTile_Void,           // clear_tile_proc
-	NULL,                     // add_accepted_cargo_proc
+	nullptr,                     // add_accepted_cargo_proc
 	GetTileDesc_Void,         // get_tile_desc_proc
 	GetTileTrackStatus_Void,  // get_tile_track_status_proc
-	NULL,                     // click_tile_proc
-	NULL,                     // animate_tile_proc
+	nullptr,                     // click_tile_proc
+	nullptr,                     // animate_tile_proc
 	TileLoop_Void,            // tile_loop_proc
 	ChangeTileOwner_Void,     // change_tile_owner_proc
-	NULL,                     // add_produced_cargo_proc
-	NULL,                     // vehicle_enter_tile_proc
+	nullptr,                     // add_produced_cargo_proc
+	nullptr,                     // vehicle_enter_tile_proc
 	GetFoundation_Void,       // get_foundation_proc
 	TerraformTile_Void,       // terraform_tile_proc
 };

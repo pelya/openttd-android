@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -21,12 +19,12 @@
 #include <stack>
 #include <vector>
 
-#ifdef WITH_ICU_LAYOUT
+#ifdef WITH_ICU_LX
 #include "layout/ParagraphLayout.h"
 #define ICU_FONTINSTANCE : public icu::LEFontInstance
-#else /* WITH_ICU_LAYOUT */
+#else /* WITH_ICU_LX */
 #define ICU_FONTINSTANCE
-#endif /* WITH_ICU_LAYOUT */
+#endif /* WITH_ICU_LX */
 
 /**
  * Text drawing parameters, which can change while drawing a line, but are kept between multiple parts
@@ -48,7 +46,7 @@ struct FontState {
 	inline void SetColour(TextColour c)
 	{
 		assert(c >= TC_BLUE && c <= TC_BLACK);
-		this->cur_colour = c;
+		if ((this->cur_colour & TC_FORCED) == 0) this->cur_colour = c;
 	}
 
 	/**
@@ -89,7 +87,7 @@ public:
 
 	Font(FontSize size, TextColour colour);
 
-#ifdef WITH_ICU_LAYOUT
+#ifdef WITH_ICU_LX
 	/* Implementation details of LEFontInstance */
 
 	le_int32 getUnitsPerEM() const;
@@ -105,7 +103,7 @@ public:
 	LEGlyphID mapCharToGlyph(LEUnicode32 ch) const;
 	void getGlyphAdvance(LEGlyphID glyph, LEPoint &advance) const;
 	le_bool getGlyphPoint(LEGlyphID glyph, le_int32 pointNumber, LEPoint &point) const;
-#endif /* WITH_ICU_LAYOUT */
+#endif /* WITH_ICU_LX */
 };
 
 /** Mapping from index to font. */
@@ -137,12 +135,12 @@ public:
 		virtual int GetLeading() const = 0;
 		virtual int GetWidth() const = 0;
 		virtual int CountRuns() const = 0;
-		virtual const VisualRun *GetVisualRun(int run) const = 0;
+		virtual const VisualRun &GetVisualRun(int run) const = 0;
 		virtual int GetInternalCharLength(WChar c) const = 0;
 	};
 
 	virtual void Reflow() = 0;
-	virtual const Line *NextLine(int max_width) = 0;
+	virtual std::unique_ptr<const Line> NextLine(int max_width) = 0;
 };
 
 /**
@@ -150,7 +148,7 @@ public:
  *
  * It also accounts for the memory allocations and frees.
  */
-class Layouter : public AutoDeleteSmallVector<const ParagraphLayouter::Line *, 4> {
+class Layouter : public std::vector<std::unique_ptr<const ParagraphLayouter::Line>> {
 	const char *string; ///< Pointer to the original string.
 
 	/** Key into the linecache */
@@ -177,7 +175,7 @@ public:
 		FontState state_after;     ///< Font state after the line.
 		ParagraphLayouter *layout; ///< Layout of the line.
 
-		LineCacheItem() : buffer(NULL), layout(NULL) {}
+		LineCacheItem() : buffer(nullptr), layout(nullptr) {}
 		~LineCacheItem() { delete layout; free(buffer); }
 	};
 private:

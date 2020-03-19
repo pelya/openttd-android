@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,17 +16,20 @@
 #include "vehicle_type.h"
 #include "economy_func.h"
 #include "rail.h"
+#include "road.h"
 #include "linkgraph/linkgraph_type.h"
+#include "industry_type.h"
 
 void ModifyStationRatingAround(TileIndex tile, Owner owner, int amount, uint radius);
 
-void FindStationsAroundTiles(const TileArea &location, StationList *stations);
+void FindStationsAroundTiles(const TileArea &location, StationList *stations, bool use_nearby = true);
 
 void ShowStationViewWindow(StationID station);
 void UpdateAllStationVirtCoords();
+void ClearAllStationCachedNames();
 
 CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad);
-CargoArray GetAcceptanceAroundTiles(TileIndex tile, int w, int h, int rad, CargoTypes *always_accepted = NULL);
+CargoArray GetAcceptanceAroundTiles(TileIndex tile, int w, int h, int rad, CargoTypes *always_accepted = nullptr);
 
 void UpdateStationAcceptance(Station *st, bool show_msg);
 
@@ -38,6 +39,10 @@ void StationPickerDrawSprite(int x, int y, StationType st, RailType railtype, Ro
 bool HasStationInUse(StationID station, bool include_company, CompanyID company);
 
 void DeleteOilRig(TileIndex t);
+void UpdateStationDockingTiles(Station *st);
+void RemoveDockingTile(TileIndex t);
+void ClearDockingTilesCheckingNeighbours(TileIndex tile);
+bool IsValidDockingDirectionForDock(TileIndex t, DiagDirection d);
 
 /* Check if a rail station tile is traversable. */
 bool IsStationTileBlocked(TileIndex tile);

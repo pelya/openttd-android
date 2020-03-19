@@ -10,8 +10,6 @@
 ##grflangid 0x14
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -282,7 +280,7 @@ STR_SORT_BY_TIMETABLE_DELAY                                     :تاخير جد
 STR_SORT_BY_FACILITY                                            :نوع المحطة
 STR_SORT_BY_RATING_MAX                                          :اعلى نسبة شحن
 STR_SORT_BY_RATING_MIN                                          :اقل نسبة شحن
-STR_SORT_BY_ENGINE_ID                                           :نوع المحرك (قياسي(
+STR_SORT_BY_ENGINE_ID                                           :نوع المحرك (قياسي)
 STR_SORT_BY_COST                                                :التكلفة
 STR_SORT_BY_POWER                                               :الطاقة
 STR_SORT_BY_TRACTIVE_EFFORT                                     :قوة الجذب
@@ -448,9 +446,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :توقل كونسول
 STR_ABOUT_MENU_AI_DEBUG                                         :مكتشف اخطاء الذكاء الصناعي
 STR_ABOUT_MENU_SCREENSHOT                                       :صورة من الشاشة - Ctrl-S -
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :صورة للشاشة مصغرة
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :تقريب الشاشة القياسي
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :صورة كبيرة لكامل الخريطة -Ctrl-G -
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :حول 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :موائم العفريتات
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :اضهار /اخفاء مربح الحوارات/الخيارات
@@ -619,9 +614,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}معدل2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}مستوى الصوت
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}مؤثرات الصوت
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}منخفض
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}مرتفع
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}-----
@@ -826,6 +818,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}فشل �
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}جديد {STRING}الآن متاحة !
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}جديد {STRING} الآن متاح ! - {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} لم تعد تقبل {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION}لم تعد تقبل {STRING} او {STRING}
@@ -1147,7 +1140,7 @@ STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :الكثافة 
 STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :إختر مقدار الصناعات التي يجب تكوينها وعلى اي مستوى يجب ان تكون خلال اللعبة
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :ارتفاع خط الثلج: {STRING}
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :تحكم على اي ارتفاع يبدأ نزول الثلج في المناطق القطبية,تؤثر الثلوج على مستوى تطور القطاع الصناعي ونمو المدن
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :خشونة التضاريس (صفر التكوين فقط ) :({STRING}
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :خشونة التضاريس: {STRING}
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(TerraGenesis only)إختر تكرار الهضبات: الاراض المستويه تحتوي على البضع منها,هضبات موزعه عرضيا اكثر,الاراض الوعرة تحتوي الكثير من الهضاب,التي من الممكن ان تكون متكررة
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :ناعم جدا
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :ناعم
@@ -1369,7 +1362,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :توزيع ال
 STR_CONFIG_SETTING_AI                                           :{ORANGE}المتنافسين
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE} لاعبين الحاسوب
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :اصلي
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(مفضل)
 
@@ -1440,13 +1432,9 @@ STR_QUIT_NO                                                     :{BLACK}لا
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :ويندوز
-STR_OSNAME_DOS                                                  :دوس
 STR_OSNAME_UNIX                                                 :يونكس
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :بي او اس
 STR_OSNAME_HAIKU                                                :هايكو
-STR_OSNAME_MORPHOS                                              :مورف او اس
-STR_OSNAME_AMIGAOS                                              :اميقا
 STR_OSNAME_OS2                                                  :او اس/2
 STR_OSNAME_SUNOS                                                :صن
 
@@ -1946,7 +1934,7 @@ STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :بناء الس
 
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}بناء سكة حديد
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}بناء سكة القطار باستخدام البناء التلقائي
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}بناء ورشة قطارات (لصيانة و شراء القطارات).
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}بناء ورشة قطارات (لصيانة و شراء القطارات)
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}غير السكة الى نقطة عبور
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}بناء محطة قطار. مفتاح كنترول يسمح بضم المحطات
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}بناء إشارات السكك الحديدية.
@@ -2028,7 +2016,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION                  :{BLACK}بناء
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD                         :{BLACK}بناء الطرق باستخدام النظام الآلي
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}بناء سكة القطار باستخدام النظام الآلي
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_VEHICLE_DEPOT               :{BLACK}بناء ورشة صيانة لعربات الطرق (لشراء و صيانة العربات).
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}بناء ورشة لصيانة عربات الترام (لشراء و صيانة عربات الترام).
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}بناء ورشة لصيانة عربات الترام (لشراء و صيانة عربات الترام)
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_BUS_STATION                      :{BLACK}بناء محطة باصات
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_PASSENGER_TRAM_STATION           :{BLACK}بناء محطة ركاب ترام.
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRUCK_LOADING_BAY                :{BLACK}بناء محطة تحميل عربات. مفتاح كنترول يسمح بمجاورة المحطات.
@@ -2040,6 +2028,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}بناء
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}بناء نفق ترام
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}بدل بناء/إزالة الطرق
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}بدل بناء / ازالة طرق الترام
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}اتجاه ورشة الصيانة
@@ -2590,7 +2579,8 @@ STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}ادخل
 # Town directory window
 STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}مدن/ بلدات
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}-بدون-
-STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ) {COMMA})
+STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{RLE}{TOWN}{BLACK} {RLM}({COMMA})
+STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{RLE}{TOWN}{YELLOW} (مدينة){BLACK} {RLM}({COMMA})
 STR_TOWN_DIRECTORY_LIST_TOOLTIP                                 :{BLACK}اسم المدينة - اضغط على الاسم لتوسيط الشاشة عليها. اضغط + كنترول لفتح شاشة عرض جديدة للضاحية.
 STR_TOWN_POPULATION                                             :{BLACK}سكان العالم: {COMMA}
 
@@ -2678,7 +2668,7 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- بدون -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}اختر جميع المرافق
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}اختر كل انواع الشحن (حتى غير المنتظرة(
+STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}اختر كل انواع الشحن (حتى غير المنتظرة)
 STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}لا يوجد اي شحنة منتظرة
 
 # Station view window
@@ -2802,8 +2792,6 @@ STR_BUY_COMPANY_MESSAGE                                         :{WHITE}نحن �
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}صناعات
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}-بدون-
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW}({COMMA}% صدرت)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW}({COMMA}%/{COMMA}% صدرت)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}اسماء المصانع - اضغط على اسم المصنع لتوسيط الشاشة عليه. اضغط + كنترول لفتح شاشة عرض جديدة لمنطقة المصنع.
 
@@ -2864,6 +2852,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :لاتنتمي 
 STR_GROUP_DEFAULT_SHIPS                                         :مركبة لاتنتمي لأي مجموعة
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :طائرة لاتنتمي لأي مجموعة
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}المجموعات: اضغط على اي مجموعة لعرض مركباتها . اسحب للترتيب .
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}أضغط لإنشاء مجموعة
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}أحذف المجموعة المختارة
@@ -2885,10 +2874,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :عربات قط
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :عربات قطار احادي جديدة
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :عربات قطار ممغنط جديدة
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :عربات قطار
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :عربات جديدة
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :عربات قطار
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :سفن جديدة
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :طائرة جديدة
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK} التكلفة: {GOLD}{CURRENCY_LONG}{BLACK} الوزن: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}السرعة: {GOLD}{VELOCITY}{BLACK} الطاقة: {GOLD}{POWER}
@@ -2897,7 +2889,7 @@ STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}السر
 STR_PURCHASE_INFO_SPEED_CANAL                                   :{BLACK}السرعة في القناة/النهر: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_RUNNINGCOST                                   :{BLACK}تكلفة التشغيل: {GOLD}{CURRENCY_LONG}/ سنة
 STR_PURCHASE_INFO_CAPACITY                                      :{BLACK}السعة: {GOLD}{CARGO_LONG} {STRING}
-STR_PURCHASE_INFO_REFITTABLE                                    :)قابل لتغيير(
+STR_PURCHASE_INFO_REFITTABLE                                    :(قابل لتغيي)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}تصميم: {GOLD}{NUM}{BLACK} العمر الافتراضي: {GOLD}{COMMA} سنة
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}الاعتمادية القصوى: {GOLD}{COMMA}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}التكلفة: {GOLD}{CURRENCY_LONG}
@@ -2920,10 +2912,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}شراء
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}شراء سفينة
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}شراء طائرة
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}شراء العربة الموضحة
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}شراء العربة
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}شراء السفينة المختارة
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}اشتر الطائرة المختارة
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}اعادة تسمية
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}أعد التسمية
@@ -3021,12 +3015,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}أنت 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}رسالة من المصنعين
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}قد صممنا موديل جديد من {STRING} - هل ترغب في استخدام سنة حصري لهذه المركبة, لنستطيع تقييمها للأستخدام العام
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :قاطرة سكة حديد
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :مركبة
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :طائرة
-STR_ENGINE_PREVIEW_SHIP                                         :سفينة
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :قاطرة سكة قطار احادية
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :قاطرة سكة قطار ممغنطة
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :مركبة
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :طائرة
+STR_ENGINE_PREVIEW_SHIP                                         :سفينة
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK} التكلفة: {CURRENCY_LONG} الوزن: {WEIGHT_SHORT}{} السرعة: {VELOCITY}  الطاقة: {POWER}{} كلفة التشغيل: {CURRENCY_LONG} / سنة{} السعة: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}التكلفة {CURRENCY_LONG} الوزن {WEIGHT_SHORT}{}السرعة {VELOCITY}  Power: {POWER}قوة السحب  {6:FORCE}{}التكلفة التشغيلية {4:CURRENCY_LONG}/سنة{}السعة: {5:CARGO_LONG}
@@ -3060,6 +3057,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :عربات ال
 STR_REPLACE_ELRAIL_VEHICLES                                     :سكة حديد كهربائية
 STR_REPLACE_MONORAIL_VEHICLES                                   :عربات احادية السكة
 STR_REPLACE_MAGLEV_VEHICLES                                     :مركبات ممغنطة
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK} إزالة العربات: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK} المحافظة على طول القطار بازالة عربات ابتداء من المقدمة عند التبديل - عندما يكون التبدل ينتج قطارا اطول.
@@ -3193,7 +3191,7 @@ STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK} عرض 
 STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}السعة: {LTBLUE}
 
 # Vehicle refit
-STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE} )تغيير(
+STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE} (تغيير)
 STR_REFIT_TITLE                                                 :{GOLD}اختر نوع الحمولة ...
 STR_REFIT_NEW_CAPACITY_COST_OF_REFIT                            :{BLACK}السعة الجديدة: {GOLD}{CARGO_LONG}{}{BLACK}تكلفة التغيير: {RED}{CURRENCY_LONG}
 STR_REFIT_NEW_CAPACITY_COST_OF_AIRCRAFT_REFIT                   :{BLACK}السعة الجديدة: {GOLD}{CARGO_LONG}, {GOLD}{CARGO_LONG}{}{BLACK}تكلفة اعادة التهيئة: {RED}{CURRENCY_LONG}
@@ -3415,7 +3413,7 @@ STR_TIMETABLE_RESET_LATENESS                                    :{BLACK}اعد �
 STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}عدل وقت التاخير للعداد حتى تصل المركبة في الوقت المحدد
 
 STR_TIMETABLE_AUTOFILL                                          :{BLACK}تهيئة تلقائية
-STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}املأ الجدولة تلقائيا بقيم الرحلة التالية (مفتاح كنترول لمحاولة ابقائ وقت الانتظار).
+STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}مفتاح كنترول لمحاولة ابقائ وقت الانتظار (املأ الجدولة تلقائيا بقيم الرحلة التالية)
 
 STR_TIMETABLE_EXPECTED                                          :{BLACK}متوقع
 STR_TIMETABLE_SCHEDULED                                         :{BLACK}مجدول
@@ -3482,6 +3480,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK} اقب�
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK} اختر الذكاء الصناعي المنتقى
 STR_AI_LIST_CANCEL                                              :{BLACK} الغاء
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK} لا تغير الذكاء الصناعي
+
 
 # AI Parameters
 STR_AI_SETTINGS_CLOSE                                           :{BLACK} اغلاق
@@ -3735,7 +3734,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}يجب �
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}... مسار السكة الحديدية غير مناسب
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}يجب إزاله السكه الحديديه اولاً
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}الطريق باتجاه واحد او ربما يكون مسدوداً
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}التقاطع المتعدد غير متاح لهذا النوع من السكك
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}التقاطع المتعدد غير متاح لهذا النوع من السكك
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}تعذر بناء اﻹشارات هنا...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}تعذر بناء السكه الحديديه هنا...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}تعذر إزاله السكه الحديديه من هنا...

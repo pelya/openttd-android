@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -11,7 +9,7 @@
 
 /** Construction macro for a #CargoSpec structure. */
 #define MK(bt, label, c, e, f, g, h, fr, te, ks1, ks2, ks3, ks4, ks5, l, m, cmult) \
-		{bt, label, c, c, e, cmult, f, {g, h}, fr, te, 0, 0, ks1, ks2, ks3, ks4, ks5, l, m, NULL, NULL, 0}
+		{bt, label, c, c, e, cmult, f, {g, h}, fr, te, 0, 0, ks1, ks2, ks3, ks4, ks5, l, m, nullptr, nullptr, 0}
 /** Cargo types available by default. */
 static const CargoSpec _default_cargo[] = {
 	MK(  0, 'PASS', 152,  1, 3185,  0,  24, false, TE_PASSENGERS,

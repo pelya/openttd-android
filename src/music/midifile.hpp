@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
 * This file is part of OpenTTD.
 * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -22,9 +20,9 @@ struct MusicSongInfo;
 
 struct MidiFile {
 	struct DataBlock {
-		uint32 ticktime;           ///< tick number since start of file this block should be triggered at
-		uint32 realtime;           ///< real-time (microseconds) since start of file this block should be triggered at
-		SmallVector<byte, 8> data; ///< raw midi data contained in block
+		uint32 ticktime;        ///< tick number since start of file this block should be triggered at
+		uint32 realtime;        ///< real-time (microseconds) since start of file this block should be triggered at
+		std::vector<byte> data; ///< raw midi data contained in block
 		DataBlock(uint32 _ticktime = 0) : ticktime(_ticktime) { }
 	};
 	struct TempoChange {

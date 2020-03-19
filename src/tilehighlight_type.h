@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -52,6 +50,8 @@ struct TileHighlightData {
 	Point offs;          ///< Offset, in tile "units", for the blue coverage area from the selected area's northern tile.
 	Point outersize;     ///< Size, in tile "units", of the blue coverage area excluding the side of the selected area.
 	bool diagonal;       ///< Whether the dragged area is a 45 degrees rotated rectangle.
+
+	bool freeze;         ///< Freeze highlight in place.
 
 	Point new_pos;       ///< New value for \a pos; used to determine whether to redraw the selection.
 	Point new_size;      ///< New value for \a size; used to determine whether to redraw the selection.

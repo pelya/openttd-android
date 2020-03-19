@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -52,7 +50,7 @@ public:
 	 * Find a library.
 	 * @param library The library name to find.
 	 * @param version The version the library should have.
-	 * @return The library if found, NULL otherwise.
+	 * @return The library if found, nullptr otherwise.
 	 */
 	virtual class ScriptInfo *FindLibrary(const char *library, int version) = 0;
 
@@ -182,8 +180,10 @@ public:
 	 * @param tile The tile on which the command was executed.
 	 * @param p1 p1 as given to DoCommandPInternal.
 	 * @param p2 p2 as given to DoCommandPInternal.
+	 * @param cmd cmd as given to DoCommandPInternal.
+	 * @return true if we handled result.
 	 */
-	void DoCommandCallback(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2);
+	bool DoCommandCallback(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd);
 
 	/**
 	 * Insert an event for this script.
@@ -197,6 +197,8 @@ public:
 	 *  paused.
 	 */
 	bool IsSleeping() { return this->suspend != 0; }
+
+	size_t GetAllocatedMemory() const;
 
 protected:
 	class Squirrel *engine;               ///< A wrapper around the squirrel vm.
@@ -241,6 +243,7 @@ private:
 	int suspend;                          ///< The amount of ticks to suspend this script before it's allowed to continue.
 	bool is_paused;                       ///< Is the script paused? (a paused script will not be executed until unpaused)
 	Script_SuspendCallbackProc *callback; ///< Callback that should be called in the next tick the script runs.
+	size_t last_allocated_memory;         ///< Last known allocated memory value (for display for crashed scripts)
 
 	/**
 	 * Call the script Load function if it exists and data was loaded

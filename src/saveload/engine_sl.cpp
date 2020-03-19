@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -68,7 +66,7 @@ static Engine* CallocEngine()
  */
 static void FreeEngine(Engine *e)
 {
-	if (e != NULL) {
+	if (e != nullptr) {
 		e->~Engine();
 		free(e);
 	}
@@ -88,8 +86,7 @@ Engine *GetTempDataEngine(EngineID index)
 
 static void Save_ENGN()
 {
-	Engine *e;
-	FOR_ALL_ENGINES(e) {
+	for (Engine *e : Engine::Iterate()) {
 		SlSetArrayIndex(e->index);
 		SlObject(e, _engine_desc);
 	}
@@ -120,8 +117,7 @@ static void Load_ENGN()
  */
 void CopyTempEngineData()
 {
-	Engine *e;
-	FOR_ALL_ENGINES(e) {
+	for (Engine *e : Engine::Iterate()) {
 		if (e->index >= _temp_engine.size()) break;
 
 		const Engine *se = GetTempDataEngine(e->index);
@@ -141,9 +137,14 @@ void CopyTempEngineData()
 		e->preview_wait        = se->preview_wait;
 		e->company_avail       = se->company_avail;
 		e->company_hidden      = se->company_hidden;
-		if (se->name != NULL) e->name = stredup(se->name);
+		if (se->name != nullptr) e->name = stredup(se->name);
 	}
 
+	ResetTempEngineData();
+}
+
+void ResetTempEngineData()
+{
 	/* Get rid of temporary data */
 	for (std::vector<Engine*>::iterator it = _temp_engine.begin(); it != _temp_engine.end(); ++it) {
 		FreeEngine(*it);
@@ -177,26 +178,27 @@ static const SaveLoad _engine_id_mapping_desc[] = {
 
 static void Save_EIDS()
 {
-	const EngineIDMapping *end = _engine_mngr.End();
 	uint index = 0;
-	for (EngineIDMapping *eid = _engine_mngr.Begin(); eid != end; eid++, index++) {
+	for (EngineIDMapping &eid : _engine_mngr) {
 		SlSetArrayIndex(index);
-		SlObject(eid, _engine_id_mapping_desc);
+		SlObject(&eid, _engine_id_mapping_desc);
+		index++;
 	}
 }
 
 static void Load_EIDS()
 {
-	_engine_mngr.Clear();
+	_engine_mngr.clear();
 
 	while (SlIterateArray() != -1) {
-		EngineIDMapping *eid = _engine_mngr.Append();
+		/*C++17: EngineIDMapping *eid = &*/ _engine_mngr.emplace_back();
+		EngineIDMapping *eid = &_engine_mngr.back();
 		SlObject(eid, _engine_id_mapping_desc);
 	}
 }
 
 extern const ChunkHandler _engine_chunk_handlers[] = {
-	{ 'EIDS', Save_EIDS, Load_EIDS, NULL, NULL, CH_ARRAY          },
-	{ 'ENGN', Save_ENGN, Load_ENGN, NULL, NULL, CH_ARRAY          },
-	{ 'ENGS', NULL,      Load_ENGS, NULL, NULL, CH_RIFF | CH_LAST },
+	{ 'EIDS', Save_EIDS, Load_EIDS, nullptr, nullptr, CH_ARRAY          },
+	{ 'ENGN', Save_ENGN, Load_ENGN, nullptr, nullptr, CH_ARRAY          },
+	{ 'ENGS', nullptr,   Load_ENGS, nullptr, nullptr, CH_RIFF | CH_LAST },
 };

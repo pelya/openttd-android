@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -1991,7 +1989,7 @@ static const char * const _name_romanian_real[] = {
 	"Motru",
 	"N\xC4\x83s\xC4\x83ud",
 	"N\xC4\x83vodari",
-	"Odobe\xC8x99ti",
+	"Odobe\xC8\x99ti",
 	"Olteni\xC8\x9B""a",
 	"One\xC8\x99ti",
 	"Oradea",

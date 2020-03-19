@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -28,15 +26,15 @@
 /** A partially 32 bpp blitter with palette animation. */
 class Blitter_32bppSSE2_Anim : public Blitter_32bppAnim {
 public:
-	/* virtual */ void PaletteAnimate(const Palette &palette);
-	/* virtual */ const char *GetName() { return "32bpp-sse2-anim"; }
+	void PaletteAnimate(const Palette &palette) override;
+	const char *GetName() override { return "32bpp-sse2-anim"; }
 };
 
 /** Factory for the partially 32bpp blitter with animation. */
 class FBlitter_32bppSSE2_Anim : public BlitterFactory {
 public:
 	FBlitter_32bppSSE2_Anim() : BlitterFactory("32bpp-sse2-anim", "32bpp partially SSE2 Animation Blitter (palette animation)", HasCPUIDFlag(1, 3, 26)) {}
-	/* virtual */ Blitter *CreateInstance() { return new Blitter_32bppSSE2_Anim(); }
+	Blitter *CreateInstance() override { return new Blitter_32bppSSE2_Anim(); }
 };
 
 #endif /* WITH_SSE */

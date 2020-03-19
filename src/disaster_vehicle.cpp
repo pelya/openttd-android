@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -62,7 +60,7 @@ static void DisasterClearSquare(TileIndex tile)
 	switch (GetTileType(tile)) {
 		case MP_RAILWAY:
 			if (Company::IsHumanID(GetTileOwner(tile)) && !IsRailDepot(tile)) {
-				Backup<CompanyByte> cur_company(_current_company, OWNER_WATER, FILE_LINE);
+				Backup<CompanyID> cur_company(_current_company, OWNER_WATER, FILE_LINE);
 				DoCommand(tile, 0, 0, DC_EXEC, CMD_LANDSCAPE_CLEAR);
 				cur_company.Restore();
 
@@ -72,7 +70,7 @@ static void DisasterClearSquare(TileIndex tile)
 			break;
 
 		case MP_HOUSE: {
-			Backup<CompanyByte> cur_company(_current_company, OWNER_NONE, FILE_LINE);
+			Backup<CompanyID> cur_company(_current_company, OWNER_NONE, FILE_LINE);
 			DoCommand(tile, 0, 0, DC_EXEC, CMD_LANDSCAPE_CLEAR);
 			cur_company.Restore();
 			break;
@@ -137,11 +135,11 @@ DisasterVehicle::DisasterVehicle(int x, int y, Direction direction, DisasterSubT
 		case ST_HELICOPTER:
 		case ST_BIG_UFO:
 		case ST_BIG_UFO_DESTROYER:
-			GetAircraftFlightLevelBounds(this, &this->z_pos, NULL);
+			GetAircraftFlightLevelBounds(this, &this->z_pos, nullptr);
 			break;
 
 		case ST_HELICOPTER_ROTORS:
-			GetAircraftFlightLevelBounds(this, &this->z_pos, NULL);
+			GetAircraftFlightLevelBounds(this, &this->z_pos, nullptr);
 			this->z_pos += ROTOR_Z_OFFSET;
 			break;
 
@@ -190,7 +188,7 @@ void DisasterVehicle::UpdatePosition(int x, int y, int z)
 	this->UpdatePositionAndViewport();
 
 	DisasterVehicle *u = this->Next();
-	if (u != NULL) {
+	if (u != nullptr) {
 		int safe_x = Clamp(x, 0, MapMaxX() * TILE_SIZE);
 		int safe_y = Clamp(y - 1, 0, MapMaxY() * TILE_SIZE);
 
@@ -203,7 +201,7 @@ void DisasterVehicle::UpdatePosition(int x, int y, int z)
 		u->UpdateImage();
 		u->UpdatePositionAndViewport();
 
-		if ((u = u->Next()) != NULL) {
+		if ((u = u->Next()) != nullptr) {
 			u->x_pos = x;
 			u->y_pos = y;
 			u->z_pos = z + ROTOR_Z_OFFSET;
@@ -333,8 +331,7 @@ static bool DisasterTick_Ufo(DisasterVehicle *v)
 		v->current_order.SetDestination(1);
 
 		uint n = 0; // Total number of targetable road vehicles.
-		RoadVehicle *u;
-		FOR_ALL_ROADVEHICLES(u) {
+		for (const RoadVehicle *u : RoadVehicle::Iterate()) {
 			if (u->IsFrontEngine()) n++;
 		}
 
@@ -345,19 +342,21 @@ static bool DisasterTick_Ufo(DisasterVehicle *v)
 		}
 
 		n = RandomRange(n); // Choose one of them.
-		FOR_ALL_ROADVEHICLES(u) {
+		for (const RoadVehicle *u : RoadVehicle::Iterate()) {
 			/* Find (n+1)-th road vehicle. */
-			if (u->IsFrontEngine() && (n-- == 0)) break;
+			if (u->IsFrontEngine() && (n-- == 0)) {
+				/* Target it. */
+				v->dest_tile = u->index;
+				v->age = 0;
+				break;
+			}
 		}
 
-		/* Target it. */
-		v->dest_tile = u->index;
-		v->age = 0;
 		return true;
 	} else {
 		/* Target a vehicle */
 		RoadVehicle *u = RoadVehicle::Get(v->dest_tile);
-		assert(u != NULL && u->type == VEH_ROAD && u->IsFrontEngine());
+		assert(u != nullptr && u->type == VEH_ROAD && u->IsFrontEngine());
 
 		uint dist = Delta(v->x_pos, u->x_pos) + Delta(v->y_pos, u->y_pos);
 
@@ -542,8 +541,7 @@ static bool DisasterTick_Big_Ufo(DisasterVehicle *v)
 
 		v->current_order.SetDestination(2);
 
-		Vehicle *target;
-		FOR_ALL_VEHICLES(target) {
+		for (Vehicle *target : Vehicle::Iterate()) {
 			if (target->IsGroundVehicle()) {
 				if (Delta(target->x_pos, v->x_pos) + Delta(target->y_pos, v->y_pos) <= 12 * (int)TILE_SIZE) {
 					target->breakdown_ctr = 5;
@@ -710,8 +708,7 @@ static void Disaster_Zeppeliner_Init()
 	/* Pick a random place, unless we find a small airport */
 	int x = TileX(Random()) * TILE_SIZE + TILE_SIZE / 2;
 
-	Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (const Station *st : Station::Iterate()) {
 		if (st->airport.tile != INVALID_TILE && (st->airport.type == AT_SMALL || st->airport.type == AT_LARGE)) {
 			x = (TileX(st->airport.tile) + 2) * TILE_SIZE;
 			break;
@@ -748,16 +745,16 @@ static void Disaster_Airplane_Init()
 {
 	if (!Vehicle::CanAllocateItem(2)) return;
 
-	Industry *i, *found = NULL;
+	Industry *found = nullptr;
 
-	FOR_ALL_INDUSTRIES(i) {
+	for (Industry *i : Industry::Iterate()) {
 		if ((GetIndustrySpec(i->type)->behaviour & INDUSTRYBEH_AIRPLANE_ATTACKS) &&
-				(found == NULL || Chance16(1, 2))) {
+				(found == nullptr || Chance16(1, 2))) {
 			found = i;
 		}
 	}
 
-	if (found == NULL) return;
+	if (found == nullptr) return;
 
 	/* Start from the bottom (south side) of the map */
 	int x = (MapSizeX() + 9) * TILE_SIZE - 1;
@@ -774,16 +771,16 @@ static void Disaster_Helicopter_Init()
 {
 	if (!Vehicle::CanAllocateItem(3)) return;
 
-	Industry *i, *found = NULL;
+	Industry *found = nullptr;
 
-	FOR_ALL_INDUSTRIES(i) {
+	for (Industry *i : Industry::Iterate()) {
 		if ((GetIndustrySpec(i->type)->behaviour & INDUSTRYBEH_CHOPPER_ATTACKS) &&
-				(found == NULL || Chance16(1, 2))) {
+				(found == nullptr || Chance16(1, 2))) {
 			found = i;
 		}
 	}
 
-	if (found == NULL) return;
+	if (found == nullptr) return;
 
 	int x = -16 * (int)TILE_SIZE;
 	int y = TileY(found->location.tile) * TILE_SIZE + 37;
@@ -861,9 +858,7 @@ static void Disaster_CoalMine_Init()
 	uint m;
 
 	for (m = 0; m < 15; m++) {
-		const Industry *i;
-
-		FOR_ALL_INDUSTRIES(i) {
+		for (const Industry *i : Industry::Iterate()) {
 			if ((GetIndustrySpec(i->type)->behaviour & INDUSTRYBEH_CAN_SUBSIDENCE) && --index < 0) {
 				SetDParam(0, i->town->index);
 				AddTileNewsItem(STR_NEWS_DISASTER_COAL_MINE_SUBSIDENCE, NT_ACCIDENT, i->location.tile + TileDiffXY(1, 1)); // keep the news, even when the mine closes
@@ -942,8 +937,7 @@ void StartupDisasters()
  */
 void ReleaseDisastersTargetingIndustry(IndustryID i)
 {
-	DisasterVehicle *v;
-	FOR_ALL_DISASTERVEHICLES(v) {
+	for (DisasterVehicle *v : DisasterVehicle::Iterate()) {
 		/* primary disaster vehicles that have chosen target */
 		if (v->subtype == ST_AIRPLANE || v->subtype == ST_HELICOPTER) {
 			/* if it has chosen target, and it is this industry (yes, dest_tile is IndustryID here), set order to "leaving map peacefully" */
@@ -958,15 +952,14 @@ void ReleaseDisastersTargetingIndustry(IndustryID i)
  */
 void ReleaseDisastersTargetingVehicle(VehicleID vehicle)
 {
-	DisasterVehicle *v;
-	FOR_ALL_DISASTERVEHICLES(v) {
+	for (DisasterVehicle *v : DisasterVehicle::Iterate()) {
 		/* primary disaster vehicles that have chosen target */
 		if (v->subtype == ST_SMALL_UFO) {
 			if (v->current_order.GetDestination() != 0 && v->dest_tile == vehicle) {
 				/* Revert to target-searching */
 				v->current_order.SetDestination(0);
 				v->dest_tile = RandomTile();
-				GetAircraftFlightLevelBounds(v, &v->z_pos, NULL);
+				GetAircraftFlightLevelBounds(v, &v->z_pos, nullptr);
 				v->age = 0;
 			}
 		}

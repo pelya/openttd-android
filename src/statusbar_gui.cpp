@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -28,6 +26,7 @@
 #include "core/geometry_func.hpp"
 #include "guitimer_func.h"
 #include "settings_gui.h"
+#include "zoom_func.h"
 
 #include "widgets/statusbar_widget.h"
 
@@ -100,18 +99,18 @@ struct StatusBarWindow : Window {
 		PositionStatusbar(this);
 	}
 
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
 	{
 		Point pt = { 0, _screen.height - sm_height };
 		return pt;
 	}
 
-	virtual void FindWindowPlacementAndResize(int def_width, int def_height)
+	void FindWindowPlacementAndResize(int def_width, int def_height) override
 	{
 		Window::FindWindowPlacementAndResize(min(_toolbar_width, _screen.width - GetMinSizing(NWST_STEP) * 2), def_height);
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		Dimension d;
 		switch (widget) {
@@ -122,8 +121,7 @@ struct StatusBarWindow : Window {
 				d = GetStringBoundingBox(STR_WHITE_DATE_LONG);
 
 				int64 max_money = UINT32_MAX;
-				const Company *c;
-				FOR_ALL_COMPANIES(c) max_money = max<int64>(c->money, max_money);
+				for (const Company *c : Company::Iterate()) max_money = max<int64>(c->money, max_money);
 				SetDParam(0, 100LL * max_money);
 				d = maxdim(d, GetStringBoundingBox(STR_COMPANY_MONEY));
 				break;
@@ -148,7 +146,7 @@ struct StatusBarWindow : Window {
 		*size = maxdim(d, *size);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		StringID str = INVALID_STRING_ID;
 
@@ -162,7 +160,7 @@ struct StatusBarWindow : Window {
 			case WID_S_RIGHT: {
 				/* Draw company money, if any */
 				const Company *c = Company::GetIfValid(_local_company);
-				if (c != NULL) {
+				if (c != nullptr) {
 					SetDParam(0, c->money);
 					str = STR_COMPANY_MONEY;
 				}
@@ -176,10 +174,10 @@ struct StatusBarWindow : Window {
 				} else if (_do_autosave) {
 					str = STR_STATUSBAR_AUTOSAVE;
 				} else if (_pause_mode != PM_UNPAUSED) {
-					str = STR_STATUSBAR_PAUSED;
-				} else if (this->ticker_scroll < TICKER_STOP && FindWindowById(WC_NEWS_WINDOW, 0) == NULL && _statusbar_news_item != NULL && _statusbar_news_item->string_id != 0) {
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, STR_STATUSBAR_PAUSED, TC_FROMSTRING, SA_HOR_CENTER);
+				} else if (this->ticker_scroll < TICKER_STOP && FindWindowById(WC_NEWS_WINDOW, 0) == NULL && _statusbar_news_item != nullptr && _statusbar_news_item->string_id != 0) {
 					/* Draw the scrolling news text */
-					if (!DrawScrollingStatusText(_statusbar_news_item, this->ticker_scroll, r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, r.bottom)) {
+					if (!DrawScrollingStatusText(_statusbar_news_item, ScaleGUITrad(this->ticker_scroll), r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, r.bottom)) {
 						InvalidateWindowData(WC_STATUS_BAR, 0, SBI_NEWS_DELETED);
 						if (Company::IsValidID(_local_company)) {
 							/* This is the default text */
@@ -212,7 +210,7 @@ struct StatusBarWindow : Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		switch (data) {
@@ -228,7 +226,7 @@ struct StatusBarWindow : Window {
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_S_MIDDLE: ShowLastNewsMessage(); break;
@@ -237,7 +235,7 @@ struct StatusBarWindow : Window {
 		}
 	}
 
-	virtual void OnRealtimeTick(uint delta_ms)
+	void OnRealtimeTick(uint delta_ms) override
 	{
 		if (_pause_mode != PM_UNPAUSED) return;
 
@@ -265,7 +263,7 @@ static const NWidgetPart _nested_main_status_widgets[] = {
 };
 
 static WindowDesc _main_status_desc(
-	WDP_MANUAL, NULL, 0, 0,
+	WDP_MANUAL, nullptr, 0, 0,
 	WC_STATUS_BAR, WC_NONE,
 	WDF_NO_FOCUS,
 	_nested_main_status_widgets, lengthof(_nested_main_status_widgets)
@@ -277,7 +275,7 @@ static WindowDesc _main_status_desc(
 bool IsNewsTickerShown()
 {
 	const StatusBarWindow *w = dynamic_cast<StatusBarWindow*>(FindWindowById(WC_STATUS_BAR, 0));
-	return w != NULL && w->ticker_scroll < StatusBarWindow::TICKER_STOP;
+	return w != nullptr && w->ticker_scroll < StatusBarWindow::TICKER_STOP;
 }
 
 /**

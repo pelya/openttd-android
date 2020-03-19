@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
 * This file is part of OpenTTD.
 * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -140,5 +138,20 @@ enum MidiController {
 	MIDICT_MODE_MONO         = 126,
 	MIDICT_MODE_POLY         = 127,
 };
+
+
+/** Well-known MIDI system exclusive message values for use with the MidiGetStandardSysexMessage function. */
+enum class MidiSysexMessage {
+	/** Reset device to General MIDI defaults */
+	ResetGM,
+	/** Reset device to (Roland) General Standard defaults */
+	ResetGS,
+	/** Reset device to (Yamaha) XG defaults */
+	ResetXG,
+	/** Set up Roland SoundCanvas reverb room as TTD does */
+	RolandSetReverb,
+};
+
+const byte *MidiGetStandardSysexMessage(MidiSysexMessage msg, size_t &length);
 
 #endif /* MUSIC_MIDI_H */

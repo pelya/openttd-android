@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -22,7 +20,7 @@
 
 #include "safeguards.h"
 
-static SmallVector<SoundEntry, 8> _sounds;
+static std::vector<SoundEntry> _sounds;
 
 
 /**
@@ -32,15 +30,15 @@ static SmallVector<SoundEntry, 8> _sounds;
  */
 SoundEntry *AllocateSound(uint num)
 {
-	SoundEntry *sound = _sounds.Append(num);
-	MemSetT(sound, 0, num);
-	return sound;
+	size_t pos = _sounds.size();
+	_sounds.insert(_sounds.end(), num, SoundEntry());
+	return &_sounds[pos];
 }
 
 
 void InitializeSoundPool()
 {
-	_sounds.Clear();
+	_sounds.clear();
 
 	/* Copy original sound data to the pool */
 	SndCopyToPool();
@@ -49,14 +47,14 @@ void InitializeSoundPool()
 
 SoundEntry *GetSound(SoundID index)
 {
-	if (index >= _sounds.Length()) return NULL;
+	if (index >= _sounds.size()) return nullptr;
 	return &_sounds[index];
 }
 
 
 uint GetNumSounds()
 {
-	return _sounds.Length();
+	return (uint)_sounds.size();
 }
 
 
@@ -173,7 +171,7 @@ SoundID GetNewGRFSoundID(const GRFFile *file, SoundID sound_id)
 	if (sound_id < ORIGINAL_SAMPLE_COUNT) return sound_id;
 
 	sound_id -= ORIGINAL_SAMPLE_COUNT;
-	if (file == NULL || sound_id >= file->num_sounds) return INVALID_SOUND;
+	if (file == nullptr || sound_id >= file->num_sounds) return INVALID_SOUND;
 
 	return file->sound_offset  + sound_id;
 }
@@ -192,7 +190,7 @@ bool PlayVehicleSound(const Vehicle *v, VehicleSoundEvent event)
 	uint16 callback;
 
 	/* If the engine has no GRF ID associated it can't ever play any new sounds */
-	if (file == NULL) return false;
+	if (file == nullptr) return false;
 
 	/* Check that the vehicle type uses the sound effect callback */
 	if (!HasBit(EngInfo(v->engine_type)->callback_mask, CBM_VEHICLE_SOUND_EFFECT)) return false;

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -23,7 +21,6 @@
  */
 static inline int ScaleByZoom(int value, ZoomLevel zoom)
 {
-	assert(zoom >= 0);
 	return value << zoom;
 }
 
@@ -36,7 +33,6 @@ static inline int ScaleByZoom(int value, ZoomLevel zoom)
  */
 static inline int UnScaleByZoom(int value, ZoomLevel zoom)
 {
-	assert(zoom >= 0);
 	return (value + (1 << zoom) - 1) >> zoom;
 }
 
@@ -48,7 +44,6 @@ static inline int UnScaleByZoom(int value, ZoomLevel zoom)
  */
 static inline int ScaleByZoomLower(int value, ZoomLevel zoom)
 {
-	assert(zoom >= 0);
 	return value << zoom;
 }
 
@@ -60,7 +55,6 @@ static inline int ScaleByZoomLower(int value, ZoomLevel zoom)
  */
 static inline int UnScaleByZoomLower(int value, ZoomLevel zoom)
 {
-	assert(zoom >= 0);
 	return value >> zoom;
 }
 

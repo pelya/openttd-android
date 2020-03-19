@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,7 +23,7 @@
 	} else {
 		config = &_settings_game.game_config;
 	}
-	if (*config == NULL) *config = new GameConfig();
+	if (*config == nullptr) *config = new GameConfig();
 	return *config;
 }
 
@@ -42,5 +40,5 @@ ScriptInfo *GameConfig::FindInfo(const char *name, int version, bool force_exact
 bool GameConfig::ResetInfo(bool force_exact_match)
 {
 	this->info = (ScriptInfo *)Game::FindInfo(this->name, force_exact_match ? this->version : -1, force_exact_match);
-	return this->info != NULL;
+	return this->info != nullptr;
 }

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -21,7 +19,7 @@ namespace SQConvert {
 	template <> inline ScriptEvent &GetParam(ForceType<ScriptEvent &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptEvent *)instance; }
 	template <> inline const ScriptEvent *GetParam(ForceType<const ScriptEvent *>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return  (ScriptEvent *)instance; }
 	template <> inline const ScriptEvent &GetParam(ForceType<const ScriptEvent &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptEvent *)instance; }
-	template <> inline int Return<ScriptEvent *>(HSQUIRRELVM vm, ScriptEvent *res) { if (res == NULL) { sq_pushnull(vm); return 1; } Squirrel::CreateClassInstanceVM(vm, "Event", res, NULL, DefSQDestructorCallback<ScriptEvent>, true); return 1; }
+	template <> inline int Return<ScriptEvent *>(HSQUIRRELVM vm, ScriptEvent *res) { if (res == nullptr) { sq_pushnull(vm); return 1; } Squirrel::CreateClassInstanceVM(vm, "Event", res, nullptr, DefSQDestructorCallback<ScriptEvent>, true); return 1; }
 } // namespace SQConvert
 
 namespace SQConvert {
@@ -30,5 +28,5 @@ namespace SQConvert {
 	template <> inline ScriptEventController &GetParam(ForceType<ScriptEventController &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptEventController *)instance; }
 	template <> inline const ScriptEventController *GetParam(ForceType<const ScriptEventController *>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return  (ScriptEventController *)instance; }
 	template <> inline const ScriptEventController &GetParam(ForceType<const ScriptEventController &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptEventController *)instance; }
-	template <> inline int Return<ScriptEventController *>(HSQUIRRELVM vm, ScriptEventController *res) { if (res == NULL) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "EventController", res, NULL, DefSQDestructorCallback<ScriptEventController>, true); return 1; }
+	template <> inline int Return<ScriptEventController *>(HSQUIRRELVM vm, ScriptEventController *res) { if (res == nullptr) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "EventController", res, nullptr, DefSQDestructorCallback<ScriptEventController>, true); return 1; }
 } // namespace SQConvert

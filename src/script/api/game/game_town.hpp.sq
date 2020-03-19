@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -81,6 +79,8 @@ void SQGSTown_Register(Squirrel *engine)
 	SQGSTown.DefSQStaticMethod(engine, &ScriptTown::ExpandTown,                        "ExpandTown",                        3, ".ii");
 	SQGSTown.DefSQStaticMethod(engine, &ScriptTown::FoundTown,                         "FoundTown",                         6, ".iibi.");
 	SQGSTown.DefSQStaticMethod(engine, &ScriptTown::GetRating,                         "GetRating",                         3, ".ii");
+	SQGSTown.DefSQStaticMethod(engine, &ScriptTown::GetDetailedRating,                 "GetDetailedRating",                 3, ".ii");
+	SQGSTown.DefSQStaticMethod(engine, &ScriptTown::ChangeRating,                      "ChangeRating",                      4, ".iii");
 	SQGSTown.DefSQStaticMethod(engine, &ScriptTown::GetAllowedNoise,                   "GetAllowedNoise",                   2, ".i");
 	SQGSTown.DefSQStaticMethod(engine, &ScriptTown::GetRoadLayout,                     "GetRoadLayout",                     2, ".i");
 

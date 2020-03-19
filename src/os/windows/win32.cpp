@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -30,6 +28,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include "../../language.h"
+#include "../../thread.h"
 
 #include "../../safeguards.h"
 
@@ -60,14 +59,14 @@ bool LoadLibraryList(Function proc[], const char *dll)
 		HMODULE lib;
 		lib = LoadLibrary(MB_TO_WIDE(dll));
 
-		if (lib == NULL) return false;
+		if (lib == nullptr) return false;
 		for (;;) {
 			FARPROC p;
 
 			while (*dll++ != '\0') { /* Nothing */ }
 			if (*dll == '\0') break;
 			p = GetProcAddress(lib, dll);
-			if (p == NULL) return false;
+			if (p == nullptr) return false;
 			*proc++ = (Function)p;
 		}
 		dll++;
@@ -78,12 +77,12 @@ bool LoadLibraryList(Function proc[], const char *dll)
 void ShowOSErrorBox(const char *buf, bool system)
 {
 	MyShowCursor(true);
-	MessageBox(GetActiveWindow(), OTTD2FS(buf), _T("Error!"), MB_ICONSTOP);
+	MessageBox(GetActiveWindow(), OTTD2FS(buf), _T("Error!"), MB_ICONSTOP | MB_TASKMODAL);
 }
 
 void OSOpenBrowser(const char *url)
 {
-	ShellExecute(GetActiveWindow(), _T("open"), OTTD2FS(url), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(GetActiveWindow(), _T("open"), OTTD2FS(url), nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 /* Code below for windows version of opendir/readdir/closedir copied and
@@ -141,7 +140,7 @@ DIR *opendir(const TCHAR *path)
 
 	if ((fa != INVALID_FILE_ATTRIBUTES) && (fa & FILE_ATTRIBUTE_DIRECTORY)) {
 		d = dir_calloc();
-		if (d != NULL) {
+		if (d != nullptr) {
 			TCHAR search_path[MAX_PATH];
 			bool slash = path[_tcslen(path) - 1] == '\\';
 
@@ -157,14 +156,14 @@ DIR *opendir(const TCHAR *path)
 				d->at_first_entry = true;
 			} else {
 				dir_free(d);
-				d = NULL;
+				d = nullptr;
 			}
 		} else {
 			errno = ENOMEM;
 		}
 	} else {
 		/* path not found or not a directory */
-		d = NULL;
+		d = nullptr;
 		errno = ENOENT;
 	}
 
@@ -178,11 +177,11 @@ struct dirent *readdir(DIR *d)
 
 	if (d->at_first_entry) {
 		/* the directory was empty when opened */
-		if (d->hFind == INVALID_HANDLE_VALUE) return NULL;
+		if (d->hFind == INVALID_HANDLE_VALUE) return nullptr;
 		d->at_first_entry = false;
 	} else if (!FindNextFile(d->hFind, &d->fd)) { // determine cause and bail
 		if (GetLastError() == ERROR_NO_MORE_FILES) SetLastError(prev_err);
-		return NULL;
+		return nullptr;
 	}
 
 	/* This entry has passed all checks; return information about it.
@@ -250,7 +249,7 @@ bool FiosGetDiskFreeSpace(const char *path, uint64 *tot)
 	DWORD spc, bps, nfc, tnc;
 
 	_sntprintf(root, lengthof(root), _T("%c:") _T(PATHSEP), path[0]);
-	if (tot != NULL && GetDiskFreeSpace(root, &spc, &bps, &nfc, &tnc)) {
+	if (tot != nullptr && GetDiskFreeSpace(root, &spc, &bps, &nfc, &tnc)) {
 		*tot = ((spc * bps) * (uint64)nfc);
 		retval = true;
 	}
@@ -338,9 +337,9 @@ void CreateConsole()
 	*stderr = *fdopen(2, "w" );
 #endif
 
-	setvbuf(stdin, NULL, _IONBF, 0);
-	setvbuf(stdout, NULL, _IONBF, 0);
-	setvbuf(stderr, NULL, _IONBF, 0);
+	setvbuf(stdin, nullptr, _IONBF, 0);
+	setvbuf(stdout, nullptr, _IONBF, 0);
+	setvbuf(stderr, nullptr, _IONBF, 0);
 }
 
 /** Temporary pointer to get the help message to the window */
@@ -397,7 +396,7 @@ void ShowInfo(const char *str)
 			 * ShowInfo are much shorter, or so long they need this way of displaying
 			 * them anyway. */
 			_help_msg = str;
-			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(101), NULL, HelpDialogFunc);
+			DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(101), nullptr, HelpDialogFunc);
 		} else {
 			/* We need to put the text in a separate buffer because the default
 			 * buffer in OTTD2FS might not be large enough (512 chars). */
@@ -458,28 +457,28 @@ void DetermineBasePaths(const char *exe)
 	char tmp[MAX_PATH];
 	TCHAR path[MAX_PATH];
 #ifdef WITH_PERSONAL_DIR
-	if (SUCCEEDED(OTTDSHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, path))) {
+	if (SUCCEEDED(OTTDSHGetFolderPath(nullptr, CSIDL_PERSONAL, nullptr, SHGFP_TYPE_CURRENT, path))) {
 		strecpy(tmp, FS2OTTD(path), lastof(tmp));
 		AppendPathSeparator(tmp, lastof(tmp));
 		strecat(tmp, PERSONAL_DIR, lastof(tmp));
 		AppendPathSeparator(tmp, lastof(tmp));
 		_searchpaths[SP_PERSONAL_DIR] = stredup(tmp);
 	} else {
-		_searchpaths[SP_PERSONAL_DIR] = NULL;
+		_searchpaths[SP_PERSONAL_DIR] = nullptr;
 	}
 
-	if (SUCCEEDED(OTTDSHGetFolderPath(NULL, CSIDL_COMMON_DOCUMENTS, NULL, SHGFP_TYPE_CURRENT, path))) {
+	if (SUCCEEDED(OTTDSHGetFolderPath(nullptr, CSIDL_COMMON_DOCUMENTS, nullptr, SHGFP_TYPE_CURRENT, path))) {
 		strecpy(tmp, FS2OTTD(path), lastof(tmp));
 		AppendPathSeparator(tmp, lastof(tmp));
 		strecat(tmp, PERSONAL_DIR, lastof(tmp));
 		AppendPathSeparator(tmp, lastof(tmp));
 		_searchpaths[SP_SHARED_DIR] = stredup(tmp);
 	} else {
-		_searchpaths[SP_SHARED_DIR] = NULL;
+		_searchpaths[SP_SHARED_DIR] = nullptr;
 	}
 #else
-	_searchpaths[SP_PERSONAL_DIR] = NULL;
-	_searchpaths[SP_SHARED_DIR]   = NULL;
+	_searchpaths[SP_PERSONAL_DIR] = nullptr;
+	_searchpaths[SP_SHARED_DIR]   = nullptr;
 #endif
 
 	/* Get the path to working directory of OpenTTD */
@@ -487,15 +486,15 @@ void DetermineBasePaths(const char *exe)
 	AppendPathSeparator(tmp, lastof(tmp));
 	_searchpaths[SP_WORKING_DIR] = stredup(tmp);
 
-	if (!GetModuleFileName(NULL, path, lengthof(path))) {
+	if (!GetModuleFileName(nullptr, path, lengthof(path))) {
 		DEBUG(misc, 0, "GetModuleFileName failed (%lu)\n", GetLastError());
-		_searchpaths[SP_BINARY_DIR] = NULL;
+		_searchpaths[SP_BINARY_DIR] = nullptr;
 	} else {
 		TCHAR exec_dir[MAX_PATH];
 		_tcsncpy(path, convert_to_fs(exe, path, lengthof(path)), lengthof(path));
-		if (!GetFullPathName(path, lengthof(exec_dir), exec_dir, NULL)) {
+		if (!GetFullPathName(path, lengthof(exec_dir), exec_dir, nullptr)) {
 			DEBUG(misc, 0, "GetFullPathName failed (%lu)\n", GetLastError());
-			_searchpaths[SP_BINARY_DIR] = NULL;
+			_searchpaths[SP_BINARY_DIR] = nullptr;
 		} else {
 			strecpy(tmp, convert_from_fs(exec_dir, tmp, lengthof(tmp)), lastof(tmp));
 			char *s = strrchr(tmp, PATHSEPCHAR);
@@ -504,8 +503,8 @@ void DetermineBasePaths(const char *exe)
 		}
 	}
 
-	_searchpaths[SP_INSTALLATION_DIR]       = NULL;
-	_searchpaths[SP_APPLICATION_BUNDLE_DIR] = NULL;
+	_searchpaths[SP_INSTALLATION_DIR]       = nullptr;
+	_searchpaths[SP_APPLICATION_BUNDLE_DIR] = nullptr;
 }
 
 
@@ -515,18 +514,18 @@ bool GetClipboardContents(char *buffer, const char *last)
 	const char *ptr;
 
 	if (IsClipboardFormatAvailable(CF_UNICODETEXT)) {
-		OpenClipboard(NULL);
+		OpenClipboard(nullptr);
 		cbuf = GetClipboardData(CF_UNICODETEXT);
 
 		ptr = (const char*)GlobalLock(cbuf);
-		int out_len = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR)ptr, -1, buffer, (last - buffer) + 1, NULL, NULL);
+		int out_len = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR)ptr, -1, buffer, (last - buffer) + 1, nullptr, nullptr);
 		GlobalUnlock(cbuf);
 		CloseClipboard();
 
 		if (out_len == 0) return false;
 #if !defined(UNICODE)
 	} else if (IsClipboardFormatAvailable(CF_TEXT)) {
-		OpenClipboard(NULL);
+		OpenClipboard(nullptr);
 		cbuf = GetClipboardData(CF_TEXT);
 
 		ptr = (const char*)GlobalLock(cbuf);
@@ -540,12 +539,6 @@ bool GetClipboardContents(char *buffer, const char *last)
 	}
 
 	return true;
-}
-
-
-void CSleep(int milliseconds)
-{
-	Sleep(milliseconds);
 }
 
 
@@ -601,7 +594,7 @@ char *convert_from_fs(const TCHAR *name, char *utf8_buf, size_t buflen)
 	const WCHAR *wide_buf = name;
 #else
 	/* Convert string from the local codepage to UTF-16. */
-	int wide_len = MultiByteToWideChar(CP_ACP, 0, name, -1, NULL, 0);
+	int wide_len = MultiByteToWideChar(CP_ACP, 0, name, -1, nullptr, 0);
 	if (wide_len == 0) {
 		utf8_buf[0] = '\0';
 		return utf8_buf;
@@ -612,7 +605,7 @@ char *convert_from_fs(const TCHAR *name, char *utf8_buf, size_t buflen)
 #endif
 
 	/* Convert UTF-16 string to UTF-8. */
-	int len = WideCharToMultiByte(CP_UTF8, 0, wide_buf, -1, utf8_buf, (int)buflen, NULL, NULL);
+	int len = WideCharToMultiByte(CP_UTF8, 0, wide_buf, -1, utf8_buf, (int)buflen, nullptr, nullptr);
 	if (len == 0) utf8_buf[0] = '\0';
 
 	return utf8_buf;
@@ -635,7 +628,7 @@ TCHAR *convert_to_fs(const char *name, TCHAR *system_buf, size_t buflen, bool co
 	int len = MultiByteToWideChar(CP_UTF8, 0, name, -1, system_buf, (int)buflen);
 	if (len == 0) system_buf[0] = '\0';
 #else
-	int len = MultiByteToWideChar(CP_UTF8, 0, name, -1, NULL, 0);
+	int len = MultiByteToWideChar(CP_UTF8, 0, name, -1, nullptr, 0);
 	if (len == 0) {
 		system_buf[0] = '\0';
 		return system_buf;
@@ -644,7 +637,7 @@ TCHAR *convert_to_fs(const char *name, TCHAR *system_buf, size_t buflen, bool co
 	WCHAR *wide_buf = AllocaM(WCHAR, len);
 	MultiByteToWideChar(CP_UTF8, 0, name, -1, wide_buf, len);
 
-	len = WideCharToMultiByte(console_cp ? CP_OEMCP : CP_ACP, 0, wide_buf, len, system_buf, (int)buflen, NULL, NULL);
+	len = WideCharToMultiByte(console_cp ? CP_OEMCP : CP_ACP, 0, wide_buf, len, system_buf, (int)buflen, nullptr, nullptr);
 	if (len == 0) system_buf[0] = '\0';
 #endif
 
@@ -659,7 +652,7 @@ TCHAR *convert_to_fs(const char *name, TCHAR *system_buf, size_t buflen, bool co
  */
 HRESULT OTTDSHGetFolderPath(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPTSTR pszPath)
 {
-	static HRESULT (WINAPI *SHGetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR) = NULL;
+	static HRESULT (WINAPI *SHGetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR) = nullptr;
 	static bool first_time = true;
 
 	/* We only try to load the library one time; if it fails, it fails */
@@ -679,7 +672,7 @@ HRESULT OTTDSHGetFolderPath(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 		first_time = false;
 	}
 
-	if (SHGetFolderPath != NULL) return SHGetFolderPath(hwnd, csidl, hToken, dwFlags, pszPath);
+	if (SHGetFolderPath != nullptr) return SHGetFolderPath(hwnd, csidl, hToken, dwFlags, pszPath);
 
 	/* SHGetFolderPath doesn't exist, try a more conservative approach,
 	 * eg environment variables. This is only included for legacy modes
@@ -703,7 +696,7 @@ HRESULT OTTDSHGetFolderPath(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 				HKEY key;
 				if (RegOpenKeyEx(csidl == CSIDL_PERSONAL ? HKEY_CURRENT_USER : HKEY_LOCAL_MACHINE, REGSTR_PATH_SPECIAL_FOLDERS, 0, KEY_READ, &key) != ERROR_SUCCESS) break;
 				DWORD len = MAX_PATH;
-				ret = RegQueryValueEx(key, csidl == CSIDL_PERSONAL ? _T("Personal") : _T("Common Documents"), NULL, NULL, (LPBYTE)pszPath, &len);
+				ret = RegQueryValueEx(key, csidl == CSIDL_PERSONAL ? _T("Personal") : _T("Common Documents"), nullptr, nullptr, (LPBYTE)pszPath, &len);
 				RegCloseKey(key);
 				if (ret == ERROR_SUCCESS) return (HRESULT)0;
 				break;
@@ -723,19 +716,11 @@ const char *GetCurrentLocale(const char *)
 	if (GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, lang, lengthof(lang)) == 0 ||
 	    GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, country, lengthof(country)) == 0) {
 		/* Unable to retrieve the locale. */
-		return NULL;
+		return nullptr;
 	}
 	/* Format it as 'en_us'. */
 	static char retbuf[6] = {lang[0], lang[1], '_', country[0], country[1], 0};
 	return retbuf;
-}
-
-uint GetCPUCoreCount()
-{
-	SYSTEM_INFO info;
-
-	GetSystemInfo(&info);
-	return info.dwNumberOfProcessors;
 }
 
 
@@ -763,7 +748,7 @@ void Win32SetCurrentLocaleName(const char *iso_code)
 int OTTDStringCompare(const char *s1, const char *s2)
 {
 	typedef int (WINAPI *PFNCOMPARESTRINGEX)(LPCWSTR, DWORD, LPCWCH, int, LPCWCH, int, LPVOID, LPVOID, LPARAM);
-	static PFNCOMPARESTRINGEX _CompareStringEx = NULL;
+	static PFNCOMPARESTRINGEX _CompareStringEx = nullptr;
 	static bool first_time = true;
 
 #ifndef SORT_DIGITSASNUMBERS
@@ -778,10 +763,10 @@ int OTTDStringCompare(const char *s1, const char *s2)
 		first_time = false;
 	}
 
-	if (_CompareStringEx != NULL) {
+	if (_CompareStringEx != nullptr) {
 		/* CompareStringEx takes UTF-16 strings, even in ANSI-builds. */
-		int len_s1 = MultiByteToWideChar(CP_UTF8, 0, s1, -1, NULL, 0);
-		int len_s2 = MultiByteToWideChar(CP_UTF8, 0, s2, -1, NULL, 0);
+		int len_s1 = MultiByteToWideChar(CP_UTF8, 0, s1, -1, nullptr, 0);
+		int len_s2 = MultiByteToWideChar(CP_UTF8, 0, s2, -1, nullptr, 0);
 
 		if (len_s1 != 0 && len_s2 != 0) {
 			LPWSTR str_s1 = AllocaM(WCHAR, len_s1);
@@ -790,7 +775,7 @@ int OTTDStringCompare(const char *s1, const char *s2)
 			MultiByteToWideChar(CP_UTF8, 0, s1, -1, str_s1, len_s1);
 			MultiByteToWideChar(CP_UTF8, 0, s2, -1, str_s2, len_s2);
 
-			int result = _CompareStringEx(_cur_iso_locale, LINGUISTIC_IGNORECASE | SORT_DIGITSASNUMBERS, str_s1, -1, str_s2, -1, NULL, NULL, 0);
+			int result = _CompareStringEx(_cur_iso_locale, LINGUISTIC_IGNORECASE | SORT_DIGITSASNUMBERS, str_s1, -1, str_s2, -1, nullptr, nullptr, 0);
 			if (result != 0) return result;
 		}
 	}
@@ -816,12 +801,12 @@ PACK_N(struct THREADNAME_INFO {
 /**
  * Signal thread name to any attached debuggers.
  */
-void SetWin32ThreadName(DWORD dwThreadID, const char* threadName)
+void SetCurrentThreadName(const char *threadName)
 {
 	THREADNAME_INFO info;
 	info.dwType = 0x1000;
 	info.szName = threadName;
-	info.dwThreadID = dwThreadID;
+	info.dwThreadID = -1;
 	info.dwFlags = 0;
 
 #pragma warning(push)
@@ -832,4 +817,6 @@ void SetWin32ThreadName(DWORD dwThreadID, const char* threadName)
 	}
 #pragma warning(pop)
 }
+#else
+void SetCurrentThreadName(const char *) {}
 #endif

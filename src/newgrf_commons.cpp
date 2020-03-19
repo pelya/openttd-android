@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -235,9 +233,9 @@ uint16 IndustryOverrideManager::AddEntityID(byte grf_local_id, uint32 grfid, byt
 		const IndustrySpec *inds = GetIndustrySpec(id);
 
 		/* This industry must be one that is not available(enabled), mostly because of climate.
-		 * And it must not already be used by a grf (grffile == NULL).
+		 * And it must not already be used by a grf (grffile == nullptr).
 		 * So reserve this slot here, as it is the chosen one */
-		if (!inds->enabled && inds->grf_prop.grffile == NULL) {
+		if (!inds->enabled && inds->grf_prop.grffile == nullptr) {
 			EntityIDMapping *map = &mapping_ID[id];
 
 			if (map->entity_id == 0 && map->grfid == 0) {
@@ -279,7 +277,7 @@ void IndustryOverrideManager::SetEntitySpec(IndustrySpec *inds)
 	}
 
 	/* Now that we know we can use the given id, copy the spec to its final destination... */
-	memcpy(&_industry_specs[ind_id], inds, sizeof(*inds));
+	_industry_specs[ind_id] = *inds;
 	/* ... and mark it as usable*/
 	_industry_specs[ind_id].enabled = true;
 }
@@ -463,13 +461,13 @@ uint32 GetNearbyTileInformation(TileIndex tile, bool grf_version8)
 /**
  * Returns company information like in vehicle var 43 or station var 43.
  * @param owner Owner of the object.
- * @param l Livery of the object; NULL to use default.
+ * @param l Livery of the object; nullptr to use default.
  * @return NewGRF company information.
  */
 uint32 GetCompanyInfo(CompanyID owner, const Livery *l)
 {
-	if (l == NULL && Company::IsValidID(owner)) l = &Company::Get(owner)->livery[LS_DEFAULT];
-	return owner | (Company::IsValidAiID(owner) ? 0x10000 : 0) | (l != NULL ? (l->colour1 << 24) | (l->colour2 << 28) : 0);
+	if (l == nullptr && Company::IsValidID(owner)) l = &Company::Get(owner)->livery[LS_DEFAULT];
+	return owner | (Company::IsValidAiID(owner) ? 0x10000 : 0) | (l != nullptr ? (l->colour1 << 24) | (l->colour2 << 28) : 0);
 }
 
 /**
@@ -579,7 +577,7 @@ bool Convert8bitBooleanCallback(const GRFFile *grffile, uint16 cbid, uint16 cb_r
 }
 
 
-/* static */ SmallVector<DrawTileSeqStruct, 8> NewGRFSpriteLayout::result_seq;
+/* static */ std::vector<DrawTileSeqStruct> NewGRFSpriteLayout::result_seq;
 
 /**
  * Clone the building sprites of a spritelayout.
@@ -587,8 +585,8 @@ bool Convert8bitBooleanCallback(const GRFFile *grffile, uint16 cbid, uint16 cb_r
  */
 void NewGRFSpriteLayout::Clone(const DrawTileSeqStruct *source)
 {
-	assert(this->seq == NULL);
-	assert(source != NULL);
+	assert(this->seq == nullptr);
+	assert(source != nullptr);
 
 	size_t count = 1; // 1 for the terminator
 	const DrawTileSeqStruct *element;
@@ -607,7 +605,7 @@ void NewGRFSpriteLayout::Clone(const NewGRFSpriteLayout *source)
 {
 	this->Clone((const DrawTileSprites*)source);
 
-	if (source->registers != NULL) {
+	if (source->registers != nullptr) {
 		size_t count = 1; // 1 for the ground sprite
 		const DrawTileSeqStruct *element;
 		foreach_draw_tile_seq(element, source->seq) count++;
@@ -625,7 +623,7 @@ void NewGRFSpriteLayout::Clone(const NewGRFSpriteLayout *source)
  */
 void NewGRFSpriteLayout::Allocate(uint num_sprites)
 {
-	assert(this->seq == NULL);
+	assert(this->seq == nullptr);
 
 	DrawTileSeqStruct *sprites = CallocT<DrawTileSeqStruct>(num_sprites + 1);
 	sprites[num_sprites].MakeTerminator();
@@ -637,8 +635,8 @@ void NewGRFSpriteLayout::Allocate(uint num_sprites)
  */
 void NewGRFSpriteLayout::AllocateRegisters()
 {
-	assert(this->seq != NULL);
-	assert(this->registers == NULL);
+	assert(this->seq != nullptr);
+	assert(this->registers == nullptr);
 
 	size_t count = 1; // 1 for the ground sprite
 	const DrawTileSeqStruct *element;
@@ -650,7 +648,7 @@ void NewGRFSpriteLayout::AllocateRegisters()
 /**
  * Prepares a sprite layout before resolving action-1-2-3 chains.
  * Integrates offsets into the layout and determines which chains to resolve.
- * @note The function uses statically allocated temporary storage, which is reused everytime when calling the function.
+ * @note The function uses statically allocated temporary storage, which is reused every time when calling the function.
  *       That means, you have to use the sprite layout before calling #PrepareLayout() the next time.
  * @param orig_offset          Offset to apply to non-action-1 sprites.
  * @param newgrf_ground_offset Offset to apply to action-1 ground sprites.
@@ -661,12 +659,13 @@ void NewGRFSpriteLayout::AllocateRegisters()
  */
 uint32 NewGRFSpriteLayout::PrepareLayout(uint32 orig_offset, uint32 newgrf_ground_offset, uint32 newgrf_offset, uint constr_stage, bool separate_ground) const
 {
-	result_seq.Clear();
+	result_seq.clear();
 	uint32 var10_values = 0;
 
 	/* Create a copy of the spritelayout, so we can modify some values.
 	 * Also include the groundsprite into the sequence for easier processing. */
-	DrawTileSeqStruct *result = result_seq.Append();
+	/*C++17: DrawTileSeqStruct *result = &*/ result_seq.emplace_back();
+	DrawTileSeqStruct *result = &result_seq.back();
 	result->image = ground;
 	result->delta_x = 0;
 	result->delta_y = 0;
@@ -674,17 +673,17 @@ uint32 NewGRFSpriteLayout::PrepareLayout(uint32 orig_offset, uint32 newgrf_groun
 
 	const DrawTileSeqStruct *dtss;
 	foreach_draw_tile_seq(dtss, this->seq) {
-		*result_seq.Append() = *dtss;
+		result_seq.push_back(*dtss);
 	}
-	result_seq.Append()->MakeTerminator();
-
+	result_seq.emplace_back() /*C++17: .MakeTerminator()*/;
+	result_seq.back().MakeTerminator();
 	/* Determine the var10 values the action-1-2-3 chains needs to be resolved for,
 	 * and apply the default sprite offsets (unless disabled). */
 	const TileLayoutRegisters *regs = this->registers;
 	bool ground = true;
-	foreach_draw_tile_seq(result, result_seq.Begin()) {
+	foreach_draw_tile_seq(result, result_seq.data()) {
 		TileLayoutFlags flags = TLF_NOTHING;
-		if (regs != NULL) flags = regs->flags;
+		if (regs != nullptr) flags = regs->flags;
 
 		/* Record var10 value for the sprite */
 		if (HasBit(result->image.sprite, SPRITE_MODIFIER_CUSTOM_SPRITE) || (flags & TLF_SPRITE_REG_FLAGS)) {
@@ -696,7 +695,7 @@ uint32 NewGRFSpriteLayout::PrepareLayout(uint32 orig_offset, uint32 newgrf_groun
 		if (!(flags & TLF_SPRITE)) {
 			if (HasBit(result->image.sprite, SPRITE_MODIFIER_CUSTOM_SPRITE)) {
 				result->image.sprite += ground ? newgrf_ground_offset : newgrf_offset;
-				if (constr_stage > 0 && regs != NULL) result->image.sprite += GetConstructionStageOffset(constr_stage, regs->max_sprite_offset);
+				if (constr_stage > 0 && regs != nullptr) result->image.sprite += GetConstructionStageOffset(constr_stage, regs->max_sprite_offset);
 			} else {
 				result->image.sprite += orig_offset;
 			}
@@ -712,12 +711,12 @@ uint32 NewGRFSpriteLayout::PrepareLayout(uint32 orig_offset, uint32 newgrf_groun
 		if (!(flags & TLF_PALETTE)) {
 			if (HasBit(result->image.pal, SPRITE_MODIFIER_CUSTOM_SPRITE)) {
 				result->image.sprite += ground ? newgrf_ground_offset : newgrf_offset;
-				if (constr_stage > 0 && regs != NULL) result->image.sprite += GetConstructionStageOffset(constr_stage, regs->max_palette_offset);
+				if (constr_stage > 0 && regs != nullptr) result->image.sprite += GetConstructionStageOffset(constr_stage, regs->max_palette_offset);
 			}
 		}
 
 		ground = false;
-		if (regs != NULL) regs++;
+		if (regs != nullptr) regs++;
 	}
 
 	return var10_values;
@@ -736,9 +735,9 @@ void NewGRFSpriteLayout::ProcessRegisters(uint8 resolved_var10, uint32 resolved_
 	DrawTileSeqStruct *result;
 	const TileLayoutRegisters *regs = this->registers;
 	bool ground = true;
-	foreach_draw_tile_seq(result, result_seq.Begin()) {
+	foreach_draw_tile_seq(result, result_seq.data()) {
 		TileLayoutFlags flags = TLF_NOTHING;
-		if (regs != NULL) flags = regs->flags;
+		if (regs != nullptr) flags = regs->flags;
 
 		/* Is the sprite or bounding box affected by an action-1-2-3 chain? */
 		if (HasBit(result->image.sprite, SPRITE_MODIFIER_CUSTOM_SPRITE) || (flags & TLF_SPRITE_REG_FLAGS)) {
@@ -793,6 +792,6 @@ void NewGRFSpriteLayout::ProcessRegisters(uint8 resolved_var10, uint32 resolved_
 		}
 
 		ground = false;
-		if (regs != NULL) regs++;
+		if (regs != nullptr) regs++;
 	}
 }

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -79,7 +77,7 @@ struct Aircraft FINAL : public SpecializedVehicle<Aircraft, VEH_AIRCRAFT> {
 	byte previous_pos;             ///< Previous desired position of the aircraft.
 	StationID targetairport;       ///< Airport to go to next.
 	byte state;                    ///< State of the airport. @see AirportMovementStates
-	DirectionByte last_direction;
+	Direction last_direction;
 	byte number_consecutive_turns; ///< Protection to prevent the aircraft of making a lot of turns in order to reach a specific point.
 	byte turn_counter;             ///< Ticks between each turn to prevent > 45 degree turns.
 	byte flags;                    ///< Aircraft flags. @see AirVehicleFlags
@@ -137,11 +135,6 @@ struct Aircraft FINAL : public SpecializedVehicle<Aircraft, VEH_AIRCRAFT> {
 		return this->acache.cached_max_range;
 	}
 };
-
-/**
- * Macro for iterating over all aircraft.
- */
-#define FOR_ALL_AIRCRAFT(var) FOR_ALL_VEHICLES_OF_TYPE(Aircraft, var)
 
 void GetRotorImage(const Aircraft *v, EngineImageType image_type, VehicleSpriteSeq *result);
 

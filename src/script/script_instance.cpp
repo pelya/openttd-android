@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -34,8 +32,8 @@
 ScriptStorage::~ScriptStorage()
 {
 	/* Free our pointers */
-	if (event_data != NULL) ScriptEventController::FreeEventPointer();
-	if (log_data != NULL) ScriptLog::FreeLogPointer();
+	if (event_data != nullptr) ScriptEventController::FreeEventPointer();
+	if (log_data != nullptr) ScriptLog::FreeLogPointer();
 }
 
 /**
@@ -50,17 +48,17 @@ static void PrintFunc(bool error_msg, const SQChar *message)
 }
 
 ScriptInstance::ScriptInstance(const char *APIName) :
-	engine(NULL),
-	versionAPI(NULL),
-	controller(NULL),
-	storage(NULL),
-	instance(NULL),
+	engine(nullptr),
+	versionAPI(nullptr),
+	controller(nullptr),
+	storage(nullptr),
+	instance(nullptr),
 	is_started(false),
 	is_dead(false),
 	is_save_data_on_stack(false),
 	suspend(0),
 	is_paused(false),
-	callback(NULL)
+	callback(nullptr)
 {
 	this->storage = new ScriptStorage();
 	this->engine  = new Squirrel(APIName);
@@ -89,13 +87,17 @@ void ScriptInstance::Initialize(const char *main_script, const char *instance_na
 		}
 
 		/* Create the main-class */
-		this->instance = MallocT<SQObject>(1);
+		this->instance = new SQObject();
 		if (!this->engine->CreateClassInstance(instance_name, this->controller, this->instance)) {
+			/* If CreateClassInstance has returned false instance has not been
+			 * registered with squirrel, so avoid trying to Release it by clearing it now */
+			delete this->instance;
+			this->instance = nullptr;
 			this->Died();
 			return;
 		}
 		ScriptObject::SetAllowDoCommand(true);
-	} catch (Script_FatalError e) {
+	} catch (Script_FatalError &e) {
 		this->is_dead = true;
 		this->engine->ThrowError(e.GetErrorMessage());
 		this->engine->ResumeError();
@@ -135,11 +137,11 @@ ScriptInstance::~ScriptInstance()
 {
 	ScriptObject::ActiveInstance active(this);
 
-	if (instance != NULL) this->engine->ReleaseObject(this->instance);
-	if (engine != NULL) delete this->engine;
+	if (instance != nullptr) this->engine->ReleaseObject(this->instance);
+	if (engine != nullptr) delete this->engine;
 	delete this->storage;
 	delete this->controller;
-	free(this->instance);
+	delete this->instance;
 }
 
 void ScriptInstance::Continue()
@@ -153,10 +155,13 @@ void ScriptInstance::Died()
 	DEBUG(script, 0, "The script died unexpectedly.");
 	this->is_dead = true;
 
-	if (this->instance != NULL) this->engine->ReleaseObject(this->instance);
+	this->last_allocated_memory = this->GetAllocatedMemory(); // Update cache
+
+	if (this->instance != nullptr) this->engine->ReleaseObject(this->instance);
+	delete this->instance;
 	delete this->engine;
-	this->instance = NULL;
-	this->engine = NULL;
+	this->instance = nullptr;
+	this->engine = nullptr;
 }
 
 void ScriptInstance::GameLoop()
@@ -179,14 +184,14 @@ void ScriptInstance::GameLoop()
 	_current_company = ScriptObject::GetCompany();
 
 	/* If there is a callback to call, call that first */
-	if (this->callback != NULL) {
+	if (this->callback != nullptr) {
 		if (this->is_save_data_on_stack) {
 			sq_poptop(this->engine->GetVM());
 			this->is_save_data_on_stack = false;
 		}
 		try {
 			this->callback(this);
-		} catch (Script_Suspend e) {
+		} catch (Script_Suspend &e) {
 			this->suspend  = e.GetSuspendTime();
 			this->callback = e.GetSuspendCallback();
 
@@ -195,7 +200,7 @@ void ScriptInstance::GameLoop()
 	}
 
 	this->suspend  = 0;
-	this->callback = NULL;
+	this->callback = nullptr;
 
 	if (!this->is_started) {
 		try {
@@ -216,10 +221,10 @@ void ScriptInstance::GameLoop()
 			ScriptObject::SetAllowDoCommand(true);
 			/* Start the script by calling Start() */
 			if (!this->engine->CallMethod(*this->instance, "Start",  _settings_game.script.script_max_opcode_till_suspend) || !this->engine->IsSuspended()) this->Died();
-		} catch (Script_Suspend e) {
+		} catch (Script_Suspend &e) {
 			this->suspend  = e.GetSuspendTime();
 			this->callback = e.GetSuspendCallback();
-		} catch (Script_FatalError e) {
+		} catch (Script_FatalError &e) {
 			this->is_dead = true;
 			this->engine->ThrowError(e.GetErrorMessage());
 			this->engine->ResumeError();
@@ -237,10 +242,10 @@ void ScriptInstance::GameLoop()
 	/* Continue the VM */
 	try {
 		if (!this->engine->Resume(_settings_game.script.script_max_opcode_till_suspend)) this->Died();
-	} catch (Script_Suspend e) {
+	} catch (Script_Suspend &e) {
 		this->suspend  = e.GetSuspendTime();
 		this->callback = e.GetSuspendCallback();
-	} catch (Script_FatalError e) {
+	} catch (Script_FatalError &e) {
 		this->is_dead = true;
 		this->engine->ThrowError(e.GetErrorMessage());
 		this->engine->ResumeError();
@@ -351,7 +356,7 @@ static const SaveLoad _script_byte[] = {
 		case OT_INTEGER: {
 			if (!test) {
 				_script_sl_byte = SQSL_INT;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			SQInteger res;
 			sq_getinteger(vm, index, &res);
@@ -365,7 +370,7 @@ static const SaveLoad _script_byte[] = {
 		case OT_STRING: {
 			if (!test) {
 				_script_sl_byte = SQSL_STRING;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			const SQChar *buf;
 			sq_getstring(vm, index, &buf);
@@ -376,7 +381,7 @@ static const SaveLoad _script_byte[] = {
 			}
 			if (!test) {
 				_script_sl_byte = (byte)len;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 				SlArray(const_cast<char *>(buf), len, SLE_CHAR);
 			}
 			return true;
@@ -385,7 +390,7 @@ static const SaveLoad _script_byte[] = {
 		case OT_ARRAY: {
 			if (!test) {
 				_script_sl_byte = SQSL_ARRAY;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			sq_pushnull(vm);
 			while (SQ_SUCCEEDED(sq_next(vm, index - 1))) {
@@ -400,7 +405,7 @@ static const SaveLoad _script_byte[] = {
 			sq_pop(vm, 1);
 			if (!test) {
 				_script_sl_byte = SQSL_ARRAY_TABLE_END;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			return true;
 		}
@@ -408,7 +413,7 @@ static const SaveLoad _script_byte[] = {
 		case OT_TABLE: {
 			if (!test) {
 				_script_sl_byte = SQSL_TABLE;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			sq_pushnull(vm);
 			while (SQ_SUCCEEDED(sq_next(vm, index - 1))) {
@@ -423,7 +428,7 @@ static const SaveLoad _script_byte[] = {
 			sq_pop(vm, 1);
 			if (!test) {
 				_script_sl_byte = SQSL_ARRAY_TABLE_END;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			return true;
 		}
@@ -431,13 +436,13 @@ static const SaveLoad _script_byte[] = {
 		case OT_BOOL: {
 			if (!test) {
 				_script_sl_byte = SQSL_BOOL;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			SQBool res;
 			sq_getbool(vm, index, &res);
 			if (!test) {
 				_script_sl_byte = res ? 1 : 0;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			return true;
 		}
@@ -445,7 +450,7 @@ static const SaveLoad _script_byte[] = {
 		case OT_NULL: {
 			if (!test) {
 				_script_sl_byte = SQSL_NULL;
-				SlObject(NULL, _script_byte);
+				SlObject(nullptr, _script_byte);
 			}
 			return true;
 		}
@@ -459,7 +464,7 @@ static const SaveLoad _script_byte[] = {
 /* static */ void ScriptInstance::SaveEmpty()
 {
 	_script_sl_byte = 0;
-	SlObject(NULL, _script_byte);
+	SlObject(nullptr, _script_byte);
 }
 
 void ScriptInstance::Save()
@@ -467,7 +472,7 @@ void ScriptInstance::Save()
 	ScriptObject::ActiveInstance active(this);
 
 	/* Don't save data if the script didn't start yet or if it crashed. */
-	if (this->engine == NULL || this->engine->HasScriptCrashed()) {
+	if (this->engine == nullptr || this->engine->HasScriptCrashed()) {
 		SaveEmpty();
 		return;
 	}
@@ -475,7 +480,7 @@ void ScriptInstance::Save()
 	HSQUIRRELVM vm = this->engine->GetVM();
 	if (this->is_save_data_on_stack) {
 		_script_sl_byte = 1;
-		SlObject(NULL, _script_byte);
+		SlObject(nullptr, _script_byte);
 		/* Save the data that was just loaded. */
 		SaveObject(vm, -1, SQUIRREL_MAX_DEPTH, false);
 	} else if (!this->is_started) {
@@ -494,7 +499,7 @@ void ScriptInstance::Save()
 				this->engine->CrashOccurred();
 				return;
 			}
-		} catch (Script_FatalError e) {
+		} catch (Script_FatalError &e) {
 			/* If we don't mark the script as dead here cleaning up the squirrel
 			 * stack could throw Script_FatalError again. */
 			this->is_dead = true;
@@ -518,7 +523,7 @@ void ScriptInstance::Save()
 		sq_pushobject(vm, savedata);
 		if (SaveObject(vm, -1, SQUIRREL_MAX_DEPTH, true)) {
 			_script_sl_byte = 1;
-			SlObject(NULL, _script_byte);
+			SlObject(nullptr, _script_byte);
 			SaveObject(vm, -1, SQUIRREL_MAX_DEPTH, false);
 			this->is_save_data_on_stack = true;
 		} else {
@@ -528,7 +533,7 @@ void ScriptInstance::Save()
 	} else {
 		ScriptLog::Warning("Save function is not implemented");
 		_script_sl_byte = 0;
-		SlObject(NULL, _script_byte);
+		SlObject(nullptr, _script_byte);
 	}
 }
 
@@ -553,50 +558,50 @@ bool ScriptInstance::IsPaused()
 
 /* static */ bool ScriptInstance::LoadObjects(HSQUIRRELVM vm)
 {
-	SlObject(NULL, _script_byte);
+	SlObject(nullptr, _script_byte);
 	switch (_script_sl_byte) {
 		case SQSL_INT: {
 			int value;
 			SlArray(&value, 1, SLE_INT32);
-			if (vm != NULL) sq_pushinteger(vm, (SQInteger)value);
+			if (vm != nullptr) sq_pushinteger(vm, (SQInteger)value);
 			return true;
 		}
 
 		case SQSL_STRING: {
-			SlObject(NULL, _script_byte);
+			SlObject(nullptr, _script_byte);
 			static char buf[256];
 			SlArray(buf, _script_sl_byte, SLE_CHAR);
-			if (vm != NULL) sq_pushstring(vm, buf, -1);
+			if (vm != nullptr) sq_pushstring(vm, buf, -1);
 			return true;
 		}
 
 		case SQSL_ARRAY: {
-			if (vm != NULL) sq_newarray(vm, 0);
+			if (vm != nullptr) sq_newarray(vm, 0);
 			while (LoadObjects(vm)) {
-				if (vm != NULL) sq_arrayappend(vm, -2);
+				if (vm != nullptr) sq_arrayappend(vm, -2);
 				/* The value is popped from the stack by squirrel. */
 			}
 			return true;
 		}
 
 		case SQSL_TABLE: {
-			if (vm != NULL) sq_newtable(vm);
+			if (vm != nullptr) sq_newtable(vm);
 			while (LoadObjects(vm)) {
 				LoadObjects(vm);
-				if (vm != NULL) sq_rawset(vm, -3);
+				if (vm != nullptr) sq_rawset(vm, -3);
 				/* The key (-2) and value (-1) are popped from the stack by squirrel. */
 			}
 			return true;
 		}
 
 		case SQSL_BOOL: {
-			SlObject(NULL, _script_byte);
-			if (vm != NULL) sq_pushbool(vm, (SQBool)(_script_sl_byte != 0));
+			SlObject(nullptr, _script_byte);
+			if (vm != nullptr) sq_pushbool(vm, (SQBool)(_script_sl_byte != 0));
 			return true;
 		}
 
 		case SQSL_NULL: {
-			if (vm != NULL) sq_pushnull(vm);
+			if (vm != nullptr) sq_pushnull(vm);
 			return true;
 		}
 
@@ -610,24 +615,24 @@ bool ScriptInstance::IsPaused()
 
 /* static */ void ScriptInstance::LoadEmpty()
 {
-	SlObject(NULL, _script_byte);
+	SlObject(nullptr, _script_byte);
 	/* Check if there was anything saved at all. */
 	if (_script_sl_byte == 0) return;
 
-	LoadObjects(NULL);
+	LoadObjects(nullptr);
 }
 
 void ScriptInstance::Load(int version)
 {
 	ScriptObject::ActiveInstance active(this);
 
-	if (this->engine == NULL || version == -1) {
+	if (this->engine == nullptr || version == -1) {
 		LoadEmpty();
 		return;
 	}
 	HSQUIRRELVM vm = this->engine->GetVM();
 
-	SlObject(NULL, _script_byte);
+	SlObject(nullptr, _script_byte);
 	/* Check if there was anything saved at all. */
 	if (_script_sl_byte == 0) return;
 
@@ -678,9 +683,14 @@ SQInteger ScriptInstance::GetOpsTillSuspend()
 	return this->engine->GetOpsTillSuspend();
 }
 
-void ScriptInstance::DoCommandCallback(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+bool ScriptInstance::DoCommandCallback(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	ScriptObject::ActiveInstance active(this);
+
+	if (!ScriptObject::CheckLastCommand(tile, p1, p2, cmd)) {
+		DEBUG(script, 1, "DoCommandCallback terminating a script, last command does not match expected command");
+		return false;
+	}
 
 	ScriptObject::SetLastCommandRes(result.Succeeded());
 
@@ -690,6 +700,10 @@ void ScriptInstance::DoCommandCallback(const CommandCost &result, TileIndex tile
 		ScriptObject::IncreaseDoCommandCosts(result.GetCost());
 		ScriptObject::SetLastCost(result.GetCost());
 	}
+
+	ScriptObject::SetLastCommand(INVALID_TILE, 0, 0, CMD_END);
+
+	return true;
 }
 
 void ScriptInstance::InsertEvent(class ScriptEvent *event)
@@ -697,4 +711,10 @@ void ScriptInstance::InsertEvent(class ScriptEvent *event)
 	ScriptObject::ActiveInstance active(this);
 
 	ScriptEventController::InsertEvent(event);
+}
+
+size_t ScriptInstance::GetAllocatedMemory() const
+{
+	if (this->engine == nullptr) return this->last_allocated_memory;
+	return this->engine->GetAllocatedMemory();
 }

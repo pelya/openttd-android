@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -39,6 +37,7 @@
 #include "company_base.h"
 #include "company_gui.h"
 #include "newgrf_generic.h"
+#include "industry.h"
 
 #include "table/strings.h"
 
@@ -148,12 +147,56 @@ CommandCost CmdBuildShipDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 
 		MakeShipDepot(tile,  _current_company, depot->index, DEPOT_PART_NORTH, axis, wc1);
 		MakeShipDepot(tile2, _current_company, depot->index, DEPOT_PART_SOUTH, axis, wc2);
+		CheckForDockingTile(tile);
+		CheckForDockingTile(tile2);
 		MarkTileDirtyByTile(tile);
 		MarkTileDirtyByTile(tile2);
 		MakeDefaultName(depot);
 	}
 
 	return cost;
+}
+
+bool IsPossibleDockingTile(TileIndex t)
+{
+	assert(IsValidTile(t));
+	switch (GetTileType(t)) {
+		case MP_WATER:
+			if (IsLock(t) && GetLockPart(t) == LOCK_PART_MIDDLE) return false;
+			FALLTHROUGH;
+		case MP_RAILWAY:
+		case MP_STATION:
+		case MP_TUNNELBRIDGE:
+			return TrackStatusToTrackBits(GetTileTrackStatus(t, TRANSPORT_WATER, 0)) != TRACK_BIT_NONE;
+
+		default:
+			return false;
+	}
+}
+
+/**
+ * Mark the supplied tile as a docking tile if it is suitable for docking.
+ * Tiles surrounding the tile are tested to be docks with correct orientation.
+ * @param t Tile to test.
+ */
+void CheckForDockingTile(TileIndex t)
+{
+	for (DiagDirection d = DIAGDIR_BEGIN; d != DIAGDIR_END; d++) {
+		TileIndex tile = t + TileOffsByDiagDir(d);
+		if (!IsValidTile(tile)) continue;
+
+		if (IsDockTile(tile) && IsValidDockingDirectionForDock(tile, d)) {
+			Station::GetByTile(tile)->docking_station.Add(t);
+			SetDockingTile(t, true);
+		}
+		if (IsTileType(tile, MP_INDUSTRY)) {
+			Station *st = Industry::GetByTile(tile)->neutral_station;
+			if (st != nullptr) {
+				st->docking_station.Add(t);
+				SetDockingTile(t, true);
+			}
+		}
+	}
 }
 
 void MakeWaterKeepingClass(TileIndex tile, Owner o)
@@ -168,7 +211,7 @@ void MakeWaterKeepingClass(TileIndex tile, Owner o)
 		if (wc == WATER_CLASS_CANAL) {
 			/* If we clear the canal, we have to remove it from the infrastructure count as well. */
 			Company *c = Company::GetIfValid(o);
-			if (c != NULL) {
+			if (c != nullptr) {
 				c->infrastructure.water--;
 				DirtyCompanyInfrastructureWindows(c->index);
 			}
@@ -185,7 +228,7 @@ void MakeWaterKeepingClass(TileIndex tile, Owner o)
 	if (wc == WATER_CLASS_SEA && z > 0) {
 		/* Update company infrastructure count. */
 		Company *c = Company::GetIfValid(o);
-		if (c != NULL) {
+		if (c != nullptr) {
 			c->infrastructure.water++;
 			DirtyCompanyInfrastructureWindows(c->index);
 		}
@@ -204,6 +247,7 @@ void MakeWaterKeepingClass(TileIndex tile, Owner o)
 		default: break;
 	}
 
+	if (wc != WATER_CLASS_INVALID) CheckForDockingTile(tile);
 	MarkTileDirtyByTile(tile);
 }
 
@@ -227,7 +271,7 @@ static CommandCost RemoveShipDepot(TileIndex tile, DoCommandFlag flags)
 		delete Depot::GetByTile(tile);
 
 		Company *c = Company::GetIfValid(GetTileOwner(tile));
-		if (c != NULL) {
+		if (c != nullptr) {
 			c->infrastructure.water -= 2 * LOCK_DEPOT_TILE_FACTOR;
 			DirtyCompanyInfrastructureWindows(c->index);
 		}
@@ -293,7 +337,7 @@ static CommandCost DoBuildLock(TileIndex tile, DiagDirection dir, DoCommandFlag 
 	if (flags & DC_EXEC) {
 		/* Update company infrastructure counts. */
 		Company *c = Company::GetIfValid(_current_company);
-		if (c != NULL) {
+		if (c != nullptr) {
 			/* Counts for the water. */
 			if (!IsWaterTile(tile - delta)) c->infrastructure.water++;
 			if (!IsWaterTile(tile + delta)) c->infrastructure.water++;
@@ -303,6 +347,8 @@ static CommandCost DoBuildLock(TileIndex tile, DiagDirection dir, DoCommandFlag 
 		}
 
 		MakeLock(tile, _current_company, dir, wc_lower, wc_upper, wc_middle);
+		CheckForDockingTile(tile - delta);
+		CheckForDockingTile(tile + delta);
 		MarkTileDirtyByTile(tile);
 		MarkTileDirtyByTile(tile - delta);
 		MarkTileDirtyByTile(tile + delta);
@@ -338,7 +384,7 @@ static CommandCost RemoveLock(TileIndex tile, DoCommandFlag flags)
 	if (flags & DC_EXEC) {
 		/* Remove middle part from company infrastructure count. */
 		Company *c = Company::GetIfValid(GetTileOwner(tile));
-		if (c != NULL) {
+		if (c != nullptr) {
 			c->infrastructure.water -= 3 * LOCK_DEPOT_TILE_FACTOR; // three parts of the lock.
 			DirtyCompanyInfrastructureWindows(c->index);
 		}
@@ -428,7 +474,7 @@ CommandCost CmdBuildCanal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 					MakeRiver(tile, Random());
 					if (_game_mode == GM_EDITOR) {
 						TileIndex tile2 = tile;
-						CircularTileSearch(&tile2, RIVER_OFFSET_DESERT_DISTANCE, RiverModifyDesertZone, NULL);
+						CircularTileSearch(&tile2, RIVER_OFFSET_DESERT_DISTANCE, RiverModifyDesertZone, nullptr);
 					}
 					break;
 
@@ -449,6 +495,7 @@ CommandCost CmdBuildCanal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 			}
 			MarkTileDirtyByTile(tile);
 			MarkCanalsAndRiversAroundDirty(tile);
+			CheckForDockingTile(tile);
 		}
 
 		cost.AddCost(_price[PR_BUILD_CANAL]);
@@ -489,8 +536,10 @@ static CommandCost ClearTile_Water(TileIndex tile, DoCommandFlag flags)
 					Company::Get(owner)->infrastructure.water--;
 					DirtyCompanyInfrastructureWindows(owner);
 				}
+				bool remove = IsDockingTile(tile);
 				DoClearSquare(tile);
 				MarkCanalsAndRiversAroundDirty(tile);
+				if (remove) RemoveDockingTile(tile);
 			}
 
 			return CommandCost(EXPENSES_CONSTRUCTION, base_cost);
@@ -504,8 +553,10 @@ static CommandCost ClearTile_Water(TileIndex tile, DoCommandFlag flags)
 			if (ret.Failed()) return ret;
 
 			if (flags & DC_EXEC) {
+				bool remove = IsDockingTile(tile);
 				DoClearSquare(tile);
 				MarkCanalsAndRiversAroundDirty(tile);
+				if (remove) RemoveDockingTile(tile);
 			}
 			if (IsSlopeWithOneCornerRaised(slope)) {
 				return CommandCost(EXPENSES_CONSTRUCTION, _price[PR_CLEAR_WATER]);
@@ -931,11 +982,11 @@ static void FloodVehicle(Vehicle *v)
  * Flood a vehicle if we are allowed to flood it, i.e. when it is on the ground.
  * @param v    The vehicle to test for flooding.
  * @param data The z of level to flood.
- * @return NULL as we always want to remove everything.
+ * @return nullptr as we always want to remove everything.
  */
 static Vehicle *FloodVehicleProc(Vehicle *v, void *data)
 {
-	if ((v->vehstatus & VS_CRASHED) != 0) return NULL;
+	if ((v->vehstatus & VS_CRASHED) != 0) return nullptr;
 
 	switch (v->type) {
 		default: break;
@@ -963,7 +1014,7 @@ static Vehicle *FloodVehicleProc(Vehicle *v, void *data)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1044,7 +1095,7 @@ void DoFloodTile(TileIndex target)
 
 	bool flooded = false; // Will be set to true if something is changed.
 
-	Backup<CompanyByte> cur_company(_current_company, OWNER_WATER, FILE_LINE);
+	Backup<CompanyID> cur_company(_current_company, OWNER_WATER, FILE_LINE);
 
 	Slope tileh = GetTileSlope(target);
 	if (tileh != SLOPE_FLAT) {
@@ -1095,6 +1146,8 @@ void DoFloodTile(TileIndex target)
 
 		/* update signals if needed */
 		UpdateSignalsInBuffer();
+
+		if (IsPossibleDockingTile(target)) CheckForDockingTile(target);
 	}
 
 	cur_company.Restore();
@@ -1105,7 +1158,7 @@ void DoFloodTile(TileIndex target)
  */
 static void DoDryUp(TileIndex tile)
 {
-	Backup<CompanyByte> cur_company(_current_company, OWNER_WATER, FILE_LINE);
+	Backup<CompanyID> cur_company(_current_company, OWNER_WATER, FILE_LINE);
 
 	switch (GetTileType(tile)) {
 		case MP_RAILWAY:
@@ -1321,14 +1374,14 @@ extern const TileTypeProcs _tile_type_water_procs = {
 	DrawTile_Water,           // draw_tile_proc
 	GetSlopePixelZ_Water,     // get_slope_z_proc
 	ClearTile_Water,          // clear_tile_proc
-	NULL,                     // add_accepted_cargo_proc
+	nullptr,                     // add_accepted_cargo_proc
 	GetTileDesc_Water,        // get_tile_desc_proc
 	GetTileTrackStatus_Water, // get_tile_track_status_proc
 	ClickTile_Water,          // click_tile_proc
-	NULL,                     // animate_tile_proc
+	nullptr,                     // animate_tile_proc
 	TileLoop_Water,           // tile_loop_proc
 	ChangeTileOwner_Water,    // change_tile_owner_proc
-	NULL,                     // add_produced_cargo_proc
+	nullptr,                     // add_produced_cargo_proc
 	VehicleEnter_Water,       // vehicle_enter_tile_proc
 	GetFoundation_Water,      // get_foundation_proc
 	TerraformTile_Water,      // terraform_tile_proc

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -41,11 +39,15 @@ void SQGSEngine_Register(Squirrel *engine)
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::IsWagon,                 "IsWagon",                 2, ".i");
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::CanRunOnRail,            "CanRunOnRail",            3, ".ii");
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::HasPowerOnRail,          "HasPowerOnRail",          3, ".ii");
+	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::CanRunOnRoad,            "CanRunOnRoad",            3, ".ii");
+	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::HasPowerOnRoad,          "HasPowerOnRoad",          3, ".ii");
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::GetRoadType,             "GetRoadType",             2, ".i");
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::GetRailType,             "GetRailType",             2, ".i");
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::IsArticulated,           "IsArticulated",           2, ".i");
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::GetPlaneType,            "GetPlaneType",            2, ".i");
 	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::GetMaximumOrderDistance, "GetMaximumOrderDistance", 2, ".i");
+	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::EnableForCompany,        "EnableForCompany",        3, ".ii");
+	SQGSEngine.DefSQStaticMethod(engine, &ScriptEngine::DisableForCompany,       "DisableForCompany",       3, ".ii");
 
 	SQGSEngine.PostRegister(engine);
 }

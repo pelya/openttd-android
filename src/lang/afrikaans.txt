@@ -11,8 +11,6 @@
 ##gender male
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -473,9 +471,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Skakel terminaal
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Spel skript ontfout
 STR_ABOUT_MENU_SCREENSHOT                                       :Skermskoot
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Ten volle vergrote skermskoot
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Basiese groote skermskoot
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Hele kaart Skermkiekie (Ctrl+G)
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Oor 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :"Sprite" rigter
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :skakel beperkte bokse
@@ -645,9 +640,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Op Bestelling 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Musiek Volume
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Effek Volume
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAKS
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -858,6 +850,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Automati
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}Nuwe {STRING} nou beskikbaar!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Nuwe {STRING} nou beskikbaar!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} aanvaar nie meer {STRING} nie
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} aanvaar nie meer {STRING} of {STRING} nie
@@ -1685,7 +1678,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Vragver
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Mededingers
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Rekenaar spelers
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Oorspronklik
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Aanbevole)
 
@@ -1768,13 +1760,9 @@ STR_QUIT_NO                                                     :{BLACK}Nee
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2401,6 +2389,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Bou pad 
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Bou tonnel. Shift kies tussen bou/kwotasie
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Skakel bou/verwydering van pad konstruksie
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Skakel bou/verwyder vir tremweg konstruksie
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Pad Depot Oriëntering
@@ -3261,8 +3250,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Spoorstukke:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Seine
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Padstukke:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Pad
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tremweg
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Waterteëls:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanale
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stasies:
@@ -3273,8 +3260,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Nywerhede
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Geen -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% vervoer)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% vervoer)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Nywerheidsname - klik op 'n naam om skerm na nywerheid te skuif. Ctrl+klik maak 'n nuwe venster vir die nywerheid oop
 
@@ -3336,6 +3321,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Ongegroepeerde 
 STR_GROUP_DEFAULT_SHIPS                                         :Ongegroepeerde skepe
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Ongegroepeerde vliegtuig
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Groepe - klik op 'n groep om alle voertuie in hierdie groep te lys. Sleep en los om te rangskik volgens hiërargie.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klik om groep te skep
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Vee uit die gekose groep
@@ -3357,10 +3343,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Nuwe Elektries 
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Nuwe monospoor voertuie
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Nuwe Maglev Voertuie
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Spoorweg Voertuie
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Nuwe Pad Voertuie
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Spoorweg Voertuie
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Nuwe Skepe
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Nuwe Vliegtuig
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Koste: {GOLD}{CURRENCY_LONG}{BLACK} Gewig: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Spoed: {GOLD}{VELOCITY}{BLACK} Krag: {GOLD}{POWER}
@@ -3393,10 +3382,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Koop Voe
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Bou skip
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Koop vliegtuig
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Koop die gekose lokomotief/wa. Shift+klik vir kwotasie
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Koop die gekose voertuig. Shift+klik vir kwotasie
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Koop die gekose skip. Shift+klik vir kwotasie
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Koop die gekose vliegtuig. Shift+klik vir kwotasie
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Hernoem
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Hernoem
@@ -3506,12 +3497,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}U staan
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Boodskap van voertuig fabrikant
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Ons het sopas 'n nuwe {STRING} ontwerp, sal jy belangstel om hierdie voertuig eksklusief vir 'n jaar te gebruik. Hierdie word gedoen om te kyk hoe die voertuig doen voordat hy wereld wyd in produksie gesit word?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :spoorweg lokomotief
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :padvoertuig
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :vliegtuig
-STR_ENGINE_PREVIEW_SHIP                                         :skip
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :monospoor lokomotief
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :maglev lokomotief
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :padvoertuig
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :vliegtuig
+STR_ENGINE_PREVIEW_SHIP                                         :skip
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Koste: {CURRENCY_LONG} Massa: {WEIGHT_SHORT}{}Spoed: {VELOCITY}  Krag: {POWER}{}Loopkoste: {CURRENCY_LONG}/jr{}Kapasitiet: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Koste: {CURRENCY_LONG} Gewig: {WEIGHT_SHORT}{}Spoed: {VELOCITY}  Krag: {POWER}  Maks. Treg Krag: {6:FORCE}{}Lopende Koste: {4:CURRENCY_LONG}/jaar{}Kapasitiet: {5:CARGO_LONG}
@@ -3552,6 +3546,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Treine
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektriese treine
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monospoor voertuie
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev Voertuie
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Wa verwydering: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Maak autovervanging die lengte van 'n trein dieselfde hou deur verwydering waens (deur voor te begin), indien die enjin vervanging die trein langer sal maak
@@ -4000,6 +3995,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Kies bel
 STR_AI_LIST_CANCEL                                              :{BLACK}Kanseleer
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Moenie skrif verander nie
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4271,7 +4267,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Moet eer
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Geen geskikte treinspoor
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Moet eers spoor verwyder
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Pad is een rigting of geblok
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Vlak kruisings word nie toegelaat vir die spoor tipe nie
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Vlak kruisings word nie toegelaat vir die spoor tipe nie
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Kan nie seinligte hier bou nie...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Kan nie spore hier bou nie...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Kan nie spore hier verwyder nie...

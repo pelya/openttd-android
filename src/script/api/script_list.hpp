@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -198,7 +196,7 @@ public:
 	/**
 	 * Remove everything that is in the given list from this list (same item index that is).
 	 * @param list the list of items to remove.
-	 * @pre list != NULL
+	 * @pre list != nullptr
 	 */
 	void RemoveList(ScriptList *list);
 
@@ -242,7 +240,7 @@ public:
 	/**
 	 * Keeps everything that is in the given list from this list (same item index that is).
 	 * @param list the list of items to keep.
-	 * @pre list != NULL
+	 * @pre list != nullptr
 	 */
 	void KeepList(ScriptList *list);
 

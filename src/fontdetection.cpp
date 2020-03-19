@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -9,7 +7,7 @@
 
 /** @file fontdetection.cpp Detection of the right font. */
 
-#ifdef WITH_FREETYPE
+#if defined(WITH_FREETYPE) || defined(_WIN32)
 
 #include "stdafx.h"
 #include "debug.h"
@@ -17,7 +15,9 @@
 #include "string_func.h"
 #include "strings_func.h"
 
+#ifdef WITH_FREETYPE
 extern FT_Library _library;
+#endif /* WITH_FREETYPE */
 
 /**
  * Get the font loaded into a Freetype face by using a font-name.
@@ -37,6 +37,7 @@ extern FT_Library _library;
 
 #include "safeguards.h"
 
+#ifdef WITH_FREETYPE
 /**
  * Get the short DOS 8.3 format for paths.
  * FreeType doesn't support Unicode filenames and Windows' fopen (as used
@@ -53,7 +54,7 @@ const char *GetShortPath(const TCHAR *long_path)
 #ifdef UNICODE
 	WCHAR short_path_w[MAX_PATH];
 	GetShortPathName(long_path, short_path_w, lengthof(short_path_w));
-	WideCharToMultiByte(CP_ACP, 0, short_path_w, -1, short_path, lengthof(short_path), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, short_path_w, -1, short_path, lengthof(short_path), nullptr, nullptr);
 #else
 	/* Technically not needed, but do it for consistency. */
 	GetShortPathName(long_path, short_path, lengthof(short_path));
@@ -101,7 +102,7 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 		DWORD vbuflen = lengthof(vbuffer);
 		DWORD dbuflen = lengthof(dbuffer);
 
-		ret = RegEnumValue(hKey, index, vbuffer, &vbuflen, NULL, NULL, (byte*)dbuffer, &dbuflen);
+		ret = RegEnumValue(hKey, index, vbuffer, &vbuflen, nullptr, nullptr, (byte*)dbuffer, &dbuflen);
 		if (ret != ERROR_SUCCESS) goto registry_no_font_found;
 
 		/* The font names in the registry are of the following 3 forms:
@@ -114,16 +115,16 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 		 * by '&'. Our best bet will be to do substr match for the fontname
 		 * and then let FreeType figure out which index to load */
 		s = _tcschr(vbuffer, _T('('));
-		if (s != NULL) s[-1] = '\0';
+		if (s != nullptr) s[-1] = '\0';
 
-		if (_tcschr(vbuffer, _T('&')) == NULL) {
+		if (_tcschr(vbuffer, _T('&')) == nullptr) {
 			if (_tcsicmp(vbuffer, font_namep) == 0) break;
 		} else {
-			if (_tcsstr(vbuffer, font_namep) != NULL) break;
+			if (_tcsstr(vbuffer, font_namep) != nullptr) break;
 		}
 	}
 
-	if (!SUCCEEDED(OTTDSHGetFolderPath(NULL, CSIDL_FONTS, NULL, SHGFP_TYPE_CURRENT, vbuffer))) {
+	if (!SUCCEEDED(OTTDSHGetFolderPath(nullptr, CSIDL_FONTS, nullptr, SHGFP_TYPE_CURRENT, vbuffer))) {
 		DEBUG(freetype, 0, "SHGetFolderPath cannot return fonts directory");
 		goto folder_error;
 	}
@@ -175,7 +176,7 @@ registry_no_font_found:
 static const char *GetEnglishFontName(const ENUMLOGFONTEX *logfont)
 {
 	static char font_name[MAX_PATH];
-	const char *ret_font_name = NULL;
+	const char *ret_font_name = nullptr;
 	uint pos = 0;
 	HDC dc;
 	HGDIOBJ oldfont;
@@ -184,11 +185,11 @@ static const char *GetEnglishFontName(const ENUMLOGFONTEX *logfont)
 	uint16 format, count, stringOffset, platformId, encodingId, languageId, nameId, length, offset;
 
 	HFONT font = CreateFontIndirect(&logfont->elfLogFont);
-	if (font == NULL) goto err1;
+	if (font == nullptr) goto err1;
 
-	dc = GetDC(NULL);
+	dc = GetDC(nullptr);
 	oldfont = SelectObject(dc, font);
-	dw = GetFontData(dc, 'eman', 0, NULL, 0);
+	dw = GetFontData(dc, 'eman', 0, nullptr, 0);
 	if (dw == GDI_ERROR) goto err2;
 
 	buf = MallocT<byte>(dw);
@@ -236,11 +237,12 @@ err3:
 	free(buf);
 err2:
 	SelectObject(dc, oldfont);
-	ReleaseDC(NULL, dc);
+	ReleaseDC(nullptr, dc);
 	DeleteObject(font);
 err1:
-	return ret_font_name == NULL ? WIDE_TO_MB((const TCHAR*)logfont->elfFullName) : ret_font_name;
+	return ret_font_name == nullptr ? WIDE_TO_MB((const TCHAR*)logfont->elfFullName) : ret_font_name;
 }
+#endif /* WITH_FREETYPE */
 
 class FontList {
 protected:
@@ -249,10 +251,10 @@ protected:
 	uint capacity;
 
 public:
-	FontList() : fonts(NULL), items(0), capacity(0) { };
+	FontList() : fonts(nullptr), items(0), capacity(0) { };
 
 	~FontList() {
-		if (this->fonts == NULL) return;
+		if (this->fonts == nullptr) return;
 
 		for (uint i = 0; i < this->items; i++) {
 			free(this->fonts[i]);
@@ -303,12 +305,12 @@ static int CALLBACK EnumFontCallback(const ENUMLOGFONTEX *logfont, const NEWTEXT
 		FONTSIGNATURE fs;
 		memset(&fs, 0, sizeof(fs));
 		HFONT font = CreateFontIndirect(&logfont->elfLogFont);
-		if (font != NULL) {
-			HDC dc = GetDC(NULL);
+		if (font != nullptr) {
+			HDC dc = GetDC(nullptr);
 			HGDIOBJ oldfont = SelectObject(dc, font);
 			GetTextCharsetInfo(dc, &fs, 0);
 			SelectObject(dc, oldfont);
-			ReleaseDC(NULL, dc);
+			ReleaseDC(nullptr, dc);
 			DeleteObject(font);
 		}
 		if ((fs.fsCsb[0] & info->locale.lsCsbSupported[0]) == 0 && (fs.fsCsb[1] & info->locale.lsCsbSupported[1]) == 0) return 1;
@@ -317,12 +319,13 @@ static int CALLBACK EnumFontCallback(const ENUMLOGFONTEX *logfont, const NEWTEXT
 	char font_name[MAX_PATH];
 	convert_from_fs((const TCHAR *)logfont->elfFullName, font_name, lengthof(font_name));
 
+#ifdef WITH_FREETYPE
 	/* Add english name after font name */
 	const char *english_name = GetEnglishFontName(logfont);
 	strecpy(font_name + strlen(font_name) + 1, english_name, lastof(font_name));
 
 	/* Check whether we can actually load the font. */
-	bool ft_init = _library != NULL;
+	bool ft_init = _library != nullptr;
 	bool found = false;
 	FT_Face face;
 	/* Init FreeType if needed. */
@@ -333,13 +336,18 @@ static int CALLBACK EnumFontCallback(const ENUMLOGFONTEX *logfont, const NEWTEXT
 	if (!ft_init) {
 		/* Uninit FreeType if we did the init. */
 		FT_Done_FreeType(_library);
-		_library = NULL;
+		_library = nullptr;
 	}
 
 	if (!found) return 1;
+#else
+	const char *english_name = font_name;
+#endif /* WITH_FREETYPE */
 
-	info->callback->SetFontNames(info->settings, font_name);
-	if (info->callback->FindMissingGlyphs(NULL)) return 1;
+	PLOGFONT os_data = MallocT<LOGFONT>(1);
+	*os_data = logfont->elfLogFont;
+	info->callback->SetFontNames(info->settings, font_name, os_data);
+	if (info->callback->FindMissingGlyphs(nullptr)) return 1;
 	DEBUG(freetype, 1, "Fallback font: %s (%s)", font_name, english_name);
 	return 0; // stop enumerating
 }
@@ -362,9 +370,9 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 	font.lfFaceName[0] = '\0';
 	font.lfPitchAndFamily = 0;
 
-	HDC dc = GetDC(NULL);
+	HDC dc = GetDC(nullptr);
 	int ret = EnumFontFamiliesEx(dc, &font, (FONTENUMPROC)&EnumFontCallback, (LPARAM)&langInfo, 0);
-	ReleaseDC(NULL, dc);
+	ReleaseDC(nullptr, dc);
 	return ret == 0;
 }
 
@@ -384,36 +392,29 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 	/* Get font reference from name. */
 	UInt8 file_path[PATH_MAX];
 	OSStatus os_err = -1;
-	CFStringRef name = CFStringCreateWithCString(kCFAllocatorDefault, font_name, kCFStringEncodingUTF8);
+	CFAutoRelease<CFStringRef> name(CFStringCreateWithCString(kCFAllocatorDefault, font_name, kCFStringEncodingUTF8));
 
 #if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6)
 	if (MacOSVersionIsAtLeast(10, 6, 0)) {
 		/* Simply creating the font using CTFontCreateWithNameAndSize will *always* return
-		 * something, no matter the name. As such, we can't use it to check for existance.
+		 * something, no matter the name. As such, we can't use it to check for existence.
 		 * We instead query the list of all font descriptors that match the given name which
 		 * does not do this stupid name fallback. */
-		CTFontDescriptorRef name_desc = CTFontDescriptorCreateWithNameAndSize(name, 0.0);
-		CFSetRef mandatory_attribs = CFSetCreate(kCFAllocatorDefault, (const void **)&kCTFontNameAttribute, 1, &kCFTypeSetCallBacks);
-		CFArrayRef descs = CTFontDescriptorCreateMatchingFontDescriptors(name_desc, mandatory_attribs);
-		CFRelease(mandatory_attribs);
-		CFRelease(name_desc);
-		CFRelease(name);
+		CFAutoRelease<CTFontDescriptorRef> name_desc(CTFontDescriptorCreateWithNameAndSize(name.get(), 0.0));
+		CFAutoRelease<CFSetRef> mandatory_attribs(CFSetCreate(kCFAllocatorDefault, (const void **)&kCTFontNameAttribute, 1, &kCFTypeSetCallBacks));
+		CFAutoRelease<CFArrayRef> descs(CTFontDescriptorCreateMatchingFontDescriptors(name_desc.get(), mandatory_attribs.get()));
 
 		/* Loop over all matches until we can get a path for one of them. */
-		for (CFIndex i = 0; descs != NULL && i < CFArrayGetCount(descs) && os_err != noErr; i++) {
-			CTFontRef font = CTFontCreateWithFontDescriptor((CTFontDescriptorRef)CFArrayGetValueAtIndex(descs, i), 0.0, NULL);
-			CFURLRef fontURL = (CFURLRef)CTFontCopyAttribute(font, kCTFontURLAttribute);
-			if (CFURLGetFileSystemRepresentation(fontURL, true, file_path, lengthof(file_path))) os_err = noErr;
-			CFRelease(font);
-			CFRelease(fontURL);
+		for (CFIndex i = 0; descs.get() != nullptr && i < CFArrayGetCount(descs.get()) && os_err != noErr; i++) {
+			CFAutoRelease<CTFontRef> font(CTFontCreateWithFontDescriptor((CTFontDescriptorRef)CFArrayGetValueAtIndex(descs.get(), i), 0.0, nullptr));
+			CFAutoRelease<CFURLRef> fontURL((CFURLRef)CTFontCopyAttribute(font.get(), kCTFontURLAttribute));
+			if (CFURLGetFileSystemRepresentation(fontURL.get(), true, file_path, lengthof(file_path))) os_err = noErr;
 		}
-		if (descs != NULL) CFRelease(descs);
 	} else
 #endif
 	{
 #if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6)
-		ATSFontRef font = ATSFontFindFromName(name, kATSOptionFlagsDefault);
-		CFRelease(name);
+		ATSFontRef font = ATSFontFindFromName(name.get(), kATSOptionFlagsDefault);
 		if (font == kInvalidFont) return err;
 
 		/* Get a file system reference for the font. */
@@ -467,34 +468,31 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			/* Just copy the first part of the isocode. */
 			strecpy(lang, language_isocode, lastof(lang));
 			char *sep = strchr(lang, '_');
-			if (sep != NULL) *sep = '\0';
+			if (sep != nullptr) *sep = '\0';
 		}
 
-		/* Create a font descriptor matching the wanted language and latin (english) glyphs. */
+		/* Create a font descriptor matching the wanted language and latin (english) glyphs.
+		 * Can't use CFAutoRelease here for everything due to the way the dictionary has to be created. */
 		CFStringRef lang_codes[2];
 		lang_codes[0] = CFStringCreateWithCString(kCFAllocatorDefault, lang, kCFStringEncodingUTF8);
 		lang_codes[1] = CFSTR("en");
 		CFArrayRef lang_arr = CFArrayCreate(kCFAllocatorDefault, (const void **)lang_codes, lengthof(lang_codes), &kCFTypeArrayCallBacks);
-		CFDictionaryRef lang_attribs = CFDictionaryCreate(kCFAllocatorDefault, (const void**)&kCTFontLanguagesAttribute, (const void **)&lang_arr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-		CTFontDescriptorRef lang_desc = CTFontDescriptorCreateWithAttributes(lang_attribs);
+		CFAutoRelease<CFDictionaryRef> lang_attribs(CFDictionaryCreate(kCFAllocatorDefault, (const void**)&kCTFontLanguagesAttribute, (const void **)&lang_arr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+		CFAutoRelease<CTFontDescriptorRef> lang_desc(CTFontDescriptorCreateWithAttributes(lang_attribs.get()));
 		CFRelease(lang_arr);
-		CFRelease(lang_attribs);
 		CFRelease(lang_codes[0]);
 
 		/* Get array of all font descriptors for the wanted language. */
-		CFSetRef mandatory_attribs = CFSetCreate(kCFAllocatorDefault, (const void **)&kCTFontLanguagesAttribute, 1, &kCFTypeSetCallBacks);
-		CFArrayRef descs = CTFontDescriptorCreateMatchingFontDescriptors(lang_desc, mandatory_attribs);
-		CFRelease(mandatory_attribs);
-		CFRelease(lang_desc);
+		CFAutoRelease<CFSetRef> mandatory_attribs(CFSetCreate(kCFAllocatorDefault, (const void **)&kCTFontLanguagesAttribute, 1, &kCFTypeSetCallBacks));
+		CFAutoRelease<CFArrayRef> descs(CTFontDescriptorCreateMatchingFontDescriptors(lang_desc.get(), mandatory_attribs.get()));
 
-		for (CFIndex i = 0; descs != NULL && i < CFArrayGetCount(descs); i++) {
-			CTFontDescriptorRef font = (CTFontDescriptorRef)CFArrayGetValueAtIndex(descs, i);
+		for (CFIndex i = 0; descs.get() != nullptr && i < CFArrayGetCount(descs.get()); i++) {
+			CTFontDescriptorRef font = (CTFontDescriptorRef)CFArrayGetValueAtIndex(descs.get(), i);
 
 			/* Get font traits. */
-			CFDictionaryRef traits = (CFDictionaryRef)CTFontDescriptorCopyAttribute(font, kCTFontTraitsAttribute);
+			CFAutoRelease<CFDictionaryRef> traits((CFDictionaryRef)CTFontDescriptorCopyAttribute(font, kCTFontTraitsAttribute));
 			CTFontSymbolicTraits symbolic_traits;
-			CFNumberGetValue((CFNumberRef)CFDictionaryGetValue(traits, kCTFontSymbolicTrait), kCFNumberIntType, &symbolic_traits);
-			CFRelease(traits);
+			CFNumberGetValue((CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait), kCFNumberIntType, &symbolic_traits);
 
 			/* Skip symbol fonts and vertical fonts. */
 			if ((symbolic_traits & kCTFontClassMaskTrait) == (CTFontStylisticClass)kCTFontSymbolicClass || (symbolic_traits & kCTFontVerticalTrait)) continue;
@@ -505,9 +503,8 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 
 			/* Get font name. */
 			char name[128];
-			CFStringRef font_name = (CFStringRef)CTFontDescriptorCopyAttribute(font, kCTFontDisplayNameAttribute);
-			CFStringGetCString(font_name, name, lengthof(name), kCFStringEncodingUTF8);
-			CFRelease(font_name);
+			CFAutoRelease<CFStringRef> font_name((CFStringRef)CTFontDescriptorCopyAttribute(font, kCTFontDisplayNameAttribute));
+			CFStringGetCString(font_name.get(), name, lengthof(name), kCFStringEncodingUTF8);
 
 			/* There are some special fonts starting with an '.' and the last
 			 * resort font that aren't usable. Skip them. */
@@ -515,13 +512,12 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 
 			/* Save result. */
 			callback->SetFontNames(settings, name);
-			if (!callback->FindMissingGlyphs(NULL)) {
+			if (!callback->FindMissingGlyphs(nullptr)) {
 				DEBUG(freetype, 2, "CT-Font for %s: %s", language_isocode, name);
 				result = true;
 				break;
 			}
 		}
-		if (descs != NULL) CFRelease(descs);
 	} else
 #endif
 	{
@@ -530,7 +526,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 		 * are available to the application. */
 		ATSFontIterator itr;
 		ATSFontRef font;
-		ATSFontIteratorCreate(kATSFontContextLocal, NULL, NULL, kATSOptionFlagsDefaultScope, &itr);
+		ATSFontIteratorCreate(kATSFontContextLocal, nullptr, nullptr, kATSOptionFlagsDefaultScope, &itr);
 		while (!result && ATSFontIteratorNext(itr, &font) == noErr) {
 			/* Get font name. */
 			char name[128];
@@ -545,14 +541,14 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			if (monospace != callback->Monospace()) continue;
 
 			/* We only want the base font and not bold or italic variants. */
-			if (strstr(name, "Italic") != NULL || strstr(name, "Bold")) continue;
+			if (strstr(name, "Italic") != nullptr || strstr(name, "Bold")) continue;
 
 			/* Skip some inappropriate or ugly looking fonts that have better alternatives. */
 			if (name[0] == '.' || strncmp(name, "Apple Symbols", 13) == 0 || strncmp(name, "LastResort", 10) == 0) continue;
 
 			/* Save result. */
 			callback->SetFontNames(settings, name);
-			if (!callback->FindMissingGlyphs(NULL)) {
+			if (!callback->FindMissingGlyphs(nullptr)) {
 				DEBUG(freetype, 2, "ATS-Font for %s: %s", language_isocode, name);
 				result = true;
 				break;
@@ -566,10 +562,10 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 		/* For some OS versions, the font 'Arial Unicode MS' does not report all languages it
 		 * supports. If we didn't find any other font, just try it, maybe we get lucky. */
 		callback->SetFontNames(settings, "Arial Unicode MS");
-		result = !callback->FindMissingGlyphs(NULL);
+		result = !callback->FindMissingGlyphs(nullptr);
 	}
 
-	callback->FindMissingGlyphs(NULL);
+	callback->FindMissingGlyphs(nullptr);
 	return result;
 }
 
@@ -599,7 +595,7 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 		/* Split & strip the font's style */
 		font_family = stredup(font_name);
 		font_style = strchr(font_family, ',');
-		if (font_style != NULL) {
+		if (font_style != nullptr) {
 			font_style[0] = '\0';
 			font_style++;
 			while (*font_style == ' ' || *font_style == '\t') font_style++;
@@ -607,13 +603,13 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 
 		/* Resolve the name and populate the information structure */
 		pat = FcNameParse((FcChar8*)font_family);
-		if (font_style != NULL) FcPatternAddString(pat, FC_STYLE, (FcChar8*)font_style);
+		if (font_style != nullptr) FcPatternAddString(pat, FC_STYLE, (FcChar8*)font_style);
 		FcConfigSubstitute(0, pat, FcMatchPattern);
 		FcDefaultSubstitute(pat);
 		fs = FcFontSetCreate();
 		match = FcFontMatch(0, pat, &result);
 
-		if (fs != NULL && match != NULL) {
+		if (fs != nullptr && match != nullptr) {
 			int i;
 			FcChar8 *family;
 			FcChar8 *style;
@@ -627,7 +623,7 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 						FcPatternGetString(fs->fonts[i], FC_STYLE,  0, &style)  == FcResultMatch) {
 
 					/* The correct style? */
-					if (font_style != NULL && strcasecmp(font_style, (char*)style) != 0) continue;
+					if (font_style != nullptr && strcasecmp(font_style, (char*)style) != 0) continue;
 
 					/* Font config takes the best shot, which, if the family name is spelled
 					 * wrongly a 'random' font, so check whether the family name is the
@@ -660,31 +656,31 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 	char lang[16];
 	seprintf(lang, lastof(lang), ":lang=%s", language_isocode);
 	char *split = strchr(lang, '_');
-	if (split != NULL) *split = '\0';
+	if (split != nullptr) *split = '\0';
 
 	/* First create a pattern to match the wanted language. */
 	//FcPattern *pat = FcNameParse((FcChar8*)lang);
 	FcPattern *pat = FcPatternCreate();
 	/* We only want to know the filename. */
-	FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_SPACING, FC_SLANT, FC_WEIGHT, NULL);
+	FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_SPACING, FC_SLANT, FC_WEIGHT, nullptr);
 	/* Get the list of filenames matching the wanted language. */
-	FcFontSet *fs = FcFontList(NULL, pat, os);
+	FcFontSet *fs = FcFontList(nullptr, pat, os);
 
 	/* We don't need these anymore. */
 	FcObjectSetDestroy(os);
 	FcPatternDestroy(pat);
 
-	if (fs != NULL) {
+	if (fs != nullptr) {
 		int best_weight = -1;
-		const char *best_font = NULL;
+		const char *best_font = nullptr;
 		int best_missing_glypths = 65536;
 
 		for (int i = 0; i < fs->nfont; i++) {
 			FcPattern *font = fs->fonts[i];
 
-			FcChar8 *file = NULL;
+			FcChar8 *file = nullptr;
 			FcResult res = FcPatternGetString(font, FC_FILE, 0, &file);
-			if (res != FcResultMatch || file == NULL) {
+			if (res != FcResultMatch || file == nullptr) {
 				continue;
 			}
 			DEBUG(freetype, 1, "Got font %s", file);
@@ -705,7 +701,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 
 			callback->SetFontNames(settings, (const char*)file);
 
-			missing += callback->FindMissingGlyphs(NULL);
+			missing += callback->FindMissingGlyphs(nullptr);
 			DEBUG(freetype, 1, "Font \"%s\" misses %d glyphs for lang %s", file, missing, lang);
 
 			if (missing < best_missing_glypths) {
@@ -716,7 +712,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			}
 		}
 
-		if (best_font != NULL) {
+		if (best_font != nullptr) {
 			ret = true;
 			callback->SetFontNames(settings, best_font);
 			InitFreeType(callback->Monospace());

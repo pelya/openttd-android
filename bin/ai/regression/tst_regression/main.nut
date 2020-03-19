@@ -1,5 +1,3 @@
-/* $Id$ */
-
 class Regression extends AIController {
 	function Start();
 };
@@ -1703,6 +1701,19 @@ function Regression::Vehicle()
 	print("  GetWagonAge():        " + AIVehicle.GetWagonAge(17, 2));
 	print("  GetWagonEngineType(): " + AIVehicle.GetWagonEngineType(17 3));
 	print("  GetWagonAge():        " + AIVehicle.GetWagonAge(17, 3));
+
+	print("  --Refit--");
+	print("    GetBuildWithRefitCapacity(): " + AIVehicle.GetBuildWithRefitCapacity(28479, 211, 255));
+	print("    GetBuildWithRefitCapacity(): " + AIVehicle.GetBuildWithRefitCapacity(28479, 211, 0));
+	print("    GetBuildWithRefitCapacity(): " + AIVehicle.GetBuildWithRefitCapacity(28479, 211, 9));
+	print("    BuildVehicleWithRefit():     " + AIVehicle.BuildVehicleWithRefit(28479, 211, 9));
+	print("    GetCapacity():               " + AIVehicle.GetCapacity(20, 9));
+	print("    GetCapacity():               " + AIVehicle.GetCapacity(20, 5));
+	print("    GetRefitCapacity():          " + AIVehicle.GetRefitCapacity(20, 5));
+	print("    RefitVehicle():              " + AIVehicle.RefitVehicle(20, 5));
+	print("    GetCapacity():               " + AIVehicle.GetCapacity(20, 9));
+	print("    GetCapacity():               " + AIVehicle.GetCapacity(20, 5));
+	print("    SellVehicle():               " + AIVehicle.SellVehicle(20));
 
 	print("  --Errors--");
 	print("    RefitVehicle():        " + AIVehicle.RefitVehicle(12, 0));

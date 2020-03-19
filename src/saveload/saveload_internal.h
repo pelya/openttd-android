@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -22,6 +20,7 @@ StringID RemapOldStringID(StringID s);
 char *CopyFromOldName(StringID id);
 void ResetOldNames();
 
+void ResetOldWaypoints();
 void MoveBuoysToWaypoints();
 void MoveWaypointsToBaseStations();
 const SaveLoad *GetBaseStationDescription();
@@ -30,6 +29,7 @@ void AfterLoadVehicles(bool part_of_load);
 void FixupTrainLengths();
 void AfterLoadStations();
 void AfterLoadRoadStops();
+void ResetLabelMaps();
 void AfterLoadLabelMaps();
 void AfterLoadStoryBook();
 void AfterLoadLinkGraphs();
@@ -44,12 +44,13 @@ void ResetViewportAfterLoadGame();
 void ConvertOldMultiheadToNew();
 void ConnectMultiheadedTrains();
 
+void ResetTempEngineData();
 Engine *GetTempDataEngine(EngineID index);
 void CopyTempEngineData();
 
 extern int32 _saved_scrollpos_x;
 extern int32 _saved_scrollpos_y;
-extern ZoomLevelByte _saved_scrollpos_zoom;
+extern ZoomLevel _saved_scrollpos_zoom;
 
 extern SavegameType _savegame_type;
 extern uint32 _ttdp_version;

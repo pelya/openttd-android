@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -78,11 +76,15 @@ static WindowDesc _errmsg_face_desc(
  * Copy the given data into our instance.
  * @param data The data to copy.
  */
-ErrorMessageData::ErrorMessageData(const ErrorMessageData &data)
+ErrorMessageData::ErrorMessageData(const ErrorMessageData &data) :
+	duration(data.duration), textref_stack_grffile(data.textref_stack_grffile), textref_stack_size(data.textref_stack_size),
+	summary_msg(data.summary_msg), detailed_msg(data.detailed_msg), position(data.position), face(data.face)
 {
-	*this = data;
+	memcpy(this->textref_stack, data.textref_stack, sizeof(this->textref_stack));
+	memcpy(this->decode_params, data.decode_params, sizeof(this->decode_params));
+	memcpy(this->strings,       data.strings,       sizeof(this->strings));
 	for (size_t i = 0; i < lengthof(this->strings); i++) {
-		if (this->strings[i] != NULL) {
+		if (this->strings[i] != nullptr) {
 			this->strings[i] = stredup(this->strings[i]);
 			this->decode_params[i] = (size_t)this->strings[i];
 		}
@@ -186,7 +188,7 @@ public:
 		this->InitNested();
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_EM_MESSAGE: {
@@ -214,7 +216,7 @@ public:
 		}
 	}
 
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
 	{
 		/* Position (0, 0) given, center the window. */
 		if (this->position.x == 0 && this->position.y == 0) {
@@ -228,7 +230,7 @@ public:
 		int scr_top = GetMainViewTop() + 20;
 		int scr_bot = GetMainViewBottom() - 20;
 
-		Point pt = RemapCoords2(this->position.x, this->position.y);
+		Point pt = RemapCoords(this->position.x, this->position.y, GetSlopePixelZOutsideMap(this->position.x, this->position.y));
 		const ViewPort *vp = FindWindowById(WC_MAIN_WINDOW, 0)->viewport;
 		if (this->face == INVALID_COMPANY) {
 			/* move x pos to opposite corner */
@@ -250,18 +252,18 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		/* If company gets shut down, while displaying an error about it, remove the error message. */
 		if (this->face != INVALID_COMPANY && !Company::IsValidID(this->face)) delete this;
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		if (widget == WID_EM_CAPTION) CopyInDParam(0, this->decode_params, lengthof(this->decode_params));
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_EM_FACE: {
@@ -298,13 +300,13 @@ public:
 		}
 	}
 
-	virtual void OnMouseLoop()
+	void OnMouseLoop() override
 	{
 		/* Disallow closing the window too easily, if timeout is disabled */
 		if (_right_button_down && this->duration != 0) delete this;
 	}
 
-	virtual void OnHundredthTick()
+	void OnHundredthTick() override
 	{
 		/* Timeout enabled? */
 		if (this->duration != 0) {
@@ -319,7 +321,7 @@ public:
 		if (_window_system_initialized) ShowFirstError();
 	}
 
-	virtual EventState OnKeyPress(WChar key, uint16 keycode)
+	EventState OnKeyPress(WChar key, uint16 keycode) override
 	{
 		if (keycode != WKC_SPACE) return ES_NOT_HANDLED;
 		delete this;
@@ -375,7 +377,7 @@ void ShowFirstError()
 void UnshowCriticalError()
 {
 	ErrmsgWindow *w = (ErrmsgWindow*)FindWindowById(WC_ERRMSG, 0);
-	if (_window_system_initialized && w != NULL) {
+	if (_window_system_initialized && w != nullptr) {
 		if (w->IsCritical()) _error_list.push_front(*w);
 		_window_system_initialized = false;
 		delete w;
@@ -395,7 +397,7 @@ void UnshowCriticalError()
  */
 void ShowErrorMessage(StringID summary_msg, StringID detailed_msg, WarningLevel wl, int x, int y, const GRFFile *textref_stack_grffile, uint textref_stack_size, const uint32 *textref_stack)
 {
-	assert(textref_stack_size == 0 || (textref_stack_grffile != NULL && textref_stack != NULL));
+	assert(textref_stack_size == 0 || (textref_stack_grffile != nullptr && textref_stack != nullptr));
 	if (summary_msg == STR_NULL) summary_msg = STR_EMPTY;
 
 	if (wl != WL_INFO) {
@@ -426,7 +428,7 @@ void ShowErrorMessage(StringID summary_msg, StringID detailed_msg, WarningLevel 
 	data.CopyOutDParams();
 
 	ErrmsgWindow *w = (ErrmsgWindow*)FindWindowById(WC_ERRMSG, 0);
-	if (w != NULL && w->IsCritical()) {
+	if (w != nullptr && w->IsCritical()) {
 		/* A critical error is currently shown. */
 		if (wl == WL_CRITICAL) {
 			/* Push another critical error in the queue of errors,

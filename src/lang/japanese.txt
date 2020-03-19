@@ -10,8 +10,6 @@
 ##grflangid 0x39
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -472,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :―――――
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :コンソールの表示切替
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/ゲームスクリプトのデバッグ
 STR_ABOUT_MENU_SCREENSHOT                                       :スクリーンショット撮影(現在のズーム)
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :スクリーンショット撮影(最大ズーム)
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :スクリーンショット撮影(標準ズーム)
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :スクリーンショット撮影(マップ全体)
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :OpenTTDについて
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :スプライトを整列
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :バウンディングボックスの表示切替
@@ -644,9 +639,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}カスタム2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}音楽音量
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}効果音音量
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}最小
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}最大
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -857,6 +849,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}{VEHICLE
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING}が新登場!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}{STRING}が新登場!　-　{ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION}は今後{STRING}を受入れません
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION}は今後{STRING}と{STRING}を受入れません
@@ -1684,7 +1677,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}貨物�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}競争会社
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}コンピュータプレイヤー
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :オリジナル
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF{BLUE}(おすすめ)
 
@@ -1767,13 +1759,9 @@ STR_QUIT_NO                                                     :{BLACK}いい�
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2400,6 +2388,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}道路�
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}軌道用トンネルを建設します。Shiftを押しながら決定すると費用の見積が出ます
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}道路の建設/撤去を切り替えます
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}軌道の建設/撤去を切り替えます
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}車庫建設
@@ -3261,8 +3250,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}線路長:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}信号
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}道路長(含軌道):
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}道路
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}軌道
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}水運長:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}運河
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}停留施設数:
@@ -3273,8 +3260,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}産業
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- なし -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK}({CARGO_LONG}{STRING}){YELLOW}({COMMA}%が搬送済)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK}({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW}({COMMA}%/{COMMA}%が搬送済)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}産業の名前です - 名前をクリックするとこの産業拠点の場所にメイン画面を移動します。Ctrl+クリックでこの産業拠点の場所を新たなビューポートに表示します
 
@@ -3337,6 +3322,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :グループ化
 STR_GROUP_DEFAULT_SHIPS                                         :グループ化されていない船舶
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :グループ化されていない航空機
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}グループ - クリックするとこのグループに所属する全車両一覧を表示します。ドラック&ドロップで順序を並べ替えられます
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}新規のグループを作成します
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}選択したグループを削除します
@@ -3358,10 +3344,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :新規機関車
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :新規モノレール車両
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :新規リニア車両
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :新規列車
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :新規車両
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :新規列車
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :新規船舶
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :新規航空機
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}価格: {GOLD}{CURRENCY_LONG}{BLACK} 重量: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}最高速度: {GOLD}{VELOCITY}{BLACK} 出力: {GOLD}{POWER}
@@ -3394,10 +3383,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}車両�
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}船舶を購入
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}航空機を購入
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}選択した列車を購入します。Shift+クリックで購入費を見積もります
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}選択した車両を購入します。Shift+クリックで購入費を見積もります
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}選択した船舶を購入します。Shift+クリックで購入費を見積もります
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}選択した航空機を購入します。Shift+クリックで購入費を見積もります
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}名称を変更
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}名称を変更
@@ -3507,12 +3498,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}庫内�
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}製造会社からのメッセージ
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}弊社は新たに{STRING}を設計致しました。{}実地でのパフォーマンスなどを検討する為、貴社に独占モニター権を提供したいと考えておりますがいかがでしょうか?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :列車
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :車両
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :航空機
-STR_ENGINE_PREVIEW_SHIP                                         :船舶
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :モノレール列車
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :リニア列車
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :車両
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :航空機
+STR_ENGINE_PREVIEW_SHIP                                         :船舶
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}価格: {CURRENCY_LONG} 重量: {WEIGHT_SHORT}{}最高速度: {VELOCITY}{}出力: {POWER}{}運用費: {CURRENCY_LONG}/年{}収容量: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}価格: {CURRENCY_LONG} 重量: {WEIGHT_SHORT}{}最高速度: {VELOCITY} 出力: {POWER} 最大牽引力: {6:FORCE}{}運用費: {4:CURRENCY_LONG}/年{}収容量 {5:CARGO_LONG}
@@ -3554,6 +3548,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :機関車(非�
 STR_REPLACE_ELRAIL_VEHICLES                                     :機関車(電化)/電車
 STR_REPLACE_MONORAIL_VEHICLES                                   :モノレール車両
 STR_REPLACE_MAGLEV_VEHICLES                                     :リニア車両
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}列車の短縮: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}機関車の交換で列車長が長くなる場合、列車長を維持する為に客車/貨車を減らすことができます。外されるのは従属部分の先頭からになります
@@ -4002,6 +3997,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}選択�
 STR_AI_LIST_CANCEL                                              :{BLACK}キャンセル
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}スクリプトを変更しません
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} パラメータ
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4273,7 +4269,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}先に�
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}適当な線路がありません
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}先に線路を撤去しなければなりません
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}道路は一方通行または進入禁止です
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}このレール種別との平面交差はできません
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}このレール種別との平面交差はできません
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}ここには信号を設置できません
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}ここには線路を建設できません
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}ここから線路を撤去できません

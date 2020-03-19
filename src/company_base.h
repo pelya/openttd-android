@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -43,6 +41,9 @@ struct CompanyInfrastructure {
 		for (RailType rt =  RAILTYPE_BEGIN; rt < RAILTYPE_END; rt++) total += this->rail[rt];
 		return total;
 	}
+
+	uint32 GetRoadTotal() const;
+	uint32 GetTramTotal() const;
 };
 
 typedef Pool<Company, CompanyID, 1, MAX_COMPANIES> CompanyPool;
@@ -72,7 +73,7 @@ struct CompanyProperties {
 	TileIndex location_of_HQ;        ///< Northern tile of HQ; #INVALID_TILE when there is none.
 	TileIndex last_build_coordinate; ///< Coordinate of the last build thing by this company.
 
-	OwnerByte share_owners[4];       ///< Owners of the 4 shares of the company. #INVALID_OWNER if nobody has bought them yet.
+	Owner share_owners[4];           ///< Owners of the 4 shares of the company. #INVALID_OWNER if nobody has bought them yet.
 
 	Year inaugurated_year;           ///< Year of starting the company.
 
@@ -98,7 +99,7 @@ struct CompanyProperties {
 
 	// TODO: Change some of these member variables to use relevant INVALID_xxx constants
 	CompanyProperties()
-		: name_2(0), name_1(0), name(NULL), president_name_1(0), president_name_2(0), president_name(NULL),
+		: name_2(0), name_1(0), name(nullptr), president_name_1(0), president_name_2(0), president_name(nullptr),
 		  face(0), money(0), money_fraction(0), current_loan(0), colour(0), block_preview(0),
 		  location_of_HQ(0), last_build_coordinate(0), share_owners(), inaugurated_year(0),
 		  months_of_bankruptcy(0), bankrupt_asked(0), bankrupt_timeout(0), bankrupt_value(0),
@@ -137,7 +138,7 @@ struct Company : CompanyPool::PoolItem<&_company_pool>, CompanyProperties {
 	static inline bool IsValidAiID(size_t index)
 	{
 		const Company *c = Company::GetIfValid(index);
-		return c != NULL && c->is_ai;
+		return c != nullptr && c->is_ai;
 	}
 
 	/**
@@ -149,7 +150,7 @@ struct Company : CompanyPool::PoolItem<&_company_pool>, CompanyProperties {
 	static inline bool IsValidHumanID(size_t index)
 	{
 		const Company *c = Company::GetIfValid(index);
-		return c != NULL && !c->is_ai;
+		return c != nullptr && !c->is_ai;
 	}
 
 	/**
@@ -166,9 +167,6 @@ struct Company : CompanyPool::PoolItem<&_company_pool>, CompanyProperties {
 
 	static void PostDestructor(size_t index);
 };
-
-#define FOR_ALL_COMPANIES_FROM(var, start) FOR_ALL_ITEMS_FROM(Company, company_index, var, start)
-#define FOR_ALL_COMPANIES(var) FOR_ALL_COMPANIES_FROM(var, 0)
 
 Money CalculateCompanyValue(const Company *c, bool including_loan = true);
 

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -88,13 +86,13 @@ struct GRFIdentifier {
 	/**
 	 * Does the identification match the provided values?
 	 * @param grfid  Expected grfid.
-	 * @param md5sum Expected md5sum, may be \c NULL (in which case, do not check it).
+	 * @param md5sum Expected md5sum, may be \c nullptr (in which case, do not check it).
 	 * @return the object has the provided grfid and md5sum.
 	 */
 	inline bool HasGrfIdentifier(uint32 grfid, const uint8 *md5sum) const
 	{
 		if (this->grfid != grfid) return false;
-		if (md5sum == NULL) return true;
+		if (md5sum == nullptr) return true;
 		return memcmp(md5sum, this->md5sum, sizeof(this->md5sum)) == 0;
 	}
 };
@@ -133,7 +131,7 @@ struct GRFParameterInfo {
 	byte param_nr;         ///< GRF parameter to store content in
 	byte first_bit;        ///< First bit to use in the GRF parameter
 	byte num_bit;          ///< Number of bits to use for this parameter
-	SmallMap<uint32, struct GRFText *, 8> value_names; ///< Names for each value.
+	SmallMap<uint32, struct GRFText *> value_names; ///< Names for each value.
 	bool complete_labels;  ///< True if all values have a label.
 
 	uint32 GetValue(struct GRFConfig *config) const;
@@ -151,31 +149,31 @@ struct GRFTextWrapper : public SimpleCountedObject {
 
 /** Information about GRF, used in the game and (part of it) in savegames */
 struct GRFConfig : ZeroedMemoryAllocator {
-	GRFConfig(const char *filename = NULL);
+	GRFConfig(const char *filename = nullptr);
 	GRFConfig(const GRFConfig &config);
 	~GRFConfig();
 
-	GRFIdentifier ident;                           ///< grfid and md5sum to uniquely identify newgrfs
-	uint8 original_md5sum[16];                     ///< MD5 checksum of original file if only a 'compatible' file was loaded
-	char *filename;                                ///< Filename - either with or without full path
-	GRFTextWrapper *name;                          ///< NOSAVE: GRF name (Action 0x08)
-	GRFTextWrapper *info;                          ///< NOSAVE: GRF info (author, copyright, ...) (Action 0x08)
-	GRFTextWrapper *url;                           ///< NOSAVE: URL belonging to this GRF.
-	GRFError *error;                               ///< NOSAVE: Error/Warning during GRF loading (Action 0x0B)
+	GRFIdentifier ident;                        ///< grfid and md5sum to uniquely identify newgrfs
+	uint8 original_md5sum[16];                  ///< MD5 checksum of original file if only a 'compatible' file was loaded
+	char *filename;                             ///< Filename - either with or without full path
+	GRFTextWrapper *name;                       ///< NOSAVE: GRF name (Action 0x08)
+	GRFTextWrapper *info;                       ///< NOSAVE: GRF info (author, copyright, ...) (Action 0x08)
+	GRFTextWrapper *url;                        ///< NOSAVE: URL belonging to this GRF.
+	GRFError *error;                            ///< NOSAVE: Error/Warning during GRF loading (Action 0x0B)
 
-	uint32 version;                                ///< NOSAVE: Version a NewGRF can set so only the newest NewGRF is shown
-	uint32 min_loadable_version;                   ///< NOSAVE: Minimum compatible version a NewGRF can define
-	uint8 flags;                                   ///< NOSAVE: GCF_Flags, bitset
-	GRFStatus status;                              ///< NOSAVE: GRFStatus, enum
-	uint32 grf_bugs;                               ///< NOSAVE: bugs in this GRF in this run, @see enum GRFBugs
-	uint32 param[0x80];                            ///< GRF parameters
-	uint8 num_params;                              ///< Number of used parameters
-	uint8 num_valid_params;                        ///< NOSAVE: Number of valid parameters (action 0x14)
-	uint8 palette;                                 ///< GRFPalette, bitset
-	SmallVector<GRFParameterInfo *, 4> param_info; ///< NOSAVE: extra information about the parameters
-	bool has_param_defaults;                       ///< NOSAVE: did this newgrf specify any defaults for it's parameters
+	uint32 version;                             ///< NOSAVE: Version a NewGRF can set so only the newest NewGRF is shown
+	uint32 min_loadable_version;                ///< NOSAVE: Minimum compatible version a NewGRF can define
+	uint8 flags;                                ///< NOSAVE: GCF_Flags, bitset
+	GRFStatus status;                           ///< NOSAVE: GRFStatus, enum
+	uint32 grf_bugs;                            ///< NOSAVE: bugs in this GRF in this run, @see enum GRFBugs
+	uint32 param[0x80];                         ///< GRF parameters
+	uint8 num_params;                           ///< Number of used parameters
+	uint8 num_valid_params;                     ///< NOSAVE: Number of valid parameters (action 0x14)
+	uint8 palette;                              ///< GRFPalette, bitset
+	std::vector<GRFParameterInfo *> param_info; ///< NOSAVE: extra information about the parameters
+	bool has_param_defaults;                    ///< NOSAVE: did this newgrf specify any defaults for it's parameters
 
-	struct GRFConfig *next;                        ///< NOSAVE: Next item in the linked list
+	struct GRFConfig *next;                     ///< NOSAVE: Next item in the linked list
 
 	void CopyParams(const GRFConfig &src);
 
@@ -215,7 +213,7 @@ struct NewGRFScanCallback {
 size_t GRFGetSizeOfDataSection(FILE *f);
 
 void ScanNewGRFFiles(NewGRFScanCallback *callback);
-const GRFConfig *FindGRFConfig(uint32 grfid, FindGRFConfigMode mode, const uint8 *md5sum = NULL, uint32 desired_version = 0);
+const GRFConfig *FindGRFConfig(uint32 grfid, FindGRFConfigMode mode, const uint8 *md5sum = nullptr, uint32 desired_version = 0);
 GRFConfig *GetGRFConfig(uint32 grfid, uint32 mask = 0xFFFFFFFF);
 GRFConfig **CopyGRFConfigList(GRFConfig **dst, const GRFConfig *src, bool init_only);
 void AppendStaticGRFConfigs(GRFConfig **dst);
@@ -229,11 +227,9 @@ char *GRFBuildParamList(char *dst, const GRFConfig *c, const char *last);
 /* In newgrf_gui.cpp */
 void ShowNewGRFSettings(bool editable, bool show_params, bool exec_changes, GRFConfig **config);
 
-#ifdef ENABLE_NETWORK
 /** For communication about GRFs over the network */
 #define UNKNOWN_GRF_NAME_PLACEHOLDER "<Unknown>"
 GRFTextWrapper *FindUnknownGRFName(uint32 grfid, uint8 *md5sum, bool create);
-#endif /* ENABLE_NETWORK */
 
 void UpdateNewGRFScanStatus(uint num, const char *name);
 bool UpdateNewGRFConfigPalette(int32 p1 = 0);

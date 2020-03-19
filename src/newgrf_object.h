@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -100,9 +98,10 @@ struct ObjectSpec {
 
 /** Object scope resolver. */
 struct ObjectScopeResolver : public ScopeResolver {
-	struct Object *obj; ///< The object the callback is ran for.
-	TileIndex tile;     ///< The tile related to the object.
-	uint8 view;         ///< The view of the object.
+	struct Object *obj;     ///< The object the callback is ran for.
+	const ObjectSpec *spec; ///< Specification of the object type.
+	TileIndex tile;         ///< The tile related to the object.
+	uint8 view;             ///< The view of the object.
 
 	/**
 	 * Constructor of an object scope resolver.
@@ -111,13 +110,13 @@ struct ObjectScopeResolver : public ScopeResolver {
 	 * @param tile %Tile of the object.
 	 * @param view View of the object.
 	 */
-	ObjectScopeResolver(ResolverObject &ro, Object *obj, TileIndex tile, uint8 view = 0)
-		: ScopeResolver(ro), obj(obj), tile(tile), view(view)
+	ObjectScopeResolver(ResolverObject &ro, Object *obj, const ObjectSpec *spec, TileIndex tile, uint8 view = 0)
+		: ScopeResolver(ro), obj(obj), spec(spec), tile(tile), view(view)
 	{
 	}
 
-	/* virtual */ uint32 GetRandomBits() const;
-	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
+	uint32 GetRandomBits() const override;
+	uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override;
 };
 
 /** A resolver object to be used with feature 0F spritegroups. */
@@ -129,7 +128,7 @@ struct ObjectResolverObject : public ResolverObject {
 			CallbackID callback = CBID_NO_CALLBACK, uint32 param1 = 0, uint32 param2 = 0);
 	~ObjectResolverObject();
 
-	/* virtual */ ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0)
+	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override
 	{
 		switch (scope) {
 			case VSG_SCOPE_SELF:
@@ -137,7 +136,7 @@ struct ObjectResolverObject : public ResolverObject {
 
 			case VSG_SCOPE_PARENT: {
 				TownScopeResolver *tsr = this->GetTown();
-				if (tsr != NULL) return tsr;
+				if (tsr != nullptr) return tsr;
 				FALLTHROUGH;
 			}
 
@@ -145,6 +144,9 @@ struct ObjectResolverObject : public ResolverObject {
 				return ResolverObject::GetScope(scope, relative);
 		}
 	}
+
+	GrfSpecFeature GetFeature() const override;
+	uint32 GetDebugID() const override;
 
 private:
 	TownScopeResolver *GetTown();

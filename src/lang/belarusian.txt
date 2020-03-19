@@ -12,8 +12,6 @@
 ##case m f n p nom gen dat acc abl pre
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -785,9 +783,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Кансоль
 STR_ABOUT_MENU_AI_DEBUG                                         :Наладка штучнага інтэлекту (ШІ/AI) / скрыптоў
 STR_ABOUT_MENU_SCREENSHOT                                       :Здымак экрана (Ctrl+S)
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Здымак экрана ў макс. набліжэньні
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Павялiчаны здымак экрана па змоўчаньнi
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Здымак усёй мапы (Ctrl+G)
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Аб гульні OpenTTD
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Выраўноўваньне спрайтаў
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Пераключыць абмежавальныя рамкі
@@ -957,9 +952,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Уласны 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Гучнасьць музыкі
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Гучнасьць эфэктаў
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}МІН
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}МАКС
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -1174,6 +1166,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Памы
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}З'явіўся новы {STRING}!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}З'явіўся новы {STRING}!  —  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} больш не прымае {STRING.acc}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} больш не прымае {STRING.acc} ды {STRING.acc}
@@ -2009,7 +2002,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Раз�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Канкурэнты
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Кампутарныя гульцы
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :арыґінальны
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(рэкамэндуецца)
 
@@ -2093,13 +2085,9 @@ STR_QUIT_NO                                                     :{BLACK}Не
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2743,6 +2731,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Буда
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Будаўніцтва трамвайных тунэляў. Пры націснутым Shift — ацэнка кошту будаўніцтва.
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Будаўніцтва/выдаленьне аўтамабільных дарогаў
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Будаўніцтва/выдаленьне трамвайных каляінаў
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Кірунак гаража
@@ -3610,8 +3599,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Iнфр�
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Чыгуначныя элемэнты:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Сыґналы
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Дарожныя элемэнты:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Дарогi
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Трамваi
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Водныя клеткi:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Каналы
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Станцыi:
@@ -3622,8 +3609,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Прамысловасьць
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Няма -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% перавезена)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% перавезена)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Сьпіс прадпрыемстваў: пстрычка па назьве паказвае прадпрыемства ў асноўным вакне. Ctrl+клік - у дадатковым вакне.
 
@@ -3688,6 +3673,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Бяз груп
 STR_GROUP_DEFAULT_SHIPS                                         :Бяз групы
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Бяз групы
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Ґрупы — клікніце па назьве ґрупы, каб убачыць сьпіс транспарту ў гэтай ґрупе. Націсьніце ды перацягвайце ґрупы, каб упарадкаваць гіерархію.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Стварыць групу
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Выдаліць выбраную групу
@@ -3713,10 +3699,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Новы эле
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Новы монарэйкавы цягнік
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Новы маґнітарэйкавы цягнік
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Новы цягнiк
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Новы аўтамабiль
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Новы цягнiк
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Новы карабель
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Новы авiятранспарт
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Кошт: {GOLD}{CURRENCY_LONG}{BLACK} Вага: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Хуткасьць: {GOLD}{VELOCITY}{BLACK} Магутнасьць: {GOLD}{POWER}
@@ -3750,10 +3739,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Купі
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Купіць
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Купіць
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Набыць абраны лякаматыў/ваґон. Shift+пстрычка — ацэнка кошту набыцьця.
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Набыць абраны аўтамабіль. Shift+пстрычка — ацэнка кошту набыцьця.
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Набыць абраны карабель. Shift+пстрычка — ацэнка кошту набыцьця.
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Набыць абраны авіятранспарт. Shift+пстрычка — ацэнка кошту набыцьця.
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Перайменаваць
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Перайменаваць
@@ -3863,24 +3854,27 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Уве�
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Паведамленьне ад вытворцы транспарту
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Мы стварылі новую мадэль {STRING.gen}. Цi зацікаўлены Вы ў яе гадавым эксклюзіўным выкарыстаньні для праверкі перад запускам у масавую вытворчасьць?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=m}чыгуначны лякаматыў
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE.gen                      :чыгуначнага лакаматыва
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE.acc                      :чыгуначны лякаматыў
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=m}аўтамабiль
-STR_ENGINE_PREVIEW_ROAD_VEHICLE.gen                             :аўтамабiля
-STR_ENGINE_PREVIEW_ROAD_VEHICLE.acc                             :аўтамабіль
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=m}авiятранспарт
-STR_ENGINE_PREVIEW_AIRCRAFT.gen                                 :авiятранспарту
-STR_ENGINE_PREVIEW_AIRCRAFT.acc                                 :авіятранспарт
-STR_ENGINE_PREVIEW_SHIP                                         :{G=m}карабель
-STR_ENGINE_PREVIEW_SHIP.gen                                     :карабля
-STR_ENGINE_PREVIEW_SHIP.acc                                     :карабель
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :{G=m}монарэйкавы лякаматыў
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE.gen                      :монарэйкавага лякаматыва
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE.acc                      :монарэйкавы лякаматыў
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :{G=m}маґнітарэйкавы лякаматыў
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE.gen                        :магнiтарэйкавага лякаматыва
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE.acc                        :магнітарэйкавы лякаматыў
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=m}аўтамабiль
+STR_ENGINE_PREVIEW_ROAD_VEHICLE.gen                             :аўтамабiля
+STR_ENGINE_PREVIEW_ROAD_VEHICLE.acc                             :аўтамабіль
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=m}авiятранспарт
+STR_ENGINE_PREVIEW_AIRCRAFT.gen                                 :авiятранспарту
+STR_ENGINE_PREVIEW_AIRCRAFT.acc                                 :авіятранспарт
+STR_ENGINE_PREVIEW_SHIP                                         :{G=m}карабель
+STR_ENGINE_PREVIEW_SHIP.gen                                     :карабля
+STR_ENGINE_PREVIEW_SHIP.acc                                     :карабель
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Кошт: {CURRENCY_LONG} Вага: {WEIGHT_SHORT}{}Хуткасьць: {VELOCITY}  Магутнасьць: {POWER}{}Кошт абслуг.: {CURRENCY_LONG}/год{}Ёмістасьць: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Кошт: {CURRENCY_LONG} Вага: {WEIGHT_SHORT}{}Хуткасьць: {VELOCITY}  Магутнасьць: {POWER}  Макс. ЦН: {6:FORCE}{}Кошт абслуг.: {4:CURRENCY_LONG}/год{}Ёмістасьць: {5:CARGO_LONG}
@@ -3934,6 +3928,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Чыгунач�
 STR_REPLACE_ELRAIL_VEHICLES                                     :Чыгуначны транспарт на электрацязе
 STR_REPLACE_MONORAIL_VEHICLES                                   :Монарэйкавыя ТС
 STR_REPLACE_MAGLEV_VEHICLES                                     :Маґнітныя ТС
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Выдаленьне ваґонаў: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Дазволіць пры аўтазамене захоўваць даўжыню цягнікоў шляхам выдаленьня ваґонаў (пачынаючы з галавы цягніка), калі пры аўтазамене лякаматыва павялічыцца даўжыня цягніка.
@@ -4384,6 +4379,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Выбр
 STR_AI_LIST_CANCEL                                              :{BLACK}Скасаваць
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Не змяняць скрыпт
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}Параметры {STRING}
 STR_AI_SETTINGS_CAPTION_AI                                      :ШI
@@ -4586,7 +4582,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... гэ
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... няправільны кірунак дарогі
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... на прахадных прыпынках нельга рабіць павароты
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... на прахадных прыпынках нельга рабіць скрыжаваньнi
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}... дарога аднабаковая ці заблакавана
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}Немагчыма выдаліць частку станцыi...
@@ -4656,7 +4651,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Спач
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Няма прыдатных рэйкаў
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Спачатку выдаліце чыгунку
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Дарога аднабаковая або блякаваная
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Праз гэты від рэйкаў забаронена будаваць пераезды
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Праз гэты від рэйкаў забаронена будаваць пераезды
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Тут немагчыма паставіць сьветлафор...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Тут немагчыма пракласьцi рэйкі...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Не атрымалася выдаліць чыгунку...

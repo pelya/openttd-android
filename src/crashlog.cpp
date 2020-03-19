@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -52,27 +50,27 @@
 #	include <ft2build.h>
 #	include FT_FREETYPE_H
 #endif /* WITH_FREETYPE */
-#if defined(WITH_ICU_LAYOUT) || defined(WITH_ICU_SORT)
+#if defined(WITH_ICU_LX) || defined(WITH_ICU_I18N)
 #	include <unicode/uversion.h>
-#endif /* WITH_ICU_SORT || WITH_ICU_LAYOUT */
-#ifdef WITH_LZMA
+#endif /* WITH_ICU_LX || WITH_ICU_I18N */
+#ifdef WITH_LIBLZMA
 #	include <lzma.h>
 #endif
 #ifdef WITH_LZO
 #include <lzo/lzo1x.h>
 #endif
-#ifdef WITH_SDL
+#if defined(WITH_SDL) || defined(WITH_SDL2)
 #	include <SDL.h>
-#endif /* WITH_SDL */
+#endif /* WITH_SDL || WITH_SDL2 */
 #ifdef WITH_ZLIB
 # include <zlib.h>
 #endif
 
 #include "safeguards.h"
 
-/* static */ const char *CrashLog::message = NULL;
-/* static */ char *CrashLog::gamelog_buffer = NULL;
-/* static */ const char *CrashLog::gamelog_last = NULL;
+/* static */ const char *CrashLog::message = nullptr;
+/* static */ char *CrashLog::gamelog_buffer = nullptr;
+/* static */ const char *CrashLog::gamelog_last = nullptr;
 
 char *CrashLog::LogCompiler(char *buffer, const char *last) const
 {
@@ -168,18 +166,18 @@ char *CrashLog::LogConfiguration(char *buffer, const char *last) const
 			" Sound driver: %s\n"
 			" Sound set:    %s (%u)\n"
 			" Video driver: %s\n\n",
-			BlitterFactory::GetCurrentBlitter() == NULL ? "none" : BlitterFactory::GetCurrentBlitter()->GetName(),
-			BaseGraphics::GetUsedSet() == NULL ? "none" : BaseGraphics::GetUsedSet()->name,
-			BaseGraphics::GetUsedSet() == NULL ? UINT32_MAX : BaseGraphics::GetUsedSet()->version,
-			_current_language == NULL ? "none" : _current_language->file,
-			MusicDriver::GetInstance() == NULL ? "none" : MusicDriver::GetInstance()->GetName(),
-			BaseMusic::GetUsedSet() == NULL ? "none" : BaseMusic::GetUsedSet()->name,
-			BaseMusic::GetUsedSet() == NULL ? UINT32_MAX : BaseMusic::GetUsedSet()->version,
+			BlitterFactory::GetCurrentBlitter() == nullptr ? "none" : BlitterFactory::GetCurrentBlitter()->GetName(),
+			BaseGraphics::GetUsedSet() == nullptr ? "none" : BaseGraphics::GetUsedSet()->name,
+			BaseGraphics::GetUsedSet() == nullptr ? UINT32_MAX : BaseGraphics::GetUsedSet()->version,
+			_current_language == nullptr ? "none" : _current_language->file,
+			MusicDriver::GetInstance() == nullptr ? "none" : MusicDriver::GetInstance()->GetName(),
+			BaseMusic::GetUsedSet() == nullptr ? "none" : BaseMusic::GetUsedSet()->name,
+			BaseMusic::GetUsedSet() == nullptr ? UINT32_MAX : BaseMusic::GetUsedSet()->version,
 			_networking ? (_network_server ? "server" : "client") : "no",
-			SoundDriver::GetInstance() == NULL ? "none" : SoundDriver::GetInstance()->GetName(),
-			BaseSounds::GetUsedSet() == NULL ? "none" : BaseSounds::GetUsedSet()->name,
-			BaseSounds::GetUsedSet() == NULL ? UINT32_MAX : BaseSounds::GetUsedSet()->version,
-			VideoDriver::GetInstance() == NULL ? "none" : VideoDriver::GetInstance()->GetName()
+			SoundDriver::GetInstance() == nullptr ? "none" : SoundDriver::GetInstance()->GetName(),
+			BaseSounds::GetUsedSet() == nullptr ? "none" : BaseSounds::GetUsedSet()->name,
+			BaseSounds::GetUsedSet() == nullptr ? UINT32_MAX : BaseSounds::GetUsedSet()->version,
+			VideoDriver::GetInstance() == nullptr ? "none" : VideoDriver::GetInstance()->GetName()
 	);
 
 	buffer += seprintf(buffer, last,
@@ -195,16 +193,15 @@ char *CrashLog::LogConfiguration(char *buffer, const char *last) const
 	);
 
 	buffer += seprintf(buffer, last, "AI Configuration (local: %i) (current: %i):\n", (int)_local_company, (int)_current_company);
-	const Company *c;
-	FOR_ALL_COMPANIES(c) {
-		if (c->ai_info == NULL) {
+	for (const Company *c : Company::Iterate()) {
+		if (c->ai_info == nullptr) {
 			buffer += seprintf(buffer, last, " %2i: Human\n", (int)c->index);
 		} else {
 			buffer += seprintf(buffer, last, " %2i: %s (v%d)\n", (int)c->index, c->ai_info->GetName(), c->ai_info->GetVersion());
 		}
 	}
 
-	if (Game::GetInfo() != NULL) {
+	if (Game::GetInfo() != nullptr) {
 		buffer += seprintf(buffer, last, " GS: %s (v%d)\n", Game::GetInfo()->GetName(), Game::GetInfo()->GetVersion());
 	}
 	buffer += seprintf(buffer, last, "\n");
@@ -240,21 +237,21 @@ char *CrashLog::LogLibraries(char *buffer, const char *last) const
 	buffer += seprintf(buffer, last, " FreeType:   %d.%d.%d\n", major, minor, patch);
 #endif /* WITH_FREETYPE */
 
-#if defined(WITH_ICU_LAYOUT) || defined(WITH_ICU_SORT)
+#if defined(WITH_ICU_LX) || defined(WITH_ICU_I18N)
 	/* 4 times 0-255, separated by dots (.) and a trailing '\0' */
 	char buf[4 * 3 + 3 + 1];
 	UVersionInfo ver;
 	u_getVersion(ver);
 	u_versionToString(ver, buf);
-#ifdef WITH_ICU_SORT
+#ifdef WITH_ICU_I18N
 	buffer += seprintf(buffer, last, " ICU i18n:   %s\n", buf);
 #endif
-#ifdef WITH_ICU_LAYOUT
+#ifdef WITH_ICU_LX
 	buffer += seprintf(buffer, last, " ICU lx:     %s\n", buf);
 #endif
-#endif /* WITH_ICU_SORT || WITH_ICU_LAYOUT */
+#endif /* WITH_ICU_LX || WITH_ICU_I18N */
 
-#ifdef WITH_LZMA
+#ifdef WITH_LIBLZMA
 	buffer += seprintf(buffer, last, " LZMA:       %s\n", lzma_version_string());
 #endif
 
@@ -263,13 +260,17 @@ char *CrashLog::LogLibraries(char *buffer, const char *last) const
 #endif
 
 #ifdef WITH_PNG
-	buffer += seprintf(buffer, last, " PNG:        %s\n", png_get_libpng_ver(NULL));
+	buffer += seprintf(buffer, last, " PNG:        %s\n", png_get_libpng_ver(nullptr));
 #endif /* WITH_PNG */
 
 #ifdef WITH_SDL
-	const SDL_version *v = SDL_Linked_Version();
-	buffer += seprintf(buffer, last, " SDL:        %d.%d.%d\n", v->major, v->minor, v->patch);
-#endif /* WITH_SDL */
+	const SDL_version *sdl_v = SDL_Linked_Version();
+	buffer += seprintf(buffer, last, " SDL1:       %d.%d.%d\n", sdl_v->major, sdl_v->minor, sdl_v->patch);
+#elif defined(WITH_SDL2)
+	SDL_version sdl2_v;
+	SDL_GetVersion(&sdl2_v);
+	buffer += seprintf(buffer, last, " SDL2:       %d.%d.%d\n", sdl2_v.major, sdl2_v.minor, sdl2_v.patch);
+#endif
 
 #ifdef WITH_ZLIB
 	buffer += seprintf(buffer, last, " Zlib:       %s\n", zlibVersion());
@@ -303,7 +304,7 @@ char *CrashLog::LogGamelog(char *buffer, const char *last) const
 }
 
 /**
- * Writes any recent news messages to the buffer.
+ * Writes up to 32 recent news messages to the buffer, with the most recent first.
  * @param buffer The begin where to write at.
  * @param last   The last position in the buffer to write to.
  * @return the position of the \c '\0' character after the buffer.
@@ -312,7 +313,8 @@ char *CrashLog::LogRecentNews(char *buffer, const char *last) const
 {
 	buffer += seprintf(buffer, last, "Recent news messages:\n");
 
-	for (NewsItem *news = _oldest_news; news != NULL; news = news->next) {
+	int i = 0;
+	for (NewsItem *news = _latest_news; i < 32 && news != nullptr; news = news->prev, i++) {
 		YearMonthDay ymd;
 		ConvertDateToYMD(news->date, &ymd);
 		buffer += seprintf(buffer, last, "(%i-%02i-%02i) StringID: %u, Type: %u, Ref1: %u, %u, Ref2: %u, %u\n",
@@ -331,7 +333,7 @@ char *CrashLog::LogRecentNews(char *buffer, const char *last) const
  */
 char *CrashLog::FillCrashLog(char *buffer, const char *last) const
 {
-	time_t cur_time = time(NULL);
+	time_t cur_time = time(nullptr);
 	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\n\n");
 	buffer += seprintf(buffer, last, "Crash at: %s", asctime(gmtime(&cur_time)));
 
@@ -369,7 +371,7 @@ bool CrashLog::WriteCrashLog(const char *buffer, char *filename, const char *fil
 	seprintf(filename, filename_last, "%scrash.log", _personal_dir);
 
 	FILE *file = FioFOpenFile(filename, "w", NO_DIRECTORY);
-	if (file == NULL) return false;
+	if (file == nullptr) return false;
 
 	size_t len = strlen(buffer);
 	size_t written = fwrite(buffer, 1, len, file);
@@ -396,7 +398,7 @@ bool CrashLog::WriteSavegame(char *filename, const char *filename_last) const
 {
 	/* If the map array doesn't exist, saving will fail too. If the map got
 	 * initialised, there is a big chance the rest is initialised too. */
-	if (_m == NULL) return false;
+	if (_m == nullptr) return false;
 
 	try {
 		GamelogEmergency();
@@ -421,7 +423,7 @@ bool CrashLog::WriteSavegame(char *filename, const char *filename_last) const
 bool CrashLog::WriteScreenshot(char *filename, const char *filename_last) const
 {
 	/* Don't draw when we have invalid screen size */
-	if (_screen.width < 1 || _screen.height < 1 || _screen.dst_ptr == NULL) return false;
+	if (_screen.width < 1 || _screen.height < 1 || _screen.dst_ptr == nullptr) return false;
 
 	bool res = MakeScreenshot(SC_CRASHLOG, "crash");
 	if (res) strecpy(filename, _full_screenshot_name, filename_last);
@@ -504,7 +506,7 @@ bool CrashLog::MakeCrashLog() const
  */
 /* static */ void CrashLog::AfterCrashLogCleanup()
 {
-	if (MusicDriver::GetInstance() != NULL) MusicDriver::GetInstance()->Stop();
-	if (SoundDriver::GetInstance() != NULL) SoundDriver::GetInstance()->Stop();
-	if (VideoDriver::GetInstance() != NULL) VideoDriver::GetInstance()->Stop();
+	if (MusicDriver::GetInstance() != nullptr) MusicDriver::GetInstance()->Stop();
+	if (SoundDriver::GetInstance() != nullptr) SoundDriver::GetInstance()->Stop();
+	if (VideoDriver::GetInstance() != nullptr) VideoDriver::GetInstance()->Stop();
 }

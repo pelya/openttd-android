@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -13,7 +11,6 @@
 #define SMALLMAP_TYPE_HPP
 
 #include "smallvec_type.hpp"
-#include "sort_func.hpp"
 
 /**
  * Simple pair of data. Both types have to be POD ("Plain Old Data")!
@@ -27,6 +24,7 @@ struct SmallPair {
 
 	/** Initializes this Pair with data */
 	inline SmallPair(const T &first, const U &second) : first(first), second(second) { }
+	SmallPair() = default;
 };
 
 /**
@@ -38,8 +36,8 @@ struct SmallPair {
  *
  * @see SmallVector
  */
-template <typename T, typename U, uint S = 16>
-struct SmallMap : SmallVector<SmallPair<T, U>, S> {
+template <typename T, typename U>
+struct SmallMap : std::vector<SmallPair<T, U> > {
 	typedef ::SmallPair<T, U> Pair;
 	typedef Pair *iterator;
 	typedef const Pair *const_iterator;
@@ -54,12 +52,13 @@ struct SmallMap : SmallVector<SmallPair<T, U>, S> {
 	 * @param key key to find
 	 * @return &Pair(key, data) if found, this->End() if not
 	 */
-	inline const Pair *Find(const T &key) const
+	inline typename std::vector<Pair>::const_iterator Find(const T &key) const
 	{
-		for (uint i = 0; i < this->items; i++) {
-			if (key == this->data[i].first) return &this->data[i];
+		typename std::vector<Pair>::const_iterator it;
+		for (it = std::vector<Pair>::begin(); it != std::vector<Pair>::end(); it++) {
+			if (key == it->first) return it;
 		}
-		return this->End();
+		return it;
 	}
 
 	/**
@@ -69,11 +68,22 @@ struct SmallMap : SmallVector<SmallPair<T, U>, S> {
 	 */
 	inline Pair *Find(const T &key)
 	{
-		for (uint i = 0; i < this->items; i++) {
-			if (key == this->data[i].first) return &this->data[i];
+		for (uint i = 0; i < std::vector<Pair>::size(); i++) {
+			if (key == std::vector<Pair>::operator[](i).first) return &std::vector<Pair>::operator[](i);
 		}
 		return this->End();
 	}
+
+	inline const Pair *End() const
+	{
+		return std::vector<Pair>::data() + std::vector<Pair>::size();
+	}
+
+	inline Pair *End()
+	{
+		return std::vector<Pair>::data() + std::vector<Pair>::size();
+	}
+
 
 	/**
 	 * Tests whether a key is assigned in this map.
@@ -81,6 +91,16 @@ struct SmallMap : SmallVector<SmallPair<T, U>, S> {
 	 * @return true iff the item is present
 	 */
 	inline bool Contains(const T &key) const
+	{
+		return this->Find(key) != std::vector<Pair>::end();
+	}
+
+	/**
+	 * Tests whether a key is assigned in this map.
+	 * @param key key to test
+	 * @return true iff the item is present
+	 */
+	inline bool Contains(const T &key)
 	{
 		return this->Find(key) != this->End();
 	}
@@ -92,8 +112,9 @@ struct SmallMap : SmallVector<SmallPair<T, U>, S> {
 	 */
 	inline void Erase(Pair *pair)
 	{
-		assert(pair >= this->Begin() && pair < this->End());
-		*pair = this->data[--this->items];
+		assert(pair >= std::vector<Pair>::data() && pair < this->End());
+		auto distance = pair - std::vector<Pair>::data();
+		std::vector<Pair>::erase(std::vector<Pair>::begin() + distance);
 	}
 
 	/**
@@ -104,13 +125,11 @@ struct SmallMap : SmallVector<SmallPair<T, U>, S> {
 	 */
 	inline bool Erase(const T &key)
 	{
-		for (uint i = 0; i < this->items; i++) {
-			if (key == this->data[i].first) {
-				this->data[i] = this->data[--this->items];
-				return true;
-			}
-		}
-		return false;
+		auto *pair = this->Find(key);
+		if (pair == this->End()) return false;
+
+		this->Erase(pair);
+		return true;
 	}
 
 	/**
@@ -122,9 +141,7 @@ struct SmallMap : SmallVector<SmallPair<T, U>, S> {
 	inline bool Insert(const T &key, const U &data)
 	{
 		if (this->Contains(key)) return false;
-		Pair *n = this->Append();
-		n->first = key;
-		n->second = data;
+		std::vector<Pair>::emplace_back(key, data);
 		return true;
 	}
 
@@ -136,22 +153,13 @@ struct SmallMap : SmallVector<SmallPair<T, U>, S> {
 	 */
 	inline U &operator[](const T &key)
 	{
-		for (uint i = 0; i < this->items; i++) {
-			if (key == this->data[i].first) return this->data[i].second;
+		for (uint i = 0; i < std::vector<Pair>::size(); i++) {
+			if (key == std::vector<Pair>::operator[](i).first) return std::vector<Pair>::operator[](i).second;
 		}
-		Pair *n = this->Append();
-		n->first = key;
-		return n->second;
-	}
-
-	inline void SortByKey()
-	{
-		QSortT(this->Begin(), this->items, KeySorter);
-	}
-
-	static int CDECL KeySorter(const Pair *a, const Pair *b)
-	{
-		return a->first - b->first;
+		/*C++17: Pair &n = */ std::vector<Pair>::emplace_back();
+		Pair &n = std::vector<Pair>::back();
+		n.first = key;
+		return n.second;
 	}
 };
 

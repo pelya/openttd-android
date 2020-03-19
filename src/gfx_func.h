@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -31,7 +29,7 @@
  * VideoDriver::MakeDirty and it is truncated back to an empty rectangle. At some
  * later point (which is uninteresting, too) the video driver
  * repaints all these saved rectangle instead of the whole screen and drop the
- * rectangle informations. Then a new round begins by marking objects "dirty".
+ * rectangle information. Then a new round begins by marking objects "dirty".
  *
  * @see VideoDriver::MakeDirty
  * @see _invalid_rect
@@ -70,16 +68,14 @@ extern Point _right_button_down_pos;
 extern DrawPixelInfo _screen;
 extern bool _screen_disable_anim;   ///< Disable palette animation (important for 32bpp-anim blitter during giant screenshot)
 
-extern int _num_resolutions;
-extern Dimension _resolutions[100];
+extern std::vector<Dimension> _resolutions;
 extern Dimension _cur_resolution;
 extern Palette _cur_palette; ///< Current palette
 
 void HandleKeypress(uint keycode, WChar key);
-void HandleTextInput(const char *str, bool marked = false, const char *caret = NULL, const char *insert_location = NULL, const char *replacement_end = NULL);
+void HandleTextInput(const char *str, bool marked = false, const char *caret = nullptr, const char *insert_location = nullptr, const char *replacement_end = nullptr);
 void HandleCtrlChanged();
 void HandleMouseEvents();
-void CSleep(int milliseconds);
 void UpdateWindows();
 
 void DrawMouseCursor();
@@ -93,12 +89,12 @@ static const int DRAW_STRING_BUFFER = 2048;
 void RedrawScreenRect(int left, int top, int right, int bottom);
 void GfxScroll(int left, int top, int width, int height, int xo, int yo);
 
-Dimension GetSpriteSize(SpriteID sprid, Point *offset = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
-void DrawSpriteViewport(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL);
-void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
-void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
-void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
-void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &r, const SubSprite *sub = NULL, ZoomLevel zoom = ZOOM_LVL_GUI);
+Dimension GetSpriteSize(SpriteID sprid, Point *offset = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteViewport(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = nullptr);
+void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
+void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &r, const SubSprite *sub = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
 
 /** How to align the to-be drawn text. */
 enum StringAlignment {
@@ -126,6 +122,7 @@ int DrawStringMultiLine(int left, int right, int top, int bottom, StringID str, 
 void DrawCharCentered(uint32 c, int x, int y, TextColour colour);
 
 void GfxFillRect(int left, int top, int right, int bottom, int colour, FillRectMode mode = FILLRECT_OPAQUE);
+void GfxFillPolygon(const std::vector<Point> &shape, int colour, FillRectMode mode = FILLRECT_OPAQUE);
 void GfxDrawLine(int left, int top, int right, int bottom, int colour, int width = 1, int dash = 0);
 void DrawBox(int x, int y, int dx1, int dy1, int dx2, int dy2, int dx3, int dy3);
 
@@ -170,7 +167,7 @@ void SetAnimatedMouseCursor(const AnimCursor *table);
 void CursorTick();
 void UpdateCursorSize();
 bool ChangeResInGame(int w, int h);
-void SortResolutions(int count);
+void SortResolutions();
 bool ToggleFullScreen(bool fs);
 
 /* gfx.cpp */
@@ -263,7 +260,14 @@ static const uint8 PC_VERY_LIGHT_YELLOW  = 0x45;           ///< Almost-white yel
 
 static const uint8 PC_GREEN              = 0xD0;           ///< Green palette colour.
 
+static const uint8 PC_VERY_DARK_BLUE     = 0x9A;           ///< Almost-black blue palette colour.
 static const uint8 PC_DARK_BLUE          = 0x9D;           ///< Dark blue palette colour.
 static const uint8 PC_LIGHT_BLUE         = 0x98;           ///< Light blue palette colour.
 
+static const uint8 PC_ROUGH_LAND         = 0x52;           ///< Dark green palette colour for rough land.
+static const uint8 PC_GRASS_LAND         = 0x54;           ///< Dark green palette colour for grass land.
+static const uint8 PC_BARE_LAND          = 0x37;           ///< Brown palette colour for bare land.
+static const uint8 PC_FIELDS             = 0x25;           ///< Light brown palette colour for fields.
+static const uint8 PC_TREES              = 0x57;           ///< Green palette colour for trees.
+static const uint8 PC_WATER              = 0xC9;           ///< Dark blue palette colour for water.
 #endif /* GFX_FUNC_H */

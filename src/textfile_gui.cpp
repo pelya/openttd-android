@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,7 +23,7 @@
 #include <zlib.h>
 #endif
 
-#if defined(WITH_LZMA)
+#if defined(WITH_LIBLZMA)
 #include <lzma.h>
 #endif
 
@@ -86,7 +84,7 @@ uint TextfileWindow::GetContentHeight()
 	int max_width = this->GetWidget<NWidgetCore>(WID_TF_BACKGROUND)->current_x - WD_FRAMETEXT_LEFT - WD_FRAMERECT_RIGHT;
 
 	uint height = 0;
-	for (uint i = 0; i < this->lines.Length(); i++) {
+	for (uint i = 0; i < this->lines.size(); i++) {
 		height += GetStringHeight(this->lines[i], max_width, FS_MONO);
 	}
 
@@ -113,10 +111,10 @@ void TextfileWindow::SetupScrollbars()
 		this->hscroll->SetCount(0);
 	} else {
 		uint max_length = 0;
-		for (uint i = 0; i < this->lines.Length(); i++) {
+		for (uint i = 0; i < this->lines.size(); i++) {
 			max_length = max(max_length, GetStringBoundingBox(this->lines[i], FS_MONO).width);
 		}
-		this->vscroll->SetCount(this->lines.Length() * FONT_HEIGHT_MONO);
+		this->vscroll->SetCount((uint)this->lines.size() * FONT_HEIGHT_MONO);
 		this->hscroll->SetCount(max_length + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT);
 	}
 
@@ -152,7 +150,7 @@ void TextfileWindow::SetupScrollbars()
 	int line_height = FONT_HEIGHT_MONO;
 	int y_offset = -this->vscroll->GetPosition();
 
-	for (uint i = 0; i < this->lines.Length(); i++) {
+	for (uint i = 0; i < this->lines.size(); i++) {
 		if (IsWidgetLowered(WID_TF_WRAPTEXT)) {
 			y_offset = DrawStringMultiLine(0, right - x, y_offset, bottom - y, this->lines[i], TC_WHITE, SA_TOP | SA_LEFT, false, FS_MONO);
 		} else {
@@ -184,7 +182,7 @@ void TextfileWindow::SetupScrollbars()
 
 /* virtual */ const char *TextfileWindow::NextString()
 {
-	if (this->search_iterator >= this->lines.Length()) return NULL;
+	if (this->search_iterator >= this->lines.size()) return nullptr;
 
 	return this->lines[this->search_iterator++];
 }
@@ -194,11 +192,13 @@ void TextfileWindow::SetupScrollbars()
 	return true;
 }
 
-/* virtual */ void TextfileWindow::SetFontNames(FreeTypeSettings *settings, const char *font_name)
+/* virtual */ void TextfileWindow::SetFontNames(FreeTypeSettings *settings, const char *font_name, const void *os_data)
 {
-#ifdef WITH_FREETYPE
+#if defined(WITH_FREETYPE) || defined(_WIN32)
 	strecpy(settings->mono.font, font_name, lastof(settings->mono.font));
-#endif /* WITH_FREETYPE */
+	free(settings->mono.os_handle);
+	settings->mono.os_handle = os_data;
+#endif
 }
 
 #if defined(WITH_ZLIB)
@@ -214,13 +214,13 @@ void TextfileWindow::SetupScrollbars()
  *              After the call, it contains the size of the uncompressed
  *              data.
  *
- * When decompressing fails, *bufp is set to NULL and *sizep to 0. The
+ * When decompressing fails, *bufp is set to nullptr and *sizep to 0. The
  * compressed buffer passed in is still freed in this case.
  */
 static void Gunzip(byte **bufp, size_t *sizep)
 {
 	static const int BLOCKSIZE  = 8192;
-	byte             *buf       = NULL;
+	byte             *buf       = nullptr;
 	size_t           alloc_size = 0;
 	z_stream         z;
 	int              res;
@@ -250,14 +250,14 @@ static void Gunzip(byte **bufp, size_t *sizep)
 		*sizep = alloc_size - z.avail_out;
 	} else {
 		/* Something went wrong */
-		*bufp = NULL;
+		*bufp = nullptr;
 		*sizep = 0;
 		free(buf);
 	}
 }
 #endif
 
-#if defined(WITH_LZMA)
+#if defined(WITH_LIBLZMA)
 
 /**
  * Do an in-memory xunzip operation. This works on a .xz or (legacy)
@@ -270,13 +270,13 @@ static void Gunzip(byte **bufp, size_t *sizep)
  *              After the call, it contains the size of the uncompressed
  *              data.
  *
- * When decompressing fails, *bufp is set to NULL and *sizep to 0. The
+ * When decompressing fails, *bufp is set to nullptr and *sizep to 0. The
  * compressed buffer passed in is still freed in this case.
  */
 static void Xunzip(byte **bufp, size_t *sizep)
 {
 	static const int BLOCKSIZE  = 8192;
-	byte             *buf       = NULL;
+	byte             *buf       = nullptr;
 	size_t           alloc_size = 0;
 	lzma_stream      z = LZMA_STREAM_INIT;
 	int              res;
@@ -304,7 +304,7 @@ static void Xunzip(byte **bufp, size_t *sizep)
 		*sizep = alloc_size - z.avail_out;
 	} else {
 		/* Something went wrong */
-		*bufp = NULL;
+		*bufp = nullptr;
 		*sizep = 0;
 		free(buf);
 	}
@@ -317,14 +317,14 @@ static void Xunzip(byte **bufp, size_t *sizep)
  */
 /* virtual */ void TextfileWindow::LoadTextfile(const char *textfile, Subdirectory dir)
 {
-	if (textfile == NULL) return;
+	if (textfile == nullptr) return;
 
-	this->lines.Clear();
+	this->lines.clear();
 
 	/* Get text from file */
 	size_t filesize;
 	FILE *handle = FioFOpenFile(textfile, "rb", dir, &filesize);
-	if (handle == NULL) return;
+	if (handle == nullptr) return;
 
 	this->text = ReallocT(this->text, filesize);
 	size_t read = fread(this->text, 1, filesize, handle);
@@ -332,9 +332,9 @@ static void Xunzip(byte **bufp, size_t *sizep)
 
 	if (read != filesize) return;
 
-#if defined(WITH_ZLIB) || defined(WITH_LZMA)
+#if defined(WITH_ZLIB) || defined(WITH_LIBLZMA)
 	const char *suffix = strrchr(textfile, '.');
-	if (suffix == NULL) return;
+	if (suffix == nullptr) return;
 #endif
 
 #if defined(WITH_ZLIB)
@@ -342,7 +342,7 @@ static void Xunzip(byte **bufp, size_t *sizep)
 	if (strcmp(suffix, ".gz") == 0) Gunzip((byte**)&this->text, &filesize);
 #endif
 
-#if defined(WITH_LZMA)
+#if defined(WITH_LIBLZMA)
 	/* In-place xunzip */
 	if (strcmp(suffix, ".xz") == 0) Xunzip((byte**)&this->text, &filesize);
 #endif
@@ -365,11 +365,11 @@ static void Xunzip(byte **bufp, size_t *sizep)
 	str_validate(p, this->text + filesize, SVS_REPLACE_WITH_QUESTION_MARK | SVS_ALLOW_NEWLINE);
 
 	/* Split the string on newlines. */
-	*this->lines.Append() = p;
+	this->lines.push_back(p);
 	for (; *p != '\0'; p++) {
 		if (*p == '\n') {
 			*p = '\0';
-			*this->lines.Append() = p + 1;
+			this->lines.push_back(p + 1);
 		}
 	}
 
@@ -381,7 +381,7 @@ static void Xunzip(byte **bufp, size_t *sizep)
  * @param type The type of the textfile to search for.
  * @param dir The subdirectory to search in.
  * @param filename The filename of the content to look for.
- * @return The path to the textfile, \c NULL otherwise.
+ * @return The path to the textfile, \c nullptr otherwise.
  */
 const char *GetTextfile(TextfileType type, Subdirectory dir, const char *filename)
 {
@@ -394,20 +394,20 @@ const char *GetTextfile(TextfileType type, Subdirectory dir, const char *filenam
 
 	const char *prefix = prefixes[type];
 
-	if (filename == NULL) return NULL;
+	if (filename == nullptr) return nullptr;
 
 	static char file_path[MAX_PATH];
 	strecpy(file_path, filename, lastof(file_path));
 
 	char *slash = strrchr(file_path, PATHSEPCHAR);
-	if (slash == NULL) return NULL;
+	if (slash == nullptr) return nullptr;
 
 	static const char * const exts[] = {
 		"txt",
 #if defined(WITH_ZLIB)
 		"txt.gz",
 #endif
-#if defined(WITH_LZMA)
+#if defined(WITH_LIBLZMA)
 		"txt.xz",
 #endif
 	};
@@ -422,5 +422,5 @@ const char *GetTextfile(TextfileType type, Subdirectory dir, const char *filenam
 		seprintf(slash + 1, lastof(file_path), "%s.%s", prefix, exts[i]);
 		if (FioCheckFileExists(file_path, dir)) return file_path;
 	}
-	return NULL;
+	return nullptr;
 }

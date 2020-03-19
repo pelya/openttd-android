@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -20,6 +18,7 @@
 #include "rail_gui.h"
 #include "linkgraph/linkgraph.h"
 #include "saveload/saveload.h"
+#include "newgrf_profiling.h"
 
 #include "safeguards.h"
 
@@ -28,6 +27,8 @@ Month     _cur_month;  ///< Current month (0..11)
 Date      _date;       ///< Current date in days (day counter)
 DateFract _date_fract; ///< Fractional part of the day.
 uint16 _tick_counter;  ///< Ever incrementing (and sometimes wrapping) tick counter for setting off various events
+
+int32 _old_ending_year_slv_105; ///< Old ending year for savegames before SLV_105
 
 /**
  * Set the date.
@@ -195,33 +196,26 @@ static void OnNewYear()
 	VehiclesYearlyLoop();
 	TownsYearlyLoop();
 	InvalidateWindowClassesData(WC_BUILD_STATION);
-#ifdef ENABLE_NETWORK
 	if (_network_server) NetworkServerYearlyLoop();
-#endif /* ENABLE_NETWORK */
 
 	if (_cur_year == _settings_client.gui.semaphore_build_before) ResetSignalVariant();
 
-	/* check if we reached end of the game */
-	if (_cur_year == ORIGINAL_END_YEAR) {
+	/* check if we reached end of the game (end of ending year) */
+	if (_cur_year == _settings_game.game_creation.ending_year + 1) {
 		ShowEndGameChart();
 	/* check if we reached the maximum year, decrement dates by a year */
 	} else if (_cur_year == MAX_YEAR + 1) {
-		Vehicle *v;
 		int days_this_year;
 
 		_cur_year--;
 		days_this_year = IsLeapYear(_cur_year) ? DAYS_IN_LEAP_YEAR : DAYS_IN_YEAR;
 		_date -= days_this_year;
-		FOR_ALL_VEHICLES(v) v->date_of_last_service -= days_this_year;
+		for (Vehicle *v : Vehicle::Iterate()) v->date_of_last_service -= days_this_year;
+		for (LinkGraph *lg : LinkGraph::Iterate()) lg->ShiftDates(-days_this_year);
 
-		LinkGraph *lg;
-		FOR_ALL_LINK_GRAPHS(lg) lg->ShiftDates(-days_this_year);
-
-#ifdef ENABLE_NETWORK
 		/* Because the _date wraps here, and text-messages expire by game-days, we have to clean out
 		 *  all of them if the date is set back, else those messages will hang for ever */
 		NetworkInitChatMessage();
-#endif /* ENABLE_NETWORK */
 	}
 
 	if (_settings_client.gui.auto_euro) CheckSwitchToEuro();
@@ -244,9 +238,7 @@ static void OnNewMonth()
 	IndustryMonthlyLoop();
 	SubsidyMonthlyLoop();
 	StationMonthlyLoop();
-#ifdef ENABLE_NETWORK
 	if (_network_server) NetworkServerMonthlyLoop();
-#endif /* ENABLE_NETWORK */
 }
 
 /**
@@ -254,9 +246,11 @@ static void OnNewMonth()
  */
 static void OnNewDay()
 {
-#ifdef ENABLE_NETWORK
+	if (!_newgrf_profilers.empty() && _newgrf_profile_end_date <= _date) {
+		NewGRFProfiler::FinishAll();
+	}
+
 	if (_network_server) NetworkServerDailyLoop();
-#endif /* ENABLE_NETWORK */
 
 	DisasterDailyLoop();
 	IndustryDailyLoop();

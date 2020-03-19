@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -23,6 +21,7 @@
 #include "safeguards.h"
 
 static const uint ICON_TOKEN_COUNT = 20;     ///< Maximum number of tokens in one command
+static const uint ICON_MAX_RECURSE = 10;     ///< Maximum number of recursion
 
 /* console parser */
 IConsoleCmd   *_iconsole_cmds;    ///< list of registered commands
@@ -32,11 +31,9 @@ FILE *_iconsole_output_file;
 
 void IConsoleInit()
 {
-	_iconsole_output_file = NULL;
-#ifdef ENABLE_NETWORK /* Initialize network only variables */
+	_iconsole_output_file = nullptr;
 	_redirect_console_to_client = INVALID_CLIENT_ID;
 	_redirect_console_to_admin  = INVALID_ADMIN_ID;
-#endif
 
 	IConsoleGUIInit();
 
@@ -45,14 +42,14 @@ void IConsoleInit()
 
 static void IConsoleWriteToLogFile(const char *string)
 {
-	if (_iconsole_output_file != NULL) {
+	if (_iconsole_output_file != nullptr) {
 		/* if there is an console output file ... also print it there */
 		const char *header = GetLogPrefix();
 		if ((strlen(header) != 0 && fwrite(header, strlen(header), 1, _iconsole_output_file) != 1) ||
 				fwrite(string, strlen(string), 1, _iconsole_output_file) != 1 ||
 				fwrite("\n", 1, 1, _iconsole_output_file) != 1) {
 			fclose(_iconsole_output_file);
-			_iconsole_output_file = NULL;
+			_iconsole_output_file = nullptr;
 			IConsolePrintF(CC_DEFAULT, "cannot write to log file");
 		}
 	}
@@ -60,10 +57,10 @@ static void IConsoleWriteToLogFile(const char *string)
 
 bool CloseConsoleLogIfActive()
 {
-	if (_iconsole_output_file != NULL) {
+	if (_iconsole_output_file != nullptr) {
 		IConsolePrintF(CC_DEFAULT, "file output complete");
 		fclose(_iconsole_output_file);
-		_iconsole_output_file = NULL;
+		_iconsole_output_file = nullptr;
 		return true;
 	}
 
@@ -90,7 +87,6 @@ void IConsolePrint(TextColour colour_code, const char *string)
 	assert(IsValidConsoleColour(colour_code));
 
 	char *str;
-#ifdef ENABLE_NETWORK
 	if (_redirect_console_to_client != INVALID_CLIENT_ID) {
 		/* Redirect the string to the client */
 		NetworkServerSendRcon(_redirect_console_to_client, colour_code, string);
@@ -101,7 +97,6 @@ void IConsolePrint(TextColour colour_code, const char *string)
 		NetworkServerSendAdminRcon(_redirect_console_to_admin, colour_code, string);
 		return;
 	}
-#endif
 
 	/* Create a copy of the string, strip if of colours and invalid
 	 * characters and (when applicable) assign it to the console buffer */
@@ -110,9 +105,7 @@ void IConsolePrint(TextColour colour_code, const char *string)
 	str_validate(str, str + strlen(str));
 
 	if (_network_dedicated) {
-#ifdef ENABLE_NETWORK
 		NetworkAdminConsole("console", str);
-#endif /* ENABLE_NETWORK */
 		fprintf(stdout, "%s%s\n", GetLogPrefix(), str);
 		fflush(stdout);
 		IConsoleWriteToLogFile(str);
@@ -209,22 +202,22 @@ bool GetArgumentInteger(uint32 *value, const char *arg)
 template<class T>
 void IConsoleAddSorted(T **base, T *item_new)
 {
-	if (*base == NULL) {
+	if (*base == nullptr) {
 		*base = item_new;
 		return;
 	}
 
-	T *item_before = NULL;
+	T *item_before = nullptr;
 	T *item = *base;
 	/* The list is alphabetically sorted, insert the new item at the correct location */
-	while (item != NULL) {
+	while (item != nullptr) {
 		if (strcmp(item->name, item_new->name) > 0) break; // insert here
 
 		item_before = item;
 		item = item->next;
 	}
 
-	if (item_before == NULL) {
+	if (item_before == nullptr) {
 		*base = item_new;
 	} else {
 		item_before->next = item_new;
@@ -257,7 +250,7 @@ void IConsoleCmdRegister(const char *name, IConsoleCmdProc *proc, IConsoleHook *
 {
 	IConsoleCmd *item_new = MallocT<IConsoleCmd>(1);
 	item_new->name = RemoveUnderscores(stredup(name));
-	item_new->next = NULL;
+	item_new->next = nullptr;
 	item_new->proc = proc;
 	item_new->hook = hook;
 
@@ -267,16 +260,16 @@ void IConsoleCmdRegister(const char *name, IConsoleCmdProc *proc, IConsoleHook *
 /**
  * Find the command pointed to by its string
  * @param name command to be found
- * @return return Cmdstruct of the found command, or NULL on failure
+ * @return return Cmdstruct of the found command, or nullptr on failure
  */
 IConsoleCmd *IConsoleCmdGet(const char *name)
 {
 	IConsoleCmd *item;
 
-	for (item = _iconsole_cmds; item != NULL; item = item->next) {
+	for (item = _iconsole_cmds; item != nullptr; item = item->next) {
 		if (strcmp(item->name, name) == 0) return item;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -286,7 +279,7 @@ IConsoleCmd *IConsoleCmdGet(const char *name)
  */
 void IConsoleAliasRegister(const char *name, const char *cmd)
 {
-	if (IConsoleAliasGet(name) != NULL) {
+	if (IConsoleAliasGet(name) != nullptr) {
 		IConsoleError("an alias with this name already exists; insertion aborted");
 		return;
 	}
@@ -295,7 +288,7 @@ void IConsoleAliasRegister(const char *name, const char *cmd)
 	char *cmd_aliased = stredup(cmd);
 	IConsoleAlias *item_new = MallocT<IConsoleAlias>(1);
 
-	item_new->next = NULL;
+	item_new->next = nullptr;
 	item_new->cmdline = cmd_aliased;
 	item_new->name = new_alias;
 
@@ -305,17 +298,17 @@ void IConsoleAliasRegister(const char *name, const char *cmd)
 /**
  * Find the alias pointed to by its string
  * @param name alias to be found
- * @return return Aliasstruct of the found alias, or NULL on failure
+ * @return return Aliasstruct of the found alias, or nullptr on failure
  */
 IConsoleAlias *IConsoleAliasGet(const char *name)
 {
 	IConsoleAlias *item;
 
-	for (item = _iconsole_aliases; item != NULL; item = item->next) {
+	for (item = _iconsole_aliases; item != nullptr; item = item->next) {
 		if (strcmp(item->name, name) == 0) return item;
 	}
 
-	return NULL;
+	return nullptr;
 }
 /**
  * An alias is just another name for a command, or for more commands
@@ -324,12 +317,17 @@ IConsoleAlias *IConsoleAliasGet(const char *name)
  * @param tokencount the number of parameters passed
  * @param *tokens are the parameters given to the original command (0 is the first param)
  */
-static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char *tokens[ICON_TOKEN_COUNT])
+static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char *tokens[ICON_TOKEN_COUNT], const uint recurse_count)
 {
 	char  alias_buffer[ICON_MAX_STREAMSIZE] = { '\0' };
 	char *alias_stream = alias_buffer;
 
 	DEBUG(console, 6, "Requested command is an alias; parsing...");
+
+	if (recurse_count > ICON_MAX_RECURSE) {
+		IConsoleError("Too many alias expansions, recursion limit reached. Aborting");
+		return;
+	}
 
 	for (const char *cmdptr = alias->cmdline; *cmdptr != '\0'; cmdptr++) {
 		switch (*cmdptr) {
@@ -338,7 +336,7 @@ static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char 
 				break;
 
 			case ';': // Cmd separator; execute previous and start new command
-				IConsoleCmdExec(alias_buffer);
+				IConsoleCmdExec(alias_buffer, recurse_count);
 
 				alias_stream = alias_buffer;
 				*alias_stream = '\0'; // Make sure the new command is terminated.
@@ -398,7 +396,7 @@ static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char 
 		}
 	}
 
-	IConsoleCmdExec(alias_buffer);
+	IConsoleCmdExec(alias_buffer, recurse_count);
 }
 
 /**
@@ -406,7 +404,7 @@ static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char 
  * individual tokens (separated by spaces), then execute it if possible
  * @param cmdstr string to be parsed and executed
  */
-void IConsoleCmdExec(const char *cmdstr)
+void IConsoleCmdExec(const char *cmdstr, const uint recurse_count)
 {
 	const char *cmdptr;
 	char *tokens[ICON_TOKEN_COUNT], tokenstream[ICON_MAX_STREAMSIZE];
@@ -484,7 +482,7 @@ void IConsoleCmdExec(const char *cmdstr)
 		}
 	}
 
-	for (uint i = 0; i < lengthof(tokens) && tokens[i] != NULL; i++) {
+	for (uint i = 0; i < lengthof(tokens) && tokens[i] != nullptr; i++) {
 		DEBUG(console, 8, "Token %d is: '%s'", i, tokens[i]);
 	}
 
@@ -495,12 +493,12 @@ void IConsoleCmdExec(const char *cmdstr)
 	 */
 	RemoveUnderscores(tokens[0]);
 	IConsoleCmd *cmd = IConsoleCmdGet(tokens[0]);
-	if (cmd != NULL) {
-		ConsoleHookResult chr = (cmd->hook == NULL ? CHR_ALLOW : cmd->hook(true));
+	if (cmd != nullptr) {
+		ConsoleHookResult chr = (cmd->hook == nullptr ? CHR_ALLOW : cmd->hook(true));
 		switch (chr) {
 			case CHR_ALLOW:
 				if (!cmd->proc(t_index, tokens)) { // index started with 0
-					cmd->proc(0, NULL); // if command failed, give help
+					cmd->proc(0, nullptr); // if command failed, give help
 				}
 				return;
 
@@ -511,8 +509,8 @@ void IConsoleCmdExec(const char *cmdstr)
 
 	t_index--;
 	IConsoleAlias *alias = IConsoleAliasGet(tokens[0]);
-	if (alias != NULL) {
-		IConsoleAliasExec(alias, t_index, &tokens[1]);
+	if (alias != nullptr) {
+		IConsoleAliasExec(alias, t_index, &tokens[1], recurse_count + 1);
 		return;
 	}
 

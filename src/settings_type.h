@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -114,8 +112,8 @@ struct GUISettings {
 	uint8  statusbar_pos;                    ///< position of statusbar, 0=left, 1=center, 2=right
 	uint8  window_snap_radius;               ///< windows snap at each other if closer than this
 	uint8  window_soft_limit;                ///< soft limit of maximum number of non-stickied non-vital windows (0 = no limit)
-	ZoomLevelByte zoom_min;                  ///< minimum zoom out level
-	ZoomLevelByte zoom_max;                  ///< maximum zoom out level
+	ZoomLevel zoom_min;                      ///< minimum zoom out level
+	ZoomLevel zoom_max;                      ///< maximum zoom out level
 	bool   disable_unsuitable_building;      ///< disable infrastructure building when no suitable vehicles are available
 	byte   autosave;                         ///< how often should we do autosaves?
 	byte   save_to_network;                  ///< backup all savegames to network
@@ -155,6 +153,7 @@ struct GUISettings {
 	uint8  graph_line_thickness;             ///< the thickness of the lines in the various graph guis
 	uint8  osk_activation;                   ///< Mouse gesture to trigger the OSK.
 	byte   starting_colour;                  ///< default color scheme for the company to start a new game with
+	bool   show_newgrf_name;                 ///< Show the name of the NewGRF in the build vehicle window
 
 	uint16 console_backlog_timeout;          ///< the minimum amount of time items should be in the console backlog before they will be removed in ~3 seconds granularity.
 	uint16 console_backlog_length;           ///< the minimum amount of items in the console backlog before items will be removed.
@@ -162,11 +161,9 @@ struct GUISettings {
 	uint8  station_gui_group_order;          ///< the order of grouping cargo entries in the station gui
 	uint8  station_gui_sort_by;              ///< sort cargo entries in the station gui by station name or amount
 	uint8  station_gui_sort_order;           ///< the sort order of entries in the station gui - ascending or descending
-#ifdef ENABLE_NETWORK
 	uint16 network_chat_box_width_pct;       ///< width of the chat box in percent
 	uint8  network_chat_box_height;          ///< height of the chat box in lines
 	uint16 network_chat_timeout;             ///< timeout of chat messages in seconds
-#endif
 
 	uint8  developer;                        ///< print non-fatal warnings in console (>= 1), copy debug output to console (== 2)
 	bool   show_date_in_logs;                ///< whether to show dates in console logs
@@ -192,7 +189,7 @@ struct SoundSettings {
 	bool   news_ticker;                      ///< Play a ticker sound when a news item is published.
 	bool   news_full;                        ///< Play sound effects associated to certain news types.
 	bool   new_year;                         ///< Play sound on new year, summarising the performance during the last year.
-	bool   confirm;                          ///< Play sound effect on succesful constructions or other actions.
+	bool   confirm;                          ///< Play sound effect on successful constructions or other actions.
 	bool   click_beep;                       ///< Beep on a random selection of buttons.
 	bool   disaster;                         ///< Play disaster and accident sounds.
 	bool   vehicle;                          ///< Play vehicle sound effects.
@@ -245,7 +242,6 @@ struct NewsSettings {
 
 /** All settings related to the network. */
 struct NetworkSettings {
-#ifdef ENABLE_NETWORK
 	uint16 sync_freq;                                     ///< how often do we check whether we are still in-sync
 	uint8  frame_freq;                                    ///< how often do we send commands to the clients
 	uint16 commands_per_frame;                            ///< how many commands may be sent each frame_freq frames?
@@ -285,14 +281,13 @@ struct NetworkSettings {
 	char   last_host[NETWORK_HOSTNAME_LENGTH];            ///< IP address of the last joined server
 	uint16 last_port;                                     ///< port of the last joined server
 	bool   no_http_content_downloads;                     ///< do not do content downloads over HTTP
-#else /* ENABLE_NETWORK */
-#endif
 };
 
 /** Settings related to the creation of games. */
 struct GameCreationSettings {
 	uint32 generation_seed;                  ///< noise seed for world generation
 	Year   starting_year;                    ///< starting date
+	Year   ending_year;                      ///< scoring end date
 	uint8  map_x;                            ///< X size of map
 	uint8  map_y;                            ///< Y size of map
 	byte   land_generator;                   ///< the landscape generator
@@ -352,12 +347,7 @@ struct AISettings {
 struct ScriptSettings {
 	uint8  settings_profile;                 ///< difficulty profile to set initial settings of scripts, esp. random AIs
 	uint32 script_max_opcode_till_suspend;   ///< max opcode calls till scripts will suspend
-};
-
-/** Settings related to the old pathfinder. */
-struct OPFSettings {
-	uint16 pf_maxlength;                     ///< maximum length when searching for a train route for new pathfinder
-	byte   pf_maxdepth;                      ///< maximum recursion depth when searching for a train route for new pathfinder
+	uint32 script_max_memory_megabytes;      ///< limit on memory a single script instance may have allocated
 };
 
 /** Settings related to the new pathfinder. */
@@ -426,6 +416,8 @@ struct YAPFSettings {
 	uint32 rail_longer_platform_per_tile_penalty;  ///< penalty for longer  station platform than train (per tile)
 	uint32 rail_shorter_platform_penalty;          ///< penalty for shorter station platform than train
 	uint32 rail_shorter_platform_per_tile_penalty; ///< penalty for shorter station platform than train (per tile)
+	uint32 ship_curve45_penalty;                   ///< penalty for 45-deg curve for ships
+	uint32 ship_curve90_penalty;                   ///< penalty for 90-deg curve for ships
 };
 
 /** Settings related to all pathfinders. */
@@ -446,7 +438,6 @@ struct PathfinderSettings {
 	byte   wait_for_pbs_path;                ///< how long to wait for a path reservation.
 	byte   path_backoff_interval;            ///< ticks between checks for a free path.
 
-	OPFSettings  opf;                        ///< pathfinder settings for the old pathfinder
 	NPFSettings  npf;                        ///< pathfinder settings for the new pathfinder
 	YAPFSettings yapf;                       ///< pathfinder settings for the yet another pathfinder
 };
@@ -489,6 +480,7 @@ struct EconomySettings {
 	bool   bribe;                            ///< enable bribing the local authority
 	bool   smooth_economy;                   ///< smooth economy
 	bool   allow_shares;                     ///< allow the buying/selling of shares
+	uint8  min_years_for_shares;             ///< minimum age of a company for it to trade shares
 	uint8  feeder_payment_share;             ///< percentage of leg payment to virtually pay in feeder systems
 	byte   dist_local_authority;             ///< distance for town local authority, default 20
 	bool   exclusive_rights;                 ///< allow buying exclusive rights
@@ -500,9 +492,10 @@ struct EconomySettings {
 	uint8  town_growth_rate;                 ///< town growth rate
 	uint8  larger_towns;                     ///< the number of cities to build. These start off larger and grow twice as fast
 	uint8  initial_city_size;                ///< multiplier for the initial size of the cities compared to towns
-	TownLayoutByte town_layout;              ///< select town layout, @see TownLayout
+	TownLayout town_layout;                  ///< select town layout, @see TownLayout
+	TownCargoGenMode town_cargogen_mode;     ///< algorithm for generating cargo from houses, @see TownCargoGenMode
 	bool   allow_town_roads;                 ///< towns are allowed to build roads (always allowed when generating world / in SE)
-	TownFoundingByte found_town;             ///< town founding, @see TownFounding
+	TownFounding found_town;                 ///< town founding.
 	bool   station_noise_level;              ///< build new airports when the town noise level is still within accepted limits
 	uint16 town_noise_population[3];         ///< population to base decision on noise evaluation (@see town_council_tolerance)
 	bool   allow_town_level_crossings;       ///< towns are allowed to build level crossings
@@ -510,16 +503,16 @@ struct EconomySettings {
 };
 
 struct LinkGraphSettings {
-	uint16 recalc_time;                         ///< time (in days) for recalculating each link graph component.
-	uint16 recalc_interval;                     ///< time (in days) between subsequent checks for link graphs to be calculated.
-	DistributionTypeByte distribution_pax;      ///< distribution type for passengers
-	DistributionTypeByte distribution_mail;     ///< distribution type for mail
-	DistributionTypeByte distribution_armoured; ///< distribution type for armoured cargo class
-	DistributionTypeByte distribution_default;  ///< distribution type for all other goods
-	uint8 accuracy;                             ///< accuracy when calculating things on the link graph. low accuracy => low running time
-	uint8 demand_size;                          ///< influence of supply ("station size") on the demand function
-	uint8 demand_distance;                      ///< influence of distance between stations on the demand function
-	uint8 short_path_saturation;                ///< percentage up to which short paths are saturated before saturating most capacious paths
+	uint16 recalc_time;                     ///< time (in days) for recalculating each link graph component.
+	uint16 recalc_interval;                 ///< time (in days) between subsequent checks for link graphs to be calculated.
+	DistributionType distribution_pax;      ///< distribution type for passengers
+	DistributionType distribution_mail;     ///< distribution type for mail
+	DistributionType distribution_armoured; ///< distribution type for armoured cargo class
+	DistributionType distribution_default;  ///< distribution type for all other goods
+	uint8 accuracy;                         ///< accuracy when calculating things on the link graph. low accuracy => low running time
+	uint8 demand_size;                      ///< influence of supply ("station size") on the demand function
+	uint8 demand_distance;                  ///< influence of distance between stations on the demand function
+	uint8 short_path_saturation;            ///< percentage up to which short paths are saturated before saturating most capacious paths
 
 	inline DistributionType GetDistributionType(CargoID cargo) const {
 		if (IsCargoInClass(cargo, CC_PASSENGERS)) return this->distribution_pax;
@@ -532,6 +525,7 @@ struct LinkGraphSettings {
 /** Settings related to stations. */
 struct StationSettings {
 	bool   modified_catchment;               ///< different-size catchment areas
+	bool   serve_neutral_industries;         ///< company stations can serve industries with attached neutral stations
 	bool   adjacent_stations;                ///< allow stations to be built directly adjacent to other stations
 	bool   distant_join_stations;            ///< allow to join non-adjacent stations
 	bool   never_expire_airports;            ///< never expire airports

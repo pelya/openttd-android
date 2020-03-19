@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -50,7 +48,7 @@ struct SelectGameWindow : public Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		this->SetWidgetLoweredState(WID_SGI_TEMPERATE_LANDSCAPE, _settings_newgame.game_creation.landscape == LT_TEMPERATE);
@@ -59,7 +57,7 @@ struct SelectGameWindow : public Window {
 		this->SetWidgetLoweredState(WID_SGI_TOYLAND_LANDSCAPE,   _settings_newgame.game_creation.landscape == LT_TOYLAND);
 	}
 
-	virtual void OnInit()
+	void OnInit() override
 	{
 		bool missing_sprites = _missing_extra_graphics > 0 && !IsReleasedVersion();
 		missing_sprites = false;
@@ -72,7 +70,7 @@ struct SelectGameWindow : public Window {
 		this->GetWidget<NWidgetStacked>(WID_SGI_TRANSLATION_SELECTION)->SetDisplayedPlane(missing_lang ? 0 : SZSP_NONE);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_SGI_BASESET:
@@ -87,7 +85,7 @@ struct SelectGameWindow : public Window {
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		StringID str = 0;
 		switch (widget) {
@@ -116,13 +114,11 @@ struct SelectGameWindow : public Window {
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
-#ifdef ENABLE_NETWORK
 		/* Do not create a network server when you (just) have closed one of the game
 		 * creation/load windows for the network server. */
 		if (IsInsideMM(widget, WID_SGI_GENERATE_GAME, WID_SGI_EDIT_SCENARIO + 1)) _is_network_server = false;
-#endif /* ENABLE_NETWORK */
 
 		switch (widget) {
 			case WID_SGI_GENERATE_GAME:
@@ -277,7 +273,7 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 };
 
 static WindowDesc _select_game_desc(
-	WDP_CENTER, NULL, 0, 0,
+	WDP_CENTER, nullptr, 0, 0,
 	WC_SELECT_GAME, WC_NONE,
 	0,
 	_nested_select_game_widgets, lengthof(_nested_select_game_widgets)
@@ -299,27 +295,19 @@ void AskExitGame()
 		SetDParam(0, STR_OSNAME_WINDOWS);
 #elif defined(__APPLE__)
 		SetDParam(0, STR_OSNAME_OSX);
-#elif defined(__BEOS__)
-		SetDParam(0, STR_OSNAME_BEOS);
 #elif defined(__HAIKU__)
 		SetDParam(0, STR_OSNAME_HAIKU);
-#elif defined(__MORPHOS__)
-		SetDParam(0, STR_OSNAME_MORPHOS);
-#elif defined(__AMIGA__)
-		SetDParam(0, STR_OSNAME_AMIGAOS);
 #elif defined(__OS2__)
 		SetDParam(0, STR_OSNAME_OS2);
 #elif defined(SUNOS)
 		SetDParam(0, STR_OSNAME_SUNOS);
-#elif defined(DOS)
-		SetDParam(0, STR_OSNAME_DOS);
 #else
 		SetDParam(0, STR_OSNAME_UNIX);
 #endif
 	ShowQuery(
 		STR_QUIT_CAPTION,
 		STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD,
-		NULL,
+		nullptr,
 		AskExitGameCallback
 	);
 }
@@ -338,7 +326,7 @@ void AskExitToGameMenu()
 	ShowQuery(
 		STR_ABANDON_GAME_CAPTION,
 		(_game_mode != GM_EDITOR) ? STR_ABANDON_GAME_QUERY : STR_ABANDON_SCENARIO_QUERY,
-		NULL,
+		nullptr,
 		AskExitToGameMenuCallback
 	);
 }

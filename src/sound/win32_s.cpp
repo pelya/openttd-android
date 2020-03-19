@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -20,6 +18,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include "../os/windows/win32.h"
+#include "../thread.h"
 
 #include "../safeguards.h"
 
@@ -42,19 +41,19 @@ static void PrepareHeader(WAVEHDR *hdr)
 
 static DWORD WINAPI SoundThread(LPVOID arg)
 {
-	SetWin32ThreadName(-1, "ottd:win-sound");
+	SetCurrentThreadName("ottd:win-sound");
 
 	do {
 		for (WAVEHDR *hdr = _wave_hdr; hdr != endof(_wave_hdr); hdr++) {
 			if ((hdr->dwFlags & WHDR_INQUEUE) != 0) continue;
 			MxMixSamples(hdr->lpData, hdr->dwBufferLength / 4);
 			if (waveOutWrite(_waveout, hdr, sizeof(WAVEHDR)) != MMSYSERR_NOERROR) {
-				MessageBox(NULL, _T("Sounds are disabled until restart."), _T("waveOutWrite failed"), MB_ICONINFORMATION);
+				MessageBox(nullptr, _T("Sounds are disabled until restart."), _T("waveOutWrite failed"), MB_ICONINFORMATION);
 				return 0;
 			}
 		}
 		WaitForSingleObject(_event, INFINITE);
-	} while (_waveout != NULL);
+	} while (_waveout != nullptr);
 
 	return 0;
 }
@@ -74,7 +73,7 @@ const char *SoundDriver_Win32::Start(const char * const *parm)
 	_bufsize = min(_bufsize, UINT16_MAX);
 
 	try {
-		if (NULL == (_event = CreateEvent(NULL, FALSE, FALSE, NULL))) throw "Failed to create event";
+		if (nullptr == (_event = CreateEvent(nullptr, FALSE, FALSE, nullptr))) throw "Failed to create event";
 
 		if (waveOutOpen(&_waveout, WAVE_MAPPER, &wfex, (DWORD_PTR)_event, 0, CALLBACK_EVENT) != MMSYSERR_NOERROR) throw "waveOutOpen failed";
 
@@ -83,13 +82,13 @@ const char *SoundDriver_Win32::Start(const char * const *parm)
 		PrepareHeader(&_wave_hdr[0]);
 		PrepareHeader(&_wave_hdr[1]);
 
-		if (NULL == (_thread = CreateThread(NULL, 8192, SoundThread, 0, 0, &_threadId))) throw "Failed to create thread";
+		if (nullptr == (_thread = CreateThread(nullptr, 8192, SoundThread, 0, 0, &_threadId))) throw "Failed to create thread";
 	} catch (const char *error) {
 		this->Stop();
 		return error;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void SoundDriver_Win32::Stop()
@@ -97,7 +96,7 @@ void SoundDriver_Win32::Stop()
 	HWAVEOUT waveout = _waveout;
 
 	/* Stop the sound thread. */
-	_waveout = NULL;
+	_waveout = nullptr;
 	SetEvent(_event);
 	WaitForSingleObject(_thread, INFINITE);
 

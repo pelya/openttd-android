@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -22,9 +20,9 @@
 
 #if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 /** Cached current locale. */
-static CFLocaleRef _osx_locale = NULL;
+static CFAutoRelease<CFLocaleRef> _osx_locale;
 /** CoreText cache for font information, cleared when OTTD changes fonts. */
-static CTFontRef _font_cache[FS_END];
+static CFAutoRelease<CTFontRef> _font_cache[FS_END];
 
 
 /**
@@ -36,7 +34,7 @@ private:
 	ptrdiff_t length;
 	const FontMap& font_map;
 
-	CTTypesetterRef typesetter;
+	CFAutoRelease<CTTypesetterRef> typesetter;
 
 	CFIndex cur_offset = 0; ///< Offset from the start of the current run from where to output.
 
@@ -53,64 +51,59 @@ public:
 
 	public:
 		CoreTextVisualRun(CTRunRef run, Font *font, const CoreTextParagraphLayoutFactory::CharType *buff);
+		CoreTextVisualRun(CoreTextVisualRun &&other) = default;
 
-		virtual const GlyphID *GetGlyphs() const { return &this->glyphs[0]; }
-		virtual const float *GetPositions() const { return &this->positions[0]; }
-		virtual const int *GetGlyphToCharMap() const { return &this->glyph_to_char[0]; }
+		const GlyphID *GetGlyphs() const override { return &this->glyphs[0]; }
+		const float *GetPositions() const override { return &this->positions[0]; }
+		const int *GetGlyphToCharMap() const override { return &this->glyph_to_char[0]; }
 
-		virtual const Font *GetFont() const { return this->font;  }
-		virtual int GetLeading() const { return this->font->fc->GetHeight(); }
-		virtual int GetGlyphCount() const { return (int)this->glyphs.size(); }
+		const Font *GetFont() const override { return this->font;  }
+		int GetLeading() const override { return this->font->fc->GetHeight(); }
+		int GetGlyphCount() const override { return (int)this->glyphs.size(); }
 		int GetAdvance() const { return this->total_advance; }
 	};
 
 	/** A single line worth of VisualRuns. */
-	class CoreTextLine : public AutoDeleteSmallVector<CoreTextVisualRun *, 4>, public ParagraphLayouter::Line {
+	class CoreTextLine : public std::vector<CoreTextVisualRun>, public ParagraphLayouter::Line {
 	public:
-		CoreTextLine(CTLineRef line, const FontMap &fontMapping, const CoreTextParagraphLayoutFactory::CharType *buff)
+		CoreTextLine(CFAutoRelease<CTLineRef> line, const FontMap &fontMapping, const CoreTextParagraphLayoutFactory::CharType *buff)
 		{
-			CFArrayRef runs = CTLineGetGlyphRuns(line);
+			CFArrayRef runs = CTLineGetGlyphRuns(line.get());
 			for (CFIndex i = 0; i < CFArrayGetCount(runs); i++) {
 				CTRunRef run = (CTRunRef)CFArrayGetValueAtIndex(runs, i);
 
 				/* Extract font information for this run. */
 				CFRange chars = CTRunGetStringRange(run);
-				FontMap::const_iterator map = fontMapping.Begin();
-				while (map < fontMapping.End() - 1 && map->first <= chars.location) map++;
+				auto map = fontMapping.begin();
+				while (map < fontMapping.end() - 1 && map->first <= chars.location) map++;
 
-				*this->Append() = new CoreTextVisualRun(run, map->second, buff);
+				this->emplace_back(run, map->second, buff);
 			}
-			CFRelease(line);
 		}
 
-		virtual int GetLeading() const;
-		virtual int GetWidth() const;
-		virtual int CountRuns() const { return this->Length();  }
-		virtual const VisualRun *GetVisualRun(int run) const { return *this->Get(run);  }
+		int GetLeading() const override;
+		int GetWidth() const override;
+		int CountRuns() const override { return this->size(); }
+		const VisualRun &GetVisualRun(int run) const override { return this->at(run);  }
 
-		int GetInternalCharLength(WChar c) const
+		int GetInternalCharLength(WChar c) const override
 		{
 			/* CoreText uses UTF-16 internally which means we need to account for surrogate pairs. */
 			return c >= 0x010000U ? 2 : 1;
 		}
 	};
 
-	CoreTextParagraphLayout(CTTypesetterRef typesetter, const CoreTextParagraphLayoutFactory::CharType *buffer, ptrdiff_t len, const FontMap &fontMapping) : text_buffer(buffer), length(len), font_map(fontMapping), typesetter(typesetter)
+	CoreTextParagraphLayout(CFAutoRelease<CTTypesetterRef> typesetter, const CoreTextParagraphLayoutFactory::CharType *buffer, ptrdiff_t len, const FontMap &fontMapping) : text_buffer(buffer), length(len), font_map(fontMapping), typesetter(std::move(typesetter))
 	{
 		this->Reflow();
 	}
 
-	virtual ~CoreTextParagraphLayout()
-	{
-		CFRelease(this->typesetter);
-	}
-
-	virtual void Reflow()
+	void Reflow() override
 	{
 		this->cur_offset = 0;
 	}
 
-	virtual const Line *NextLine(int max_width);
+	std::unique_ptr<const Line> NextLine(int max_width) override;
 };
 
 
@@ -124,82 +117,78 @@ static CGFloat SpriteFontGetWidth(void *ref_con)
 }
 
 static CTRunDelegateCallbacks _sprite_font_callback = {
-	kCTRunDelegateCurrentVersion, NULL, NULL, NULL,
+	kCTRunDelegateCurrentVersion, nullptr, nullptr, nullptr,
 	&SpriteFontGetWidth
 };
 
 /* static */ ParagraphLayouter *CoreTextParagraphLayoutFactory::GetParagraphLayout(CharType *buff, CharType *buff_end, FontMap &fontMapping)
 {
-	if (!MacOSVersionIsAtLeast(10, 5, 0)) return NULL;
+	if (!MacOSVersionIsAtLeast(10, 5, 0)) return nullptr;
 
 	/* Can't layout an empty string. */
 	ptrdiff_t length = buff_end - buff;
-	if (length == 0) return NULL;
+	if (length == 0) return nullptr;
 
 	/* Can't layout our in-built sprite fonts. */
-	for (FontMap::const_iterator i = fontMapping.Begin(); i != fontMapping.End(); i++) {
-		if (i->second->fc->IsBuiltInFont()) return NULL;
+	for (const auto &i : fontMapping) {
+		if (i.second->fc->IsBuiltInFont()) return nullptr;
 	}
 
 	/* Make attributed string with embedded font information. */
-	CFMutableAttributedStringRef str = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-	CFAttributedStringBeginEditing(str);
+	CFAutoRelease<CFMutableAttributedStringRef> str(CFAttributedStringCreateMutable(kCFAllocatorDefault, 0));
+	CFAttributedStringBeginEditing(str.get());
 
-	CFStringRef base = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, buff, length, kCFAllocatorNull);
-	CFAttributedStringReplaceString(str, CFRangeMake(0, 0), base);
-	CFRelease(base);
+	CFAutoRelease<CFStringRef> base(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, buff, length, kCFAllocatorNull));
+	CFAttributedStringReplaceString(str.get(), CFRangeMake(0, 0), base.get());
 
 	/* Apply font and colour ranges to our string. This is important to make sure
 	 * that we get proper glyph boundaries on style changes. */
 	int last = 0;
-	for (FontMap::const_iterator i = fontMapping.Begin(); i != fontMapping.End(); i++) {
-		if (i->first - last == 0) continue;
+	for (const auto &i : fontMapping) {
+		if (i.first - last == 0) continue;
 
-		if (_font_cache[i->second->fc->GetSize()] == NULL) {
+		if (!_font_cache[i.second->fc->GetSize()]) {
 			/* Cache font information. */
-			CFStringRef font_name = CFStringCreateWithCString(kCFAllocatorDefault, i->second->fc->GetFontName(), kCFStringEncodingUTF8);
-			_font_cache[i->second->fc->GetSize()] = CTFontCreateWithName(font_name, i->second->fc->GetFontSize(), NULL);
-			CFRelease(font_name);
+			CFAutoRelease<CFStringRef> font_name(CFStringCreateWithCString(kCFAllocatorDefault, i.second->fc->GetFontName(), kCFStringEncodingUTF8));
+			_font_cache[i.second->fc->GetSize()].reset(CTFontCreateWithName(font_name.get(), i.second->fc->GetFontSize(), nullptr));
 		}
-		CFAttributedStringSetAttribute(str, CFRangeMake(last, i->first - last), kCTFontAttributeName, _font_cache[i->second->fc->GetSize()]);
+		CFAttributedStringSetAttribute(str.get(), CFRangeMake(last, i.first - last), kCTFontAttributeName, _font_cache[i.second->fc->GetSize()].get());
 
-		CGColorRef color = CGColorCreateGenericGray((uint8)i->second->colour / 255.0f, 1.0f); // We don't care about the real colours, just that they are different.
-		CFAttributedStringSetAttribute(str, CFRangeMake(last, i->first - last), kCTForegroundColorAttributeName, color);
+		CGColorRef color = CGColorCreateGenericGray((uint8)i.second->colour / 255.0f, 1.0f); // We don't care about the real colours, just that they are different.
+		CFAttributedStringSetAttribute(str.get(), CFRangeMake(last, i.first - last), kCTForegroundColorAttributeName, color);
 		CGColorRelease(color);
 
 		/* Install a size callback for our special sprite glyphs. */
-		for (ssize_t c = last; c < i->first; c++) {
+		for (ssize_t c = last; c < i.first; c++) {
 			if (buff[c] >= SCC_SPRITE_START && buff[c] <= SCC_SPRITE_END) {
-				CTRunDelegateRef del = CTRunDelegateCreate(&_sprite_font_callback, (void *)(size_t)(buff[c] | (i->second->fc->GetSize() << 24)));
-				CFAttributedStringSetAttribute(str, CFRangeMake(c, 1), kCTRunDelegateAttributeName, del);
-				CFRelease(del);
+				CFAutoRelease<CTRunDelegateRef> del(CTRunDelegateCreate(&_sprite_font_callback, (void *)(size_t)(buff[c] | (i.second->fc->GetSize() << 24))));
+				CFAttributedStringSetAttribute(str.get(), CFRangeMake(c, 1), kCTRunDelegateAttributeName, del.get());
 			}
 		}
 
-		last = i->first;
+		last = i.first;
 	}
-	CFAttributedStringEndEditing(str);
+	CFAttributedStringEndEditing(str.get());
 
 	/* Create and return typesetter for the string. */
-	CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(str);
-	CFRelease(str);
+	CFAutoRelease<CTTypesetterRef> typesetter(CTTypesetterCreateWithAttributedString(str.get()));
 
-	return typesetter != NULL ? new CoreTextParagraphLayout(typesetter, buff, length, fontMapping) : NULL;
+	return typesetter ? new CoreTextParagraphLayout(std::move(typesetter), buff, length, fontMapping) : nullptr;
 }
 
-/* virtual */ const CoreTextParagraphLayout::Line *CoreTextParagraphLayout::NextLine(int max_width)
+/* virtual */ std::unique_ptr<const ParagraphLayouter::Line> CoreTextParagraphLayout::NextLine(int max_width)
 {
-	if (this->cur_offset >= this->length) return NULL;
+	if (this->cur_offset >= this->length) return nullptr;
 
 	/* Get line break position, trying word breaking first and breaking somewhere if that doesn't work. */
-	CFIndex len = CTTypesetterSuggestLineBreak(this->typesetter, this->cur_offset, max_width);
-	if (len <= 0) len = CTTypesetterSuggestClusterBreak(this->typesetter, this->cur_offset, max_width);
+	CFIndex len = CTTypesetterSuggestLineBreak(this->typesetter.get(), this->cur_offset, max_width);
+	if (len <= 0) len = CTTypesetterSuggestClusterBreak(this->typesetter.get(), this->cur_offset, max_width);
 
 	/* Create line. */
-	CTLineRef line = CTTypesetterCreateLine(this->typesetter, CFRangeMake(this->cur_offset, len));
+	CFAutoRelease<CTLineRef> line(CTTypesetterCreateLine(this->typesetter.get(), CFRangeMake(this->cur_offset, len)));
 	this->cur_offset += len;
 
-	return line != NULL ? new CoreTextLine(line, this->font_map, this->text_buffer) : NULL;
+	return std::unique_ptr<const Line>(line ? new CoreTextLine(std::move(line), this->font_map, this->text_buffer) : nullptr);
 }
 
 CoreTextParagraphLayout::CoreTextVisualRun::CoreTextVisualRun(CTRunRef run, Font *font, const CoreTextParagraphLayoutFactory::CharType *buff) : font(font)
@@ -232,7 +221,7 @@ CoreTextParagraphLayout::CoreTextVisualRun::CoreTextVisualRun(CTRunRef run, Font
 			this->positions[i * 2 + 1] = pts[i].y;
 		}
 	}
-	this->total_advance = (int)CTRunGetTypographicBounds(run, CFRangeMake(0, 0), NULL, NULL, NULL);
+	this->total_advance = (int)CTRunGetTypographicBounds(run, CFRangeMake(0, 0), nullptr, nullptr, nullptr);
 	this->positions[this->glyphs.size() * 2] = this->positions[0] + this->total_advance;
 }
 
@@ -243,8 +232,8 @@ CoreTextParagraphLayout::CoreTextVisualRun::CoreTextVisualRun(CTRunRef run, Font
 int CoreTextParagraphLayout::CoreTextLine::GetLeading() const
 {
 	int leading = 0;
-	for (const CoreTextVisualRun * const *run = this->Begin(); run != this->End(); run++) {
-		leading = max(leading, (*run)->GetLeading());
+	for (const auto &run : *this) {
+		leading = max(leading, run.GetLeading());
 	}
 
 	return leading;
@@ -256,11 +245,11 @@ int CoreTextParagraphLayout::CoreTextLine::GetLeading() const
  */
 int CoreTextParagraphLayout::CoreTextLine::GetWidth() const
 {
-	if (this->Length() == 0) return 0;
+	if (this->size() == 0) return 0;
 
 	int total_width = 0;
-	for (const CoreTextVisualRun * const *run = this->Begin(); run != this->End(); run++) {
-		total_width += (*run)->GetAdvance();
+	for (const auto &run : *this) {
+		total_width += run.GetAdvance();
 	}
 
 	return total_width;
@@ -270,10 +259,7 @@ int CoreTextParagraphLayout::CoreTextLine::GetWidth() const
 /** Delete CoreText font reference for a specific font size. */
 void MacOSResetScriptCache(FontSize size)
 {
-	if (_font_cache[size] != NULL) {
-		CFRelease(_font_cache[size]);
-		_font_cache[size] = NULL;
-	}
+	_font_cache[size].reset();
 }
 
 /** Store current language locale as a CoreFounation locale. */
@@ -281,11 +267,8 @@ void MacOSSetCurrentLocaleName(const char *iso_code)
 {
 	if (!MacOSVersionIsAtLeast(10, 5, 0)) return;
 
-	if (_osx_locale != NULL) CFRelease(_osx_locale);
-
-	CFStringRef iso = CFStringCreateWithCString(kCFAllocatorNull, iso_code, kCFStringEncodingUTF8);
-	_osx_locale = CFLocaleCreate(kCFAllocatorDefault, iso);
-	CFRelease(iso);
+	CFAutoRelease<CFStringRef> iso(CFStringCreateWithCString(kCFAllocatorDefault, iso_code, kCFStringEncodingUTF8));
+	_osx_locale.reset(CFLocaleCreate(kCFAllocatorDefault, iso.get()));
 }
 
 /**
@@ -302,15 +285,13 @@ int MacOSStringCompare(const char *s1, const char *s2)
 
 	CFStringCompareFlags flags = kCFCompareCaseInsensitive | kCFCompareNumerically | kCFCompareLocalized | kCFCompareWidthInsensitive | kCFCompareForcedOrdering;
 
-	CFStringRef cf1 = CFStringCreateWithCString(kCFAllocatorDefault, s1, kCFStringEncodingUTF8);
-	CFStringRef cf2 = CFStringCreateWithCString(kCFAllocatorDefault, s2, kCFStringEncodingUTF8);
+	CFAutoRelease<CFStringRef> cf1(CFStringCreateWithCString(kCFAllocatorDefault, s1, kCFStringEncodingUTF8));
+	CFAutoRelease<CFStringRef> cf2(CFStringCreateWithCString(kCFAllocatorDefault, s2, kCFStringEncodingUTF8));
 
-	CFComparisonResult res = CFStringCompareWithOptionsAndLocale(cf1, cf2, CFRangeMake(0, CFStringGetLength(cf1)), flags, _osx_locale);
+	/* If any CFString could not be created (e.g., due to UTF8 invalid chars), return OS unsupported functionality */
+	if (cf1 == nullptr || cf2 == nullptr) return 0;
 
-	CFRelease(cf1);
-	CFRelease(cf2);
-
-	return (int)res + 2;
+	return (int)CFStringCompareWithOptionsAndLocale(cf1.get(), cf2.get(), CFRangeMake(0, CFStringGetLength(cf1.get())), flags, _osx_locale.get()) + 2;
 }
 
 
@@ -345,30 +326,27 @@ int MacOSStringCompare(const char *s1, const char *s2)
 	this->str_info.resize(utf16_to_utf8.size());
 
 	if (utf16_str.size() > 0) {
-		CFStringRef str = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, &utf16_str[0], utf16_str.size(), kCFAllocatorNull);
+		CFAutoRelease<CFStringRef> str(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, &utf16_str[0], utf16_str.size(), kCFAllocatorNull));
 
 		/* Get cluster breaks. */
-		for (CFIndex i = 0; i < CFStringGetLength(str); ) {
-			CFRange r = CFStringGetRangeOfComposedCharactersAtIndex(str, i);
+		for (CFIndex i = 0; i < CFStringGetLength(str.get()); ) {
+			CFRange r = CFStringGetRangeOfComposedCharactersAtIndex(str.get(), i);
 			this->str_info[r.location].char_stop = true;
 
 			i += r.length;
 		}
 
 		/* Get word breaks. */
-		CFStringTokenizerRef tokenizer = CFStringTokenizerCreate(kCFAllocatorDefault, str, CFRangeMake(0, CFStringGetLength(str)), kCFStringTokenizerUnitWordBoundary, _osx_locale);
+		CFAutoRelease<CFStringTokenizerRef> tokenizer(CFStringTokenizerCreate(kCFAllocatorDefault, str.get(), CFRangeMake(0, CFStringGetLength(str.get())), kCFStringTokenizerUnitWordBoundary, _osx_locale.get()));
 
 		CFStringTokenizerTokenType tokenType = kCFStringTokenizerTokenNone;
-		while ((tokenType = CFStringTokenizerAdvanceToNextToken(tokenizer)) != kCFStringTokenizerTokenNone) {
+		while ((tokenType = CFStringTokenizerAdvanceToNextToken(tokenizer.get())) != kCFStringTokenizerTokenNone) {
 			/* Skip tokens that are white-space or punctuation tokens. */
 			if ((tokenType & kCFStringTokenizerTokenHasNonLettersMask) != kCFStringTokenizerTokenHasNonLettersMask) {
-				CFRange r = CFStringTokenizerGetCurrentTokenRange(tokenizer);
+				CFRange r = CFStringTokenizerGetCurrentTokenRange(tokenizer.get());
 				this->str_info[r.location].word_stop = true;
 			}
 		}
-
-		CFRelease(tokenizer);
-		CFRelease(str);
 	}
 
 	/* End-of-string is always a valid stopping point. */
@@ -424,7 +402,7 @@ int MacOSStringCompare(const char *s1, const char *s2)
 
 /* static */ StringIterator *OSXStringIterator::Create()
 {
-	if (!MacOSVersionIsAtLeast(10, 5, 0)) return NULL;
+	if (!MacOSVersionIsAtLeast(10, 5, 0)) return nullptr;
 
 	return new OSXStringIterator();
 }
@@ -440,11 +418,11 @@ int MacOSStringCompare(const char *s1, const char *s2)
 
 /* static */ StringIterator *OSXStringIterator::Create()
 {
-	return NULL;
+	return nullptr;
 }
 
 /* static */ ParagraphLayouter *CoreTextParagraphLayoutFactory::GetParagraphLayout(CharType *buff, CharType *buff_end, FontMap &fontMapping)
 {
-	return NULL;
+	return nullptr;
 }
 #endif /* (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5) */

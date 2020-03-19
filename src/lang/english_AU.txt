@@ -10,8 +10,6 @@
 ##grflangid 0x3d
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -463,9 +461,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toggle console
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Game script debug
 STR_ABOUT_MENU_SCREENSHOT                                       :Screenshot
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Zoomed in screenshot
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Default zoom screenshot
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Whole map screenshot
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :About 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Sprite aligner
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Toggle bounding boxes
@@ -635,9 +630,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Custom 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Music Volume
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Effects Volume
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -848,6 +840,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Autorene
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}New {STRING} now available!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}New {STRING} now available!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} no longer accepts {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} no longer accepts {STRING} or {STRING}
@@ -1663,7 +1656,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Cargo d
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Competitors
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Computer players
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Recommended)
 
@@ -1744,13 +1736,9 @@ STR_QUIT_NO                                                     :{BLACK}No
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2375,6 +2363,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Build ro
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Build tramway tunnel. Shift toggles building/showing cost estimate
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Toggle build/remove for road construction
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Toggle build/remove for tramway construction
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Road Depot Orientation
@@ -3227,8 +3216,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Rail pieces:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signals
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Road pieces:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Road
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tramway
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Water tiles:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Canals
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stations:
@@ -3239,8 +3226,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industries
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- None -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% transported)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% transported)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Industry names - click on name to centre main view on industry. Ctrl+Click opens a new viewport on industry location
 
@@ -3302,6 +3287,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Ungrouped road 
 STR_GROUP_DEFAULT_SHIPS                                         :Ungrouped ships
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Ungrouped aircraft
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Groups - click on a group to list all vehicles of this group. Drag and drop groups to arrange hierarchy.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Click to create a group
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Delete the selected group
@@ -3323,10 +3309,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :New Electric Ra
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :New Monorail Vehicles
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :New Maglev Vehicles
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :New Rail Vehicles
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :New Road Vehicles
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :New Rail Vehicles
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :New Ships
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :New Aircraft
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Cost: {GOLD}{CURRENCY_LONG}{BLACK} Weight: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Speed: {GOLD}{VELOCITY}{BLACK} Power: {GOLD}{POWER}
@@ -3359,10 +3348,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Buy Vehi
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Buy Ship
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Buy Aircraft
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Buy the highlighted train vehicle. Shift+Click shows estimated cost without purchase
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Buy the highlighted road vehicle. Shift+Click shows estimated cost without purchase
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Buy the highlighted ship. Shift+Click shows estimated cost without purchase
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Buy the highlighted aircraft. Shift+Click shows estimated cost without purchase
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Rename
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Rename
@@ -3460,12 +3451,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}You are
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Message from vehicle manufacturer
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}We have just designed a new {STRING} - would you be interested in a year's exclusive use of this vehicle, so we can see how it performs before making it universally available?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :railway locomotive
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :road vehicle
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :aircraft
-STR_ENGINE_PREVIEW_SHIP                                         :ship
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :monorail locomotive
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :maglev locomotive
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :road vehicle
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :aircraft
+STR_ENGINE_PREVIEW_SHIP                                         :ship
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Cost: {CURRENCY_LONG} Weight: {WEIGHT_SHORT}{}Speed: {VELOCITY}  Power: {POWER}{}Running Cost: {CURRENCY_LONG}/yr{}Capacity: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Cost: {CURRENCY_LONG} Weight: {WEIGHT_SHORT}{}Speed: {VELOCITY}  Power: {POWER}  Max. T.E.: {6:FORCE}{}Running Cost: {4:CURRENCY_LONG}/yr{}Capacity: {5:CARGO_LONG}
@@ -3502,6 +3496,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Rail Vehicles
 STR_REPLACE_ELRAIL_VEHICLES                                     :Electrified Rail Vehicles
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monorail Vehicles
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev Vehicles
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Wagon removal: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Make autoreplace keep the length of a train the same by removing wagons (starting at the front), if replacing the engine would make the train longer
@@ -3950,6 +3945,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Select h
 STR_AI_LIST_CANCEL                                              :{BLACK}Cancel
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Don't change the script
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4220,7 +4216,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Must rem
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}No suitable railway track
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Must remove railway track first
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Road is one way or blocked
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Level crossings not allowed for this rail type
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Level crossings not allowed for this rail type
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Can't build signals here...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Can't build railway track here...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Can't remove railway track from here...

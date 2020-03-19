@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -29,12 +27,12 @@ struct LangString {
 	char *name;            ///< Name of the string.
 	char *english;         ///< English text.
 	char *translated;      ///< Translated text.
-	uint16 hash_next;      ///< Next hash entry.
-	uint16 index;          ///< The index in the language file.
+	size_t hash_next;      ///< Next hash entry.
+	size_t index;          ///< The index in the language file.
 	int line;              ///< Line of string in source-file.
 	Case *translated_case; ///< Cases of the translation.
 
-	LangString(const char *name, const char *english, int index, int line);
+	LangString(const char *name, const char *english, size_t index, int line);
 	~LangString();
 	void FreeTranslation();
 };
@@ -42,10 +40,10 @@ struct LangString {
 /** Information about the currently known strings. */
 struct StringData {
 	LangString **strings; ///< Array of all known strings.
-	uint16 *hash_heads;   ///< Hash table for the strings.
+	size_t *hash_heads;   ///< Hash table for the strings.
 	size_t tabs;          ///< The number of 'tabs' of strings.
 	size_t max_strings;   ///< The maximum number of strings.
-	int next_string_id;   ///< The next string ID to allocate.
+	size_t next_string_id;///< The next string ID to allocate.
 
 	StringData(size_t tabs);
 	~StringData();
@@ -73,7 +71,7 @@ struct StringReader {
 	 * Read a single line from the source of strings.
 	 * @param buffer The buffer to read the data in to.
 	 * @param last   The last element in the buffer.
-	 * @return The buffer, or NULL if at the end of the file.
+	 * @return The buffer, or nullptr if at the end of the file.
 	 */
 	virtual char *ReadLine(char *buffer, const char *last) = 0;
 

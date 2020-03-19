@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -10,8 +8,6 @@
 /** @file network_chat_gui.cpp GUI for handling chat messages. */
 
 #include <stdarg.h> /* va_list */
-
-#ifdef ENABLE_NETWORK
 
 #include "../stdafx.h"
 #include "../strings_func.h"
@@ -48,7 +44,7 @@ struct ChatMessage {
 };
 
 /* used for chat window */
-static ChatMessage *_chatmsg_list = NULL; ///< The actual chat message list.
+static ChatMessage *_chatmsg_list = nullptr; ///< The actual chat message list.
 static bool _chatmessage_dirty = false;   ///< Does the chat message need repainting?
 static bool _chatmessage_visible = false; ///< Is a chat message visible.
 static bool _chat_tab_completion_active;  ///< Whether tab completion is active.
@@ -59,7 +55,7 @@ static uint MAX_CHAT_MESSAGES = 0;        ///< The limit of chat messages to sho
  * the left and pixels from the bottom. The height is the maximum height.
  */
 static PointDimension _chatmsg_box;
-static uint8 *_chatmessage_backup = NULL; ///< Backup in case text is moved.
+static uint8 *_chatmessage_backup = nullptr; ///< Backup in case text is moved.
 
 /**
  * Count the chat messages.
@@ -322,7 +318,7 @@ struct NetworkChatWindow : public Window {
 		InvalidateWindowData(WC_NEWS_WINDOW, 0, 0);
 	}
 
-	virtual void FindWindowPlacementAndResize(int def_width, int def_height)
+	void FindWindowPlacementAndResize(int def_width, int def_height) override
 	{
 		Window::FindWindowPlacementAndResize(_toolbar_width, def_height);
 	}
@@ -340,8 +336,7 @@ struct NetworkChatWindow : public Window {
 		/* First, try clients */
 		if (*item < MAX_CLIENT_SLOTS) {
 			/* Skip inactive clients */
-			NetworkClientInfo *ci;
-			FOR_ALL_CLIENT_INFOS_FROM(ci, *item) {
+			for (NetworkClientInfo *ci : NetworkClientInfo::Iterate(*item)) {
 				*item = ci->index;
 				return ci->client_name;
 			}
@@ -352,9 +347,7 @@ struct NetworkChatWindow : public Window {
 		 * Not that the following assumes all town indices are adjacent, ie no
 		 * towns have been deleted. */
 		if (*item < (uint)MAX_CLIENT_SLOTS + Town::GetPoolSize()) {
-			const Town *t;
-
-			FOR_ALL_TOWNS_FROM(t, *item - MAX_CLIENT_SLOTS) {
+			for (const Town *t : Town::Iterate(*item - MAX_CLIENT_SLOTS)) {
 				/* Get the town-name via the string-system */
 				SetDParam(0, t->index);
 				GetString(chat_tab_temp_buffer, STR_TOWN_NAME, lastof(chat_tab_temp_buffer));
@@ -362,7 +355,7 @@ struct NetworkChatWindow : public Window {
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	/**
@@ -373,7 +366,7 @@ struct NetworkChatWindow : public Window {
 	static char *ChatTabCompletionFindText(char *buf)
 	{
 		char *p = strrchr(buf, ' ');
-		if (p == NULL) return buf;
+		if (p == nullptr) return buf;
 
 		*p = '\0';
 		return p + 1;
@@ -402,7 +395,7 @@ struct NetworkChatWindow : public Window {
 		tb_buf  = ChatTabCompletionFindText(pre_buf);
 		tb_len  = strlen(tb_buf);
 
-		while ((cur_name = ChatTabCompletionNextItem(&item)) != NULL) {
+		while ((cur_name = ChatTabCompletionNextItem(&item)) != nullptr) {
 			item++;
 
 			if (_chat_tab_completion_active) {
@@ -460,13 +453,13 @@ struct NetworkChatWindow : public Window {
 		free(pre_buf);
 	}
 
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
 	{
 		Point pt = { (int)GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) * 2, _screen.height - sm_height - FindWindowById(WC_STATUS_BAR, 0)->height };
 		return pt;
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget != WID_NC_DESTINATION) return;
 
@@ -479,7 +472,7 @@ struct NetworkChatWindow : public Window {
 		*size = maxdim(*size, d);
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_NC_DESTINATION) return;
 
@@ -489,7 +482,7 @@ struct NetworkChatWindow : public Window {
 		DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(r.top, r.bottom - r.top), this->dest_string, TC_BLACK, SA_RIGHT);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_NC_SENDBUTTON: /* Send */
@@ -502,7 +495,7 @@ struct NetworkChatWindow : public Window {
 		}
 	}
 
-	virtual EventState OnKeyPress(WChar key, uint16 keycode)
+	EventState OnKeyPress(WChar key, uint16 keycode) override
 	{
 		EventState state = ES_NOT_HANDLED;
 		if (keycode == WKC_TAB) {
@@ -512,7 +505,7 @@ struct NetworkChatWindow : public Window {
 		return state;
 	}
 
-	virtual void OnEditboxChanged(int wid)
+	void OnEditboxChanged(int wid) override
 	{
 		_chat_tab_completion_active = false;
 	}
@@ -522,7 +515,7 @@ struct NetworkChatWindow : public Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (data == this->dest) delete this;
 	}
@@ -545,7 +538,7 @@ static const NWidgetPart _nested_chat_window_widgets[] = {
 
 /** The description of the chat window. */
 static WindowDesc _chat_window_desc(
-	WDP_MANUAL, NULL, 0, 0,
+	WDP_MANUAL, nullptr, 0, 0,
 	WC_SEND_NETWORK_MSG, WC_NONE,
 	0,
 	_nested_chat_window_widgets, lengthof(_nested_chat_window_widgets)
@@ -562,5 +555,3 @@ void ShowNetworkChatQueryWindow(DestType type, int dest)
 	DeleteWindowByClass(WC_SEND_NETWORK_MSG);
 	new NetworkChatWindow(&_chat_window_desc, type, dest);
 }
-
-#endif /* ENABLE_NETWORK */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -37,7 +35,15 @@ enum VehicleInvalidateWindowData {
 	VIWD_AUTOREPLACE       = -4, ///< Autoreplace replaced the vehicle.
 };
 
-int DrawVehiclePurchaseInfo(int left, int right, int y, EngineID engine_number);
+/** Extra information about refitted cargo and capacity */
+struct TestedEngineDetails {
+	Money cost;           ///< Refit cost
+	CargoID cargo;        ///< Cargo type
+	uint16 capacity;      ///< Cargo capacity
+	uint16 mail_capacity; ///< Mail capacity if available
+};
+
+int DrawVehiclePurchaseInfo(int left, int right, int y, EngineID engine_number, TestedEngineDetails &te);
 
 void DrawTrainImage(const Train *v, int left, int right, int y, VehicleID selection, EngineImageType image_type, int skip, VehicleID drag_dest = INVALID_VEHICLE);
 void DrawRoadVehImage(const Vehicle *v, int left, int right, int y, VehicleID selection, EngineImageType image_type, int skip = 0);

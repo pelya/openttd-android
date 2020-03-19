@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -125,9 +123,7 @@ const SaveLoad *GetOrderDescription()
 
 static void Save_ORDR()
 {
-	Order *order;
-
-	FOR_ALL_ORDERS(order) {
+	for (Order *order : Order::Iterate()) {
 		SlSetArrayIndex(order->index);
 		SlObject(order, GetOrderDescription());
 	}
@@ -168,8 +164,8 @@ static void Load_ORDR()
 		}
 
 		/* Update all the next pointer */
-		Order *o;
-		FOR_ALL_ORDERS(o) {
+		for (Order *o : Order::Iterate()) {
+			size_t order_index = o->index;
 			/* Delete invalid orders */
 			if (o->IsType(OT_NOTHING)) {
 				delete o;
@@ -178,7 +174,7 @@ static void Load_ORDR()
 			/* The orders were built like this:
 			 * While the order is valid, set the previous will get its next pointer set */
 			Order *prev = Order::GetIfValid(order_index - 1);
-			if (prev != NULL) prev->next = o;
+			if (prev != nullptr) prev->next = o;
 		}
 	} else {
 		int index;
@@ -186,10 +182,6 @@ static void Load_ORDR()
 		while ((index = SlIterateArray()) != -1) {
 			Order *order = new (index) Order();
 			SlObject(order, GetOrderDescription());
-			if (IsSavegameVersionBefore(SLV_190)) {
-				order->SetTravelTimetabled(order->GetTravelTime() > 0);
-				order->SetWaitTimetabled(order->GetWaitTime() > 0);
-			}
 		}
 	}
 }
@@ -199,9 +191,7 @@ static void Ptrs_ORDR()
 	/* Orders from old savegames have pointers corrected in Load_ORDR */
 	if (IsSavegameVersionBefore(SLV_5, 2)) return;
 
-	Order *o;
-
-	FOR_ALL_ORDERS(o) {
+	for (Order *o : Order::Iterate()) {
 		SlObject(o, GetOrderDescription());
 	}
 }
@@ -218,9 +208,7 @@ const SaveLoad *GetOrderListDescription()
 
 static void Save_ORDL()
 {
-	OrderList *list;
-
-	FOR_ALL_ORDER_LISTS(list) {
+	for (OrderList *list : OrderList::Iterate()) {
 		SlSetArrayIndex(list->index);
 		SlObject(list, GetOrderListDescription());
 	}
@@ -240,9 +228,7 @@ static void Load_ORDL()
 
 static void Ptrs_ORDL()
 {
-	OrderList *list;
-
-	FOR_ALL_ORDER_LISTS(list) {
+	for (OrderList *list : OrderList::Iterate()) {
 		SlObject(list, GetOrderListDescription());
 	}
 }
@@ -279,8 +265,7 @@ static void Save_BKOR()
 	 * normal games this information isn't needed. */
 	if (!_networking || !_network_server) return;
 
-	OrderBackup *ob;
-	FOR_ALL_ORDER_BACKUPS(ob) {
+	for (OrderBackup *ob : OrderBackup::Iterate()) {
 		SlSetArrayIndex(ob->index);
 		SlObject(ob, GetOrderBackupDescription());
 	}
@@ -299,14 +284,13 @@ void Load_BKOR()
 
 static void Ptrs_BKOR()
 {
-	OrderBackup *ob;
-	FOR_ALL_ORDER_BACKUPS(ob) {
+	for (OrderBackup *ob : OrderBackup::Iterate()) {
 		SlObject(ob, GetOrderBackupDescription());
 	}
 }
 
 extern const ChunkHandler _order_chunk_handlers[] = {
-	{ 'BKOR', Save_BKOR, Load_BKOR, Ptrs_BKOR, NULL, CH_ARRAY},
-	{ 'ORDR', Save_ORDR, Load_ORDR, Ptrs_ORDR, NULL, CH_ARRAY},
-	{ 'ORDL', Save_ORDL, Load_ORDL, Ptrs_ORDL, NULL, CH_ARRAY | CH_LAST},
+	{ 'BKOR', Save_BKOR, Load_BKOR, Ptrs_BKOR, nullptr, CH_ARRAY},
+	{ 'ORDR', Save_ORDR, Load_ORDR, Ptrs_ORDR, nullptr, CH_ARRAY},
+	{ 'ORDL', Save_ORDL, Load_ORDL, Ptrs_ORDL, nullptr, CH_ARRAY | CH_LAST},
 };

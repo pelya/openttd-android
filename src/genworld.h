@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -13,6 +11,7 @@
 #define GENWORLD_H
 
 #include "company_type.h"
+#include <thread>
 
 /** Constants related to world generation */
 enum LandscapeGenerator {
@@ -59,9 +58,9 @@ struct GenWorldInfo {
 	CompanyID lc;          ///< The local_company before generating
 	uint size_x;           ///< X-size of the map
 	uint size_y;           ///< Y-size of the map
-	GWDoneProc *proc;      ///< Proc that is called when done (can be NULL)
-	GWAbortProc *abortp;   ///< Proc that is called when aborting (can be NULL)
-	class ThreadObject *thread; ///< The thread we are in (can be NULL)
+	GWDoneProc *proc;      ///< Proc that is called when done (can be nullptr)
+	GWAbortProc *abortp;   ///< Proc that is called when aborting (can be nullptr)
+	std::thread thread;    ///< The thread we are in (joinable if a thread was created)
 };
 
 /** Current stage of world generation process */

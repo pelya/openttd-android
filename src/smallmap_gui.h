@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -182,19 +180,17 @@ public:
 		return WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width;
 	}
 
-	virtual void SetStringParameters(int widget) const;
-	virtual void OnInit();
-	virtual void OnPaint();
-	virtual void DrawWidget(const Rect &r, int widget) const;
-	virtual void OnClick(Point pt, int widget, int click_count);
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true);
-	virtual bool OnRightClick(Point pt, int widget);
-	virtual void OnMouseWheel(int wheel);
-	virtual void OnRealtimeTick(uint delta_ms);
-	virtual void OnScroll(Point delta);
-	virtual void OnMouseOver(Point pt, int widget);
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize);
-
+	void SetStringParameters(int widget) const override;
+	void OnInit() override;
+	void OnPaint() override;
+	void DrawWidget(const Rect &r, int widget) const override;
+	void OnClick(Point pt, int widget, int click_count) override;
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override;
+	bool OnRightClick(Point pt, int widget) override;
+	void OnMouseWheel(int wheel) override;
+	void OnRealtimeTick(uint delta_ms) override;
+	void OnScroll(Point delta) override;
+	void OnMouseOver(Point pt, int widget) override;
 };
 
 #endif /* SMALLMAP_GUI_H */

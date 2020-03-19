@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -19,7 +17,9 @@
 #include "industry_type.h"
 #include "linkgraph/linkgraph_type.h"
 #include "newgrf_storage.h"
+#include "bitmap_type.h"
 #include <map>
+#include <set>
 
 typedef Pool<BaseStation, StationID, 32, 64000> StationPool;
 extern StationPool _station_pool;
@@ -316,7 +316,7 @@ struct Airport : public TileArea {
 	uint64 flags;       ///< stores which blocks on the airport are taken. was 16 bit earlier on, then 32
 	byte type;          ///< Type of this airport, @see AirportTypes
 	byte layout;        ///< Airport layout number.
-	DirectionByte rotation; ///< How this airport is rotated.
+	Direction rotation; ///< How this airport is rotated.
 
 	PersistentStorage *psa; ///< Persistent storage for NewGRF airports.
 
@@ -448,7 +448,11 @@ private:
 	}
 };
 
-typedef SmallVector<Industry *, 2> IndustryVector;
+struct IndustryCompare {
+	bool operator() (const Industry *lhs, const Industry *rhs) const;
+};
+
+typedef std::set<Industry *, IndustryCompare> IndustryList;
 
 /** Station data structure */
 struct Station FINAL : SpecializedStation<Station, false> {
@@ -465,12 +469,15 @@ public:
 	RoadStop *truck_stops;  ///< All the truck stops
 	TileArea truck_station; ///< Tile area the truck 'station' part covers
 
-	Airport airport;        ///< Tile area the airport covers
-	TileIndex dock_tile;    ///< The location of the dock
+	Airport airport;          ///< Tile area the airport covers
+	TileArea ship_station;    ///< Tile area the ship 'station' part covers
+	TileArea docking_station; ///< Tile area the docking tiles cover
 
 	IndustryType indtype;   ///< Industry type to get the name from
 
-	StationHadVehicleOfTypeByte had_vehicle_of_type;
+	BitmapTileArea catchment_tiles; ///< NOSAVE: Set of individual tiles covered by catchment area
+
+	StationHadVehicleOfType had_vehicle_of_type;
 
 	byte time_since_load;
 	byte time_since_unload;
@@ -480,7 +487,8 @@ public:
 	GoodsEntry goods[NUM_CARGO];  ///< Goods at this station
 	CargoTypes always_accepted;       ///< Bitmask of always accepted cargo types (by houses, HQs, industry tiles when industry doesn't accept cargo)
 
-	IndustryVector industries_near; ///< Cached list of industries near the station that can accept cargo, @see DeliverGoodsToIndustry()
+	IndustryList industries_near; ///< Cached list of industries near the station that can accept cargo, @see DeliverGoodsToIndustry()
+	Industry *industry;           ///< NOSAVE: Associated industry for neutral stations. (Rebuilt on load from Industry->st)
 
 	Station(TileIndex tile = INVALID_TILE);
 	~Station();
@@ -489,19 +497,28 @@ public:
 
 	void MarkTilesDirty(bool cargo_change) const;
 
-	void UpdateVirtCoord();
+	void UpdateVirtCoord() override;
+
+	void MoveSign(TileIndex new_xy) override;
 
 	void AfterStationTileSetChange(bool adding, StationType type);
 
-	/* virtual */ uint GetPlatformLength(TileIndex tile, DiagDirection dir) const;
-	/* virtual */ uint GetPlatformLength(TileIndex tile) const;
-	void RecomputeIndustriesNear();
-	static void RecomputeIndustriesNearForAll();
+	uint GetPlatformLength(TileIndex tile, DiagDirection dir) const override;
+	uint GetPlatformLength(TileIndex tile) const override;
+	void RecomputeCatchment();
+	static void RecomputeCatchmentForAll();
 
 	uint GetCatchmentRadius() const;
 	Rect GetCatchmentRect() const;
+	bool CatchmentCoversTown(TownID t) const;
+	void RemoveFromAllNearbyLists();
 
-	/* virtual */ inline bool TileBelongsToRailStation(TileIndex tile) const
+	inline bool TileIsInCatchment(TileIndex tile) const
+	{
+		return this->catchment_tiles.HasTile(tile);
+	}
+
+	inline bool TileBelongsToRailStation(TileIndex tile) const override
 	{
 		return IsRailStationTile(tile) && GetStationIndex(tile) == this->index;
 	}
@@ -511,12 +528,10 @@ public:
 		return IsAirportTile(tile) && GetStationIndex(tile) == this->index;
 	}
 
-	/* virtual */ uint32 GetNewGRFVariable(const ResolverObject &object, byte variable, byte parameter, bool *available) const;
+	uint32 GetNewGRFVariable(const ResolverObject &object, byte variable, byte parameter, bool *available) const override;
 
-	/* virtual */ void GetTileArea(TileArea *ta, StationType type) const;
+	void GetTileArea(TileArea *ta, StationType type) const override;
 };
-
-#define FOR_ALL_STATIONS(var) FOR_ALL_BASE_STATIONS_OF_TYPE(Station, var)
 
 /** Iterator to iterate over all tiles belonging to an airport. */
 class AirportTileIterator : public OrthogonalTileIterator {
@@ -547,5 +562,7 @@ public:
 		return new AirportTileIterator(*this);
 	}
 };
+
+void RebuildStationKdtree();
 
 #endif /* STATION_BASE_H */

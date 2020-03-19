@@ -1,5 +1,3 @@
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -139,7 +137,7 @@ $(OBJS_CPP:%.o=%.d): %.d: $(SRC_DIR)/%.cpp $(FILE_DEP)
 
 $(OBJS_MM:%.o=%.d): %.d: $(SRC_DIR)/%.mm $(FILE_DEP)
 	$(E) '$(STAGE) DEP $(<:$(SRC_DIR)/%.mm=%.mm)'
-	$(Q)$(CC_HOST) $(CFLAGS) -MM $< | sed 's@^$(@F:%.d=%.o):@$@ $(@:%.d=%.o):@' > $@
+	$(Q)$(CXX_HOST) $(CFLAGS) $(CXXFLAGS) -MM $< | sed 's@^$(@F:%.d=%.o):@$@ $(@:%.d=%.o):@' > $@
 
 $(OBJS_RC:%.o=%.d): %.d: $(SRC_DIR)/%.rc $(FILE_DEP)
 	$(E) '$(STAGE) DEP $(<:$(SRC_DIR)/%.rc=%.rc)'
@@ -249,7 +247,7 @@ $(filter %sse4.o, $(OBJS_CPP)): %.o: $(SRC_DIR)/%.cpp $(DEP_MASK) $(FILE_DEP)
 
 $(OBJS_MM): %.o: $(SRC_DIR)/%.mm $(DEP_MASK) $(FILE_DEP)
 	$(E) '$(STAGE) Compiling $(<:$(SRC_DIR)/%.mm=%.mm)'
-	$(Q)$(CC_HOST) $(CFLAGS) -c -o $@ $<
+	$(Q)$(CXX_HOST) $(CFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJS_RC): %.o: $(SRC_DIR)/%.rc $(FILE_DEP)
 	$(E) '$(STAGE) Compiling resource $(<:$(SRC_DIR)/%.rc=%.rc)'
@@ -269,10 +267,6 @@ $(TTD): $(OBJS) $(CONFIG_CACHE_LINKER)
 	$(Q)+$(CXX_HOST) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
 ifdef STRIP
 	$(Q)$(STRIP) $@
-endif
-ifeq ($(OS), DOS)
-	$(E) '$(STAGE) Adding CWSDPMI stub to $@'
-	$(Q)$(ROOT_DIR)/os/dos/make_dos_binary_selfcontained.sh $(SRC_OBJS_DIR)/$@
 endif
 
 # Revision files

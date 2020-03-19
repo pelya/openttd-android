@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -404,4 +402,20 @@ void SQAIEventRoadReconstruction_Register(Squirrel *engine)
 	SQAIEventRoadReconstruction.DefSQStaticMethod(engine, &ScriptEventRoadReconstruction::Convert, "Convert", 2, ".x");
 
 	SQAIEventRoadReconstruction.PostRegister(engine);
+}
+
+
+template <> const char *GetClassName<ScriptEventVehicleAutoReplaced, ST_AI>() { return "AIEventVehicleAutoReplaced"; }
+
+void SQAIEventVehicleAutoReplaced_Register(Squirrel *engine)
+{
+	DefSQClass<ScriptEventVehicleAutoReplaced, ST_AI> SQAIEventVehicleAutoReplaced("AIEventVehicleAutoReplaced");
+	SQAIEventVehicleAutoReplaced.PreRegister(engine, "AIEvent");
+
+	SQAIEventVehicleAutoReplaced.DefSQStaticMethod(engine, &ScriptEventVehicleAutoReplaced::Convert, "Convert", 2, ".x");
+
+	SQAIEventVehicleAutoReplaced.DefSQMethod(engine, &ScriptEventVehicleAutoReplaced::GetOldVehicleID, "GetOldVehicleID", 1, "x");
+	SQAIEventVehicleAutoReplaced.DefSQMethod(engine, &ScriptEventVehicleAutoReplaced::GetNewVehicleID, "GetNewVehicleID", 1, "x");
+
+	SQAIEventVehicleAutoReplaced.PostRegister(engine);
 }

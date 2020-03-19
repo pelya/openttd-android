@@ -11,8 +11,6 @@
 ##case t ba
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -300,6 +298,8 @@ STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Szűrés
 STR_BUTTON_SORT_BY                                              :{BLACK}Rendezés
 STR_BUTTON_LOCATION                                             :{BLACK}Megnéz
 STR_BUTTON_RENAME                                               :{BLACK}Átnevez
+STR_BUTTON_CATCHMENT                                            :{BLACK}Lefedett terület
+STR_TOOLTIP_CATCHMENT                                           :{BLACK}Az állomás által lefedett terület mutatása
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Ablak bezárása
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Ablak címsora - húzd ezt a mozgatáshoz
@@ -328,6 +328,7 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Ezzel a 
 STR_BUTTON_DEFAULT                                              :{BLACK}Alapértelmezett
 STR_BUTTON_CANCEL                                               :{BLACK}Mégsem
 STR_BUTTON_OK                                                   :{BLACK}OK
+STR_WARNING_PASSWORD_SECURITY                                   :{YELLOW}Figyelem: A szerver adminjai láthatják az itt beírt szöveget.
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :0123456789öüóqwertzuiopőúasdfghjkléáűíyxcvbnm,.- .
@@ -401,6 +402,7 @@ STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN                            :{BLACK}Közelí
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT                           :{BLACK}Távolítás
 STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}Vasúti pálya építése
 STR_TOOLBAR_TOOLTIP_BUILD_ROADS                                 :{BLACK}Út építése
+STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}Villamospálya építése
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Vízi út építése
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Repülőtér építése
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Nyisd meg a tájrendező ablakot a talaj emeléséhez vagy süllyesztéséhez, faültetéshez stb.
@@ -421,6 +423,7 @@ STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Táj sze
 STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Település-generálás
 STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Gazdasági épület-generálás
 STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Út építése
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Villamospálya építése
 STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Faültetés. Shift lenyomásával megmutatja a becsült építési költséget
 STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Felirat lerakása
 STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Objektum elhelyezése. Shift lenyomásával megmutatja a várható költséget
@@ -538,9 +541,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Átváltás konzolra
 STR_ABOUT_MENU_AI_DEBUG                                         :MI / Játékszkript nyomkövetés
 STR_ABOUT_MENU_SCREENSHOT                                       :Képmentés
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Teljes nagyítású képmentés
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Alapértelmezett nagyítású képmentés
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Képmentés teljes térképről
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :FPS ablak
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Az 'OpenTTD'-ről
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Sprite elhelyező
@@ -711,9 +711,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Saját 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Zene Hangereje
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Hangok Hangereje
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -931,6 +928,7 @@ STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLAC
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Új {STRING} elérhető!  -  {ENGINE}
 
+
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} többé nem fogad el {STRING.t}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} többé nem fogad el {STRING.t} és {STRING.t}
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO                              :{WHITE}{STATION} most már elfogad {STRING.t}
@@ -997,6 +995,9 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :Grúz Lari (GEL
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iráni Riál (IRR)
 STR_GAME_OPTIONS_CURRENCY_RUB                                   :Új Orosz Rubel (RUB)
 STR_GAME_OPTIONS_CURRENCY_MXN                                   :Mexikói Peso (MXN)
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :Új Tajvani Dollár (NTD)
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :Kínai Renminbi (CNY)
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :Hongkongi Dollár (HKD)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Közúti járművek
@@ -1248,6 +1249,8 @@ STR_CONFIG_SETTING_AUTOSLOPE                                    :Épületek, vá
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Tájrendezés engedélyezése épületek és utak alatt azok eltávolítása nélkül
 STR_CONFIG_SETTING_CATCHMENT                                    :Élethűbben méretezett állomási vonzáskörzetek bekapcsolása: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :A különböző állomások és repterek más vonzáskörzettel rendelkeznek
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :A vállalatok állomásai elláthatnak beépített semleges állomással rendelkező gazdasági épületeket: {STRING}
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :Ha be van kapcsolva, akkor az olyan gazdasági épületeket, amelyekhez beépített állomás tartozik (pl. olajfúró tornyok), el lehet látni a vállalatok által épített közeli állomásokkal is. Ha ki van kapcsolva, akkor csak a beépített állomásukkal lehet ellátni ezeket a gazdasági épületeket. A vállalatok közeli állomásai nem tudják őket ellátni, és a beépített állomások sem látnak el mást, csak az adott gazdasági épületet.
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :Települési tulajdonú utak/hidak/alagutak rombolásának engedélyezése: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :Városi tulajdonú infrastruktúra és épületek könnyebb eltávolíthatósága
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :Vonatok maximális hossza: {STRING}
@@ -1264,8 +1267,8 @@ STR_CONFIG_SETTING_TRAIN_SLOPE_STEEPNESS_HELPTEXT               :Egy emelkedő m
 STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA}%
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :Emelkedő meredeksége közúti járműveknek: {STRING}
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS_HELPTEXT        :Egy emelkedő mező meredeksége közúti járműveknek. Nagyobb érték esetén a jármű nehezebben mássza meg az emelkedőt
-STR_CONFIG_SETTING_FORBID_90_DEG                                :Vonatok és hajók nem tehetnek 90 fokos kanyart: {STRING}
-STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90 fokos kanyarok akkor fordulnak elő, ha egy vízszintes pályaelemet egy függőleges elem követ közvetlenül a következő mezőn, ami által a vonat egy 90 fokos kanyart tesz a szokásos 45 fokos helyett. Ez ugyanígy előfordulhat hajók esetében is
+STR_CONFIG_SETTING_FORBID_90_DEG                                :Vonatok nem tehetnek 90 fokos kanyart: {STRING}
+STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90 fokos kanyarok akkor fordulnak elő, ha egy vízszintes pályaelemet egy függőleges elem követ közvetlenül a következő mezőn, ami által a vonat egy 90 fokos kanyart tesz a szokásos 45 fokos helyett.
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Nem közvetlen szomszédos állomások egyesítése: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Állomásrészek hozzáadásának engedélyezése úgy, hogy az nem érinti közvetlenül a meglévő részeket. Ctrl+kattintás szükséges hozzá az új részek elhelyezése közben
 STR_CONFIG_SETTING_INFLATION                                    :Infláció: {STRING}
@@ -1321,8 +1324,8 @@ STR_CONFIG_SETTING_PLANE_SPEED                                  :Repülőgép se
 STR_CONFIG_SETTING_PLANE_SPEED_HELPTEXT                         :Repülőgépek relatív sebességének beállítása más járműtípusokhoz viszonyítva, a légi szállítás bevételének csökkentéséhez
 STR_CONFIG_SETTING_PLANE_SPEED_VALUE                            :1 / {COMMA}
 STR_CONFIG_SETTING_PLANE_CRASHES                                :Repülőgép-szerencsétlenségek száma: {STRING}
-STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Repülőgép-szerencsétlenség esélyének beállítása
-STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :nincs
+STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Repülőgép-szerencsétlenség esélyének beállítása.{}* Nagy repülőgépek esetén mindig fennáll a baleset veszélye, ha kis reptéren próbálnak leszállni!
+STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :nincs*
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :csökkentett
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :normál
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Áthaladó megállóhelyek engedélyezése települési tulajdonú utakon: {STRING}
@@ -1380,8 +1383,8 @@ STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Tereptípus: {S
 STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :A térkép domborzata
 STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Gazdasági épületek száma: {STRING}
 STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Mennyi gazdasági épület legyen, és mennyire legyenek fenntartva a játék folyamán
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Olajfúró tornyok maximális távolsága a térkép szélétől: {STRING}
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Olajfinomítók csak a térkép határaihoz közel építhetőek, ami sziget jellegű térképeknél a partvidék
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Olajfinomítók és olajfúró tornyok maximális távolsága a térkép szélétől: {STRING}
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Megadhatod, hogy a térkép szélétől milyen messze épülhetnek olajfinomítók és olajfúró tornyok. Sziget jellegű térképek esetén így a part közelében fognak épülni. 256 mezőnél szélesebb, ill. hosszabb térképek esetén ez az érték felszorzódik.
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Hóhatár magassága: {STRING}
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Ezzel a beállítással szabályozhatod a szub-arktikus táj hóhatárát. A hó befolyással lehet a gazdasági épületek generálására és a települések növekedésére.
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :A terep durvasága: {STRING}
@@ -1545,6 +1548,9 @@ STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :Számítógépe
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :Számítógép által irányított játékosok részvételének engedélyezése többjátékos játékokban
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :Szkriptek felfüggesztéséhez szükséges opcode mennyiség: {STRING}
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES_HELPTEXT                  :Egy kör alatti maximális számítási lépések száma, amit egy szkript kiszámíthat
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY                            :A szkriptek maximális memóriahasználata: {STRING}
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Mennyi memóriát használhat egy adott szkript, mielőtt leállításra kerül. Nagy térképek esetén lehet, hogy ezt az értéket növelni kell.
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Javítási intervallumok százalékban: {STRING}
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :A járművek javítási módjának kiválasztása, hogy az utolsó javítás óta eltelt idő, vagy a maximális megbízhatósághoz képesti százalékos csökkenés alapján kerüljelek javításra
@@ -1647,6 +1653,10 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Bekapcsolva a j
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :tiltott
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :megengedett
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :megengedett, egyéni városelrendezés
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Termelés a településeken: {STRING}
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Azt adja meg, hogy mennyi rakományt termelnek a városi épületek a település lakosságának függvényében.{}Négyzetes növekedés: Egy kétszer nagyobb település négyszer több utast termel.{}Lineáris növekedés: Egy kétszer nagyobb település kétszer több utast termel.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_ORIGINAL                   :Négyzetes (eredeti)
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineáris
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Játékbeli faelhelyezkedés: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Fák véletlenszerű megjelenésének szabályozása a játék során. Ez befolyásolhatja a gazdasági épületeket, melyek a fák növekedésétől függnek, mint a favágók
@@ -1774,7 +1784,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Rakomá
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Ellenfelek
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Számítógép által vezérelt ellenfelek
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Eredeti
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Ajánlott)
 
@@ -1858,13 +1867,9 @@ STR_QUIT_NO                                                     :{BLACK}Nem
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2202,7 +2207,7 @@ STR_NETWORK_CHAT_ALL                                            :[Mindenkinek] {
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}Add meg a hálózati beszélgetéshez a neved
 
 # Network messages
-STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Nem található a hálózati csatoló, vagy a játékban nincs hálózati támogatás (ENABLE_NETWORK)
+STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Nem található a hálózati csatoló
 STR_NETWORK_ERROR_NOSERVER                                      :{WHITE}Nem található semmilyen hálózati játék
 STR_NETWORK_ERROR_NOCONNECTION                                  :{WHITE}A szerver nem válaszolt a kérésre
 STR_NETWORK_ERROR_NEWGRF_MISMATCH                               :{WHITE}NewGRF eltérés miatt nem sikerült kapcsolódni
@@ -2494,6 +2499,11 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Közúti
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Villamos-alagút építése. Shift lenyomásával megmutatja a becsült építési költséget
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Építés és felszedés közötti váltás utaknál
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Építés és bontás közötti váltás villamospályáknál
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_ROAD                           :{BLACK}Út átalakítása a kiválasztott típusra. Shift lenyomásával megmutatja a becsült építési költséget
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}Villamospálya átalakítása a kiválasztott típusra. Shift lenyomásával megmutatja a becsült építési költséget
+
+STR_ROAD_NAME_ROAD                                              :Út
+STR_ROAD_NAME_TRAM                                              :Villamospálya
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Garázs helyzete
@@ -2678,8 +2688,11 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Elfogad: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}Vasút típusa: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}Út típusa: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_TRAM_TYPE                             :{BLACK}Villamospálya típusa: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Vasúti pályasebesség: {LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Közúti sebességkorlátozás: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT                      :{BLACK}Villamosok sebességkorlátozása: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Kövek
@@ -2789,6 +2802,7 @@ STR_FRAMERATE_SPEED_FACTOR                                      :{BLACK}A játé
 STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}Milyen gyorsan fut a játék, viszonyítva az elvárt sebességhez normál játéksebesség esetén.
 STR_FRAMERATE_CURRENT                                           :{WHITE}Pillanatnyi
 STR_FRAMERATE_AVERAGE                                           :{WHITE}Átlagos
+STR_FRAMERATE_MEMORYUSE                                         :{WHITE}Memória
 STR_FRAMERATE_DATA_POINTS                                       :{BLACK}Adatok {COMMA} mérés alapján
 STR_FRAMERATE_MS_GOOD                                           :{LTBLUE}{DECIMAL} ms
 STR_FRAMERATE_MS_WARN                                           :{YELLOW}{DECIMAL} ms
@@ -2796,6 +2810,9 @@ STR_FRAMERATE_MS_BAD                                            :{RED}{DECIMAL} 
 STR_FRAMERATE_FPS_GOOD                                          :{LTBLUE}{DECIMAL} frame/s
 STR_FRAMERATE_FPS_WARN                                          :{YELLOW}{DECIMAL} frame/s
 STR_FRAMERATE_FPS_BAD                                           :{RED}{DECIMAL} frame/s
+STR_FRAMERATE_BYTES_GOOD                                        :{LTBLUE}{BYTES}
+STR_FRAMERATE_BYTES_WARN                                        :{YELLOW}{BYTES}
+STR_FRAMERATE_BYTES_BAD                                         :{RED}{BYTES}
 STR_FRAMERATE_GRAPH_MILLISECONDS                                :{TINY_FONT}{COMMA} ms
 STR_FRAMERATE_GRAPH_SECONDS                                     :{TINY_FONT}{COMMA} s
 ############ Leave those lines in this order!!
@@ -3162,6 +3179,8 @@ STR_TOWN_VIEW_RENAME_TOWN_BUTTON                                :Város átnevez
 
 # Town local authority window
 STR_LOCAL_AUTHORITY_CAPTION                                     :{WHITE}{TOWN} önkormányzata
+STR_LOCAL_AUTHORITY_ZONE                                        :{BLACK}Terület
+STR_LOCAL_AUTHORITY_ZONE_TOOLTIP                                :{BLACK}A helyi önkormányzathoz tartozó terület mutatása
 STR_LOCAL_AUTHORITY_COMPANY_RATINGS                             :{BLACK}Vélemény a szállítási vállalatokról:
 STR_LOCAL_AUTHORITY_COMPANY_RATING                              :{YELLOW}{COMPANY} {COMPANY_NUM}: {ORANGE}{STRING}
 STR_LOCAL_AUTHORITY_ACTIONS_TITLE                               :{BLACK}Lehetséges intézkedések:
@@ -3419,8 +3438,7 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Vasúti elemek:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Vasúti jelzők
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Közúti elemek:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Út
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Villamospálya
+STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}Villamospálya elemek:
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Vízi elemek:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Csatornák
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Állomások:
@@ -3431,9 +3449,8 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Gazdasági épületek
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Nincs -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% elszállítva)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% elszállítva)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Gazdasági épületek neve - a névre kattintva a fő nézetet a választott objektumra irányíthatod. Ctrl+kattintással új látképet nyit a gazdasági épület pozíciójára
 
 # Industry view
@@ -3500,6 +3517,8 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Csoportosítatl
 STR_GROUP_DEFAULT_SHIPS                                         :Csoportosítatlan hajók
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Csoportosítatlan repülők
 
+STR_GROUP_COUNT_WITH_SUBGROUP                                   :{TINY_FONT}{COMMA} (+{COMMA})
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Csoportok - Kattints a csoport nevére a járművek listázásához. Húzással a csoportokat hierarchiába rendezheted.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Csoport létrehozásához kattints ide
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Kijelölt csoport törlése
@@ -3526,12 +3545,18 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Új villamos va
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Új egysínű járművek
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Új Maglev járművek
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Új vasúti járművek
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Új közúti járművek
+STR_BUY_VEHICLE_TRAM_VEHICLE_CAPTION                            :Új villamosok
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Új vasúti járművek
+STR_BUY_VEHICLE_ROAD_VEHICLE_ALL_CAPTION                        :Új közúti járművek
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Új hajók
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Új repülőgépek
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Ár: {GOLD}{CURRENCY_LONG}{BLACK} Súly: {GOLD}{WEIGHT_SHORT}
+STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}Ár: {GOLD}{CURRENCY_LONG}{BLACK} (Átalakítás költsége: {GOLD}{CURRENCY_LONG}{BLACK}) Súly: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Sebesség: {GOLD}{VELOCITY}{BLACK} Telj.: {GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Sebesség: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Sebesség óceánon: {GOLD}{VELOCITY}
@@ -3542,8 +3567,10 @@ STR_PURCHASE_INFO_REFITTABLE                                    :(átalakíthat�
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Kifejlesztve: {GOLD}{NUM}{BLACK} Élettartam: {GOLD}{COMMA} év
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Max. megbízhatóság: {GOLD}{COMMA}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}Ár: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}Ár: {GOLD}{CURRENCY_LONG}{BLACK} (Átalakítás költsége: {GOLD}{CURRENCY_LONG}{BLACK})
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Súly: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Ár: {GOLD}{CURRENCY_LONG}{BLACK} Sebesség: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}Ár: {GOLD}{CURRENCY_LONG}{BLACK} (Átalakítás költsége: {GOLD}{CURRENCY_LONG}{BLACK}) Végsebesség: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Kapacitás: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Meghajtott vagonok: {GOLD}+{POWER}{BLACK} Súly: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Átalakítható: {GOLD}{STRING}
@@ -3564,10 +3591,20 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Megvesz
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Megvesz
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Megvesz
 
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_BUTTON                  :{BLACK}Megvesz és átalakít
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_BUTTON           :{BLACK}Megvesz és átalakít
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}Megvesz és átalakít
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}Megvesz és átalakít
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}A kijelölt vasúti jármű megvétele. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}A kijelölt közúti jármű megvétele. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}A kijelölt hajó megvétele. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}A kijelölt repülőgép megvétele. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
+
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}A kijelölt vasúti jármű megvétele és átalakítása a kijelölt rakománytípusra. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_TOOLTIP          :{BLACK}A kijelölt közúti jármű megvétele és átalakítása a kijelölt rakománytípusra. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}A kijelölt hajó megvétele és átalakítása a kijelölt rakománytípusra. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}A kijelölt repülőgép megvétele és átalakítása a kijelölt rakománytípusra. Shift+kattintással megmutatja a becsült költséget vásárlás nélkül
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Átnevez
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Átnevez
@@ -3677,12 +3714,17 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Biztosa
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Üzenet egy járműgyártótól
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Most készültek el egy új {STRING} tervei - érdekelne a jármű egy éves kizárólagos használata, hogy megnézhessük a képességeit, mielőtt mindenki számára elérhetővé tesszük?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :vasúti mozdony
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :közúti jármű
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :repülőgép
-STR_ENGINE_PREVIEW_SHIP                                         :hajó
+STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :villamos vasúti mozdony
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :egysínű mozdony
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :Maglev mozdony
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :közúti jármű
+STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :villamos
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :repülőgép
+STR_ENGINE_PREVIEW_SHIP                                         :hajó
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Ár: {CURRENCY_LONG} Súly: {WEIGHT_SHORT}{}Sebesség: {VELOCITY} Teljesítmény: {POWER}{}Üzemeltetés: {CURRENCY_LONG}/év{}Kapacitás: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Ár: {CURRENCY_LONG} Súly: {WEIGHT_SHORT}{}Sebesség: {VELOCITY} Teljesítmény: {POWER} Maximális vonóerő: {6:FORCE}{}Üzemeltetés: {4:CURRENCY_LONG}/év{}Kapacitás: {5:CARGO_LONG}
@@ -3721,13 +3763,18 @@ STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Váltás
 STR_REPLACE_ENGINES                                             :Mozdonyok
 STR_REPLACE_WAGONS                                              :Vagonok
 STR_REPLACE_ALL_RAILTYPE                                        :Minden vasúti jármű
+STR_REPLACE_ALL_ROADTYPE                                        :Minden típus
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Cserélendő egységek vasúttípusának kiválasztása
+STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}Cserélendő járművek úttípusának kiválasztása
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Megmutatja, hogy melyik bal oldali egységet akarod kicserélni
 STR_REPLACE_RAIL_VEHICLES                                       :Normál vasúti járművek
 STR_REPLACE_ELRAIL_VEHICLES                                     :Villamosított vasúti járművek
 STR_REPLACE_MONORAIL_VEHICLES                                   :Egysínű Vasutak
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev Járművek
+
+STR_REPLACE_ROAD_VEHICLES                                       :Közúti járművek
+STR_REPLACE_TRAM_VEHICLES                                       :Villamosok
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vagon törlés: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Az automatikus cserénél a szerelvény hosszának a megtartása vagonok eltávolításával (mozdony utántól kezdve), ha a csere után a szerelvény hosszabb lenne
@@ -4179,6 +4226,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}A kijel�
 STR_AI_LIST_CANCEL                                              :{BLACK}Mégsem
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ne változtassa a szkriptet
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Paraméterek
 STR_AI_SETTINGS_CAPTION_AI                                      :MI
@@ -4381,7 +4429,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... ez e
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... az út a másik irányba vezet
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... áthaladó megállóhelyeken nem lehet kanyar
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... áthaladó megállóhelyeken nem lehet elágazás
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}... az út egyirányú vagy blokkolt
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}Nem lehet eltávolítani az állomás részét...
@@ -4451,7 +4498,8 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Előszö
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Nincs megfelelő vasúti pálya
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Előbb le kell rombolnod a vasúti pályát
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}... az út egyirányú vagy blokkolt
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Ehhez a síntipushoz nem megengedett vasúti átjárók építése
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Ehhez a síntipushoz nem megengedett vasúti átjárók építése
+STR_ERROR_CROSSING_DISALLOWED_ROAD                              :{WHITE}Ehhez az úttípushoz nem megengedett vasúti átjárók építése
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Nem helyezhetsz ide jelzőt...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Nem építhetsz ide vasúti pályát...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Nem szedheted fel innen a vasúti pályát...
@@ -4471,6 +4519,12 @@ STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}Nem romb
 STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}Innen nem lehet villamospályát eltávolítani...
 STR_ERROR_THERE_IS_NO_ROAD                                      :{WHITE}... nincs itt út
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :{WHITE}... nincs itt villamospálya
+STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}Nem lehet itt az út típusát átalakítani...
+STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :{WHITE}Nem lehet itt a villamospálya típusát átalakítani...
+STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Nincs megfelelő út
+STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}Nincs megfelelő villamospálya
+STR_ERROR_INCOMPATIBLE_ROAD                                     :{WHITE}... nem kompatibilis az út
+STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... nem kompatibilis a villamospálya
 
 # Waterway construction errors
 STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}Ide nem lehet csatornát építeni...
@@ -4523,6 +4577,7 @@ STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Csoport 
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}Csoport törlése sikertelen...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}Csoport átnevezése sikertelen...
 STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}Nem teheted ezt a csoportot a másik alcsoportjává...
+STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}... kört okozna a csoporthierarchiában
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}Csoport járműveinek törlése sikertelen...
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}Jármű hozzáadása a csoporthoz sikertelen...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Megosztott jármű csoporthoz való hozzáadása sikertelen...

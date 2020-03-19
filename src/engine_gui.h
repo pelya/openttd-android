@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -19,7 +17,7 @@
 
 typedef GUIList<EngineID, CargoID> GUIEngineList;
 
-typedef int CDECL EngList_SortTypeFunction(const EngineID*, const EngineID*); ///< argument type for #EngList_Sort.
+typedef bool EngList_SortTypeFunction(const EngineID&, const EngineID&); ///< argument type for #EngList_Sort.
 void EngList_Sort(GUIEngineList *el, EngList_SortTypeFunction compare);
 void EngList_SortPartial(GUIEngineList *el, EngList_SortTypeFunction compare, uint begin, uint num_items);
 

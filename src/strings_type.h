@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -93,9 +91,8 @@ enum SpecialStrings {
 	SPECSTR_LANGUAGE_START     = 0x7100,
 	SPECSTR_LANGUAGE_END       = SPECSTR_LANGUAGE_START + MAX_LANG - 1,
 
-	/* reserve 100 strings for various screen resolutions */
+	/* reserve strings for various screen resolutions MUST BE THE LAST VALUE IN THIS ENUM */
 	SPECSTR_RESOLUTION_START   = SPECSTR_LANGUAGE_END + 1,
-	SPECSTR_RESOLUTION_END     = SPECSTR_RESOLUTION_START + 99,
 };
 
 #endif /* STRINGS_TYPE_H */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -39,35 +37,6 @@ static const DrawTileSprites _road_depot[] = {
 	{ {0xA4A, PAL_NONE}, _road_depot_SE },
 	{ {0xA4A, PAL_NONE}, _road_depot_SW },
 	{ {0xA4A, PAL_NONE}, _road_depot_NW }
-};
-
-static const DrawTileSeqStruct _tram_depot_NE[] = {
-	TILE_SEQ_LINE((SPR_TRAMWAY_BASE + 0x35) | (1 << PALETTE_MODIFIER_COLOUR), PAL_NONE, 0, 15, 16, 1)
-	TILE_SEQ_END()
-};
-
-static const DrawTileSeqStruct _tram_depot_SE[] = {
-	TILE_SEQ_LINE((SPR_TRAMWAY_BASE + 0x31) | (1 << PALETTE_MODIFIER_COLOUR), PAL_NONE, 0, 0, 1, 16)
-	TILE_SEQ_LINE((SPR_TRAMWAY_BASE + 0x32) | (1 << PALETTE_MODIFIER_COLOUR), PAL_NONE, 15, 0, 1, 16)
-	TILE_SEQ_END()
-};
-
-static const DrawTileSeqStruct _tram_depot_SW[] = {
-	TILE_SEQ_LINE((SPR_TRAMWAY_BASE + 0x33) | (1 << PALETTE_MODIFIER_COLOUR), PAL_NONE, 0, 0, 16, 1)
-	TILE_SEQ_LINE((SPR_TRAMWAY_BASE + 0x34) | (1 << PALETTE_MODIFIER_COLOUR), PAL_NONE, 0, 15, 16, 1)
-	TILE_SEQ_END()
-};
-
-static const DrawTileSeqStruct _tram_depot_NW[] = {
-	TILE_SEQ_LINE((SPR_TRAMWAY_BASE + 0x36) | (1 << PALETTE_MODIFIER_COLOUR), PAL_NONE, 15, 0, 1, 16)
-	TILE_SEQ_END()
-};
-
-static const DrawTileSprites _tram_depot[] = {
-	{ {0xA4A, PAL_NONE}, _tram_depot_NE },
-	{ {0xA4A, PAL_NONE}, _tram_depot_SE },
-	{ {0xA4A, PAL_NONE}, _tram_depot_SW },
-	{ {0xA4A, PAL_NONE}, _tram_depot_NW }
 };
 
 /* Sprite layout for level crossings. The SpriteIDs are actually offsets

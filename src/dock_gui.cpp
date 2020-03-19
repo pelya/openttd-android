@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -41,7 +39,7 @@ static void ShowBuildDocksDepotPicker(Window *parent);
 
 static Axis _ship_depot_direction;
 
-void CcBuildDocks(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+void CcBuildDocks(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	if (result.Failed()) return;
 
@@ -49,7 +47,7 @@ void CcBuildDocks(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 }
 
-void CcPlaySound_SPLAT_WATER(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+void CcPlaySound_SPLAT_WATER(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_02_SPLAT_WATER, tile);
 }
@@ -61,7 +59,7 @@ void CcPlaySound_SPLAT_WATER(const CommandCost &result, TileIndex tile, uint32 p
  * @param[out] tile_to   The tile till where to show a selection for the aqueduct.
  * @return The other end of the aqueduct, or otherwise a tile in line with the aqueduct to cause the right error message.
  */
-static TileIndex GetOtherAqueductEnd(TileIndex tile_from, TileIndex *tile_to = NULL)
+static TileIndex GetOtherAqueductEnd(TileIndex tile_from, TileIndex *tile_to = nullptr)
 {
 	int z;
 	DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile_from, &z));
@@ -84,7 +82,7 @@ static TileIndex GetOtherAqueductEnd(TileIndex tile_from, TileIndex *tile_to = N
 		if (length > max_length) break;
 
 		if (GetTileMaxZ(endtile) > z) {
-			if (tile_to != NULL) *tile_to = endtile;
+			if (tile_to != nullptr) *tile_to = endtile;
 			break;
 		}
 	}
@@ -107,6 +105,7 @@ struct BuildDocksToolbarWindow : Window {
 	~BuildDocksToolbarWindow()
 	{
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
+		if (_game_mode == GM_NORMAL && this->IsWidgetLowered(WID_DT_STATION)) SetViewportCatchmentStation(nullptr, true);
 		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
 	}
 
@@ -115,7 +114,7 @@ struct BuildDocksToolbarWindow : Window {
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 
@@ -131,7 +130,7 @@ struct BuildDocksToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_DT_CANAL: // Build canal button
@@ -175,7 +174,7 @@ struct BuildDocksToolbarWindow : Window {
 		this->last_clicked_widget = (DockToolbarWidgets)widget;
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		switch (this->last_clicked_widget) {
 			case WID_DT_CANAL: // Build canal button
@@ -214,7 +213,7 @@ struct BuildDocksToolbarWindow : Window {
 		MoveAllWindowsOffScreen();
 	}
 
-	virtual void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt)
+	void OnPlaceDrag(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt) override
 	{
 		switch (last_clicked_widget) {
 			case WID_DT_BUILD_AQUEDUCT:
@@ -228,7 +227,7 @@ struct BuildDocksToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile)
+	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (pt.x != -1) {
 			switch (select_proc) {
@@ -284,8 +283,10 @@ struct BuildDocksToolbarWindow : Window {
 		}
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
+		if (_game_mode != GM_EDITOR && this->IsWidgetLowered(WID_DT_STATION)) SetViewportCatchmentStation(nullptr, true);
+
 		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 
@@ -305,7 +306,7 @@ struct BuildDocksToolbarWindow : Window {
 		this->OnClick(dummy, this->last_clicked_widget, 0);
 	}
 
-	virtual void OnPlacePresize(Point pt, TileIndex tile_from)
+	void OnPlacePresize(Point pt, TileIndex tile_from) override
 	{
 		if (!IsValidTile(tile_from)) return;
 		TileIndex tile_to = tile_from;
@@ -337,7 +338,7 @@ static EventState DockToolbarGlobalHotkeys(int hotkey)
 {
 	if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
 	Window *w = ShowBuildDocksToolbar();
-	if (w == NULL) return ES_NOT_HANDLED;
+	if (w == nullptr) return ES_NOT_HANDLED;
 	return w->OnHotkey(hotkey);
 }
 
@@ -391,11 +392,11 @@ static WindowDesc _build_docks_toolbar_desc(
  *
  * If the terraform toolbar is linked to the toolbar, that window is also opened.
  *
- * @return newly opened water toolbar, or NULL if the toolbar could not be opened.
+ * @return newly opened water toolbar, or nullptr if the toolbar could not be opened.
  */
 Window *ShowBuildDocksToolbar()
 {
-	if (!Company::IsValidID(_local_company)) return NULL;
+	if (!Company::IsValidID(_local_company)) return nullptr;
 
 	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildDocksToolbarWindow>(&_build_docks_toolbar_desc, TRANSPORT_WATER);
@@ -432,7 +433,7 @@ static WindowDesc _build_docks_scen_toolbar_desc(
 /**
  * Open the build water toolbar window for the scenario editor.
  *
- * @return newly opened water toolbar, or NULL if the toolbar could not be opened.
+ * @return newly opened water toolbar, or nullptr if the toolbar could not be opened.
  */
 Window *ShowBuildDocksScenToolbar()
 {
@@ -461,7 +462,7 @@ public:
 		DeleteWindowById(WC_SELECT_STATION, 0);
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		int rad = (_settings_game.station.modified_catchment) ? CA_DOCK : CA_UNMODIFIED;
 
@@ -488,7 +489,7 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case BDSW_LT_OFF:
@@ -502,7 +503,7 @@ public:
 		}
 	}
 
-	virtual void OnRealtimeTick(uint delta_ms)
+	void OnRealtimeTick(uint delta_ms) override
 	{
 		CheckRedrawStationCoverage(this);
 	}
@@ -526,7 +527,7 @@ static const NWidgetPart _nested_build_dock_station_widgets[] = {
 };
 
 static WindowDesc _build_dock_station_desc(
-	WDP_AUTO, NULL, 0, 0,
+	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_STATION, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_build_dock_station_widgets, lengthof(_nested_build_dock_station_widgets)
@@ -556,7 +557,7 @@ public:
 		UpdateDocksDirection();
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_BDD_X:
@@ -567,7 +568,7 @@ public:
 		}
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->DrawWidgets();
 
@@ -582,7 +583,7 @@ public:
 		DrawShipDepotSprite(this->GetWidget<NWidgetBase>(WID_BDD_Y)->pos_x + x1, this->GetWidget<NWidgetBase>(WID_BDD_Y)->pos_y + y2, AXIS_Y, DEPOT_PART_SOUTH);
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_BDD_X:
@@ -619,7 +620,7 @@ static const NWidgetPart _nested_build_docks_depot_widgets[] = {
 };
 
 static WindowDesc _build_docks_depot_desc(
-	WDP_AUTO, NULL, 0, 0,
+	WDP_AUTO, nullptr, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WDF_CONSTRUCTION,
 	_nested_build_docks_depot_widgets, lengthof(_nested_build_docks_depot_widgets)

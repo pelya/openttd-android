@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -26,7 +24,7 @@ static const RailTypeLabel RAILTYPE_MAGLEV_LABEL   = 'MGLV';
  *
  * This enumeration defines all 4 possible railtypes.
  */
-enum RailType {
+enum RailType : byte {
 	RAILTYPE_BEGIN    = 0,          ///< Used for iterations
 	RAILTYPE_RAIL     = 0,          ///< Standard non-electric rails
 	RAILTYPE_ELECTRIC = 1,          ///< Electric rails
@@ -34,17 +32,12 @@ enum RailType {
 	RAILTYPE_MAGLEV   = 3,          ///< Maglev
 	RAILTYPE_END      = 64,         ///< Used for iterations
 	INVALID_RAILTYPE  = 0xFF,       ///< Flag for invalid railtype
-
-	DEF_RAILTYPE_FIRST = RAILTYPE_END, ///< Default railtype: first available
-	DEF_RAILTYPE_LAST,                 ///< Default railtype: last available
-	DEF_RAILTYPE_MOST_USED,            ///< Default railtype: most used
 };
 
 /** Allow incrementing of Track variables */
 DECLARE_POSTFIX_INCREMENT(RailType)
 /** Define basic enum properties */
 template <> struct EnumPropsT<RailType> : MakeEnumPropsT<RailType, byte, RAILTYPE_BEGIN, RAILTYPE_END, INVALID_RAILTYPE, 6> {};
-typedef TinyEnumT<RailType> RailTypeByte;
 
 /**
  * The different railtypes we support, but then a bitmask of them.

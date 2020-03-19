@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -125,7 +123,7 @@ static StreamingVoiceContext* _voice_context = nullptr;
 * Initialises the XAudio2 driver.
 *
 * @param parm Driver parameters.
-* @return An error message if unsuccessful, or NULL otherwise.
+* @return An error message if unsuccessful, or nullptr otherwise.
 *
 */
 const char *SoundDriver_XAudio2::Start(const char * const *parm)
@@ -140,7 +138,7 @@ const char *SoundDriver_XAudio2::Start(const char * const *parm)
 
 	_xaudio_dll_handle = LoadLibraryA(XAUDIO2_DLL_A);
 
-	if (_xaudio_dll_handle == NULL)
+	if (_xaudio_dll_handle == nullptr)
 	{
 		CoUninitialize();
 
@@ -150,7 +148,7 @@ const char *SoundDriver_XAudio2::Start(const char * const *parm)
 
 	API_XAudio2Create xAudio2Create = (API_XAudio2Create) GetProcAddress(_xaudio_dll_handle, "XAudio2Create");
 
-	if (xAudio2Create == NULL)
+	if (xAudio2Create == nullptr)
 	{
 		FreeLibrary(_xaudio_dll_handle);
 		CoUninitialize();
@@ -248,7 +246,7 @@ const char *SoundDriver_XAudio2::Start(const char * const *parm)
 		return "Failed to submit the first audio buffer";
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**

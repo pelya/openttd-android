@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -83,7 +81,7 @@ static void _DoCommandReturnBuildBridge1(class ScriptInstance *instance)
 	switch (vehicle_type) {
 		case ScriptVehicle::VT_ROAD:
 			type |= (TRANSPORT_ROAD << 15);
-			type |= (::RoadTypeToRoadTypes((::RoadType)ScriptObject::GetRoadType()) << 8);
+			type |= (ScriptRoad::GetCurrentRoadType() << 8);
 			break;
 		case ScriptVehicle::VT_RAIL:
 			type |= (TRANSPORT_RAIL << 15);
@@ -102,7 +100,7 @@ static void _DoCommandReturnBuildBridge1(class ScriptInstance *instance)
 
 	ScriptObject::SetCallbackVariable(0, start);
 	ScriptObject::SetCallbackVariable(1, end);
-	return ScriptObject::DoCommand(end, start, type | bridge_id, CMD_BUILD_BRIDGE, NULL, &::_DoCommandReturnBuildBridge1);
+	return ScriptObject::DoCommand(end, start, type | bridge_id, CMD_BUILD_BRIDGE, nullptr, &::_DoCommandReturnBuildBridge1);
 }
 
 /* static */ bool ScriptBridge::_BuildBridgeRoad1()
@@ -114,7 +112,7 @@ static void _DoCommandReturnBuildBridge1(class ScriptInstance *instance)
 	DiagDirection dir_1 = ::DiagdirBetweenTiles(end, start);
 	DiagDirection dir_2 = ::ReverseDiagDir(dir_1);
 
-	return ScriptObject::DoCommand(start + ::TileOffsByDiagDir(dir_1), ::DiagDirToRoadBits(dir_2) | (ScriptObject::GetRoadType() << 4), 0, CMD_BUILD_ROAD, NULL, &::_DoCommandReturnBuildBridge2);
+	return ScriptObject::DoCommand(start + ::TileOffsByDiagDir(dir_1), ::DiagDirToRoadBits(dir_2) | (ScriptRoad::GetCurrentRoadType() << 4), 0, CMD_BUILD_ROAD, nullptr, &::_DoCommandReturnBuildBridge2);
 }
 
 /* static */ bool ScriptBridge::_BuildBridgeRoad2()
@@ -126,7 +124,7 @@ static void _DoCommandReturnBuildBridge1(class ScriptInstance *instance)
 	DiagDirection dir_1 = ::DiagdirBetweenTiles(end, start);
 	DiagDirection dir_2 = ::ReverseDiagDir(dir_1);
 
-	return ScriptObject::DoCommand(end + ::TileOffsByDiagDir(dir_2), ::DiagDirToRoadBits(dir_1) | (ScriptObject::GetRoadType() << 4), 0, CMD_BUILD_ROAD);
+	return ScriptObject::DoCommand(end + ::TileOffsByDiagDir(dir_2), ::DiagDirToRoadBits(dir_1) | (ScriptRoad::GetCurrentRoadType() << 4), 0, CMD_BUILD_ROAD);
 }
 
 /* static */ bool ScriptBridge::RemoveBridge(TileIndex tile)
@@ -138,8 +136,8 @@ static void _DoCommandReturnBuildBridge1(class ScriptInstance *instance)
 
 /* static */ char *ScriptBridge::GetName(BridgeID bridge_id, ScriptVehicle::VehicleType vehicle_type)
 {
-	EnforcePrecondition(NULL, vehicle_type == ScriptVehicle::VT_ROAD || vehicle_type == ScriptVehicle::VT_RAIL || vehicle_type == ScriptVehicle::VT_WATER);
-	if (!IsValidBridge(bridge_id)) return NULL;
+	EnforcePrecondition(nullptr, vehicle_type == ScriptVehicle::VT_ROAD || vehicle_type == ScriptVehicle::VT_RAIL || vehicle_type == ScriptVehicle::VT_WATER);
+	if (!IsValidBridge(bridge_id)) return nullptr;
 
 	return GetString(vehicle_type == ScriptVehicle::VT_WATER ? STR_LAI_BRIDGE_DESCRIPTION_AQUEDUCT : ::GetBridgeSpec(bridge_id)->transport_name[vehicle_type]);
 }

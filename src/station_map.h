@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,6 +15,7 @@
 #include "water_map.h"
 #include "station_func.h"
 #include "rail.h"
+#include "road.h"
 
 typedef byte StationGfx; ///< Index of station graphics. @see _station_display_datas
 
@@ -535,6 +534,7 @@ static inline void MakeStation(TileIndex t, Owner o, StationID sid, StationType 
 	SetTileType(t, MP_STATION);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
+	SetDockingTile(t, false);
 	_m[t].m2 = sid;
 	_m[t].m3 = 0;
 	_m[t].m4 = 0;
@@ -583,15 +583,16 @@ static inline void MakeRailWaypoint(TileIndex t, Owner o, StationID sid, Axis a,
  * @param o the owner of the roadstop
  * @param sid the station to which this tile belongs
  * @param rst the type of roadstop to make this tile
- * @param rt the roadtypes on this tile
+ * @param road_rt the road roadtype on this tile
+ * @param tram_rt the tram roadtype on this tile
  * @param d the direction of the roadstop
  */
-static inline void MakeRoadStop(TileIndex t, Owner o, StationID sid, RoadStopType rst, RoadTypes rt, DiagDirection d)
+static inline void MakeRoadStop(TileIndex t, Owner o, StationID sid, RoadStopType rst, RoadType road_rt, RoadType tram_rt, DiagDirection d)
 {
 	MakeStation(t, o, sid, (rst == ROADSTOP_BUS ? STATION_BUS : STATION_TRUCK), d);
-	SetRoadTypes(t, rt);
-	SetRoadOwner(t, ROADTYPE_ROAD, o);
-	SetRoadOwner(t, ROADTYPE_TRAM, o);
+	SetRoadTypes(t, road_rt, tram_rt);
+	SetRoadOwner(t, RTT_ROAD, o);
+	SetRoadOwner(t, RTT_TRAM, o);
 }
 
 /**
@@ -602,15 +603,16 @@ static inline void MakeRoadStop(TileIndex t, Owner o, StationID sid, RoadStopTyp
  * @param tram the owner of the tram
  * @param sid the station to which this tile belongs
  * @param rst the type of roadstop to make this tile
- * @param rt the roadtypes on this tile
+ * @param road_rt the road roadtype on this tile
+ * @param tram_rt the tram roadtype on this tile
  * @param a the direction of the roadstop
  */
-static inline void MakeDriveThroughRoadStop(TileIndex t, Owner station, Owner road, Owner tram, StationID sid, RoadStopType rst, RoadTypes rt, Axis a)
+static inline void MakeDriveThroughRoadStop(TileIndex t, Owner station, Owner road, Owner tram, StationID sid, RoadStopType rst, RoadType road_rt, RoadType tram_rt, Axis a)
 {
 	MakeStation(t, station, sid, (rst == ROADSTOP_BUS ? STATION_BUS : STATION_TRUCK), GFX_TRUCK_BUS_DRIVETHROUGH_OFFSET + a);
-	SetRoadTypes(t, rt);
-	SetRoadOwner(t, ROADTYPE_ROAD, road);
-	SetRoadOwner(t, ROADTYPE_TRAM, tram);
+	SetRoadTypes(t, road_rt, tram_rt);
+	SetRoadOwner(t, RTT_ROAD, road);
+	SetRoadOwner(t, RTT_TRAM, tram);
 }
 
 /**

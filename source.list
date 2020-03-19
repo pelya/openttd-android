@@ -70,6 +70,7 @@ rail.cpp
 rev.cpp
 road.cpp
 roadstop.cpp
+screenshot_gui.cpp
 screenshot.cpp
 settings.cpp
 signal.cpp
@@ -111,8 +112,8 @@ tutorial_gui.cpp
 vehicle.cpp
 vehiclelist.cpp
 viewport.cpp
-#if SSE
-viewport_sprite_sorter_sse4.cpp
+#if USE_SSE
+	viewport_sprite_sorter_sse4.cpp
 #end
 waypoint.cpp
 widget.cpp
@@ -136,6 +137,7 @@ autoslope.h
 base_media_base.h
 base_media_func.h
 base_station_base.h
+bitmap_type.h
 bmp.h
 bridge.h
 build_confirmation_func.h
@@ -270,8 +272,10 @@ newgrf_house.h
 newgrf_industries.h
 newgrf_industrytiles.h
 newgrf_object.h
+newgrf_profiling.h
 newgrf_properties.h
 newgrf_railtype.h
+newgrf_roadtype.h
 newgrf_sound.h
 newgrf_spritegroup.h
 newgrf_station.h
@@ -302,6 +306,7 @@ rail.h
 rail_gui.h
 rail_type.h
 rev.h
+road.h
 road_cmd.h
 road_func.h
 road_gui.h
@@ -311,8 +316,10 @@ roadstop_base.h
 roadveh.h
 safeguards.h
 screenshot.h
+screenshot_gui.h
 sound/sdl_s.h
 video/sdl_v.h
+video/sdl2_v.h
 settings_func.h
 settings_gui.h
 settings_internal.h
@@ -334,6 +341,7 @@ spritecache.h
 station_base.h
 station_func.h
 station_gui.h
+station_kdtree.h
 station_type.h
 statusbar_gui.h
 stdafx.h
@@ -369,6 +377,7 @@ toolbar_type.h
 toolbar_gui.h
 town.h
 town_type.h
+town_kdtree.h
 townname_func.h
 townname_type.h
 track_func.h
@@ -385,6 +394,7 @@ vehicle_gui_base.h
 vehicle_type.h
 vehiclelist.h
 viewport_func.h
+viewport_kdtree.h
 viewport_sprite_sorter.h
 viewport_type.h
 water.h
@@ -403,20 +413,19 @@ zoom_func.h
 zoom_type.h
 #if WIN32
 #else
-music/bemidi.h
-music/cocoa_m.h
-music/extmidi.h
-music/libtimidity.h
-music/fluidsynth.h
-music/os2_m.h
-music/qtmidi.h
-os/macosx/macos.h
-os/macosx/osx_stdafx.h
-os/macosx/splash.h
-os/macosx/string_osx.h
-sound/cocoa_s.h
-video/cocoa/cocoa_keys.h
-video/cocoa/cocoa_v.h
+	music/bemidi.h
+	music/cocoa_m.h
+	music/extmidi.h
+	music/fluidsynth.h
+	music/os2_m.h
+	music/qtmidi.h
+	os/macosx/macos.h
+	os/macosx/osx_stdafx.h
+	os/macosx/splash.h
+	os/macosx/string_osx.h
+	sound/cocoa_s.h
+	video/cocoa/cocoa_keys.h
+	video/cocoa/cocoa_v.h
 #end
 
 # Core Source Code
@@ -432,6 +441,7 @@ core/enum_type.hpp
 core/geometry_func.cpp
 core/geometry_func.hpp
 core/geometry_type.hpp
+core/kdtree.hpp
 core/math_func.cpp
 core/math_func.hpp
 core/mem_func.hpp
@@ -446,7 +456,6 @@ core/smallmap_type.hpp
 core/smallmatrix_type.hpp
 core/smallstack_type.hpp
 core/smallvec_type.hpp
-core/sort_func.hpp
 core/string_compare_type.hpp
 
 # GUI Source Code
@@ -553,6 +562,7 @@ widgets/order_widget.h
 widgets/osk_widget.h
 widgets/rail_widget.h
 widgets/road_widget.h
+widgets/screenshot_widget.h
 widgets/settings_widget.h
 widgets/sign_widget.h
 widgets/smallmap_widget.h
@@ -667,6 +677,7 @@ table/pricebase.h
 table/railtypes.h
 table/road_land.h
 table/roadveh_movement.h
+table/roadtypes.h
 ../objs/settings/table/settings.h
 table/sprites.h
 table/station_land.h
@@ -823,6 +834,7 @@ script/api/script_order.hpp
 script/api/script_rail.hpp
 script/api/script_railtypelist.hpp
 script/api/script_road.hpp
+script/api/script_roadtypelist.hpp
 script/api/script_sign.hpp
 script/api/script_signlist.hpp
 script/api/script_station.hpp
@@ -891,6 +903,7 @@ script/api/script_order.cpp
 script/api/script_rail.cpp
 script/api/script_railtypelist.cpp
 script/api/script_road.cpp
+script/api/script_roadtypelist.cpp
 script/api/script_sign.cpp
 script/api/script_signlist.cpp
 script/api/script_station.cpp
@@ -917,42 +930,42 @@ script/api/script_window.cpp
 # Blitters
 #if DEDICATED
 #else
-blitter/16bpp_base.cpp
-blitter/16bpp_base.hpp
-blitter/16bpp_anim.cpp
-blitter/16bpp_anim.hpp
-blitter/16bpp_simple.cpp
-blitter/16bpp_simple.hpp
-blitter/32bpp_anim.cpp
-blitter/32bpp_anim.hpp
-#if SSE
-blitter/32bpp_anim_sse2.cpp
-blitter/32bpp_anim_sse2.hpp
-blitter/32bpp_anim_sse4.cpp
-blitter/32bpp_anim_sse4.hpp
-#end
-blitter/32bpp_base.cpp
-blitter/32bpp_base.hpp
-blitter/32bpp_optimized.cpp
-blitter/32bpp_optimized.hpp
-blitter/32bpp_simple.cpp
-blitter/32bpp_simple.hpp
-#if SSE
-blitter/32bpp_sse_func.hpp
-blitter/32bpp_sse_type.h
-blitter/32bpp_sse2.cpp
-blitter/32bpp_sse2.hpp
-blitter/32bpp_sse4.cpp
-blitter/32bpp_sse4.hpp
-blitter/32bpp_ssse3.cpp
-blitter/32bpp_ssse3.hpp
-#end
-blitter/8bpp_base.cpp
-blitter/8bpp_base.hpp
-blitter/8bpp_optimized.cpp
-blitter/8bpp_optimized.hpp
-blitter/8bpp_simple.cpp
-blitter/8bpp_simple.hpp
+	blitter/16bpp_base.cpp
+	blitter/16bpp_base.hpp
+	blitter/16bpp_anim.cpp
+	blitter/16bpp_anim.hpp
+	blitter/16bpp_simple.cpp
+	blitter/16bpp_simple.hpp
+	blitter/32bpp_anim.cpp
+	blitter/32bpp_anim.hpp
+	#if USE_SSE
+		blitter/32bpp_anim_sse2.cpp
+		blitter/32bpp_anim_sse2.hpp
+		blitter/32bpp_anim_sse4.cpp
+		blitter/32bpp_anim_sse4.hpp
+	#end
+	blitter/32bpp_base.cpp
+	blitter/32bpp_base.hpp
+	blitter/32bpp_optimized.cpp
+	blitter/32bpp_optimized.hpp
+	blitter/32bpp_simple.cpp
+	blitter/32bpp_simple.hpp
+	#if USE_SSE
+		blitter/32bpp_sse_func.hpp
+		blitter/32bpp_sse_type.h
+		blitter/32bpp_sse2.cpp
+		blitter/32bpp_sse2.hpp
+		blitter/32bpp_sse4.cpp
+		blitter/32bpp_sse4.hpp
+		blitter/32bpp_ssse3.cpp
+		blitter/32bpp_ssse3.hpp
+	#end
+	blitter/8bpp_base.cpp
+	blitter/8bpp_base.hpp
+	blitter/8bpp_optimized.cpp
+	blitter/8bpp_optimized.hpp
+	blitter/8bpp_simple.cpp
+	blitter/8bpp_simple.hpp
 #end
 blitter/base.hpp
 blitter/common.hpp
@@ -984,7 +997,9 @@ newgrf_house.cpp
 newgrf_industries.cpp
 newgrf_industrytiles.cpp
 newgrf_object.cpp
+newgrf_profiling.cpp
 newgrf_railtype.cpp
+newgrf_roadtype.cpp
 newgrf_sound.cpp
 newgrf_spritegroup.cpp
 newgrf_station.cpp
@@ -1055,8 +1070,6 @@ network/core/udp.h
 
 # Pathfinder
 pathfinder/follow_track.hpp
-pathfinder/opf/opf_ship.cpp
-pathfinder/opf/opf_ship.h
 pathfinder/pathfinder_func.h
 pathfinder/pathfinder_type.h
 pathfinder/pf_performance_timer.hpp
@@ -1094,67 +1107,66 @@ video/dedicated_v.cpp
 video/null_v.cpp
 #if DEDICATED
 #else
-#if ALLEGRO
-	video/allegro_v.cpp
-#end
-#if SDL
-	video/sdl_v.cpp
-#end
-#if WIN32
-	video/win32_v.cpp
-#end
+	#if ALLEGRO
+		video/allegro_v.cpp
+	#end
+	#if SDL
+		video/sdl_v.cpp
+	#end
+	#if SDL2
+		video/sdl2_v.cpp
+	#end
+	#if WIN32
+		video/win32_v.cpp
+	#end
 #end
 
 # Music
 #if DEDICATED
 #else
-#if ALLEGRO
-	music/allegro_m.cpp
-#end
-#if DIRECTMUSIC
-	music/dmusic.cpp
-#end
+	#if ALLEGRO
+		music/allegro_m.cpp
+	#end
+	#if DIRECTMUSIC
+		music/dmusic.cpp
+	#end
 #end
 music/null_m.cpp
 music/midifile.cpp
 #if DEDICATED
 #else
-#if WIN32
-	music/win32_m.cpp
-#else
-	#if DOS
+	#if WIN32
+		music/win32_m.cpp
 	#else
-		#if MORPHOS
-		#else
-			music/extmidi.cpp
-		#end
+		music/extmidi.cpp
 	#end
-#end
-#if BEOS
-	music/bemidi.cpp
-#end
-#if LIBTIMIDITY
-	music/libtimidity.cpp
-#end
-#if FLUIDSYNTH
-	music/fluidsynth.cpp
-#end
+	#if HAIKU
+		music/bemidi.cpp
+	#end
+	#if FLUIDSYNTH
+		music/fluidsynth.cpp
+	#end
 #end
 
 # Sound
 sound/null_s.cpp
 #if DEDICATED
 #else
-#if ALLEGRO
-	sound/allegro_s.cpp
-#end
-#if SDL
-	sound/sdl_s.cpp
-#end
-#if WIN32
-	sound/win32_s.cpp
-	sound/xaudio2_s.cpp
-#end
+	#if ALLEGRO
+		sound/allegro_s.cpp
+	#end
+	#if SDL
+		sound/sdl_s.cpp
+	#end
+	#if SDL2
+		sound/sdl2_s.cpp
+	#end
+	#if WIN32
+		sound/win32_s.cpp
+		#if USE_XAUDIO2
+			sound/xaudio2_s.cpp
+		#end
+	#end
 #end
 
 #if OSX
@@ -1188,21 +1200,4 @@ sound/null_s.cpp
 #end
 
 # Threading
-thread/thread.h
-#if HAVE_THREAD
-	#if WIN32
-		thread/thread_win32.cpp
-	#else
-		#if OS2
-			thread/thread_os2.cpp
-		#else
-			#if MORPHOS
-				thread/thread_morphos.cpp
-			#else
-				thread/thread_pthread.cpp
-			#end
-		#end
-	#end
-#else
-	thread/thread_none.cpp
-#end
+thread.h

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,11 +15,9 @@
 #include "../../string_func.h"
 #include "../../core/smallmap_type.hpp"
 
-#ifdef ENABLE_NETWORK
-
 class NetworkAddress;
-typedef SmallVector<NetworkAddress, 4> NetworkAddressList; ///< Type for a list of addresses.
-typedef SmallMap<NetworkAddress, SOCKET, 4> SocketList;    ///< Type for a mapping between address and socket.
+typedef std::vector<NetworkAddress> NetworkAddressList; ///< Type for a list of addresses.
+typedef SmallMap<NetworkAddress, SOCKET> SocketList;    ///< Type for a mapping between address and socket.
 
 /**
  * Wrapper for (un)resolved network addresses; there's no reason to transform
@@ -86,20 +82,11 @@ public:
 		if (*hostname == '[') hostname++;
 		strecpy(this->hostname, StrEmpty(hostname) ? "" : hostname, lastof(this->hostname));
 		char *tmp = strrchr(this->hostname, ']');
-		if (tmp != NULL) *tmp = '\0';
+		if (tmp != nullptr) *tmp = '\0';
 
 		memset(&this->address, 0, sizeof(this->address));
 		this->address.ss_family = family;
 		this->SetPort(port);
-	}
-
-	/**
-	 * Make a clone of another address
-	 * @param address the address to clone
-	 */
-	NetworkAddress(const NetworkAddress &address)
-	{
-		memcpy(this, &address, sizeof(*this));
 	}
 
 	const char *GetHostname();
@@ -131,7 +118,7 @@ public:
 	}
 
 	bool IsFamily(int family);
-	bool IsInNetmask(char *netmask);
+	bool IsInNetmask(const char *netmask);
 
 	/**
 	 * Compare the address of this class with the address of another.
@@ -192,5 +179,4 @@ public:
 	static const char *AddressFamilyAsString(int family);
 };
 
-#endif /* ENABLE_NETWORK */
 #endif /* NETWORK_CORE_ADDRESS_H */

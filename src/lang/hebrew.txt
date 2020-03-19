@@ -12,8 +12,6 @@
 ##case singular plural gen
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -486,9 +484,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :פתח/סגור קונסולה
 STR_ABOUT_MENU_AI_DEBUG                                         :דיבאג של סקריפטים של בינה מלאכותית או של המשחק
 STR_ABOUT_MENU_SCREENSHOT                                       :צילום מסך
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :צילום מסך בהגדלה מלאה
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :ברירת מחדל של תקריב צילום מסך
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :צילום מסך ענק
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :הצג קצב פריימים
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :'OpenTTD'{NBSP}אודות
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :מיישר ספרייטים
@@ -659,9 +654,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}מותאם אישית 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}עוצמת מנגינת רקע
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}עוצמת הצלילים
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}מינ'
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}מקס'
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -875,6 +867,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}{1:STRIN
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING} חדש זמין!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}{STRING} חדש זמין כעת  -  {ENGINE}!
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} אינה מקבלת יותר {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} אינה מקבלת יותר {STRING} או {STRING}
@@ -1709,7 +1702,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}התפ�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}מתחרים
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}שחקני מחשב
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :מקורי
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(מומלץ)
 
@@ -1793,13 +1785,9 @@ STR_QUIT_NO                                                     :{BLACK}לא
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :חלונות
-STR_OSNAME_DOS                                                  :דוס
 STR_OSNAME_UNIX                                                 :יוניקס
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :מערכת הפעלה בי
 STR_OSNAME_HAIKU                                                :הייקו
-STR_OSNAME_MORPHOS                                              :מערכת הפעלה מורפ
-STR_OSNAME_AMIGAOS                                              :מערכת הפעלה אניגמה
 STR_OSNAME_OS2                                                  :מערכת הפעלה או.אס שתיים
 STR_OSNAME_SUNOS                                                :סולריס
 
@@ -2426,6 +2414,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}בנה �
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}בנה מנהרה לחשמלית. Shift בורר בנייה/הצגה של הערכת עלות
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}שנה מצב בנה/הסר כבישים
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}שנה מצב בנה\מחק למבני חשמלית
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}כיוון המוסך
@@ -3318,8 +3307,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}תתיו
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}חלקי מסילה:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}רמזורים
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}חלקי כביש:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}כביש
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}מסילת רכבת קלה
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}משבצות מים:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}תעלות
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}תחנות:
@@ -3330,8 +3317,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}תעשיות
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- אין -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{YELLOW}(שונעו {NBSP}{3:COMMA}%){BLACK} ({1:CARGO_LONG}{2:STRING}) {ORANGE}{0:INDUSTRY}
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{YELLOW}(שונעו {NBSP} {6:COMMA}%/{5:COMMA}%) {BLACK} ({3:CARGO_LONG}{4:STRING}/{1:CARGO_LONG}{2:STRING}) {ORANGE}{0:INDUSTRY}
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}רשימת תעשיות - לחץ על שם כדי להתמקד בתעשייה. Ctrl+לחיצה פותח חלונית תצוגה חדשה על מיקום התעשייה
 
@@ -3396,6 +3381,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :רכבים לא
 STR_GROUP_DEFAULT_SHIPS                                         :כלי שייט לא משוייכים
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :כלי טייס לא משוייכים
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}קבוצות – לחץ על קבוצה לצפייה בכל הכלים השייכים אליה. גרור כדי לסדר הירארכיה.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}לחץ ליצירת קבוצה חדשה
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}מחק את הקבוצה שנבחרה
@@ -3421,10 +3407,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :רכבות חש
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          ::רכבות חד-פס חדשות
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :רכבות פס מגנטי חדשות
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :רכבות זמינות
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :כלי רכב חדשים
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :רכבות זמינות
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :כלי שייט חדשים
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :כלי טייס חדש
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{GOLD}{1:WEIGHT_SHORT}{BLACK} :משקל {GOLD}{0:CURRENCY_LONG}{BLACK} :מחיר
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}מהירות: {GOLD}{VELOCITY}{BLACK} הספק: {GOLD}{POWER}
@@ -3458,10 +3447,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}רכוש
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}רכוש כלי שייט
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}רכוש כלי טייס
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}רכוש את קרון הרכבת שמודגש. Shift+לחיצה מציג הערכת עלות ללא רכישה
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}רכוש את כלי הרכב שמודגש. Shift+לחיצה מציג הערכת עלות ללא רכישה
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}רכוש את כלי השייט שמודגש. Shift+לחיצה מציג הערכת עלות ללא רכישה
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}רכוש את כלי הטייס שמודגש. Shift+לחיצה מציג הערכת עלות ללא רכישה
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}שנה שם
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}שנה שם
@@ -3571,12 +3562,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}?אתה
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}הודעה מיצרן הרכב
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}?חדש/ה! האם אתה מעוניין לבחון כלי זה באופן בלעדי לפני הוצאתו לשוק {STRING} זה עתה סיימנו את תכנונו של
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :קטר רכבת
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :כלי רכב
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :כלי טיס
-STR_ENGINE_PREVIEW_SHIP                                         :כלי שייט
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :קטר חד-פס
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :קטר פס מגנטי
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :כלי רכב
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :כלי טיס
+STR_ENGINE_PREVIEW_SHIP                                         :כלי שייט
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}{1:WEIGHT_SHORT} :משקל  {NBSP}{0:CURRENCY_LONG}  :מחיר{}  {NBSP}{3:POWER} :עצמת מנוע   {NBSP}{2:VELOCITY} :מהירות {NBSP}{}{5:CARGO_LONG} : קיבולת {NBSP} לשנה  {NBSP}{4:CURRENCY_LONG} :עלות תפעולית
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}עלות: {CURRENCY_LONG} משקל: {WEIGHT_SHORT}{}מהירות: {VELOCITY}  הספק: {POWER}  מקסימלי T.E.: {6:FORCE}{}עלות תפעולית: {4:CURRENCY_LONG}/לשנה{}קיבולת: {5:CARGO_LONG}
@@ -3622,6 +3616,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :רכבות
 STR_REPLACE_ELRAIL_VEHICLES                                     :רכבות חשמליות
 STR_REPLACE_MONORAIL_VEHICLES                                   :רכבות חד-פס
 STR_REPLACE_MAGLEV_VEHICLES                                     :רכבות פס-מגנטי
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{ORANGE}{STRING}{BLACK} : הסרת קרונות
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}שמור על האורך המקורי של הרכבת בעת שימוש בהחלפה אוטומטית, במידה והקטר מאריך את הרכבת הסר קרונות מתחילת הרכבת
@@ -4073,6 +4068,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK} בחר 
 STR_AI_LIST_CANCEL                                              :{BLACK}בטל
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}אל תשנה את התסריט
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} פרמטרים
 STR_AI_SETTINGS_CAPTION_AI                                      :שחקן מחשב
@@ -4275,7 +4271,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... כב
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}הכביש פונה לכיוון לא נכון...
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... לתחנות "על הדרך" לא יכולות להיות פינות
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... לתחנות "על הדרך" לא יכולות להיות צמתים
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}... הדרך חד כיוונית או חסומה
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}... לא ניתן לבטל חלק מהתחנה
@@ -4345,7 +4340,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}יש ל�
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}אין מסילת רכבת מתאימה
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}יש להסיר את המסילה הקיימת תחילה
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}כביש חד סיטרי או חסום
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}מפגשי כביש/מסילה אין אפשריים עבור סוג מסילה זה
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}מפגשי כביש/מסילה אין אפשריים עבור סוג מסילה זה
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}לא ניתן למקם רמזורים כאן...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}לא ניתן להניח פסי רכבת כאן...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}לא ניתן להסיר פסי רכבת ממשבצת זו...

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -10,8 +8,6 @@
 /**
  * @file tcp.cpp Basic functions to receive and send TCP packets.
  */
-
-#ifdef ENABLE_NETWORK
 
 #include "../../stdafx.h"
 #include "../../debug.h"
@@ -26,7 +22,7 @@
  */
 NetworkTCPSocketHandler::NetworkTCPSocketHandler(SOCKET s) :
 		NetworkSocketHandler(),
-		packet_queue(NULL), packet_recv(NULL),
+		packet_queue(nullptr), packet_recv(nullptr),
 		sock(s), writable(false)
 {
 }
@@ -45,13 +41,13 @@ NetworkRecvStatus NetworkTCPSocketHandler::CloseConnection(bool error)
 	NetworkSocketHandler::CloseConnection(error);
 
 	/* Free all pending and partially received packets */
-	while (this->packet_queue != NULL) {
+	while (this->packet_queue != nullptr) {
 		Packet *p = this->packet_queue->next;
 		delete this->packet_queue;
 		this->packet_queue = p;
 	}
 	delete this->packet_recv;
-	this->packet_recv = NULL;
+	this->packet_recv = nullptr;
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -65,7 +61,7 @@ NetworkRecvStatus NetworkTCPSocketHandler::CloseConnection(bool error)
 void NetworkTCPSocketHandler::SendPacket(Packet *packet)
 {
 	Packet *p;
-	assert(packet != NULL);
+	assert(packet != nullptr);
 
 	packet->PrepareToSend();
 
@@ -76,12 +72,12 @@ void NetworkTCPSocketHandler::SendPacket(Packet *packet)
 
 	/* Locate last packet buffered for the client */
 	p = this->packet_queue;
-	if (p == NULL) {
+	if (p == nullptr) {
 		/* No packets yet */
 		this->packet_queue = packet;
 	} else {
 		/* Skip to the last packet */
-		while (p->next != NULL) p = p->next;
+		while (p->next != nullptr) p = p->next;
 		p->next = packet;
 	}
 }
@@ -106,7 +102,7 @@ SendPacketsState NetworkTCPSocketHandler::SendPackets(bool closing_down)
 	if (!this->IsConnected()) return SPS_CLOSED;
 
 	p = this->packet_queue;
-	while (p != NULL) {
+	while (p != nullptr) {
 		res = send(this->sock, (const char*)p->buffer + p->pos, p->size - p->pos, 0);
 		if (res == -1) {
 			int err = GET_LAST_ERROR();
@@ -144,15 +140,15 @@ SendPacketsState NetworkTCPSocketHandler::SendPackets(bool closing_down)
 
 /**
  * Receives a packet for the given client
- * @return The received packet (or NULL when it didn't receive one)
+ * @return The received packet (or nullptr when it didn't receive one)
  */
 Packet *NetworkTCPSocketHandler::ReceivePacket()
 {
 	ssize_t res;
 
-	if (!this->IsConnected()) return NULL;
+	if (!this->IsConnected()) return nullptr;
 
-	if (this->packet_recv == NULL) {
+	if (this->packet_recv == nullptr) {
 		this->packet_recv = new Packet(this);
 	}
 
@@ -169,15 +165,15 @@ Packet *NetworkTCPSocketHandler::ReceivePacket()
 					/* Something went wrong... (104 is connection reset by peer) */
 					if (err != 104) DEBUG(net, 0, "recv failed with error %d", err);
 					this->CloseConnection();
-					return NULL;
+					return nullptr;
 				}
 				/* Connection would block, so stop for now */
-				return NULL;
+				return nullptr;
 			}
 			if (res == 0) {
 				/* Client/server has left */
 				this->CloseConnection();
-				return NULL;
+				return nullptr;
 			}
 			p->pos += res;
 		}
@@ -187,7 +183,7 @@ Packet *NetworkTCPSocketHandler::ReceivePacket()
 
 		if (p->size > SEND_MTU) {
 			this->CloseConnection();
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -200,22 +196,22 @@ Packet *NetworkTCPSocketHandler::ReceivePacket()
 				/* Something went wrong... (104 is connection reset by peer) */
 				if (err != 104) DEBUG(net, 0, "recv failed with error %d", err);
 				this->CloseConnection();
-				return NULL;
+				return nullptr;
 			}
 			/* Connection would block */
-			return NULL;
+			return nullptr;
 		}
 		if (res == 0) {
 			/* Client/server has left */
 			this->CloseConnection();
-			return NULL;
+			return nullptr;
 		}
 
 		p->pos += res;
 	}
 
 	/* Prepare for receiving a new packet */
-	this->packet_recv = NULL;
+	this->packet_recv = nullptr;
 
 	p->PrepareToRead();
 	return p;
@@ -238,14 +234,8 @@ bool NetworkTCPSocketHandler::CanSendReceive()
 	FD_SET(this->sock, &write_fd);
 
 	tv.tv_sec = tv.tv_usec = 0; // don't block at all.
-#if !defined(__MORPHOS__) && !defined(__AMIGA__)
-	if (select(FD_SETSIZE, &read_fd, &write_fd, NULL, &tv) < 0) return false;
-#else
-	if (WaitSelect(FD_SETSIZE, &read_fd, &write_fd, NULL, &tv, NULL) < 0) return false;
-#endif
+	if (select(FD_SETSIZE, &read_fd, &write_fd, nullptr, &tv) < 0) return false;
 
 	this->writable = !!FD_ISSET(this->sock, &write_fd);
 	return FD_ISSET(this->sock, &read_fd) != 0;
 }
-
-#endif /* ENABLE_NETWORK */

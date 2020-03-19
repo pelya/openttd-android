@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -53,7 +51,7 @@ public:
 	static const uint SPAWN_JOIN_TICK = 21; ///< Tick when jobs are spawned or joined every day.
 	static LinkGraphSchedule instance;
 
-	static void Run(void *j);
+	static void Run(LinkGraphJob *job);
 	static void Clear();
 
 	void SpawnNext();

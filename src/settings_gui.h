@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -22,7 +20,7 @@ void DrawArrowButtons(int x, int y, Colours button_colour, byte state, bool clic
 void DrawDropDownButton(int x, int y, Colours button_colour, bool state, bool clickable);
 void DrawBoolButton(int x, int y, bool state, bool clickable);
 
-DropDownList *BuildMusicSetDropDownList(int *selected_index);
+DropDownList BuildMusicSetDropDownList(int *selected_index);
 
 /* Actually implemented in music_gui.cpp */
 void ChangeMusicSet(int index);

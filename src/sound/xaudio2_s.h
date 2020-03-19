@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,17 +15,17 @@
 /** Implementation of the XAudio2 sound driver. */
 class SoundDriver_XAudio2 : public SoundDriver {
 public:
-	/* virtual */ const char *Start(const char * const *param);
+	const char *Start(const char * const *param) override;
 
-	/* virtual */ void Stop();
-	/* virtual */ const char *GetName() const { return "xaudio2"; }
+	void Stop() override;
+	const char *GetName() const override { return "xaudio2"; }
 };
 
 /** Factory for the XAudio2 sound driver. */
 class FSoundDriver_XAudio2 : public DriverFactoryBase {
 public:
 	FSoundDriver_XAudio2() : DriverFactoryBase(Driver::DT_SOUND, 10, "xaudio2", "XAudio2 Sound Driver") {}
-	/* virtual */ Driver *CreateInstance() const { return new SoundDriver_XAudio2(); }
+	Driver *CreateInstance() const override { return new SoundDriver_XAudio2(); }
 };
 
 #endif /* SOUND_XAUDIO2_H */

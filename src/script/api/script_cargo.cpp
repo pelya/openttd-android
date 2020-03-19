@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -29,7 +27,7 @@
 
 /* static */ char *ScriptCargo::GetCargoLabel(CargoID cargo_type)
 {
-	if (!IsValidCargo(cargo_type)) return NULL;
+	if (!IsValidCargo(cargo_type)) return nullptr;
 	const CargoSpec *cargo = ::CargoSpec::Get(cargo_type);
 
 	/* cargo->label is a uint32 packing a 4 character non-terminated string,

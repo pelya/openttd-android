@@ -11,8 +11,6 @@
 ##gender m f
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -454,9 +452,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :حائطھ تدویم
 STR_ABOUT_MENU_AI_DEBUG                                         :AI debug
 STR_ABOUT_MENU_SCREENSHOT                                       :اسکرین کی تصویر
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :مکمل قریب سے اسکرین کی تصویر
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :پہلے سے طے شدہ قربت سے اسکرین کی تصویر
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :پورے نقشے کی اسکرین کی تصویر
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Open TTD کے بارے میں
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :sprite صف بندھ
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :احاطہ کرنے والے ڈبوں کی تدویم کیجئیے
@@ -624,9 +619,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}اپنی مرضی کے مطابق 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}موسیقی کی آواز
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}اثرات کی آواز
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}کم
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}زیادہ
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -828,6 +820,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}{VEHICLE
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}نئی {STRING} اب دستیاب ہے!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}نئی {STRING} اب دستیاب ہے! - {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} مزید {STRING} قبول نہیں کرتا
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} مزید {STRING} یا {STRING} قبول نہیں کرتا
@@ -1311,7 +1304,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}صنع�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}مد مقابل
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}کمپیوٹر کے کھلاڑی
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :اصلی
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Recommended)
 
@@ -1381,13 +1373,9 @@ STR_QUIT_NO                                                     :{BLACK}نہیں
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :ونڈوز
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :یونیکس
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -1980,6 +1968,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}ٹرام
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}سڑک کی تعمیر / خاتمے میں تدویم کریں
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}ٹرام وے کی تعمیر / خاتمے میں تدویم کریں
 
+
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}گاڑیوں کے ڈپو کا رخ
 STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}گاڑیوں کے ڈپو کا رخ منتخب کریں
@@ -2307,8 +2296,6 @@ STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}تفصی
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}ریل کے ٹکڑے
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}اشارے
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}سڑک کے ٹکرے
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}سڑک
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}ٹرام وے
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}پانی کی ٹائل
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}نہریں
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD} اسٹیشن:
@@ -2342,6 +2329,7 @@ STR_VEHICLE_LIST_MANAGE_LIST                                    :{BLACK}فہرس
 # Group window
 
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}گروپ ۔ اس گروپ ک تمام گاڑیاں دیکھنے کے لیے اسے دبایں۔ پکڑ کے اوپر نیچے بھی کر سکتے ہیں۔
 
 
@@ -2350,9 +2338,14 @@ STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}گروپ
 
 # Build vehicle window
 
+
+############ range for vehicle availability starts
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :نیا طیارہ
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}پہنچ: {GOLD}{COMMA} ٹائلیں
+
+
 
 
 
@@ -2405,10 +2398,14 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 # Engine preview window
 
 
+
+
+
 # Autoreplace window
 
 STR_REPLACE_VEHICLE_VEHICLES_IN_USE                             :{YELLOW}استعمالکردہ گاڑیاں
 STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES                          :{YELLOW}میسر گاڑیاں
+
 
 
 
@@ -2540,6 +2537,7 @@ STR_AI_CONFIG_GAMESCRIPT                                        :{SILVER}کھی�
 STR_AI_CONFIG_CHANGE_NONE                                       :
 
 # Available AIs window
+
 
 
 

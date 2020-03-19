@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -16,6 +14,7 @@
 enum TownDirectoryWidgets {
 	WID_TD_SORT_ORDER,       ///< Direction of sort dropdown.
 	WID_TD_SORT_CRITERIA,    ///< Criteria of sort dropdown.
+	WID_TD_FILTER,           ///< Filter of name.
 	WID_TD_LIST,             ///< List of towns.
 	WID_TD_SCROLLBAR,        ///< Scrollbar for the town list.
 	WID_TD_WORLD_POPULATION, ///< The world's population.
@@ -24,6 +23,7 @@ enum TownDirectoryWidgets {
 /** Widgets of the #TownAuthorityWindow class. */
 enum TownAuthorityWidgets {
 	WID_TA_CAPTION,      ///< Caption of window.
+	WID_TA_ZONE_BUTTON,  ///< Turn on/off showing local authority zone.
 	WID_TA_RATING_INFO,  ///< Overview with ratings for each company.
 	WID_TA_COMMAND_LIST, ///< List of commands for the player.
 	WID_TA_SCROLLBAR,    ///< Scrollbar of the list of commands.
@@ -39,6 +39,7 @@ enum TownViewWidgets {
 	WID_TV_CENTER_VIEW,    ///< Center the main view on this town.
 	WID_TV_SHOW_AUTHORITY, ///< Show the town authority window.
 	WID_TV_CHANGE_NAME,    ///< Change the name of this town.
+	WID_TV_CATCHMENT,      ///< Toggle catchment area highlight.
 	WID_TV_EXPAND,         ///< Expand this town (scenario editor only).
 	WID_TV_DELETE,         ///< Delete this town (scenario editor only).
 };

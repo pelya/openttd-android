@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -14,7 +12,7 @@
 
 #include "window_type.h"
 
-Window *ShowTerraformToolbar(Window *link = NULL);
+Window *ShowTerraformToolbar(Window *link = nullptr);
 Window *ShowEditorTerraformToolbar();
 
 #endif /* TERRAFORM_GUI_H */

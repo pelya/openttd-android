@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -16,8 +14,6 @@
 #include "core/tcp_game.h"
 
 #include "../command_type.h"
-
-#ifdef ENABLE_NETWORK
 
 #ifdef RANDOM_DEBUG
 /**
@@ -151,8 +147,8 @@ bool IsNetworkCompatibleVersion(const char *version);
  * Everything we need to know about a command to be able to execute it.
  */
 struct CommandPacket : CommandContainer {
-	/** Make sure the pointer is NULL. */
-	CommandPacket() : next(NULL), company(INVALID_COMPANY), frame(0), my_cmd(false) {}
+	/** Make sure the pointer is nullptr. */
+	CommandPacket() : next(nullptr), company(INVALID_COMPANY), frame(0), my_cmd(false) {}
 	CommandPacket *next; ///< the next command packet (if in queue)
 	CompanyID company;   ///< company that is executing the command
 	uint32 frame;        ///< the frame in which this packet is executed
@@ -171,5 +167,4 @@ StringID GetNetworkErrorMsg(NetworkErrorCode err);
 bool NetworkFindName(char *new_name, const char *last);
 const char *GenerateCompanyPasswordHash(const char *password, const char *password_server_id, uint32 password_game_seed);
 
-#endif /* ENABLE_NETWORK */
 #endif /* NETWORK_INTERNAL_H */

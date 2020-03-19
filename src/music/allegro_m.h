@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,18 +15,18 @@
 /** Allegro's music player. */
 class MusicDriver_Allegro : public MusicDriver {
 public:
-	/* virtual */ const char *Start(const char * const *param);
+	const char *Start(const char * const *param) override;
 
-	/* virtual */ void Stop();
+	void Stop() override;
 
-	/* virtual */ void PlaySong(const MusicSongInfo &song);
+	void PlaySong(const MusicSongInfo &song) override;
 
-	/* virtual */ void StopSong();
+	void StopSong() override;
 
-	/* virtual */ bool IsSongPlaying();
+	bool IsSongPlaying() override;
 
-	/* virtual */ void SetVolume(byte vol);
-	/* virtual */ const char *GetName() const { return "allegro"; }
+	void SetVolume(byte vol) override;
+	const char *GetName() const override { return "allegro"; }
 };
 
 /** Factory for allegro's music player. */
@@ -43,7 +41,7 @@ public:
 	static const int PRIORITY = 2;
 #endif
 	FMusicDriver_Allegro() : DriverFactoryBase(Driver::DT_MUSIC, PRIORITY, "allegro", "Allegro MIDI Driver") {}
-	/* virtual */ Driver *CreateInstance() const { return new MusicDriver_Allegro(); }
+	Driver *CreateInstance() const override { return new MusicDriver_Allegro(); }
 };
 
 #endif /* MUSIC_ALLEGRO_H */

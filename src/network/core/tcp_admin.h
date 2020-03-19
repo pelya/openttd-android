@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,8 +16,6 @@
 #include "tcp.h"
 #include "../network_type.h"
 #include "../../core/pool_type.hpp"
-
-#ifdef ENABLE_NETWORK
 
 /**
  * Enum with types of TCP packets specific to the admin network.
@@ -483,7 +479,7 @@ protected:
 
 	NetworkRecvStatus HandlePacket(Packet *p);
 public:
-	NetworkRecvStatus CloseConnection(bool error = true);
+	NetworkRecvStatus CloseConnection(bool error = true) override;
 
 	NetworkAdminSocketHandler(SOCKET s);
 	~NetworkAdminSocketHandler();
@@ -499,7 +495,5 @@ public:
 		return this->status;
 	}
 };
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_TCP_ADMIN_H */

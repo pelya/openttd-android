@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -15,6 +13,7 @@
 #include "window_func.h"
 #include "newgrf_station.h"
 #include "waypoint_base.h"
+#include "viewport_kdtree.h"
 
 #include "safeguards.h"
 
@@ -54,4 +53,5 @@ Waypoint::~Waypoint()
 	if (CleaningPool()) return;
 	DeleteWindowById(WC_WAYPOINT_VIEW, this->index);
 	RemoveOrderFromAllVehicles(OT_GOTO_WAYPOINT, this->index);
+	if (this->sign.kdtree_valid) _viewport_sign_kdtree.Remove(ViewportSignKdtreeItem::MakeWaypoint(this->index));
 }

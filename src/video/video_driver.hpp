@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -14,6 +12,7 @@
 
 #include "../driver.h"
 #include "../core/geometry_type.hpp"
+#include <vector>
 
 /** The base of all video drivers. */
 class VideoDriver : public Driver {
@@ -93,6 +92,11 @@ public:
 	virtual void EditBoxLostFocus() {}
 
 	/**
+	 * An edit box gained the input focus
+	 */
+	virtual void EditBoxGainedFocus() {}
+
+	/**
 	 * Get the currently active instance of the video driver.
 	 */
 	static VideoDriver *GetInstance() {
@@ -101,8 +105,7 @@ public:
 };
 
 extern char *_ini_videodriver;
-extern int _num_resolutions;
-extern Dimension _resolutions[100];
+extern std::vector<Dimension> _resolutions;
 extern Dimension _cur_resolution;
 extern bool _rightclick_emulate;
 

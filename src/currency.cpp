@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -64,6 +62,9 @@ static const CurrencySpec origin_currency_specs[CURRENCY_END] = {
 	{ 4901, "", CF_NOEURO, "",             NBSP "Rls",       1, STR_GAME_OPTIONS_CURRENCY_IRR    }, ///< Iranian Rial
 	{   80, "", CF_NOEURO, "",             NBSP "rub",       1, STR_GAME_OPTIONS_CURRENCY_RUB    }, ///< New Russian Ruble
 	{   24, "", CF_NOEURO, "$",            "",               0, STR_GAME_OPTIONS_CURRENCY_MXN    }, ///< Mexican peso
+	{   40, "", CF_NOEURO, "NTD" NBSP,     "",               0, STR_GAME_OPTIONS_CURRENCY_NTD    }, ///< new taiwan dollar
+	{    8, "", CF_NOEURO, "\xC2\xA5",     "",               0, STR_GAME_OPTIONS_CURRENCY_CNY    }, ///< chinese renminbi
+	{   10, "", CF_NOEURO, "HKD" NBSP,     "",               0, STR_GAME_OPTIONS_CURRENCY_HKD    }, ///< hong kong dollar
 };
 
 /** Array of currencies used by the system */

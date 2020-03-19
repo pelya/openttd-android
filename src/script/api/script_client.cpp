@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -16,59 +14,41 @@
 
 #include "../../safeguards.h"
 
-#ifdef ENABLE_NETWORK
 /**
  * Finds NetworkClientInfo given client-identifier,
  *  is used by other methods to resolve client-identifier.
  * @param client The client to get info structure for
- * @return A pointer to corresponding CI struct or NULL when not found.
+ * @return A pointer to corresponding CI struct or nullptr when not found.
  */
 static NetworkClientInfo *FindClientInfo(ScriptClient::ClientID client)
 {
-	if (client == ScriptClient::CLIENT_INVALID) return NULL;
-	if (!_networking) return NULL;
+	if (client == ScriptClient::CLIENT_INVALID) return nullptr;
+	if (!_networking) return nullptr;
 	return NetworkClientInfo::GetByClientID((::ClientID)client);
 }
-#endif
 
 /* static */ ScriptClient::ClientID ScriptClient::ResolveClientID(ScriptClient::ClientID client)
 {
-#ifdef ENABLE_NETWORK
-	return (FindClientInfo(client) == NULL ? ScriptClient::CLIENT_INVALID : client);
-#else
-	return CLIENT_INVALID;
-#endif
+	return (FindClientInfo(client) == nullptr ? ScriptClient::CLIENT_INVALID : client);
 }
 
 /* static */ char *ScriptClient::GetName(ScriptClient::ClientID client)
 {
-#ifdef ENABLE_NETWORK
 	NetworkClientInfo *ci = FindClientInfo(client);
-	if (ci == NULL) return NULL;
+	if (ci == nullptr) return nullptr;
 	return stredup(ci->client_name);
-#else
-	return NULL;
-#endif
 }
 
 /* static */ ScriptCompany::CompanyID ScriptClient::GetCompany(ScriptClient::ClientID client)
 {
-#ifdef ENABLE_NETWORK
 	NetworkClientInfo *ci = FindClientInfo(client);
-	if (ci == NULL) return ScriptCompany::COMPANY_INVALID;
+	if (ci == nullptr) return ScriptCompany::COMPANY_INVALID;
 	return (ScriptCompany::CompanyID)ci->client_playas;
-#else
-	return ScriptCompany::COMPANY_INVALID;
-#endif
 }
 
 /* static */ ScriptDate::Date ScriptClient::GetJoinDate(ScriptClient::ClientID client)
 {
-#ifdef ENABLE_NETWORK
 	NetworkClientInfo *ci = FindClientInfo(client);
-	if (ci == NULL) return ScriptDate::DATE_INVALID;
+	if (ci == nullptr) return ScriptDate::DATE_INVALID;
 	return (ScriptDate::Date)ci->join_date;
-#else
-	return ScriptDate::DATE_INVALID;
-#endif
 }

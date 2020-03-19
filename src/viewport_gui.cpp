@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -77,7 +75,7 @@ public:
 		this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_EV_CAPTION:
@@ -87,7 +85,7 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_EV_ZOOM_IN: DoZoomInOutWindow(ZOOM_IN,  this); break;
@@ -117,15 +115,15 @@ public:
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
-		if (this->viewport != NULL) {
+		if (this->viewport != nullptr) {
 			NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_EV_VIEWPORT);
 			nvp->UpdateViewportCoordinates(this);
 		}
 	}
 
-	virtual void OnScroll(Point delta)
+	void OnScroll(Point delta) override
 	{
 		this->viewport->scrollpos_x += ScaleByZoom(delta.x, this->viewport->zoom);
 		this->viewport->scrollpos_y += ScaleByZoom(delta.y, this->viewport->zoom);
@@ -133,7 +131,7 @@ public:
 		this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
 	}
 
-	virtual void OnMouseWheel(int wheel)
+	void OnMouseWheel(int wheel) override
 	{
 		if (_settings_client.gui.scrollwheel_scrolling != 2) {
 			ZoomInOrOutToCursorWindow(wheel < 0, this);
@@ -145,7 +143,7 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		/* Only handle zoom message if intended for us (msg ZOOM_IN/ZOOM_OUT) */
@@ -169,7 +167,7 @@ void ShowExtraViewPortWindow(TileIndex tile)
 	int i = 0;
 
 	/* find next free window number for extra viewport */
-	while (FindWindowById(WC_EXTRA_VIEW_PORT, i) != NULL) i++;
+	while (FindWindowById(WC_EXTRA_VIEW_PORT, i) != nullptr) i++;
 
 	new ExtraViewportWindow(&_extra_view_port_desc, i, tile);
 }

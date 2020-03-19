@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -54,7 +52,7 @@
  *
  * Copies the source string to the destination buffer with respect of the
  * terminating null-character and the last pointer to the last element in
- * the destination buffer. If the last pointer is set to NULL no boundary
+ * the destination buffer. If the last pointer is set to nullptr no boundary
  * check is performed.
  *
  * @note usage: strecpy(dst, src, lastof(dst));
@@ -85,7 +83,7 @@ char *strecpy(char *dst, const char *src, const char *last)
  *
  * Appends the source string to the destination string with respect of the
  * terminating null-character and and the last pointer to the last element
- * in the destination buffer. If the last pointer is set to NULL no
+ * in the destination buffer. If the last pointer is set to nullptr no
  * boundary check is performed.
  *
  * @note usage: strecat(dst, src, lastof(dst));
@@ -106,6 +104,23 @@ static char *strecat(char *dst, const char *src, const char *last)
 
 	return strecpy(dst, src, last);
 }
+
+#if defined(__CYGWIN__)
+/**
+ * Version of strdup copied from glibc.
+ * Duplicate S, returning an identical malloc'd string.
+ * @param s The string to duplicate.
+ */
+char *
+strdup (const char *s)
+{
+	size_t len = strlen(s) + 1;
+	void *n = malloc(len);
+
+	if (n == NULL) return NULL;
+	return (char *) memcpy(n, s, len);
+}
+#endif
 
 /**
  * Version of the standard free that accepts const pointers.
@@ -163,13 +178,13 @@ public:
 	File(const char *filename)
 	{
 		this->fp = fopen(filename, "r");
-		if (this->fp == NULL) {
+		if (this->fp == nullptr) {
 			fprintf(stdout, "Could not open %s for reading\n", filename);
 			exit(1);
 		}
 		this->dirname = strdup(filename);
 		char *last = strrchr(this->dirname, '/');
-		if (last != NULL) {
+		if (last != nullptr) {
 			*last = '\0';
 		} else {
 			*this->dirname = '\0';
@@ -247,7 +262,7 @@ public:
 	 * Create the lexer and fill the keywords table.
 	 * @param file the file to read from.
 	 */
-	Lexer(const File *file) : file(file), current_char('\0'), string(NULL), token(TOKEN_UNKNOWN)
+	Lexer(const File *file) : file(file), current_char('\0'), string(nullptr), token(TOKEN_UNKNOWN)
 	{
 		this->keywords["define"]  = TOKEN_DEFINE;
 		this->keywords["defined"] = TOKEN_DEFINED;
@@ -292,8 +307,8 @@ public:
 	}
 
 	/**
-	 * Read the currenty processed string.
-	 * @return the string, can be NULL.
+	 * Read the currently processed string.
+	 * @return the string, can be nullptr.
 	 */
 	const char *GetString() const
 	{
@@ -308,7 +323,7 @@ public:
 	{
 		for (;;) {
 			free(this->string);
-			this->string = NULL;
+			this->string = nullptr;
 			this->token  = TOKEN_UNKNOWN;
 
 			switch (this->current_char) {
@@ -503,10 +518,13 @@ private:
  * @param dirname the directory to look in.
  * @param filename the file to look for.
  * @param local whether to look locally (in dirname) for the file.
- * @return the absolute path, or NULL if the file doesn't exist.
+ * @return the absolute path, or nullptr if the file doesn't exist.
  */
 const char *GeneratePath(const char *dirname, const char *filename, bool local)
 {
+	/* Ignore C++ standard library headers. */
+	if (strchr(filename, '.') == nullptr) return nullptr;
+
 	if (local) {
 		if (access(filename, R_OK) == 0) return strdup(filename);
 
@@ -517,7 +535,7 @@ const char *GeneratePath(const char *dirname, const char *filename, bool local)
 		while (*p == '.') {
 			if (*(++p) == '.') {
 				char *s = strrchr(path, '/');
-				if (s != NULL) *s = '\0';
+				if (s != nullptr) *s = '\0';
 				p += 2;
 			}
 		}
@@ -535,7 +553,7 @@ const char *GeneratePath(const char *dirname, const char *filename, bool local)
 		while (*p == '.') {
 			if (*(++p) == '.') {
 				char *s = strrchr(path, '/');
-				if (s != NULL) *s = '\0';
+				if (s != nullptr) *s = '\0';
 				p += 2;
 			}
 		}
@@ -545,7 +563,7 @@ const char *GeneratePath(const char *dirname, const char *filename, bool local)
 		if (access(path, R_OK) == 0) return strdup(path);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -730,7 +748,7 @@ void ScanFile(const char *filename, const char *ext, bool header, bool verbose)
 									break;
 								}
 								const char *h = GeneratePath(file.GetDirname(), lexer.GetString(), lexer.GetToken() == TOKEN_LOCAL);
-								if (h != NULL) {
+								if (h != nullptr) {
 									StringMap::iterator it = _headers.find(h);
 									if (it == _headers.end()) {
 										it = (_headers.insert(StringMapItem(strdup(h), new StringSet()))).first;
@@ -745,7 +763,7 @@ void ScanFile(const char *filename, const char *ext, bool header, bool verbose)
 										char path[PATH_MAX];
 										strecpy(path, filename, lastof(path));
 										*(strrchr(path, '.')) = '\0';
-										strecat(path, ext != NULL ? ext : ".o", lastof(path));
+										strecat(path, ext != nullptr ? ext : ".o", lastof(path));
 										curfile = _files.find(path);
 										if (curfile == _files.end()) {
 											curfile = (_files.insert(StringMapItem(strdup(path), new StringSet()))).first;
@@ -909,9 +927,9 @@ void ScanFile(const char *filename, const char *ext, bool header, bool verbose)
 int main(int argc, char *argv[])
 {
 	bool ignorenext = true;
-	char *filename = NULL;
-	char *ext = NULL;
-	char *delimiter = NULL;
+	char *filename = nullptr;
+	char *ext = nullptr;
+	char *delimiter = nullptr;
 	bool append = false;
 	bool verbose = false;
 
@@ -936,25 +954,25 @@ int main(int argc, char *argv[])
 			/* Define */
 			if (strncmp(argv[i], "-D", 2) == 0) {
 				char *p = strchr(argv[i], '=');
-				if (p != NULL) *p = '\0';
+				if (p != nullptr) *p = '\0';
 				_defines.insert(strdup(&argv[i][2]));
 				continue;
 			}
 			/* Output file */
 			if (strncmp(argv[i], "-f", 2) == 0) {
-				if (filename != NULL) continue;
+				if (filename != nullptr) continue;
 				filename = strdup(&argv[i][2]);
 				continue;
 			}
 			/* Object file extension */
 			if (strncmp(argv[i], "-o", 2) == 0) {
-				if (ext != NULL) continue;
+				if (ext != nullptr) continue;
 				ext = strdup(&argv[i][2]);
 				continue;
 			}
 			/* Starting string delimiter */
 			if (strncmp(argv[i], "-s", 2) == 0) {
-				if (delimiter != NULL) continue;
+				if (delimiter != nullptr) continue;
 				delimiter = strdup(&argv[i][2]);
 				continue;
 			}
@@ -966,22 +984,22 @@ int main(int argc, char *argv[])
 	}
 
 	/* Default output file is Makefile */
-	if (filename == NULL) filename = strdup("Makefile");
+	if (filename == nullptr) filename = strdup("Makefile");
 
 	/* Default delimiter string */
-	if (delimiter == NULL) delimiter = strdup("# DO NOT DELETE");
+	if (delimiter == nullptr) delimiter = strdup("# DO NOT DELETE");
 
 	char backup[PATH_MAX];
 	strecpy(backup, filename, lastof(backup));
 	strecat(backup, ".bak", lastof(backup));
 
-	char *content = NULL;
+	char *content = nullptr;
 	long size = 0;
 
 	/* Read in the current file; so we can overwrite everything from the
 	 * end of non-depend data marker down till the end. */
 	FILE *src = fopen(filename, "rb");
-	if (src != NULL) {
+	if (src != nullptr) {
 		fseek(src, 0, SEEK_END);
 		if ((size = ftell(src)) < 0) {
 			fprintf(stderr, "Could not read %s\n", filename);
@@ -1009,7 +1027,7 @@ int main(int argc, char *argv[])
 
 		/* Then append it to the real file. */
 		src = fopen(backup, "r");
-		while (fgets(content, size, src) != NULL) {
+		while (fgets(content, size, src) != nullptr) {
 			fputs(content, dst);
 			if (!strncmp(content, delimiter, strlen(delimiter))) found_delimiter = true;
 			if (!append && found_delimiter) break;

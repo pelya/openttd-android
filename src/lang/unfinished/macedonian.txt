@@ -10,8 +10,6 @@
 ##grflangid 0x26
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -446,8 +444,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Вклучи конзола
 STR_ABOUT_MENU_AI_DEBUG                                         :АИ / игри сценарио де-бубачки
 STR_ABOUT_MENU_SCREENSHOT                                       :Слика од екранот
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Зумира екранот
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Целата сајтот екранот
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :За 'ОтвориTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :самовила усогласат
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Вклучи одблеснува кутии
@@ -616,9 +612,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Свое 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Гласност на музка
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Гласност на ефекти
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}МИН
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -772,6 +765,7 @@ STR_NEWS_DISASTER_FLOOD_VEHICLE                                 :{BIG_FONT}{BLAC
 # Order review system / warnings
 
 STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE} не може да се стигне до следната дестинација, бидејќи тоа е надвор од опсегот
+
 
 
 
@@ -952,9 +946,6 @@ STR_QUIT_NO                                                     :{BLACK}Не
 STR_OSNAME_WINDOWS                                              :Windows
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -1090,6 +1081,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}Изгр
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_PASSENGER_TRAM_STATION           :{BLACK}Изгради трамвајска станица за патници
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_BRIDGE                   :{BLACK}Изгради трамвајски мост
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Изгради трамвајски тунел
+
 
 # Road depot construction window
 
@@ -1402,8 +1394,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Инфр
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}железнички парчиња:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}сигнали
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Патот парчиња:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}патот
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}трамвај
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Вода плочки:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}каналите
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}станици:
@@ -1451,10 +1441,14 @@ STR_VEHICLE_LIST_SEND_SHIP_TO_DEPOT                             :Испрати 
 
 
 
+
 # Build vehicle window
 
+
+############ range for vehicle availability starts
 STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Шински возила
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Нов авион
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Опсег: {GOLD}{COMMA} плочки
 
@@ -1462,7 +1456,9 @@ STR_BUY_VEHICLE_AIRCRAFT_LIST_TOOLTIP                           :{BLACK}Лист
 
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Направи авион
 
+
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Направи авион од селектираниот тип
+
 
 STR_BUY_VEHICLE_AIRCRAFT_RENAME_BUTTON                          :{BLACK}Преименувај
 
@@ -1505,11 +1501,15 @@ STR_DEPOT_AIRCRAFT_LOCATION_TOOLTIP                             :{BLACK}Цент
 # Engine preview window
 
 
+
+
+
 # Autoreplace window
 STR_REPLACE_VEHICLE_TRAIN                                       :Воз
 STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Патно возило
 STR_REPLACE_VEHICLE_SHIP                                        :Брод
 STR_REPLACE_VEHICLE_AIRCRAFT                                    :Летало
+
 
 
 
@@ -1672,6 +1672,7 @@ STR_AI_LIST_CAPTION_GAMESCRIPT                                  :GameScripts
 
 
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :АИ
 STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :GameScript
@@ -1768,7 +1769,7 @@ STR_ERROR_AUTOREPLACE_NOTHING_TO_DO                             :{WHITE}Не а�
 STR_ERROR_AUTOREPLACE_MONEY_LIMIT                               :(лимит на пари)
 
 # Rail construction errors
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Ниво, нема премини се дозволени за овој вид железнички
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Ниво, нема премини се дозволени за овој вид железнички
 STR_ERROR_THERE_IS_NO_RAILROAD_TRACK                            :{WHITE}... не постои железничка пруга
 STR_ERROR_THERE_ARE_NO_SIGNALS                                  :{WHITE}... постојат никакви сигнали
 

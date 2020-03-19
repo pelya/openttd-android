@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -177,6 +175,8 @@ enum CompanyInfrastructureWidgets {
 	WID_CI_RAIL_COUNT,    ///< Count of rail.
 	WID_CI_ROAD_DESC,     ///< Description of road.
 	WID_CI_ROAD_COUNT,    ///< Count of road.
+	WID_CI_TRAM_DESC,     ///< Description of tram.
+	WID_CI_TRAM_COUNT,    ///< Count of tram.
 	WID_CI_WATER_DESC,    ///< Description of water.
 	WID_CI_WATER_COUNT,   ///< Count of water.
 	WID_CI_STATION_DESC,  ///< Description of station.

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -86,11 +84,11 @@ CargoPacket::CargoPacket(uint16 count, byte days_in_transit, StationID source, T
 /**
  * Split this packet in two and return the split off part.
  * @param new_size Size of the split part.
- * @return Split off part, or NULL if no packet could be allocated!
+ * @return Split off part, or nullptr if no packet could be allocated!
  */
 CargoPacket *CargoPacket::Split(uint new_size)
 {
-	if (!CargoPacket::CanAllocateItem()) return NULL;
+	if (!CargoPacket::CanAllocateItem()) return nullptr;
 
 	Money fs = this->FeederShare(new_size);
 	CargoPacket *cp_new = new CargoPacket(new_size, this->days_in_transit, this->source, this->source_xy, this->loaded_at_xy, fs, this->source_type, this->source_id);
@@ -128,8 +126,7 @@ void CargoPacket::Reduce(uint count)
  */
 /* static */ void CargoPacket::InvalidateAllFrom(SourceType src_type, SourceID src)
 {
-	CargoPacket *cp;
-	FOR_ALL_CARGOPACKETS(cp) {
+	for (CargoPacket *cp : CargoPacket::Iterate()) {
 		if (cp->source_type == src_type && cp->source_id == src) cp->source_id = INVALID_SOURCE;
 	}
 }
@@ -140,8 +137,7 @@ void CargoPacket::Reduce(uint count)
  */
 /* static */ void CargoPacket::InvalidateAllFrom(StationID sid)
 {
-	CargoPacket *cp;
-	FOR_ALL_CARGOPACKETS(cp) {
+	for (CargoPacket *cp : CargoPacket::Iterate()) {
 		if (cp->source == sid) cp->source = INVALID_STATION;
 	}
 }
@@ -248,12 +244,12 @@ template <class Tinst, class Tcont>
  * @param cp Cargo packet to add.
  * @param action Either MTA_KEEP if you want to add the packet directly or MTA_LOAD
  * if you want to reserve it first.
- * @pre cp != NULL
+ * @pre cp != nullptr
  * @pre action == MTA_LOAD || (action == MTA_KEEP && this->designation_counts[MTA_LOAD] == 0)
  */
 void VehicleCargoList::Append(CargoPacket *cp, MoveToAction action)
 {
-	assert(cp != NULL);
+	assert(cp != nullptr);
 	assert(action == MTA_LOAD ||
 			(action == MTA_KEEP && this->action_counts[MTA_LOAD] == 0));
 	this->AddToMeta(cp, action);
@@ -395,7 +391,7 @@ void VehicleCargoList::AgeCargo()
 }
 
 /**
- * Sets loaded_at_xy to the current station for all cargo to be transfered.
+ * Sets loaded_at_xy to the current station for all cargo to be transferred.
  * This is done when stopping or skipping while the vehicle is unloading. In
  * that case the vehicle will get part of its transfer credits early and it may
  * get more transfer credits than it's entitled to.
@@ -689,11 +685,11 @@ uint VehicleCargoList::Reroute(uint max_move, VehicleCargoList *dest, StationID 
  * @note Do not use the cargo packet anymore after it has been appended to this CargoList!
  * @param next the next hop
  * @param cp the cargo packet to add
- * @pre cp != NULL
+ * @pre cp != nullptr
  */
 void StationCargoList::Append(CargoPacket *cp, StationID next)
 {
-	assert(cp != NULL);
+	assert(cp != nullptr);
 	this->AddToCache(cp);
 
 	StationCargoPacketMap::List &list = this->packets[next];
@@ -776,7 +772,7 @@ uint StationCargoList::Truncate(uint max_move, StationCargoAmountMap *cargo_per_
 	uint prev_count = this->count;
 	uint moved = 0;
 	uint loop = 0;
-	bool do_count = cargo_per_source != NULL;
+	bool do_count = cargo_per_source != nullptr;
 	while (max_move > moved) {
 		for (Iterator it(this->packets.begin()); it != this->packets.end();) {
 			CargoPacket *cp = *it;

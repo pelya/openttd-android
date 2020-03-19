@@ -1,5 +1,3 @@
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -9,8 +7,8 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = OpenTTD
-PROJECT_NUMBER         =
+PROJECT_NAME           = "OpenTTD Source"
+PROJECT_NUMBER         = $(VERSION)
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = docs/source/
@@ -289,16 +287,15 @@ EXPAND_ONLY_PREDEF     = YES
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             = ENABLE_NETWORK \
-                         WITH_ZLIB \
+PREDEFINED             = WITH_ZLIB \
                          WITH_LZO \
-                         WITH_LZMA \
+                         WITH_LIBLZMA \
                          WITH_SDL \
                          WITH_PNG \
                          WITH_FONTCONFIG \
                          WITH_FREETYPE \
-                         WITH_ICU_SORT \
-                         WITH_ICU_LAYOUT \
+                         WITH_ICU_I18N \
+                         WITH_ICU_LX \
                          UNICODE \
                          _UNICODE \
                          _GNU_SOURCE \

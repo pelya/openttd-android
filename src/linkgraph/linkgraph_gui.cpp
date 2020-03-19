@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -58,8 +56,7 @@ void LinkGraphOverlay::RebuildCache()
 	DrawPixelInfo dpi;
 	this->GetWidgetDpi(&dpi);
 
-	const Station *sta;
-	FOR_ALL_STATIONS(sta) {
+	for (const Station *sta : Station::Iterate()) {
 		if (sta->rect.IsEmpty()) continue;
 
 		Point pta = this->GetStationMiddle(sta);
@@ -301,7 +298,7 @@ void LinkGraphOverlay::DrawStationDots(const DrawPixelInfo *dpi) const
 {
 	for (StationSupplyList::const_iterator i(this->cached_stations.begin()); i != this->cached_stations.end(); ++i) {
 		const Station *st = Station::GetIfValid(i->first);
-		if (st == NULL) continue;
+		if (st == nullptr) continue;
 		Point pt = this->GetStationMiddle(st);
 		if (!this->IsPointVisible(pt, dpi, 3 * this->scale)) continue;
 
@@ -345,7 +342,7 @@ void LinkGraphOverlay::DrawStationDots(const DrawPixelInfo *dpi) const
  */
 Point LinkGraphOverlay::GetStationMiddle(const Station *st) const
 {
-	if (this->window->viewport != NULL) {
+	if (this->window->viewport != nullptr) {
 		return GetViewportStationMiddle(this->window->viewport, st);
 	} else {
 		/* assume this is a smallmap */
@@ -399,7 +396,7 @@ NWidgetBase *MakeCargoesLegendLinkGraphGUI(int *biggest_index)
 {
 	static const uint ENTRIES_PER_ROW = CeilDiv(NUM_CARGO, 5);
 	NWidgetVertical *panel = new NWidgetVertical(NC_EQUALSIZE);
-	NWidgetHorizontal *row = NULL;
+	NWidgetHorizontal *row = nullptr;
 	for (uint i = 0; i < NUM_CARGO; ++i) {
 		if (i % ENTRIES_PER_ROW == 0) {
 			if (row) panel->Add(row);
@@ -564,7 +561,7 @@ bool LinkGraphLegendWindow::OnTooltip(Point pt, int widget, TooltipCloseConditio
 {
 	if (IsInsideMM(widget, WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST + 1)) {
 		if (this->IsWidgetDisabled(widget)) {
-			GuiShowTooltips(this, STR_LINKGRAPH_LEGEND_SELECT_COMPANIES, 0, NULL, close_cond);
+			GuiShowTooltips(this, STR_LINKGRAPH_LEGEND_SELECT_COMPANIES, 0, nullptr, close_cond);
 		} else {
 			uint64 params[2];
 			CompanyID cid = (CompanyID)(widget - WID_LGL_COMPANY_FIRST);

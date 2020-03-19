@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,6 +10,8 @@
 #ifndef INDUSTRYTYPE_H
 #define INDUSTRYTYPE_H
 
+#include <array>
+#include <vector>
 #include "map_type.h"
 #include "slope_type.h"
 #include "industry_type.h"
@@ -22,7 +22,6 @@
 
 enum IndustryCleanupType {
 	CLEAN_RANDOMSOUNDS,    ///< Free the dynamically allocated sounds table
-	CLEAN_TILELAYOUT,      ///< Free the dynamically allocated tile layout structure
 };
 
 /** Available types of industry lifetimes. */
@@ -92,17 +91,20 @@ enum IndustryTileSpecialFlags {
 };
 DECLARE_ENUM_AS_BIT_SET(IndustryTileSpecialFlags)
 
-struct IndustryTileTable {
+/** Definition of one tile in an industry tile layout */
+struct IndustryTileLayoutTile {
 	TileIndexDiffC ti;
 	IndustryGfx gfx;
 };
+
+/** A complete tile layout for an industry is a list of tiles */
+using IndustryTileLayout = std::vector<IndustryTileLayoutTile>;
 
 /**
  * Defines the data structure for constructing industry.
  */
 struct IndustrySpec {
-	const IndustryTileTable * const *table;     ///< List of the tiles composing the industry
-	byte num_table;                             ///< Number of elements in the table
+	std::vector<IndustryTileLayout> layouts;    ///< List of possible tile layouts for the industry
 	uint8 cost_multiplier;                      ///< Base construction cost multiplier.
 	uint32 removal_cost_multiplier;             ///< Base removal cost multiplier.
 	uint32 prospecting_chance;                  ///< Chance prospecting succeeds
@@ -142,6 +144,8 @@ struct IndustrySpec {
 	Money GetConstructionCost() const;
 	Money GetRemovalCost() const;
 	bool UsesSmoothEconomy() const;
+
+	~IndustrySpec();
 };
 
 /**
@@ -179,7 +183,7 @@ extern IndustryTileSpec _industry_tile_specs[NUM_INDUSTRYTILES];
 /* industry_gui.cpp */
 void SortIndustryTypes();
 /* Industry types sorted alphabetically by name. */
-extern IndustryType _sorted_industry_types[NUM_INDUSTRYTYPES];
+extern std::array<IndustryType, NUM_INDUSTRYTYPES> _sorted_industry_types;
 
 /**
  * Do industry gfx ID translation for NewGRFs.

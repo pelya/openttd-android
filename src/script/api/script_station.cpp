@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -23,7 +21,7 @@
 /* static */ bool ScriptStation::IsValidStation(StationID station_id)
 {
 	const Station *st = ::Station::GetIfValid(station_id);
-	return st != NULL && (st->owner == ScriptObject::GetCompany() || ScriptObject::GetCompany() == OWNER_DEITY || st->owner == OWNER_NONE);
+	return st != nullptr && (st->owner == ScriptObject::GetCompany() || ScriptObject::GetCompany() == OWNER_DEITY || st->owner == OWNER_NONE);
 }
 
 /* static */ ScriptCompany::CompanyID ScriptStation::GetOwner(StationID station_id)
@@ -211,13 +209,11 @@ template<bool Tfrom, bool Tvia>
 	if (!IsValidStation(station_id)) return false;
 	if (!ScriptRoad::IsRoadTypeAvailable(road_type)) return false;
 
-	::RoadTypes r = RoadTypeToRoadTypes((::RoadType)road_type);
-
-	for (const RoadStop *rs = ::Station::Get(station_id)->GetPrimaryRoadStop(ROADSTOP_BUS); rs != NULL; rs = rs->next) {
-		if ((::GetRoadTypes(rs->xy) & r) != 0) return true;
+	for (const RoadStop *rs = ::Station::Get(station_id)->GetPrimaryRoadStop(ROADSTOP_BUS); rs != nullptr; rs = rs->next) {
+		if (HasBit(::GetPresentRoadTypes(rs->xy), (::RoadType)road_type)) return true;
 	}
-	for (const RoadStop *rs = ::Station::Get(station_id)->GetPrimaryRoadStop(ROADSTOP_TRUCK); rs != NULL; rs = rs->next) {
-		if ((::GetRoadTypes(rs->xy) & r) != 0) return true;
+	for (const RoadStop *rs = ::Station::Get(station_id)->GetPrimaryRoadStop(ROADSTOP_TRUCK); rs != nullptr; rs = rs->next) {
+		if (HasBit(::GetPresentRoadTypes(rs->xy), (::RoadType)road_type)) return true;
 	}
 
 	return false;

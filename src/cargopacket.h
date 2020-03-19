@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -43,13 +41,13 @@ typedef uint32 TileOrStationID;
  */
 struct CargoPacket : CargoPacketPool::PoolItem<&_cargopacket_pool> {
 private:
-	Money feeder_share;         ///< Value of feeder pickup to be paid for on delivery of cargo.
-	uint16 count;               ///< The amount of cargo in this packet.
-	byte days_in_transit;       ///< Amount of days this packet has been in transit.
-	SourceTypeByte source_type; ///< Type of \c source_id.
-	SourceID source_id;         ///< Index of source, INVALID_SOURCE if unknown/invalid.
-	StationID source;           ///< The station where the cargo came from first.
-	TileIndex source_xy;        ///< The origin of the cargo (first station in feeder chain).
+	Money feeder_share;     ///< Value of feeder pickup to be paid for on delivery of cargo.
+	uint16 count;           ///< The amount of cargo in this packet.
+	byte days_in_transit;   ///< Amount of days this packet has been in transit.
+	SourceType source_type; ///< Type of \c source_id.
+	SourceID source_id;     ///< Index of source, INVALID_SOURCE if unknown/invalid.
+	StationID source;       ///< The station where the cargo came from first.
+	TileIndex source_xy;    ///< The origin of the cargo (first station in feeder chain).
 	union {
 		TileOrStationID loaded_at_xy; ///< Location where this cargo has been loaded into the vehicle.
 		TileOrStationID next_station; ///< Station where the cargo wants to go next.
@@ -195,19 +193,6 @@ public:
 };
 
 /**
- * Iterate over all _valid_ cargo packets from the given start.
- * @param var   Variable used as "iterator".
- * @param start Cargo packet ID of the first packet to iterate over.
- */
-#define FOR_ALL_CARGOPACKETS_FROM(var, start) FOR_ALL_ITEMS_FROM(CargoPacket, cargopacket_index, var, start)
-
-/**
- * Iterate over all _valid_ cargo packets from the begin of the pool.
- * @param var   Variable used as "iterator".
- */
-#define FOR_ALL_CARGOPACKETS(var) FOR_ALL_CARGOPACKETS_FROM(var, 0)
-
-/**
  * Simple collection class for a list of cargo packets.
  * @tparam Tinst Actual instantiation of this cargo list.
  */
@@ -286,7 +271,7 @@ protected:
 	typedef CargoList<VehicleCargoList, CargoPacketList> Parent;
 
 	Money feeder_share;                     ///< Cache for the feeder share.
-	uint action_counts[NUM_MOVE_TO_ACTION]; ///< Counts of cargo to be transfered, delivered, kept and loaded.
+	uint action_counts[NUM_MOVE_TO_ACTION]; ///< Counts of cargo to be transferred, delivered, kept and loaded.
 
 	template<class Taction>
 	void ShiftCargo(Taction action);
@@ -549,7 +534,7 @@ public:
 
 	uint Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationIDStack next);
 	uint Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationIDStack next);
-	uint Truncate(uint max_move = UINT_MAX, StationCargoAmountMap *cargo_per_source = NULL);
+	uint Truncate(uint max_move = UINT_MAX, StationCargoAmountMap *cargo_per_source = nullptr);
 	uint Reroute(uint max_move, StationCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge);
 
 	/**

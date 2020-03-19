@@ -10,8 +10,6 @@
 ##grflangid 0x35
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -237,6 +235,8 @@ STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Valitse 
 STR_BUTTON_SORT_BY                                              :{BLACK}Lajittele
 STR_BUTTON_LOCATION                                             :{BLACK}Sijainti
 STR_BUTTON_RENAME                                               :{BLACK}Nimeä uudelleen
+STR_BUTTON_CATCHMENT                                            :{BLACK}Vaikutusalue
+STR_TOOLTIP_CATCHMENT                                           :{BLACK}Valitse, näytetäänkö vaikutusalue
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Sulje ikkuna
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Ikkunan otsake – siirrä ikkunaa vetämällä tästä
@@ -259,12 +259,13 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Näytä 
 STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP                   :{BLACK}Kun otat tämän käyttöön, myös piilotetut junat näytetään
 STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE_TOOLTIP            :{BLACK}Kun otat tämän käyttöön, myös piilotetut ajoneuvot näytetään
 STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP_TOOLTIP                    :{BLACK}Kun otat tämän käyttöön, myös piilotetut laivat näytetään
-STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Kun otat tämän käyttöön, myös piilotetut lentokoneet näytetään
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Kun otat tämän käyttöön, myös piilotetut ilma-alukset näytetään
 
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}Oletus
 STR_BUTTON_CANCEL                                               :{BLACK}Peruuta
 STR_BUTTON_OK                                                   :{BLACK}OK
+STR_WARNING_PASSWORD_SECURITY                                   :{YELLOW}Varoitus: Palvelimen ylläpitäjät saattavat nähdä kaiken tähän kirjoittamasi.
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :§1234567890+´ qwertyuiopå¨asdfghjklöä' zxcvbnm,.- .
@@ -333,11 +334,12 @@ STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Rahoita 
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Näytä luettelo yhtiön junista. Ctrl+Klik avaa ryhmä/kulkuneuvolistan
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}Näytä luettelo yhtiön ajoneuvoista. Ctrl+Klik avaa ryhmä/kulkuneuvoikkunan
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}Näytä luettelo yhtiön laivoista. Ctrl+Klik avaa ryhmä/kulkuneuvoikkunan
-STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_AIRCRAFT            :{BLACK}Näytä luettelo yhtiön lentokoneista. Ctrl+Klik avaa ryhmä/kulkuneuvoikkunan
+STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_AIRCRAFT            :{BLACK}Näytä luettelo yhtiön ilma-aluksista. Ctrl+Klik avaa ryhmä/kulkuneuvoikkunan
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN                            :{BLACK}Lähennä näkymää
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT                           :{BLACK}Loitonna näkymää
 STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}Rakenna rautateitä
 STR_TOOLBAR_TOOLTIP_BUILD_ROADS                                 :{BLACK}Rakenna teitä
+STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}Rakenna raitioteitä
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Rakenna satamia
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Rakenna lentokenttiä
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Avaa maastonmuokkaustyökalupalkki maan kohottamiseen/madaltamiseen, puiden istuttamiseen, jne.
@@ -358,6 +360,7 @@ STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Maaston 
 STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Kuntien luonti
 STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Teollisuuden luonti
 STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Tienrakennus
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Raitiotien rakentaminen
 STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Istuta puita. Shift vaihtaa istutustilan ja kustannusarvion välillä
 STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Sijoita kyltti
 STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Sijoita objekti. Shift vaihtaa rakennustilan ja kustannusarvion välillä
@@ -475,9 +478,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Konsoli
 STR_ABOUT_MENU_AI_DEBUG                                         :Tekoälyn/peliskriptin virheenjäljitys
 STR_ABOUT_MENU_SCREENSHOT                                       :Kuvakaappaus
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Täysin lähennetty kuvakaappaus
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Kuvakaappaus oletuslähennystasolla
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Koko kartan kuvakaappaus
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Näytä kuvataajuus
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Tietoja OpenTTD:stä
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Sprite-kohdistaja
@@ -616,7 +616,7 @@ STR_PERFORMANCE_DETAIL_AMOUNT_INT                               :{BLACK}({COMMA}
 STR_PERFORMANCE_DETAIL_PERCENT                                  :{WHITE}{NUM}%
 STR_PERFORMANCE_DETAIL_SELECT_COMPANY_TOOLTIP                   :{BLACK}Näytä tietoja tästä yhtiöstä
 ############ Those following lines need to be in this order!!
-STR_PERFORMANCE_DETAIL_VEHICLES                                 :{BLACK}Liikennevälineitä:
+STR_PERFORMANCE_DETAIL_VEHICLES                                 :{BLACK}Kulkuneuvot:
 STR_PERFORMANCE_DETAIL_STATIONS                                 :{BLACK}Asemia:
 STR_PERFORMANCE_DETAIL_MIN_PROFIT                               :{BLACK}Vähimmäistuotto:
 STR_PERFORMANCE_DETAIL_MIN_INCOME                               :{BLACK}Vähimmäistulo:
@@ -627,7 +627,7 @@ STR_PERFORMANCE_DETAIL_MONEY                                    :{BLACK}Raha:
 STR_PERFORMANCE_DETAIL_LOAN                                     :{BLACK}Laina:
 STR_PERFORMANCE_DETAIL_TOTAL                                    :{BLACK}Yhteensä:
 ############ End of order list
-STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP                         :{BLACK}Liikennevälineiden määrä. Tähän kuuluvat ajoneuvot, junat, laivat ja lentokoneet
+STR_PERFORMANCE_DETAIL_VEHICLES_TOOLTIP                         :{BLACK}Kulkuveuvojen määrä. Tähän kuuluvat ajoneuvot, junat, laivat ja ilma-alukset
 STR_PERFORMANCE_DETAIL_STATIONS_TOOLTIP                         :{BLACK}Asemien osien määrä. Kaikki osat asemista (esim. rautatieasema, bussipysäkki, lentokenttä) lasketaan, vaikka ne olisivat yhdistettynä yhdeksi asemaksi
 STR_PERFORMANCE_DETAIL_MIN_PROFIT_TOOLTIP                       :{BLACK}Vähätuottoisimman kulkuneuvon tulo (kaikkien yli 2 vuotta vanhojen kulkuneuvojen)
 STR_PERFORMANCE_DETAIL_MIN_INCOME_TOOLTIP                       :{BLACK}Viimeisen 12 neljänneksen vähätuottoisimman kuun käteistuoton määrä
@@ -648,9 +648,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Oma 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Musiikin voimakkuus
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Äänitehosteiden voimakkuus
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -706,7 +703,7 @@ STR_HIGHSCORE_PRESIDENT_OF_COMPANY_ACHIEVES_STATUS              :{BIG_FONT}{WHIT
 STR_SMALLMAP_CAPTION                                            :{WHITE}Kartta – {STRING}
 
 STR_SMALLMAP_TYPE_CONTOURS                                      :Korkeuserot
-STR_SMALLMAP_TYPE_VEHICLES                                      :Liikennevälineet
+STR_SMALLMAP_TYPE_VEHICLES                                      :Kulkuneuvot
 STR_SMALLMAP_TYPE_INDUSTRIES                                    :Teollisuus
 STR_SMALLMAP_TYPE_ROUTEMAP                                      :Rahtivirta
 STR_SMALLMAP_TYPE_ROUTES                                        :Reitit
@@ -727,11 +724,11 @@ STR_SMALLMAP_LEGENDA_ROADS                                      :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_RAILROADS                                  :{TINY_FONT}{BLACK}Rautatiet
 STR_SMALLMAP_LEGENDA_STATIONS_AIRPORTS_DOCKS                    :{TINY_FONT}{BLACK}Asemat/lentokentät/satamat
 STR_SMALLMAP_LEGENDA_BUILDINGS_INDUSTRIES                       :{TINY_FONT}{BLACK}Rakennukset/Teollisuus
-STR_SMALLMAP_LEGENDA_VEHICLES                                   :{TINY_FONT}{BLACK}Liikennevälineet
+STR_SMALLMAP_LEGENDA_VEHICLES                                   :{TINY_FONT}{BLACK}Kulkuneuvot
 STR_SMALLMAP_LEGENDA_TRAINS                                     :{TINY_FONT}{BLACK}Junat
 STR_SMALLMAP_LEGENDA_ROAD_VEHICLES                              :{TINY_FONT}{BLACK}Ajoneuvot
 STR_SMALLMAP_LEGENDA_SHIPS                                      :{TINY_FONT}{BLACK}Laivat
-STR_SMALLMAP_LEGENDA_AIRCRAFT                                   :{TINY_FONT}{BLACK}Lentokoneet
+STR_SMALLMAP_LEGENDA_AIRCRAFT                                   :{TINY_FONT}{BLACK}Ilma-alukset
 STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES                           :{TINY_FONT}{BLACK}Kuljetusreitit
 STR_SMALLMAP_LEGENDA_FOREST                                     :{TINY_FONT}{BLACK}Metsä
 STR_SMALLMAP_LEGENDA_RAILROAD_STATION                           :{TINY_FONT}{BLACK}Rautatieasema
@@ -792,11 +789,11 @@ STR_NEWS_FIRST_CARGO_TRAM_ARRIVAL                               :{BIG_FONT}{BLAC
 STR_NEWS_FIRST_SHIP_ARRIVAL                                     :{BIG_FONT}{BLACK}Asukkaat juhlivat . . .{}{STATION} vastaanottaa ensimmäisen laivan!
 STR_NEWS_FIRST_AIRCRAFT_ARRIVAL                                 :{BIG_FONT}{BLACK}Asukkaat juhlivat . . .{}{STATION} vastaanottaa ensimmäisen lentokoneen!
 
-STR_NEWS_TRAIN_CRASH                                            :{BIG_FONT}{BLACK}Junaonnettomuus!{}{COMMA} kuolee törmäyksen jälkeisessä tulipallossa.
-STR_NEWS_ROAD_VEHICLE_CRASH_DRIVER                              :{BIG_FONT}{BLACK}Tasoristeysturma!{}Kuljettaja kuolee junan ja auton törmäyksen jälkeisessä tulipallossa
-STR_NEWS_ROAD_VEHICLE_CRASH                                     :{BIG_FONT}{BLACK}Tasoristeysturma!{}{COMMA} kuolee junan ja auton törmäyksen jälkeisessä tulipallossa
-STR_NEWS_AIRCRAFT_CRASH                                         :{BIG_FONT}{BLACK}Lento-onnettomuus!{}{COMMA} kuolee tulipallossa asemalla {STATION}.
-STR_NEWS_PLANE_CRASH_OUT_OF_FUEL                                :{BIG_FONT}{BLACK}Lento-onnettomuus!{}Lentokoneelta loppui polttoaine, {COMMA} kuolee tulipallossa
+STR_NEWS_TRAIN_CRASH                                            :{BIG_FONT}{BLACK}Junaonnettomuus!{}{COMMA} kuollut törmäyksen jälkeisessä tulipallossa
+STR_NEWS_ROAD_VEHICLE_CRASH_DRIVER                              :{BIG_FONT}{BLACK}Tasoristeysturma!{}Kuljettaja kuollut junan ja auton törmäyksen jälkeisessä tulipallossa
+STR_NEWS_ROAD_VEHICLE_CRASH                                     :{BIG_FONT}{BLACK}Tasoristeysturma!{}{COMMA} kuoli junan ja auton törmäyksen jälkeisessä tulipallossa
+STR_NEWS_AIRCRAFT_CRASH                                         :{BIG_FONT}{BLACK}Lento-onnettomuus!{}{1:STATION}: {0:COMMA} kuollut tulipallossa
+STR_NEWS_PLANE_CRASH_OUT_OF_FUEL                                :{BIG_FONT}{BLACK}Lento-onnettomuus!{}Polttoaineen loppuminen johti {COMMA} ihmisen kuolemaan tulipallossa
 
 STR_NEWS_DISASTER_ZEPPELIN                                      :{BIG_FONT}{BLACK}{STATION}: Ilmalaivaonnettomuus!
 STR_NEWS_DISASTER_SMALL_UFO                                     :{BIG_FONT}{BLACK}Ajoneuvo tuhoutui törmäyksessä UFO:n kanssa!
@@ -867,6 +864,8 @@ STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLAC
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Uusi {STRING} on nyt saatavilla! – {ENGINE}
 
+STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}Avaa ryhmäikkuna kulkuneuvon ryhmään kohdistettuna
+
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} ei ota enää vastaan {STRING}.
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} ei ota enää vastaan {STRING} tai {STRING}.
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO                              :{WHITE}{STATION} ottaa nyt vastaan {STRING}.
@@ -933,6 +932,9 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgian lari (
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iranin rial (IRR)
 STR_GAME_OPTIONS_CURRENCY_RUB                                   :Uusi Venäjän rupla (RUB)
 STR_GAME_OPTIONS_CURRENCY_MXN                                   :Meksikon peso (MXN)
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :Uusi Taiwanin dollari (TWD)
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :Kiinan renminbi (CNY)
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :Hongkongin dollari (HKD)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Kulkuneuvot
@@ -1184,6 +1186,8 @@ STR_CONFIG_SETTING_AUTOSLOPE                                    :Salli maaston m
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Sallii maaston muokkaamisen rakennusten ja ratojen alta tuhoamatta niitä
 STR_CONFIG_SETTING_CATCHMENT                                    :Realistisemman kokoiset vaikutusalueet: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :Erityyppisillä asemilla ja lentokentillä on eri kokoiset vaikutusalueet
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :Yhtiöiden asemat voivat palvella laitoksia, joilla on omat asemat: {STRING}
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :Mikäli käytössä, asemilla valmiiksi varustettuja teollisuuslaitoksia (kuten öljylauttoja) voivat palvella myös yhtiöiden lähistölle rakentamat asemat. Mikäli pois käytöstä, tällaisia laitoksia voivat palvella vain niiden omat asemat. Lähistöllä olevat yhtiöiden asemat eivät tällöin voi palvella näitä laitoksia, eivätkä laitosten asemat palvele muita kuin näitä laitoksia
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :Kunnan omistamien teiden, siltojen ja tunneleiden raivaaminen sallittu: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :Tekee kuntien omistaman infrastruktuurin ja rakennusten tuhoamisesta helpompaa
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :Junien maksimipituus: {STRING}
@@ -1200,8 +1204,8 @@ STR_CONFIG_SETTING_TRAIN_SLOPE_STEEPNESS_HELPTEXT               :Mäkien jyrkkyy
 STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA}{NBSP}%
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :Mäkien jyrkkyys ajoneuvoille: {STRING}
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS_HELPTEXT        :Mäkien jyrkkyys ajoneuvoille. Korkeammat arvot tekevät mäkien nousemisesta vaikeampaa
-STR_CONFIG_SETTING_FORBID_90_DEG                                :90 asteen käännökset kielletty junilta ja laivoilta: {STRING}
-STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90 asteen käännöksiä esiintyy kun vaakasuuntaista rataa seuraa pystysuuntainen rata viereisellä ruudulla, tämä vaatii junan kääntymään 90 astetta ruutujen reunalla normaalin 45 asteen sijasta. Tämä asetus vaikuttaa myös laivojen kääntymissäteeseen
+STR_CONFIG_SETTING_FORBID_90_DEG                                :90 asteen käännökset kielletty junilta: {STRING}
+STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90 asteen käännöksiä esiintyy kun vaakasuuntaista rataa seuraa pystysuuntainen rata viereisellä ruudulla, tämä vaatii junan kääntymään 90 astetta ruutujen reunalla normaalin 45 asteen sijasta.
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Salli ei-vierekkäisten asemien yhdistäminen: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Mahdollistaa aseman osien rakentamisen vaikka ne eivät olisi kosketuksissa olemassaoleviin aseman osiin. Vaatii Ctrl-näppäimen painamisen rakennettaessa
 STR_CONFIG_SETTING_INFLATION                                    :Inflaatio: {STRING}
@@ -1254,11 +1258,11 @@ STR_CONFIG_SETTING_ALLOW_GIVE_MONEY_HELPTEXT                    :Sallii rahan si
 STR_CONFIG_SETTING_FREIGHT_TRAINS                               :Rahdin painokerroin raskaiden junien simulointia varten: {STRING}
 STR_CONFIG_SETTING_FREIGHT_TRAINS_HELPTEXT                      :Määritä rahdin kuljettamisen vaikutus junissa. Korkeammat arvot tekevät rahdin kuljettamisesta raskaampaa junille, erityisesti mäissä
 STR_CONFIG_SETTING_PLANE_SPEED                                  :Lentokoneiden nopeuskerroin: {STRING}
-STR_CONFIG_SETTING_PLANE_SPEED_HELPTEXT                         :Määritä lentokoneiden suhteellinen nopeus verrattuna toisiin kulkuneuvotyyppeihin
+STR_CONFIG_SETTING_PLANE_SPEED_HELPTEXT                         :Määritä lentokoneiden suhteellinen nopeus verrattuna toisiin kulkuneuvotyyppeihin, jotta vähennetään ilma-alusksilla tehtyjen kuljetusten tuottoa
 STR_CONFIG_SETTING_PLANE_SPEED_VALUE                            :1 / {COMMA}
 STR_CONFIG_SETTING_PLANE_CRASHES                                :Lento-onnettomuuksien määrä: {STRING}
-STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Määrittää lento-onnettomuuksien todennäköisyyden
-STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Ei yhtään
+STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Määrittää lento-onnettomuuksien todennäköisyyden.{}¹ Isot lentokoneet voivat kuitenkin aina tuhoutua pienille lentokentille laskeutuessaan.
+STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Ei yhtään¹
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :Vähennetty
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :Tavallinen
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Läpiajettavat pysäkit kuntien omistamille teille: {STRING}
@@ -1305,6 +1309,8 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Näytä kunnan 
 STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Näytä kuntien asukasluvut kartalla
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Viivojen paksuus kuvaajissa: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Viivan leveys kuvaajissa. Ohut viiva on tarkasti luettavissa kun taas paksumpi viiva on helpompi nähdä ja sen värit ovat helpommin havaittavissa
+STR_CONFIG_SETTING_SHOW_NEWGRF_NAME                             :Näytä NewGRF:n nimi kulkuneuvoikkunassa: {STRING}
+STR_CONFIG_SETTING_SHOW_NEWGRF_NAME_HELPTEXT                    :Lisää kulkuneuvovalikoimaikkunaan rivin, joka kertoo mistä NewGRF:stä valittu kulkuneuvo on peräisin.
 
 STR_CONFIG_SETTING_LANDSCAPE                                    :Maasto: {STRING}
 STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Maasto vaikuttaa useisiin pelin peruselementteihin, kuten rahtiin ja kuntien kasvuedellytyksiin. NewGRF:t ja peliskriptit voivat kuitenkin vaikuttaa tarkemmin pelin kulkuun
@@ -1316,8 +1322,8 @@ STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Maaston tyyppi:
 STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :(Vain TerraGenesis) Maaston mäkisyys
 STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Teollisuuden määrä: {STRING}
 STR_CONFIG_SETTING_INDUSTRY_DENSITY_HELPTEXT                    :Määritä, kuinka paljon teollisuutta tulisi luoda ja millä tasolla teollisuuden tulisi pysytellä pelin aikana
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Suurin sallittu etäisyys kartan reunoilta öljynjalostamoille: {STRING}
-STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Öljynjalostamoja rakennetaan ainoastaan kartan reunoille eli rannikoille saarikartoilla
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Suurin sallittu etäisyys kartan reunoilta öljyteollisuudelle: {STRING}
+STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Öljynjalostamojen ja öljylauttojen suurin etäisyys kartan reunasta. Saarikartoilla tämä takaa sen, että ne ovat lähellä rannikkoa. Yli 256 ruudun kartoilla tätä arvoa suurennetaan suhteessa kartan kokoon.
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Lumirajan korkeus: {STRING}
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Määritä, millä korkeudella lumiraja on pohjoisessa maastotyypissä. Lumi vaikuttaa teollisuuslaitosten luontiin sekä kuntien kasvuedellytyksiin
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Maaston epätasaisuus: {STRING}
@@ -1457,8 +1463,8 @@ STR_CONFIG_SETTING_MAX_TRAINS                                   :Suurin sallittu
 STR_CONFIG_SETTING_MAX_TRAINS_HELPTEXT                          :Yhtiön suurin sallittu junien määrä
 STR_CONFIG_SETTING_MAX_ROAD_VEHICLES                            :Suurin sallittu ajoneuvojen määrä yhtiötä kohden: {STRING}
 STR_CONFIG_SETTING_MAX_ROAD_VEHICLES_HELPTEXT                   :Yhtiön suurin sallittu ajoneuvojen määrä
-STR_CONFIG_SETTING_MAX_AIRCRAFT                                 :Suurin sallittu lentokoneiden määrä yhtiötä kohden: {STRING}
-STR_CONFIG_SETTING_MAX_AIRCRAFT_HELPTEXT                        :Yhtiön suurin sallittu lentokoneiden määrä
+STR_CONFIG_SETTING_MAX_AIRCRAFT                                 :Suurin sallittu ilma-alusten määrä yhtiötä kohden: {STRING}
+STR_CONFIG_SETTING_MAX_AIRCRAFT_HELPTEXT                        :Yhtiön suurin sallittu ilma-alusten määrä
 STR_CONFIG_SETTING_MAX_SHIPS                                    :Suurin sallittu laivojen määrä yhtiötä kohden: {STRING}
 STR_CONFIG_SETTING_MAX_SHIPS_HELPTEXT                           :Yhtiön suurin sallittu laivojen määrä
 
@@ -1466,8 +1472,8 @@ STR_CONFIG_SETTING_AI_BUILDS_TRAINS                             :Tietokoneella e
 STR_CONFIG_SETTING_AI_BUILDS_TRAINS_HELPTEXT                    :Mikäli käytössä, junien rakentaminen ei ole mahdollista tietokonepelaajille
 STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES                      :Tietokoneella ei ole ajoneuvoja: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES_HELPTEXT             :Mikäli käytössä, ajoneuvojen rakentaminen ei ole mahdollista tietokonepelaajille
-STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT                           :Tietokoneella ei ole lentokoneita: {STRING}
-STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT_HELPTEXT                  :Mikäli käytössä, lentokoneiden rakentaminen ei ole mahdollista tietokonepelaajille
+STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT                           :Tietokoneella ei ole ilma-aluksia: {STRING}
+STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT_HELPTEXT                  :Mikäli käytössä, ilma-alusten rakentaminen ei ole mahdollista tietokonepelaajille
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS                              :Tietokoneella ei ole laivoja: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS_HELPTEXT                     :Mikäli käytössä, laivojen rakentaminen ei ole mahdollista tietokonepelaajille
 
@@ -1481,6 +1487,9 @@ STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :Salli tekoälyt
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :Sallii tietokonepelaajien osallistumisen moninpeleihin
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :#opcodet ennen skriptin pysäyttämistä: {STRING}
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES_HELPTEXT                  :Suurin sallittu määrä laskutoimituksia, jonka skripti voi suorittaa yhden vuoron aikana
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY                            :Skriptikohtainen muistinkäyttö enintään: {STRING}
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Kuinka paljon muistia yksittäinen skripti saa käyttää, ennen kuin se pakotetaan lopettamaan. Jos kartta on iso, tätä arvoa voi joutua suurentamaan.
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Huoltovälit ovat prosentteina: {STRING}
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Määritä, aiheuttaako edellisestä huollosta kulunut aika vai luotettavuuden laskeminen kulkuneuvon huoltamisen
@@ -1539,10 +1548,16 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :Täysi
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR                           :Värilliset uutiset ilmestyvät: {STRING}
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :Vuosi, jonka jälkeen sanomalehdet ovat värillisiä. Ennen tätä vuotta sanomalehdet käyttävät mustavalkoisia kuvia
 STR_CONFIG_SETTING_STARTING_YEAR                                :Aloitusvuosi: {STRING}
+STR_CONFIG_SETTING_ENDING_YEAR                                  :Pistelaskun päättymisvuosi: {STRING}
+STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :Pelin päättymisvuosi pisteiden laskemista varten. Tämän vuoden lopussa talletetaan yhtiön pistemäärä ja näytetään ennätysluettelo; pelaajat voivat jatkaa pelaamista tämän jälkeenkin.{}Jos päättymisvuosi on ennen alkamisvuotta, ennätyksiä ei näytetä koskaan.
+STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
+STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Ei koskaan
 STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Tasainen talous (enemmän pieniä muutoksia): {STRING}
 STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Mikäli käytössä, teollisuuden tuotanto muuttuu useammin ja vähemmän kerrallaan. Tällä asetuksella ei ole yleensä vaikutusta mikäli teollisuustyypit ovat NewGRF:n tarjoamia
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Salli toisten yhtiöiden osakkeiden ostaminen: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Mikäli käytössä, toisten yhtiöiden osakkeiden ostaminen ja myyminen on mahdollista. Osakkeet ovat saatavilla vain yhtiöille, jotka ovat saavuttaneet tietyn iän
+STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Yhtiön vähimmäisikä osakekaupoille: {STRING}
+STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES_HELPTEXT                :Aseta yhtiölle vähimmäisikä, jonka jälkeen muut voivat ostaa ja myydä yhtiön osakkeita.
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Syöttöjärjestelmään maksettavan tuoton osuus: {STRING}
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :Osuus tuotosta, joka annetaan välittäjille syöttöjärjestelmissä
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY                         :Opastimien väli vedettäessä: {STRING}
@@ -1583,6 +1598,10 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Mikäli käytö
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Kielletty
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Sallittu
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Sallittu, oma tiekaava
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Taajamarahdin luonti: {STRING}
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Talojen tuottaman rahdin määrä suhteessa kunnan asukaslukuun.{}Neliöllinen kasvu: Kaksinkertainen asukasmäärä tuottaa matkustajia nelinkertaisesti.{}Lineaarinen kasvu: Kaksinkertainen asukasmäärä tuottaa matkustajia kaksinkertaisesti.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_ORIGINAL                   :Neliöllinen (alkuperäinen)
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineaarinen
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Puiden istutus pelissä: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Määrittää puiden sattumanvaraisen luomisen. Tämä voi vaikuttaa teollisuuslaitoksiin jotka ovat riippuvaisia puiden kasvamisesta, esimerkiksi sahat
@@ -1710,7 +1729,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Rahdin 
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Kilpailijat
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Tietokonepelaajat
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Alkuperäinen
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Suositeltu)
 
@@ -1794,13 +1812,9 @@ STR_QUIT_NO                                                     :{BLACK}Ei
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -1835,7 +1849,7 @@ STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Näytä 
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Näytä junien väriteemat
 STR_LIVERY_ROAD_VEHICLE_TOOLTIP                                 :{BLACK}Näytä tieajoneuvojen väriteemat
 STR_LIVERY_SHIP_TOOLTIP                                         :{BLACK}Näytä laivojen väriteemat
-STR_LIVERY_AIRCRAFT_TOOLTIP                                     :{BLACK}Näytä lentokoneiden väriteemat
+STR_LIVERY_AIRCRAFT_TOOLTIP                                     :{BLACK}Näytä ilma-alusten väriteemat
 STR_LIVERY_PRIMARY_TOOLTIP                                      :{BLACK}Valitse valitulle teemalle ensisijainen väri. Ctrl+Klik asettaa tämän värin jokaiselle teemalle
 STR_LIVERY_SECONDARY_TOOLTIP                                    :{BLACK}Valitse valitulle teemalle toissijainen väri. Ctrl+Klik asettaa tämän värin jokaiselle teemalle
 STR_LIVERY_PANEL_TOOLTIP                                        :{BLACK}Valitse muutettava väriteema, tai valitse useita Ctrl pohjassa. Paina valintalaatikkoa valitaksesi teeman
@@ -2138,7 +2152,7 @@ STR_NETWORK_CHAT_ALL                                            :[Kaikki] {STRIN
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}Syötä teksti verkkokeskustelua varten
 
 # Network messages
-STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Verkkolaitteita ei löytynyt tai käännetty ilman ENABLE_NETWORK-valintaa
+STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Verkkolaitteita ei löytynyt
 STR_NETWORK_ERROR_NOSERVER                                      :{WHITE}Verkkopelejä ei löytynyt
 STR_NETWORK_ERROR_NOCONNECTION                                  :{WHITE}Palvelin ei vastannut pyyntöön
 STR_NETWORK_ERROR_NEWGRF_MISMATCH                               :{WHITE}Yhteyden muodostaminen epäonnistui NewGRF-virheen vuoksi
@@ -2430,6 +2444,11 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Rakenna 
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Rakenna raitiotietunneli. Shift vaihtaa rakennustilan ja kustannusarvion välillä
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Tien rakentaminen/siirtäminen päälle/pois
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Vaihda raitiotien rakentamisen ja purkamisen välillä
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_ROAD                           :{BLACK}Muunna tai päivitä tien tyyppi. Shift vaihtaa muuntotilan ja kustannusarvion välillä
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}Muunna tai päivitä raitiotien tyyppi. Shift vaihtaa muuntotilan ja kustannusarvion välillä
+
+STR_ROAD_NAME_ROAD                                              :Tie
+STR_ROAD_NAME_TRAM                                              :Raitiotie
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Autovarikon suunta
@@ -2614,8 +2633,11 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Vastaanottaa rahtia: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}Raidetyyppi: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}Tien tyyppi: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_TRAM_TYPE                             :{BLACK}Raitiotien tyyppi: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Radan nopeusrajoitus: {LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Tien nopeusrajoitus: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT                      :{BLACK}Raitiotien nopeusrajoitus: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Kalliota
@@ -2725,6 +2747,7 @@ STR_FRAMERATE_SPEED_FACTOR                                      :{BLACK}Pelin ny
 STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}Pelin tämänhetkinen nopeus verrattuna normaalilla simulaationopeudella odotettavissa olevaan
 STR_FRAMERATE_CURRENT                                           :{WHITE}Nykyinen
 STR_FRAMERATE_AVERAGE                                           :{WHITE}Keskiarvo
+STR_FRAMERATE_MEMORYUSE                                         :{WHITE}Muisti
 STR_FRAMERATE_DATA_POINTS                                       :{BLACK}Data perustuu {COMMA} mittaukseen
 STR_FRAMERATE_MS_GOOD                                           :{LTBLUE}{DECIMAL} ms
 STR_FRAMERATE_MS_WARN                                           :{YELLOW}{DECIMAL} ms
@@ -2732,6 +2755,9 @@ STR_FRAMERATE_MS_BAD                                            :{RED}{DECIMAL} 
 STR_FRAMERATE_FPS_GOOD                                          :{LTBLUE}{DECIMAL} kuvaa/s
 STR_FRAMERATE_FPS_WARN                                          :{YELLOW}{DECIMAL} kuvaa/s
 STR_FRAMERATE_FPS_BAD                                           :{RED}{DECIMAL} kuvaa/s
+STR_FRAMERATE_BYTES_GOOD                                        :{LTBLUE}{BYTES}
+STR_FRAMERATE_BYTES_WARN                                        :{YELLOW}{BYTES}
+STR_FRAMERATE_BYTES_BAD                                         :{RED}{BYTES}
 STR_FRAMERATE_GRAPH_MILLISECONDS                                :{TINY_FONT}{COMMA} ms
 STR_FRAMERATE_GRAPH_SECONDS                                     :{TINY_FONT}{COMMA} s
 ############ Leave those lines in this order!!
@@ -3098,6 +3124,8 @@ STR_TOWN_VIEW_RENAME_TOWN_BUTTON                                :Nimeä kunta
 
 # Town local authority window
 STR_LOCAL_AUTHORITY_CAPTION                                     :{WHITE}{TOWN}: viranomaiset
+STR_LOCAL_AUTHORITY_ZONE                                        :{BLACK}Alue
+STR_LOCAL_AUTHORITY_ZONE_TOOLTIP                                :{BLACK}Näytä paikallisviranomaisten hallinnoiman alueen raja
 STR_LOCAL_AUTHORITY_COMPANY_RATINGS                             :{BLACK}Kuljetusyhtiön arvioinnit:
 STR_LOCAL_AUTHORITY_COMPANY_RATING                              :{YELLOW}{COMPANY} {COMPANY_NUM}: {ORANGE}{STRING}
 STR_LOCAL_AUTHORITY_ACTIONS_TITLE                               :{BLACK}Toiminnot:
@@ -3259,7 +3287,7 @@ STR_STATION_VIEW_SCHEDULED_SHIPS_TOOLTIP                        :{BLACK}Näytä 
 STR_STATION_VIEW_RENAME_STATION_CAPTION                         :Nimeä asema/lastausalue
 
 STR_STATION_VIEW_CLOSE_AIRPORT                                  :{BLACK}Sulje lentokenttä
-STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Estä lentokoneiden laskeutuminen tälle lentokentälle
+STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Estä ilma-aluksia laskeutumasta tälle lentokentälle
 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
@@ -3278,12 +3306,12 @@ STR_FINANCES_SECTION_CONSTRUCTION                               :{GOLD}Rakentami
 STR_FINANCES_SECTION_NEW_VEHICLES                               :{GOLD}Uudet kulkuneuvot
 STR_FINANCES_SECTION_TRAIN_RUNNING_COSTS                        :{GOLD}Junien käyttökustannukset
 STR_FINANCES_SECTION_ROAD_VEHICLE_RUNNING_COSTS                 :{GOLD}Ajoneuvojen käyttökustannukset
-STR_FINANCES_SECTION_AIRCRAFT_RUNNING_COSTS                     :{GOLD}Lentokoneiden käyttökustannukset
+STR_FINANCES_SECTION_AIRCRAFT_RUNNING_COSTS                     :{GOLD}Ilma-alusten käyttökustannukset
 STR_FINANCES_SECTION_SHIP_RUNNING_COSTS                         :{GOLD}Laivojen käyttökustannukset
 STR_FINANCES_SECTION_PROPERTY_MAINTENANCE                       :{GOLD}Omaisuudenhallinta
 STR_FINANCES_SECTION_TRAIN_INCOME                               :{GOLD}Junien tulot
 STR_FINANCES_SECTION_ROAD_VEHICLE_INCOME                        :{GOLD}Ajoneuvojen tulot
-STR_FINANCES_SECTION_AIRCRAFT_INCOME                            :{GOLD}Lentokoneiden tulot
+STR_FINANCES_SECTION_AIRCRAFT_INCOME                            :{GOLD}Ilma-alusten tulot
 STR_FINANCES_SECTION_SHIP_INCOME                                :{GOLD}Laivojen tulot
 STR_FINANCES_SECTION_LOAN_INTEREST                              :{GOLD}Lainan korko
 STR_FINANCES_SECTION_OTHER                                      :{GOLD}Muuta
@@ -3309,7 +3337,7 @@ STR_COMPANY_VIEW_COLOUR_SCHEME_TITLE                            :{GOLD}Väriteem
 STR_COMPANY_VIEW_VEHICLES_TITLE                                 :{GOLD}Kulkuneuvot:
 STR_COMPANY_VIEW_TRAINS                                         :{WHITE}{COMMA} juna{P "" a}
 STR_COMPANY_VIEW_ROAD_VEHICLES                                  :{WHITE}{COMMA} ajoneuvo{P "" a}
-STR_COMPANY_VIEW_AIRCRAFT                                       :{WHITE}{COMMA} lentokone{P "" tta}
+STR_COMPANY_VIEW_AIRCRAFT                                       :{WHITE}{COMMA} ilma-alus{P "" ta}
 STR_COMPANY_VIEW_SHIPS                                          :{WHITE}{COMMA} laiva{P "" a}
 STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}Ei mitään
 STR_COMPANY_VIEW_COMPANY_VALUE                                  :{GOLD}Yhtiön arvo: {WHITE}{CURRENCY_LONG}
@@ -3355,8 +3383,7 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Rautatiepalat:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Opastimet
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Teiden palat:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Tie
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Raitiotie
+STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}Raitiotiepalat:
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Vesiruudut:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanavat
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Asemat:
@@ -3367,10 +3394,17 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Teollisuusala
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ei mitään -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}{NBSP}% kuljetettu)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}{NBSP}% / {COMMA}{NBSP}% kuljetettu)
+STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% kuljetettu){BLACK}
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} ja {NUM} muuta
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Teollisuusmuotojen nimet - kohdista päänäkymä teollisuuslaitokseen napsauttamalla nimeä. Ctrl+Klik avaa uuden näkymäikkunan teollisuuslaitoksen sijaintiin
+STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Vastaanotettava rahti: {SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Tuotettu rahti: {SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :Kaikki rahtityypit
+STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :Ei mitään
 
 # Industry view
 STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTRY}
@@ -3395,7 +3429,7 @@ STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Muuta tu
 STR_VEHICLE_LIST_TRAIN_CAPTION                                  :{WHITE}{STRING} - {COMMA} juna{P "" a}
 STR_VEHICLE_LIST_ROAD_VEHICLE_CAPTION                           :{WHITE}{STRING} - {COMMA} ajoneuvo{P "" a}
 STR_VEHICLE_LIST_SHIP_CAPTION                                   :{WHITE}{STRING} - {COMMA} laiva{P "" a}
-STR_VEHICLE_LIST_AIRCRAFT_CAPTION                               :{WHITE}{STRING} - {COMMA} lentokone{P "" tta}
+STR_VEHICLE_LIST_AIRCRAFT_CAPTION                               :{WHITE}{STRING} - {COMMA} ilma-alus{P "" ta}
 
 STR_VEHICLE_LIST_TRAIN_LIST_TOOLTIP                             :{BLACK}Junat – napsauta junaa saadaksesi tietoja
 STR_VEHICLE_LIST_ROAD_VEHICLE_TOOLTIP                           :{BLACK}Ajoneuvot – napsauta ajoneuvoa saadaksesi tietoja
@@ -3412,7 +3446,7 @@ STR_VEHICLE_LIST_AVAILABLE_ENGINES_TOOLTIP                      :{BLACK}Näytä 
 
 STR_VEHICLE_LIST_MANAGE_LIST                                    :{BLACK}Muokkaa listaa
 STR_VEHICLE_LIST_MANAGE_LIST_TOOLTIP                            :{BLACK}Ohjaa kaikkia listan kulkuneuvoja
-STR_VEHICLE_LIST_REPLACE_VEHICLES                               :Korvaa liikennevälineitä
+STR_VEHICLE_LIST_REPLACE_VEHICLES                               :Korvaa kulkuneuvoja
 STR_VEHICLE_LIST_SEND_FOR_SERVICING                             :Lähetä huoltoon
 
 STR_VEHICLE_LIST_SEND_TRAIN_TO_DEPOT                            :Lähetä varikolle
@@ -3429,12 +3463,14 @@ STR_VEHICLE_LIST_SHARED_ORDERS_LIST_CAPTION                     :{WHITE}{COMMA} 
 STR_GROUP_ALL_TRAINS                                            :Kaikki junat
 STR_GROUP_ALL_ROAD_VEHICLES                                     :Kaikki ajoneuvot
 STR_GROUP_ALL_SHIPS                                             :Kaikki laivat
-STR_GROUP_ALL_AIRCRAFTS                                         :Kaikki lentoalukset
+STR_GROUP_ALL_AIRCRAFTS                                         :Kaikki ilma-alukset
 
 STR_GROUP_DEFAULT_TRAINS                                        :Muut junat
 STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Muut ajoneuvot
 STR_GROUP_DEFAULT_SHIPS                                         :Muut laivat
-STR_GROUP_DEFAULT_AIRCRAFTS                                     :Muut lentokoneet
+STR_GROUP_DEFAULT_AIRCRAFTS                                     :Muut ilma-alukset
+
+STR_GROUP_COUNT_WITH_SUBGROUP                                   :{TINY_FONT}{COMMA} (+{COMMA})
 
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Ryhmät – napsauta ryhmää nähdäksesi kaikki kulkuneuvot tässä ryhmässä. Järjestä ryhmiä vetämällä ja pudottamalla.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Luo ryhmä
@@ -3457,17 +3493,23 @@ STR_GROUP_OCCUPANCY                                             :Nykyinen käytt
 STR_GROUP_OCCUPANCY_VALUE                                       :{NUM} %
 
 # Build vehicle window
-STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Uusi juna
+STR_BUY_VEHICLE_TRAIN_RAIL_CAPTION                              :Uudet junat
 STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Uusi sähköjuna
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Uusi yksiraidejuna
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Uusi Maglev-juna
 
+STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Uudet ajoneuvot
+STR_BUY_VEHICLE_TRAM_VEHICLE_CAPTION                            :Uudet raitiovaunut
+
+############ range for vehicle availability starts
 STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Uudet junat
-STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Uusia ajoneuvoja
-STR_BUY_VEHICLE_SHIP_CAPTION                                    :Uusia laivoja
-STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Uusi lentokone
+STR_BUY_VEHICLE_ROAD_VEHICLE_ALL_CAPTION                        :Uudet ajoneuvot
+STR_BUY_VEHICLE_SHIP_CAPTION                                    :Uudet laivat
+STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Uusi ilma-alus
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Hinta: {GOLD}{CURRENCY_LONG}{BLACK} Paino: {GOLD}{WEIGHT_SHORT}
+STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}Hinta: {GOLD}{CURRENCY_LONG}{BLACK} (Sovituskustannus: {GOLD}{CURRENCY_LONG}{BLACK}) Paino: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Nopeus: {GOLD}{VELOCITY}{BLACK} Teho: {GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Nopeus: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Nopeus merellä: {GOLD}{VELOCITY}
@@ -3478,8 +3520,10 @@ STR_PURCHASE_INFO_REFITTABLE                                    :(sovitettava)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Suunniteltu: {GOLD}{NUM}{BLACK} Elinikä: {GOLD}{COMMA} vuo{P si tta}
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Enimmäisluotettavuus: {GOLD}{COMMA}{NBSP}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}Hinta: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}Hinta: {GOLD}{CURRENCY_LONG}{BLACK} (Sovituskustannus: {GOLD}{CURRENCY_LONG}{BLACK})
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Paino: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Hinta: {GOLD}{CURRENCY_LONG}{BLACK} Nopeus: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}Hinta: {GOLD}{CURRENCY_LONG}{BLACK} (Sovituskustannus: {GOLD}{CURRENCY_LONG}{BLACK}) Nopeus: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Kapasiteetti: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Moottoroidut vaunut: {GOLD}+{POWER}{BLACK} Paino: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Sovitettavissa: {GOLD}{STRING}
@@ -3488,22 +3532,32 @@ STR_PURCHASE_INFO_NONE                                          :Ei mitään
 STR_PURCHASE_INFO_ALL_BUT                                       :Kaikki paitsi {CARGO_LIST}
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Suurin vetovoima: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Toimintasäde: {GOLD}{COMMA} ruutua
-STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Lentokonetyyppi: {GOLD}{STRING}
+STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Ilma-alustyyppi: {GOLD}{STRING}
 
 STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}Junien valintaluettelo. Lisää tietoja junaa napsauttamalla. Ctrl+Klik näyttää tai piilottaa kulkuneuvon tyypin
 STR_BUY_VEHICLE_ROAD_VEHICLE_LIST_TOOLTIP                       :{BLACK}Ajoneuvojen valintaluettelo. Napsauta ajoneuvoa saadaksesi lisää tietoja. Ctrl+Klik näyttää tai piilottaa ajoneuvon tyypin
 STR_BUY_VEHICLE_SHIP_LIST_TOOLTIP                               :{BLACK}Laivojen valintaluettelo. Napsauta laivaa saadaksesi lisää tietoja. Ctrl+Klik näyttää tai piilottaa laivan tyypin
-STR_BUY_VEHICLE_AIRCRAFT_LIST_TOOLTIP                           :{BLACK}Lentokoneiden valintaluettelo. Napsauta lentokonetta saadaksesi lisää tietoja. Ctrl+Klik näyttää tai piilottaa lentokoneen tyypin
+STR_BUY_VEHICLE_AIRCRAFT_LIST_TOOLTIP                           :{BLACK}Ilma-alusten valintaluettelo. Napsauta ilma-alusta saadaksesi lisää tietoja. Ctrl+Klik näyttää tai piilottaa ilma-aluksen tyypin
 
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_BUTTON                        :{BLACK}Osta yksikkö
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Osta ajoneuvo
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Osta laiva
-STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Osta lentokone
+STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Osta ilma-alus
+
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_BUTTON                  :{BLACK}Osta ja sovita yksikkö
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_BUTTON           :{BLACK}Osta ja sovita ajoneuvo
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}Osta ja sovita laiva
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}Osta ja sovita ilma-alus
 
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Osta valittu yksikkö. Shift+Klik näyttää kustannusarvion ostamatta
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Osta valittu ajoneuvo. Shift+Klik näyttää kustannusarvion ostamatta
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Osta valittu laiva. Shift+Klik näyttää kustannusarvion ostamatta
-STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Osta korostettu lentokone. Shift+Klik näyttää kustannusarvion ostamatta
+STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Osta korostettu ilma-alus. Shift+Klik näyttää kustannusarvion ostamatta
+
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}Osta ja sovita valittu yksikkö. Shift+Klik näyttää kustannusarvion ostamatta
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_TOOLTIP          :{BLACK}Osta ja sovita valittu ajoneuvo. Shift+Klik näyttää kustannusarvion ostamatta
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}Osta ja sovita valittu laiva. Shift+Klik näyttää kustannusarvion ostamatta
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}Osta ja sovita valittu ilma-alus. Shift+Klik näyttää kustannusarvion ostamatta
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Nimeä
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Nimeä
@@ -3528,12 +3582,12 @@ STR_BUY_VEHICLE_AIRCRAFT_SHOW_TOGGLE_BUTTON                     :{BLACK}Näytä
 STR_BUY_VEHICLE_TRAIN_HIDE_SHOW_TOGGLE_TOOLTIP                  :{BLACK}Näytä tai piilota junan tyyppi
 STR_BUY_VEHICLE_ROAD_VEHICLE_HIDE_SHOW_TOGGLE_TOOLTIP           :{BLACK}Näytä tai piilota ajoneuvon tyyppi
 STR_BUY_VEHICLE_SHIP_HIDE_SHOW_TOGGLE_TOOLTIP                   :{BLACK}Näytä tai piilota laivan tyyppi
-STR_BUY_VEHICLE_AIRCRAFT_HIDE_SHOW_TOGGLE_TOOLTIP               :{BLACK}Näytä tai piilota lentokoneen tyyppi
+STR_BUY_VEHICLE_AIRCRAFT_HIDE_SHOW_TOGGLE_TOOLTIP               :{BLACK}Näytä tai piilota ilma-aluksen tyyppi
 
-STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}Nimeä juna(vaunu)n tyyppi uudelleen.
+STR_QUERY_RENAME_TRAIN_TYPE_CAPTION                             :{WHITE}Nimeä juna(vaunu)n tyyppi uudelleen
 STR_QUERY_RENAME_ROAD_VEHICLE_TYPE_CAPTION                      :{WHITE}Nimeä ajoneuvon tyyppi uudelleen
-STR_QUERY_RENAME_SHIP_TYPE_CAPTION                              :{WHITE}Nimeä laivatyyppi uudelleen.
-STR_QUERY_RENAME_AIRCRAFT_TYPE_CAPTION                          :{WHITE}Nimeä lentokonetyyppi uudelleen.
+STR_QUERY_RENAME_SHIP_TYPE_CAPTION                              :{WHITE}Nimeä laivatyyppi uudelleen
+STR_QUERY_RENAME_AIRCRAFT_TYPE_CAPTION                          :{WHITE}Nimeä ilma-alustyyppi uudelleen
 
 # Depot window
 STR_DEPOT_CAPTION                                               :{WHITE}{DEPOT}
@@ -3566,22 +3620,22 @@ STR_DEPOT_SELL_ALL_BUTTON_AIRCRAFT_TOOLTIP                      :{BLACK}Myy kaik
 STR_DEPOT_AUTOREPLACE_TRAIN_TOOLTIP                             :{BLACK}Korvaa kaikki veturitallilla olevat junat automaattisesti
 STR_DEPOT_AUTOREPLACE_ROAD_VEHICLE_TOOLTIP                      :{BLACK}Korvaa kaikki varikolla olevat ajoneuvot automaattisesti
 STR_DEPOT_AUTOREPLACE_SHIP_TOOLTIP                              :{BLACK}Korvaa kaikki telakalla olevat laivat automaattisesti
-STR_DEPOT_AUTOREPLACE_AIRCRAFT_TOOLTIP                          :{BLACK}Korvaa kaikki hallissa olevat lento-alukset automaattisesti
+STR_DEPOT_AUTOREPLACE_AIRCRAFT_TOOLTIP                          :{BLACK}Korvaa kaikki hallissa olevat lentokoneet automaattisesti
 
-STR_DEPOT_TRAIN_NEW_VEHICLES_BUTTON                             :{BLACK}Uusia liikennevälineitä
-STR_DEPOT_ROAD_VEHICLE_NEW_VEHICLES_BUTTON                      :{BLACK}Uusia ajoneuvoja
-STR_DEPOT_SHIP_NEW_VEHICLES_BUTTON                              :{BLACK}Uusia laivoja
-STR_DEPOT_AIRCRAFT_NEW_VEHICLES_BUTTON                          :{BLACK}Uusia lentokoneita
+STR_DEPOT_TRAIN_NEW_VEHICLES_BUTTON                             :{BLACK}Uudet kulkuneuvot
+STR_DEPOT_ROAD_VEHICLE_NEW_VEHICLES_BUTTON                      :{BLACK}Uudet ajoneuvot
+STR_DEPOT_SHIP_NEW_VEHICLES_BUTTON                              :{BLACK}Uudet laivat
+STR_DEPOT_AIRCRAFT_NEW_VEHICLES_BUTTON                          :{BLACK}Uudet lentokoneet
 
 STR_DEPOT_TRAIN_NEW_VEHICLES_TOOLTIP                            :{BLACK}Osta uusi yksikkö
 STR_DEPOT_ROAD_VEHICLE_NEW_VEHICLES_TOOLTIP                     :{BLACK}Osta uusi ajoneuvo
 STR_DEPOT_SHIP_NEW_VEHICLES_TOOLTIP                             :{BLACK}Osta uusi laiva
-STR_DEPOT_AIRCRAFT_NEW_VEHICLES_TOOLTIP                         :{BLACK}Osta uusi lentokone
+STR_DEPOT_AIRCRAFT_NEW_VEHICLES_TOOLTIP                         :{BLACK}Osta uusi ilma-alus
 
 STR_DEPOT_CLONE_TRAIN                                           :{BLACK}Kloonaa juna
 STR_DEPOT_CLONE_ROAD_VEHICLE                                    :{BLACK}Kloonaa ajoneuvo
 STR_DEPOT_CLONE_SHIP                                            :{BLACK}Kloonaa laiva
-STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}Kloonaa lentokone
+STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}Kloonaa ilma-alus
 
 STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}Tämä ostaa kopion junasta ja kaikista sen vaunuista. Napsauta tätä painiketta ja sen jälkeen junaa varikon sisä- tai ulkopuolella. Ctrl+Klik jakaa komennot. Shift+Klik näyttää kustannusarvion ostamatta kopiota
 STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_INFO                         :{BLACK}Tämä ostaa kopion ajoneuvosta. Napsauta tätä painiketta ja sen jälkeen ajoneuvoa varikon sisä- tai ulkopuolella. Ctrl+Klik jakaa komennot. Shift+Klik näyttää kustannusarvion ostamatta kopiota
@@ -3613,20 +3667,25 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Olet my
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Viesti kulkuneuvovalmistajalta
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Olemme juuri suunnitelleet uuden {STRING} – oletteko kiinnostunut vuoden yksinoikeutetusta kokeilusta, jotta näemme miten tuote suoriutuu ennen kuin julkistamme sen yleiseen käyttöön?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :veturin
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :ajoneuvon
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :lentokoneen
-STR_ENGINE_PREVIEW_SHIP                                         :laivan
+STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :sähköradan veturi
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :yksiraiteisen veturin
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :maglev-veturin
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :ajoneuvon
+STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :raitiovaunun
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :ilma-aluksen
+STR_ENGINE_PREVIEW_SHIP                                         :laivan
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Hinta: {CURRENCY_LONG} Paino: {WEIGHT_SHORT}{}Nopeus: {VELOCITY}  Teho: {POWER}{}Käyttökustannukset: {CURRENCY_LONG}/vuosi{}Kapasiteetti: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Hinta: {CURRENCY_LONG} Paino: {WEIGHT_SHORT}{}Nopeus: {VELOCITY}  Teho: {POWER}  Maks. vetovoima: {6:FORCE}{}Käyttökustannukset: {4:CURRENCY_LONG}/v{}Kapasiteetti: {5:CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST                   :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING}{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING}{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING} Toimintamatka: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
-STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Lentokonetyyppi: {STRING} Toimintamatka: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST          :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Ilma-alustyyppi: {STRING}{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST              :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Ilma-alustyyppi: {STRING}{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST    :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Ilma-alustyyppi: {STRING} Toimintamatka: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}, {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
+STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST        :{BLACK}Hinta: {CURRENCY_LONG} Maks. nopeus: {VELOCITY}{}Ilma-alustyyppi: {STRING} Toimintamatka: {COMMA} ruutua{}Kapasiteetti: {CARGO_LONG}{}Käyttökustannukset: {CURRENCY_LONG}/v
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Korvaa {STRING} – {STRING}
@@ -3638,17 +3697,17 @@ STR_REPLACE_VEHICLE_AIRCRAFT                                    :lentokoneita
 STR_REPLACE_VEHICLE_VEHICLES_IN_USE                             :{YELLOW}Käytössä olevat kulkuneuvot
 STR_REPLACE_VEHICLE_VEHICLES_IN_USE_TOOLTIP                     :{BLACK}Sarake kulkuneuvoille, jotka omistat
 STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES                          :{YELLOW}Saatavilla olevat kulkuneuvot
-STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES_TOOLTIP                  :{BLACK}Sarake kulkuneuvoille, jotka voidaan uusia
+STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES_TOOLTIP                  :{BLACK}Sarake kulkuneuvoille, jotka voidaan uudistaa
 
 STR_REPLACE_HELP_LEFT_ARRAY                                     :{BLACK}Valitse korvattava veturityyppi.
 STR_REPLACE_HELP_RIGHT_ARRAY                                    :{BLACK}Valitse vasemmalla näkyvän veturityypinn korvaava uusi veturityyppi.
 
 STR_REPLACE_VEHICLES_START                                      :{BLACK}Aloita kulkuneuvojen korvaaminen
-STR_REPLACE_VEHICLES_NOW                                        :Korvaa kaikki liikennevälineet nyt
-STR_REPLACE_VEHICLES_WHEN_OLD                                   :Korvaa vain vanhat liikennevälineet
+STR_REPLACE_VEHICLES_NOW                                        :Korvaa kaikki kulkuneuvot heti
+STR_REPLACE_VEHICLES_WHEN_OLD                                   :Korvaa vain vanhat kulkuneuvot
 STR_REPLACE_HELP_START_BUTTON                                   :{BLACK}Napsauta aloittaaksesi vasemmalta valitun veturityypin korvauksen oikealta valitulla veturityypillä.
 STR_REPLACE_NOT_REPLACING                                       :{BLACK}Ei korvata
-STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED                      :{BLACK}Ei liikennevälinettä valittuna
+STR_REPLACE_NOT_REPLACING_VEHICLE_SELECTED                      :{BLACK}Ei kulkuneuvoa valittuna
 STR_REPLACE_REPLACING_WHEN_OLD                                  :{ENGINE} kun vanha
 STR_REPLACE_VEHICLES_STOP                                       :{BLACK}Lopeta kulkuneuvojen korvaaminen
 STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}Napsauta pysäyttääksesi vasemmalta valitun veturityypin korvauksen.
@@ -3657,13 +3716,18 @@ STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Vaihda t
 STR_REPLACE_ENGINES                                             :Veturit
 STR_REPLACE_WAGONS                                              :Vaunut
 STR_REPLACE_ALL_RAILTYPE                                        :Kaikki junat
+STR_REPLACE_ALL_ROADTYPE                                        :Kaikki ajoneuvot
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Valitse rautatietyyppi, jolle veturikorvaukset tehdään.
+STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}Valitse tien tyyppi, jolle ajoneuvojen korvaukset tehdään
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Näyttää, millä vasemmalta valittu veturi korvataan, jos millään.
 STR_REPLACE_RAIL_VEHICLES                                       :Junat
 STR_REPLACE_ELRAIL_VEHICLES                                     :Sähköjunat
 STR_REPLACE_MONORAIL_VEHICLES                                   :Yksiraiteiset
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev-junat
+
+STR_REPLACE_ROAD_VEHICLES                                       :Ajoneuvot
+STR_REPLACE_TRAM_VEHICLES                                       :Raitiovaunut
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vaunun poisto: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Automaattikorvauksessa junapituus pidetään samana poistamalla vaunuja (edestä) jos veturi pidentäisi junaa
@@ -3674,12 +3738,12 @@ STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE
 STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Keskitä näkymä junan sijaintiin. Ctrl+Klik seuraa junaa näkymässä
 STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Keskitä näkymä ajoneuvon sijaintiin. Ctrl+Klik seuraa ajoneuvoa päänäkymässä
 STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Keskitä näkymä laivan sijaintiin. Ctrl+Click seuraa laivaa näkymässä
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Keskitä näkymä lentokoneen sijaintiin. Ctrl+Klik seuraa lentokonetta päänäkymässä
+STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Keskitä näkymä ilma-aluksen sijaintiin. Ctrl+Klik seuraa ilma-alusta päänäkymässä
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Lähetä juna veturitalliin. Ctrl+Klik suorittaa vain huollon
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Lähetä ajoneuvo varikolle. Ctrl+Klik suorittaa vain huollon
 STR_VEHICLE_VIEW_SHIP_SEND_TO_DEPOT_TOOLTIP                     :{BLACK}Lähetä laiva telakalle. Ctrl+Klik suorittaa vain huollon
-STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Lähetä lentokone lentokonehalliin. Ctrl+Klik suorittaa vain huollon
+STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Lähetä ilma-alus lentokonehalliin. Ctrl+Klik suorittaa vain huollon
 
 STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}Tämä ostaa kopion junasta vaunuineen. Ctrl+Klik jakaa komennot. Shift+Klik näyttää kustannusarvion ostamatta kopiota
 STR_VEHICLE_VIEW_CLONE_ROAD_VEHICLE_INFO                        :{BLACK}Tämä ostaa kopion ajoneuvosta. Ctrl+Klik jakaa komennot. Shift+Klik näyttää kustannusarvion ostamatta kopiota
@@ -3691,7 +3755,7 @@ STR_VEHICLE_VIEW_TRAIN_IGNORE_SIGNAL_TOOLTIP                    :{BLACK}Anna jun
 STR_VEHICLE_VIEW_TRAIN_REFIT_TOOLTIP                            :{BLACK}Sovita juna kuljettamaan muuta rahtityyppiä
 STR_VEHICLE_VIEW_ROAD_VEHICLE_REFIT_TOOLTIP                     :{BLACK}Muuta ajoneuvo kuljettamaan muuta rahtityyppiä
 STR_VEHICLE_VIEW_SHIP_REFIT_TOOLTIP                             :{BLACK}Sovita laiva eri rahtityypille
-STR_VEHICLE_VIEW_AIRCRAFT_REFIT_TOOLTIP                         :{BLACK}Sovita lentokone eri rahtityypille.
+STR_VEHICLE_VIEW_AIRCRAFT_REFIT_TOOLTIP                         :{BLACK}Sovita ilma-alus kuljettamaan eri rahtityyppiä
 
 STR_VEHICLE_VIEW_TRAIN_REVERSE_TOOLTIP                          :{BLACK}Käännä junan suunta
 STR_VEHICLE_VIEW_ROAD_VEHICLE_REVERSE_TOOLTIP                   :{BLACK}Pakota ajoneuvo kääntymään ympäri
@@ -3699,12 +3763,12 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_REVERSE_TOOLTIP                   :{BLACK}Pakota a
 STR_VEHICLE_VIEW_TRAIN_ORDERS_TOOLTIP                           :{BLACK}Näytä junan käskyt. Ctrl+Klik näyttää junan aikataulun
 STR_VEHICLE_VIEW_ROAD_VEHICLE_ORDERS_TOOLTIP                    :{BLACK}Näytä ajoneuvon käskyt. Ctrl+Klik näyttää ajoneuvon aikataulun
 STR_VEHICLE_VIEW_SHIP_ORDERS_TOOLTIP                            :{BLACK}Näytä laivan käskyt. Ctrl+Click näyttää laivan aikataulun
-STR_VEHICLE_VIEW_AIRCRAFT_ORDERS_TOOLTIP                        :{BLACK}Näytä lentokoneen käskyt. Ctrl+Klik näyttää lentokoneen aikataulun
+STR_VEHICLE_VIEW_AIRCRAFT_ORDERS_TOOLTIP                        :{BLACK}Näytä ilma-aluksen käskyt. Ctrl+Klik näyttää ilma-aluksen aikataulun
 
 STR_VEHICLE_VIEW_TRAIN_SHOW_DETAILS_TOOLTIP                     :{BLACK}Näytä junan tiedot
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Näytä ajoneuvon tiedot
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Näytä laivan tiedot
-STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Näytä lentokoneen tiedot.
+STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Näytä ilma-aluksen tiedot
 
 STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Valitun junan toiminnot – napsauta pysäyttääksesi/käynnistääksesi junan. Ctrl+Klik vierittääksesi kohteeseen
 STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Nykyisen ajoneuvon toiminnot – napsauta pysäyttääksesi/käynnistääksesi ajoneuvon. Ctrl+Klik vierittääksesi kohteeseen
@@ -3741,7 +3805,7 @@ STR_VEHICLE_NAME_BUTTON                                         :{BLACK}Nimi
 STR_VEHICLE_DETAILS_TRAIN_RENAME                                :{BLACK}Nimeä juna
 STR_VEHICLE_DETAILS_ROAD_VEHICLE_RENAME                         :{BLACK}Nimeä ajoneuvo
 STR_VEHICLE_DETAILS_SHIP_RENAME                                 :{BLACK}Nimeä laiva
-STR_VEHICLE_DETAILS_AIRCRAFT_RENAME                             :{BLACK}Nimeä lentokone
+STR_VEHICLE_DETAILS_AIRCRAFT_RENAME                             :{BLACK}Nimeä ilma-alus
 
 STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Ikä: {LTBLUE}{STRING}{BLACK}   Käyttökustannukset: {LTBLUE}{CURRENCY_LONG}/yr
 # The next two need to stay in this order
@@ -3749,8 +3813,8 @@ STR_VEHICLE_INFO_AGE                                            :{COMMA} vuo{P s
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} vuo{P si tta} ({COMMA})
 
 STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Huippunopeus: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Maks. nopeus: {LTBLUE}{VELOCITY} {BLACK}Lentokonetyyppi: {LTBLUE}{STRING}
-STR_VEHICLE_INFO_MAX_SPEED_TYPE_RANGE                           :{BLACK}Maks. nopeus: {LTBLUE}{VELOCITY} {BLACK}Lentokonetyyppi: {LTBLUE}{STRING} {BLACK}Toimintamatka: {LTBLUE}{COMMA} ruutua
+STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Huippunopeus: {LTBLUE}{VELOCITY} {BLACK}Ilma-alustyyppi: {LTBLUE}{STRING}
+STR_VEHICLE_INFO_MAX_SPEED_TYPE_RANGE                           :{BLACK}Huippunopeus: {LTBLUE}{VELOCITY} {BLACK}Ilma-alustyyppi: {LTBLUE}{STRING} {BLACK}Toimintamatka: {LTBLUE}{COMMA} ruutua
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Paino: {LTBLUE}{WEIGHT_SHORT} {BLACK}Teho: {LTBLUE}{POWER}{BLACK} Maks. nopeus: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Paino: {LTBLUE}{WEIGHT_SHORT} {BLACK}Teho: {LTBLUE}{POWER}{BLACK} Maks. nopeus: {LTBLUE}{VELOCITY} {BLACK}Maks. vetovoima: {LTBLUE}{FORCE}
 
@@ -3778,7 +3842,7 @@ STR_VEHICLE_DETAILS_PERCENT                                     :Prosentteja
 STR_QUERY_RENAME_TRAIN_CAPTION                                  :{WHITE}Nimeä juna
 STR_QUERY_RENAME_ROAD_VEHICLE_CAPTION                           :{WHITE}Nimeä ajoneuvo
 STR_QUERY_RENAME_SHIP_CAPTION                                   :{WHITE}Nimeä laiva
-STR_QUERY_RENAME_AIRCRAFT_CAPTION                               :{WHITE}Nimeä lentokone
+STR_QUERY_RENAME_AIRCRAFT_CAPTION                               :{WHITE}Nimeä ilma-alus
 
 # Extra buttons for train details windows
 STR_VEHICLE_DETAILS_TRAIN_ENGINE_BUILT_AND_VALUE                :{LTBLUE}{ENGINE}{BLACK}   Rakennettu: {LTBLUE}{NUM}{BLACK} Arvo: {LTBLUE}{CURRENCY_LONG}
@@ -3820,7 +3884,7 @@ STR_REFIT_AIRCRAFT_LIST_TOOLTIP                                 :{BLACK}Valitse 
 STR_REFIT_TRAIN_REFIT_BUTTON                                    :{BLACK}Sovita juna
 STR_REFIT_ROAD_VEHICLE_REFIT_BUTTON                             :{BLACK}Korjaa ajoneuvo.
 STR_REFIT_SHIP_REFIT_BUTTON                                     :{BLACK}Sovita laiva
-STR_REFIT_AIRCRAFT_REFIT_BUTTON                                 :{BLACK}Sovita lentokone
+STR_REFIT_AIRCRAFT_REFIT_BUTTON                                 :{BLACK}Sovita ilma-alus
 
 STR_REFIT_TRAIN_REFIT_TOOLTIP                                   :{BLACK}Sovita juna kuljettamaan valittua rahtityyppiä
 STR_REFIT_ROAD_VEHICLE_REFIT_TOOLTIP                            :{BLACK}Muuta ajoneuvo rahtaamaan korostettua rahtityyppiä.
@@ -4115,6 +4179,14 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Valitse 
 STR_AI_LIST_CANCEL                                              :{BLACK}Peruuta
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Älä vaihda skriptiä
 
+STR_SCREENSHOT_CAPTION                                          :{WHITE}Ota kuvakaappaus
+STR_SCREENSHOT_SCREENSHOT                                       :{BLACK}Tavallinen kuvakaappaus
+STR_SCREENSHOT_ZOOMIN_SCREENSHOT                                :{BLACK}Täysin lähennetty kuvakaappaus
+STR_SCREENSHOT_DEFAULTZOOM_SCREENSHOT                           :{BLACK}Kuvakaappaus oletuslähennyksellä
+STR_SCREENSHOT_WORLD_SCREENSHOT                                 :{BLACK}Koko kartan kuvakaappaus
+STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Korkeuskartan kuvakaappaus
+STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Pienoiskartan kuvakaappaus
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametrit
 STR_AI_SETTINGS_CAPTION_AI                                      :Tekoäly
@@ -4317,7 +4389,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... kunt
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... tie on väärin päin
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... läpiajettavissa pysäkeissä ei voi olla mutkia
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... läpiajettavissa pysäkeissä ei voi olla risteyksiä
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}... tie on yksisuuntainen tai suljettu
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}Aseman osaa ei voi poistaa...
@@ -4369,7 +4440,7 @@ STR_ERROR_CAN_T_REVERSE_DIRECTION_RAIL_VEHICLE                  :{WHITE}Kulkuneu
 STR_ERROR_CAN_T_REVERSE_DIRECTION_RAIL_VEHICLE_MULTIPLE_UNITS   :{WHITE}... koostuu useammista yksiköistä
 STR_ERROR_INCOMPATIBLE_RAIL_TYPES                               :Raiteet eivät ole yhteensopivia
 
-STR_ERROR_CAN_T_MOVE_VEHICLE                                    :{WHITE}Liikennevälinettä ei voi poistaa...
+STR_ERROR_CAN_T_MOVE_VEHICLE                                    :{WHITE}Kulkuneuvoa ei voi siirtää...
 STR_ERROR_REAR_ENGINE_FOLLOW_FRONT                              :{WHITE}Moottorivaunun takaosa seuraa aina etuosaansa
 STR_ERROR_UNABLE_TO_FIND_ROUTE_TO                               :{WHITE}Reittiä paikalliselle veturitallille ei löydy.
 STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}Paikallista varikkoa ei löydy.
@@ -4387,7 +4458,8 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Opastime
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Ei kelvollista rautatietä.
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Rautatie pitää poistaa ensin.
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Tie on yksisuuntainen tai suljettu
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Tasoristeykset eivät ole sallittu tälle raidetyypille
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Tasoristeykset eivät ole sallittu tälle raidetyypille
+STR_ERROR_CROSSING_DISALLOWED_ROAD                              :{WHITE}Tasoristeykset eivät ole sallittuja tälle tietyypille
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Opastinta ei voi rakentaa.
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Rautatietä ei voi rakentaa.
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Rautatietä ei voi poistaa.
@@ -4407,6 +4479,12 @@ STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}Tietä e
 STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}Tästä ei voi poistaa raitiotietä.
 STR_ERROR_THERE_IS_NO_ROAD                                      :{WHITE}... tässä ei ole tietä
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :{WHITE}... tässä ei ole raitiotietä
+STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}Tien tyyppiä ei voi muuntaa tässä...
+STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :{WHITE}Raitiotien tyyppiä ei voi muuntaa tässä...
+STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Ei sopivaa tietä
+STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}Ei sopivaa raitiotietä
+STR_ERROR_INCOMPATIBLE_ROAD                                     :{WHITE}... yhteensopimaton tie
+STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... yhteensopimaton raitiotie
 
 # Waterway construction errors
 STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}Kanaalia ei voi rakentaa tähän...
@@ -4459,6 +4537,7 @@ STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Ei voi l
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}Ryhmää ei voi poistaa.
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}Ryhmää ei voi nimetä.
 STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}Pääryhmää ei voi määrittää...
+STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}... ryhmähierarkiassa ei saa olla silmukoita
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}Ryhmän kaikkia kulkuneuvoja ei voi poistaa.
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}Ei voi lisätä kulkuneuvoa ryhmään.
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Ei voi lisätä jaettuja kulkuneuvoja ryhmään.
@@ -4467,47 +4546,47 @@ STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Ei voi l
 STR_ERROR_TRAIN_IN_THE_WAY                                      :{WHITE}Juna on tiellä.
 STR_ERROR_ROAD_VEHICLE_IN_THE_WAY                               :{WHITE}Ajoneuvo tiellä.
 STR_ERROR_SHIP_IN_THE_WAY                                       :{WHITE}Laiva on tiellä.
-STR_ERROR_AIRCRAFT_IN_THE_WAY                                   :{WHITE}Lentokone on tiellä.
+STR_ERROR_AIRCRAFT_IN_THE_WAY                                   :{WHITE}Ilma-alus on tiellä
 
 STR_ERROR_CAN_T_REFIT_TRAIN                                     :{WHITE}Junaa ei voi sovittaa...
 STR_ERROR_CAN_T_REFIT_ROAD_VEHICLE                              :{WHITE}Ajoneuvoa ei voida korjata.
 STR_ERROR_CAN_T_REFIT_SHIP                                      :{WHITE}Laivaa ei voi sovittaa...
-STR_ERROR_CAN_T_REFIT_AIRCRAFT                                  :{WHITE}Lentokonetta ei voi sovittaa...
+STR_ERROR_CAN_T_REFIT_AIRCRAFT                                  :{WHITE}Ilma-alusta ei voi sovittaa...
 
 STR_ERROR_CAN_T_RENAME_TRAIN                                    :{WHITE}Junaa ei voi nimetä...
 STR_ERROR_CAN_T_RENAME_ROAD_VEHICLE                             :{WHITE}Ajoneuvoa ei voi nimetä...
 STR_ERROR_CAN_T_RENAME_SHIP                                     :{WHITE}Laivaa ei voi nimetä...
-STR_ERROR_CAN_T_RENAME_AIRCRAFT                                 :{WHITE}Lentokonetta ei voi nimetä...
+STR_ERROR_CAN_T_RENAME_AIRCRAFT                                 :{WHITE}Ilma-aluta ei voi nimetä...
 
 STR_ERROR_CAN_T_STOP_START_TRAIN                                :{WHITE}Junaa ei voi pysäyttää/lähettää...
 STR_ERROR_CAN_T_STOP_START_ROAD_VEHICLE                         :{WHITE}Ajoneuvoa ei voi pysäyttää/laitta liikkeelle...
 STR_ERROR_CAN_T_STOP_START_SHIP                                 :{WHITE}Laivaa ei voi pysäyttää/laittaa liikkeelle...
-STR_ERROR_CAN_T_STOP_START_AIRCRAFT                             :{WHITE}Lentokonetta ei voi pysäyttää/laittaa liikkeelle...
+STR_ERROR_CAN_T_STOP_START_AIRCRAFT                             :{WHITE}Ilma-alusta ei voi pysäyttää/laittaa liikkeelle...
 
 STR_ERROR_CAN_T_SEND_TRAIN_TO_DEPOT                             :{WHITE}Junan lähettäminen veturitalliin ei onnistu...
 STR_ERROR_CAN_T_SEND_ROAD_VEHICLE_TO_DEPOT                      :{WHITE}Ajoneuvon lähettäminen varikolle ei onnistu...
 STR_ERROR_CAN_T_SEND_SHIP_TO_DEPOT                              :{WHITE}Laivaa ei voi lähettää telakalle...
-STR_ERROR_CAN_T_SEND_AIRCRAFT_TO_HANGAR                         :{WHITE}Lentokonetta ei voi lähettää lentokonehalliin...
+STR_ERROR_CAN_T_SEND_AIRCRAFT_TO_HANGAR                         :{WHITE}Ilma-alusta ei voi lähettää lentokonehalliin...
 
 STR_ERROR_CAN_T_BUY_TRAIN                                       :{WHITE}Yksikköä ei voi ostaa...
 STR_ERROR_CAN_T_BUY_ROAD_VEHICLE                                :{WHITE}Ajoneuvoa ei voi ostaa...
 STR_ERROR_CAN_T_BUY_SHIP                                        :{WHITE}Laivaa ei voi ostaa...
-STR_ERROR_CAN_T_BUY_AIRCRAFT                                    :{WHITE}Lentokonetta ei voi ostaa...
+STR_ERROR_CAN_T_BUY_AIRCRAFT                                    :{WHITE}Ilma-alusta ei voi ostaa...
 
 STR_ERROR_CAN_T_RENAME_TRAIN_TYPE                               :{WHITE}Juna(vaunu)n tyyppiä ei voi uudelleennimetä...
 STR_ERROR_CAN_T_RENAME_ROAD_VEHICLE_TYPE                        :{WHITE}Ajoneuvotyyppiä ei voi uudelleennimetä...
 STR_ERROR_CAN_T_RENAME_SHIP_TYPE                                :{WHITE}Laivatyyppin uudelleennimeäminen ei onnistu...
-STR_ERROR_CAN_T_RENAME_AIRCRAFT_TYPE                            :{WHITE}Lentokonetyyppiä ei voi uudelleennimetä...
+STR_ERROR_CAN_T_RENAME_AIRCRAFT_TYPE                            :{WHITE}Ilma-alustyyppiä ei voi uudelleennimetä...
 
 STR_ERROR_CAN_T_SELL_TRAIN                                      :{WHITE}Yksikköä ei voi myydä...
 STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :{WHITE}Ajoneuvoa ei voi myydä...
 STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}Laivaa ei voi myydä...
-STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Lentokonetta ei voi myydä...
+STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Ilma-alusta ei voi myydä...
 
 STR_ERROR_RAIL_VEHICLE_NOT_AVAILABLE                            :{WHITE}Juna tai vaunu ei ole saatavilla
 STR_ERROR_ROAD_VEHICLE_NOT_AVAILABLE                            :{WHITE}Ajoneuvo ei ole saatavilla
 STR_ERROR_SHIP_NOT_AVAILABLE                                    :{WHITE}Laiva ei ole saatavilla
-STR_ERROR_AIRCRAFT_NOT_AVAILABLE                                :{WHITE}Lentokone ei ole saatavilla
+STR_ERROR_AIRCRAFT_NOT_AVAILABLE                                :{WHITE}Ilma-alus ei ole saatavilla
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}Liian monta kulkuneuvoa pelissä.
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Huoltoväliä ei voi muuttaa.
@@ -4526,7 +4605,7 @@ STR_ERROR_TRAIN_START_NO_POWER                                  :Junalla ei ole 
 
 STR_ERROR_CAN_T_MAKE_ROAD_VEHICLE_TURN                          :{WHITE}Ajoneuvoa ei voida kääntää...
 
-STR_ERROR_AIRCRAFT_IS_IN_FLIGHT                                 :{WHITE}Lentokone on lennossa.
+STR_ERROR_AIRCRAFT_IS_IN_FLIGHT                                 :{WHITE}Ilma-alus on lennossa
 
 # Order related errors
 STR_ERROR_NO_MORE_SPACE_FOR_ORDERS                              :{WHITE}Ei enää tilaa pysähdyksille.
@@ -4545,7 +4624,7 @@ STR_ERROR_CAN_T_SHARE_ORDER_LIST                                :{WHITE}Käskyj�
 STR_ERROR_CAN_T_STOP_SHARING_ORDER_LIST                         :{WHITE}Käskyjen jakamista ei voida lopettaa...
 STR_ERROR_CAN_T_COPY_ORDER_LIST                                 :{WHITE}Käskyjä ei voida kopioida...
 STR_ERROR_TOO_FAR_FROM_PREVIOUS_DESTINATION                     :{WHITE}... liian kaukana edellisestä määränpäästä
-STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... lentokoneen toimintasäde ei ole tarpeeksi suuri
+STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... ilma-aluksen toimintasäde ei riitä
 
 # Timetable related errors
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Ei voi asettaa aikataulua.
@@ -4657,7 +4736,7 @@ STR_SV_UNNAMED                                                  :Nimetön
 STR_SV_TRAIN_NAME                                               :Juna {COMMA}
 STR_SV_ROAD_VEHICLE_NAME                                        :Ajoneuvo {COMMA}
 STR_SV_SHIP_NAME                                                :Laiva {COMMA}
-STR_SV_AIRCRAFT_NAME                                            :Lentokone {COMMA}
+STR_SV_AIRCRAFT_NAME                                            :Ilma-alus {COMMA}
 
 STR_SV_STNAME                                                   :{STRING}
 STR_SV_STNAME_NORTH                                             :Pohjois-{STRING}
@@ -5068,5 +5147,3 @@ STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
 STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} ({VELOCITY})
-
-# Android strings

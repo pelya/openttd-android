@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -19,6 +17,6 @@ struct Window *ShowBuildRailToolbar(RailType railtype);
 void ReinitGuiAfterToggleElrail(bool disable);
 bool ResetSignalVariant(int32 = 0);
 void InitializeRailGUI();
-DropDownList *GetRailTypeDropDownList(bool for_replacement = false, bool all_option = false);
+DropDownList GetRailTypeDropDownList(bool for_replacement = false, bool all_option = false);
 
 #endif /* RAIL_GUI_H */

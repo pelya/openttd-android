@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -73,7 +71,7 @@ static void Save_NGRF()
 {
 	int index = 0;
 
-	for (GRFConfig *c = _grfconfig; c != NULL; c = c->next) {
+	for (GRFConfig *c = _grfconfig; c != nullptr; c = c->next) {
 		if (HasBit(c->flags, GCF_STATIC)) continue;
 		SlSetArrayIndex(index++);
 		SlObject(c, _grfconfig_desc);
@@ -98,7 +96,7 @@ static void Load_NGRF()
 
 	if (_game_mode == GM_MENU) {
 		/* Intro game must not have NewGRF. */
-		if (_grfconfig != NULL) SlErrorCorrupt("The intro game must not use NewGRF");
+		if (_grfconfig != nullptr) SlErrorCorrupt("The intro game must not use NewGRF");
 
 		/* Activate intro NewGRFs (townnames) */
 		ResetGRFConfig(false);
@@ -114,5 +112,5 @@ static void Check_NGRF()
 }
 
 extern const ChunkHandler _newgrf_chunk_handlers[] = {
-	{ 'NGRF', Save_NGRF, Load_NGRF, NULL, Check_NGRF, CH_ARRAY | CH_LAST }
+	{ 'NGRF', Save_NGRF, Load_NGRF, nullptr, Check_NGRF, CH_ARRAY | CH_LAST }
 };

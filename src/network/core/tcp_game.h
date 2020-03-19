@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,8 +16,6 @@
 #include "tcp.h"
 #include "../network_type.h"
 #include "../../core/pool_type.hpp"
-
-#ifdef ENABLE_NETWORK
 
 /**
  * Enum with all types of TCP packets.
@@ -132,12 +128,12 @@ struct CommandPacket;
 /** A queue of CommandPackets. */
 class CommandQueue {
 	CommandPacket *first; ///< The first packet in the queue.
-	CommandPacket *last;  ///< The last packet in the queue; only valid when first != NULL.
+	CommandPacket *last;  ///< The last packet in the queue; only valid when first != nullptr.
 	uint count;           ///< The number of items in the queue.
 
 public:
 	/** Initialise the command queue. */
-	CommandQueue() : first(NULL), last(NULL), count(0) {}
+	CommandQueue() : first(nullptr), last(nullptr), count(0) {}
 	/** Clear the command queue. */
 	~CommandQueue() { this->Free(); }
 	void Append(CommandPacket *p);
@@ -524,7 +520,7 @@ public:
 	CommandQueue incoming_queue; ///< The command-queue awaiting handling
 	uint last_packet;            ///< Time we received the last frame.
 
-	NetworkRecvStatus CloseConnection(bool error = true);
+	NetworkRecvStatus CloseConnection(bool error = true) override;
 
 	/**
 	 * Close the network connection due to the given status.
@@ -539,7 +535,7 @@ public:
 	 */
 	inline void SetInfo(NetworkClientInfo *info)
 	{
-		assert(info != NULL && this->info == NULL);
+		assert(info != nullptr && this->info == nullptr);
 		this->info = info;
 	}
 
@@ -557,7 +553,5 @@ public:
 	const char *ReceiveCommand(Packet *p, CommandPacket *cp);
 	void SendCommand(Packet *p, const CommandPacket *cp);
 };
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_TCP_GAME_H */

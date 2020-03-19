@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -29,7 +27,7 @@ static bool CheckAPIVersion(const char *api_version)
 	return strcmp(api_version, "0.7") == 0 || strcmp(api_version, "1.0") == 0 || strcmp(api_version, "1.1") == 0 ||
 			strcmp(api_version, "1.2") == 0 || strcmp(api_version, "1.3") == 0 || strcmp(api_version, "1.4") == 0 ||
 			strcmp(api_version, "1.5") == 0 || strcmp(api_version, "1.6") == 0 || strcmp(api_version, "1.7") == 0 ||
-			strcmp(api_version, "1.8") == 0 || strcmp(api_version, "1.9") == 0;
+			strcmp(api_version, "1.8") == 0 || strcmp(api_version, "1.9") == 0 || strcmp(api_version, "1.10") == 0;
 }
 
 #if defined(_WIN32)
@@ -65,8 +63,8 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 /* static */ SQInteger AIInfo::Constructor(HSQUIRRELVM vm)
 {
 	/* Get the AIInfo */
-	SQUserPointer instance = NULL;
-	if (SQ_FAILED(sq_getinstanceup(vm, 2, &instance, 0)) || instance == NULL) return sq_throwerror(vm, "Pass an instance of a child class of AIInfo to RegisterAI");
+	SQUserPointer instance = nullptr;
+	if (SQ_FAILED(sq_getinstanceup(vm, 2, &instance, 0)) || instance == nullptr) return sq_throwerror(vm, "Pass an instance of a child class of AIInfo to RegisterAI");
 	AIInfo *info = (AIInfo *)instance;
 
 	SQInteger res = ScriptInfo::Constructor(vm, info);
@@ -100,7 +98,7 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 	}
 
 	/* Remove the link to the real instance, else it might get deleted by RegisterAI() */
-	sq_setinstanceup(vm, 2, NULL);
+	sq_setinstanceup(vm, 2, nullptr);
 	/* Register the AI to the base system */
 	info->GetScanner()->RegisterScript(info);
 	return 0;
@@ -112,7 +110,7 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 	SQUserPointer instance;
 	sq_getinstanceup(vm, 2, &instance, 0);
 	AIInfo *info = (AIInfo *)instance;
-	info->api_version = NULL;
+	info->api_version = nullptr;
 
 	SQInteger res = ScriptInfo::Constructor(vm, info);
 	if (res != 0) return res;
@@ -122,7 +120,7 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 	info->api_version = stredup(buf);
 
 	/* Remove the link to the real instance, else it might get deleted by RegisterAI() */
-	sq_setinstanceup(vm, 2, NULL);
+	sq_setinstanceup(vm, 2, nullptr);
 	/* Register the AI to the base system */
 	static_cast<AIScannerInfo *>(info->GetScanner())->SetDummyAI(info);
 	return 0;
@@ -131,7 +129,7 @@ template <> const char *GetClassName<AIInfo, ST_AI>() { return "AIInfo"; }
 AIInfo::AIInfo() :
 	min_loadable_version(0),
 	use_as_random(false),
-	api_version(NULL)
+	api_version(nullptr)
 {
 }
 

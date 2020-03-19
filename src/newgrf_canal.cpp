@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -15,6 +13,7 @@
 #include "newgrf_canal.h"
 #include "water.h"
 #include "water_map.h"
+#include "spritecache.h"
 
 #include "safeguards.h"
 
@@ -30,18 +29,19 @@ struct CanalScopeResolver : public ScopeResolver {
 	{
 	}
 
-	/* virtual */ uint32 GetRandomBits() const;
-	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
+	uint32 GetRandomBits() const override;
+	uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override;
 };
 
 /** Resolver object for canals. */
 struct CanalResolverObject : public ResolverObject {
 	CanalScopeResolver canal_scope;
+	CanalFeature feature;
 
 	CanalResolverObject(CanalFeature feature, TileIndex tile,
 			CallbackID callback = CBID_NO_CALLBACK, uint32 callback_param1 = 0, uint32 callback_param2 = 0);
 
-	/* virtual */ ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0)
+	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override
 	{
 		switch (scope) {
 			case VSG_SCOPE_SELF: return &this->canal_scope;
@@ -49,7 +49,10 @@ struct CanalResolverObject : public ResolverObject {
 		}
 	}
 
-	/* virtual */ const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
+	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
+
+	GrfSpecFeature GetFeature() const override;
+	uint32 GetDebugID() const override;
 };
 
 /* virtual */ uint32 CanalScopeResolver::GetRandomBits() const
@@ -108,9 +111,19 @@ struct CanalResolverObject : public ResolverObject {
 
 /* virtual */ const SpriteGroup *CanalResolverObject::ResolveReal(const RealSpriteGroup *group) const
 {
-	if (group->num_loaded == 0) return NULL;
+	if (group->num_loaded == 0) return nullptr;
 
 	return group->loaded[0];
+}
+
+GrfSpecFeature CanalResolverObject::GetFeature() const
+{
+	return GSF_CANALS;
+}
+
+uint32 CanalResolverObject::GetDebugID() const
+{
+	return this->feature;
 }
 
 /**
@@ -123,7 +136,7 @@ struct CanalResolverObject : public ResolverObject {
  */
 CanalResolverObject::CanalResolverObject(CanalFeature feature, TileIndex tile,
 		CallbackID callback, uint32 callback_param1, uint32 callback_param2)
-		: ResolverObject(_water_feature[feature].grffile, callback, callback_param1, callback_param2), canal_scope(*this, tile)
+		: ResolverObject(_water_feature[feature].grffile, callback, callback_param1, callback_param2), canal_scope(*this, tile), feature(feature)
 {
 	this->root_spritegroup = _water_feature[feature].group;
 }
@@ -138,7 +151,7 @@ SpriteID GetCanalSprite(CanalFeature feature, TileIndex tile)
 {
 	CanalResolverObject object(feature, tile);
 	const SpriteGroup *group = object.Resolve();
-	if (group == NULL) return 0;
+	if (group == nullptr) return 0;
 
 	return group->GetResult();
 }

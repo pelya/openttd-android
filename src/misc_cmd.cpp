@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -154,12 +152,10 @@ CommandCost CmdPause(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, 
 		case PM_PAUSED_GAME_SCRIPT:
 			break;
 
-#ifdef ENABLE_NETWORK
 		case PM_PAUSED_JOIN:
 		case PM_PAUSED_ACTIVE_CLIENTS:
 			if (!_networking) return CMD_ERROR;
 			break;
-#endif /* ENABLE_NETWORK */
 
 		default: return CMD_ERROR;
 	}
@@ -168,23 +164,19 @@ CommandCost CmdPause(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, 
 			ShowQuery(
 				STR_NEWGRF_UNPAUSE_WARNING_TITLE,
 				STR_NEWGRF_UNPAUSE_WARNING,
-				NULL,
+				nullptr,
 				AskUnsafeUnpauseCallback
 			);
 		} else {
-#ifdef ENABLE_NETWORK
 			PauseMode prev_mode = _pause_mode;
-#endif /* ENABLE_NETWORK */
 
 			if (p2 == 0) {
-				_pause_mode = _pause_mode & ~p1;
+				_pause_mode = static_cast<PauseMode>(_pause_mode & (byte)~p1);
 			} else {
-				_pause_mode = _pause_mode | p1;
+				_pause_mode = static_cast<PauseMode>(_pause_mode | (byte)p1);
 			}
 
-#ifdef ENABLE_NETWORK
 			NetworkHandlePauseChange(prev_mode, (PauseMode)p1);
-#endif /* ENABLE_NETWORK */
 		}
 
 		SetWindowDirty(WC_STATUS_BAR, 0);
@@ -229,12 +221,12 @@ CommandCost CmdChangeBankBalance(TileIndex tile, DoCommandFlag flags, uint32 p1,
 
 	if (flags & DC_EXEC) {
 		/* Change company bank balance of company. */
-		Backup<CompanyByte> cur_company(_current_company, company, FILE_LINE);
+		Backup<CompanyID> cur_company(_current_company, company, FILE_LINE);
 		SubtractMoneyFromCompany(CommandCost(expenses_type, -delta));
 		cur_company.Restore();
 	}
 
-	/* This command doesn't cost anyting for deity. */
+	/* This command doesn't cost anything for deity. */
 	CommandCost zero_cost(expenses_type, 0);
 	return zero_cost;
 }
@@ -265,7 +257,7 @@ CommandCost CmdGiveMoney(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 
 	if (flags & DC_EXEC) {
 		/* Add money to company */
-		Backup<CompanyByte> cur_company(_current_company, dest_company, FILE_LINE);
+		Backup<CompanyID> cur_company(_current_company, dest_company, FILE_LINE);
 		SubtractMoneyFromCompany(CommandCost(EXPENSES_OTHER, -amount.GetCost()));
 		cur_company.Restore();
 	}

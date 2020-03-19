@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -15,9 +13,32 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 1.10.0
+ *
+ * This version is not yet released. The following changes are not set in stone yet.
+ *
+ * API additions:
+ * \li AIGroup::SetPrimaryColour
+ * \li AIGroup::SetSecondaryColour
+ * \li AIGroup::GetPrimaryColour
+ * \li AIGroup::GetSecondaryColour
+ * \li AIVehicle::BuildVehicleWithRefit
+ * \li AIVehicle::GetBuildWithRefitCapacity
+ * \li AIRoad::GetName
+ * \li AIRoad::RoadVehCanRunOnRoad
+ * \li AIRoad::RoadVehHasPowerOnRoad
+ * \li AIRoad::ConvertRoadType
+ * \li AIRoad::GetMaxSpeed
+ * \li AIEngine::CanRunOnRoad
+ * \li AIEngine::HasPowerOnRoad
+ * \li AIRoadTypeList::RoadTypeList
+ * \li AIEventVehicleAutoReplaced
+ *
+ * Other changes:
+ * \li AITile::DemolishTile works without a selected company
+ *
  * \b 1.9.0
  *
- * 1.9.0 is not yet released. The following changes are not set in stone yet.
  * API additions:
  * \li AIAirport::GetMonthlyMaintenanceCost
  * \li AIGroup::SetParent
@@ -34,6 +55,9 @@
  * \b 1.8.0
  *
  * No changes
+ *
+ * API additions:
+ * \li AIRoad::ERR_ROADTYPE_DISALLOWS_CROSSING
  *
  * \b 1.7.0 - 1.7.2
  *
@@ -288,7 +312,7 @@
  *     destination it its catchment area. One industry tile or one town house
  *     is enough as long as station accepts the cargo. Awarded subsidies are no
  *     longer bound to stations used for first delivery, any station can be
- *     used for loading and unloading as long as cargo is transfered from
+ *     used for loading and unloading as long as cargo is transferred from
  *     source to destination.
  * \li Make AIEngine:CanRefitCargo() not report refittability to mail by
  *     default for aircraft. It is not necessarily true. This means that even

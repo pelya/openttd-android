@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -43,7 +41,7 @@
 		ticks = 1;
 	}
 
-	throw Script_Suspend(ticks, NULL);
+	throw Script_Suspend(ticks, nullptr);
 }
 
 /* static */ void ScriptController::Break(const char* message)
@@ -119,7 +117,7 @@ ScriptController::~ScriptController()
 	strtolower(library_name);
 
 	ScriptInfo *lib = ScriptObject::GetActiveInstance()->FindLibrary(library, version);
-	if (lib == NULL) {
+	if (lib == nullptr) {
 		char error[1024];
 		seprintf(error, lastof(error), "couldn't find library '%s' with version %d", library, version);
 		throw sq_throwerror(vm, error);

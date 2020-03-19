@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -36,7 +34,7 @@ void DrawAircraftDetails(const Aircraft *v, int left, int right, int y)
 	int y_offset = (v->Next()->cargo_cap != 0) ? -(FONT_HEIGHT_NORMAL + 1): 0;
 	Money feeder_share = 0;
 
-	for (const Aircraft *u = v; u != NULL; u = u->Next()) {
+	for (const Aircraft *u = v; u != nullptr; u = u->Next()) {
 		if (u->IsNormalAircraft()) {
 			SetDParam(0, u->engine_type);
 			SetDParam(1, u->build_year);

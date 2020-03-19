@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,18 +16,17 @@
 
 #include "safeguards.h"
 
-char *_ini_videodriver;     ///< The video driver a stored in the configuration file.
-int _num_resolutions;       ///< The number of resolutions.
-Dimension _resolutions[100]; ///< List of resolutions.
-Dimension _cur_resolution;  ///< The current resolution.
-bool _rightclick_emulate;   ///< Whether right clicking is emulated.
+char *_ini_videodriver;              ///< The video driver a stored in the configuration file.
+std::vector<Dimension> _resolutions; ///< List of resolutions.
+Dimension _cur_resolution;           ///< The current resolution.
+bool _rightclick_emulate;            ///< Whether right clicking is emulated.
 
-char *_ini_sounddriver;     ///< The sound driver a stored in the configuration file.
+char *_ini_sounddriver;              ///< The sound driver a stored in the configuration file.
 
-char *_ini_musicdriver;     ///< The music driver a stored in the configuration file.
+char *_ini_musicdriver;              ///< The music driver a stored in the configuration file.
 
-char *_ini_blitter;         ///< The blitter as stored in the configuration file.
-bool _blitter_autodetected; ///< Was the blitter autodetected or specified by the user?
+char *_ini_blitter;                  ///< The blitter as stored in the configuration file.
+bool _blitter_autodetected;          ///< Was the blitter autodetected or specified by the user?
 
 /**
  * Get a string parameter the list of parameters.
@@ -41,10 +38,10 @@ const char *GetDriverParam(const char * const *parm, const char *name)
 {
 	size_t len;
 
-	if (parm == NULL) return NULL;
+	if (parm == nullptr) return nullptr;
 
 	len = strlen(name);
-	for (; *parm != NULL; parm++) {
+	for (; *parm != nullptr; parm++) {
 		const char *p = *parm;
 
 		if (strncmp(p, name, len) == 0) {
@@ -52,7 +49,7 @@ const char *GetDriverParam(const char * const *parm, const char *name)
 			if (p[len] == '\0') return p + len;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -63,7 +60,7 @@ const char *GetDriverParam(const char * const *parm, const char *name)
  */
 bool GetDriverParamBool(const char * const *parm, const char *name)
 {
-	return GetDriverParam(parm, name) != NULL;
+	return GetDriverParam(parm, name) != nullptr;
 }
 
 /**
@@ -76,7 +73,7 @@ bool GetDriverParamBool(const char * const *parm, const char *name)
 int GetDriverParamInt(const char * const *parm, const char *name, int def)
 {
 	const char *p = GetDriverParam(parm, name);
-	return p != NULL ? atoi(p) : def;
+	return p != nullptr ? atoi(p) : def;
 }
 
 /**
@@ -120,8 +117,8 @@ bool DriverFactoryBase::SelectDriverImpl(const char *name, Driver::Type type)
 				Driver *newd = d->CreateInstance();
 				*GetActiveDriver(type) = newd;
 
-				const char *err = newd->Start(NULL);
-				if (err == NULL) {
+				const char *err = newd->Start(nullptr);
+				if (err == nullptr) {
 					DEBUG(driver, 1, "Successfully probed %s driver '%s'", GetDriverTypeName(type), d->name);
 					delete oldd;
 					return true;
@@ -141,8 +138,8 @@ bool DriverFactoryBase::SelectDriverImpl(const char *name, Driver::Type type)
 		/* Extract the driver name and put parameter list in parm */
 		strecpy(buffer, name, lastof(buffer));
 		parm = strchr(buffer, ':');
-		parms[0] = NULL;
-		if (parm != NULL) {
+		parms[0] = nullptr;
+		if (parm != nullptr) {
 			uint np = 0;
 			/* Tokenize the parm. */
 			do {
@@ -150,7 +147,7 @@ bool DriverFactoryBase::SelectDriverImpl(const char *name, Driver::Type type)
 				if (np < lengthof(parms) - 1) parms[np++] = parm;
 				while (*parm != '\0' && *parm != ',') parm++;
 			} while (*parm == ',');
-			parms[np] = NULL;
+			parms[np] = nullptr;
 		}
 
 		/* Find this driver */
@@ -168,7 +165,7 @@ bool DriverFactoryBase::SelectDriverImpl(const char *name, Driver::Type type)
 			Driver *newd = d->CreateInstance();
 
 			const char *err = newd->Start(parms);
-			if (err != NULL) {
+			if (err != nullptr) {
 				delete newd;
 				usererror("Unable to load driver '%s'. The error was: %s", d->name, err);
 			}

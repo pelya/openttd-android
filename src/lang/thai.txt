@@ -10,8 +10,6 @@
 ##grflangid 0x42
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -464,9 +462,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :เปิด/ปิด คอนโซล
 STR_ABOUT_MENU_AI_DEBUG                                         :ดีบัก สคริปต์ AI/Game
 STR_ABOUT_MENU_SCREENSHOT                                       :จับภาพหน้าจอ (Ctrl+S)
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :จับภาพหน้าจอในแบบขยายใหญ่สุด
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :ค่าเริ่มต้นของการขยายภาพในการจับหน้าจอ
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :จับภาพหน้าจอทั้งแผนที่ (Ctrl+G)
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :เกี่ยวกับ 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :ตัวจัดแนว Sprite
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :เปิด/ปิด bounding boxes
@@ -636,9 +631,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}กำหนดเอง 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}ระดับเสียงดนตรี
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}ระดับเสียงเอฟเฟกต์
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}ต่ำสุด
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}สูงสุด
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -848,6 +840,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}เป�
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING}รุ่นใหม่ขณะนี้มีให้สั่งผลิตแล้ว!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}ใหม่ {STRING} มีจำหน่ายแล้ว  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} ไม่ต้องการรับ {STRING} อีกต่อไป
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} ไม่รับ {STRING} หรือ {STRING} แล้ว
@@ -1635,7 +1628,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}กา�
 STR_CONFIG_SETTING_AI                                           :{ORANGE}คู่แข่ง
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}ผู้เล่นคอมพิวเตอร์
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :ดั้งเดิม
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(แนะนำ)
 
@@ -1718,13 +1710,9 @@ STR_QUIT_NO                                                     :{BLACK}ไม�
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :ระบบปฏิบัติการ Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2349,6 +2337,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}สร�
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}สร้างอุโมงค์รถราง. กด Shift เพื่อแสดงการประเมินค่าใช้จ่าย
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}สลับโหมด สร้าง/ลบ ถนน
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}สลับโหมด สร้าง/ลบ รางสำหรับรถราง
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}ทิศทางของอู่รถ
@@ -3192,8 +3181,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}โค�
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}ชิ้นส่วนทางรถไฟ:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}เสาอาณัติสัญญาณ
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}ชิ้นส่วนถนน:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}ถนน
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}ทางรถราง
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}คลอง:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}คลอง
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}สถานี:
@@ -3204,8 +3191,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}อุตสาหกรรม
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- ไม่มี -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% ได้รับการขนส่ง)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% ได้รับการขนส่ง)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}ชื่อของอุตสาหกรรม - คลิ๊กที่ชื่อเพื่อไปยังจุดศูนย์กลาง
 
@@ -3267,6 +3252,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :พาหนะ
 STR_GROUP_DEFAULT_SHIPS                                         :พาหนะที่ไม่ได้จัดกลุ่ม
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :พาหนะที่ไม่ได้จัดกลุ่ม
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}กลุ่ม - คลิ๊กที่กลุ่มเพื่อดูรายการยานพาหนะในกลุ่ม
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}กดเพื่อสร้างกลุ่ม
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}ลบกลุ่มที่เลือก
@@ -3286,10 +3272,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :รถไฟฟ
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :รถไฟฟ้ารางเดี่ยวใหม่
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Maglev (รถไฟพลังแม่เหล็ก) ใหม่
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :ประเถทไฟที่สามารถซื้อได้
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :ประเถทรถที่สามารถซื้อได้
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :ประเถทไฟที่สามารถซื้อได้
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :ประเถทเรือที่สามารถซื้อได้
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :ประเถทอากาศยานที่สามารถซื้อได้
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}มูลค่า: {GOLD}{CURRENCY_LONG}{BLACK} น้ำหนัก: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}ความเร็ว: {GOLD}{VELOCITY}{BLACK} พลังขับเคลื่อน: {GOLD}{POWER}
@@ -3322,10 +3311,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}ซื�
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}ซื้อเรือ
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}ซื้อเครื่องบิน
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}ซื้อรถไฟที่เลือกไว้ เมื่อกด Shift+คลิกเมาส์ จะแสดงมูลค่าโดยประมาณโดยไม่ทำการซื้อ
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}ซื้อรถที่เลือกไว้ เมื่อกด Shift+คลิกเมาส์ จะแสดงมูลค่าโดยประมาณโดยไม่ทำการซื้อ
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}ซื้อเรือที่เลือกไว้ เมื่อกด Shift+คลิกเมาส์ จะแสดงมูลค่าโดยประมาณโดยไม่ทำการซื้อ
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}ซื้อเครื่องบินที่เลือกไว้ เมื่อกด Shift+คลิกเมาส์ จะแสดงมูลค่าโดยประมาณโดยไม่ทำการซื้อ
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}เปลี่ยนชื่อ
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}เปลี่ยนชื่อ
@@ -3427,12 +3418,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}คุ�
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}ข้อความจากผู้ผลิตยานพาหนะ
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}เราได้ออกแบบ {STRING} ใหม่ - หากคุณต้องการที่จะนำไปทดลองใช้ เราจะให้คุณนำไปใช้งานก่อนที่จะนำออกไปจำหน่ายในตลาดปกติ{}คุณต้องการนำไปทดลองใช้หรือไม่ ?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :หัวรถจักร
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :ยานพาหนะทางบก
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :อากาศยาน
-STR_ENGINE_PREVIEW_SHIP                                         :ยานพาหนะทางน้ำ
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :รถไฟรางเดี่ยว
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :รถไฟรางแม่เหล็กไฟฟ้า
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :ยานพาหนะทางบก
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :อากาศยาน
+STR_ENGINE_PREVIEW_SHIP                                         :ยานพาหนะทางน้ำ
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}มูลค่า: {CURRENCY_LONG} น้ำหนัก: {WEIGHT_SHORT}{}ความเร็ว: {VELOCITY}พลังขับเคลื่อน: {POWER}{}ค่าปฏิบัติการ: {CURRENCY_LONG}/ปี{}ความจุ: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}มูลค่า: {CURRENCY_LONG} น้ำหนัก: {WEIGHT_SHORT}{}ความเร็ว: {VELOCITY}พลังขับเคลื่อน: {POWER}  กำัลังลากจูงสูงสุด: {6:FORCE}{}ค่าปฎิบัติการ: {4:CURRENCY_LONG}/ปี{}ความจุ: {5:CARGO_LONG}
@@ -3470,6 +3464,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :ยานพา
 STR_REPLACE_ELRAIL_VEHICLES                                     :ยานพาหนะที่ใช้ไฟฟ้า
 STR_REPLACE_MONORAIL_VEHICLES                                   :ยานพาหนะประเภทรถไฟรางเดี่ยว
 STR_REPLACE_MAGLEV_VEHICLES                                     :รถไฟพลังงานแม่แหล็ก
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}ขายรถพ่วง: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}ทำให้การแทนที่ขบวนรถไฟทำให้ความยาวของขบวนยังเท่าเดิม
@@ -3914,6 +3909,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}เล�
 STR_AI_LIST_CANCEL                                              :{BLACK}ยกเลิก
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}ไม่สามารถเปลี่ยน script
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4183,7 +4179,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}ต้�
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}ไม่มีรางรถไฟที่เหมาะสม
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}ต้องทำลายทางรถไฟทิ้งเสียก่อน
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}ถนนเป็นทางเดียวหรือถูกปิดกั้น
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}ทางตัดเสมอระดับทางไม่อนุญาตให้ตัดผ่านทางประเภทนี้
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}ทางตัดเสมอระดับทางไม่อนุญาตให้ตัดผ่านทางประเภทนี้
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}ไม่สามารถสร้างเสาอาณัติสัญญาณได้...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}บริเวณนี้ไม่สามารถสร้างรางรถไฟได้...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}ตรงนี้ไม่สามารถลบรางรถไฟออกไปได้

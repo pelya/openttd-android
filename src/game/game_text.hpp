@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -23,18 +21,18 @@ struct LanguageStrings {
 	const char *language; ///< Name of the language (base filename).
 	StringList lines;     ///< The lines of the file to pass into the parser/encoder.
 
-	LanguageStrings(const char *language, const char *end = NULL);
+	LanguageStrings(const char *language, const char *end = nullptr);
 	~LanguageStrings();
 };
 
 /** Container for all the game strings. */
 struct GameStrings {
-	uint version;                  ///< The version of the language strings.
-	LanguageStrings *cur_language; ///< The current (compiled) language.
+	uint version;                                  ///< The version of the language strings.
+	std::shared_ptr<LanguageStrings> cur_language; ///< The current (compiled) language.
 
-	AutoDeleteSmallVector<LanguageStrings *, 4> raw_strings;      ///< The raw strings per language, first must be English/the master language!.
-	AutoDeleteSmallVector<LanguageStrings *, 4> compiled_strings; ///< The compiled strings per language, first must be English/the master language!.
-	StringList string_names;                                      ///< The names of the compiled strings.
+	std::vector<std::unique_ptr<LanguageStrings>> raw_strings;      ///< The raw strings per language, first must be English/the master language!.
+	std::vector<std::shared_ptr<LanguageStrings>> compiled_strings; ///< The compiled strings per language, first must be English/the master language!.
+	StringList string_names;                                        ///< The names of the compiled strings.
 
 	void Compile();
 };

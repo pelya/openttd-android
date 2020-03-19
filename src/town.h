@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -36,7 +34,7 @@ static const TownID INVALID_TOWN = 0xFFFF;
 static const uint TOWN_GROWTH_WINTER = 0xFFFFFFFE; ///< The town only needs this cargo in the winter (any amount)
 static const uint TOWN_GROWTH_DESERT = 0xFFFFFFFF; ///< The town needs the cargo for growth when on desert (any amount)
 static const uint16 TOWN_GROWTH_RATE_NONE = 0xFFFF; ///< Special value for Town::growth_rate to disable town growth.
-static const uint16 MAX_TOWN_GROWTH_TICKS = 930; ///< Max amount of original town ticks that still fit into uint16, about equal to UINT16_MAX / TOWN_GROWTH_TICKS but sligtly less to simplify calculations
+static const uint16 MAX_TOWN_GROWTH_TICKS = 930; ///< Max amount of original town ticks that still fit into uint16, about equal to UINT16_MAX / TOWN_GROWTH_TICKS but slightly less to simplify calculations
 
 typedef Pool<Town, TownID, 64, 64000> TownPool;
 extern TownPool _town_pool;
@@ -45,8 +43,8 @@ extern TownPool _town_pool;
 struct TownCache {
 	uint32 num_houses;                        ///< Amount of houses
 	uint32 population;                        ///< Current population of people
-	ViewportSign sign;                        ///< Location of name sign, UpdateVirtCoord updates this
-	PartOfSubsidyByte part_of_subsidy;        ///< Is this town a source/destination of a subsidy?
+	TrackedViewportSign sign;                 ///< Location of name sign, UpdateVirtCoord updates this
+	PartOfSubsidy part_of_subsidy;            ///< Is this town a source/destination of a subsidy?
 	uint32 squared_town_zone_radius[HZB_END]; ///< UpdateTownRadius updates this given the house count
 	BuildingCounts<uint16> building_counts;   ///< The number of each type of building in the town
 };
@@ -61,7 +59,8 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	uint32 townnamegrfid;
 	uint16 townnametype;
 	uint32 townnameparts;
-	char *name;                    ///< Custom town name. If NULL, the town was not renamed and uses the generated name.
+	char *name;                    ///< Custom town name. If nullptr, the town was not renamed and uses the generated name.
+	mutable std::string cached_name; ///< NOSAVE: Cache of the resolved name of the town, if not using a custom town name
 
 	byte flags;                    ///< See #TownFlags.
 
@@ -72,7 +71,7 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	/* Company ratings. */
 	CompanyMask have_ratings;      ///< which companies have a rating
 	uint8 unwanted[MAX_COMPANIES]; ///< how many months companies aren't wanted by towns (bribe)
-	CompanyByte exclusivity;       ///< which company has exclusivity
+	CompanyID exclusivity;         ///< which company has exclusivity
 	uint8 exclusive_counter;       ///< months till the exclusivity expires
 	int16 ratings[MAX_COMPANIES];  ///< ratings of each company for this town
 
@@ -88,17 +87,20 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 	CargoTypes cargo_produced;       ///< Bitmap of all cargoes produced by houses in this town.
 	AcceptanceMatrix cargo_accepted; ///< Bitmap of cargoes accepted by houses for each 4*4 map square of the town.
 	CargoTypes cargo_accepted_total; ///< NOSAVE: Bitmap of all cargoes accepted by houses in this town.
+	StationList stations_near;       ///< NOSAVE: List of nearby stations.
 
-	uint16 time_until_rebuild;     ///< time until we rebuild a house
+	uint16 time_until_rebuild;       ///< time until we rebuild a house
 
-	uint16 grow_counter;           ///< counter to count when to grow, value is smaller than or equal to growth_rate
-	uint16 growth_rate;            ///< town growth rate
+	uint16 grow_counter;             ///< counter to count when to grow, value is smaller than or equal to growth_rate
+	uint16 growth_rate;              ///< town growth rate
 
-	byte fund_buildings_months;    ///< fund buildings program in action?
-	byte road_build_months;        ///< fund road reconstruction in action?
+	byte fund_buildings_months;      ///< fund buildings program in action?
+	byte road_build_months;          ///< fund road reconstruction in action?
 
-	bool larger_town;              ///< if this is a larger town and should grow more quickly
-	TownLayoutByte layout;         ///< town specific road layout
+	bool larger_town;                ///< if this is a larger town and should grow more quickly
+	TownLayout layout;               ///< town specific road layout
+
+	bool show_zone;                  ///< NOSAVE: mark town to show the local authority zone in the viewports
 
 	std::list<PersistentStorage *> psa_list;
 
@@ -129,6 +131,13 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 
 	void UpdateVirtCoord();
 
+	inline const char *GetCachedName() const
+	{
+		if (this->name != nullptr) return this->name;
+		if (this->cached_name.empty()) this->FillCachedName();
+		return this->cached_name.c_str();
+	}
+
 	static inline Town *GetByTile(TileIndex tile)
 	{
 		return Town::Get(GetTownIndex(tile));
@@ -136,13 +145,20 @@ struct Town : TownPool::PoolItem<&_town_pool> {
 
 	static Town *GetRandom();
 	static void PostDestructor(size_t index);
+
+private:
+	void FillCachedName() const;
 };
 
 uint32 GetWorldPopulation();
 
 void UpdateAllTownVirtCoords();
+void ClearAllTownCachedNames();
 void ShowTownViewWindow(TownID town);
 void ExpandTown(Town *t);
+
+void RebuildTownKdtree();
+
 
 /**
  * Action types that a company must ask permission for to a town authority.
@@ -152,6 +168,13 @@ enum TownRatingCheckType {
 	ROAD_REMOVE         = 0,      ///< Removal of a road owned by the town.
 	TUNNELBRIDGE_REMOVE = 1,      ///< Removal of a tunnel or bridge owned by the towb.
 	TOWN_RATING_CHECK_TYPE_COUNT, ///< Number of town checking action types.
+};
+
+/** Special values for town list window for the data parameter of #InvalidateWindowData. */
+enum TownDirectoryInvalidateWindowData {
+	TDIWD_FORCE_REBUILD,
+	TDIWD_POPULATION_CHANGE,
+	TDIWD_FORCE_RESORT,
 };
 
 /**
@@ -174,9 +197,6 @@ CommandCost CheckforTownRating(DoCommandFlag flags, Town *t, TownRatingCheckType
 TileIndexDiff GetHouseNorthPart(HouseID &house);
 
 Town *CalcClosestTownFromTile(TileIndex tile, uint threshold = UINT_MAX);
-
-#define FOR_ALL_TOWNS_FROM(var, start) FOR_ALL_ITEMS_FROM(Town, town_index, var, start)
-#define FOR_ALL_TOWNS(var) FOR_ALL_TOWNS_FROM(var, 0)
 
 void ResetHouses();
 
@@ -229,7 +249,7 @@ template <class T>
 void MakeDefaultName(T *obj)
 {
 	/* We only want to set names if it hasn't been set before, or when we're calling from afterload. */
-	assert(obj->name == NULL || obj->town_cn == UINT16_MAX);
+	assert(obj->name == nullptr || obj->town_cn == UINT16_MAX);
 
 	obj->town = ClosestTownFromTile(obj->xy, UINT_MAX);
 
@@ -253,7 +273,7 @@ void MakeDefaultName(T *obj)
 		T *lobj = T::GetIfValid(cid);
 
 		/* check only valid waypoints... */
-		if (lobj != NULL && obj != lobj) {
+		if (lobj != nullptr && obj != lobj) {
 			/* only objects within the same city and with the same type */
 			if (lobj->town == obj->town && lobj->IsOfType(obj)) {
 				/* if lobj->town_cn < next, uint will overflow to '+inf' */
@@ -294,5 +314,7 @@ static inline uint16 TownTicksToGameTicks(uint16 ticks) {
 
 
 extern CargoTypes _town_cargoes_accepted;
+
+RoadType GetTownRoadType(const Town *t);
 
 #endif /* TOWN_H */

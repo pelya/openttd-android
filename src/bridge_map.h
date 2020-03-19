@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -12,8 +10,10 @@
 #ifndef BRIDGE_MAP_H
 #define BRIDGE_MAP_H
 
+#include "rail_map.h"
 #include "road_map.h"
 #include "bridge.h"
+#include "water_map.h"
 
 /**
  * Checks if this is a bridge, instead of a tunnel
@@ -123,20 +123,20 @@ static inline void SetBridgeMiddle(TileIndex t, Axis a)
  * @param bridgetype the type of bridge this bridge ramp belongs to
  * @param d          the direction this ramp must be facing
  * @param tt         the transport type of the bridge
- * @param rt         the road or rail type
  * @note this function should not be called directly.
  */
-static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, DiagDirection d, TransportType tt, uint rt)
+static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, DiagDirection d, TransportType tt)
 {
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
+	SetDockingTile(t, false);
 	_m[t].m2 = 0;
 	_m[t].m3 = 0;
-	_m[t].m4 = 0;
+	_m[t].m4 = INVALID_ROADTYPE;
 	_m[t].m5 = 1 << 7 | tt << 2 | d;
 	SB(_me[t].m6, 2, 4, bridgetype);
 	_me[t].m7 = 0;
-	_me[t].m8 = rt;
+	_me[t].m8 = INVALID_ROADTYPE << 6;
 }
 
 /**
@@ -147,14 +147,15 @@ static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, D
  * @param owner_tram the new owner of the tram on the bridge
  * @param bridgetype the type of bridge this bridge ramp belongs to
  * @param d          the direction this ramp must be facing
- * @param r          the road type of the bridge
+ * @param road_rt    the road type of the bridge
+ * @param tram_rt    the tram type of the bridge
  */
-static inline void MakeRoadBridgeRamp(TileIndex t, Owner o, Owner owner_road, Owner owner_tram, BridgeType bridgetype, DiagDirection d, RoadTypes r)
+static inline void MakeRoadBridgeRamp(TileIndex t, Owner o, Owner owner_road, Owner owner_tram, BridgeType bridgetype, DiagDirection d, RoadType road_rt, RoadType tram_rt)
 {
-	MakeBridgeRamp(t, o, bridgetype, d, TRANSPORT_ROAD, 0);
-	SetRoadOwner(t, ROADTYPE_ROAD, owner_road);
-	if (owner_tram != OWNER_TOWN) SetRoadOwner(t, ROADTYPE_TRAM, owner_tram);
-	SetRoadTypes(t, r);
+	MakeBridgeRamp(t, o, bridgetype, d, TRANSPORT_ROAD);
+	SetRoadOwner(t, RTT_ROAD, owner_road);
+	if (owner_tram != OWNER_TOWN) SetRoadOwner(t, RTT_TRAM, owner_tram);
+	SetRoadTypes(t, road_rt, tram_rt);
 }
 
 /**
@@ -163,11 +164,12 @@ static inline void MakeRoadBridgeRamp(TileIndex t, Owner o, Owner owner_road, Ow
  * @param o          the new owner of the bridge ramp
  * @param bridgetype the type of bridge this bridge ramp belongs to
  * @param d          the direction this ramp must be facing
- * @param r          the rail type of the bridge
+ * @param rt         the rail type of the bridge
  */
-static inline void MakeRailBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, DiagDirection d, RailType r)
+static inline void MakeRailBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, DiagDirection d, RailType rt)
 {
-	MakeBridgeRamp(t, o, bridgetype, d, TRANSPORT_RAIL, r);
+	MakeBridgeRamp(t, o, bridgetype, d, TRANSPORT_RAIL);
+	SetRailType(t, rt);
 }
 
 /**
@@ -178,7 +180,7 @@ static inline void MakeRailBridgeRamp(TileIndex t, Owner o, BridgeType bridgetyp
  */
 static inline void MakeAqueductBridgeRamp(TileIndex t, Owner o, DiagDirection d)
 {
-	MakeBridgeRamp(t, o, 0, d, TRANSPORT_WATER, 0);
+	MakeBridgeRamp(t, o, 0, d, TRANSPORT_WATER);
 }
 
 #endif /* BRIDGE_MAP_H */

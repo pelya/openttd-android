@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -80,9 +78,9 @@ const char *SoundDriver_Cocoa::Start(const char * const *parm)
 		desc.componentFlags = 0;
 		desc.componentFlagsMask = 0;
 
-		AudioComponent comp = AudioComponentFindNext (NULL, &desc);
-		if (comp == NULL) {
-			return "cocoa_s: Failed to start CoreAudio: AudioComponentFindNext returned NULL";
+		AudioComponent comp = AudioComponentFindNext (nullptr, &desc);
+		if (comp == nullptr) {
+			return "cocoa_s: Failed to start CoreAudio: AudioComponentFindNext returned nullptr";
 		}
 
 		/* Open & initialize the default output audio unit */
@@ -101,9 +99,9 @@ const char *SoundDriver_Cocoa::Start(const char * const *parm)
 		desc.componentFlags = 0;
 		desc.componentFlagsMask = 0;
 
-		Component comp = FindNextComponent (NULL, &desc);
-		if (comp == NULL) {
-			return "cocoa_s: Failed to start CoreAudio: FindNextComponent returned NULL";
+		Component comp = FindNextComponent (nullptr, &desc);
+		if (comp == nullptr) {
+			return "cocoa_s: Failed to start CoreAudio: FindNextComponent returned nullptr";
 		}
 
 		/* Open & initialize the default output audio unit */
@@ -126,7 +124,7 @@ const char *SoundDriver_Cocoa::Start(const char * const *parm)
 
 	/* Set the audio callback */
 	callback.inputProc = audioCallback;
-	callback.inputProcRefCon = NULL;
+	callback.inputProcRefCon = nullptr;
 	if (AudioUnitSetProperty(_outputAudioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &callback, sizeof(callback)) != noErr) {
 		return "cocoa_s: Failed to start CoreAudio: AudioUnitSetProperty (kAudioUnitProperty_SetRenderCallback)";
 	}
@@ -137,7 +135,7 @@ const char *SoundDriver_Cocoa::Start(const char * const *parm)
 	}
 
 	/* We're running! */
-	return NULL;
+	return nullptr;
 }
 
 

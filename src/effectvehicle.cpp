@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -595,7 +593,7 @@ assert_compile(lengthof(_effect_transparency_options) == EV_END);
  */
 EffectVehicle *CreateEffectVehicle(int x, int y, int z, EffectVehicleType type)
 {
-	if (!Vehicle::CanAllocateItem()) return NULL;
+	if (!Vehicle::CanAllocateItem()) return nullptr;
 
 	EffectVehicle *v = new EffectVehicle();
 	v->subtype = type;

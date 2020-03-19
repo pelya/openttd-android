@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -143,7 +141,7 @@ struct CSegmentCostCacheT : public CSegmentCostCacheBase {
 	inline Tsegment& Get(Key &key, bool *found)
 	{
 		Tsegment *item = m_map.Find(key);
-		if (item == NULL) {
+		if (item == nullptr) {
 			*found = false;
 			item = new (m_heap.Append()) Tsegment(key);
 			m_map.Push(*item);

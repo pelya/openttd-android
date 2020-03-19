@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -104,11 +102,11 @@ public:
 	LinkGraphLegendWindow(WindowDesc *desc, int window_number);
 	void SetOverlay(LinkGraphOverlay *overlay);
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize);
-	virtual void DrawWidget(const Rect &r, int widget) const;
-	virtual bool OnTooltip(Point pt, int widget, TooltipCloseCondition close_cond);
-	virtual void OnClick(Point pt, int widget, int click_count);
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true);
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override;
+	void DrawWidget(const Rect &r, int widget) const override;
+	bool OnTooltip(Point pt, int widget, TooltipCloseCondition close_cond) override;
+	void OnClick(Point pt, int widget, int click_count) override;
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override;
 
 private:
 	LinkGraphOverlay *overlay;

@@ -11,8 +11,6 @@
 ##gender Masculin Femenin
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -476,9 +474,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Commuta la consola
 STR_ABOUT_MENU_AI_DEBUG                                         :Depuració de les IA i l'script de partida
 STR_ABOUT_MENU_SCREENSHOT                                       :Captura de pantalla
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Captura de pantalla amb el zoom màxim
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Captura de pantalla amb el zoom predeterminat
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Captura de pantalla de tot el mapa
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Mostra els fotogrames per segon
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Quant a l'OpenTTD
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Alineador de sprites
@@ -649,9 +644,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Personalitzat 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Volum de la música
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Volum dels efectes
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MÍN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MÀX
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -867,6 +859,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}L'autore
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}No{G u va} {STRING} disponible!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}No{G u va} {STRING} disponible!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} ja no accepta més {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} ja no accepta més {STRING} ni {STRING}
@@ -1201,8 +1194,8 @@ STR_CONFIG_SETTING_TRAIN_SLOPE_STEEPNESS_HELPTEXT               :El pendent de l
 STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA}%
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :Pendent de les costes per als vehicles de carretera: {STRING}
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS_HELPTEXT        :El pendent de les caselles amb costes per a vehicles de carretera. Els valors alts fan que sigui més difícil pujar els turons.
-STR_CONFIG_SETTING_FORBID_90_DEG                                :Prohibeix fer girs de 90 graus als trens i vaixells: {STRING}
-STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :Els girs de 90 graus succeeixen quan hi ha una via horitzontal seguida d'una de vertical a la cel·la annexa, provocant que el tren giri 90 graus quan travessi la vora de la cel·la en lloc dels 45 graus usuals en les altres combinacions. Això també s'aplica al gir dels vaixells.
+STR_CONFIG_SETTING_FORBID_90_DEG                                :Prohibeix fer girs de 90 graus als trens: {STRING}
+STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :Els girs de 90 graus succeeixen quan hi ha una via horitzontal seguida d'una de vertical a la cel·la annexa, provocant que el tren giri 90 graus quan travessi la vora de la cel·la en lloc dels 45 graus usuals en les altres combinacions.
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Permet ajuntar estacions no annexes: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Aquesta opció permet afegir parts noves a una estació existent sense estar les parts noves en contacte directe amb les existents. Cal clicar Ctrl+Clic mentre es col·loquen les parts noves.
 STR_CONFIG_SETTING_INFLATION                                    :Inflació: {STRING}
@@ -1258,8 +1251,8 @@ STR_CONFIG_SETTING_PLANE_SPEED                                  :Factor de veloc
 STR_CONFIG_SETTING_PLANE_SPEED_HELPTEXT                         :Estableix la velocitat relativa dels avions en comparació amb els altres tipus de vehicles, per reduir la quantitat de guanys de transport dels avions
 STR_CONFIG_SETTING_PLANE_SPEED_VALUE                            :1 / {COMMA}
 STR_CONFIG_SETTING_PLANE_CRASHES                                :Nombre d'accidents d'avió: {STRING}
-STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Estableix la probabilitat amb què succeeixen els accidents d'avió
-STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Cap
+STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Estableix la probabilitat amb què succeeixen els accidents d'avió.{}* Els avions grans sempre tenen un risc d'estavellar-se quan aterren en aeroports petits.
+STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Cap*
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :Reduït
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :Normal
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Permet situar parades en carreteres que són propietat de la població: {STRING}
@@ -1584,6 +1577,10 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Activant aquest
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Prohibit
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Permès
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Permès, disposició dels carrers personalitzada
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :Generació de càrrega a les poblacions: {STRING}
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Estableix quanta càrrega es produirà a les cases en funció dels habitants de la població.{}Creixement quadràtic: una població el doble de gran generarà el quàdruple de passatgers.{}Creixement lineal: una població el doble de gran generarà el doble de passatgers.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_ORIGINAL                   :Quadràtica (original)
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineal
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Disposició de nous arbres durant la partida: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Controla l'aparició aleatòria dels arbres durant una partida. Això podria afectar a les indústries que es basen en el creixement dels arbres, per exemple les serradores
@@ -1711,7 +1708,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distrib
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Competidors
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Jugadors IA
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Recomanat)
 
@@ -1795,13 +1791,9 @@ STR_QUIT_NO                                                     :{BLACK}No
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2431,6 +2423,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Construe
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Construeix un túnel per a tramvies. Shift commuta construeix/mostra el cost estimat
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Intercanvia funció construeix/treu per la construcció de carreteres
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Canvia construeix/treu de la construcció de vies de tramvia
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Orientació de la cotxera
@@ -3355,8 +3348,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infraest
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Trossos de vies:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Senyals
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Trossos de carretera:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Carretera
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tramvia
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Cel·les d'aigua:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Canals
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Estacions:
@@ -3367,8 +3358,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Indústries
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Cap -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% transportat)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% transportat)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Nom de les indústries - clica al nom per centrar la vista en la indústria. Ctrl+Clic obre una nova vista al lloc de la indústria
 
@@ -3436,6 +3425,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Vehicles desagr
 STR_GROUP_DEFAULT_SHIPS                                         :Vaixells desagrupats
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Avions desagrupats
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grups - Clica en un grup per llistar tots els vehicles d'aquest grup. Arrossega i solta per a canviar-ne la jerarquia.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Clica per crear un grup
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Elimina el grup seleccionat
@@ -3462,10 +3452,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Compra de nous 
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Compra de nous vehicles monorail
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Compra de nous vehicles Maglev
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Compra de nous vehicles sobre vies
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Compra de nous vehicles de carretera
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Compra de nous vehicles sobre vies
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Compra de nous vaixells
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Compra de noves aeronaus
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Cost: {GOLD}{CURRENCY_LONG}{BLACK} Pes: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Velocitat: {GOLD}{VELOCITY}{BLACK} Potència: {GOLD}{POWER}
@@ -3500,10 +3493,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Compra e
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Compra el vaixell
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Compra l'aeronau
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Compra el tren/vagó seleccionat. Amb Maj+Clic, mostra el cost estimat sense comprar-lo.
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Compra el vehicle marcat. Amb Maj+Clic, mostra el cost estimat sense comprar-lo.
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Compra el vaixell seleccionat. Amb Maj+Clic, mostra el cost estimat sense comprar-lo.
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Compra l'aeronau marcada. Amb Maj+Clic, mostra el cost estimat sense comprar-la.
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Canvia el nom
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Canvia el nom
@@ -3613,12 +3608,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Estàs 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Missatge del fabricant de vehicles
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Acabem de dissenyar {G un una} {G nou nova} {STRING}. Esteu interessats en fer ús exclusiu d'aquest vehicle durant un any, per veure com va, abans del seu llançament mundial?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=Femenin}locomotora de tren
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=Masculin}automòbil
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=Masculin}avió
-STR_ENGINE_PREVIEW_SHIP                                         :{G=Masculin}vaixell
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :{G=Femenin}locomotora de monorail
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :{G=Femenin}locomotora de maglev
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=Masculin}automòbil
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=Masculin}avió
+STR_ENGINE_PREVIEW_SHIP                                         :{G=Masculin}vaixell
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Cost: {CURRENCY_LONG} Pes: {WEIGHT_SHORT}{}Velocitat: {VELOCITY}  Potència: {POWER}{}Cost de circulació: {CURRENCY_LONG}/any{}Capacitat: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Cost: {CURRENCY_LONG} Pes: {WEIGHT_SHORT}{}Velocitat: {VELOCITY} Potència: {POWER} Màx. E.T.: {6:FORCE}{}Cost d'utilització: {4:CURRENCY_LONG}/any{}Capacitat: {5:CARGO_LONG}
@@ -3664,6 +3662,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Trens de Vapor 
 STR_REPLACE_ELRAIL_VEHICLES                                     :Trens Elèctrics
 STR_REPLACE_MONORAIL_VEHICLES                                   :Trens monorail
 STR_REPLACE_MAGLEV_VEHICLES                                     :Trens maglev
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Treure vagons: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Fer que la substitució automàtica mantingui la llargada del tren eliminant vagons (començant pel front), si substituint la màquina el tren es fa més llarg
@@ -4115,6 +4114,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Seleccio
 STR_AI_LIST_CANCEL                                              :{BLACK}Cancel·la
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}No canviïs l'script.
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}Paràmetres {STRING}
 STR_AI_SETTINGS_CAPTION_AI                                      :de la IA
@@ -4317,7 +4317,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... aque
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... sentit de la carretera en la direcció incorrecta
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... les estacions d'autobús de pas no poden tenir cantonades
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... les estacions d'autobús de pas no poden tenir interseccions
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}... la carretera és d'un sol sentit o està blocada.
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}No es pot treure part de la estació...
@@ -4387,7 +4386,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}...abans
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Via de tren no apropiada
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}...abans s'ha de treure la via.
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}La carretera és un d'un sol sentit o està bloquejada
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Els passos a nivell no estan permesos en aquest tipus de via
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Els passos a nivell no estan permesos en aquest tipus de via
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Aquí no es poden construir senyals...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Aquí no es pot construir la via de tren...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Aquí no es pot treure la via de tren...

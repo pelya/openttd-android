@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -26,7 +24,7 @@ const char *GetGRFStringFromGRFText(const struct GRFText *text);
 const char *GetGRFStringPtr(uint16 stringid);
 void CleanUpStrings();
 void SetCurrentGrfLangID(byte language_id);
-char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newlines, const char *str, int *olen = NULL, StringControlCode byte80 = SCC_NEWGRF_PRINT_WORD_STRING_ID);
+char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newlines, const char *str, int *olen = nullptr, StringControlCode byte80 = SCC_NEWGRF_PRINT_WORD_STRING_ID);
 struct GRFText *DuplicateGRFText(struct GRFText *orig);
 void AddGRFTextToList(struct GRFText **list, struct GRFText *text_to_add);
 void AddGRFTextToList(struct GRFText **list, byte langid, uint32 grfid, bool allow_newlines, const char *text_to_add);
@@ -35,7 +33,7 @@ void CleanUpGRFText(struct GRFText *grftext);
 
 bool CheckGrfLangID(byte lang_id, byte grf_version);
 
-void StartTextRefStackUsage(const GRFFile *grffile, byte numEntries, const uint32 *values = NULL);
+void StartTextRefStackUsage(const GRFFile *grffile, byte numEntries, const uint32 *values = nullptr);
 void StopTextRefStackUsage();
 void RewindTextRefStack();
 bool UsingNewGRFTextStack();
@@ -57,9 +55,9 @@ struct LanguageMap {
 	 * the genders/cases/plural OpenTTD IDs to the NewGRF's internal IDs. In this
 	 * case a NewGRF developer/translator might want a different translation for
 	 * both cases. Thus we are basically implementing a multi-map. */
-	SmallVector<Mapping, 1> gender_map; ///< Mapping of NewGRF and OpenTTD IDs for genders.
-	SmallVector<Mapping, 1> case_map;   ///< Mapping of NewGRF and OpenTTD IDs for cases.
-	int plural_form;                    ///< The plural form used for this language.
+	std::vector<Mapping> gender_map; ///< Mapping of NewGRF and OpenTTD IDs for genders.
+	std::vector<Mapping> case_map;   ///< Mapping of NewGRF and OpenTTD IDs for cases.
+	int plural_form;                 ///< The plural form used for this language.
 
 	int GetMapping(int newgrf_id, bool gender) const;
 	int GetReverseMapping(int openttd_id, bool gender) const;

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -15,12 +13,10 @@
 #include "core/tcp_content.h"
 #include "core/tcp_http.h"
 
-#if defined(ENABLE_NETWORK)
-
 /** Vector with content info */
-typedef SmallVector<ContentInfo *, 16> ContentVector;
+typedef std::vector<ContentInfo *> ContentVector;
 /** Vector with constant content info */
-typedef SmallVector<const ContentInfo *, 16> ConstContentVector;
+typedef std::vector<const ContentInfo *> ConstContentVector;
 
 /** Iterator for the content vector */
 typedef ContentInfo **ContentIterator;
@@ -68,12 +64,12 @@ struct ContentCallback {
  */
 class ClientNetworkContentSocketHandler : public NetworkContentSocketHandler, ContentCallback, HTTPCallback {
 protected:
-	typedef SmallVector<ContentID, 4> ContentIDList; ///< List of content IDs to (possibly) select.
-	SmallVector<ContentCallback *, 2> callbacks; ///< Callbacks to notify "the world"
-	ContentIDList requested;                     ///< ContentIDs we already requested (so we don't do it again)
-	ContentVector infos;                         ///< All content info we received
-	SmallVector<char, 1024> http_response;       ///< The HTTP response to the requests we've been doing
-	int http_response_index;                     ///< Where we are, in the response, with handling it
+	typedef std::vector<ContentID> ContentIDList; ///< List of content IDs to (possibly) select.
+	std::vector<ContentCallback *> callbacks;     ///< Callbacks to notify "the world"
+	ContentIDList requested;                      ///< ContentIDs we already requested (so we don't do it again)
+	ContentVector infos;                          ///< All content info we received
+	std::vector<char> http_response;              ///< The HTTP response to the requests we've been doing
+	int http_response_index;                      ///< Where we are, in the response, with handling it
 
 	FILE *curFile;        ///< Currently downloaded file
 	ContentInfo *curInfo; ///< Information about the currently downloaded file
@@ -82,20 +78,20 @@ protected:
 
 	friend class NetworkContentConnecter;
 
-	virtual bool Receive_SERVER_INFO(Packet *p);
-	virtual bool Receive_SERVER_CONTENT(Packet *p);
+	bool Receive_SERVER_INFO(Packet *p) override;
+	bool Receive_SERVER_CONTENT(Packet *p) override;
 
 	ContentInfo *GetContent(ContentID cid);
 	void DownloadContentInfo(ContentID cid);
 
-	void OnConnect(bool success);
-	void OnDisconnect();
-	void OnReceiveContentInfo(const ContentInfo *ci);
-	void OnDownloadProgress(const ContentInfo *ci, int bytes);
-	void OnDownloadComplete(ContentID cid);
+	void OnConnect(bool success) override;
+	void OnDisconnect() override;
+	void OnReceiveContentInfo(const ContentInfo *ci) override;
+	void OnDownloadProgress(const ContentInfo *ci, int bytes) override;
+	void OnDownloadComplete(ContentID cid) override;
 
-	void OnFailure();
-	void OnReceiveData(const char *data, size_t length);
+	void OnFailure() override;
+	void OnReceiveData(const char *data, size_t length) override;
 
 	bool BeforeDownload();
 	void AfterDownload();
@@ -111,7 +107,7 @@ public:
 
 	void Connect();
 	void SendReceive();
-	void Close();
+	void Close() override;
 
 	void RequestContentList(ContentType type);
 	void RequestContentList(uint count, const ContentID *content_ids);
@@ -131,30 +127,26 @@ public:
 	void CheckDependencyState(ContentInfo *ci);
 
 	/** Get the number of content items we know locally. */
-	uint Length() const { return this->infos.Length(); }
+	uint Length() const { return (uint)this->infos.size(); }
 	/** Get the begin of the content inf iterator. */
-	ConstContentIterator Begin() const { return this->infos.Begin(); }
+	ConstContentIterator Begin() const { return this->infos.data(); }
 	/** Get the nth position of the content inf iterator. */
-	ConstContentIterator Get(uint32 index) const { return this->infos.Get(index); }
+	ConstContentIterator Get(uint32 index) const { return this->infos.data() + index; }
 	/** Get the end of the content inf iterator. */
-	ConstContentIterator End() const { return this->infos.End(); }
+	ConstContentIterator End() const { return this->Begin() + this->Length(); }
 
 	void Clear();
 
 	/** Add a callback to this class */
-	void AddCallback(ContentCallback *cb) { this->callbacks.Include(cb); }
+	void AddCallback(ContentCallback *cb) { include(this->callbacks, cb); }
 	/** Remove a callback */
-	void RemoveCallback(ContentCallback *cb) { this->callbacks.Erase(this->callbacks.Find(cb)); }
+	void RemoveCallback(ContentCallback *cb) { this->callbacks.erase(std::find(this->callbacks.begin(), this->callbacks.end(), cb)); }
 };
 
 extern ClientNetworkContentSocketHandler _network_content_client;
 
-void ShowNetworkContentListWindow(ContentVector *cv = NULL, ContentType type1 = CONTENT_TYPE_END, ContentType type2 = CONTENT_TYPE_END);
+void ShowNetworkContentListWindow(ContentVector *cv = nullptr, ContentType type1 = CONTENT_TYPE_END, ContentType type2 = CONTENT_TYPE_END);
 
 void ShowMissingContentWindow(const struct GRFConfig *list);
-
-#else
-static inline void ShowNetworkContentListWindow() {}
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CONTENT_H */

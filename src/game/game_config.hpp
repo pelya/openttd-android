@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -42,7 +40,7 @@ public:
 	bool ResetInfo(bool force_exact_match);
 
 protected:
-	/* virtual */ ScriptInfo *FindInfo(const char *name, int version, bool force_exact_match);
+	ScriptInfo *FindInfo(const char *name, int version, bool force_exact_match) override;
 };
 
 #endif /* GAME_CONFIG_HPP */

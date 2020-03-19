@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -11,8 +9,6 @@
 
 #ifndef NETWORK_CLIENT_H
 #define NETWORK_CLIENT_H
-
-#ifdef ENABLE_NETWORK
 
 #include "network_internal.h"
 
@@ -44,33 +40,33 @@ protected:
 	friend void NetworkClose(bool close_admins);
 	static ClientNetworkGameSocketHandler *my_client; ///< This is us!
 
-	virtual NetworkRecvStatus Receive_SERVER_FULL(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_BANNED(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_ERROR(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_COMPANY_INFO(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_CLIENT_INFO(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_NEED_GAME_PASSWORD(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_NEED_COMPANY_PASSWORD(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_WELCOME(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_WAIT(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_MAP_BEGIN(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_MAP_SIZE(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_MAP_DATA(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_MAP_DONE(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_JOIN(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_FRAME(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_SYNC(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_COMMAND(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_CHAT(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_QUIT(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_ERROR_QUIT(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_SHUTDOWN(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_NEWGAME(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_RCON(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_CHECK_NEWGRFS(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_MOVE(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_COMPANY_UPDATE(Packet *p);
-	virtual NetworkRecvStatus Receive_SERVER_CONFIG_UPDATE(Packet *p);
+	NetworkRecvStatus Receive_SERVER_FULL(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_BANNED(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_ERROR(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_COMPANY_INFO(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_CLIENT_INFO(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_NEED_GAME_PASSWORD(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_NEED_COMPANY_PASSWORD(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_WELCOME(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_WAIT(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_MAP_BEGIN(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_MAP_SIZE(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_MAP_DATA(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_MAP_DONE(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_JOIN(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_FRAME(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_SYNC(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_COMMAND(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_CHAT(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_QUIT(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_ERROR_QUIT(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_SHUTDOWN(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_NEWGAME(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_RCON(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_CHECK_NEWGRFS(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_MOVE(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_COMPANY_UPDATE(Packet *p) override;
+	NetworkRecvStatus Receive_SERVER_CONFIG_UPDATE(Packet *p) override;
 
 	static NetworkRecvStatus SendNewGRFsOk();
 	static NetworkRecvStatus SendGetMap();
@@ -80,7 +76,7 @@ public:
 	ClientNetworkGameSocketHandler(SOCKET s);
 	~ClientNetworkGameSocketHandler();
 
-	NetworkRecvStatus CloseConnection(NetworkRecvStatus status);
+	NetworkRecvStatus CloseConnection(NetworkRecvStatus status) override;
 	void ClientError(NetworkRecvStatus res);
 
 	static NetworkRecvStatus SendCompanyInformationQuery();
@@ -117,7 +113,5 @@ extern CompanyID _network_join_as;
 
 extern const char *_network_join_server_password;
 extern const char *_network_join_company_password;
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CLIENT_H */

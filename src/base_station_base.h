@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -53,15 +51,16 @@ struct StationRect : public Rect {
 /** Base class for all station-ish types */
 struct BaseStation : StationPool::PoolItem<&_station_pool> {
 	TileIndex xy;                   ///< Base tile of the station
-	ViewportSign sign;              ///< NOSAVE: Dimensions of sign
+	TrackedViewportSign sign;       ///< NOSAVE: Dimensions of sign
 	byte delete_ctr;                ///< Delete counter. If greater than 0 then it is decremented until it reaches 0; the waypoint is then is deleted.
 
 	char *name;                     ///< Custom name
 	StringID string_id;             ///< Default name (town area) of station
+	mutable std::string cached_name; ///< NOSAVE: Cache of the resolved name of the station, if not using a custom name
 
 	Town *town;                     ///< The town this station is associated with
-	OwnerByte owner;                ///< The owner of this station
-	StationFacilityByte facilities; ///< The facilities that this station has
+	Owner owner;                    ///< The owner of this station
+	StationFacility facilities;     ///< The facilities that this station has
 
 	uint8 num_specs;                ///< Number of specs in the speclist
 	StationSpecList *speclist;      ///< List of station specs of this station
@@ -110,6 +109,19 @@ struct BaseStation : StationPool::PoolItem<&_station_pool> {
 	 */
 	virtual void UpdateVirtCoord() = 0;
 
+	inline const char *GetCachedName() const
+	{
+		if (this->name != nullptr) return this->name;
+		if (this->cached_name.empty()) this->FillCachedName();
+		return this->cached_name.c_str();
+	}
+
+	virtual void MoveSign(TileIndex new_xy)
+	{
+		this->xy = new_xy;
+		this->UpdateVirtCoord();
+	}
+
 	/**
 	 * Get the tile area for a given station type.
 	 * @param ta tile area to fill.
@@ -157,9 +169,10 @@ struct BaseStation : StationPool::PoolItem<&_station_pool> {
 	}
 
 	static void PostDestructor(size_t index);
-};
 
-#define FOR_ALL_BASE_STATIONS(var) FOR_ALL_ITEMS_FROM(BaseStation, station_index, var, 0)
+private:
+	void FillCachedName() const;
+};
 
 /**
  * Class defining several overloaded accessors so we don't
@@ -214,7 +227,7 @@ struct SpecializedStation : public BaseStation {
 	 */
 	static inline T *GetIfValid(size_t index)
 	{
-		return IsValidID(index) ? Get(index) : NULL;
+		return IsValidID(index) ? Get(index) : nullptr;
 	}
 
 	/**
@@ -248,8 +261,13 @@ struct SpecializedStation : public BaseStation {
 		assert(IsExpected(st));
 		return (const T *)st;
 	}
-};
 
-#define FOR_ALL_BASE_STATIONS_OF_TYPE(name, var) FOR_ALL_ITEMS_FROM(name, station_index, var, 0) if (name::IsExpected(var))
+	/**
+	 * Returns an iterable ensemble of all valid stations of type T
+	 * @param from index of the first station to consider
+	 * @return an iterable ensemble of all valid stations of type T
+	 */
+	static Pool::IterateWrapper<T> Iterate(size_t from = 0) { return Pool::IterateWrapper<T>(from); }
+};
 
 #endif /* BASE_STATION_BASE_H */

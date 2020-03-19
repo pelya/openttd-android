@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -36,25 +34,25 @@ public:
 	/**
 	 * Creates a command cost return with no cost and no error
 	 */
-	CommandCost() : expense_type(INVALID_EXPENSES), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	CommandCost() : expense_type(INVALID_EXPENSES), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 	/**
 	 * Creates a command return value the is failed with the given message
 	 */
-	explicit CommandCost(StringID msg) : expense_type(INVALID_EXPENSES), cost(0), message(msg), success(false), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	explicit CommandCost(StringID msg) : expense_type(INVALID_EXPENSES), cost(0), message(msg), success(false), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 	/**
 	 * Creates a command cost with given expense type and start cost of 0
 	 * @param ex_t the expense type
 	 */
-	explicit CommandCost(ExpensesType ex_t) : expense_type(ex_t), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	explicit CommandCost(ExpensesType ex_t) : expense_type(ex_t), cost(0), message(INVALID_STRING_ID), success(true), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 	/**
 	 * Creates a command return value with the given start cost and expense type
 	 * @param ex_t the expense type
 	 * @param cst the initial cost of this command
 	 */
-	CommandCost(ExpensesType ex_t, const Money &cst) : expense_type(ex_t), cost(cst), message(INVALID_STRING_ID), success(true), textref_stack_grffile(NULL), textref_stack_size(0) {}
+	CommandCost(ExpensesType ex_t, const Money &cst) : expense_type(ex_t), cost(cst), message(INVALID_STRING_ID), success(true), textref_stack_grffile(nullptr), textref_stack_size(0) {}
 
 
 	/**
@@ -202,6 +200,7 @@ enum Commands {
 	CMD_REMOVE_LONG_ROAD,             ///< remove a complete road (not a "half" one)
 	CMD_BUILD_ROAD,                   ///< build a "half" road
 	CMD_BUILD_ROAD_DEPOT,             ///< build a road depot
+	CMD_CONVERT_ROAD,                 ///< convert a road type
 
 	CMD_BUILD_AIRPORT,                ///< build an airport
 
@@ -239,6 +238,7 @@ enum Commands {
 	CMD_DECREASE_LOAN,                ///< decrease the loan from the bank
 
 	CMD_WANT_ENGINE_PREVIEW,          ///< confirm the preview of an engine
+	CMD_ENGINE_CTRL,                  ///< control availability of the engine for companies
 
 	CMD_RENAME_VEHICLE,               ///< rename a whole vehicle
 	CMD_RENAME_ENGINE,                ///< rename a engine (in the engine list)
@@ -263,6 +263,7 @@ enum Commands {
 	CMD_DO_TOWN_ACTION,               ///< do a action from the town detail window (like advertises or bribe)
 	CMD_TOWN_CARGO_GOAL,              ///< set the goal of a cargo for a town
 	CMD_TOWN_GROWTH_RATE,             ///< set the town growth rate
+	CMD_TOWN_RATING,                  ///< set rating of a company in a town
 	CMD_TOWN_SET_TEXT,                ///< set the custom text of a town
 	CMD_EXPAND_TOWN,                  ///< expand a town
 	CMD_DELETE_TOWN,                  ///< delete a town
@@ -467,7 +468,7 @@ struct Command {
  * @param p1 Additional data of the command
  * @see CommandProc
  */
-typedef void CommandCallback(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2);
+typedef void CommandCallback(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd);
 
 /**
  * Structure for buffering the build command when selecting a station to join.

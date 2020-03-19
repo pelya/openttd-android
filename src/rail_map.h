@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,6 +15,7 @@
 #include "signal_func.h"
 #include "track_func.h"
 #include "tile_map.h"
+#include "water_map.h"
 #include "signal_type.h"
 
 
@@ -521,6 +520,7 @@ static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 {
 	SetTileType(t, MP_RAILWAY);
 	SetTileOwner(t, o);
+	SetDockingTile(t, false);
 	_m[t].m2 = 0;
 	_m[t].m3 = 0;
 	_m[t].m4 = 0;
@@ -535,6 +535,7 @@ static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirectio
 {
 	SetTileType(t, MP_RAILWAY);
 	SetTileOwner(t, o);
+	SetDockingTile(t, false);
 	_m[t].m2 = did;
 	_m[t].m3 = 0;
 	_m[t].m4 = 0;

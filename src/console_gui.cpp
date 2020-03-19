@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -83,7 +81,7 @@ struct IConsoleLine {
 	static const IConsoleLine *Get(uint index)
 	{
 		const IConsoleLine *item = IConsoleLine::front;
-		while (index != 0 && item != NULL) {
+		while (index != 0 && item != nullptr) {
 			index--;
 			item = item->previous;
 		}
@@ -101,14 +99,14 @@ struct IConsoleLine {
 	static bool Truncate()
 	{
 		IConsoleLine *cur = IConsoleLine::front;
-		if (cur == NULL) return false;
+		if (cur == nullptr) return false;
 
 		int count = 1;
-		for (IConsoleLine *item = cur->previous; item != NULL; count++, cur = item, item = item->previous) {
+		for (IConsoleLine *item = cur->previous; item != nullptr; count++, cur = item, item = item->previous) {
 			if (item->time > _settings_client.gui.console_backlog_timeout &&
 					count > _settings_client.gui.console_backlog_length) {
 				delete item;
-				cur->previous = NULL;
+				cur->previous = nullptr;
 				return true;
 			}
 
@@ -124,12 +122,12 @@ struct IConsoleLine {
 	static void Reset()
 	{
 		delete IConsoleLine::front;
-		IConsoleLine::front = NULL;
+		IConsoleLine::front = nullptr;
 		IConsoleLine::size = 0;
 	}
 };
 
-/* static */ IConsoleLine *IConsoleLine::front = NULL;
+/* static */ IConsoleLine *IConsoleLine::front = nullptr;
 /* static */ int IConsoleLine::size  = 0;
 
 
@@ -167,7 +165,7 @@ static const struct NWidgetPart _nested_console_window_widgets[] = {
 };
 
 static WindowDesc _console_window_desc(
-	WDP_MANUAL, NULL, 0, 0,
+	WDP_MANUAL, nullptr, 0, 0,
 	WC_CONSOLE, WC_NONE,
 	0,
 	_nested_console_window_widgets, lengthof(_nested_console_window_widgets)
@@ -206,13 +204,13 @@ struct IConsoleWindow : Window
 		this->SetDirty();
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		const int right = this->width - 5;
 
 		GfxFillRect(0, 0, this->width - 1, this->height - 1, PC_BLACK);
 		int ypos = this->height - this->line_height;
-		for (const IConsoleLine *print = IConsoleLine::Get(IConsoleWindow::scroll); print != NULL; print = print->previous) {
+		for (const IConsoleLine *print = IConsoleLine::Get(IConsoleWindow::scroll); print != nullptr; print = print->previous) {
 			SetDParamStr(0, print->buffer);
 			ypos = DrawStringMultiLine(5, right, -this->line_height, ypos, STR_JUST_RAW_STRING, print->colour, SA_LEFT | SA_BOTTOM | SA_FORCE) - ICON_LINE_SPACING;
 			if (ypos < 0) break;
@@ -234,7 +232,7 @@ struct IConsoleWindow : Window
 		}
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
 		_focused_window = this;
 
@@ -244,7 +242,7 @@ struct IConsoleWindow : Window
 		this->OnKeyPress(0, WKC_RETURN);
 	}
 
-	virtual void OnHundredthTick()
+	void OnHundredthTick() override
 	{
 		if (IConsoleLine::Truncate() &&
 				(IConsoleWindow::scroll > IConsoleLine::size)) {
@@ -253,12 +251,12 @@ struct IConsoleWindow : Window
 		}
 	}
 
-	virtual void OnMouseLoop()
+	void OnMouseLoop() override
 	{
 		if (_iconsole_cmdline.HandleCaret()) this->SetDirty();
 	}
 
-	virtual EventState OnKeyPress(WChar key, uint16 keycode)
+	EventState OnKeyPress(WChar key, uint16 keycode) override
 	{
 		if (_focused_window != this) return ES_NOT_HANDLED;
 
@@ -296,13 +294,13 @@ struct IConsoleWindow : Window
 
 			case WKC_RETURN: case WKC_NUM_ENTER: {
 				/* We always want the ] at the left side; we always force these strings to be left
-				 * aligned anyway. So enforce this in all cases by addding a left-to-right marker,
+				 * aligned anyway. So enforce this in all cases by adding a left-to-right marker,
 				 * otherwise it will be drawn at the wrong side with right-to-left texts. */
 				IConsolePrintF(CC_COMMAND, LRM "] %s", _iconsole_cmdline.buf);
 				const char *cmd = IConsoleHistoryAdd(_iconsole_cmdline.buf);
 				IConsoleClearCommand();
 
-				if (cmd != NULL) IConsoleCmdExec(cmd);
+				if (cmd != nullptr) IConsoleCmdExec(cmd);
 				break;
 			}
 
@@ -329,7 +327,7 @@ struct IConsoleWindow : Window
 		return ES_HANDLED;
 	}
 
-	virtual void InsertTextString(int wid, const char *str, bool marked, const char *caret, const char *insert_location, const char *replacement_end)
+	void InsertTextString(int wid, const char *str, bool marked, const char *caret, const char *insert_location, const char *replacement_end) override
 	{
 		if (_iconsole_cmdline.InsertString(str, marked, caret, insert_location, replacement_end)) {
 			IConsoleWindow::scroll = 0;
@@ -338,25 +336,25 @@ struct IConsoleWindow : Window
 		}
 	}
 
-	virtual const char *GetFocusedText() const
+	const char *GetFocusedText() const override
 	{
 		return _iconsole_cmdline.buf;
 	}
 
-	virtual const char *GetCaret() const
+	const char *GetCaret() const override
 	{
 		return _iconsole_cmdline.buf + _iconsole_cmdline.caretpos;
 	}
 
-	virtual const char *GetMarkedText(size_t *length) const
+	const char *GetMarkedText(size_t *length) const override
 	{
-		if (_iconsole_cmdline.markend == 0) return NULL;
+		if (_iconsole_cmdline.markend == 0) return nullptr;
 
 		*length = _iconsole_cmdline.markend - _iconsole_cmdline.markpos;
 		return _iconsole_cmdline.buf + _iconsole_cmdline.markpos;
 	}
 
-	virtual Point GetCaretPosition() const
+	Point GetCaretPosition() const override
 	{
 		int delta = min(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
 		Point pt = {this->line_offset + delta + _iconsole_cmdline.caretxoffs, this->height - this->line_height};
@@ -364,7 +362,7 @@ struct IConsoleWindow : Window
 		return pt;
 	}
 
-	virtual Rect GetTextBoundingRect(const char *from, const char *to) const
+	Rect GetTextBoundingRect(const char *from, const char *to) const override
 	{
 		int delta = min(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
 
@@ -375,21 +373,26 @@ struct IConsoleWindow : Window
 		return r;
 	}
 
-	virtual const char *GetTextCharacterAtPosition(const Point &pt) const
+	const char *GetTextCharacterAtPosition(const Point &pt) const override
 	{
 		int delta = min(this->width - this->line_offset - _iconsole_cmdline.pixels - ICON_RIGHT_BORDERWIDTH, 0);
 
-		if (!IsInsideMM(pt.y, this->height - this->line_height, this->height)) return NULL;
+		if (!IsInsideMM(pt.y, this->height - this->line_height, this->height)) return nullptr;
 
 		return GetCharAtPosition(_iconsole_cmdline.buf, pt.x - delta);
 	}
 
-	virtual void OnMouseWheel(int wheel)
+	void OnMouseWheel(int wheel) override
 	{
 		this->Scroll(-wheel);
 	}
 
-	virtual void OnFocusLost()
+	void OnFocus() override
+	{
+		VideoDriver::GetInstance()->EditBoxGainedFocus();
+	}
+
+	void OnFocusLost() override
 	{
 		VideoDriver::GetInstance()->EditBoxLostFocus();
 	}
@@ -490,10 +493,10 @@ static const char *IConsoleHistoryAdd(const char *cmd)
 	while (IsWhitespace(*cmd)) cmd++;
 
 	/* Do not put empty command in history */
-	if (StrEmpty(cmd)) return NULL;
+	if (StrEmpty(cmd)) return nullptr;
 
 	/* Do not put in history if command is same as previous */
-	if (_iconsole_history[0] == NULL || strcmp(_iconsole_history[0], cmd) != 0) {
+	if (_iconsole_history[0] == nullptr || strcmp(_iconsole_history[0], cmd) != 0) {
 		free(_iconsole_history[ICON_HISTORY_SIZE - 1]);
 		memmove(&_iconsole_history[1], &_iconsole_history[0], sizeof(_iconsole_history[0]) * (ICON_HISTORY_SIZE - 1));
 		_iconsole_history[0] = stredup(cmd);
@@ -510,10 +513,10 @@ static const char *IConsoleHistoryAdd(const char *cmd)
  */
 static void IConsoleHistoryNavigate(int direction)
 {
-	if (_iconsole_history[0] == NULL) return; // Empty history
+	if (_iconsole_history[0] == nullptr) return; // Empty history
 	_iconsole_historypos = Clamp(_iconsole_historypos + direction, -1, ICON_HISTORY_SIZE - 1);
 
-	if (direction > 0 && _iconsole_history[_iconsole_historypos] == NULL) _iconsole_historypos--;
+	if (direction > 0 && _iconsole_history[_iconsole_historypos] == nullptr) _iconsole_historypos--;
 
 	if (_iconsole_historypos == -1) {
 		_iconsole_cmdline.DeleteAll();

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,7 +15,6 @@
 #include "string_func.h"
 #include "strings_func.h"
 #include "table/strings.h"
-#include "core/sort_func.hpp"
 #include "debug.h"
 
 #include "safeguards.h"
@@ -79,9 +76,9 @@ int8 SaveHighScoreValue(const Company *c)
 }
 
 /** Sort all companies given their performance */
-static int CDECL HighScoreSorter(const Company * const *a, const Company * const *b)
+static bool HighScoreSorter(const Company * const &a, const Company * const &b)
 {
-	return (*b)->old_economy[0].performance_history - (*a)->old_economy[0].performance_history;
+	return b->old_economy[0].performance_history < a->old_economy[0].performance_history;
 }
 
 /**
@@ -90,15 +87,14 @@ static int CDECL HighScoreSorter(const Company * const *a, const Company * const
  */
 int8 SaveHighScoreValueNetwork()
 {
-	const Company *c;
 	const Company *cl[MAX_COMPANIES];
 	uint count = 0;
 	int8 company = -1;
 
 	/* Sort all active companies with the highest score first */
-	FOR_ALL_COMPANIES(c) cl[count++] = c;
+	for (const Company *c : Company::Iterate()) cl[count++] = c;
 
-	QSortT(cl, count, &HighScoreSorter);
+	std::sort(std::begin(cl), std::begin(cl) + count, HighScoreSorter);
 
 	{
 		uint i;
@@ -129,7 +125,7 @@ void SaveToHighScore()
 {
 	FILE *fp = fopen(_highscore_file, "wb");
 
-	if (fp != NULL) {
+	if (fp != nullptr) {
 		uint i;
 		HighScore *hs;
 
@@ -159,7 +155,7 @@ void LoadFromHighScore()
 
 	memset(_highscore_table, 0, sizeof(_highscore_table));
 
-	if (fp != NULL) {
+	if (fp != nullptr) {
 		uint i;
 		HighScore *hs;
 

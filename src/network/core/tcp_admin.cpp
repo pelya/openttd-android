@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -10,8 +8,6 @@
 /**
  * @file tcp_admin.cpp Basic functions to receive and send TCP packets to and from the admin network.
  */
-
-#ifdef ENABLE_NETWORK
 
 #include "../../stdafx.h"
 
@@ -117,7 +113,7 @@ NetworkRecvStatus NetworkAdminSocketHandler::HandlePacket(Packet *p)
 NetworkRecvStatus NetworkAdminSocketHandler::ReceivePackets()
 {
 	Packet *p;
-	while ((p = this->ReceivePacket()) != NULL) {
+	while ((p = this->ReceivePacket()) != nullptr) {
 		NetworkRecvStatus res = this->HandlePacket(p);
 		if (res != NETWORK_RECV_STATUS_OKAY) return res;
 	}
@@ -172,5 +168,3 @@ NetworkRecvStatus NetworkAdminSocketHandler::Receive_SERVER_CMD_NAMES(Packet *p)
 NetworkRecvStatus NetworkAdminSocketHandler::Receive_SERVER_CMD_LOGGING(Packet *p) { return this->ReceiveInvalidPacket(ADMIN_PACKET_SERVER_CMD_LOGGING); }
 NetworkRecvStatus NetworkAdminSocketHandler::Receive_SERVER_RCON_END(Packet *p) { return this->ReceiveInvalidPacket(ADMIN_PACKET_SERVER_RCON_END); }
 NetworkRecvStatus NetworkAdminSocketHandler::Receive_SERVER_PONG(Packet *p) { return this->ReceiveInvalidPacket(ADMIN_PACKET_SERVER_PONG); }
-
-#endif /* ENABLE_NETWORK */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -115,7 +113,7 @@ public:
 	 * @param vehicle_id The vehicle to set the name for.
 	 * @param name The name for the vehicle (can be either a raw string, or a ScriptText object).
 	 * @pre IsValidVehicle(vehicle_id).
-	 * @pre name != NULL && len(name) != 0.
+	 * @pre name != nullptr && len(name) != 0.
 	 * @game @pre Valid ScriptCompanyMode active in scope.
 	 * @exception ScriptError::ERR_NAME_IS_NOT_UNIQUE
 	 * @return True if and only if the name was changed.
@@ -319,6 +317,41 @@ public:
 	 *   assigning orders.
 	 */
 	static VehicleID BuildVehicle(TileIndex depot, EngineID engine_id);
+
+	/**
+	 * Builds a vehicle with the given engine at the given depot and refits it to the given cargo.
+	 * @param depot The depot where the vehicle will be build.
+	 * @param engine_id The engine to use for this vehicle.
+	 * @param cargo The cargo to refit to.
+	 * @pre The tile at depot has a depot that can build the engine and
+	 *   is owned by you.
+	 * @pre ScriptEngine::IsBuildable(engine_id).
+	 * @pre ScriptCargo::IsValidCargo(cargo).
+	 * @game @pre Valid ScriptCompanyMode active in scope.
+	 * @exception ScriptVehicle::ERR_VEHICLE_TOO_MANY
+	 * @exception ScriptVehicle::ERR_VEHICLE_BUILD_DISABLED
+	 * @exception ScriptVehicle::ERR_VEHICLE_WRONG_DEPOT
+	 * @return The VehicleID of the new vehicle, or an invalid VehicleID when
+	 *   it failed. Check the return value using IsValidVehicle. In test-mode
+	 *   0 is returned if it was successful; any other value indicates failure.
+	 * @note In Test Mode it means you can't assign orders yet to this vehicle,
+	 *   as the vehicle isn't really built yet. Build it for real first before
+	 *   assigning orders.
+	 */
+	static VehicleID BuildVehicleWithRefit(TileIndex depot, EngineID engine_id, CargoID cargo);
+
+	/**
+	 * Gets the capacity of a vehicle built at the given depot with the given engine and refitted to the given cargo.
+	 * @param depot The depot where the vehicle will be build.
+	 * @param engine_id The engine to use for this vehicle.
+	 * @param cargo The cargo to refit to.
+	 * @pre The tile at depot has a depot that can build the engine and
+	 *   is owned by you.
+	 * @pre ScriptEngine::IsBuildable(engine_id).
+	 * @pre ScriptCargo::IsValidCargo(cargo).
+	 * @return The capacity the vehicle will have when refited.
+	 */
+	static int GetBuildWithRefitCapacity(TileIndex depot, EngineID engine_id, CargoID cargo);
 
 	/**
 	 * Clones a vehicle at the given depot, copying or cloning its orders.
@@ -563,6 +596,11 @@ public:
 	static uint GetMaximumOrderDistance(VehicleID vehicle_id);
 
 private:
+	/**
+	 * Internal function used by BuildVehicle(WithRefit).
+	 */
+	static VehicleID _BuildVehicleInternal(TileIndex depot, EngineID engine_id, CargoID cargo);
+
 	/**
 	 * Internal function used by SellWagon(Chain).
 	 */

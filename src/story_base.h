@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -27,7 +25,7 @@ extern uint32 _story_page_next_sort_value;
 /*
  * Each story page element is one of these types.
  */
-enum StoryPageElementType {
+enum StoryPageElementType : byte {
 	SPET_TEXT = 0, ///< A text element.
 	SPET_LOCATION, ///< An element that references a tile along with a one-line text.
 	SPET_GOAL,     ///< An element that references a goal.
@@ -37,7 +35,6 @@ enum StoryPageElementType {
 
 /** Define basic enum properties */
 template <> struct EnumPropsT<StoryPageElementType> : MakeEnumPropsT<StoryPageElementType, byte, SPET_TEXT, SPET_END, INVALID_SPET, 8> {};
-typedef TinyEnumT<StoryPageElementType> StoryPageElementTypeByte; ///< typedefing-enumification of Direction
 
 /**
  * Struct about story page elements.
@@ -47,7 +44,7 @@ typedef TinyEnumT<StoryPageElementType> StoryPageElementTypeByte; ///< typedefin
 struct StoryPageElement : StoryPageElementPool::PoolItem<&_story_page_element_pool> {
 	uint32 sort_value;   ///< A number that increases for every created story page element. Used for sorting. The id of a story page element is the pool index.
 	StoryPageID page; ///< Id of the page which the page element belongs to
-	StoryPageElementTypeByte type; ///< Type of page element
+	StoryPageElementType type; ///< Type of page element
 
 	uint32 referenced_id; ///< Id of referenced object (location, goal etc.)
 	char *text;           ///< Static content text of page element
@@ -58,19 +55,16 @@ struct StoryPageElement : StoryPageElementPool::PoolItem<&_story_page_element_po
 	inline StoryPageElement() { }
 
 	/**
-	 * (Empty) destructor has to be defined else operator delete might be called with NULL parameter
+	 * (Empty) destructor has to be defined else operator delete might be called with nullptr parameter
 	 */
 	inline ~StoryPageElement() { free(this->text); }
 };
-
-#define FOR_ALL_STORY_PAGE_ELEMENTS_FROM(var, start) FOR_ALL_ITEMS_FROM(StoryPageElement, story_page_element_index, var, start)
-#define FOR_ALL_STORY_PAGE_ELEMENTS(var) FOR_ALL_STORY_PAGE_ELEMENTS_FROM(var, 0)
 
 /** Struct about stories, current and completed */
 struct StoryPage : StoryPagePool::PoolItem<&_story_page_pool> {
 	uint32 sort_value;   ///< A number that increases for every created story page. Used for sorting. The id of a story page is the pool index.
 	Date date;           ///< Date when the page was created.
-	CompanyByte company; ///< StoryPage is for a specific company; INVALID_COMPANY if it is global
+	CompanyID company;   ///< StoryPage is for a specific company; INVALID_COMPANY if it is global
 
 	char *title;         ///< Title of story page
 
@@ -80,22 +74,18 @@ struct StoryPage : StoryPagePool::PoolItem<&_story_page_pool> {
 	inline StoryPage() { }
 
 	/**
-	 * (Empty) destructor has to be defined else operator delete might be called with NULL parameter
+	 * (Empty) destructor has to be defined else operator delete might be called with nullptr parameter
 	 */
 	inline ~StoryPage()
 	{
 		if (!this->CleaningPool()) {
-			StoryPageElement *spe;
-			FOR_ALL_STORY_PAGE_ELEMENTS(spe) {
+			for (StoryPageElement *spe : StoryPageElement::Iterate()) {
 				if (spe->page == this->index) delete spe;
 			}
 		}
 		free(this->title);
 	}
 };
-
-#define FOR_ALL_STORY_PAGES_FROM(var, start) FOR_ALL_ITEMS_FROM(StoryPage, story_page_index, var, start)
-#define FOR_ALL_STORY_PAGES(var) FOR_ALL_STORY_PAGES_FROM(var, 0)
 
 #endif /* STORY_BASE_H */
 

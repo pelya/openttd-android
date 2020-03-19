@@ -12,8 +12,6 @@
 ##case small
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -239,6 +237,8 @@ STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Velg fil
 STR_BUTTON_SORT_BY                                              :{BLACK}Sorter etter
 STR_BUTTON_LOCATION                                             :{BLACK}Gå til
 STR_BUTTON_RENAME                                               :{BLACK}Gi nytt navn
+STR_BUTTON_CATCHMENT                                            :{BLACK}Dekning
+STR_TOOLTIP_CATCHMENT                                           :{BLACK}Veksle mellom visning av dekningsområde
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Lukk vindu
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Vindustittel - dra her for å flytte vindu
@@ -267,6 +267,7 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Ved å a
 STR_BUTTON_DEFAULT                                              :{BLACK}Standard
 STR_BUTTON_CANCEL                                               :{BLACK}Avbryt
 STR_BUTTON_OK                                                   :{BLACK}OK
+STR_WARNING_PASSWORD_SECURITY                                   :{YELLOW}Advarsel: Server-administratorer kan lese tekst som blir skrevet her.
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :`1234567890-=\qwertyuiop[]asdfghjkl;'  zxcvbnm,./ .
@@ -340,6 +341,7 @@ STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN                            :{BLACK}Zoom inn
 STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT                           :{BLACK}Zoom ut
 STR_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                        :{BLACK}Bygg jernbanespor
 STR_TOOLBAR_TOOLTIP_BUILD_ROADS                                 :{BLACK}Bygg veier
+STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}Bygg trikkespor
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Bygg havner
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Bygg flyplasser
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Åpne landskapsverktøylinjen for å heve/senke land, plante trær, osv.
@@ -360,6 +362,7 @@ STR_SCENEDIT_TOOLBAR_LANDSCAPE_GENERATION                       :{BLACK}Landskap
 STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Bygenerering
 STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Industrigenerering
 STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Veibygging
+STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Bygg trikkespor
 STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Plant trær. Shift slår av/på kostnadsestimat
 STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Plasser skilt
 STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Plasser objekt. Shift slår av/på kostnadsestimat
@@ -477,9 +480,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Vis/skjul konsoll
 STR_ABOUT_MENU_AI_DEBUG                                         :AI/Spillskript-feilsøking
 STR_ABOUT_MENU_SCREENSHOT                                       :Skjermbilde
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Fullt forstørret skjermbilde
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Normalt forstørret skjermbilde
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Skjermbilde av hele kartet
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Vis bildehastighet
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Om 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Spriteforskyver
@@ -650,9 +650,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Egendefinert 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Musikkvolum
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Lydeffektvolum
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}MIN
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}MAKS
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -838,7 +835,7 @@ STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_COAL                      :{BIG_FONT}{BLAC
 STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_OIL                       :{BIG_FONT}{BLACK}Nye oljereserver funnet i {INDUSTRY}!{}En dobling i produksjonen ventes!
 STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_FARM                      :{BIG_FONT}{BLACK}Forbedring i gårdbruksmetoder på {INDUSTRY} forventes å doble produksjonen!
 STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_SMOOTH                    :{BIG_FONT}{BLACK}Produksjonen av {STRING} ved {INDUSTRY} øker med {COMMA}{NBSP}%!
-STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_GENERAL                   :{BIG_FONT}{BLACK}{INDUSTRY} sin produksjon har sunket med 50{NBSP}%
+STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_GENERAL                   :{BIG_FONT}{BLACK}Produksjonen ved {INDUSTRY} har sunket med 50{NBSP}%
 STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_FARM                      :{BIG_FONT}{BLACK}Insektinvasjon gjør stor skade på {INDUSTRY}!{}Produksjonen synker med 50{NBSP}%
 STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_SMOOTH                    :{BIG_FONT}{BLACK}Produksjonen av {STRING} ved {INDUSTRY} synker med {COMMA}{NBSP}%!
 
@@ -868,6 +865,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Kunne ik
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}Ny{G "" "" tt} {STRING} er nå tilgjengelig!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Ny{G "" "" tt} {STRING} er nå tilgjengelig!  -  {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} godtar ikke lenger {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} godtar ikke lenger {STRING} eller {STRING}
@@ -935,6 +933,9 @@ STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgisk lari (
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iransk rial (IRR)
 STR_GAME_OPTIONS_CURRENCY_RUB                                   :Ny russisk rubel (RUB)
 STR_GAME_OPTIONS_CURRENCY_MXN                                   :Meksikansk peso (MXN)
+STR_GAME_OPTIONS_CURRENCY_NTD                                   :Ny Taiwan Dollar (NTD)
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :Chinese Renminbi (CNY)
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :Hong Kong Dollar (HKD)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Kjøretøy
@@ -1186,6 +1187,8 @@ STR_CONFIG_SETTING_AUTOSLOPE                                    :Tillat endring 
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Tillat endring av landskapet under bygninger og spor uten å fjerne dem
 STR_CONFIG_SETTING_CATCHMENT                                    :Mer realistisk størrelse på oppfangingsområder: {STRING}
 STR_CONFIG_SETTING_CATCHMENT_HELPTEXT                           :Ha oppsamlingsområder i forskjellige størrelser for forskjellige typer stasjoner og lufthavner
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES                     :Firmaets stasjoner kan betjene industrier med tilknyttede nøytrale stasjoner: {STRING}
+STR_CONFIG_SETTING_SERVE_NEUTRAL_INDUSTRIES_HELPTEXT            :Hvis aktivert, vil industrier med egne stasjoner (slik som oljerigger) også kunne betjenes av firma-stasjoner bygget i nærheten. Hvis deaktivert, vil disse industriene bare kunne betjenes av sine egne stasjoner. Nærliggende firma-stasjoner vil ikke kunne betjene dem, heller ikke vil den egne stasjonen betjene noe annet enn den tilhørende industrien.
 STR_CONFIG_SETTING_EXTRADYNAMITE                                :Tillat fjerning av flere veier, broer osv. eid av byene: {STRING}
 STR_CONFIG_SETTING_EXTRADYNAMITE_HELPTEXT                       :Gjør det enklere å fjerne infrastruktur og bygninger som tilhører byer
 STR_CONFIG_SETTING_TRAIN_LENGTH                                 :Maksimal toglengde: {STRING}
@@ -1202,8 +1205,8 @@ STR_CONFIG_SETTING_TRAIN_SLOPE_STEEPNESS_HELPTEXT               :Brattheten av e
 STR_CONFIG_SETTING_PERCENTAGE                                   :{COMMA} %
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS                 :Skråningens bratthet for veikjøretøy: {STRING}
 STR_CONFIG_SETTING_ROAD_VEHICLE_SLOPE_STEEPNESS_HELPTEXT        :Brattheten av et skrått kartelement for et veikjøretøy. Høyere verdier gjør det vanskeligere å kjøre opp bakken
-STR_CONFIG_SETTING_FORBID_90_DEG                                :Forby tog og skip å gjøre 90° svinger: {STRING}
-STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90-graders svinger oppstår når et horisontalt spor etterfølges av et vertikalt spor på tilstøtende kartelement, som dermed fører til at toget må snu 90 grader når det krysser kartelementet, istedenfor de vanlige 45 grader for andre spor-kombinasjoner. Dette gjelder også for båters svingradius
+STR_CONFIG_SETTING_FORBID_90_DEG                                :Forby tog å gjøre 90° svinger: {STRING}
+STR_CONFIG_SETTING_FORBID_90_DEG_HELPTEXT                       :90-graders svinger oppstår når et horisontalt spor etterfølges av et vertikalt spor på tilstøtende kartelement, som medfører at toget må svinge 90 grader når det krysser kartelementet, i stedet for de vanlige 45 grader for andre spor-kombinasjoner.
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS                        :Tillat sammenslåing av stasjoner som ikke ligger inntil hverandre: {STRING}
 STR_CONFIG_SETTING_DISTANT_JOIN_STATIONS_HELPTEXT               :Gjør det mulig å legge til deler til en stasjon uten at de er direkte ved siden av hverandre. Bruk Ctrl+klikk for å bygge slike stasjoner.
 STR_CONFIG_SETTING_INFLATION                                    :Inflasjon: {STRING}
@@ -1240,9 +1243,9 @@ STR_CONFIG_SETTING_STOP_LOCATION_FAR_END                        :bortenden
 STR_CONFIG_SETTING_AUTOSCROLL                                   :Flytt på bildet hvis pilen er nær ytterkantene av skjermen: {STRING}
 STR_CONFIG_SETTING_AUTOSCROLL_HELPTEXT                          :Når aktivert, vil synsfeltet begynne å rulle når musen er nær kanten av vinduet
 STR_CONFIG_SETTING_AUTOSCROLL_DISABLED                          :Deaktivert
-STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT_FULLSCREEN          :Hoved tillegsvindu, bare fullskjerm
-STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :hoved tillegsvindu
-STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :alle tillegsvindu
+STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT_FULLSCREEN          :Hovedvindu, bare fullskjerm
+STR_CONFIG_SETTING_AUTOSCROLL_MAIN_VIEWPORT                     :Hovedvindu
+STR_CONFIG_SETTING_AUTOSCROLL_EVERY_VIEWPORT                    :alle tilleggsvindu
 STR_CONFIG_SETTING_BRIBE                                        :Tillat bestikkelser av bystyret: {STRING}
 STR_CONFIG_SETTING_BRIBE_HELPTEXT                               :Tillat firmaer å prøve å bestikke de lokale myndighetene i byen. Hvis bestikkelsen blir oppdaget av en inspektør, vil selskapet ikke være i stand til å gjøre forretninger i byen de neste seks månedene
 STR_CONFIG_SETTING_BRIBE_HELPTEXT.small                         :firma
@@ -1260,8 +1263,8 @@ STR_CONFIG_SETTING_PLANE_SPEED                                  :Flyfart faktor:
 STR_CONFIG_SETTING_PLANE_SPEED_HELPTEXT                         :Still den relative hastigheten til fly sammenlignet med andre kjøretøy, for å redusere inntekter ved luftfrakt
 STR_CONFIG_SETTING_PLANE_SPEED_VALUE                            :1 / {COMMA}
 STR_CONFIG_SETTING_PLANE_CRASHES                                :Antall flystyrter: {STRING}
-STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Bestem sjansen for en flykatastrofe
-STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Ingen
+STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :Bestem sannsynligheten for flykrasj.{}* Store fly vil alltid kunne krasje når de lander på små flyplasser.
+STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :Ingen*
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :Redusert
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :Normalt
 STR_CONFIG_SETTING_STOP_ON_TOWN_ROAD                            :Tillat stoppesteder med gjennomkjøring på by-eide veier: {STRING}
@@ -1416,7 +1419,7 @@ STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_CONSTRUCTION     :Alt utenom kons
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_LANDSCAPING      :Alt utenom landskapsendringer
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_ACTIONS              :Alle handlinger
 STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS                       :Bruk grupper i kjøretøyliste: {STRING}
-STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Aktiver bruk av de avanserte kjøretøyslistene for guppering av kjøretøy
+STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Aktiver bruk av avanserte kjøretøylister for guppering av kjøretøy
 STR_CONFIG_SETTING_LOADING_INDICATORS                           :Bruk lastingsindikatorer: {STRING}
 STR_CONFIG_SETTING_LOADING_INDICATORS_HELPTEXT                  :Velg hvorvidt lasteindikatorer vises over kjøretøy som lastes eller losses
 STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :Vis rutetabell i antall tikk i stedet for antall dager: {STRING}
@@ -1467,7 +1470,7 @@ STR_CONFIG_SETTING_MAX_SHIPS_HELPTEXT                           :Maksimalt antal
 
 STR_CONFIG_SETTING_AI_BUILDS_TRAINS                             :Hindre datamaskinen i å bygge tog: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_TRAINS_HELPTEXT                    :Aktivering av denne innstillingen gjør bygging av tog umulig for en datamaskin-spiller
-STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES                      :Hindre datamaskinen i å bygge kjøretøy: {STRING}
+STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES                      :Hindre datamaskinen i å bygge veikjøretøy: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_ROAD_VEHICLES_HELPTEXT             :Aktivering av denne innstillingen gjør bygging av veikjøretøy umulig for en datamaskin-spiller
 STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT                           :Hindre datamaskinen i å bygge luftfartøy: {STRING}
 STR_CONFIG_SETTING_AI_BUILDS_AIRCRAFT_HELPTEXT                  :Aktivering av denne innstillingen gjør bygging av fly umulig for en datamaskin-spiller
@@ -1484,6 +1487,9 @@ STR_CONFIG_SETTING_AI_IN_MULTIPLAYER                            :Tillat AI-er i 
 STR_CONFIG_SETTING_AI_IN_MULTIPLAYER_HELPTEXT                   :Tillat datamaskin-spillere å delta i flerspiller-spill
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES                           :#opcodes før skript er avbrutt: {STRING}
 STR_CONFIG_SETTING_SCRIPT_MAX_OPCODES_HELPTEXT                  :Maksimalt antall beregningstrinn et skript kan ta i én omgang
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY                            :Maks minnebruk pr. script: {STRING}
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Hvor mye minne ett enkelt script kan bruke før det blir stoppet av systemet. Denne verdien må kanskje økes for store kart.
+STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Vedlikeholdsintervaller er i prosent: {STRING}
 STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Velge om vedlikehold av kjøretøyer utløses av tiden som er forløpt fra siste gjennomførte vedlikehold, eller av at pålitelighet dropper under en bestemt prosent av maksimal pålitelighet
@@ -1586,6 +1592,10 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_HELPTEXT                       :Ved å aktivere
 STR_CONFIG_SETTING_TOWN_FOUNDING_FORBIDDEN                      :Forbudt
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED                        :Tillatt
 STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Tillatt, egendefinert oppsett av by
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE                            :varegenerering byer: {STRING}
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_HELPTEXT                   :Hvor mye varer som genereres av hus i byer, i forhold til byens folketall.{}Kvadratisk vekst: En by av dobbel størrelse genererer fire ganger så mange passasjerer.{}Lineær vekst: En by av dobbel størrelse genererer dobbelt så mange passasjerer.
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_ORIGINAL                   :Kvadratisk (original)
+STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineær
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Plassering av trær i spillet: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Kontroll tilfeldige utseender til tre under spillet. Dette kan påvirke industrier som avhenger av trevekst, for eksempel trelast
@@ -1713,7 +1723,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Gods-di
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Motstandere
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Datamaskinstyrte spillere
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Original
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Anbefalt)
 
@@ -1797,13 +1806,9 @@ STR_QUIT_NO                                                     :{BLACK}Nei
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2142,7 +2147,7 @@ STR_NETWORK_CHAT_ALL                                            :[Alle] {STRING}
 STR_NETWORK_CHAT_OSKTITLE                                       :{BLACK}Skriv inn tekst for nettverkssamtale
 
 # Network messages
-STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Ingen nettverksadaptere funnet eller kompilert uten ENABLE_NETWORK
+STR_NETWORK_ERROR_NOTAVAILABLE                                  :{WHITE}Ingen nettverksadapter funnet
 STR_NETWORK_ERROR_NOSERVER                                      :{WHITE}Kunne ikke finne noen nettverksspill
 STR_NETWORK_ERROR_NOCONNECTION                                  :{WHITE}Tjeneren svarte ikke på forespørselen
 STR_NETWORK_ERROR_NEWGRF_MISMATCH                               :{WHITE}Kunne ikke koble til pga. ulike versjoner av NewGRF
@@ -2434,6 +2439,11 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Bygg vei
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Bygg trikkesportunnel. Shift slår av/på kostnadsestimat
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Veksle mellom bygging/fjerning for veibygging
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Veksle mellom bygging/fjerning for trikkesporkonstruksjon
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_ROAD                           :{BLACK}Konverter/oppgrader veitypen. Shift slår av/på kostnadsestimat
+STR_ROAD_TOOLBAR_TOOLTIP_CONVERT_TRAM                           :{BLACK}Konverter/oppgrader trikketypen. Shift slår av/på kostnadsestimat
+
+STR_ROAD_NAME_ROAD                                              :Vei
+STR_ROAD_NAME_TRAM                                              :Trikkespor
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Garasjens retning
@@ -2618,8 +2628,11 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Godtatte varer: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}Skinnetype: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}Veitype: {LTBLUE}{STRING}
+STR_LANG_AREA_INFORMATION_TRAM_TYPE                             :{BLACK}Trikketype: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Fartsgrense for jernbanespor: {LTBLUE}{VELOCITY}
 STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Veiens fartsgrense: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT                      :{BLACK}Fartsgrense for trikk: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Steiner
@@ -2729,6 +2742,7 @@ STR_FRAMERATE_SPEED_FACTOR                                      :{BLACK}Gjeldend
 STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}Hvor raskt spillet kjører i forhold til forventet hastighet ved normal simulering.
 STR_FRAMERATE_CURRENT                                           :{WHITE}Gjeldende
 STR_FRAMERATE_AVERAGE                                           :{WHITE}Middels
+STR_FRAMERATE_MEMORYUSE                                         :{WHITE}Minne
 STR_FRAMERATE_DATA_POINTS                                       :{BLACK}Data basert på {COMMA} målinger
 STR_FRAMERATE_MS_GOOD                                           :{LTBLUE}{DECIMAL} ms
 STR_FRAMERATE_MS_WARN                                           :{YELLOW}{DECIMAL} ms
@@ -2736,6 +2750,9 @@ STR_FRAMERATE_MS_BAD                                            :{RED}{DECIMAL} 
 STR_FRAMERATE_FPS_GOOD                                          :{LTBLUE}{DECIMAL} bilder/s
 STR_FRAMERATE_FPS_WARN                                          :{YELLOW}{DECIMAL} Bilder/s
 STR_FRAMERATE_FPS_BAD                                           :{RED}{DECIMAL} frames/s
+STR_FRAMERATE_BYTES_GOOD                                        :{LTBLUE}{BYTES}
+STR_FRAMERATE_BYTES_WARN                                        :{YELLOW}{BYTES}
+STR_FRAMERATE_BYTES_BAD                                         :{RED}{BYTES}
 STR_FRAMERATE_GRAPH_MILLISECONDS                                :{TINY_FONT}{COMMA} ms
 STR_FRAMERATE_GRAPH_SECONDS                                     :{TINY_FONT}{COMMA} s
 ############ Leave those lines in this order!!
@@ -3359,8 +3376,7 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Infrastr
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Jernbanebiter:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signaler
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Veibiter:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Vei
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Trikkespor
+STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}Trikkevogner:
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Vannruter:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanaler
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Stasjoner:
@@ -3371,8 +3387,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industrier
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ingen -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% transportert)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% transportert)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Industrinavn - klikk på navn for å gå til industri. Ctrl+klikk åpner et nytt tilleggsvindu over industrien
 
@@ -3440,6 +3454,8 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Ugrupperte kjø
 STR_GROUP_DEFAULT_SHIPS                                         :Ugrupperte skip
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Ugrupperte luftfartøy
 
+STR_GROUP_COUNT_WITH_SUBGROUP                                   :{TINY_FONT}{COMMA} (+{COMMA})
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grupper - Klikk på en gruppe for å se alle kjøretøy i gruppen. Dra og slipp grupper for å arrangere dem hierarkisk
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Klikk for å opprette en gruppe
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Fjern den valgte gruppen
@@ -3466,12 +3482,18 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Nye tog/vogner 
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Nye tog/vogner for monorail
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Nye tog/vogner for maglev
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nye tog/vogner
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Nye kjøretøy
+STR_BUY_VEHICLE_TRAM_VEHICLE_CAPTION                            :Nye trikkekjøretøy
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Nye tog/vogner
+STR_BUY_VEHICLE_ROAD_VEHICLE_ALL_CAPTION                        :Nye veikjøretøy
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Nye skip
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Nye luftfartøy
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Kostnad: {GOLD}{CURRENCY_LONG}{BLACK} Vekt: {GOLD}{WEIGHT_SHORT}
+STR_PURCHASE_INFO_COST_REFIT_WEIGHT                             :{BLACK}Kostnad: {GOLD}{CURRENCY_LONG}{BLACK} (Ombyggingskostnad: {GOLD}{CURRENCY_LONG}{BLACK}) Vekt: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Hastighet: {GOLD}{VELOCITY}{BLACK} Kraft: {GOLD}{POWER}
 STR_PURCHASE_INFO_SPEED                                         :{BLACK}Hastighet: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_SPEED_OCEAN                                   :{BLACK}Hastighet på havet: {GOLD}{VELOCITY}
@@ -3482,8 +3504,10 @@ STR_PURCHASE_INFO_REFITTABLE                                    :(ombyggbart)
 STR_PURCHASE_INFO_DESIGNED_LIFE                                 :{BLACK}Designet: {GOLD}{NUM}{BLACK} Levetid: {GOLD}{COMMA} år
 STR_PURCHASE_INFO_RELIABILITY                                   :{BLACK}Maks pålitelighet: {GOLD}{COMMA}{NBSP}%
 STR_PURCHASE_INFO_COST                                          :{BLACK}Kostnad: {GOLD}{CURRENCY_LONG}
+STR_PURCHASE_INFO_COST_REFIT                                    :{BLACK}Kostnad: {GOLD}{CURRENCY_LONG}{BLACK} (Ombyggingskostnad: {GOLD}{CURRENCY_LONG}{BLACK})
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Vekt: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Kostnad: {GOLD}{CURRENCY_LONG}{BLACK} Hastighet: {GOLD}{VELOCITY}
+STR_PURCHASE_INFO_COST_REFIT_SPEED                              :{BLACK}Kostnad: {GOLD}{CURRENCY_LONG}{BLACK} (Ombyggingskostnad: {GOLD}{CURRENCY_LONG}{BLACK}) Hastighet: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Kapasitet: {GOLD}{CARGO_LONG}, {CARGO_LONG}
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Lokomotivvogner: {GOLD}+{POWER}{BLACK} Vekt: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Kan bygges om til: {GOLD}{STRING}
@@ -3504,10 +3528,20 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Kjøp kj
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Kjøp skip
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Kjøp luftfartøy
 
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_BUTTON                  :{BLACK}Kjøp og bygg om kjøretøy
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_BUTTON           :{BLACK}Kjøp og bygg om kjøretøy
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}Kjøp og bygg om skip
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_BUTTON               :{BLACK}Kjøp og bygg om luftfartøy
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Kjøp det merkede tog/vogn. Shift+klikk viser estimert kostnad
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Kjøp det merkede kjøretøy. Shift+klikk viser estimert kostnad
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Kjøp det merkede skip. Shift+klikk viser estimert kostnad
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Kjøp det merkede luftfartøy. Shift+klikk viser estimert kostnad
+
+STR_BUY_VEHICLE_TRAIN_BUY_REFIT_VEHICLE_TOOLTIP                 :{BLACK}Kjøp og bygg om merket tog/vogn. Shift+klikk viser anslått kostnad uten å kjøpe.
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_TOOLTIP          :{BLACK}Kjøp og bygg om det merkede kjøretøyet. Shift+klikk viser anslått kostnad uten å kjøpe.
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_TOOLTIP                  :{BLACK}Kjøp og bygg om det merkede skipet. Shift+klikk viser anslått kostnad uten å kjøpe.
+STR_BUY_VEHICLE_AIRCRAFT_BUY_REFIT_VEHICLE_TOOLTIP              :{BLACK}Kjøp og bygg om det merkede luftfartøyet. Shift+klikk viser anslått kostnad uten å kjøpe.
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Endre navn
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Endre navn
@@ -3616,13 +3650,18 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Du er n
 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Melding fra kjøretøysprodusent
-STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Vi har nettopp designet e{G n i t} ny{G "" "" tt} {STRING} - er du interessert i et års ekslusivt bruk av dette, slik at vi kan se hvordan det virker før det blir allment tilgjengelig?
+STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Vi har nettopp designet e{G n i t} ny{G "" "" tt} {STRING} - er du interessert i ett års ekslusivt bruk av dette, slik at vi kan se hvordan det virker før det blir allment tilgjengelig?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=neuter}lokomotiv
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=neuter}kjøretøy
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=neuter}luftfartøy
-STR_ENGINE_PREVIEW_SHIP                                         :{G=neuter}skip
+STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :{G=neuter}elektrisk lokomotiv
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :{G=neuter}monorail-lokomotiv
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :{G=neuter}maglev-lokomotiv
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :{G=neuter}kjøretøy
+STR_ENGINE_PREVIEW_TRAM_VEHICLE                                 :trikkekjøretøy
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :{G=neuter}luftfartøy
+STR_ENGINE_PREVIEW_SHIP                                         :{G=neuter}skip
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Kostnad: {CURRENCY_LONG} Vekt: {WEIGHT_SHORT}{}Hastighet: {VELOCITY}  Kraft: {POWER}{}Driftskostnader: {CURRENCY_LONG}/år{}Kapasitet: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Kostnad: {CURRENCY_LONG} Vekt: {WEIGHT_SHORT}{}Hastighet: {VELOCITY}  Kraft: {POWER}  Maks trekkraft: {6:FORCE}{}Vedlikehold: {4:CURRENCY_LONG}/år{}Kapasitet: {5:CARGO_LONG}
@@ -3660,14 +3699,19 @@ STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}Klikk de
 STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Veksle mellom tog- og vognerstatningsvinduet
 STR_REPLACE_ENGINES                                             :Lokomotiv
 STR_REPLACE_WAGONS                                              :Vogner
-STR_REPLACE_ALL_RAILTYPE                                        :Status: Mangler
+STR_REPLACE_ALL_RAILTYPE                                        :Alle jernbanekjøretøy
+STR_REPLACE_ALL_ROADTYPE                                        :Alle veikjøretøy
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Velg jernbanetypen du vil bytte ut lokomotiv på
+STR_REPLACE_HELP_ROADTYPE                                       :{BLACK}Velg veitypen du vil bytte ut kjøretøy på
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Viser hvilket lokomotiv som overtar for det valgte lokomotivet på venstresiden
 STR_REPLACE_RAIL_VEHICLES                                       :Jernbanekjøretøy
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektriske jernbanekjøretøy
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monorail-kjøretøy
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev-kjøretøy
+
+STR_REPLACE_ROAD_VEHICLES                                       :Veikjøretøy
+STR_REPLACE_TRAM_VEHICLES                                       :Trikkekjøretøy
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vognfjerning: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}La autoerstatningen beholde lengen på toget ved å fjerne vogner (fra første vogn), hvis utskiftningen gjør toget lengre.
@@ -3752,11 +3796,11 @@ STR_VEHICLE_INFO_AGE_RUNNING_COST_YR                            :{BLACK}Alder: {
 STR_VEHICLE_INFO_AGE                                            :{COMMA} år ({COMMA})
 STR_VEHICLE_INFO_AGE_RED                                        :{RED}{COMMA} år ({COMMA})
 
-STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Maks hastighet: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Maks. hastighet: {LTBLUE}{VELOCITY} {BLACK}Flytype: {LTBLUE}{STRING}
-STR_VEHICLE_INFO_MAX_SPEED_TYPE_RANGE                           :{BLACK}Maks. hastighet: {LTBLUE}{VELOCITY} {BLACK}Flytype: {LTBLUE}{STRING} {BLACK}Rekkevidde: {LTBLUE}{COMMA} ruter
-STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Vekt: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kraft: {LTBLUE}{POWER}{BLACK} Maks hastighet: {LTBLUE}{VELOCITY}
-STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Vekt: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kraft: {LTBLUE}{POWER}{BLACK} Maks hastighet: {LTBLUE}{VELOCITY} {BLACK}Maks trekkraft: {LTBLUE}{FORCE}
+STR_VEHICLE_INFO_MAX_SPEED                                      :{BLACK}Topphastighet: {LTBLUE}{VELOCITY}
+STR_VEHICLE_INFO_MAX_SPEED_TYPE                                 :{BLACK}Topphastighet: {LTBLUE}{VELOCITY} {BLACK}Flytype: {LTBLUE}{STRING}
+STR_VEHICLE_INFO_MAX_SPEED_TYPE_RANGE                           :{BLACK}Topphastighet: {LTBLUE}{VELOCITY} {BLACK}Flytype: {LTBLUE}{STRING} {BLACK}Rekkevidde: {LTBLUE}{COMMA} ruter
+STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Vekt: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kraft: {LTBLUE}{POWER}{BLACK} Topphastighet: {LTBLUE}{VELOCITY}
+STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Vekt: {LTBLUE}{WEIGHT_SHORT} {BLACK}Kraft: {LTBLUE}{POWER}{BLACK} Topphastighet: {LTBLUE}{VELOCITY} {BLACK}Maks trekkraft: {LTBLUE}{FORCE}
 
 STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR                     :{BLACK}Fortjeneste i år: {LTBLUE}{CURRENCY_LONG} (i fjor: {CURRENCY_LONG})
 STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Pålitelighet: {LTBLUE}{COMMA}{NBSP}%  {BLACK}Havarier siden siste vedlikehold: {LTBLUE}{COMMA}
@@ -3883,7 +3927,7 @@ STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}Kjøret�
 # Conditional order variables, must follow order of OrderConditionVariable enum
 STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE                           :Lastprosent
 STR_ORDER_CONDITIONAL_RELIABILITY                               :Pålitelighet
-STR_ORDER_CONDITIONAL_MAX_SPEED                                 :Maks hastighet
+STR_ORDER_CONDITIONAL_MAX_SPEED                                 :Topphastighet
 STR_ORDER_CONDITIONAL_AGE                                       :Alder (år)
 STR_ORDER_CONDITIONAL_REQUIRES_SERVICE                          :Trenger vedlikehold
 STR_ORDER_CONDITIONAL_UNCONDITIONALLY                           :Alltid
@@ -4120,6 +4164,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Velg det
 STR_AI_LIST_CANCEL                                              :{BLACK}Avbryt
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ikke endre skriptet
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametre
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
@@ -4322,7 +4367,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... denn
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... veien vender i feil retning
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... gjennomkjøringsstopper kan ikke ha hjørner
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... gjennomkjøringsstopper kan ikke ha kryss
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}... veien er enveiskjørt eller blokkert
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}Kan ikke fjerne del av stasjonen...
@@ -4392,7 +4436,8 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Må fjer
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Ingen passende jernbanespor
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Må fjerne jernbanespor først
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Veien er enveiskjørt eller blokkert
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Denne jernbanetypen tillater ikke planoverganger
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Denne jernbanetypen tillater ikke planoverganger
+STR_ERROR_CROSSING_DISALLOWED_ROAD                              :{WHITE}Denne veitypen tillater ikke planoverganger
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Kan ikke bygge signaler her...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Kan ikke bygge jernbanespor her...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Kan ikke fjerne jernbanespor herfra...
@@ -4412,6 +4457,12 @@ STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}Kan ikke
 STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}Kan ikke fjerne trikkespor herfra...
 STR_ERROR_THERE_IS_NO_ROAD                                      :{WHITE}... det finnes ingen vei
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :{WHITE}... det finnes ingen trikkespor
+STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}Kan ikke konvertere veitype her...
+STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :{WHITE}Kan ikke konvertere trikketype her...
+STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Ingen passende vei
+STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}Ingen passende trikkespor
+STR_ERROR_INCOMPATIBLE_ROAD                                     :{WHITE}... inkompatibel vei
+STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... ingen passende trikkespor
 
 # Waterway construction errors
 STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}Kan ikke bygge kanaler her...
@@ -4464,6 +4515,7 @@ STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Kan ikke
 STR_ERROR_GROUP_CAN_T_DELETE                                    :{WHITE}Kan ikke slette denne gruppen...
 STR_ERROR_GROUP_CAN_T_RENAME                                    :{WHITE}Kan ikke gi nytt navn på denne gruppen...
 STR_ERROR_GROUP_CAN_T_SET_PARENT                                :{WHITE}Kan ikke sette foreldregruppe...
+STR_ERROR_GROUP_CAN_T_SET_PARENT_RECURSION                      :{WHITE}... løkker i gruppehierarkiet er ikke tillatt
 STR_ERROR_GROUP_CAN_T_REMOVE_ALL_VEHICLES                       :{WHITE}Kan ikke fjerne alle kjøretøy fra denne gruppen...
 STR_ERROR_GROUP_CAN_T_ADD_VEHICLE                               :{WHITE}Kan ikke legge til kjøretøyet i denne gruppen...
 STR_ERROR_GROUP_CAN_T_ADD_SHARED_VEHICLE                        :{WHITE}Kan ikke legge til delte kjøretøyer i gruppen...

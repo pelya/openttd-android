@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -19,7 +17,7 @@
 #include "../core/math_func.hpp"
 #include "../core/random_func.hpp"
 #include "../texteff.hpp"
-#include "../thread/thread.h"
+#include "../thread.h"
 #include "../progress.h"
 #include "../window_gui.h"
 #include "../window_func.h"
@@ -27,6 +25,9 @@
 #include "win32_v.h"
 #include <windows.h>
 #include <imm.h>
+#include <mutex>
+#include <condition_variable>
+#include <algorithm>
 
 #include "../safeguards.h"
 
@@ -40,7 +41,7 @@
 #endif
 
 typedef BOOL (WINAPI *PFNTRACKMOUSEEVENT)(LPTRACKMOUSEEVENT lpEventTrack);
-static PFNTRACKMOUSEEVENT _pTrackMouseEvent = NULL;
+static PFNTRACKMOUSEEVENT _pTrackMouseEvent = nullptr;
 
 static struct {
 	HWND main_wnd;
@@ -65,12 +66,10 @@ DWORD _imm_props;
 
 /** Whether the drawing is/may be done in a separate thread. */
 static bool _draw_threaded;
-/** Thread used to 'draw' to the screen, i.e. push data to the screen. */
-static ThreadObject *_draw_thread = NULL;
 /** Mutex to keep the access to the shared memory controlled. */
-static ThreadMutex *_draw_mutex = NULL;
-/** Event that is signaled when the drawing thread has finished initializing. */
-static HANDLE _draw_thread_initialized = NULL;
+static std::recursive_mutex *_draw_mutex = nullptr;
+/** Signal to draw the next frame. */
+static std::condition_variable_any *_draw_signal = nullptr;
 /** Should we keep continue drawing? */
 static volatile bool _draw_continue;
 /** Local copy of the palette for use in the drawing thread. */
@@ -91,7 +90,7 @@ static void MakePalette()
 
 	}
 	_wnd.gdi_palette = CreatePalette(pal);
-	if (_wnd.gdi_palette == NULL) usererror("CreatePalette failed!\n");
+	if (_wnd.gdi_palette == nullptr) usererror("CreatePalette failed!\n");
 
 	_cur_palette.first_dirty = 0;
 	_cur_palette.count_dirty = 256;
@@ -309,7 +308,7 @@ bool VideoDriver_Win32::MakeWindow(bool full_screen)
 		}
 	} else if (_wnd.fullscreen) {
 		/* restore display? */
-		ChangeDisplaySettings(NULL, 0);
+		ChangeDisplaySettings(nullptr, 0);
 		/* restore the resolution */
 		_wnd.width = _bck_resolution.width;
 		_wnd.height = _bck_resolution.height;
@@ -336,7 +335,7 @@ bool VideoDriver_Win32::MakeWindow(bool full_screen)
 		w = r.right - r.left;
 		h = r.bottom - r.top;
 
-		if (_wnd.main_wnd != NULL) {
+		if (_wnd.main_wnd != nullptr) {
 			if (!_window_maximize) SetWindowPos(_wnd.main_wnd, 0, 0, 0, w, h, SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOMOVE);
 		} else {
 			int x = (GetSystemMetrics(SM_CXSCREEN) - w) / 2;
@@ -345,8 +344,8 @@ bool VideoDriver_Win32::MakeWindow(bool full_screen)
 			char window_title[64];
 			seprintf(window_title, lastof(window_title), "OpenTTD %s", _openttd_revision);
 
-			_wnd.main_wnd = CreateWindow(_T("OTTD"), MB_TO_WIDE(window_title), style, x, y, w, h, 0, 0, GetModuleHandle(NULL), 0);
-			if (_wnd.main_wnd == NULL) usererror("CreateWindow failed");
+			_wnd.main_wnd = CreateWindow(_T("OTTD"), MB_TO_WIDE(window_title), style, x, y, w, h, 0, 0, GetModuleHandle(nullptr), 0);
+			if (_wnd.main_wnd == nullptr) usererror("CreateWindow failed");
 			ShowWindow(_wnd.main_wnd, showstyle);
 		}
 	}
@@ -393,14 +392,14 @@ static void PaintWindow(HDC dc)
 	DeleteDC(dc2);
 }
 
-static void PaintWindowThread(void *)
+static void PaintWindowThread()
 {
 	/* First tell the main thread we're started */
-	_draw_mutex->BeginCritical();
-	SetEvent(_draw_thread_initialized);
+	std::unique_lock<std::recursive_mutex> lock(*_draw_mutex);
+	_draw_signal->notify_one();
 
 	/* Now wait for the first thing to draw! */
-	_draw_mutex->WaitForSignal();
+	_draw_signal->wait(*_draw_mutex);
 
 	while (_draw_continue) {
 		/* Convert update region from logical to device coordinates. */
@@ -422,11 +421,8 @@ static void PaintWindowThread(void *)
 		/* Flush GDI buffer to ensure drawing here doesn't conflict with any GDI usage in the main WndProc. */
 		GdiFlush();
 
-		_draw_mutex->WaitForSignal();
+		_draw_signal->wait(*_draw_mutex);
 	}
-
-	_draw_mutex->EndCritical();
-	_draw_thread->Exit();
 }
 
 /** Forward key presses to the window system. */
@@ -562,14 +558,14 @@ static LRESULT HandleIMEComposition(HWND hwnd, WPARAM wParam, LPARAM lParam)
 	if (hIMC != NULL) {
 		if (lParam & GCS_RESULTSTR) {
 			/* Read result string from the IME. */
-			LONG len = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0); // Length is always in bytes, even in UNICODE build.
+			LONG len = ImmGetCompositionString(hIMC, GCS_RESULTSTR, nullptr, 0); // Length is always in bytes, even in UNICODE build.
 			TCHAR *str = (TCHAR *)_alloca(len + sizeof(TCHAR));
 			len = ImmGetCompositionString(hIMC, GCS_RESULTSTR, str, len);
 			str[len / sizeof(TCHAR)] = '\0';
 
 			/* Transmit text to windowing system. */
 			if (len > 0) {
-				HandleTextInput(NULL, true); // Clear marked string.
+				HandleTextInput(nullptr, true); // Clear marked string.
 				HandleTextInput(FS2OTTD(str));
 			}
 			SetCompositionPos(hwnd);
@@ -580,7 +576,7 @@ static LRESULT HandleIMEComposition(HWND hwnd, WPARAM wParam, LPARAM lParam)
 
 		if ((lParam & GCS_COMPSTR) && DrawIMECompositionString()) {
 			/* Read composition string from the IME. */
-			LONG len = ImmGetCompositionString(hIMC, GCS_COMPSTR, NULL, 0); // Length is always in bytes, even in UNICODE build.
+			LONG len = ImmGetCompositionString(hIMC, GCS_COMPSTR, nullptr, 0); // Length is always in bytes, even in UNICODE build.
 			TCHAR *str = (TCHAR *)_alloca(len + sizeof(TCHAR));
 			len = ImmGetCompositionString(hIMC, GCS_COMPSTR, str, len);
 			str[len / sizeof(TCHAR)] = '\0';
@@ -590,7 +586,7 @@ static LRESULT HandleIMEComposition(HWND hwnd, WPARAM wParam, LPARAM lParam)
 				convert_from_fs(str, utf8_buf, lengthof(utf8_buf));
 
 				/* Convert caret position from bytes in the input string to a position in the UTF-8 encoded string. */
-				LONG caret_bytes = ImmGetCompositionString(hIMC, GCS_CURSORPOS, NULL, 0);
+				LONG caret_bytes = ImmGetCompositionString(hIMC, GCS_CURSORPOS, nullptr, 0);
 				const char *caret = utf8_buf;
 				for (const TCHAR *c = str; *c != '\0' && *caret != '\0' && caret_bytes > 0; c++, caret_bytes--) {
 					/* Skip DBCS lead bytes or leading surrogates. */
@@ -607,7 +603,7 @@ static LRESULT HandleIMEComposition(HWND hwnd, WPARAM wParam, LPARAM lParam)
 
 				HandleTextInput(utf8_buf, true, caret);
 			} else {
-				HandleTextInput(NULL, true);
+				HandleTextInput(nullptr, true);
 			}
 
 			lParam &= ~(GCS_COMPSTR | GCS_COMPATTR | GCS_COMPCLAUSE | GCS_CURSORPOS | GCS_DELTASTART);
@@ -625,7 +621,7 @@ static void CancelIMEComposition(HWND hwnd)
 	if (hIMC != NULL) ImmNotifyIME(hIMC, NI_COMPOSITIONSTR, CPS_CANCEL, 0);
 	ImmReleaseContext(hwnd, hIMC);
 	/* Clear any marked string from the current edit box. */
-	HandleTextInput(NULL, true);
+	HandleTextInput(nullptr, true);
 }
 
 static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -650,15 +646,15 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 			break;
 
 		case WM_PAINT:
-			if (!in_sizemove && _draw_mutex != NULL && !HasModalProgress()) {
+			if (!in_sizemove && _draw_mutex != nullptr && !HasModalProgress()) {
 				/* Get the union of the old update rect and the new update rect. */
 				RECT r;
 				GetUpdateRect(hwnd, &r, FALSE);
 				UnionRect(&_wnd.update_rect, &_wnd.update_rect, &r);
 
 				/* Mark the window as updated, otherwise Windows would send more WM_PAINT messages. */
-				ValidateRect(hwnd, NULL);
-				_draw_mutex->SendSignal();
+				ValidateRect(hwnd, nullptr);
+				_draw_signal->notify_one();
 			} else {
 				PAINTSTRUCT ps;
 
@@ -679,7 +675,7 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
 			SelectPalette(hDC, hOldPalette, TRUE);
 			ReleaseDC(hwnd, hDC);
-			if (nChanged != 0) InvalidateRect(hwnd, NULL, FALSE);
+			if (nChanged != 0) InvalidateRect(hwnd, nullptr, FALSE);
 			return 0;
 		}
 
@@ -733,7 +729,7 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 			 * tracking the mouse for exiting the window */
 			if (!_cursor.in_window) {
 				_cursor.in_window = true;
-				if (_pTrackMouseEvent != NULL) {
+				if (_pTrackMouseEvent != nullptr) {
 					TRACKMOUSEEVENT tme;
 					tme.cbSize = sizeof(tme);
 					tme.dwFlags = TME_LEAVE;
@@ -786,7 +782,7 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
 		case WM_IME_ENDCOMPOSITION:
 			/* Clear any pending composition string. */
-			HandleTextInput(NULL, true);
+			HandleTextInput(nullptr, true);
 			if (DrawIMECompositionString()) return 0;
 			break;
 
@@ -834,7 +830,7 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
 			/* Silently drop all messages handled by WM_CHAR. */
 			MSG msg;
-			if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
+			if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE)) {
 				if ((msg.message == WM_CHAR || msg.message == WM_DEADCHAR) && GB(lParam, 16, 8) == GB(msg.lParam, 16, 8)) {
 					return 0;
 				}
@@ -996,7 +992,7 @@ static LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 				} else if (!active && !minimized) {
 					/* Minimise the window and restore desktop */
 					ShowWindow(hwnd, SW_MINIMIZE);
-					ChangeDisplaySettings(NULL, 0);
+					ChangeDisplaySettings(nullptr, 0);
 				}
 			}
 			break;
@@ -1011,7 +1007,7 @@ static void RegisterWndClass()
 	static bool registered = false;
 
 	if (!registered) {
-		HINSTANCE hinst = GetModuleHandle(NULL);
+		HINSTANCE hinst = GetModuleHandle(nullptr);
 		WNDCLASS wnd = {
 			CS_OWNDC,
 			WndProcGdi,
@@ -1019,7 +1015,7 @@ static void RegisterWndClass()
 			0,
 			hinst,
 			LoadIcon(hinst, MAKEINTRESOURCE(100)),
-			LoadCursor(NULL, IDC_ARROW),
+			LoadCursor(nullptr, IDC_ARROW),
 			0,
 			0,
 			_T("OTTD")
@@ -1060,8 +1056,8 @@ static bool AllocateDibSection(int w, int h, bool force)
 	if (_wnd.dib_sect) DeleteObject(_wnd.dib_sect);
 
 	dc = GetDC(0);
-	_wnd.dib_sect = CreateDIBSection(dc, bi, DIB_RGB_COLORS, (VOID**)&_wnd.buffer_bits, NULL, 0);
-	if (_wnd.dib_sect == NULL) usererror("CreateDIBSection failed");
+	_wnd.dib_sect = CreateDIBSection(dc, bi, DIB_RGB_COLORS, (VOID**)&_wnd.buffer_bits, nullptr, 0);
+	if (_wnd.dib_sect == nullptr) usererror("CreateDIBSection failed");
 	ReleaseDC(0, dc);
 
 	_screen.width = w;
@@ -1088,45 +1084,29 @@ static const Dimension default_resolutions[] = {
 
 static void FindResolutions()
 {
-	uint n = 0;
 	uint i;
 	DEVMODEA dm;
 
 	/* Check modes for the relevant fullscreen bpp */
 	uint bpp = _support8bpp != S8BPP_HARDWARE ? 32 : BlitterFactory::GetCurrentBlitter()->GetScreenDepth();
 
+	_resolutions.clear();
+
 	/* XXX - EnumDisplaySettingsW crashes with unicows.dll on Windows95
 	 * Doesn't really matter since we don't pass a string anyways, but still
 	 * a letdown */
-	for (i = 0; EnumDisplaySettingsA(NULL, i, &dm) != 0; i++) {
-		if (dm.dmBitsPerPel == bpp &&
-				dm.dmPelsWidth >= 640 && dm.dmPelsHeight >= 480) {
-			uint j;
-
-			for (j = 0; j < n; j++) {
-				if (_resolutions[j].width == dm.dmPelsWidth && _resolutions[j].height == dm.dmPelsHeight) break;
-			}
-
-			/* In the previous loop we have checked already existing/added resolutions if
-			 * they are the same as the new ones. If this is not the case (j == n); we have
-			 * looped all and found none, add the new one to the list. If we have reached the
-			 * maximum amount of resolutions, then quit querying the display */
-			if (j == n) {
-				_resolutions[j].width  = dm.dmPelsWidth;
-				_resolutions[j].height = dm.dmPelsHeight;
-				if (++n == lengthof(_resolutions)) break;
-			}
-		}
+	for (i = 0; EnumDisplaySettingsA(nullptr, i, &dm) != 0; i++) {
+		if (dm.dmBitsPerPel != bpp || dm.dmPelsWidth < 640 || dm.dmPelsHeight < 480) continue;
+		if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(dm.dmPelsWidth, dm.dmPelsHeight)) != _resolutions.end()) continue;
+		_resolutions.emplace_back(dm.dmPelsWidth, dm.dmPelsHeight);
 	}
 
 	/* We have found no resolutions, show the default list */
-	if (n == 0) {
-		memcpy(_resolutions, default_resolutions, sizeof(default_resolutions));
-		n = lengthof(default_resolutions);
+	if (_resolutions.empty()) {
+		_resolutions.assign(std::begin(default_resolutions), std::end(default_resolutions));
 	}
 
-	_num_resolutions = n;
-	SortResolutions(_num_resolutions);
+	SortResolutions();
 }
 
 static FVideoDriver_Win32 iFVideoDriver_Win32;
@@ -1152,9 +1132,9 @@ const char *VideoDriver_Win32::Start(const char * const *parm)
 
 	MarkWholeScreenDirty();
 
-	_draw_threaded = GetDriverParam(parm, "no_threads") == NULL && GetDriverParam(parm, "no_thread") == NULL && GetCPUCoreCount() > 1;
+	_draw_threaded = GetDriverParam(parm, "no_threads") == nullptr && GetDriverParam(parm, "no_thread") == nullptr && std::thread::hardware_concurrency() > 1;
 
-	return NULL;
+	return nullptr;
 }
 
 void VideoDriver_Win32::Stop()
@@ -1163,7 +1143,7 @@ void VideoDriver_Win32::Stop()
 	DeleteObject(_wnd.dib_sect);
 	DestroyWindow(_wnd.main_wnd);
 
-	if (_wnd.fullscreen) ChangeDisplaySettings(NULL, 0);
+	if (_wnd.fullscreen) ChangeDisplaySettings(nullptr, 0);
 	MyShowCursor(true);
 }
 
@@ -1179,7 +1159,7 @@ static void CheckPaletteAnim()
 	if (_cur_palette.count_dirty == 0) return;
 
 	_local_palette = _cur_palette;
-	InvalidateRect(_wnd.main_wnd, NULL, FALSE);
+	InvalidateRect(_wnd.main_wnd, nullptr, FALSE);
 }
 
 void VideoDriver_Win32::MainLoop()
@@ -1189,28 +1169,37 @@ void VideoDriver_Win32::MainLoop()
 	uint32 last_cur_ticks = cur_ticks;
 	uint32 next_tick = cur_ticks + MILLISECONDS_PER_TICK;
 
+	std::thread draw_thread;
+	std::unique_lock<std::recursive_mutex> draw_lock;
+
 	if (_draw_threaded) {
 		/* Initialise the mutex first, because that's the thing we *need*
 		 * directly in the newly created thread. */
-		_draw_mutex = ThreadMutex::New();
-		_draw_thread_initialized = CreateEvent(NULL, FALSE, FALSE, NULL);
-		if (_draw_mutex == NULL || _draw_thread_initialized == NULL) {
+		try {
+			_draw_signal = new std::condition_variable_any();
+			_draw_mutex = new std::recursive_mutex();
+		} catch (...) {
 			_draw_threaded = false;
-		} else {
+		}
+
+		if (_draw_threaded) {
+			draw_lock = std::unique_lock<std::recursive_mutex>(*_draw_mutex);
+
 			_draw_continue = true;
-			_draw_threaded = ThreadObject::New(&PaintWindowThread, NULL, &_draw_thread, "ottd:draw-win32");
+			_draw_threaded = StartNewThread(&draw_thread, "ottd:draw-win32", &PaintWindowThread);
 
 			/* Free the mutex if we won't be able to use it. */
 			if (!_draw_threaded) {
+				draw_lock.unlock();
+				draw_lock.release();
 				delete _draw_mutex;
-				_draw_mutex = NULL;
-				CloseHandle(_draw_thread_initialized);
-				_draw_thread_initialized = NULL;
+				delete _draw_signal;
+				_draw_mutex = nullptr;
+				_draw_signal = nullptr;
 			} else {
 				DEBUG(driver, 1, "Threaded drawing enabled");
 				/* Wait till the draw thread has started itself. */
-				WaitForSingleObject(_draw_thread_initialized, INFINITE);
-				_draw_mutex->BeginCritical();
+				_draw_signal->wait(*_draw_mutex);
 			}
 		}
 	}
@@ -1221,13 +1210,13 @@ void VideoDriver_Win32::MainLoop()
 	for (;;) {
 		uint32 prev_cur_ticks = cur_ticks; // to check for wrapping
 
-		while (PeekMessage(&mesg, NULL, 0, 0, PM_REMOVE)) {
+		while (PeekMessage(&mesg, nullptr, 0, 0, PM_REMOVE)) {
 			InteractiveRandom(); // randomness
 			/* Convert key messages to char messages if we want text input. */
 			if (EditBoxInGlobalFocus()) TranslateMessage(&mesg);
 			DispatchMessage(&mesg);
 		}
-		if (_exit_game) return;
+		if (_exit_game) break;
 
 #if defined(_DEBUG)
 		if (_wnd.has_focus && GetAsyncKeyState(VK_SHIFT) < 0 &&
@@ -1270,9 +1259,9 @@ void VideoDriver_Win32::MainLoop()
 
 			/* The game loop is the part that can run asynchronously.
 			 * The rest except sleeping can't. */
-			if (_draw_threaded) _draw_mutex->EndCritical();
+			if (_draw_threaded) draw_lock.unlock();
 			GameLoop();
-			if (_draw_threaded) _draw_mutex->BeginCritical();
+			if (_draw_threaded) draw_lock.lock();
 
 			if (_force_full_redraw) MarkWholeScreenDirty();
 
@@ -1283,9 +1272,9 @@ void VideoDriver_Win32::MainLoop()
 			GdiFlush();
 
 			/* Release the thread while sleeping */
-			if (_draw_threaded) _draw_mutex->EndCritical();
+			if (_draw_threaded) draw_lock.unlock();
 			Sleep(1);
-			if (_draw_threaded) _draw_mutex->BeginCritical();
+			if (_draw_threaded) draw_lock.lock();
 
 			NetworkDrawChatMessage();
 			DrawMouseCursor();
@@ -1296,35 +1285,37 @@ void VideoDriver_Win32::MainLoop()
 		_draw_continue = false;
 		/* Sending signal if there is no thread blocked
 		 * is very valid and results in noop */
-		_draw_mutex->SendSignal();
-		_draw_mutex->EndCritical();
-		_draw_thread->Join();
+		_draw_signal->notify_all();
+		if (draw_lock.owns_lock()) draw_lock.unlock();
+		draw_lock.release();
+		draw_thread.join();
 
-		CloseHandle(_draw_thread_initialized);
 		delete _draw_mutex;
-		delete _draw_thread;
+		delete _draw_signal;
+
+		_draw_mutex = nullptr;
 	}
 }
 
 bool VideoDriver_Win32::ChangeResolution(int w, int h)
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
+	std::unique_lock<std::recursive_mutex> lock;
+	if (_draw_mutex != nullptr) lock = std::unique_lock<std::recursive_mutex>(*_draw_mutex);
+
 	if (_window_maximize) ShowWindow(_wnd.main_wnd, SW_SHOWNORMAL);
 
 	_wnd.width = _wnd.width_org = w;
 	_wnd.height = _wnd.height_org = h;
 
-	bool ret = this->MakeWindow(_fullscreen); // _wnd.fullscreen screws up ingame resolution switching
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
-	return ret;
+	return this->MakeWindow(_fullscreen); // _wnd.fullscreen screws up ingame resolution switching
 }
 
 bool VideoDriver_Win32::ToggleFullscreen(bool full_screen)
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
-	bool ret = this->MakeWindow(full_screen);
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
-	return ret;
+	std::unique_lock<std::recursive_mutex> lock;
+	if (_draw_mutex != nullptr) lock = std::unique_lock<std::recursive_mutex>(*_draw_mutex);
+
+	return this->MakeWindow(full_screen);
 }
 
 bool VideoDriver_Win32::AfterBlitterChange()
@@ -1334,19 +1325,20 @@ bool VideoDriver_Win32::AfterBlitterChange()
 
 void VideoDriver_Win32::AcquireBlitterLock()
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
+	if (_draw_mutex != nullptr) _draw_mutex->lock();
 }
 
 void VideoDriver_Win32::ReleaseBlitterLock()
 {
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
+	if (_draw_mutex != nullptr) _draw_mutex->unlock();
 }
 
 void VideoDriver_Win32::EditBoxLostFocus()
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
+	std::unique_lock<std::recursive_mutex> lock;
+	if (_draw_mutex != nullptr) lock = std::unique_lock<std::recursive_mutex>(*_draw_mutex);
+
 	CancelIMEComposition(_wnd.main_wnd);
 	SetCompositionPos(_wnd.main_wnd);
 	SetCandidatePos(_wnd.main_wnd);
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
 }

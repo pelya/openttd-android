@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -14,10 +12,14 @@
  * holding everything that the newgrf action 04 will send over to OpenTTD.
  * One of the biggest problems is that Dynamic lang Array uses ISO codes
  * as way to identifying current user lang, while newgrf uses bit shift codes
- * not related to ISO.  So equivalence functionnality had to be set.
+ * not related to ISO.  So equivalence functionality had to be set.
  */
 
 #include "stdafx.h"
+
+#include <algorithm>
+#include <array>
+
 #include "newgrf.h"
 #include "strings_func.h"
 #include "newgrf_storage.h"
@@ -115,7 +117,7 @@ private:
 	 * @param text_   The text to store in this GRFText.
 	 * @param len_    The length of the text to store.
 	 */
-	GRFText(byte langid_, const char *text_, size_t len_) : next(NULL), len(len_), langid(langid_)
+	GRFText(byte langid_, const char *text_, size_t len_) : next(nullptr), len(len_), langid(langid_)
 	{
 		/* We need to use memcpy instead of strcpy due to
 		 * the possibility of "choice lists" and therefore
@@ -167,9 +169,9 @@ static byte _currentLangID = GRFLX_ENGLISH;  ///< by default, english is used.
  */
 int LanguageMap::GetMapping(int newgrf_id, bool gender) const
 {
-	const SmallVector<Mapping, 1> &map = gender ? this->gender_map : this->case_map;
-	for (const Mapping *m = map.Begin(); m != map.End(); m++) {
-		if (m->newgrf_id == newgrf_id) return m->openttd_id;
+	const std::vector<Mapping> &map = gender ? this->gender_map : this->case_map;
+	for (const Mapping &m : map) {
+		if (m.newgrf_id == newgrf_id) return m.openttd_id;
 	}
 	return -1;
 }
@@ -182,9 +184,9 @@ int LanguageMap::GetMapping(int newgrf_id, bool gender) const
  */
 int LanguageMap::GetReverseMapping(int openttd_id, bool gender) const
 {
-	const SmallVector<Mapping, 1> &map = gender ? this->gender_map : this->case_map;
-	for (const Mapping *m = map.Begin(); m != map.End(); m++) {
-		if (m->openttd_id == openttd_id) return m->newgrf_id;
+	const std::vector<Mapping> &map = gender ? this->gender_map : this->case_map;
+	for (const Mapping &m : map) {
+		if (m.openttd_id == openttd_id) return m.newgrf_id;
 	}
 	return -1;
 }
@@ -194,8 +196,8 @@ struct UnmappedChoiceList : ZeroedMemoryAllocator {
 	/** Clean everything up. */
 	~UnmappedChoiceList()
 	{
-		for (SmallPair<byte, char *> *p = this->strings.Begin(); p < this->strings.End(); p++) {
-			free(p->second);
+		for (SmallPair<byte, char *> p : this->strings) {
+			free(p.second);
 		}
 	}
 
@@ -232,7 +234,7 @@ struct UnmappedChoiceList : ZeroedMemoryAllocator {
 		}
 
 		char *d = old_d;
-		if (lm == NULL) {
+		if (lm == nullptr) {
 			/* In case there is no mapping, just ignore everything but the default.
 			 * A probable cause for this happening is when the language file has
 			 * been removed by the user and as such no mapping could be made. */
@@ -342,7 +344,7 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 	size_t len = Utf8Decode(&c, str);
 
 	/* Helper variable for a possible (string) mapping. */
-	UnmappedChoiceList *mapping = NULL;
+	UnmappedChoiceList *mapping = nullptr;
 
 	if (c == NFO_UTF8_IDENTIFIER) {
 		unicode = true;
@@ -461,7 +463,7 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 						if (str[0] == '\0') goto string_end;
 						const LanguageMap *lm = LanguageMap::GetLanguageMap(grfid, language_id);
 						int index = *str++;
-						int mapped = lm != NULL ? lm->GetMapping(index, code == 0x0E) : -1;
+						int mapped = lm != nullptr ? lm->GetMapping(index, code == 0x0E) : -1;
 						if (mapped >= 0) {
 							d += Utf8Encode(d, code == 0x0E ? SCC_GENDER_INDEX : SCC_SET_CASE);
 							d += Utf8Encode(d, code == 0x0E ? mapped : mapped + 1);
@@ -472,7 +474,7 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 					case 0x10:
 					case 0x11:
 						if (str[0] == '\0') goto string_end;
-						if (mapping == NULL) {
+						if (mapping == nullptr) {
 							if (code == 0x10) str++; // Skip the index
 							grfmsg(1, "choice list %s marker found when not expected", code == 0x10 ? "next" : "default");
 							break;
@@ -490,7 +492,7 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 						break;
 
 					case 0x12:
-						if (mapping == NULL) {
+						if (mapping == nullptr) {
 							grfmsg(1, "choice list end marker found when not expected");
 						} else {
 							/* Terminate the previous string. */
@@ -499,7 +501,7 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 							/* Now we can start flushing everything and clean everything up. */
 							d = mapping->Flush(LanguageMap::GetLanguageMap(grfid, language_id));
 							delete mapping;
-							mapping = NULL;
+							mapping = nullptr;
 						}
 						break;
 
@@ -507,7 +509,7 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 					case 0x14:
 					case 0x15:
 						if (str[0] == '\0') goto string_end;
-						if (mapping != NULL) {
+						if (mapping != nullptr) {
 							grfmsg(1, "choice lists can't be stacked, it's going to get messy now...");
 							if (code != 0x14) str++;
 						} else {
@@ -527,6 +529,9 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 					case 0x1E:
 						d += Utf8Encode(d, SCC_NEWGRF_PRINT_DWORD_DATE_LONG + code - 0x16);
 						break;
+
+					case 0x1F: d += Utf8Encode(d, SCC_PUSH_COLOUR); break;
+					case 0x20: d += Utf8Encode(d, SCC_POP_COLOUR);  break;
 
 					default:
 						grfmsg(1, "missing handler for extended format code");
@@ -559,13 +564,13 @@ char *TranslateTTDPatchCodes(uint32 grfid, uint8 language_id, bool allow_newline
 	}
 
 string_end:
-	if (mapping != NULL) {
+	if (mapping != nullptr) {
 		grfmsg(1, "choice list was incomplete, the whole list is ignored");
 		delete mapping;
 	}
 
 	*d = '\0';
-	if (olen != NULL) *olen = d - tmp + 1;
+	if (olen != nullptr) *olen = d - tmp + 1;
 	tmp = ReallocT(tmp, d - tmp + 1);
 	return tmp;
 }
@@ -580,7 +585,7 @@ void AddGRFTextToList(GRFText **list, GRFText *text_to_add)
 	GRFText **ptext, *text;
 
 	/* Loop through all languages and see if we can replace a string */
-	for (ptext = list; (text = *ptext) != NULL; ptext = &text->next) {
+	for (ptext = list; (text = *ptext) != nullptr; ptext = &text->next) {
 		if (text->langid == text_to_add->langid) {
 			text_to_add->next = text->next;
 			*ptext = text_to_add;
@@ -630,9 +635,9 @@ void AddGRFTextToList(struct GRFText **list, const char *text_to_add)
  */
 GRFText *DuplicateGRFText(GRFText *orig)
 {
-	GRFText *newtext = NULL;
+	GRFText *newtext = nullptr;
 	GRFText **ptext = &newtext;
-	for (; orig != NULL; orig = orig->next) {
+	for (; orig != nullptr; orig = orig->next) {
 		*ptext = GRFText::Copy(orig);
 		ptext = &(*ptext)->next;
 	}
@@ -684,7 +689,7 @@ StringID AddGRFString(uint32 grfid, uint16 stringid, byte langid_to_add, bool ne
 	/* If we didn't find our stringid and grfid in the list, allocate a new id */
 	if (id == _num_grf_texts) _num_grf_texts++;
 
-	if (_grf_text[id].textholder == NULL) {
+	if (_grf_text[id].textholder == nullptr) {
 		_grf_text[id].grfid      = grfid;
 		_grf_text[id].stringid   = stringid;
 		_grf_text[id].def_string = def_string;
@@ -715,20 +720,20 @@ StringID GetGRFStringID(uint32 grfid, StringID stringid)
  * Get a C-string from a GRFText-list. If there is a translation for the
  * current language it is returned, otherwise the default translation
  * is returned. If there is neither a default nor a translation for the
- * current language NULL is returned.
+ * current language nullptr is returned.
  * @param text The GRFText to get the string from.
  */
 const char *GetGRFStringFromGRFText(const GRFText *text)
 {
-	const char *default_text = NULL;
+	const char *default_text = nullptr;
 
 	/* Search the list of lang-strings of this stringid for current lang */
-	for (; text != NULL; text = text->next) {
+	for (; text != nullptr; text = text->next) {
 		if (text->langid == _currentLangID) return text->text;
 
 		/* If the current string is English or American, set it as the
 		 * fallback language if the specific language isn't available. */
-		if (text->langid == GRFLX_UNSPECIFIED || (default_text == NULL && (text->langid == GRFLX_ENGLISH || text->langid == GRFLX_AMERICAN))) {
+		if (text->langid == GRFLX_UNSPECIFIED || (default_text == nullptr && (text->langid == GRFLX_ENGLISH || text->langid == GRFLX_AMERICAN))) {
 			default_text = text->text;
 		}
 	}
@@ -744,7 +749,7 @@ const char *GetGRFStringPtr(uint16 stringid)
 	assert(_grf_text[stringid].grfid != 0);
 
 	const char *str = GetGRFStringFromGRFText(_grf_text[stringid].textholder);
-	if (str != NULL) return str;
+	if (str != nullptr) return str;
 
 	/* Use the default string ID if the fallback string isn't available */
 	return GetStringPtr(_grf_text[stringid].def_string);
@@ -783,7 +788,7 @@ bool CheckGrfLangID(byte lang_id, byte grf_version)
  */
 void CleanUpGRFText(GRFText *grftext)
 {
-	while (grftext != NULL) {
+	while (grftext != nullptr) {
 		GRFText *grftext2 = grftext->next;
 		delete grftext;
 		grftext = grftext2;
@@ -802,29 +807,21 @@ void CleanUpStrings()
 		CleanUpGRFText(_grf_text[id].textholder);
 		_grf_text[id].grfid      = 0;
 		_grf_text[id].stringid   = 0;
-		_grf_text[id].textholder = NULL;
+		_grf_text[id].textholder = nullptr;
 	}
 
 	_num_grf_texts = 0;
 }
 
 struct TextRefStack {
-	byte stack[0x30];
+	std::array<byte, 0x30> stack;
 	byte position;
 	const GRFFile *grffile;
 	bool used;
 
-	TextRefStack() : position(0), grffile(NULL), used(false) {}
+	TextRefStack() : position(0), grffile(nullptr), used(false) {}
 
-	TextRefStack(const TextRefStack &stack) :
-		position(stack.position),
-		grffile(stack.grffile),
-		used(stack.used)
-	{
-		memcpy(this->stack, stack.stack, sizeof(this->stack));
-	}
-
-	uint8  PopUnsignedByte()  { assert(this->position < lengthof(this->stack)); return this->stack[this->position++]; }
+	uint8  PopUnsignedByte()  { assert(this->position < this->stack.size()); return this->stack[this->position++]; }
 	int8   PopSignedByte()    { return (int8)this->PopUnsignedByte(); }
 
 	uint16 PopUnsignedWord()
@@ -862,9 +859,8 @@ struct TextRefStack {
 		if (this->position >= 2) {
 			this->position -= 2;
 		} else {
-			for (int i = lengthof(stack) - 1; i >= this->position + 2; i--) {
-				this->stack[i] = this->stack[i - 2];
-			}
+			// Rotate right 2 positions
+			std::rotate(this->stack.rbegin(), this->stack.rbegin() + 2, this->stack.rend());
 		}
 		this->stack[this->position]     = GB(word, 0, 8);
 		this->stack[this->position + 1] = GB(word, 8, 8);
@@ -872,7 +868,7 @@ struct TextRefStack {
 
 	void ResetStack(const GRFFile *grffile)
 	{
-		assert(grffile != NULL);
+		assert(grffile != nullptr);
 		this->position = 0;
 		this->grffile = grffile;
 		this->used = true;
@@ -928,7 +924,7 @@ void RestoreTextRefStackBackup(struct TextRefStack *backup)
  *
  * @param grffile the NewGRF providing the stack data
  * @param numEntries number of entries to copy from the registers
- * @param values values to copy onto the stack; if NULL the temporary NewGRF registers will be used instead
+ * @param values values to copy onto the stack; if nullptr the temporary NewGRF registers will be used instead
  */
 void StartTextRefStackUsage(const GRFFile *grffile, byte numEntries, const uint32 *values)
 {
@@ -936,12 +932,12 @@ void StartTextRefStackUsage(const GRFFile *grffile, byte numEntries, const uint3
 
 	_newgrf_textrefstack.ResetStack(grffile);
 
-	byte *p = _newgrf_textrefstack.stack;
+	auto stack_it = _newgrf_textrefstack.stack.begin();
 	for (uint i = 0; i < numEntries; i++) {
-		uint32 value = values != NULL ? values[i] : _temp_store.GetValue(0x100 + i);
+		uint32 value = values != nullptr ? values[i] : _temp_store.GetValue(0x100 + i);
 		for (uint j = 0; j < 32; j += 8) {
-			*p = GB(value, j, 8);
-			p++;
+			*stack_it = GB(value, j, 8);
+			stack_it++;
 		}
 	}
 }

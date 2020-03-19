@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -58,13 +56,14 @@ extern SpriteGroupPool _spritegroup_pool;
 /* Common wrapper for all the different sprite group types */
 struct SpriteGroup : SpriteGroupPool::PoolItem<&_spritegroup_pool> {
 protected:
-	SpriteGroup(SpriteGroupType type) : type(type) {}
+	SpriteGroup(SpriteGroupType type) : nfo_line(0), type(type) {}
 	/** Base sprite group resolver */
 	virtual const SpriteGroup *Resolve(ResolverObject &object) const { return this; };
 
 public:
 	virtual ~SpriteGroup() {}
 
+	uint32 nfo_line;
 	SpriteGroupType type;
 
 	virtual SpriteID GetResult() const { return 0; }
@@ -316,13 +315,13 @@ struct ScopeResolver {
 struct ResolverObject {
 	/**
 	 * Resolver constructor.
-	 * @param grffile NewGRF file associated with the object (or \c NULL if none).
+	 * @param grffile NewGRF file associated with the object (or \c nullptr if none).
 	 * @param callback Callback code being resolved (default value is #CBID_NO_CALLBACK).
 	 * @param callback_param1 First parameter (var 10) of the callback (only used when \a callback is also set).
 	 * @param callback_param2 Second parameter (var 18) of the callback (only used when \a callback is also set).
 	 */
 	ResolverObject(const GRFFile *grffile, CallbackID callback = CBID_NO_CALLBACK, uint32 callback_param1 = 0, uint32 callback_param2 = 0)
-		: default_scope(*this), callback(callback), callback_param1(callback_param1), callback_param2(callback_param2), grffile(grffile), root_spritegroup(NULL)
+		: default_scope(*this), callback(callback), callback_param1(callback_param1), callback_param2(callback_param2), grffile(grffile), root_spritegroup(nullptr)
 	{
 		this->ResetState();
 	}
@@ -360,7 +359,7 @@ struct ResolverObject {
 	uint16 ResolveCallback()
 	{
 		const SpriteGroup *result = Resolve();
-		return result != NULL ? result->GetCallbackResult() : CALLBACK_FAILED;
+		return result != nullptr ? result->GetCallbackResult() : CALLBACK_FAILED;
 	}
 
 	virtual const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
@@ -400,6 +399,18 @@ struct ResolverObject {
 		this->used_triggers = 0;
 		memset(this->reseed, 0, sizeof(this->reseed));
 	}
+
+	/**
+	 * Get the feature number being resolved for.
+	 * This function is mainly intended for the callback profiling feature.
+	 */
+	virtual GrfSpecFeature GetFeature() const { return GSF_INVALID; }
+	/**
+	 * Get an identifier for the item being resolved.
+	 * This function is mainly intended for the callback profiling feature,
+	 * and should return an identifier recognisable by the NewGRF developer.
+	 */
+	virtual uint32 GetDebugID() const { return 0; }
 };
 
 #endif /* NEWGRF_SPRITEGROUP_H */

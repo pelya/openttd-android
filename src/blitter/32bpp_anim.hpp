@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -26,8 +24,8 @@ protected:
 
 public:
 	Blitter_32bppAnim() :
-		anim_buf(NULL),
-		anim_alloc(NULL),
+		anim_buf(nullptr),
+		anim_alloc(nullptr),
 		anim_buf_width(0),
 		anim_buf_height(0),
 		anim_buf_pitch(0)
@@ -37,21 +35,21 @@ public:
 
 	~Blitter_32bppAnim();
 
-	/* virtual */ void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom);
-	/* virtual */ void DrawColourMappingRect(void *dst, int width, int height, PaletteID pal);
-	/* virtual */ void SetPixel(void *video, int x, int y, uint8 colour);
-	/* virtual */ void DrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width, int dash);
-	/* virtual */ void DrawRect(void *video, int width, int height, uint8 colour);
-	/* virtual */ void CopyFromBuffer(void *video, const void *src, int width, int height);
-	/* virtual */ void CopyToBuffer(const void *video, void *dst, int width, int height);
-	/* virtual */ void ScrollBuffer(void *video, int &left, int &top, int &width, int &height, int scroll_x, int scroll_y);
-	/* virtual */ int BufferSize(int width, int height);
-	/* virtual */ void PaletteAnimate(const Palette &palette);
-	/* virtual */ Blitter::PaletteAnimation UsePaletteAnimation();
+	void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom) override;
+	void DrawColourMappingRect(void *dst, int width, int height, PaletteID pal) override;
+	void SetPixel(void *video, int x, int y, uint8 colour) override;
+	void DrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width, int dash) override;
+	void DrawRect(void *video, int width, int height, uint8 colour) override;
+	void CopyFromBuffer(void *video, const void *src, int width, int height) override;
+	void CopyToBuffer(const void *video, void *dst, int width, int height) override;
+	void ScrollBuffer(void *video, int &left, int &top, int &width, int &height, int scroll_x, int scroll_y) override;
+	int BufferSize(int width, int height) override;
+	void PaletteAnimate(const Palette &palette) override;
+	Blitter::PaletteAnimation UsePaletteAnimation() override;
 
-	/* virtual */ const char *GetName() { return "32bpp-anim"; }
-	/* virtual */ int GetBytesPerPixel() { return 6; }
-	/* virtual */ void PostResize();
+	const char *GetName() override { return "32bpp-anim"; }
+	int GetBytesPerPixel() override { return 6; }
+	void PostResize() override;
 
 	/**
 	 * Look up the colour in the current palette.
@@ -77,7 +75,7 @@ public:
 class FBlitter_32bppAnim : public BlitterFactory {
 public:
 	FBlitter_32bppAnim() : BlitterFactory("32bpp-anim", "32bpp Animation Blitter (palette animation)") {}
-	/* virtual */ Blitter *CreateInstance() { return new Blitter_32bppAnim(); }
+	Blitter *CreateInstance() override { return new Blitter_32bppAnim(); }
 };
 
 #endif /* BLITTER_32BPP_ANIM_HPP */

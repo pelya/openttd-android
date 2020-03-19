@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -26,7 +24,7 @@ static bool CheckAPIVersion(const char *api_version)
 {
 	return strcmp(api_version, "1.2") == 0 || strcmp(api_version, "1.3") == 0 || strcmp(api_version, "1.4") == 0 ||
 			strcmp(api_version, "1.5") == 0 || strcmp(api_version, "1.6") == 0 || strcmp(api_version, "1.7") == 0 ||
-			strcmp(api_version, "1.8") == 0 || strcmp(api_version, "1.9") == 0;
+			strcmp(api_version, "1.8") == 0 || strcmp(api_version, "1.9") == 0 || strcmp(api_version, "1.10") == 0;
 }
 
 #if defined(_WIN32)
@@ -55,8 +53,8 @@ template <> const char *GetClassName<GameInfo, ST_GS>() { return "GSInfo"; }
 /* static */ SQInteger GameInfo::Constructor(HSQUIRRELVM vm)
 {
 	/* Get the GameInfo */
-	SQUserPointer instance = NULL;
-	if (SQ_FAILED(sq_getinstanceup(vm, 2, &instance, 0)) || instance == NULL) return sq_throwerror(vm, "Pass an instance of a child class of GameInfo to RegisterGame");
+	SQUserPointer instance = nullptr;
+	if (SQ_FAILED(sq_getinstanceup(vm, 2, &instance, 0)) || instance == nullptr) return sq_throwerror(vm, "Pass an instance of a child class of GameInfo to RegisterGame");
 	GameInfo *info = (GameInfo *)instance;
 
 	SQInteger res = ScriptInfo::Constructor(vm, info);
@@ -82,7 +80,7 @@ template <> const char *GetClassName<GameInfo, ST_GS>() { return "GSInfo"; }
 	}
 
 	/* Remove the link to the real instance, else it might get deleted by RegisterGame() */
-	sq_setinstanceup(vm, 2, NULL);
+	sq_setinstanceup(vm, 2, nullptr);
 	/* Register the Game to the base system */
 	info->GetScanner()->RegisterScript(info);
 	return 0;
@@ -91,7 +89,7 @@ template <> const char *GetClassName<GameInfo, ST_GS>() { return "GSInfo"; }
 GameInfo::GameInfo() :
 	min_loadable_version(0),
 	is_developer_only(false),
-	api_version(NULL)
+	api_version(nullptr)
 {
 }
 

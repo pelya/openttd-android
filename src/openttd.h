@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -55,7 +53,7 @@ extern bool _exit_game;
 extern bool _restart_game;
 
 /** Modes of pausing we've got */
-enum PauseMode {
+enum PauseMode : byte {
 	PM_UNPAUSED              = 0,      ///< A normal unpaused game
 	PM_PAUSED_NORMAL         = 1 << 0, ///< A game normally paused
 	PM_PAUSED_SAVELOAD       = 1 << 1, ///< A game paused for saving/loading
@@ -68,10 +66,9 @@ enum PauseMode {
 	PMB_PAUSED_NETWORK = PM_PAUSED_ACTIVE_CLIENTS | PM_PAUSED_JOIN,
 };
 DECLARE_ENUM_AS_BIT_SET(PauseMode)
-typedef SimpleTinyEnumT<PauseMode, byte> PauseModeByte;
 
 /** The current pause mode */
-extern PauseModeByte _pause_mode;
+extern PauseMode _pause_mode;
 
 void AskExitGame();
 void AskExitToGameMenu();

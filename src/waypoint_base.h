@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,23 +23,25 @@ struct Waypoint FINAL : SpecializedStation<Waypoint, true> {
 	Waypoint(TileIndex tile = INVALID_TILE) : SpecializedStation<Waypoint, true>(tile) { }
 	~Waypoint();
 
-	void UpdateVirtCoord();
+	void UpdateVirtCoord() override;
 
-	/* virtual */ inline bool TileBelongsToRailStation(TileIndex tile) const
+	void MoveSign(TileIndex new_xy) override;
+
+	inline bool TileBelongsToRailStation(TileIndex tile) const override
 	{
 		return IsRailWaypointTile(tile) && GetStationIndex(tile) == this->index;
 	}
 
-	/* virtual */ uint32 GetNewGRFVariable(const struct ResolverObject &object, byte variable, byte parameter, bool *available) const;
+	uint32 GetNewGRFVariable(const struct ResolverObject &object, byte variable, byte parameter, bool *available) const override;
 
-	/* virtual */ void GetTileArea(TileArea *ta, StationType type) const;
+	void GetTileArea(TileArea *ta, StationType type) const override;
 
-	/* virtual */ uint GetPlatformLength(TileIndex tile, DiagDirection dir) const
+	uint GetPlatformLength(TileIndex tile, DiagDirection dir) const override
 	{
 		return 1;
 	}
 
-	/* virtual */ uint GetPlatformLength(TileIndex tile) const
+	uint GetPlatformLength(TileIndex tile) const override
 	{
 		return 1;
 	}
@@ -66,11 +66,5 @@ struct Waypoint FINAL : SpecializedStation<Waypoint, true> {
 		return this->string_id == wp->string_id;
 	}
 };
-
-/**
- * Iterate over all waypoints.
- * @param var The variable used for iteration.
- */
-#define FOR_ALL_WAYPOINTS(var) FOR_ALL_BASE_STATIONS_OF_TYPE(Waypoint, var)
 
 #endif /* WAYPOINT_BASE_H */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -47,7 +45,7 @@ void DrawRoadVehDetails(const Vehicle *v, int left, int right, int y)
 
 		memset(subtype_text, 0, sizeof(subtype_text));
 
-		for (const Vehicle *u = v; u != NULL; u = u->Next()) {
+		for (const Vehicle *u = v; u != nullptr; u = u->Next()) {
 			max_cargo[u->cargo_type] += u->cargo_cap;
 			if (u->cargo_cap > 0) {
 				StringID text = GetCargoSubtypeText(u);
@@ -80,7 +78,7 @@ void DrawRoadVehDetails(const Vehicle *v, int left, int right, int y)
 
 		DrawString(left, right, y + FONT_HEIGHT_NORMAL + y_offset, capacity, TC_BLUE);
 
-		for (const Vehicle *u = v; u != NULL; u = u->Next()) {
+		for (const Vehicle *u = v; u != nullptr; u = u->Next()) {
 			if (u->cargo_cap == 0) continue;
 
 			str = STR_VEHICLE_DETAILS_CARGO_EMPTY;
@@ -143,7 +141,7 @@ void DrawRoadVehImage(const Vehicle *v, int left, int right, int y, VehicleID se
 	_cur_dpi = &tmp_dpi;
 
 	int px = rtl ? max_width + skip : -skip;
-	for (; u != NULL && (rtl ? px > 0 : px < max_width); u = u->Next()) {
+	for (; u != nullptr && (rtl ? px > 0 : px < max_width); u = u->Next()) {
 		Point offset;
 		int width = u->GetDisplayImageWidth(&offset);
 

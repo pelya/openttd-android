@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -47,7 +45,7 @@ struct BaseVehicleListWindow : public Window {
 	void SortVehicleList();
 	void BuildVehicleList();
 	Dimension GetActionDropdownSize(bool show_autoreplace, bool show_group);
-	DropDownList *BuildActionDropdownList(bool show_autoreplace, bool show_group);
+	DropDownList BuildActionDropdownList(bool show_autoreplace, bool show_group);
 };
 
 uint GetVehicleListHeight(VehicleType type, uint divisor = 1);

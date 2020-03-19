@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -79,7 +77,7 @@ CommandCost CmdCreateGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 
 		case GT_STORY_PAGE: {
 			if (!StoryPage::IsValidID(p2)) return CMD_ERROR;
-			CompanyByte story_company = StoryPage::Get(p2)->company;
+			CompanyID story_company = StoryPage::Get(p2)->company;
 			if (company == INVALID_COMPANY ? story_company != INVALID_COMPANY : story_company != INVALID_COMPANY && story_company != company) return CMD_ERROR;
 			break;
 		}
@@ -93,7 +91,7 @@ CommandCost CmdCreateGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 		g->dst = p2;
 		g->company = company;
 		g->text = stredup(text);
-		g->progress = NULL;
+		g->progress = nullptr;
 		g->completed = false;
 
 		if (g->company == INVALID_COMPANY) {
@@ -187,7 +185,7 @@ CommandCost CmdSetGoalProgress(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 		Goal *g = Goal::Get(p1);
 		free(g->progress);
 		if (StrEmpty(text)) {
-			g->progress = NULL;
+			g->progress = nullptr;
 		} else {
 			g->progress = stredup(text);
 		}
@@ -236,10 +234,11 @@ CommandCost CmdSetGoalCompleted(TileIndex tile, DoCommandFlag flags, uint32 p1, 
  * @param flags type of operation
  * @param p1 various bitstuffed elements
  * - p1 = (bit  0 - 15) - Unique ID to use for this question.
- * - p1 = (bit 16 - 23) - Company or client for which this question is.
- * - p1 = (bit 24 - 25) - Question type.
- * - p1 = (bit 31) - Question target: 0 - company, 1 - client.
- * @param p2 Buttons of the question.
+ * - p1 = (bit 16 - 31) - Company or client for which this question is.
+ * @param p2 various bitstuffed elements
+ * - p2 = (bit 0 - 17) - Buttons of the question.
+ * - p2 = (bit 29 - 30) - Question type.
+ * - p2 = (bit 31) - Question target: 0 - company, 1 - client.
  * @param text Text of the question.
  * @return the cost of this operation or an error
  */
@@ -247,37 +246,31 @@ CommandCost CmdGoalQuestion(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 {
 	uint16 uniqueid = (GoalType)GB(p1, 0, 16);
 	CompanyID company = (CompanyID)GB(p1, 16, 8);
-#ifdef ENABLE_NETWORK
-	ClientIndex client = (ClientIndex)GB(p1, 16, 8);
-#endif
-	byte type = GB(p1, 24, 2);
-	bool is_client = HasBit(p1, 31);
+	ClientID client = (ClientID)GB(p1, 16, 16);
+
+	assert_compile(GOAL_QUESTION_BUTTON_COUNT < 29);
+	uint32 button_mask = GB(p2, 0, GOAL_QUESTION_BUTTON_COUNT);
+	byte type = GB(p2, 29, 2);
+	bool is_client = HasBit(p2, 31);
 
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	if (StrEmpty(text)) return CMD_ERROR;
 	if (is_client) {
-#ifdef ENABLE_NETWORK
-		if (!NetworkClientInfo::IsValidID(client)) return CMD_ERROR;
-#else
-		return CMD_ERROR;
-#endif
+		if (NetworkClientInfo::GetByClientID(client) == nullptr) return CMD_ERROR;
 	} else {
 		if (company != INVALID_COMPANY && !Company::IsValidID(company)) return CMD_ERROR;
 	}
-	if (CountBits(p2) < 1 || CountBits(p2) > 3) return CMD_ERROR;
-	if (p2 >= (1 << GOAL_QUESTION_BUTTON_COUNT)) return CMD_ERROR;
+	if (CountBits(button_mask) < 1 || CountBits(button_mask) > 3) return CMD_ERROR;
 	if (type >= GOAL_QUESTION_TYPE_COUNT) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
 		if (is_client) {
-#ifdef ENABLE_NETWORK
-			if (NetworkClientInfo::Get(client)->client_id != _network_own_client_id) return CommandCost();
-#endif
+			if (client != _network_own_client_id) return CommandCost();
 		} else {
 			if (company == INVALID_COMPANY && !Company::IsValidID(_local_company)) return CommandCost();
 			if (company != INVALID_COMPANY && company != _local_company) return CommandCost();
 		}
-		ShowGoalQuestion(uniqueid, type, p2, text);
+		ShowGoalQuestion(uniqueid, type, button_mask, text);
 	}
 
 	return CommandCost();

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -135,7 +133,6 @@
 	std::string json;
 	ScriptAdmin::MakeJSON(vm, -1, SQUIRREL_MAX_DEPTH, json);
 
-#ifdef ENABLE_NETWORK
 	if (json.length() > NETWORK_GAMESCRIPT_JSON_LENGTH) {
 		ScriptLog::Error("You are trying to send a table that is too large to the AdminPort. No data sent.");
 		sq_pushinteger(vm, 0);
@@ -143,7 +140,6 @@
 	}
 
 	NetworkAdminGameScript(json.c_str());
-#endif /* ENABLE_NETWORK */
 
 	sq_pushinteger(vm, 1);
 	return 1;

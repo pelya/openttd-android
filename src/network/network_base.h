@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -11,8 +9,6 @@
 
 #ifndef NETWORK_BASE_H
 #define NETWORK_BASE_H
-
-#ifdef ENABLE_NETWORK
 
 #include "network_type.h"
 #include "core/address.h"
@@ -41,18 +37,4 @@ struct NetworkClientInfo : NetworkClientInfoPool::PoolItem<&_networkclientinfo_p
 	static NetworkClientInfo *GetByClientID(ClientID client_id);
 };
 
-/**
- * Iterate over all the clients from a given index.
- * @param var The variable to iterate with.
- * @param start The location to start the iteration from.
- */
-#define FOR_ALL_CLIENT_INFOS_FROM(var, start) FOR_ALL_ITEMS_FROM(NetworkClientInfo, clientinfo_index, var, start)
-
-/**
- * Iterate over all the clients.
- * @param var The variable to iterate with.
- */
-#define FOR_ALL_CLIENT_INFOS(var) FOR_ALL_CLIENT_INFOS_FROM(var, 0)
-
-#endif /* ENABLE_NETWORK */
 #endif /* NETWORK_BASE_H */

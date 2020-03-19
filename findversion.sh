@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -63,7 +61,7 @@ if [ -f "$ROOT_DIR/.ottdrev" ]; then
 	# We are an exported source bundle
 	cat $ROOT_DIR/.ottdrev
 	exit
-elif [ -d "$ROOT_DIR/.git" ]; then
+elif [ -d "$ROOT_DIR/.git" ] || [ -f "$ROOT_DIR/.git" ]; then
 	# We are a git checkout
 	# Refresh the index to make sure file stat info is in sync, then look for modifications
 	git update-index --refresh >/dev/null

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -23,13 +21,6 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef __MORPHOS__
-#ifdef stderr
-#undef stderr
-#endif
-#define stderr stdout
-#endif /* __MORPHOS__ */
-
 #include "../safeguards.h"
 
 /**
@@ -48,7 +39,7 @@ void NORETURN CDECL error(const char *s, ...)
 	exit(1);
 }
 
-static const int OUTPUT_BLOCK_SIZE = 16000; ///< Block size of the buffer in #OutputBuffer.
+static const size_t OUTPUT_BLOCK_SIZE = 16000; ///< Block size of the buffer in #OutputBuffer.
 
 /** Output buffer for a block of data. */
 class OutputBuffer {
@@ -65,10 +56,9 @@ public:
 	 * @param length Length of the text in bytes.
 	 * @return Number of bytes actually stored.
 	 */
-	int Add(const char *text, int length)
+	size_t Add(const char *text, size_t length)
 	{
-		int store_size = min(length, OUTPUT_BLOCK_SIZE - this->size);
-		assert(store_size >= 0);
+		size_t store_size = min(length, OUTPUT_BLOCK_SIZE - this->size);
 		assert(store_size <= OUTPUT_BLOCK_SIZE);
 		MemCpyT(this->data + this->size, text, store_size);
 		this->size += store_size;
@@ -81,7 +71,7 @@ public:
 	 */
 	void Write(FILE *out_fp) const
 	{
-		if (fwrite(this->data, 1, this->size, out_fp) != (size_t)this->size) {
+		if (fwrite(this->data, 1, this->size, out_fp) != this->size) {
 			fprintf(stderr, "Error: Cannot write output\n");
 		}
 	}
@@ -95,7 +85,7 @@ public:
 		return this->size < OUTPUT_BLOCK_SIZE;
 	}
 
-	int size;                     ///< Number of bytes stored in \a data.
+	size_t size;                  ///< Number of bytes stored in \a data.
 	char data[OUTPUT_BLOCK_SIZE]; ///< Stored data.
 };
 
@@ -110,7 +100,7 @@ public:
 	/** Clear the temporary storage. */
 	void Clear()
 	{
-		this->output_buffer.Clear();
+		this->output_buffer.clear();
 	}
 
 	/**
@@ -118,19 +108,20 @@ public:
 	 * @param text   Text to store.
 	 * @param length Length of the text in bytes, \c 0 means 'length of the string'.
 	 */
-	void Add(const char *text, int length = 0)
+	void Add(const char *text, size_t length = 0)
 	{
 		if (length == 0) length = strlen(text);
 
 		if (length > 0 && this->BufferHasRoom()) {
-			int stored_size = this->output_buffer[this->output_buffer.Length() - 1].Add(text, length);
+			size_t stored_size = this->output_buffer[this->output_buffer.size() - 1].Add(text, length);
 			length -= stored_size;
 			text += stored_size;
 		}
 		while (length > 0) {
-			OutputBuffer *block = this->output_buffer.Append();
-			block->Clear(); // Initialize the new block.
-			int stored_size = block->Add(text, length);
+			/*C++17: OutputBuffer &block =*/ this->output_buffer.emplace_back();
+			OutputBuffer &block = this->output_buffer.back();
+			block.Clear(); // Initialize the new block.
+			size_t stored_size = block.Add(text, length);
 			length -= stored_size;
 			text += stored_size;
 		}
@@ -142,8 +133,8 @@ public:
 	 */
 	void Write(FILE *out_fp) const
 	{
-		for (const OutputBuffer *out_data = this->output_buffer.Begin(); out_data != this->output_buffer.End(); out_data++) {
-			out_data->Write(out_fp);
+		for (const OutputBuffer &out_data : output_buffer) {
+			out_data.Write(out_fp);
 		}
 	}
 
@@ -154,11 +145,11 @@ private:
 	 */
 	bool BufferHasRoom() const
 	{
-		uint num_blocks = this->output_buffer.Length();
+		size_t num_blocks = this->output_buffer.size();
 		return num_blocks > 0 && this->output_buffer[num_blocks - 1].HasRoom();
 	}
 
-	typedef SmallVector<OutputBuffer, 2> OutputBufferVector; ///< Vector type for output buffers.
+	typedef std::vector<OutputBuffer> OutputBufferVector; ///< Vector type for output buffers.
 	OutputBufferVector output_buffer; ///< Vector of blocks containing the stored output.
 };
 
@@ -167,10 +158,10 @@ private:
 struct SettingsIniFile : IniLoadFile {
 	/**
 	 * Construct a new ini loader.
-	 * @param list_group_names A \c NULL terminated list with group names that should be loaded as lists instead of variables. @see IGT_LIST
-	 * @param seq_group_names  A \c NULL terminated list with group names that should be loaded as lists of names. @see IGT_SEQUENCE
+	 * @param list_group_names A \c nullptr terminated list with group names that should be loaded as lists instead of variables. @see IGT_LIST
+	 * @param seq_group_names  A \c nullptr terminated list with group names that should be loaded as lists of names. @see IGT_SEQUENCE
 	 */
-	SettingsIniFile(const char * const *list_group_names = NULL, const char * const *seq_group_names = NULL) :
+	SettingsIniFile(const char * const *list_group_names = nullptr, const char * const *seq_group_names = nullptr) :
 			IniLoadFile(list_group_names, seq_group_names)
 	{
 	}
@@ -180,7 +171,7 @@ struct SettingsIniFile : IniLoadFile {
 		/* Open the text file in binary mode to prevent end-of-line translations
 		 * done by ftell() and friends, as defined by K&R. */
 		FILE *in = fopen(filename, "rb");
-		if (in == NULL) return NULL;
+		if (in == nullptr) return nullptr;
 
 		fseek(in, 0L, SEEK_END);
 		*size = ftell(in);
@@ -209,9 +200,9 @@ static const char *DEFAULTS_GROUP_NAME  = "defaults";   ///< Name of the group c
  */
 static IniLoadFile *LoadIniFile(const char *filename)
 {
-	static const char * const seq_groups[] = {PREAMBLE_GROUP_NAME, POSTAMBLE_GROUP_NAME, NULL};
+	static const char * const seq_groups[] = {PREAMBLE_GROUP_NAME, POSTAMBLE_GROUP_NAME, nullptr};
 
-	IniLoadFile *ini = new SettingsIniFile(NULL, seq_groups);
+	IniLoadFile *ini = new SettingsIniFile(nullptr, seq_groups);
 	ini->LoadFromDisk(filename, NO_DIRECTORY);
 	return ini;
 }
@@ -224,8 +215,8 @@ static IniLoadFile *LoadIniFile(const char *filename)
 static void DumpGroup(IniLoadFile *ifile, const char * const group_name)
 {
 	IniGroup *grp = ifile->GetGroup(group_name, 0, false);
-	if (grp != NULL && grp->type == IGT_SEQUENCE) {
-		for (IniItem *item = grp->item; item != NULL; item = item->next) {
+	if (grp != nullptr && grp->type == IGT_SEQUENCE) {
+		for (IniItem *item = grp->item; item != nullptr; item = item->next) {
 			if (item->name) {
 				_stored_output.Add(item->name);
 				_stored_output.Add("\n", 1);
@@ -238,14 +229,14 @@ static void DumpGroup(IniLoadFile *ifile, const char * const group_name)
  * Find the value of a template variable.
  * @param name Name of the item to find.
  * @param grp  Group currently being expanded (searched first).
- * @param defaults Fallback group to search, \c NULL skips the search.
- * @return Text of the item if found, else \c NULL.
+ * @param defaults Fallback group to search, \c nullptr skips the search.
+ * @return Text of the item if found, else \c nullptr.
  */
 static const char *FindItemValue(const char *name, IniGroup *grp, IniGroup *defaults)
 {
 	IniItem *item = grp->GetItem(name, false);
-	if (item == NULL && defaults != NULL) item = defaults->GetItem(name, false);
-	if (item == NULL || item->value == NULL) return NULL;
+	if (item == nullptr && defaults != nullptr) item = defaults->GetItem(name, false);
+	if (item == nullptr || item->value == nullptr) return nullptr;
 	return item->value;
 }
 
@@ -256,30 +247,30 @@ static const char *FindItemValue(const char *name, IniGroup *grp, IniGroup *defa
 static void DumpSections(IniLoadFile *ifile)
 {
 	static const int MAX_VAR_LENGTH = 64;
-	static const char * const special_group_names[] = {PREAMBLE_GROUP_NAME, POSTAMBLE_GROUP_NAME, DEFAULTS_GROUP_NAME, TEMPLATES_GROUP_NAME, NULL};
+	static const char * const special_group_names[] = {PREAMBLE_GROUP_NAME, POSTAMBLE_GROUP_NAME, DEFAULTS_GROUP_NAME, TEMPLATES_GROUP_NAME, nullptr};
 
 	IniGroup *default_grp = ifile->GetGroup(DEFAULTS_GROUP_NAME, 0, false);
 	IniGroup *templates_grp  = ifile->GetGroup(TEMPLATES_GROUP_NAME, 0, false);
-	if (templates_grp == NULL) return;
+	if (templates_grp == nullptr) return;
 
 	/* Output every group, using its name as template name. */
-	for (IniGroup *grp = ifile->group; grp != NULL; grp = grp->next) {
+	for (IniGroup *grp = ifile->group; grp != nullptr; grp = grp->next) {
 		const char * const *sgn;
-		for (sgn = special_group_names; *sgn != NULL; sgn++) if (strcmp(grp->name, *sgn) == 0) break;
-		if (*sgn != NULL) continue;
+		for (sgn = special_group_names; *sgn != nullptr; sgn++) if (strcmp(grp->name, *sgn) == 0) break;
+		if (*sgn != nullptr) continue;
 
 		IniItem *template_item = templates_grp->GetItem(grp->name, false); // Find template value.
-		if (template_item == NULL || template_item->value == NULL) {
+		if (template_item == nullptr || template_item->value == nullptr) {
 			fprintf(stderr, "settingsgen: Warning: Cannot find template %s\n", grp->name);
 			continue;
 		}
 
 		/* Prefix with #if/#ifdef/#ifndef */
-		static const char * const pp_lines[] = {"if", "ifdef", "ifndef", NULL};
+		static const char * const pp_lines[] = {"if", "ifdef", "ifndef", nullptr};
 		int count = 0;
-		for (const char * const *name = pp_lines; *name != NULL; name++) {
+		for (const char * const *name = pp_lines; *name != nullptr; name++) {
 			const char *condition = FindItemValue(*name, grp, default_grp);
-			if (condition != NULL) {
+			if (condition != nullptr) {
 				_stored_output.Add("#", 1);
 				_stored_output.Add(*name);
 				_stored_output.Add(" ", 1);
@@ -318,7 +309,7 @@ static void DumpSections(IniLoadFile *ifile)
 			if (i > 0) {
 				/* Find the text to output. */
 				const char *valitem = FindItemValue(variable, grp, default_grp);
-				if (valitem != NULL) _stored_output.Add(valitem);
+				if (valitem != nullptr) _stored_output.Add(valitem);
 			} else {
 				_stored_output.Add("$", 1);
 			}
@@ -338,10 +329,10 @@ static void DumpSections(IniLoadFile *ifile)
  */
 static void CopyFile(const char *fname, FILE *out_fp)
 {
-	if (fname == NULL) return;
+	if (fname == nullptr) return;
 
 	FILE *in_fp = fopen(fname, "r");
-	if (in_fp == NULL) {
+	if (in_fp == nullptr) {
 		fprintf(stderr, "settingsgen: Warning: Cannot open file %s for copying\n", fname);
 		return;
 	}
@@ -368,10 +359,10 @@ static void CopyFile(const char *fname, FILE *out_fp)
 static bool CompareFiles(const char *n1, const char *n2)
 {
 	FILE *f2 = fopen(n2, "rb");
-	if (f2 == NULL) return false;
+	if (f2 == nullptr) return false;
 
 	FILE *f1 = fopen(n1, "rb");
-	if (f1 == NULL) {
+	if (f1 == nullptr) {
 		fclose(f2);
 		error("can't open %s", n1);
 	}
@@ -399,7 +390,7 @@ static bool CompareFiles(const char *n1, const char *n2)
 static const OptionData _opts[] = {
 	  GETOPT_NOVAL(     'v', "--version"),
 	  GETOPT_NOVAL(     'h', "--help"),
-	GETOPT_GENERAL('h', '?', NULL, ODF_NO_VALUE),
+	GETOPT_GENERAL('h', '?', nullptr, ODF_NO_VALUE),
 	  GETOPT_VALUE(     'o', "--output"),
 	  GETOPT_VALUE(     'b', "--before"),
 	  GETOPT_VALUE(     'a', "--after"),
@@ -442,9 +433,9 @@ static void ProcessIniFile(const char *fname)
  */
 int CDECL main(int argc, char *argv[])
 {
-	const char *output_file = NULL;
-	const char *before_file = NULL;
-	const char *after_file = NULL;
+	const char *output_file = nullptr;
+	const char *before_file = nullptr;
+	const char *after_file = nullptr;
 
 	GetOptData mgo(argc - 1, argv + 1, _opts);
 	for (;;) {
@@ -490,7 +481,7 @@ int CDECL main(int argc, char *argv[])
 	for (int i = 0; i < mgo.numleft; i++) ProcessIniFile(mgo.argv[i]);
 
 	/* Write output. */
-	if (output_file == NULL) {
+	if (output_file == nullptr) {
 		CopyFile(before_file, stdout);
 		_stored_output.Write(stdout);
 		CopyFile(after_file, stdout);
@@ -498,7 +489,7 @@ int CDECL main(int argc, char *argv[])
 		static const char * const tmp_output = "tmp2.xxx";
 
 		FILE *fp = fopen(tmp_output, "w");
-		if (fp == NULL) {
+		if (fp == nullptr) {
 			fprintf(stderr, "settingsgen: Warning: Cannot open file %s\n", tmp_output);
 			return 1;
 		}

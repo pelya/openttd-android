@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -44,9 +42,9 @@ struct HouseScopeResolver : public ScopeResolver {
 	{
 	}
 
-	/* virtual */ uint32 GetRandomBits() const;
-	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
-	/* virtual */ uint32 GetTriggers() const;
+	uint32 GetRandomBits() const override;
+	uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override;
+	uint32 GetTriggers() const override;
 };
 
 /** Resolver object to be used for houses (feature 07 spritegroups). */
@@ -58,7 +56,7 @@ struct HouseResolverObject : public ResolverObject {
 			CallbackID callback = CBID_NO_CALLBACK, uint32 param1 = 0, uint32 param2 = 0,
 			bool not_yet_constructed = false, uint8 initial_random_bits = 0, CargoTypes watched_cargo_triggers = 0);
 
-	/* virtual */ ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0)
+	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override
 	{
 		switch (scope) {
 			case VSG_SCOPE_SELF:   return &this->house_scope;
@@ -66,6 +64,9 @@ struct HouseResolverObject : public ResolverObject {
 			default: return ResolverObject::GetScope(scope, relative);
 		}
 	}
+
+	GrfSpecFeature GetFeature() const override;
+	uint32 GetDebugID() const override;
 };
 
 /**

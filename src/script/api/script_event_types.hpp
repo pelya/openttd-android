@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -799,8 +797,8 @@ private:
 
 /**
  * Event AircraftDestTooFar, indicating the next destination of an aircraft is too far away.
- * This event can be trigger when the current oder of an aircraft changes, usually either when
- * loading is done or when switch manually.
+ * This event can be triggered when the current order of an aircraft changes, usually either when
+ * loading is done or when switched manually.
  * @api ai
  */
 class ScriptEventAircraftDestTooFar : public ScriptEvent {
@@ -1058,6 +1056,46 @@ public:
 	 * @return The converted instance.
 	 */
 	static ScriptEventRoadReconstruction *Convert(ScriptEventCompanyTown *instance) { return (ScriptEventRoadReconstruction *)instance; }
+};
+
+/**
+ * Event VehicleAutoReplaced, indicating a vehicle has been auto replaced.
+ * @api ai
+ */
+class ScriptEventVehicleAutoReplaced : public ScriptEvent {
+public:
+	/**
+	 * @param old_id The vehicle that has been replaced.
+	 * @param new_id The vehicle that has been created in replacement.
+	 */
+	ScriptEventVehicleAutoReplaced(VehicleID old_id, VehicleID new_id) :
+		ScriptEvent(ET_VEHICLE_AUTOREPLACED),
+		old_id(old_id),
+		new_id(new_id)
+	{}
+
+	/**
+	 * Convert an ScriptEvent to the real instance.
+	 * @param instance The instance to convert.
+	 * @return The converted instance.
+	 */
+	static ScriptEventVehicleAutoReplaced *Convert(ScriptEvent *instance) { return (ScriptEventVehicleAutoReplaced *)instance; }
+
+	/**
+	 * Get the VehicleID of the vehicle that has been replaced.
+	 * @return The VehicleID of the vehicle that has been replaced. This ID is no longer valid for referencing the vehicle.
+	 */
+	VehicleID GetOldVehicleID() { return this->old_id; }
+
+	/**
+	 * Get the VehicleID of the vehicle that has been created in replacement.
+	 * @return The VehicleID of the vehicle that has been created in replacement.
+	 */
+	VehicleID GetNewVehicleID() { return this->new_id; }
+
+private:
+	VehicleID old_id; ///< The vehicle that has been replaced.
+	VehicleID new_id; ///< The vehicle that has been created in replacement.
 };
 
 #endif /* SCRIPT_EVENT_TYPES_HPP */

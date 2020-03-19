@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -42,16 +40,14 @@ static void UpdateWaypointOrder(Order *o)
 void MoveBuoysToWaypoints()
 {
 	/* Buoy orders become waypoint orders */
-	OrderList *ol;
-	FOR_ALL_ORDER_LISTS(ol) {
+	for (OrderList *ol : OrderList::Iterate()) {
 		VehicleType vt = ol->GetFirstSharedVehicle()->type;
 		if (vt != VEH_SHIP && vt != VEH_TRAIN) continue;
 
-		for (Order *o = ol->GetFirstOrder(); o != NULL; o = o->next) UpdateWaypointOrder(o);
+		for (Order *o = ol->GetFirstOrder(); o != nullptr; o = o->next) UpdateWaypointOrder(o);
 	}
 
-	Vehicle *v;
-	FOR_ALL_VEHICLES(v) {
+	for (Vehicle *v : Vehicle::Iterate()) {
 		VehicleType vt = v->type;
 		if (vt != VEH_SHIP && vt != VEH_TRAIN) continue;
 
@@ -59,8 +55,7 @@ void MoveBuoysToWaypoints()
 	}
 
 	/* Now make the stations waypoints */
-	Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (Station *st : Station::Iterate()) {
 		if ((st->had_vehicle_of_type & HVOT_WAYPOINT) == 0) continue;
 
 		StationID index    = st->index;
@@ -68,7 +63,7 @@ void MoveBuoysToWaypoints()
 		Town *town         = st->town;
 		StringID string_id = st->string_id;
 		char *name         = st->name;
-		st->name           = NULL;
+		st->name           = nullptr;
 		Date build_date    = st->build_date;
 		/* TTDPatch could use "buoys with rail station" for rail waypoints */
 		bool train         = st->train_station.tile != INVALID_TILE;
@@ -111,18 +106,17 @@ void MoveBuoysToWaypoints()
 void AfterLoadStations()
 {
 	/* Update the speclists of all stations to point to the currently loaded custom stations. */
-	BaseStation *st;
-	FOR_ALL_BASE_STATIONS(st) {
+	for (BaseStation *st : BaseStation::Iterate()) {
 		for (uint i = 0; i < st->num_specs; i++) {
 			if (st->speclist[i].grfid == 0) continue;
 
-			st->speclist[i].spec = StationClass::GetByGrf(st->speclist[i].grfid, st->speclist[i].localidx, NULL);
+			st->speclist[i].spec = StationClass::GetByGrf(st->speclist[i].grfid, st->speclist[i].localidx, nullptr);
 		}
 
 		if (Station::IsExpected(st)) {
 			Station *sta = Station::From(st);
-			for (const RoadStop *rs = sta->bus_stops; rs != NULL; rs = rs->next) sta->bus_station.Add(rs->xy);
-			for (const RoadStop *rs = sta->truck_stops; rs != NULL; rs = rs->next) sta->truck_station.Add(rs->xy);
+			for (const RoadStop *rs = sta->bus_stops; rs != nullptr; rs = rs->next) sta->bus_station.Add(rs->xy);
+			for (const RoadStop *rs = sta->truck_stops; rs != nullptr; rs = rs->next) sta->truck_station.Add(rs->xy);
 		}
 
 		StationUpdateCachedTriggers(st);
@@ -135,12 +129,11 @@ void AfterLoadStations()
 void AfterLoadRoadStops()
 {
 	/* First construct the drive through entries */
-	RoadStop *rs;
-	FOR_ALL_ROADSTOPS(rs) {
+	for (RoadStop *rs : RoadStop::Iterate()) {
 		if (IsDriveThroughStopTile(rs->xy)) rs->MakeDriveThrough();
 	}
 	/* And then rebuild the data in those entries */
-	FOR_ALL_ROADSTOPS(rs) {
+	for (RoadStop *rs : RoadStop::Iterate()) {
 		if (!HasBit(rs->status, RoadStop::RSSFB_BASE_ENTRY)) continue;
 
 		rs->GetEntry(DIAGDIR_NE)->Rebuild(rs);
@@ -174,8 +167,8 @@ static const SaveLoad _old_station_desc[] = {
 	SLE_CONDVAR(Station, train_station.tile,         SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
 	SLE_CONDVAR(Station, airport.tile,               SLE_FILE_U16 | SLE_VAR_U32,  SL_MIN_VERSION, SLV_6),
 	SLE_CONDVAR(Station, airport.tile,               SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
-	SLE_CONDVAR(Station, dock_tile,                  SLE_FILE_U16 | SLE_VAR_U32,  SL_MIN_VERSION, SLV_6),
-	SLE_CONDVAR(Station, dock_tile,                  SLE_UINT32,                  SLV_6, SL_MAX_VERSION),
+	SLE_CONDNULL(2, SL_MIN_VERSION, SLV_6),
+	SLE_CONDNULL(4, SLV_6, SLV_MULTITILE_DOCKS),
 	    SLE_REF(Station, town,                       REF_TOWN),
 	    SLE_VAR(Station, train_station.w,            SLE_FILE_U8 | SLE_VAR_U16),
 	SLE_CONDVAR(Station, train_station.h,            SLE_FILE_U8 | SLE_VAR_U16,   SLV_2, SL_MAX_VERSION),
@@ -378,8 +371,7 @@ static void Ptrs_STNS()
 	if (!IsSavegameVersionBefore(SLV_123)) return;
 
 	uint num_cargo = IsSavegameVersionBefore(SLV_EXTEND_CARGOTYPES) ? 32 : NUM_CARGO;
-	Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (Station *st : Station::Iterate()) {
 		if (!IsSavegameVersionBefore(SLV_68)) {
 			for (CargoID i = 0; i < num_cargo; i++) {
 				GoodsEntry *ge = &st->goods[i];
@@ -423,7 +415,13 @@ static const SaveLoad _station_desc[] = {
 
 	      SLE_REF(Station, bus_stops,                  REF_ROADSTOPS),
 	      SLE_REF(Station, truck_stops,                REF_ROADSTOPS),
-	      SLE_VAR(Station, dock_tile,                  SLE_UINT32),
+	 SLE_CONDNULL(4, SL_MIN_VERSION, SLV_MULTITILE_DOCKS),
+	  SLE_CONDVAR(Station, ship_station.tile,          SLE_UINT32,                SLV_MULTITILE_DOCKS, SL_MAX_VERSION),
+	  SLE_CONDVAR(Station, ship_station.w,             SLE_FILE_U8 | SLE_VAR_U16, SLV_MULTITILE_DOCKS, SL_MAX_VERSION),
+	  SLE_CONDVAR(Station, ship_station.h,             SLE_FILE_U8 | SLE_VAR_U16, SLV_MULTITILE_DOCKS, SL_MAX_VERSION),
+	  SLE_CONDVAR(Station, docking_station.tile,       SLE_UINT32,                SLV_MULTITILE_DOCKS, SL_MAX_VERSION),
+	  SLE_CONDVAR(Station, docking_station.w,          SLE_FILE_U8 | SLE_VAR_U16, SLV_MULTITILE_DOCKS, SL_MAX_VERSION),
+	  SLE_CONDVAR(Station, docking_station.h,          SLE_FILE_U8 | SLE_VAR_U16, SLV_MULTITILE_DOCKS, SL_MAX_VERSION),
 	      SLE_VAR(Station, airport.tile,               SLE_UINT32),
 	  SLE_CONDVAR(Station, airport.w,                  SLE_FILE_U8 | SLE_VAR_U16, SLV_140, SL_MAX_VERSION),
 	  SLE_CONDVAR(Station, airport.h,                  SLE_FILE_U8 | SLE_VAR_U16, SLV_140, SL_MAX_VERSION),
@@ -510,9 +508,8 @@ static void RealSave_STNN(BaseStation *bst)
 
 static void Save_STNN()
 {
-	BaseStation *st;
 	/* Write the stations */
-	FOR_ALL_BASE_STATIONS(st) {
+	for (BaseStation *st : BaseStation::Iterate()) {
 		SlSetArrayIndex(st->index);
 		SlAutolength((AutolengthProc*)RealSave_STNN, st);
 	}
@@ -544,11 +541,11 @@ static void Load_STNN()
 			for (CargoID i = 0; i < num_cargo; i++) {
 				SlObject(&st->goods[i], GetGoodsDesc());
 				FlowSaveLoad flow;
-				FlowStat *fs = NULL;
+				FlowStat *fs = nullptr;
 				StationID prev_source = INVALID_STATION;
 				for (uint32 j = 0; j < _num_flows; ++j) {
 					SlObject(&flow, _flow_desc);
-					if (fs == NULL || prev_source != flow.source) {
+					if (fs == nullptr || prev_source != flow.source) {
 						fs = &(st->goods[i].flows.insert(std::make_pair(flow.source, FlowStat(flow.via, flow.share, flow.restricted))).first->second);
 					} else {
 						fs->AppendShare(flow.via, flow.share, flow.restricted);
@@ -584,8 +581,7 @@ static void Ptrs_STNN()
 	if (IsSavegameVersionBefore(SLV_123)) return;
 
 	uint num_cargo = IsSavegameVersionBefore(SLV_EXTEND_CARGOTYPES) ? 32 : NUM_CARGO;
-	Station *st;
-	FOR_ALL_STATIONS(st) {
+	for (Station *st : Station::Iterate()) {
 		for (CargoID i = 0; i < num_cargo; i++) {
 			GoodsEntry *ge = &st->goods[i];
 			if (IsSavegameVersionBefore(SLV_183)) {
@@ -602,17 +598,14 @@ static void Ptrs_STNN()
 		SlObject(st, _station_desc);
 	}
 
-	Waypoint *wp;
-	FOR_ALL_WAYPOINTS(wp) {
+	for (Waypoint *wp : Waypoint::Iterate()) {
 		SlObject(wp, _waypoint_desc);
 	}
 }
 
 static void Save_ROADSTOP()
 {
-	RoadStop *rs;
-
-	FOR_ALL_ROADSTOPS(rs) {
+	for (RoadStop *rs : RoadStop::Iterate()) {
 		SlSetArrayIndex(rs->index);
 		SlObject(rs, _roadstop_desc);
 	}
@@ -631,14 +624,13 @@ static void Load_ROADSTOP()
 
 static void Ptrs_ROADSTOP()
 {
-	RoadStop *rs;
-	FOR_ALL_ROADSTOPS(rs) {
+	for (RoadStop *rs : RoadStop::Iterate()) {
 		SlObject(rs, _roadstop_desc);
 	}
 }
 
 extern const ChunkHandler _station_chunk_handlers[] = {
-	{ 'STNS', NULL,          Load_STNS,     Ptrs_STNS,     NULL, CH_ARRAY },
-	{ 'STNN', Save_STNN,     Load_STNN,     Ptrs_STNN,     NULL, CH_ARRAY },
-	{ 'ROAD', Save_ROADSTOP, Load_ROADSTOP, Ptrs_ROADSTOP, NULL, CH_ARRAY | CH_LAST},
+	{ 'STNS', nullptr,       Load_STNS,     Ptrs_STNS,     nullptr, CH_ARRAY },
+	{ 'STNN', Save_STNN,     Load_STNN,     Ptrs_STNN,     nullptr, CH_ARRAY },
+	{ 'ROAD', Save_ROADSTOP, Load_ROADSTOP, Ptrs_ROADSTOP, nullptr, CH_ARRAY | CH_LAST},
 };

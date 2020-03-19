@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -30,6 +28,7 @@ enum StationViewWidgets {
 	WID_SV_ROADVEHS,           ///< List of scheduled road vehs button.
 	WID_SV_SHIPS,              ///< List of scheduled ships button.
 	WID_SV_PLANES,             ///< List of scheduled planes button.
+	WID_SV_CATCHMENT,          ///< Toggle catchment area highlight.
 };
 
 /** Widgets of the #CompanyStationsWindow class. */

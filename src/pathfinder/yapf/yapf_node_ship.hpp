@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -14,7 +12,19 @@
 
 /** Yapf Node for ships */
 template <class Tkey_>
-struct CYapfShipNodeT : CYapfNodeT<Tkey_, CYapfShipNodeT<Tkey_> > { };
+struct CYapfShipNodeT : CYapfNodeT<Tkey_, CYapfShipNodeT<Tkey_> > {
+	typedef CYapfNodeT<Tkey_, CYapfShipNodeT<Tkey_> > base;
+
+	TileIndex m_segment_last_tile;
+	Trackdir  m_segment_last_td;
+
+	void Set(CYapfShipNodeT *parent, TileIndex tile, Trackdir td, bool is_choice)
+	{
+		base::Set(parent, tile, td, is_choice);
+		m_segment_last_tile = tile;
+		m_segment_last_td   = td;
+	}
+};
 
 /* now define two major node types (that differ by key type) */
 typedef CYapfShipNodeT<CYapfNodeKeyExitDir>  CYapfShipNodeExitDir;

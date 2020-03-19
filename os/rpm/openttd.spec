@@ -17,9 +17,9 @@
 #
 
 Name:           openttd
-Version:        1.9
+Version:        1.10.beta2
 Release:        0
-%define srcver  1.9.0
+%define srcver  1.10.0-beta2
 Summary:        An open source reimplementation of Chris Sawyer's Transport Tycoon Deluxe
 License:        GPL-2.0
 Group:          Amusements/Games/Strategy/Other
@@ -61,7 +61,7 @@ BuildRequires:  kernel
 BuildRequires:  pkg-config
 %endif
 
-# bulding openttd.grf is not required as it is a) part of source and
+# building openttd.grf is not required as it is a) part of source and
 # b) required only, if you want to use the original set
 %if 0%{?with_grfcodec}
 BuildRequires:  grfcodec
@@ -81,7 +81,7 @@ the original data from the game or install the recommend subackages OpenGFX for
 free graphics, OpenSFX for free sounds and OpenMSX for free music.
 
 OpenTTD is licensed under the GNU General Public License version 2.0. For more
-information, see the file 'COPYING' included with every release and source
+information, see the file 'COPYING.md' included with every release and source
 download of the game.
 
 %package gui
@@ -91,7 +91,7 @@ Group:          Amusements/Games/Strategy/Other
 Requires:       %{name}
 Conflicts:      %{name}-dedicated
 
-BuildRequires:  SDL-devel
+BuildRequires:  SDL2-devel
 BuildRequires:  fontconfig-devel
 
 %if 0%{?rhel_version} != 600

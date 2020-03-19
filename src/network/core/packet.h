@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,8 +15,6 @@
 #include "config.h"
 #include "core.h"
 #include "../../string_type.h"
-
-#ifdef ENABLE_NETWORK
 
 typedef uint16 PacketSize; ///< Size of the whole packet.
 typedef uint8  PacketType; ///< Identifier for the packet
@@ -86,7 +82,5 @@ public:
 	uint64 Recv_uint64();
 	void   Recv_string(char *buffer, size_t size, StringValidationSettings settings = SVS_REPLACE_WITH_QUESTION_MARK);
 };
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_PACKET_H */

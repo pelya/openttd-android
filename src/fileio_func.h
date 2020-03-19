@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -30,7 +28,7 @@ void FioSkipBytes(int n);
 /**
  * The search paths OpenTTD could search through.
  * At least one of the slots has to be filled with a path.
- * NULL paths tell that there is no such path for the
+ * nullptr paths tell that there is no such path for the
  * current operating system.
  */
 extern const char *_searchpaths[NUM_SEARCHPATHS];
@@ -42,14 +40,14 @@ extern const char *_searchpaths[NUM_SEARCHPATHS];
  */
 static inline bool IsValidSearchPath(Searchpath sp)
 {
-	return sp < NUM_SEARCHPATHS && _searchpaths[sp] != NULL;
+	return sp < NUM_SEARCHPATHS && _searchpaths[sp] != nullptr;
 }
 
 /** Iterator for all the search paths */
 #define FOR_ALL_SEARCHPATHS(sp) for (sp = SP_FIRST_DIR; sp < NUM_SEARCHPATHS; sp++) if (IsValidSearchPath(sp))
 
 void FioFCloseFile(FILE *f);
-FILE *FioFOpenFile(const char *filename, const char *mode, Subdirectory subdir, size_t *filesize = NULL);
+FILE *FioFOpenFile(const char *filename, const char *mode, Subdirectory subdir, size_t *filesize = nullptr);
 bool FioCheckFileExists(const char *filename, Subdirectory subdir);
 char *FioGetFullPath(char *buf, const char *last, Searchpath sp, Subdirectory subdir, const char *filename);
 char *FioFindFullPath(char *buf, const char *last, Subdirectory subdir, const char *filename);
@@ -64,8 +62,6 @@ bool AppendPathSeparator(char *buf, const char *last);
 void DeterminePaths(const char *exe);
 void *ReadFileToMem(const char *filename, size_t *lenp, size_t maxsize);
 bool FileExists(const char *filename);
-const char *FioTarFirstDir(const char *tarname, Subdirectory subdir);
-void FioTarAddLink(const char *src, const char *dest, Subdirectory subdir);
 bool ExtractTar(const char *tar_filename, Subdirectory subdir);
 
 extern const char *_personal_dir; ///< custom directory for personal settings, saves, newgrf, etc.
@@ -107,7 +103,7 @@ public:
 		ALL      = BASESET | NEWGRF | AI | SCENARIO | GAME, ///< Scan for everything.
 	};
 
-	/* virtual */ bool AddFile(const char *filename, size_t basepath_length, const char *tar_filename = NULL);
+	bool AddFile(const char *filename, size_t basepath_length, const char *tar_filename = nullptr) override;
 
 	bool AddFile(Subdirectory sd, const char *filename);
 

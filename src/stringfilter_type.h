@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -39,7 +37,7 @@ private:
 	};
 
 	const char *filter_buffer;                     ///< Parsed filter string. Words separated by 0.
-	SmallVector<WordState, 4> word_index;          ///< Word index and filter state.
+	std::vector<WordState> word_index;             ///< Word index and filter state.
 	uint word_matches;                             ///< Summary of filter state: Number of words matched.
 
 	const bool *case_sensitive;                    ///< Match case-sensitively (usually a static variable).
@@ -47,9 +45,9 @@ private:
 public:
 	/**
 	 * Constructor for filter.
-	 * @param case_sensitive Pointer to a (usually static) variable controlling the case-sensitivity. NULL means always case-insensitive.
+	 * @param case_sensitive Pointer to a (usually static) variable controlling the case-sensitivity. nullptr means always case-insensitive.
 	 */
-	StringFilter(const bool *case_sensitive = NULL) : filter_buffer(NULL), word_matches(0), case_sensitive(case_sensitive) {}
+	StringFilter(const bool *case_sensitive = nullptr) : filter_buffer(nullptr), word_matches(0), case_sensitive(case_sensitive) {}
 	~StringFilter() { free(this->filter_buffer); }
 
 	void SetFilterTerm(const char *str);
@@ -58,7 +56,7 @@ public:
 	 * Check whether any filter words were entered.
 	 * @return true if no words were entered.
 	 */
-	bool IsEmpty() const { return this->word_index.Length() == 0; }
+	bool IsEmpty() const { return this->word_index.size() == 0; }
 
 	void ResetState();
 	void AddLine(const char *str);
@@ -68,7 +66,7 @@ public:
 	 * Get the matching state of the current item.
 	 * @return true if matched.
 	 */
-	bool GetState() const { return this->word_matches == this->word_index.Length(); }
+	bool GetState() const { return this->word_matches == this->word_index.size(); }
 };
 
 #endif /* STRINGFILTER_TYPE_H */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -53,9 +51,8 @@
 static int _rename_id = 1;
 static int _rename_what = -1;
 
-void CcGiveMoney(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+void CcGiveMoney(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
-#ifdef ENABLE_NETWORK
 	if (result.Failed() || !_settings_game.economy.give_money) return;
 
 	/* Inform the company of the action of one of its clients (controllers). */
@@ -68,25 +65,22 @@ void CcGiveMoney(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2
 	} else {
 		NetworkServerSendChat(NETWORK_ACTION_GIVE_MONEY, DESTTYPE_TEAM, p2, msg, CLIENT_ID_SERVER, p1);
 	}
-#endif /* ENABLE_NETWORK */
 }
 
 void HandleOnEditText(const char *str)
 {
 	switch (_rename_what) {
-#ifdef ENABLE_NETWORK
-	case 3: { // Give money, you can only give money in excess of loan
-		const Company *c = Company::GetIfValid(_local_company);
-		if (c == NULL) break;
-		Money money = min(c->money - c->current_loan, (Money)(atoi(str) / _currency->rate));
+		case 3: { // Give money, you can only give money in excess of loan
+			const Company *c = Company::GetIfValid(_local_company);
+			if (c == nullptr) break;
+			Money money = min(c->money - c->current_loan, (Money)(atoi(str) / _currency->rate));
 
-		uint32 money_c = Clamp(ClampToI32(money), 0, 20000000); // Clamp between 20 million and 0
+			uint32 money_c = Clamp(ClampToI32(money), 0, 20000000); // Clamp between 20 million and 0
 
-		/* Give 'id' the money, and subtract it from ourself */
-		DoCommandP(0, money_c, _rename_id, CMD_GIVE_MONEY | CMD_MSG(STR_ERROR_INSUFFICIENT_FUNDS), CcGiveMoney, str);
-		break;
-	}
-#endif /* ENABLE_NETWORK */
+			/* Give 'id' the money, and subtract it from ourself */
+			DoCommandP(0, money_c, _rename_id, CMD_GIVE_MONEY | CMD_MSG(STR_ERROR_INSUFFICIENT_FUNDS), CcGiveMoney, str);
+			break;
+		}
 		default: NOT_REACHED();
 	}
 
@@ -121,19 +115,17 @@ bool HandlePlacePushButton(Window *w, int widget, CursorID cursor, HighLightStyl
 }
 
 
-void CcPlaySound_EXPLOSION(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2)
+void CcPlaySound_EXPLOSION(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_12_EXPLOSION, tile);
 }
 
-#ifdef ENABLE_NETWORK
 void ShowNetworkGiveMoneyWindow(CompanyID company)
 {
 	_rename_id = company;
 	_rename_what = 3;
-	ShowQueryString(STR_EMPTY, STR_NETWORK_GIVE_MONEY_CAPTION, 30, NULL, CS_NUMERAL, QSF_NONE);
+	ShowQueryString(STR_EMPTY, STR_NETWORK_GIVE_MONEY_CAPTION, 30, nullptr, CS_NUMERAL, QSF_NONE);
 }
-#endif /* ENABLE_NETWORK */
 
 
 /**
@@ -147,7 +139,7 @@ bool DoZoomInOutWindow(ZoomStateChange how, Window *w)
 {
 	ViewPort *vp;
 
-	assert(w != NULL);
+	assert(w != nullptr);
 	vp = w->viewport;
 
 	switch (how) {
@@ -181,7 +173,7 @@ bool DoZoomInOutWindow(ZoomStateChange how, Window *w)
 			w->viewport->follow_vehicle = INVALID_VEHICLE;
 			break;
 	}
-	if (vp != NULL) { // the vp can be null when how == ZOOM_NONE
+	if (vp != nullptr) { // the vp can be null when how == ZOOM_NONE
 		vp->virtual_left = w->viewport->scrollpos_x;
 		vp->virtual_top = w->viewport->scrollpos_y;
 	}
@@ -192,7 +184,7 @@ bool DoZoomInOutWindow(ZoomStateChange how, Window *w)
 
 void ZoomInOrOutToCursorWindow(bool in, Window *w)
 {
-	assert(w != NULL);
+	assert(w != nullptr);
 
 	if (_game_mode != GM_MENU) {
 		ViewPort *vp = w->viewport;
@@ -205,6 +197,16 @@ void ZoomInOrOutToCursorWindow(bool in, Window *w)
 			DoZoomInOutWindow(in ? ZOOM_IN : ZOOM_OUT, w);
 		}
 	}
+}
+
+void FixTitleGameZoom()
+{
+	if (_game_mode != GM_MENU) return;
+
+	ViewPort *vp = FindWindowByClass(WC_MAIN_WINDOW)->viewport;
+	vp->zoom = _gui_zoom;
+	vp->virtual_width = ScaleByZoom(vp->width, vp->zoom);
+	vp->virtual_height = ScaleByZoom(vp->height, vp->zoom);
 }
 
 static const struct NWidgetPart _nested_main_window_widgets[] = {
@@ -258,7 +260,7 @@ struct MainWindow : Window
 		this->refresh.SetInterval(LINKGRAPH_DELAY);
 	}
 
-	virtual void OnRealtimeTick(uint delta_ms)
+	void OnRealtimeTick(uint delta_ms) override
 	{
 		if (!this->refresh.Elapsed(delta_ms)) return;
 
@@ -273,7 +275,7 @@ struct MainWindow : Window
 		this->GetWidget<NWidgetBase>(WID_M_VIEWPORT)->SetDirty(this);
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->DrawWidgets();
 		if (_game_mode == GM_MENU) {
@@ -293,7 +295,7 @@ struct MainWindow : Window
 		}
 	}
 
-	virtual EventState OnHotkey(int hotkey)
+	EventState OnHotkey(int hotkey) override
 	{
 		if (hotkey == GHK_QUIT) {
 			HandleExitGameRequest();
@@ -399,11 +401,10 @@ struct MainWindow : Window
 				ResetRestoreAllTransparency();
 				break;
 
-#ifdef ENABLE_NETWORK
 			case GHK_CHAT: // smart chat; send to team if any, otherwise to all
 				if (_networking) {
 					const NetworkClientInfo *cio = NetworkClientInfo::GetByClientID(_network_own_client_id);
-					if (cio == NULL) break;
+					if (cio == nullptr) break;
 
 					ShowNetworkChatQueryWindow(NetworkClientPreferTeamChat(cio) ? DESTTYPE_TEAM : DESTTYPE_BROADCAST, cio->client_playas);
 				}
@@ -416,7 +417,7 @@ struct MainWindow : Window
 			case GHK_CHAT_COMPANY: // send text to all team mates
 				if (_networking) {
 					const NetworkClientInfo *cio = NetworkClientInfo::GetByClientID(_network_own_client_id);
-					if (cio == NULL) break;
+					if (cio == nullptr) break;
 
 					ShowNetworkChatQueryWindow(DESTTYPE_TEAM, cio->client_playas);
 				}
@@ -427,14 +428,13 @@ struct MainWindow : Window
 					ShowNetworkChatQueryWindow(DESTTYPE_CLIENT, CLIENT_ID_SERVER);
 				}
 				break;
-#endif
 
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
 	}
 
-	virtual void OnScroll(Point delta)
+	void OnScroll(Point delta) override
 	{
 		this->viewport->scrollpos_x += ScaleByZoom(delta.x, this->viewport->zoom);
 		this->viewport->scrollpos_y += ScaleByZoom(delta.y, this->viewport->zoom);
@@ -443,16 +443,16 @@ struct MainWindow : Window
 		this->refresh.SetInterval(LINKGRAPH_DELAY);
 	}
 
-	virtual void OnMouseWheel(int wheel)
+	void OnMouseWheel(int wheel) override
 	{
 		if (_settings_client.gui.scrollwheel_scrolling != 2) {
 			ZoomInOrOutToCursorWindow(wheel < 0, this);
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
-		if (this->viewport != NULL) {
+		if (this->viewport != nullptr) {
 			NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(WID_M_VIEWPORT);
 			nvp->UpdateViewportCoordinates(this);
 			this->refresh.SetInterval(LINKGRAPH_DELAY);
@@ -464,7 +464,7 @@ struct MainWindow : Window
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 		/* Forward the message to the appropriate toolbar (ingame or scenario editor) */
@@ -519,18 +519,16 @@ static Hotkey global_hotkeys[] = {
 	Hotkey('8' | WKC_CTRL | WKC_SHIFT, "invisibility_catenary", GHK_TOGGLE_INVISIBILITY + 7),
 	Hotkey('X' | WKC_CTRL, "transparency_toolbar", GHK_TRANSPARENCY_TOOLBAR),
 	Hotkey('X', "toggle_transparency", GHK_TRANSPARANCY),
-#ifdef ENABLE_NETWORK
 	Hotkey(_ghk_chat_keys, "chat", GHK_CHAT),
 	Hotkey(_ghk_chat_all_keys, "chat_all", GHK_CHAT_ALL),
 	Hotkey(_ghk_chat_company_keys, "chat_company", GHK_CHAT_COMPANY),
 	Hotkey(_ghk_chat_server_keys, "chat_server", GHK_CHAT_SERVER),
-#endif
 	HOTKEY_LIST_END
 };
 HotkeyList MainWindow::hotkeys("global", global_hotkeys);
 
 static WindowDesc _main_window_desc(
-	WDP_MANUAL, NULL, 0, 0,
+	WDP_MANUAL, nullptr, 0, 0,
 	WC_MAIN_WINDOW, WC_NONE,
 	0,
 	_nested_main_window_widgets, lengthof(_nested_main_window_widgets),

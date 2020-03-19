@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -741,7 +739,7 @@ static const PalSpriteID * const * const _bridge_sprite_table[MAX_BRIDGES] = {
  * @param nrd description of the road bridge in query tool
  */
 #define MBR(y, mnl, mxl, p, mxs, spr, plt, dsc, nrl, nrd) \
-	{y, mnl, mxl, p, mxs, spr, plt, dsc, { nrl, nrd }, NULL, 0}
+	{y, mnl, mxl, p, mxs, spr, plt, dsc, { nrl, nrd }, nullptr, 0}
 
 const BridgeSpec _orig_bridge[] = {
 /*

@@ -10,8 +10,6 @@
 ##grflangid 0x0f
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -472,9 +470,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Toglu Consol
 STR_ABOUT_MENU_AI_DEBUG                                         :Dadnamu AI / Sgript Gêm
 STR_ABOUT_MENU_SCREENSHOT                                       :Ciplun
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Ciplun lefel mwyhád uchaf
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Ciplun pellter rhagosodedig
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Ciplun o'r map cyfan
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :Gwybodaeth am 'OpenTTD'
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Aliniwr corluniau
 STR_ABOUT_MENU_TOGGLE_BOUNDING_BOXES                            :Toglo bocsys ffinio
@@ -644,9 +639,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Cyfaddas 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Lefel Sain Cerddoriaeth
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Lefel Sain Effeithiau
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}ISAF
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}UCHAF
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -674,6 +666,7 @@ STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTB
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}Indecs Traciau
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}Rhaglen - '{STRING}'
 STR_PLAYLIST_CLEAR                                              :{TINY_FONT}{BLACK}Clirio
+STR_PLAYLIST_CHANGE_SET                                         :{BLACK}Newid set
 STR_PLAYLIST_TOOLTIP_CLEAR_CURRENT_PROGRAM_CUSTOM1              :{BLACK}Clirio'r rhaglen gyfredol (Cyfaddas 1 neu Cyfaddas 2)
 STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}Cliciwch i ychwanegu trac cerddoriaeth i'r rhaglen gyfredol (Cyfaddas 1 Neu Cyfaddas 2 yn unig)
 STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}Cliciwch i dynnu trac cerddoriaeth o'r rhaglen gyfredol (Cyfaddas 1 Neu Cyfaddas 2 yn unig)
@@ -858,6 +851,7 @@ STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLAC
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Mae {STRING} newydd yn awr ar gael!  -  {ENGINE}
 
+
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}Nid yw {STATION} bellach yn derbyn {STRING}
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}Nid yw {STATION} bellach yn derbyn {STRING} na {STRING}
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO                              :{WHITE}Mae {STATION} nawr yn derbyn {STRING}
@@ -922,6 +916,8 @@ STR_GAME_OPTIONS_CURRENCY_ZAR                                   :Rand De Affrica
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Addasedig...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari Georgia (GEL)
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial Iran (IRR)
+STR_GAME_OPTIONS_CURRENCY_RUB                                   :Rwbl Rwsaidd Newydd (RUB)
+STR_GAME_OPTIONS_CURRENCY_CNY                                   :Renminbi Tseina (CNY)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Cerbydau Ffordd
@@ -1686,7 +1682,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Dosrani
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Cystadleuwyr
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Chwaraewyr Cyfrifiadurol
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Gwreiddiol
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Argymellir)
 
@@ -1770,13 +1765,9 @@ STR_QUIT_NO                                                     :{BLACK}Na
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -1805,6 +1796,7 @@ STR_CHEAT_CHANGE_DATE_QUERY_CAPT                                :{WHITE}Newid y 
 STR_CHEAT_SETUP_PROD                                            :{LTBLUE}Galluogi newid graddfeydd cynhyrchu: {ORANGE}{STRING}
 
 # Livery window
+STR_LIVERY_CAPTION                                              :{WHITE}{COMPANY} - Cynllun Lliw
 
 STR_LIVERY_GENERAL_TOOLTIP                                      :{BLACK}Dangos cynllun lliw cyffredinol
 STR_LIVERY_TRAIN_TOOLTIP                                        :{BLACK}Dangos cynllun lliw trenau
@@ -2404,6 +2396,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Adeiladu
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}toglu adeiladu/clirio ar gyfer adeiladu ffyrdd
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Toglu adeiladu/dileu ar gyfer adeiladu tramffordd
 
+
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Cyfeiriad Depo Ffordd
 STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Dewiswch gyfeiriad depo cerbyd ffordd
@@ -2688,9 +2681,14 @@ STR_ABOUT_VERSION                                               :{BLACK}fersiwn 
 STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 Y tîm OpenTTD
 
 # Framerate display window
+STR_FRAMERATE_RATE_BLITTER_TOOLTIP                              :{BLACK}Nifer o fframiau fideo a lunir bob eiliad.
+STR_FRAMERATE_SPEED_FACTOR_TOOLTIP                              :{BLACK}Pa mor gyflym mae'r gêm yn rhedeg, o gymharu a'r cyflymder i'w ddisgwyl ar gyfradd efelychu arferol.
+STR_FRAMERATE_FPS_GOOD                                          :{LTBLUE}{DECIMAL} frâm yr eiliad
 ############ Leave those lines in this order!!
+STR_FRAMERATE_GL_ECONOMY                                        :{BLACK}  Trin cargo:
 ############ End of leave-in-this-order
 ############ Leave those lines in this order!!
+STR_FRAMETIME_CAPTION_VIDEO                                     :Allbwn fideo
 ############ End of leave-in-this-order
 
 
@@ -2945,6 +2943,7 @@ STR_NEWGRF_BUGGY                                                :{WHITE}Mae NewG
 STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}Mae'r wybodaeth llwyth/ailffitio ar gyfer '{1:ENGINE}' yn wahanol i'r rhestr brynu wedi'r adeiladu. Gall hyn beri i awtoadnewyddu/-ddisodli fethu ag ailfitio'n gywir
 STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}'{1:STRING}' wedi creu lŵp diddiwedd yn y system adalw cynhyrchu
 STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}Dychwelodd adalwad {1:HEX} ganlyniad anhysbys/annilys {2:HEX}
+STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}'{1:STRING}' wedi dychwelyd math cargo annilys yn yr adalwad cynhyrchu yn {2:HEX}
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
 STR_NEWGRF_INVALID_CARGO                                        :<llwyth annilys>
@@ -3264,8 +3263,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Tanadeil
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Darnau rheilffordd:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Signalau
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Darnau ffordd:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Ffordd
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tramffordd
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Teiliau dŵr:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Camlesi
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Gorsafoedd:
@@ -3276,8 +3273,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Diwydiannau
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Dim -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} ({COMMA}% wedi'i gludo)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} ({COMMA}%/{COMMA}% wedi'i gludo)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Enwau diwydiannau - cliciwch ar enw i ganoli'r sgrin ar ddiwydiant. Mae Ctrl+Clic yn agor ffenest golwg newydd ar leoliad y diwydiant
 
@@ -3342,6 +3337,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Cerbydau ffordd
 STR_GROUP_DEFAULT_SHIPS                                         :Llongau heb eu grwpio
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Awyrenau heb eu grwpio
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Grŵp - cliciwch ar grŵp i restru pob cerbyd yn y grŵp hwn. Gallwch glico a llusgo grwpiau i drefnu'r hierarchaeth.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Cliciwch i greu grŵp
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Dileu'r grŵp a ddewiswyd
@@ -3367,10 +3363,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Cerbydau Rheilf
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Cerbydau Monoreilffordd Newydd
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Cerbydau Maglef Newydd
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Cerbydau Rheilffordd Newydd
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Cerbydau Ffordd Newydd
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Cerbydau Rheilffordd Newydd
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Llongau Newydd
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Awyrennau Newydd
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Cost: {GOLD}{CURRENCY_LONG}{BLACK} Pwysau: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Cyflymder: {GOLD}{VELOCITY}{BLACK} Pŵer: {GOLD}{POWER}
@@ -3404,10 +3403,14 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Prynu Ce
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Prynu Llong
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Prynu Awyren
 
+STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_REFIT_VEHICLE_BUTTON           :{BLACK}Prynu ac Ailffitio Cerbyd
+STR_BUY_VEHICLE_SHIP_BUY_REFIT_VEHICLE_BUTTON                   :{BLACK}Prynu ac Ailffitio Llong
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Adeiladu'r cerbyd trên sydd wedi'i amlygu. Mae Shift+Clic yn dangos amcangyfrif o'r gost
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}Adeiladu'r cerbyd ffordd sydd wedi'i amlygu. Mae Shift+Clic yn dangos amcangyfrif o'r gost
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Adeiladu'r llong sydd wedi'i hamlygu. Mae Shift+Clic yn dfangos amcangyfrif o'r gost
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Adeiladu'r awyren sydd wedi'i hamlygu. Mae Shift+Clic yn dangos amcangyfrif o'r gost
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Ailenwi
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}Ailenwi
@@ -3517,12 +3520,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Rydych 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Neges gan wneuthurwr cerbydau
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Rydyn ni newydd gynllunio {STRING} newydd - a fyddai gennych chi ddiddordeb mewn cael defnydd cyfyngol o'r cerbyd hwn am flwyddyn er mwyn i ni gael profi ei berfformiad cyn y bydd ar gael i bawb?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :trên
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :cerbyd ffordd
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :awyren
-STR_ENGINE_PREVIEW_SHIP                                         :llong
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :trên monoreilffordd
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :trên maglef
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :cerbyd ffordd
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :awyren
+STR_ENGINE_PREVIEW_SHIP                                         :llong
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Côst: {CURRENCY_LONG} Pwysau: {WEIGHT_SHORT}{}Cyflymder: {VELOCITY}  Pŵer: {POWER}{}Côst Rhedeg: {CURRENCY_LONG}/bl{}Gallu cludo: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Cost: {CURRENCY_LONG} Pwysau: {WEIGHT_SHORT}{}Cyflymder: {VELOCITY}  Pŵer: {POWER}  Grym Uchaf: {6:FORCE}{}Cost Rhedeg: {4:CURRENCY_LONG}/bl{}Cynhwysedd: {5:CARGO_LONG}
@@ -3568,6 +3574,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Cerbydau Rheilf
 STR_REPLACE_ELRAIL_VEHICLES                                     :Cerbydau Rheilffordd Drydan
 STR_REPLACE_MONORAIL_VEHICLES                                   :Cerbydau Monoreilffordd
 STR_REPLACE_MAGLEV_VEHICLES                                     :Cerbydau Maglef
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Tynnu wagenni: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Gwneud i awtoddisodli gadw hyd y trên yr un peth drwy dynnu wagenni (gan ddechrau yn y blaen), os byddai newid yr injan yn gwneud y trên yn hirach
@@ -3788,6 +3795,7 @@ STR_ORDER_CONDITIONAL_AGE                                       :Oed (blynyddoed
 STR_ORDER_CONDITIONAL_REQUIRES_SERVICE                          :Angen gwasanaeth
 STR_ORDER_CONDITIONAL_UNCONDITIONALLY                           :Bob tro
 STR_ORDER_CONDITIONAL_REMAINING_LIFETIME                        :Oes yn weddill (blynyddoedd)
+STR_ORDER_CONDITIONAL_MAX_RELIABILITY                           :Dibynadwyedd uchafsymol
 
 STR_ORDER_CONDITIONAL_COMPARATOR_TOOLTIP                        :{BLACK}Sut i gymharu'r data cerbyd i'r gwerth a roddwyd
 STR_ORDER_CONDITIONAL_COMPARATOR_EQUALS                         :yn hafal i
@@ -4017,6 +4025,7 @@ STR_AI_LIST_ACCEPT                                              :{BLACK}Derbyn
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Dewis y sgript a amlygwyd
 STR_AI_LIST_CANCEL                                              :{BLACK}Canslo
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Peidio newid y sgript
+
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Paramedrau
@@ -4289,7 +4298,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Rhaid ty
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Dim trac rheilffordd addas
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Rhaid tynnu'r trac rheilffordd yn gyntaf
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Mae'r ffordd yn ffordd un-ffordd, neu wedi'i blocio
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Ni chaniateir croesfannau ar y cledrau yma
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Ni chaniateir croesfannau ar y cledrau yma
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Methu adeiladu signalau yma...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Methu adeiladu trac rheilffordd yma...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Methu tynnu trac rheilffordd oddi yma...
@@ -4309,6 +4318,7 @@ STR_ERROR_CAN_T_REMOVE_ROAD_FROM                                :{WHITE}Methu cl
 STR_ERROR_CAN_T_REMOVE_TRAMWAY_FROM                             :{WHITE}Methu dileu tramffordd oddi yma...
 STR_ERROR_THERE_IS_NO_ROAD                                      :{WHITE}... nid oes ffordd yno
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :{WHITE}... nid oes tramffordd yno
+STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Dim lôn addas
 
 # Waterway construction errors
 STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}Methu adeiladu camlesi yma...
@@ -4471,6 +4481,8 @@ STR_BASESOUNDS_DOS_DESCRIPTION                                  :Effeithiau sain
 STR_BASESOUNDS_WIN_DESCRIPTION                                  :Effeithiau sain gwreiddiol fersiwn Windows o Transport Tycoon Deluxe.
 STR_BASESOUNDS_NONE_DESCRIPTION                                 :Pecyn sain heb unrhyw effeithiau sain ynddo.
 STR_BASEMUSIC_WIN_DESCRIPTION                                   :Cerddoriaeth gwreiddiol fersion Windows o Transport Tycoon Deluxe.
+STR_BASEMUSIC_DOS_DESCRIPTION                                   :Cerddoriaeth gwreiddiol fersiwn DOS o Transport Tycoon Deluxe.
+STR_BASEMUSIC_TTO_DESCRIPTION                                   :Cerddoriaeth gwreiddiol fersion DOS o Transport Tycoon Deluxe (Gwreiddiol/Golygydd Byd).
 STR_BASEMUSIC_NONE_DESCRIPTION                                  :Pecyn cerddoriaeth heb unrhyw gerddoriaeth ynddo.
 
 ##id 0x2000

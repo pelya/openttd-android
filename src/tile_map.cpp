@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -34,7 +32,7 @@ static Slope GetTileSlopeGivenHeight(int hnorth, int hwest, int heast, int hsout
 	int hmines = min(heast, hsouth);
 	int hmin = min(hminnw, hmines);
 
-	if (h != NULL) *h = hmin;
+	if (h != nullptr) *h = hmin;
 
 	int hmaxnw = max(hnorth, hwest);
 	int hmaxes = max(heast, hsouth);
@@ -55,7 +53,7 @@ static Slope GetTileSlopeGivenHeight(int hnorth, int hwest, int heast, int hsout
 /**
  * Return the slope of a given tile inside the map.
  * @param tile Tile to compute slope of
- * @param h    If not \c NULL, pointer to storage of z height
+ * @param h    If not \c nullptr, pointer to storage of z height
  * @return Slope of the tile, except for the HALFTILE part
  */
 Slope GetTileSlope(TileIndex tile, int *h)
@@ -76,9 +74,9 @@ Slope GetTileSlope(TileIndex tile, int *h)
 /**
  * Return the slope of a given tile, also for tiles outside the map (virtual "black" tiles).
  *
- * @param x X coordinate of the tile to compute slope of, may be ouside the map.
- * @param y Y coordinate of the tile to compute slope of, may be ouside the map.
- * @param h If not \c NULL, pointer to storage of z height.
+ * @param x X coordinate of the tile to compute slope of, may be outside the map.
+ * @param y Y coordinate of the tile to compute slope of, may be outside the map.
+ * @param h If not \c nullptr, pointer to storage of z height.
  * @return Slope of the tile, except for the HALFTILE part.
  */
 Slope GetTilePixelSlopeOutsideMap(int x, int y, int *h)
@@ -89,14 +87,14 @@ Slope GetTilePixelSlopeOutsideMap(int x, int y, int *h)
 	int hsouth = TileHeightOutsideMap(x + 1, y + 1); // S corner.
 
 	Slope s = GetTileSlopeGivenHeight(hnorth, hwest, heast, hsouth, h);
-	if (h != NULL) *h *= TILE_HEIGHT;
+	if (h != nullptr) *h *= TILE_HEIGHT;
 	return s;
 }
 
 /**
  * Check if a given tile is flat
  * @param tile Tile to check
- * @param h If not \c NULL, pointer to storage of z height (only if tile is flat)
+ * @param h If not \c nullptr, pointer to storage of z height (only if tile is flat)
  * @return Whether the tile is flat
  */
 bool IsTileFlat(TileIndex tile, int *h)
@@ -111,7 +109,7 @@ bool IsTileFlat(TileIndex tile, int *h)
 	if (TileHeight(TileXY(x1, y2)) != z) return false;
 	if (TileHeight(TileXY(x2, y2)) != z) return false;
 
-	if (h != NULL) *h = z;
+	if (h != nullptr) *h = z;
 	return true;
 }
 

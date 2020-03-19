@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -37,7 +35,7 @@ struct QueryString {
 	 * @param size Maximum size in bytes.
 	 * @param chars Maximum size in chars.
 	 */
-	QueryString(uint16 size, uint16 chars = UINT16_MAX) : ok_button(ACTION_NOTHING), cancel_button(ACTION_DESELECT), text(size, chars), orig(NULL)
+	QueryString(uint16 size, uint16 chars = UINT16_MAX) : ok_button(ACTION_NOTHING), cancel_button(ACTION_DESELECT), text(size, chars), orig(nullptr)
 	{
 	}
 
@@ -79,11 +77,11 @@ public:
 	/**
 	 * Get the currently marked text.
 	 * @param[out] length Length of the marked text.
-	 * @return Begining of the marked area or NULL if no text is marked.
+	 * @return Beginning of the marked area or nullptr if no text is marked.
 	 */
 	const char *GetMarkedText(size_t *length) const
 	{
-		if (this->text.markend == 0) return NULL;
+		if (this->text.markend == 0) return nullptr;
 
 		*length = this->text.markend - this->text.markpos;
 		return this->text.buf + this->text.markpos;

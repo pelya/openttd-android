@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -28,18 +26,19 @@ static const WChar STATE_QUOTE2 = '"';
  */
 void StringFilter::SetFilterTerm(const char *str)
 {
-	this->word_index.Reset();
+	this->word_index.clear();
+	this->word_index.shrink_to_fit();
 	this->word_matches = 0;
 	free(this->filter_buffer);
 
-	assert(str != NULL);
+	assert(str != nullptr);
 
 	char *dest = MallocT<char>(strlen(str) + 1);
 	this->filter_buffer = dest;
 
 	WChar state = STATE_WHITESPACE;
 	const char *pos = str;
-	WordState *word = NULL;
+	WordState *word = nullptr;
 	size_t len;
 	for (;; pos += len) {
 		WChar c;
@@ -47,9 +46,9 @@ void StringFilter::SetFilterTerm(const char *str)
 
 		if (c == 0 || (state == STATE_WORD && IsWhitespace(c))) {
 			/* Finish word */
-			if (word != NULL) {
+			if (word != nullptr) {
 				*(dest++) = '\0';
-				word = NULL;
+				word = nullptr;
 			}
 			state = STATE_WHITESPACE;
 			if (c != 0) continue; else break;
@@ -74,10 +73,9 @@ void StringFilter::SetFilterTerm(const char *str)
 		}
 
 		/* Add to word */
-		if (word == NULL) {
-			word = this->word_index.Append();
-			word->start = dest;
-			word->match = false;
+		if (word == nullptr) {
+			/*C++17: word = &*/ this->word_index.push_back({dest, false});
+			word = &this->word_index.back();
 		}
 
 		memcpy(dest, pos, len);
@@ -91,9 +89,8 @@ void StringFilter::SetFilterTerm(const char *str)
 void StringFilter::ResetState()
 {
 	this->word_matches = 0;
-	const WordState *end = this->word_index.End();
-	for (WordState *it = this->word_index.Begin(); it != end; ++it) {
-		it->match = false;
+	for (WordState &ws : this->word_index) {
+		ws.match = false;
 	}
 }
 
@@ -107,14 +104,13 @@ void StringFilter::ResetState()
  */
 void StringFilter::AddLine(const char *str)
 {
-	if (str == NULL) return;
+	if (str == nullptr) return;
 
-	bool match_case = this->case_sensitive != NULL && *this->case_sensitive;
-	const WordState *end = this->word_index.End();
-	for (WordState *it = this->word_index.Begin(); it != end; ++it) {
-		if (!it->match) {
-			if ((match_case ? strstr(str, it->start) : strcasestr(str, it->start)) != NULL) {
-				it->match = true;
+	bool match_case = this->case_sensitive != nullptr && *this->case_sensitive;
+	for (WordState &ws : this->word_index) {
+		if (!ws.match) {
+			if ((match_case ? strstr(str, ws.start) : strcasestr(str, ws.start)) != nullptr) {
+				ws.match = true;
 				this->word_matches++;
 			}
 		}

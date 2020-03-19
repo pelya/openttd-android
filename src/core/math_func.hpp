@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -115,7 +113,7 @@ template <typename T>
 static inline T *AlignPtr(T *x, uint n)
 {
 	assert_compile(sizeof(size_t) == sizeof(void *));
-	return (T *)Align((size_t)x, n);
+	return reinterpret_cast<T *>(Align((size_t)x, n));
 }
 
 /**
@@ -202,7 +200,7 @@ static inline uint ClampU(const uint a, const uint min, const uint max)
  */
 static inline int32 ClampToI32(const int64 a)
 {
-	return (int32)Clamp<int64>(a, INT32_MIN, INT32_MAX);
+	return static_cast<int32>(Clamp<int64>(a, INT32_MIN, INT32_MAX));
 }
 
 /**
@@ -218,7 +216,7 @@ static inline uint16 ClampToU16(const uint64 a)
 	 * match for min(uint64, uint) than uint64 min(uint64, uint64). As such we
 	 * need to cast the UINT16_MAX to prevent MSVC from displaying its
 	 * infinite loads of warnings. */
-	return (uint16)min<uint64>(a, (uint64)UINT16_MAX);
+	return static_cast<uint16>(min<uint64>(a, static_cast<uint64>(UINT16_MAX)));
 }
 
 /**
@@ -247,9 +245,9 @@ static inline T Delta(const T a, const T b)
  * @return True if the value is in the interval, false else.
  */
 template <typename T>
-static inline bool IsInsideBS(const T x, const uint base, const uint size)
+static inline bool IsInsideBS(const T x, const size_t base, const size_t size)
 {
-	return (uint)(x - base) < size;
+	return (size_t)(x - base) < size;
 }
 
 /**
@@ -263,9 +261,9 @@ static inline bool IsInsideBS(const T x, const uint base, const uint size)
  * @see IsInsideBS()
  */
 template <typename T>
-static inline bool IsInsideMM(const T x, const uint min, const uint max)
+static inline bool IsInsideMM(const T x, const size_t min, const size_t max)
 {
-	return (uint)(x - min) < (max - min);
+	return (size_t)(x - min) < (max - min);
 }
 
 /**
@@ -339,10 +337,10 @@ static inline int RoundDivSU(int a, uint b)
 {
 	if (a > 0) {
 		/* 0.5 is rounded to 1 */
-		return (a + (int)b / 2) / (int)b;
+		return (a + static_cast<int>(b) / 2) / static_cast<int>(b);
 	} else {
 		/* -0.5 is rounded to 0 */
-		return (a - ((int)b - 1) / 2) / (int)b;
+		return (a - (static_cast<int>(b) - 1) / 2) / static_cast<int>(b);
 	}
 }
 

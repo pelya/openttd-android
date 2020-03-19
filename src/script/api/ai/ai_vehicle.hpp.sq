@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -122,6 +120,8 @@ void SQAIVehicle_Register(Squirrel *engine)
 	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::IsInDepot,                      "IsInDepot",                      2, ".i");
 	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::IsStoppedInDepot,               "IsStoppedInDepot",               2, ".i");
 	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::BuildVehicle,                   "BuildVehicle",                   3, ".ii");
+	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::BuildVehicleWithRefit,          "BuildVehicleWithRefit",          4, ".iii");
+	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::GetBuildWithRefitCapacity,      "GetBuildWithRefitCapacity",      4, ".iii");
 	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::CloneVehicle,                   "CloneVehicle",                   4, ".iib");
 	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::MoveWagon,                      "MoveWagon",                      5, ".iiii");
 	SQAIVehicle.DefSQStaticMethod(engine, &ScriptVehicle::MoveWagonChain,                 "MoveWagonChain",                 5, ".iiii");

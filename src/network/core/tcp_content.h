@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -18,8 +16,6 @@
 #include "tcp.h"
 #include "packet.h"
 #include "../../debug.h"
-
-#ifdef ENABLE_NETWORK
 
 /** The values in the enum are important; they are used as database 'keys' */
 enum ContentType {
@@ -100,7 +96,7 @@ struct ContentInfo {
 class NetworkContentSocketHandler : public NetworkTCPSocketHandler {
 protected:
 	NetworkAddress client_addr; ///< The address we're connected to.
-	virtual void Close();
+	void Close() override;
 
 	bool ReceiveInvalidPacket(PacketContentType type);
 
@@ -212,7 +208,5 @@ public:
 #ifndef OPENTTD_MSU
 Subdirectory GetContentInfoSubDir(ContentType type);
 #endif /* OPENTTD_MSU */
-
-#endif /* ENABLE_NETWORK */
 
 #endif /* NETWORK_CORE_TCP_CONTENT_H */

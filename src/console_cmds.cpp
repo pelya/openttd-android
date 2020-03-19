@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -35,10 +33,12 @@
 #include "ai/ai.hpp"
 #include "ai/ai_config.hpp"
 #include "newgrf.h"
+#include "newgrf_profiling.h"
 #include "console_func.h"
 #include "engine_base.h"
 #include "game/game.hpp"
 #include "table/strings.h"
+#include <time.h>
 
 #include "safeguards.h"
 
@@ -85,8 +85,6 @@ static ConsoleFileList _console_file_list; ///< File storage cache for the conso
 /****************
  * command hooks
  ****************/
-
-#ifdef ENABLE_NETWORK
 
 /**
  * Check network availability and inform in console about failure of detection.
@@ -159,10 +157,6 @@ DEF_CONSOLE_HOOK(ConHookNoNetwork)
 	return CHR_ALLOW;
 }
 
-#else
-#	define ConHookNoNetwork NULL
-#endif /* ENABLE_NETWORK */
-
 DEF_CONSOLE_HOOK(ConHookNewGRFDeveloperTool)
 {
 	if (_settings_client.gui.newgrf_developer_tools) {
@@ -170,11 +164,7 @@ DEF_CONSOLE_HOOK(ConHookNewGRFDeveloperTool)
 			if (echo) IConsoleError("This command is only available in game and editor.");
 			return CHR_DISALLOW;
 		}
-#ifdef ENABLE_NETWORK
 		return ConHookNoNetwork(echo);
-#else
-		return CHR_ALLOW;
-#endif
 	}
 	return CHR_HIDE;
 }
@@ -258,7 +248,7 @@ DEF_CONSOLE_CMD(ConResetTile)
  * Scroll to a tile on the map.
  * param x tile number or tile x coordinate.
  * param y optional y coordinate.
- * @note When only one argument is given it is intepreted as the tile number.
+ * @note When only one argument is given it is interpreted as the tile number.
  *       When two arguments are given, they are interpreted as the tile's x
  *       and y coordinates.
  * @return True when either console help was shown or a proper amount of parameters given.
@@ -359,7 +349,7 @@ DEF_CONSOLE_CMD(ConLoad)
 	const char *file = argv[1];
 	_console_file_list.ValidateFileList();
 	const FiosItem *item = _console_file_list.FindItem(file);
-	if (item != NULL) {
+	if (item != nullptr) {
 		if (GetAbstractFileType(item->type) == FT_SAVEGAME) {
 			_switch_mode = SM_LOAD_GAME;
 			_file_to_saveload.SetMode(item->type);
@@ -388,7 +378,7 @@ DEF_CONSOLE_CMD(ConRemove)
 	const char *file = argv[1];
 	_console_file_list.ValidateFileList();
 	const FiosItem *item = _console_file_list.FindItem(file);
-	if (item != NULL) {
+	if (item != nullptr) {
 		if (!FiosDelete(item->name)) {
 			IConsolePrintF(CC_ERROR, "%s: Failed to delete file", file);
 		}
@@ -444,7 +434,7 @@ DEF_CONSOLE_CMD(ConChangeDirectory)
 	const char *file = argv[1];
 	_console_file_list.ValidateFileList(true);
 	const FiosItem *item = _console_file_list.FindItem(file);
-	if (item != NULL) {
+	if (item != nullptr) {
 		switch (item->type) {
 			case FIOS_TYPE_DIR: case FIOS_TYPE_DRIVE: case FIOS_TYPE_PARENT:
 				FiosBrowseTo(item);
@@ -472,7 +462,7 @@ DEF_CONSOLE_CMD(ConPrintWorkingDirectory)
 	_console_file_list.ValidateFileList(true);
 	_console_file_list.InvalidateFileList();
 
-	FiosGetDescText(&path, NULL);
+	FiosGetDescText(&path, nullptr);
 	IConsolePrint(CC_DEFAULT, path);
 	return true;
 }
@@ -493,13 +483,12 @@ DEF_CONSOLE_CMD(ConClearBuffer)
 /**********************************
  * Network Core Console Commands
  **********************************/
-#ifdef ENABLE_NETWORK
 
-static bool ConKickOrBan(const char *argv, bool ban)
+static bool ConKickOrBan(const char *argv, bool ban, const char *reason)
 {
 	uint n;
 
-	if (strchr(argv, '.') == NULL && strchr(argv, ':') == NULL) { // banning with ID
+	if (strchr(argv, '.') == nullptr && strchr(argv, ':') == nullptr) { // banning with ID
 		ClientID client_id = (ClientID)atoi(argv);
 
 		/* Don't kill the server, or the client doing the rcon. The latter can't be kicked because
@@ -512,21 +501,21 @@ static bool ConKickOrBan(const char *argv, bool ban)
 		}
 
 		NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(client_id);
-		if (ci == NULL) {
+		if (ci == nullptr) {
 			IConsoleError("Invalid client");
 			return true;
 		}
 
 		if (!ban) {
 			/* Kick only this client, not all clients with that IP */
-			NetworkServerKickClient(client_id);
+			NetworkServerKickClient(client_id, reason);
 			return true;
 		}
 
 		/* When banning, kick+ban all clients with that IP */
-		n = NetworkServerKickOrBanIP(client_id, ban);
+		n = NetworkServerKickOrBanIP(client_id, ban, reason);
 	} else {
-		n = NetworkServerKickOrBanIP(argv, ban);
+		n = NetworkServerKickOrBanIP(argv, ban, reason);
 	}
 
 	if (n == 0) {
@@ -541,28 +530,48 @@ static bool ConKickOrBan(const char *argv, bool ban)
 DEF_CONSOLE_CMD(ConKick)
 {
 	if (argc == 0) {
-		IConsoleHelp("Kick a client from a network game. Usage: 'kick <ip | client-id>'");
+		IConsoleHelp("Kick a client from a network game. Usage: 'kick <ip | client-id> [<kick-reason>]'");
 		IConsoleHelp("For client-id's, see the command 'clients'");
 		return true;
 	}
 
-	if (argc != 2) return false;
+	if (argc != 2 && argc != 3) return false;
 
-	return ConKickOrBan(argv[1], false);
+	/* No reason supplied for kicking */
+	if (argc == 2) return ConKickOrBan(argv[1], false, nullptr);
+
+	/* Reason for kicking supplied */
+	size_t kick_message_length = strlen(argv[2]);
+	if (kick_message_length >= 255) {
+		IConsolePrintF(CC_ERROR, "ERROR: Maximum kick message length is 254 characters. You entered %d characters.", kick_message_length);
+		return false;
+	} else {
+		return ConKickOrBan(argv[1], false, argv[2]);
+	}
 }
 
 DEF_CONSOLE_CMD(ConBan)
 {
 	if (argc == 0) {
-		IConsoleHelp("Ban a client from a network game. Usage: 'ban <ip | client-id>'");
+		IConsoleHelp("Ban a client from a network game. Usage: 'ban <ip | client-id> [<ban-reason>]'");
 		IConsoleHelp("For client-id's, see the command 'clients'");
 		IConsoleHelp("If the client is no longer online, you can still ban his/her IP");
 		return true;
 	}
 
-	if (argc != 2) return false;
+	if (argc != 2 && argc != 3) return false;
 
-	return ConKickOrBan(argv[1], true);
+	/* No reason supplied for kicking */
+	if (argc == 2) return ConKickOrBan(argv[1], true, nullptr);
+
+	/* Reason for kicking supplied */
+	size_t kick_message_length = strlen(argv[2]);
+	if (kick_message_length >= 255) {
+		IConsolePrintF(CC_ERROR, "ERROR: Maximum kick message length is 254 characters. You entered %d characters.", kick_message_length);
+		return false;
+	} else {
+		return ConKickOrBan(argv[1], true, argv[2]);
+	}
 }
 
 DEF_CONSOLE_CMD(ConUnBan)
@@ -577,21 +586,20 @@ DEF_CONSOLE_CMD(ConUnBan)
 
 	/* Try by IP. */
 	uint index;
-	for (index = 0; index < _network_ban_list.Length(); index++) {
-		if (strcmp(_network_ban_list[index], argv[1]) == 0) break;
+	for (index = 0; index < _network_ban_list.size(); index++) {
+		if (_network_ban_list[index] == argv[1]) break;
 	}
 
 	/* Try by index. */
-	if (index >= _network_ban_list.Length()) {
+	if (index >= _network_ban_list.size()) {
 		index = atoi(argv[1]) - 1U; // let it wrap
 	}
 
-	if (index < _network_ban_list.Length()) {
+	if (index < _network_ban_list.size()) {
 		char msg[64];
-		seprintf(msg, lastof(msg), "Unbanned %s", _network_ban_list[index]);
+		seprintf(msg, lastof(msg), "Unbanned %s", _network_ban_list[index].c_str());
 		IConsolePrint(CC_DEFAULT, msg);
-		free(_network_ban_list[index]);
-		_network_ban_list.Erase(_network_ban_list.Get(index));
+		_network_ban_list.erase(_network_ban_list.begin() + index);
 	} else {
 		IConsolePrint(CC_DEFAULT, "Invalid list index or IP not in ban-list.");
 		IConsolePrint(CC_DEFAULT, "For a list of banned IP's, see the command 'banlist'");
@@ -610,8 +618,8 @@ DEF_CONSOLE_CMD(ConBanList)
 	IConsolePrint(CC_DEFAULT, "Banlist: ");
 
 	uint i = 1;
-	for (char **iter = _network_ban_list.Begin(); iter != _network_ban_list.End(); iter++, i++) {
-		IConsolePrintF(CC_DEFAULT, "  %d) %s", i, *iter);
+	for (const auto &entry : _network_ban_list) {
+		IConsolePrintF(CC_DEFAULT, "  %d) %s", i, entry.c_str());
 	}
 
 	return true;
@@ -714,7 +722,7 @@ DEF_CONSOLE_CMD(ConClientNickChange)
 		return true;
 	}
 
-	if (NetworkClientInfo::GetByClientID(client_id) == NULL) {
+	if (NetworkClientInfo::GetByClientID(client_id) == nullptr) {
 		IConsoleError("Invalid client");
 		return true;
 	}
@@ -785,7 +793,7 @@ DEF_CONSOLE_CMD(ConMoveClient)
 	CompanyID company_id = (CompanyID)(atoi(argv[2]) <= MAX_COMPANIES ? atoi(argv[2]) - 1 : atoi(argv[2]));
 
 	/* check the client exists */
-	if (ci == NULL) {
+	if (ci == nullptr) {
 		IConsoleError("Invalid client-id, check the command 'clients' for valid client-id's.");
 		return true;
 	}
@@ -850,7 +858,7 @@ DEF_CONSOLE_CMD(ConResetCompany)
 	}
 
 	/* It is safe to remove this company */
-	DoCommandP(0, CCA_DELETE | index << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_DELETE | index << 16 | CRR_MANUAL << 24, 0, CMD_COMPANY_CTRL);
 	IConsolePrint(CC_DEFAULT, "Company deleted.");
 
 	return true;
@@ -884,8 +892,7 @@ DEF_CONSOLE_CMD(ConNetworkReconnect)
 		default:
 			/* From a user pov 0 is a new company, internally it's different and all
 			 * companies are offset by one to ease up on users (eg companies 1-8 not 0-7) */
-			playas--;
-			if (playas < COMPANY_FIRST || playas >= MAX_COMPANIES) return false;
+			if (playas < COMPANY_FIRST + 1 || playas > MAX_COMPANIES + 1) return false;
 			break;
 	}
 
@@ -913,8 +920,8 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 	if (argc < 2) return false;
 	if (_networking) NetworkDisconnect(); // we are in network-mode, first close it!
 
-	const char *port = NULL;
-	const char *company = NULL;
+	const char *port = nullptr;
+	const char *company = nullptr;
 	char *ip = argv[1];
 	/* Default settings: default port and new company */
 	uint16 rport = NETWORK_DEFAULT_PORT;
@@ -923,7 +930,7 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 	ParseConnectionString(&company, &port, ip);
 
 	IConsolePrintF(CC_DEFAULT, "Connecting to %s...", ip);
-	if (company != NULL) {
+	if (company != nullptr) {
 		join_as = (CompanyID)atoi(company);
 		IConsolePrintF(CC_DEFAULT, "    company-no: %d", join_as);
 
@@ -934,7 +941,7 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 			join_as--;
 		}
 	}
-	if (port != NULL) {
+	if (port != nullptr) {
 		rport = atoi(port);
 		IConsolePrintF(CC_DEFAULT, "    port: %s", port);
 	}
@@ -943,8 +950,6 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 
 	return true;
 }
-
-#endif /* ENABLE_NETWORK */
 
 /*********************************
  *  script file console commands
@@ -961,7 +966,7 @@ DEF_CONSOLE_CMD(ConExec)
 
 	FILE *script_file = FioFOpenFile(argv[1], "r", BASE_DIR);
 
-	if (script_file == NULL) {
+	if (script_file == nullptr) {
 		if (argc == 2 || atoi(argv[2]) != 0) IConsoleError("script file not found");
 		return true;
 	}
@@ -969,7 +974,7 @@ DEF_CONSOLE_CMD(ConExec)
 	_script_running = true;
 
 	char cmdline[ICON_CMDLN_SIZE];
-	while (_script_running && fgets(cmdline, sizeof(cmdline), script_file) != NULL) {
+	while (_script_running && fgets(cmdline, sizeof(cmdline), script_file) != nullptr) {
 		/* Remove newline characters from the executing script */
 		for (char *cmdptr = cmdline; *cmdptr != '\0'; cmdptr++) {
 			if (*cmdptr == '\n' || *cmdptr == '\r') {
@@ -1020,7 +1025,7 @@ DEF_CONSOLE_CMD(ConScript)
 
 		IConsolePrintF(CC_DEFAULT, "file output started to: %s", argv[1]);
 		_iconsole_output_file = fopen(argv[1], "ab");
-		if (_iconsole_output_file == NULL) IConsoleError("could not open file");
+		if (_iconsole_output_file == nullptr) IConsoleError("could not open file");
 	}
 
 	return true;
@@ -1059,7 +1064,7 @@ DEF_CONSOLE_CMD(ConNewGame)
 		return true;
 	}
 
-	StartNewGameWithoutGUI((argc == 2) ? strtoul(argv[1], NULL, 10) : GENERATE_NEW_SEED);
+	StartNewGameWithoutGUI((argc == 2) ? strtoul(argv[1], nullptr, 10) : GENERATE_NEW_SEED);
 	return true;
 }
 
@@ -1172,9 +1177,8 @@ DEF_CONSOLE_CMD(ConStartAI)
 	}
 
 	int n = 0;
-	Company *c;
 	/* Find the next free slot */
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		if (c->index != n) break;
 		n++;
 	}
@@ -1227,7 +1231,7 @@ DEF_CONSOLE_CMD(ConReloadAI)
 	}
 
 	/* First kill the company of the AI, then start a new one. This should start the current AI again */
-	DoCommandP(0, CCA_DELETE | company_id << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_DELETE | company_id << 16 | CRR_MANUAL << 24, 0,CMD_COMPANY_CTRL);
 	DoCommandP(0, CCA_NEW_AI | company_id << 16, 0, CMD_COMPANY_CTRL);
 	IConsolePrint(CC_DEFAULT, "AI reloaded.");
 
@@ -1264,7 +1268,7 @@ DEF_CONSOLE_CMD(ConStopAI)
 	}
 
 	/* Now kill the company of the AI. */
-	DoCommandP(0, CCA_DELETE | company_id << 16, CRR_MANUAL, CMD_COMPANY_CTRL);
+	DoCommandP(0, CCA_DELETE | company_id << 16 | CRR_MANUAL << 24, 0, CMD_COMPANY_CTRL);
 	IConsolePrint(CC_DEFAULT, "AI stopped, company deleted.");
 
 	return true;
@@ -1311,7 +1315,7 @@ DEF_CONSOLE_CMD(ConRescanNewGRF)
 		return true;
 	}
 
-	ScanNewGRFFiles(NULL);
+	ScanNewGRFFiles(nullptr);
 
 	return true;
 }
@@ -1331,13 +1335,27 @@ DEF_CONSOLE_CMD(ConGetSeed)
 DEF_CONSOLE_CMD(ConGetDate)
 {
 	if (argc == 0) {
-		IConsoleHelp("Returns the current date (day-month-year) of the game. Usage: 'getdate'");
+		IConsoleHelp("Returns the current date (year-month-day) of the game. Usage: 'getdate'");
 		return true;
 	}
 
 	YearMonthDay ymd;
 	ConvertDateToYMD(_date, &ymd);
-	IConsolePrintF(CC_DEFAULT, "Date: %d-%d-%d", ymd.day, ymd.month + 1, ymd.year);
+	IConsolePrintF(CC_DEFAULT, "Date: %04d-%02d-%02d", ymd.year, ymd.month + 1, ymd.day);
+	return true;
+}
+
+DEF_CONSOLE_CMD(ConGetSysDate)
+{
+	if (argc == 0) {
+		IConsoleHelp("Returns the current date (year-month-day) of your system. Usage: 'getsysdate'");
+		return true;
+	}
+
+	time_t t;
+	time(&t);
+	auto timeinfo = localtime(&t);
+	IConsolePrintF(CC_DEFAULT, "System Date: %04d-%02d-%02d %02d:%02d:%02d", timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
 	return true;
 }
 
@@ -1354,7 +1372,7 @@ DEF_CONSOLE_CMD(ConAlias)
 	if (argc < 3) return false;
 
 	alias = IConsoleAliasGet(argv[1]);
-	if (alias == NULL) {
+	if (alias == nullptr) {
 		IConsoleAliasRegister(argv[1], argv[2]);
 	} else {
 		free(alias->cmdline);
@@ -1366,17 +1384,18 @@ DEF_CONSOLE_CMD(ConAlias)
 DEF_CONSOLE_CMD(ConScreenShot)
 {
 	if (argc == 0) {
-		IConsoleHelp("Create a screenshot of the game. Usage: 'screenshot [big | giant | no_con] [file name]'");
+		IConsoleHelp("Create a screenshot of the game. Usage: 'screenshot [big | giant | no_con | minimap] [file name]'");
 		IConsoleHelp("'big' makes a zoomed-in screenshot of the visible area, 'giant' makes a screenshot of the "
 				"whole map, 'no_con' hides the console to create the screenshot. 'big' or 'giant' "
-				"screenshots are always drawn without console");
+				"screenshots are always drawn without console. "
+				"'minimap' makes a top-viewed minimap screenshot of whole world which represents one tile by one pixel.");
 		return true;
 	}
 
 	if (argc > 3) return false;
 
 	ScreenshotType type = SC_VIEWPORT;
-	const char *name = NULL;
+	const char *name = nullptr;
 
 	if (argc > 1) {
 		if (strcmp(argv[1], "big") == 0) {
@@ -1386,6 +1405,10 @@ DEF_CONSOLE_CMD(ConScreenShot)
 		} else if (strcmp(argv[1], "giant") == 0) {
 			/* screenshot giant [filename] */
 			type = SC_WORLD;
+			if (argc > 2) name = argv[2];
+		} else if (strcmp(argv[1], "minimap") == 0) {
+			/* screenshot minimap [filename] */
+			type = SC_MINIMAP;
 			if (argc > 2) name = argv[2];
 		} else if (strcmp(argv[1], "no_con") == 0) {
 			/* screenshot no_con [filename] */
@@ -1414,7 +1437,7 @@ DEF_CONSOLE_CMD(ConInfoCmd)
 	if (argc < 2) return false;
 
 	const IConsoleCmd *cmd = IConsoleCmdGet(argv[1]);
-	if (cmd == NULL) {
+	if (cmd == nullptr) {
 		IConsoleError("the given command was not found");
 		return true;
 	}
@@ -1422,7 +1445,7 @@ DEF_CONSOLE_CMD(ConInfoCmd)
 	IConsolePrintF(CC_DEFAULT, "command name: %s", cmd->name);
 	IConsolePrintF(CC_DEFAULT, "command proc: %p", cmd->proc);
 
-	if (cmd->hook != NULL) IConsoleWarning("command is hooked");
+	if (cmd->hook != nullptr) IConsoleWarning("command is hooked");
 
 	return true;
 }
@@ -1480,16 +1503,16 @@ DEF_CONSOLE_CMD(ConHelp)
 
 		RemoveUnderscores(argv[1]);
 		cmd = IConsoleCmdGet(argv[1]);
-		if (cmd != NULL) {
-			cmd->proc(0, NULL);
+		if (cmd != nullptr) {
+			cmd->proc(0, nullptr);
 			return true;
 		}
 
 		alias = IConsoleAliasGet(argv[1]);
-		if (alias != NULL) {
+		if (alias != nullptr) {
 			cmd = IConsoleCmdGet(alias->cmdline);
-			if (cmd != NULL) {
-				cmd->proc(0, NULL);
+			if (cmd != nullptr) {
+				cmd->proc(0, nullptr);
 				return true;
 			}
 			IConsolePrintF(CC_ERROR, "ERROR: alias is of special type, please see its execution-line: '%s'", alias->cmdline);
@@ -1519,9 +1542,9 @@ DEF_CONSOLE_CMD(ConListCommands)
 		return true;
 	}
 
-	for (const IConsoleCmd *cmd = _iconsole_cmds; cmd != NULL; cmd = cmd->next) {
-		if (argv[1] == NULL || strstr(cmd->name, argv[1]) != NULL) {
-			if (cmd->hook == NULL || cmd->hook(false) != CHR_HIDE) IConsolePrintF(CC_DEFAULT, "%s", cmd->name);
+	for (const IConsoleCmd *cmd = _iconsole_cmds; cmd != nullptr; cmd = cmd->next) {
+		if (argv[1] == nullptr || strstr(cmd->name, argv[1]) != nullptr) {
+			if (cmd->hook == nullptr || cmd->hook(false) != CHR_HIDE) IConsolePrintF(CC_DEFAULT, "%s", cmd->name);
 		}
 	}
 
@@ -1535,8 +1558,8 @@ DEF_CONSOLE_CMD(ConListAliases)
 		return true;
 	}
 
-	for (const IConsoleAlias *alias = _iconsole_aliases; alias != NULL; alias = alias->next) {
-		if (argv[1] == NULL || strstr(alias->name, argv[1]) != NULL) {
+	for (const IConsoleAlias *alias = _iconsole_aliases; alias != nullptr; alias = alias->next) {
+		if (argv[1] == nullptr || strstr(alias->name, argv[1]) != nullptr) {
 			IConsolePrintF(CC_DEFAULT, "%s => %s", alias->name, alias->cmdline);
 		}
 	}
@@ -1551,8 +1574,7 @@ DEF_CONSOLE_CMD(ConCompanies)
 		return true;
 	}
 
-	Company *c;
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		/* Grab the company name */
 		char company_name[512];
 		SetDParam(0, c->index);
@@ -1561,12 +1583,9 @@ DEF_CONSOLE_CMD(ConCompanies)
 		const char *password_state = "";
 		if (c->is_ai) {
 			password_state = "AI";
-		}
-#ifdef ENABLE_NETWORK
-		else if (_network_server) {
+		} else if (_network_server) {
 				password_state = StrEmpty(_network_company_states[c->index].password) ? "unprotected" : "protected";
 		}
-#endif
 
 		char colour[512];
 		GetString(colour, STR_COLOUR_DARK_BLUE + _company_colours[c->index], lastof(colour));
@@ -1582,8 +1601,6 @@ DEF_CONSOLE_CMD(ConCompanies)
 
 	return true;
 }
-
-#ifdef ENABLE_NETWORK
 
 DEF_CONSOLE_CMD(ConSay)
 {
@@ -1750,8 +1767,8 @@ static void OutputContentState(const ContentInfo *const ci)
 
 DEF_CONSOLE_CMD(ConContent)
 {
-	static ContentCallback *cb = NULL;
-	if (cb == NULL) {
+	static ContentCallback *cb = nullptr;
+	if (cb == nullptr) {
 		cb = new ConsoleContentCallback();
 		_network_content_client.AddCallback(cb);
 	}
@@ -1809,7 +1826,7 @@ DEF_CONSOLE_CMD(ConContent)
 	if (strcasecmp(argv[1], "state") == 0) {
 		IConsolePrintF(CC_WHITE, "id, type, state, name");
 		for (ConstContentIterator iter = _network_content_client.Begin(); iter != _network_content_client.End(); iter++) {
-			if (argc > 2 && strcasestr((*iter)->name, argv[2]) == NULL) continue;
+			if (argc > 2 && strcasestr((*iter)->name, argv[2]) == nullptr) continue;
 			OutputContentState(*iter);
 		}
 		return true;
@@ -1826,7 +1843,6 @@ DEF_CONSOLE_CMD(ConContent)
 	return false;
 }
 #endif /* defined(WITH_ZLIB) */
-#endif /* ENABLE_NETWORK */
 
 DEF_CONSOLE_CMD(ConSetting)
 {
@@ -1875,7 +1891,7 @@ DEF_CONSOLE_CMD(ConListSettings)
 
 	if (argc > 2) return false;
 
-	IConsoleListSettings((argc == 2) ? argv[1] : NULL);
+	IConsoleListSettings((argc == 2) ? argv[1] : nullptr);
 	return true;
 }
 
@@ -1894,6 +1910,135 @@ DEF_CONSOLE_CMD(ConNewGRFReload)
 
 	ReloadNewGRFData();
 	return true;
+}
+
+DEF_CONSOLE_CMD(ConNewGRFProfile)
+{
+	if (argc == 0) {
+		IConsoleHelp("Collect performance data about NewGRF sprite requests and callbacks. Sub-commands can be abbreviated.");
+		IConsoleHelp("Usage: newgrf_profile [list]");
+		IConsoleHelp("  List all NewGRFs that can be profiled, and their status.");
+		IConsoleHelp("Usage: newgrf_profile select <grf-num>...");
+		IConsoleHelp("  Select one or more GRFs for profiling.");
+		IConsoleHelp("Usage: newgrf_profile unselect <grf-num>...");
+		IConsoleHelp("  Unselect one or more GRFs from profiling. Use the keyword \"all\" instead of a GRF number to unselect all. Removing an active profiler aborts data collection.");
+		IConsoleHelp("Usage: newgrf_profile start [<num-days>]");
+		IConsoleHelp("  Begin profiling all selected GRFs. If a number of days is provided, profiling stops after that many in-game days.");
+		IConsoleHelp("Usage: newgrf_profile stop");
+		IConsoleHelp("  End profiling and write the collected data to CSV files.");
+		IConsoleHelp("Usage: newgrf_profile abort");
+		IConsoleHelp("  End profiling and discard all collected data.");
+		return true;
+	}
+
+	extern const std::vector<GRFFile *> &GetAllGRFFiles();
+	const std::vector<GRFFile *> &files = GetAllGRFFiles();
+
+	/* "list" sub-command */
+	if (argc == 1 || strncasecmp(argv[1], "lis", 3) == 0) {
+		IConsolePrint(CC_INFO, "Loaded GRF files:");
+		int i = 1;
+		for (GRFFile *grf : files) {
+			auto profiler = std::find_if(_newgrf_profilers.begin(), _newgrf_profilers.end(), [&](NewGRFProfiler &pr) { return pr.grffile == grf; });
+			bool selected = profiler != _newgrf_profilers.end();
+			bool active = selected && profiler->active;
+			TextColour tc = active ? TC_LIGHT_BLUE : selected ? TC_GREEN : CC_INFO;
+			const char *statustext = active ? " (active)" : selected ? " (selected)" : "";
+			IConsolePrintF(tc, "%d: [%08X] %s%s", i, BSWAP32(grf->grfid), grf->filename, statustext);
+			i++;
+		}
+		return true;
+	}
+
+	/* "select" sub-command */
+	if (strncasecmp(argv[1], "sel", 3) == 0 && argc >= 3) {
+		for (size_t argnum = 2; argnum < argc; ++argnum) {
+			int grfnum = atoi(argv[argnum]);
+			if (grfnum < 1 || grfnum > (int)files.size()) { // safe cast, files.size() should not be larger than a few hundred in the most extreme cases
+				IConsolePrintF(CC_WARNING, "GRF number %d out of range, not added.", grfnum);
+				continue;
+			}
+			GRFFile *grf = files[grfnum - 1];
+			if (std::any_of(_newgrf_profilers.begin(), _newgrf_profilers.end(), [&](NewGRFProfiler &pr) { return pr.grffile == grf; })) {
+				IConsolePrintF(CC_WARNING, "GRF number %d [%08X] is already selected for profiling.", grfnum, BSWAP32(grf->grfid));
+				continue;
+			}
+			_newgrf_profilers.emplace_back(grf);
+		}
+		return true;
+	}
+
+	/* "unselect" sub-command */
+	if (strncasecmp(argv[1], "uns", 3) == 0 && argc >= 3) {
+		for (size_t argnum = 2; argnum < argc; ++argnum) {
+			if (strcasecmp(argv[argnum], "all") == 0) {
+				_newgrf_profilers.clear();
+				break;
+			}
+			int grfnum = atoi(argv[argnum]);
+			if (grfnum < 1 || grfnum > (int)files.size()) {
+				IConsolePrintF(CC_WARNING, "GRF number %d out of range, not removing.", grfnum);
+				continue;
+			}
+			GRFFile *grf = files[grfnum - 1];
+			auto pos = std::find_if(_newgrf_profilers.begin(), _newgrf_profilers.end(), [&](NewGRFProfiler &pr) { return pr.grffile == grf; });
+			if (pos != _newgrf_profilers.end()) _newgrf_profilers.erase(pos);
+		}
+		return true;
+	}
+
+	/* "start" sub-command */
+	if (strncasecmp(argv[1], "sta", 3) == 0) {
+		std::string grfids;
+		size_t started = 0;
+		for (NewGRFProfiler &pr : _newgrf_profilers) {
+			if (!pr.active) {
+				pr.Start();
+				started++;
+
+				if (!grfids.empty()) grfids += ", ";
+				char grfidstr[12]{ 0 };
+				seprintf(grfidstr, lastof(grfidstr), "[%08X]", BSWAP32(pr.grffile->grfid));
+				grfids += grfidstr;
+			}
+		}
+		if (started > 0) {
+			IConsolePrintF(CC_DEBUG, "Started profiling for GRFID%s %s", (started > 1) ? "s" : "", grfids.c_str());
+			if (argc >= 3) {
+				int days = max(atoi(argv[2]), 1);
+				_newgrf_profile_end_date = _date + days;
+
+				char datestrbuf[32]{ 0 };
+				SetDParam(0, _newgrf_profile_end_date);
+				GetString(datestrbuf, STR_JUST_DATE_ISO, lastof(datestrbuf));
+				IConsolePrintF(CC_DEBUG, "Profiling will automatically stop on game date %s", datestrbuf);
+			} else {
+				_newgrf_profile_end_date = MAX_DAY;
+			}
+		} else if (_newgrf_profilers.empty()) {
+			IConsolePrintF(CC_WARNING, "No GRFs selected for profiling, did not start.");
+		} else {
+			IConsolePrintF(CC_WARNING, "Did not start profiling for any GRFs, all selected GRFs are already profiling.");
+		}
+		return true;
+	}
+
+	/* "stop" sub-command */
+	if (strncasecmp(argv[1], "sto", 3) == 0) {
+		NewGRFProfiler::FinishAll();
+		return true;
+	}
+
+	/* "abort" sub-command */
+	if (strncasecmp(argv[1], "abo", 3) == 0) {
+		for (NewGRFProfiler &pr : _newgrf_profilers) {
+			pr.Abort();
+		}
+		_newgrf_profile_end_date = MAX_DAY;
+		return true;
+	}
+
+	return false;
 }
 
 #ifdef _DEBUG
@@ -1960,6 +2105,7 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("restart",      ConRestart);
 	IConsoleCmdRegister("getseed",      ConGetSeed);
 	IConsoleCmdRegister("getdate",      ConGetDate);
+	IConsoleCmdRegister("getsysdate",   ConGetSysDate);
 	IConsoleCmdRegister("quit",         ConExit);
 	IConsoleCmdRegister("resetengines", ConResetEngines, ConHookNoNetwork);
 	IConsoleCmdRegister("reset_enginepool", ConResetEnginePool, ConHookNoNetwork);
@@ -2008,7 +2154,7 @@ void IConsoleStdLibRegister()
 	IConsoleAliasRegister("players",       "companies");
 
 	/* networking functions */
-#ifdef ENABLE_NETWORK
+
 /* Content downloading is only available with ZLIB */
 #if defined(WITH_ZLIB)
 	IConsoleCmdRegister("content",         ConContent);
@@ -2066,7 +2212,6 @@ void IConsoleStdLibRegister()
 	IConsoleAliasRegister("restart_game_year",     "setting restart_game_year %+");
 	IConsoleAliasRegister("min_players",           "setting min_active_clients %+");
 	IConsoleAliasRegister("reload_cfg",            "setting reload_cfg %+");
-#endif /* ENABLE_NETWORK */
 
 	/* debugging stuff */
 #ifdef _DEBUG
@@ -2077,4 +2222,5 @@ void IConsoleStdLibRegister()
 
 	/* NewGRF development stuff */
 	IConsoleCmdRegister("reload_newgrfs",  ConNewGRFReload, ConHookNewGRFDeveloperTool);
+	IConsoleCmdRegister("newgrf_profile",  ConNewGRFProfile, ConHookNewGRFDeveloperTool);
 }

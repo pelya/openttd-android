@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -21,5 +19,5 @@ namespace SQConvert {
 	template <> inline ScriptGame &GetParam(ForceType<ScriptGame &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptGame *)instance; }
 	template <> inline const ScriptGame *GetParam(ForceType<const ScriptGame *>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return  (ScriptGame *)instance; }
 	template <> inline const ScriptGame &GetParam(ForceType<const ScriptGame &>, HSQUIRRELVM vm, int index, SQAutoFreePointers *ptr) { SQUserPointer instance; sq_getinstanceup(vm, index, &instance, 0); return *(ScriptGame *)instance; }
-	template <> inline int Return<ScriptGame *>(HSQUIRRELVM vm, ScriptGame *res) { if (res == NULL) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "Game", res, NULL, DefSQDestructorCallback<ScriptGame>, true); return 1; }
+	template <> inline int Return<ScriptGame *>(HSQUIRRELVM vm, ScriptGame *res) { if (res == nullptr) { sq_pushnull(vm); return 1; } res->AddRef(); Squirrel::CreateClassInstanceVM(vm, "Game", res, nullptr, DefSQDestructorCallback<ScriptGame>, true); return 1; }
 } // namespace SQConvert

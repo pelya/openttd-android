@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -10,8 +8,6 @@
 /** @file network.cpp Base functions for networking support. */
 
 #include "../stdafx.h"
-
-#ifdef ENABLE_NETWORK
 
 #include "../strings_func.h"
 #include "../command_func.h"
@@ -59,7 +55,7 @@ bool _network_available;  ///< is network mode available?
 bool _network_dedicated;  ///< are we a dedicated server?
 bool _is_network_server;  ///< Does this client wants to be a network-server?
 NetworkServerGameInfo _network_game_info; ///< Information about our game.
-NetworkCompanyState *_network_company_states = NULL; ///< Statistics about some companies.
+NetworkCompanyState *_network_company_states = nullptr; ///< Statistics about some companies.
 ClientID _network_own_client_id;      ///< Our client identifier.
 ClientID _redirect_console_to_client; ///< If not invalid, redirect the console output to a client.
 bool _network_need_advertise;         ///< Whether we need to advertise.
@@ -103,10 +99,7 @@ extern void StateGameLoop();
  */
 bool HasClients()
 {
-	NetworkClientSocket *cs;
-	FOR_ALL_CLIENT_SOCKETS(cs) return true;
-
-	return false;
+	return !NetworkClientSocket::Iterate().empty();
 }
 
 /**
@@ -121,41 +114,36 @@ NetworkClientInfo::~NetworkClientInfo()
 /**
  * Return the CI given it's client-identifier
  * @param client_id the ClientID to search for
- * @return return a pointer to the corresponding NetworkClientInfo struct or NULL when not found
+ * @return return a pointer to the corresponding NetworkClientInfo struct or nullptr when not found
  */
 /* static */ NetworkClientInfo *NetworkClientInfo::GetByClientID(ClientID client_id)
 {
-	NetworkClientInfo *ci;
-
-	FOR_ALL_CLIENT_INFOS(ci) {
+	for (NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (ci->client_id == client_id) return ci;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
  * Return the client state given it's client-identifier
  * @param client_id the ClientID to search for
- * @return return a pointer to the corresponding NetworkClientSocket struct or NULL when not found
+ * @return return a pointer to the corresponding NetworkClientSocket struct or nullptr when not found
  */
 /* static */ ServerNetworkGameSocketHandler *ServerNetworkGameSocketHandler::GetByClientID(ClientID client_id)
 {
-	NetworkClientSocket *cs;
-
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		if (cs->client_id == client_id) return cs;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 byte NetworkSpectatorCount()
 {
-	const NetworkClientInfo *ci;
 	byte count = 0;
 
-	FOR_ALL_CLIENT_INFOS(ci) {
+	for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (ci->client_playas == COMPANY_SPECTATOR) count++;
 	}
 
@@ -260,6 +248,7 @@ void NetworkTextMessage(NetworkAction action, TextColour colour, bool self_send,
 		case NETWORK_ACTION_GIVE_MONEY:     strid = self_send ? STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY : STR_NETWORK_MESSAGE_GIVE_MONEY;   break;
 		case NETWORK_ACTION_CHAT_COMPANY:   strid = self_send ? STR_NETWORK_CHAT_TO_COMPANY : STR_NETWORK_CHAT_COMPANY; break;
 		case NETWORK_ACTION_CHAT_CLIENT:    strid = self_send ? STR_NETWORK_CHAT_TO_CLIENT  : STR_NETWORK_CHAT_CLIENT;  break;
+		case NETWORK_ACTION_KICKED:         strid = STR_NETWORK_MESSAGE_KICKED; break;
 		default:                            strid = STR_NETWORK_CHAT_ALL; break;
 	}
 
@@ -380,7 +369,7 @@ void NetworkHandlePauseChange(PauseMode prev_mode, PauseMode changed_mode)
 
 			char buffer[DRAW_STRING_BUFFER];
 			GetString(buffer, str, lastof(buffer));
-			NetworkTextMessage(NETWORK_ACTION_SERVER_MESSAGE, CC_DEFAULT, false, NULL, buffer);
+			NetworkTextMessage(NETWORK_ACTION_SERVER_MESSAGE, CC_DEFAULT, false, nullptr, buffer);
 			break;
 		}
 
@@ -412,10 +401,9 @@ static void CheckPauseHelper(bool pause, PauseMode pm)
  */
 static uint NetworkCountActiveClients()
 {
-	const NetworkClientSocket *cs;
 	uint count = 0;
 
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (const NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		if (cs->status != NetworkClientSocket::STATUS_ACTIVE) continue;
 		if (!Company::IsValidID(cs->GetInfo()->client_playas)) continue;
 		count++;
@@ -443,8 +431,7 @@ static void CheckMinActiveClients()
  */
 static bool NetworkHasJoiningClient()
 {
-	const NetworkClientSocket *cs;
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (const NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		if (cs->status >= NetworkClientSocket::STATUS_AUTHORIZED && cs->status < NetworkClientSocket::STATUS_ACTIVE) return true;
 	}
 
@@ -531,19 +518,17 @@ void NetworkClose(bool close_admins)
 {
 	if (_network_server) {
 		if (close_admins) {
-			ServerNetworkAdminSocketHandler *as;
-			FOR_ALL_ADMIN_SOCKETS(as) {
+			for (ServerNetworkAdminSocketHandler *as : ServerNetworkAdminSocketHandler::Iterate()) {
 				as->CloseConnection(true);
 			}
 		}
 
-		NetworkClientSocket *cs;
-		FOR_ALL_CLIENT_SOCKETS(cs) {
+		for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 			cs->CloseConnection(NETWORK_RECV_STATUS_CONN_LOST);
 		}
 		ServerNetworkGameSocketHandler::CloseListeners();
 		ServerNetworkAdminSocketHandler::CloseListeners();
-	} else if (MyClient::my_client != NULL) {
+	} else if (MyClient::my_client != nullptr) {
 		MyClient::SendQuit();
 		MyClient::my_client->CloseConnection(NETWORK_RECV_STATUS_CONN_LOST);
 	}
@@ -556,7 +541,7 @@ void NetworkClose(bool close_admins)
 	NetworkFreeLocalCommandQueue();
 
 	free(_network_company_states);
-	_network_company_states = NULL;
+	_network_company_states = nullptr;
 
 	InitializeNetworkPools(close_admins);
 }
@@ -578,12 +563,12 @@ class TCPQueryConnecter : TCPConnecter {
 public:
 	TCPQueryConnecter(const NetworkAddress &address) : TCPConnecter(address) {}
 
-	virtual void OnFailure()
+	void OnFailure() override
 	{
 		NetworkDisconnect();
 	}
 
-	virtual void OnConnect(SOCKET s)
+	void OnConnect(SOCKET s) override
 	{
 		_networking = true;
 		new ClientNetworkGameSocketHandler(s);
@@ -610,8 +595,8 @@ void NetworkTCPQueryServer(NetworkAddress address)
 void NetworkAddServer(const char *b)
 {
 	if (*b != '\0') {
-		const char *port = NULL;
-		const char *company = NULL;
+		const char *port = nullptr;
+		const char *company = nullptr;
 		char host[NETWORK_HOSTNAME_LENGTH];
 		uint16 rport;
 
@@ -621,7 +606,7 @@ void NetworkAddServer(const char *b)
 		rport = NETWORK_DEFAULT_PORT;
 
 		ParseConnectionString(&company, &port, host);
-		if (port != NULL) rport = atoi(port);
+		if (port != nullptr) rport = atoi(port);
 
 		NetworkUDPQueryServer(NetworkAddress(host, rport), true);
 	}
@@ -634,13 +619,13 @@ void NetworkAddServer(const char *b)
  */
 void GetBindAddresses(NetworkAddressList *addresses, uint16 port)
 {
-	for (char **iter = _network_bind_list.Begin(); iter != _network_bind_list.End(); iter++) {
-		*addresses->Append() = NetworkAddress(*iter, port);
+	for (const auto &iter : _network_bind_list) {
+		addresses->emplace_back(iter.c_str(), port);
 	}
 
 	/* No address, so bind to everything. */
-	if (addresses->Length() == 0) {
-		*addresses->Append() = NetworkAddress("", port);
+	if (addresses->size() == 0) {
+		addresses->emplace_back("", port);
 	}
 }
 
@@ -649,10 +634,10 @@ void GetBindAddresses(NetworkAddressList *addresses, uint16 port)
  * by the function that generates the config file. */
 void NetworkRebuildHostList()
 {
-	_network_host_list.Clear();
+	_network_host_list.clear();
 
-	for (NetworkGameList *item = _network_game_list; item != NULL; item = item->next) {
-		if (item->manually) *_network_host_list.Append() = stredup(item->address.GetAddressAsString(false));
+	for (NetworkGameList *item = _network_game_list; item != nullptr; item = item->next) {
+		if (item->manually) _network_host_list.emplace_back(item->address.GetAddressAsString(false));
 	}
 }
 
@@ -661,12 +646,12 @@ class TCPClientConnecter : TCPConnecter {
 public:
 	TCPClientConnecter(const NetworkAddress &address) : TCPConnecter(address) {}
 
-	virtual void OnFailure()
+	void OnFailure() override
 	{
 		NetworkError(STR_NETWORK_ERROR_NOCONNECTION);
 	}
 
-	virtual void OnConnect(SOCKET s)
+	void OnConnect(SOCKET s) override
 	{
 		_networking = true;
 		new ClientNetworkGameSocketHandler(s);
@@ -772,14 +757,12 @@ bool NetworkServerStart()
 void NetworkReboot()
 {
 	if (_network_server) {
-		NetworkClientSocket *cs;
-		FOR_ALL_CLIENT_SOCKETS(cs) {
+		for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 			cs->SendNewGame();
 			cs->SendPackets();
 		}
 
-		ServerNetworkAdminSocketHandler *as;
-		FOR_ALL_ACTIVE_ADMIN_SOCKETS(as) {
+		for (ServerNetworkAdminSocketHandler *as : ServerNetworkAdminSocketHandler::IterateActive()) {
 			as->SendNewGame();
 			as->SendPackets();
 		}
@@ -798,15 +781,13 @@ void NetworkReboot()
 void NetworkDisconnect(bool blocking, bool close_admins)
 {
 	if (_network_server) {
-		NetworkClientSocket *cs;
-		FOR_ALL_CLIENT_SOCKETS(cs) {
+		for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 			cs->SendShutdown();
 			cs->SendPackets();
 		}
 
 		if (close_admins) {
-			ServerNetworkAdminSocketHandler *as;
-			FOR_ALL_ACTIVE_ADMIN_SOCKETS(as) {
+			for (ServerNetworkAdminSocketHandler *as : ServerNetworkAdminSocketHandler::IterateActive()) {
 				as->SendShutdown();
 				as->SendPackets();
 			}
@@ -886,21 +867,21 @@ void NetworkGameLoop()
 		static FILE *f = FioFOpenFile("commands.log", "rb", SAVE_DIR);
 		static Date next_date = 0;
 		static uint32 next_date_fract;
-		static CommandPacket *cp = NULL;
+		static CommandPacket *cp = nullptr;
 		static bool check_sync_state = false;
 		static uint32 sync_state[2];
-		if (f == NULL && next_date == 0) {
+		if (f == nullptr && next_date == 0) {
 			DEBUG(net, 0, "Cannot open commands.log");
 			next_date = 1;
 		}
 
-		while (f != NULL && !feof(f)) {
+		while (f != nullptr && !feof(f)) {
 			if (_date == next_date && _date_fract == next_date_fract) {
-				if (cp != NULL) {
-					NetworkSendCommand(cp->tile, cp->p1, cp->p2, cp->cmd & ~CMD_FLAGS_MASK, NULL, cp->text, cp->company);
+				if (cp != nullptr) {
+					NetworkSendCommand(cp->tile, cp->p1, cp->p2, cp->cmd & ~CMD_FLAGS_MASK, nullptr, cp->text, cp->company);
 					DEBUG(net, 0, "injecting: %08x; %02x; %02x; %06x; %08x; %08x; %08x; \"%s\" (%s)", _date, _date_fract, (int)_current_company, cp->tile, cp->p1, cp->p2, cp->cmd, cp->text, GetCommandName(cp->cmd));
 					free(cp);
-					cp = NULL;
+					cp = nullptr;
 				}
 				if (check_sync_state) {
 					if (sync_state[0] == _random.state[0] && sync_state[1] == _random.state[1]) {
@@ -914,16 +895,16 @@ void NetworkGameLoop()
 				}
 			}
 
-			if (cp != NULL || check_sync_state) break;
+			if (cp != nullptr || check_sync_state) break;
 
 			char buff[4096];
-			if (fgets(buff, lengthof(buff), f) == NULL) break;
+			if (fgets(buff, lengthof(buff), f) == nullptr) break;
 
 			char *p = buff;
 			/* Ignore the "[date time] " part of the message */
 			if (*p == '[') {
 				p = strchr(p, ']');
-				if (p == NULL) break;
+				if (p == nullptr) break;
 				p += 2;
 			}
 
@@ -970,10 +951,10 @@ void NetworkGameLoop()
 				NOT_REACHED();
 			}
 		}
-		if (f != NULL && feof(f)) {
+		if (f != nullptr && feof(f)) {
 			DEBUG(net, 0, "End of commands.log");
 			fclose(f);
-			f = NULL;
+			f = nullptr;
 		}
 #endif /* DEBUG_DUMP_COMMANDS */
 		if (_frame_counter >= _frame_counter_max) {
@@ -1172,5 +1153,3 @@ bool IsNetworkCompatibleVersion(const char *other)
 	const char *hash2 = ExtractNetworkRevisionHash(other);
 	return hash1 && hash2 && (strncmp(hash1, hash2, GITHASH_SUFFIX_LEN) == 0);
 }
-
-#endif /* ENABLE_NETWORK */

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -11,8 +9,6 @@
  * @file tcp_http.cpp Basic functions to receive and send HTTP TCP packets.
  */
 
-#ifdef ENABLE_NETWORK
-
 #include "../../stdafx.h"
 #include "../../debug.h"
 #include "../../rev.h"
@@ -23,7 +19,7 @@
 #include "../../safeguards.h"
 
 /** List of open HTTP connections. */
-static SmallVector<NetworkHTTPSocketHandler *, 1> _http_connections;
+static std::vector<NetworkHTTPSocketHandler *> _http_connections;
 
 /**
  * Start the querying
@@ -45,11 +41,11 @@ NetworkHTTPSocketHandler::NetworkHTTPSocketHandler(SOCKET s,
 	redirect_depth(depth),
 	sock(s)
 {
-	size_t bufferSize = strlen(url) + strlen(host) + strlen(GetNetworkRevisionString()) + (data == NULL ? 0 : strlen(data)) + 128;
+	size_t bufferSize = strlen(url) + strlen(host) + strlen(GetNetworkRevisionString()) + (data == nullptr ? 0 : strlen(data)) + 128;
 	char *buffer = AllocaM(char, bufferSize);
 
 	DEBUG(net, 7, "[tcp/http] requesting %s%s", host, url);
-	if (data != NULL) {
+	if (data != nullptr) {
 		seprintf(buffer, buffer + bufferSize - 1, "POST %s HTTP/1.0\r\nHost: %s\r\nUser-Agent: OpenTTD/%s\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s\r\n", url, host, GetNetworkRevisionString(), (int)strlen(data), data);
 	} else {
 		seprintf(buffer, buffer + bufferSize - 1, "GET %s HTTP/1.0\r\nHost: %s\r\nUser-Agent: OpenTTD/%s\r\n\r\n", url, host, GetNetworkRevisionString());
@@ -65,7 +61,7 @@ NetworkHTTPSocketHandler::NetworkHTTPSocketHandler(SOCKET s,
 		return;
 	}
 
-	*_http_connections.Append() = this;
+	_http_connections.push_back(this);
 }
 
 /** Free whatever needs to be freed. */
@@ -110,7 +106,7 @@ static const char * const LOCATION       = "Location: ";       ///< Header for l
 int NetworkHTTPSocketHandler::HandleHeader()
 {
 	assert(strlen(HTTP_1_0) == strlen(HTTP_1_1));
-	assert(strstr(this->recv_buffer, END_OF_HEADER) != NULL);
+	assert(strstr(this->recv_buffer, END_OF_HEADER) != nullptr);
 
 	/* We expect a HTTP/1.[01] reply */
 	if (strncmp(this->recv_buffer, HTTP_1_0, strlen(HTTP_1_0)) != 0 &&
@@ -124,7 +120,7 @@ int NetworkHTTPSocketHandler::HandleHeader()
 
 		/* Get the length of the document to receive */
 		char *length = strcasestr(this->recv_buffer, CONTENT_LENGTH);
-		if (length == NULL) return_error("[tcp/http] missing 'content-length' header");
+		if (length == nullptr) return_error("[tcp/http] missing 'content-length' header");
 
 		/* Skip the header */
 		length += strlen(CONTENT_LENGTH);
@@ -165,7 +161,7 @@ int NetworkHTTPSocketHandler::HandleHeader()
 
 	/* Redirect to other URL */
 	char *uri = strcasestr(this->recv_buffer, LOCATION);
-	if (uri == NULL) return_error("[tcp/http] missing 'location' header for redirect");
+	if (uri == nullptr) return_error("[tcp/http] missing 'location' header for redirect");
 
 	uri += strlen(LOCATION);
 
@@ -180,7 +176,7 @@ int NetworkHTTPSocketHandler::HandleHeader()
 	if (ret != 0) return ret;
 
 	/* We've relinquished control of data now. */
-	this->data = NULL;
+	this->data = nullptr;
 
 	/* Restore the header. */
 	*end_of_line = '\r';
@@ -197,22 +193,22 @@ int NetworkHTTPSocketHandler::HandleHeader()
 /* static */ int NetworkHTTPSocketHandler::Connect(char *uri, HTTPCallback *callback, const char *data, int depth)
 {
 	char *hname = strstr(uri, "://");
-	if (hname == NULL) return_error("[tcp/http] invalid location");
+	if (hname == nullptr) return_error("[tcp/http] invalid location");
 
 	hname += 3;
 
 	char *url = strchr(hname, '/');
-	if (url == NULL) return_error("[tcp/http] invalid location");
+	if (url == nullptr) return_error("[tcp/http] invalid location");
 
 	*url = '\0';
 
 	/* Fetch the hostname, and possible port number. */
-	const char *company = NULL;
-	const char *port = NULL;
+	const char *company = nullptr;
+	const char *port = nullptr;
 	ParseConnectionString(&company, &port, hname);
-	if (company != NULL) return_error("[tcp/http] invalid hostname");
+	if (company != nullptr) return_error("[tcp/http] invalid hostname");
 
-	NetworkAddress address(hname, port == NULL ? 80 : atoi(port));
+	NetworkAddress address(hname, port == nullptr ? 80 : atoi(port));
 
 	/* Restore the URL. */
 	*url = '/';
@@ -248,7 +244,7 @@ int NetworkHTTPSocketHandler::Receive()
 		if (res == 0) {
 			if (this->recv_length != 0) return -1;
 
-			this->callback->OnReceiveData(NULL, 0);
+			this->callback->OnReceiveData(nullptr, 0);
 			return 0;
 		}
 
@@ -263,7 +259,7 @@ int NetworkHTTPSocketHandler::Receive()
 			char *end_of_header = strstr(this->recv_buffer, END_OF_HEADER);
 			this->recv_buffer[end] = prev;
 
-			if (end_of_header == NULL) {
+			if (end_of_header == nullptr) {
 				if (read == lengthof(this->recv_buffer)) {
 					DEBUG(net, 0, "[tcp/http] header too big");
 					return -1;
@@ -299,25 +295,21 @@ int NetworkHTTPSocketHandler::Receive()
 /* static */ void NetworkHTTPSocketHandler::HTTPReceive()
 {
 	/* No connections, just bail out. */
-	if (_http_connections.Length() == 0) return;
+	if (_http_connections.size() == 0) return;
 
 	fd_set read_fd;
 	struct timeval tv;
 
 	FD_ZERO(&read_fd);
-	for (NetworkHTTPSocketHandler **iter = _http_connections.Begin(); iter < _http_connections.End(); iter++) {
-		FD_SET((*iter)->sock, &read_fd);
+	for (NetworkHTTPSocketHandler *handler : _http_connections) {
+		FD_SET(handler->sock, &read_fd);
 	}
 
 	tv.tv_sec = tv.tv_usec = 0; // don't block at all.
-#if !defined(__MORPHOS__) && !defined(__AMIGA__)
-	int n = select(FD_SETSIZE, &read_fd, NULL, NULL, &tv);
-#else
-	int n = WaitSelect(FD_SETSIZE, &read_fd, NULL, NULL, &tv, NULL);
-#endif
+	int n = select(FD_SETSIZE, &read_fd, nullptr, nullptr, &tv);
 	if (n == -1) return;
 
-	for (NetworkHTTPSocketHandler **iter = _http_connections.Begin(); iter < _http_connections.End(); /* nothing */) {
+	for (auto iter = _http_connections.begin(); iter < _http_connections.end(); /* nothing */) {
 		NetworkHTTPSocketHandler *cur = *iter;
 
 		if (FD_ISSET(cur->sock, &read_fd)) {
@@ -327,7 +319,7 @@ int NetworkHTTPSocketHandler::Receive()
 			if (ret <= 0) {
 				/* Then... the connection can be closed */
 				cur->CloseConnection();
-				_http_connections.Erase(iter);
+				iter = _http_connections.erase(iter);
 				delete cur;
 				continue;
 			}
@@ -335,5 +327,3 @@ int NetworkHTTPSocketHandler::Receive()
 		iter++;
 	}
 }
-
-#endif /* ENABLE_NETWORK */

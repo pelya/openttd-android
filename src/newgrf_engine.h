@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -40,9 +38,9 @@ struct VehicleScopeResolver : public ScopeResolver {
 
 	void SetVehicle(const Vehicle *v) { this->v = v; }
 
-	/* virtual */ uint32 GetRandomBits() const;
-	/* virtual */ uint32 GetVariable(byte variable, uint32 parameter, bool *available) const;
-	/* virtual */ uint32 GetTriggers() const;
+	uint32 GetRandomBits() const override;
+	uint32 GetVariable(byte variable, uint32 parameter, bool *available) const override;
+	uint32 GetTriggers() const override;
 };
 
 /** Resolver for a vehicle (chain) */
@@ -64,9 +62,12 @@ struct VehicleResolverObject : public ResolverObject {
 	VehicleResolverObject(EngineID engine_type, const Vehicle *v, WagonOverride wagon_override, bool info_view = false,
 			CallbackID callback = CBID_NO_CALLBACK, uint32 callback_param1 = 0, uint32 callback_param2 = 0);
 
-	/* virtual */ ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0);
+	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, byte relative = 0) override;
 
-	/* virtual */ const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
+	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
+
+	GrfSpecFeature GetFeature() const override;
+	uint32 GetDebugID() const override;
 };
 
 static const uint TRAININFO_DEFAULT_VEHICLE_WIDTH   = 29;
@@ -81,11 +82,11 @@ void SetCustomEngineSprites(EngineID engine, byte cargo, const struct SpriteGrou
 
 void GetCustomEngineSprite(EngineID engine, const Vehicle *v, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result);
 #define GetCustomVehicleSprite(v, direction, image_type, result) GetCustomEngineSprite(v->engine_type, v, direction, image_type, result)
-#define GetCustomVehicleIcon(et, direction, image_type, result) GetCustomEngineSprite(et, NULL, direction, image_type, result)
+#define GetCustomVehicleIcon(et, direction, image_type, result) GetCustomEngineSprite(et, nullptr, direction, image_type, result)
 
 void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, bool info_view, EngineImageType image_type, VehicleSpriteSeq *result);
 #define GetCustomRotorSprite(v, i, image_type, result) GetRotorOverrideSprite(v->engine_type, v, i, image_type, result)
-#define GetCustomRotorIcon(et, image_type, result) GetRotorOverrideSprite(et, NULL, true, image_type, result)
+#define GetCustomRotorIcon(et, image_type, result) GetRotorOverrideSprite(et, nullptr, true, image_type, result)
 
 /* Forward declaration of GRFFile, to avoid unnecessary inclusion of newgrf.h
  * elsewhere... */
@@ -100,7 +101,7 @@ bool UsesWagonOverride(const Vehicle *v);
 /* Handler to Evaluate callback 36. If the callback fails (i.e. most of the
  * time) orig_value is returned */
 uint GetVehicleProperty(const Vehicle *v, PropertyID property, uint orig_value);
-uint GetEngineProperty(EngineID engine, PropertyID property, uint orig_value, const Vehicle *v = NULL);
+uint GetEngineProperty(EngineID engine, PropertyID property, uint orig_value, const Vehicle *v = nullptr);
 
 enum VehicleTrigger {
 	VEHICLE_TRIGGER_NEW_CARGO     = 0x01,

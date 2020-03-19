@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -17,25 +15,25 @@
 /** The music player that does nothing. */
 class MusicDriver_Null : public MusicDriver {
 public:
-	/* virtual */ const char *Start(const char * const *param) { return NULL; }
+	const char *Start(const char * const *param) override { return nullptr; }
 
-	/* virtual */ void Stop() { }
+	void Stop() override { }
 
-	/* virtual */ void PlaySong(const MusicSongInfo &song) { }
+	void PlaySong(const MusicSongInfo &song) override { }
 
-	/* virtual */ void StopSong() { }
+	void StopSong() override { }
 
-	/* virtual */ bool IsSongPlaying() { return true; }
+	bool IsSongPlaying() override { return true; }
 
-	/* virtual */ void SetVolume(byte vol) { }
-	/* virtual */ const char *GetName() const { return "null"; }
+	void SetVolume(byte vol) override { }
+	const char *GetName() const override { return "null"; }
 };
 
 /** Factory for the null music player. */
 class FMusicDriver_Null : public DriverFactoryBase {
 public:
 	FMusicDriver_Null() : DriverFactoryBase(Driver::DT_MUSIC, 1, "null", "Null Music Driver") {}
-	/* virtual */ Driver *CreateInstance() const { return new MusicDriver_Null(); }
+	Driver *CreateInstance() const override { return new MusicDriver_Null(); }
 };
 
 #endif /* MUSIC_NULL_H */

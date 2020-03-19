@@ -11,8 +11,6 @@
 ##case tamlanan
 
 
-# $Id$
-
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -476,9 +474,6 @@ STR_ABOUT_MENU_SEPARATOR                                        :
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :Konsolu aç/kapa
 STR_ABOUT_MENU_AI_DEBUG                                         :YZ/Oyun betik hata ayıklama
 STR_ABOUT_MENU_SCREENSHOT                                       :Ekran görüntüsü
-STR_ABOUT_MENU_ZOOMIN_SCREENSHOT                                :Tamamen yakınlaştırılmış ekran görüntüsü
-STR_ABOUT_MENU_DEFAULTZOOM_SCREENSHOT                           :Varsayılan yakınlıkta ekran görüntüsü
-STR_ABOUT_MENU_GIANT_SCREENSHOT                                 :Tüm harita ekran görüntüsü
 STR_ABOUT_MENU_SHOW_FRAMERATE                                   :Kare oranını göster
 STR_ABOUT_MENU_ABOUT_OPENTTD                                    :'OpenTTD' Hakkında
 STR_ABOUT_MENU_SPRITE_ALIGNER                                   :Nesne hizalayıcı
@@ -649,9 +644,6 @@ STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}Özel 2
 STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}Müzik Sesi
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}Efekt Sesi
-STR_MUSIC_RULER_MIN                                             :{TINY_FONT}{BLACK}ASGARİ
-STR_MUSIC_RULER_MAX                                             :{TINY_FONT}{BLACK}AZAMİ
-STR_MUSIC_RULER_MARKER                                          :{TINY_FONT}{BLACK}'
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
@@ -867,6 +859,7 @@ STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}Otomatik
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING} artık kullanılabilir!
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
 STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}Yeni {STRING} artık kullanılabilir! - {ENGINE}
+
 
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO                        :{WHITE}{STATION} artık {STRING} kabul etmiyor
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_OR_CARGO               :{WHITE}{STATION} artık {STRING} veya {STRING} kabul etmiyor
@@ -1709,7 +1702,6 @@ STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Kargo d
 STR_CONFIG_SETTING_AI                                           :{ORANGE}Rakipler
 STR_CONFIG_SETTING_AI_NPC                                       :{ORANGE}Bilgisayar oyuncuları
 
-STR_CONFIG_SETTING_PATHFINDER_OPF                               :Özgün
 STR_CONFIG_SETTING_PATHFINDER_NPF                               :NPF
 STR_CONFIG_SETTING_PATHFINDER_YAPF_RECOMMENDED                  :YAPF {BLUE}(Önerilen)
 
@@ -1793,13 +1785,9 @@ STR_QUIT_NO                                                     :{BLACK}Hayır
 
 # Supported OSes
 STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_DOS                                                  :DOS
 STR_OSNAME_UNIX                                                 :Unix
 STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_BEOS                                                 :BeOS
 STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_MORPHOS                                              :MorphOS
-STR_OSNAME_AMIGAOS                                              :AmigaOS
 STR_OSNAME_OS2                                                  :OS/2
 STR_OSNAME_SUNOS                                                :SunOS
 
@@ -2429,6 +2417,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_TUNNEL                      :{BLACK}Tünel Y
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_TUNNEL                   :{BLACK}Tramvay tüneli yap. Shift ile tıklama maliyet tahminini gösterir
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_ROAD           :{BLACK}Yol yap/sil arasında geçiş yap
 STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Tramvay yapımı/yıkımı
+
 
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Garaj Yönü
@@ -3348,8 +3337,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}{COMPANY
 STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Demiryolu parçaları:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Sinyaller
 STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Karayolu parçaları:
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD                            :{WHITE}Karayolu
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY                         :{WHITE}Tramvay
 STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Su kareleri:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Kanallar
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}İstasyonlar:
@@ -3360,8 +3347,6 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL                           :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Fabrikalar
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Hiçbiri -
-STR_INDUSTRY_DIRECTORY_ITEM                                     :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}){YELLOW} (%{COMMA} taşındı)
-STR_INDUSTRY_DIRECTORY_ITEM_TWO                                 :{ORANGE}{INDUSTRY}{BLACK} ({CARGO_LONG}{STRING}/{CARGO_LONG}{STRING}){YELLOW} (%{COMMA}/%{COMMA} taşındı)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Fabrika adları - görüntüyü fabrikada merkezlemek için adına tıklayın. Ctrl ile tıklama fabrikanın konumunu gösteren yeni bir pencere açar
 
@@ -3429,6 +3414,7 @@ STR_GROUP_DEFAULT_ROAD_VEHICLES                                 :Gruplanmamış 
 STR_GROUP_DEFAULT_SHIPS                                         :Gruplanmamış gemiler
 STR_GROUP_DEFAULT_AIRCRAFTS                                     :Gruplanmamış uçaklar
 
+
 STR_GROUPS_CLICK_ON_GROUP_FOR_TOOLTIP                           :{BLACK}Gruplar - gruba ait araçları listelemek için grubun üzerine tıklayın. Hiyerarşiyi düzenlemek için grupları sürükleyip bırakın.
 STR_GROUP_CREATE_TOOLTIP                                        :{BLACK}Grup oluşturmak için tıklayın
 STR_GROUP_DELETE_TOOLTIP                                        :{BLACK}Seçili grubu sil
@@ -3455,10 +3441,13 @@ STR_BUY_VEHICLE_TRAIN_ELRAIL_CAPTION                            :Yeni Elektrikli
 STR_BUY_VEHICLE_TRAIN_MONORAIL_CAPTION                          :Yeni Monoray
 STR_BUY_VEHICLE_TRAIN_MAGLEV_CAPTION                            :Yeni Maglev
 
-STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Trenler
 STR_BUY_VEHICLE_ROAD_VEHICLE_CAPTION                            :Yeni Karayolu Araçları
+
+############ range for vehicle availability starts
+STR_BUY_VEHICLE_TRAIN_ALL_CAPTION                               :Trenler
 STR_BUY_VEHICLE_SHIP_CAPTION                                    :Yeni gemi
 STR_BUY_VEHICLE_AIRCRAFT_CAPTION                                :Yeni Hava Aracı
+############ range for vehicle availability ends
 
 STR_PURCHASE_INFO_COST_WEIGHT                                   :{BLACK}Fiyat: {GOLD}{CURRENCY_LONG}{BLACK} Ağırlık: {GOLD}{WEIGHT_SHORT}
 STR_PURCHASE_INFO_SPEED_POWER                                   :{BLACK}Hız: {GOLD}{VELOCITY}{BLACK} Güç: {GOLD}{POWER}
@@ -3493,10 +3482,12 @@ STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_BUTTON                 :{BLACK}Araç Sa
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_BUTTON                         :{BLACK}Gemi Satın Al
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_BUTTON                     :{BLACK}Uçak Satın Al
 
+
 STR_BUY_VEHICLE_TRAIN_BUY_VEHICLE_TOOLTIP                       :{BLACK}Seçili treni satın al. Shift ile tıklama satın almadan tahmini maliyeti gösterir.
 STR_BUY_VEHICLE_ROAD_VEHICLE_BUY_VEHICLE_TOOLTIP                :{BLACK}İşaretli aracı al. Shift ile tıklama satın almadan tahmini maliyeti gösterir
 STR_BUY_VEHICLE_SHIP_BUY_VEHICLE_TOOLTIP                        :{BLACK}Seçili gemiyi satın al. Shift ile tıklama satın almadan tahmini maliyeti gösterir
 STR_BUY_VEHICLE_AIRCRAFT_BUY_VEHICLE_TOOLTIP                    :{BLACK}Seçili uçağı satın al. Shift ile tıklama satın almadan tahmini maliyeti gösterir
+
 
 STR_BUY_VEHICLE_TRAIN_RENAME_BUTTON                             :{BLACK}Yeni isim
 STR_BUY_VEHICLE_ROAD_VEHICLE_RENAME_BUTTON                      :{BLACK}İsim
@@ -3606,12 +3597,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Garajda
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Araç üreticisinden mesaj
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Yeni bir {STRING} tasarladık - bizim için bunu bir yıl denemeyi kabul ediyor musunuz?
+
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :lokomotif
-STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :karayolu aracı
-STR_ENGINE_PREVIEW_AIRCRAFT                                     :uçak
-STR_ENGINE_PREVIEW_SHIP                                         :gemi
 STR_ENGINE_PREVIEW_MONORAIL_LOCOMOTIVE                          :monoray lokomotifi
 STR_ENGINE_PREVIEW_MAGLEV_LOCOMOTIVE                            :maglev lokomotifi
+
+STR_ENGINE_PREVIEW_ROAD_VEHICLE                                 :karayolu aracı
+
+STR_ENGINE_PREVIEW_AIRCRAFT                                     :uçak
+STR_ENGINE_PREVIEW_SHIP                                         :gemi
 
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER                      :{BLACK}Fiyat: {CURRENCY_LONG} Ağırlık: {WEIGHT_SHORT}{}Hız: {VELOCITY}  Güç: {POWER}{}İşletme Gideri: {CURRENCY_LONG}/yıl{}Kapasite: {CARGO_LONG}
 STR_ENGINE_PREVIEW_COST_WEIGHT_SPEED_POWER_MAX_TE               :{BLACK}Maliyet: {CURRENCY_LONG} Ağırlık: {WEIGHT_SHORT}{}Hız: {VELOCITY}  Güç: {POWER}  Azami Tork: {6:FORCE}{}İşletme Gideri: {4:CURRENCY_LONG}/yıl{}Kapasite: {5:CARGO_LONG}
@@ -3657,6 +3651,7 @@ STR_REPLACE_RAIL_VEHICLES                                       :Demiryolu Araç
 STR_REPLACE_ELRAIL_VEHICLES                                     :Elektrikli Trenler
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monoray Araçları
 STR_REPLACE_MAGLEV_VEHICLES                                     :Maglev Araçları
+
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Vagon kaldırma: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Otomatik yenilemede tren boyutunun artması gerekiyorsa vagonları kaldır (en önden başlayarak yeterli sayıda vagon silinir)
@@ -4108,6 +4103,7 @@ STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Vurgulan
 STR_AI_LIST_CANCEL                                              :{BLACK}İptal
 STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Betiği değiştirme
 
+
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parametreler
 STR_AI_SETTINGS_CAPTION_AI                                      :YZ
@@ -4310,7 +4306,6 @@ STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... bu y
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... yol yanlış yönde
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... yol üstü duraklar köşe üzerine inşa edilemez
 STR_ERROR_DRIVE_THROUGH_JUNCTION                                :{WHITE}... yol üstü duraklar kavşak üzerine inşa edilemez
-STR_ERROR_DRIVE_THROUGH_ON_ONEWAY_ROAD                          :{WHITE}... yol tek yön ya da engellenmiş
 
 # Station destruction related errors
 STR_ERROR_CAN_T_REMOVE_PART_OF_STATION                          :{WHITE}İstasyonun parçasi kaldırılamaz...
@@ -4380,7 +4375,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Önce i�
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Uygun ray yok
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Önce ray kaldırılmalı
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}Yol tek yönlü veya kapalı
-STR_ERROR_CROSSING_DISALLOWED                                   :{WHITE}Bu ray türü için hemzemin geçit yapılamaz
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}Bu ray türü için hemzemin geçit yapılamaz
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}Buraya sinyal yapılamıyor...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}Buraya ray yapılamıyor...
 STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK                           :{WHITE}Buradan ray kaldırılamıyor...

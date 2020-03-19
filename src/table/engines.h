@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -388,7 +386,7 @@ static const EngineInfo _orig_engine_info[] = {
  * Tractive effort coefficient by default is the same as TTDPatch, 0.30*256=76
  * Air drag value depends on the top speed of the vehicle.
  */
-#define RVI(a, b, c, d, e, f, g, h, i, j, k) { a, b, c, {j}, d, e, f, g, h, k, i, 0, 0, 0, VE_DEFAULT, 0, 76, 0, 0 }
+#define RVI(a, b, c, d, e, f, g, h, i, j, k) { a, b, c, j, d, e, f, g, h, k, i, 0, 0, 0, VE_DEFAULT, 0, 76, 0, 0 }
 #define M RAILVEH_MULTIHEAD
 #define W RAILVEH_WAGON
 #define G RAILVEH_SINGLEHEAD
@@ -669,7 +667,7 @@ static const AircraftVehicleInfo _orig_aircraft_vehicle_info[] = {
  * Tractive effort coefficient by default is the same as TTDPatch, 0.30*256=76
  * Air drag value depends on the top speed of the vehicle.
  */
-#define ROV(a, b, c, d, e, f, g, h) { a, b, c, PR_RUNNING_ROADVEH, d, e, f, g, h, 76, 0, VE_DEFAULT, 0 }
+#define ROV(a, b, c, d, e, f, g, h) { a, b, c, PR_RUNNING_ROADVEH, d, e, f, g, h, 76, 0, VE_DEFAULT, 0, ROADTYPE_ROAD }
 static const RoadVehicleInfo _orig_road_vehicle_info[] = {
 	/*    image_index       sfx                                 max_speed    power
 	 *    |    cost_factor  |                                   |   capacity |

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -25,7 +23,7 @@
 
 /* static */ char *ScriptRail::GetName(RailType rail_type)
 {
-	if (!IsRailTypeAvailable(rail_type)) return NULL;
+	if (!IsRailTypeAvailable(rail_type)) return nullptr;
 
 	return GetString(GetRailTypeInfo((::RailType)rail_type)->strings.menu_text);
 }
@@ -68,7 +66,7 @@
 
 /* static */ bool ScriptRail::IsRailTypeAvailable(RailType rail_type)
 {
-	if ((::RailType)rail_type < RAILTYPE_BEGIN || (::RailType)rail_type >= RAILTYPE_END) return false;
+	if ((::RailType)rail_type >= RAILTYPE_END) return false;
 
 	return ScriptObject::GetCompany() == OWNER_DEITY || ::HasRailtypeAvail(ScriptObject::GetCompany(), (::RailType)rail_type);
 }
@@ -185,7 +183,7 @@
 	if (res != CALLBACK_FAILED) {
 		int index = 0;
 		const StationSpec *spec = StationClass::GetByGrf(file->grfid, res, &index);
-		if (spec == NULL) {
+		if (spec == nullptr) {
 			DEBUG(grf, 1, "%s returned an invalid station ID for 'AI construction/purchase selection (18)' callback", file->filename);
 		} else {
 			/* We might have gotten an usable station spec. Try to build it, but if it fails we'll fall back to the original station. */
@@ -487,10 +485,10 @@ static bool IsValidSignalType(int signal_type)
 
 	switch (build_type) {
 		case BT_TRACK:    return ::RailBuildCost((::RailType)railtype);
-		case BT_SIGNAL:   return ::GetPrice(PR_BUILD_SIGNALS, 1, NULL);
-		case BT_DEPOT:    return ::GetPrice(PR_BUILD_DEPOT_TRAIN, 1, NULL);
-		case BT_STATION:  return ::GetPrice(PR_BUILD_STATION_RAIL, 1, NULL) + ::GetPrice(PR_BUILD_STATION_RAIL_LENGTH, 1, NULL);
-		case BT_WAYPOINT: return ::GetPrice(PR_BUILD_WAYPOINT_RAIL, 1, NULL);
+		case BT_SIGNAL:   return ::GetPrice(PR_BUILD_SIGNALS, 1, nullptr);
+		case BT_DEPOT:    return ::GetPrice(PR_BUILD_DEPOT_TRAIN, 1, nullptr);
+		case BT_STATION:  return ::GetPrice(PR_BUILD_STATION_RAIL, 1, nullptr) + ::GetPrice(PR_BUILD_STATION_RAIL_LENGTH, 1, nullptr);
+		case BT_WAYPOINT: return ::GetPrice(PR_BUILD_WAYPOINT_RAIL, 1, nullptr);
 		default: return -1;
 	}
 }

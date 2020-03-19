@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -14,6 +12,7 @@
 
 #include "cargotype.h"
 #include "rail_type.h"
+#include "road_type.h"
 #include "fileio_type.h"
 #include "core/bitmath_func.hpp"
 #include "core/alloc_type.hpp"
@@ -83,6 +82,8 @@ enum GrfSpecFeature {
 	GSF_OBJECTS,
 	GSF_RAILTYPES,
 	GSF_AIRPORTTILES,
+	GSF_ROADTYPES,
+	GSF_TRAMTYPES,
 	GSF_END,
 
 	GSF_FAKE_TOWNS = GSF_END, ///< Fake town GrfSpecFeature for NewGRF debugging (parent scope)
@@ -122,17 +123,23 @@ struct GRFFile : ZeroedMemoryAllocator {
 
 	GRFLabel *label; ///< Pointer to the first label. This is a linked list, not an array.
 
-	SmallVector<CargoLabel, 4> cargo_list;          ///< Cargo translation table (local ID -> label)
+	std::vector<CargoLabel> cargo_list;             ///< Cargo translation table (local ID -> label)
 	uint8 cargo_map[NUM_CARGO];                     ///< Inverse cargo translation table (CargoID -> local ID)
 
-	SmallVector<RailTypeLabel, 4> railtype_list;    ///< Railtype translation table
-	RailTypeByte railtype_map[RAILTYPE_END];
+	std::vector<RailTypeLabel> railtype_list;       ///< Railtype translation table
+	RailType railtype_map[RAILTYPE_END];
+
+	std::vector<RoadTypeLabel> roadtype_list;       ///< Roadtype translation table (road)
+	RoadType roadtype_map[ROADTYPE_END];
+
+	std::vector<RoadTypeLabel> tramtype_list;       ///, Roadtype translation table (tram)
+	RoadType tramtype_map[ROADTYPE_END];
 
 	CanalProperties canal_local_properties[CF_END]; ///< Canal properties as set by this NewGRF
 
 	struct LanguageMap *language_map; ///< Mappings related to the languages.
 
-	int traininfo_vehicle_pitch;  ///< Vertical offset for draing train images in depot GUI and vehicle details
+	int traininfo_vehicle_pitch;  ///< Vertical offset for drawing train images in depot GUI and vehicle details
 	uint traininfo_vehicle_width; ///< Width (in pixels) of a 8/8 train vehicle in depot GUI and vehicle details
 
 	uint32 grf_features;                     ///< Bitset of GrfSpecFeature the grf uses
@@ -158,12 +165,19 @@ enum ShoreReplacement {
 	SHORE_REPLACE_ONLY_NEW,   ///< Only corner-shores were loaded by Action5 (openttd(w/d).grf only).
 };
 
+enum TramReplacement {
+	TRAMWAY_REPLACE_DEPOT_NONE,       ///< No tram depot graphics were loaded.
+	TRAMWAY_REPLACE_DEPOT_WITH_TRACK, ///< Electrified depot graphics with tram track were loaded.
+	TRAMWAY_REPLACE_DEPOT_NO_TRACK,   ///< Electrified depot graphics without tram track were loaded.
+};
+
 struct GRFLoadedFeatures {
 	bool has_2CC;             ///< Set if any vehicle is loaded which uses 2cc (two company colours).
 	uint64 used_liveries;     ///< Bitmask of #LiveryScheme used by the defined engines.
 	bool has_newhouses;       ///< Set if there are any newhouses loaded.
 	bool has_newindustries;   ///< Set if there are any newindustries loaded.
-	ShoreReplacement shore;   ///< It which way shore sprites were replaced.
+	ShoreReplacement shore;   ///< In which way shore sprites were replaced.
+	TramReplacement tram;     ///< In which way tram depots were replaced.
 };
 
 /**

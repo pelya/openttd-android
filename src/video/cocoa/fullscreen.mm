@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -30,6 +28,7 @@
 #include "../../core/sort_func.hpp"
 #include "cocoa_v.h"
 #include "../../gfx_func.h"
+#include "../../thread.h"
 #include "../../os/macosx/macos.h"
 
 /**
@@ -174,7 +173,7 @@ class FullscreenSubdriver : public CocoaSubdriver {
 
 		double adjustment = (target - position) / linesPerSecond;
 
-		CSleep((uint32)(adjustment * 1000));
+		CSleep((uint32)adjustment * 1000);
 	}
 
 

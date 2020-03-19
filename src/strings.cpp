@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -35,9 +33,7 @@
 #include "window_func.h"
 #include "debug.h"
 #include "game/game_text.hpp"
-#ifdef ENABLE_NETWORK
-#	include "network/network_content_gui.h"
-#endif /* ENABLE_NETWORK */
+#include "network/network_content_gui.h"
 #include <stack>
 
 #include "table/strings.h"
@@ -47,13 +43,13 @@
 
 char _config_language_file[MAX_PATH];             ///< The file (name) stored in the configuration.
 LanguageList _languages;                          ///< The actual list of language meta data.
-const LanguageMetadata *_current_language = NULL; ///< The currently loaded language.
+const LanguageMetadata *_current_language = nullptr; ///< The currently loaded language.
 
 TextDirection _current_text_dir; ///< Text direction of the currently selected language.
 
-#ifdef WITH_ICU_SORT
-icu::Collator *_current_collator = NULL;          ///< Collator for the language currently in use.
-#endif /* WITH_ICU_SORT */
+#ifdef WITH_ICU_I18N
+icu::Collator *_current_collator = nullptr;          ///< Collator for the language currently in use.
+#endif /* WITH_ICU_I18N */
 
 static uint64 _global_string_params_data[20];     ///< Global array of string parameters. To access, use #SetDParam.
 static WChar _global_string_params_type[20];      ///< Type of parameters stored in #_global_string_params
@@ -62,7 +58,7 @@ StringParameters _global_string_params(_global_string_params_data, 20, _global_s
 /** Reset the type array. */
 void StringParameters::ClearTypeInformation()
 {
-	assert(this->type != NULL);
+	assert(this->type != nullptr);
 	MemSetT(this->type, 0, this->num_param);
 }
 
@@ -77,8 +73,11 @@ int64 StringParameters::GetInt64(WChar type)
 		DEBUG(misc, 0, "Trying to read invalid string parameter");
 		return 0;
 	}
-	if (this->type != NULL) {
-		assert(this->type[this->offset] == 0 || this->type[this->offset] == type);
+	if (this->type != nullptr) {
+		if (this->type[this->offset] != 0 && this->type[this->offset] != type) {
+			DEBUG(misc, 0, "Trying to read string parameter with wrong type");
+			return 0;
+		}
 		this->type[this->offset] = type;
 	}
 	return this->data[this->offset++];
@@ -120,7 +119,8 @@ void SetDParamMaxValue(uint n, uint64 max_value, uint min_count, FontSize size)
  */
 void SetDParamMaxDigits(uint n, uint count, FontSize size)
 {
-	uint front, next;
+	uint front = 0;
+	uint next = 0;
 	GetBroadestDigit(&front, &next, size);
 	uint64 val = count > 1 ? front : next;
 	for (; count > 1; count--) {
@@ -170,7 +170,7 @@ void CopyOutDParam(uint64 *dst, const char **strings, StringID string, int num)
 			strings[i] = stredup((const char *)(size_t)_global_string_params.GetParam(i));
 			dst[i] = (size_t)strings[i];
 		} else {
-			strings[i] = NULL;
+			strings[i] = nullptr;
 		}
 	}
 }
@@ -318,7 +318,7 @@ static char *FormatNumber(char *buff, int64 number, const char *last, const char
 	for (int i = 0; i < max_digits; i++) {
 		if (i == max_digits - fractional_digits) {
 			const char *decimal_separator = _settings_game.locale.digit_decimal_separator;
-			if (decimal_separator == NULL) decimal_separator = _langpack->digit_decimal_separator;
+			if (decimal_separator == nullptr) decimal_separator = _langpack->digit_decimal_separator;
 			buff += seprintf(buff, last, "%s", decimal_separator);
 		}
 
@@ -343,7 +343,7 @@ static char *FormatNumber(char *buff, int64 number, const char *last, const char
 static char *FormatCommaNumber(char *buff, int64 number, const char *last, int fractional_digits = 0)
 {
 	const char *separator = _settings_game.locale.digit_group_separator;
-	if (separator == NULL) separator = _langpack->digit_group_separator;
+	if (separator == nullptr) separator = _langpack->digit_group_separator;
 	return FormatNumber(buff, number, last, separator, 1, fractional_digits);
 }
 
@@ -382,7 +382,7 @@ static char *FormatBytes(char *buff, int64 number, const char *last)
 	}
 
 	const char *decimal_separator = _settings_game.locale.digit_decimal_separator;
-	if (decimal_separator == NULL) decimal_separator = _langpack->digit_decimal_separator;
+	if (decimal_separator == nullptr) decimal_separator = _langpack->digit_decimal_separator;
 
 	if (number < 1024) {
 		id = 0;
@@ -476,8 +476,8 @@ static char *FormatGenericCurrency(char *buff, const CurrencySpec *spec, Money n
 	}
 
 	const char *separator = _settings_game.locale.digit_group_separator_currency;
-	if (separator == NULL && !StrEmpty(_currency->separator)) separator = _currency->separator;
-	if (separator == NULL) separator = _langpack->digit_group_separator_currency;
+	if (separator == nullptr && !StrEmpty(_currency->separator)) separator = _currency->separator;
+	if (separator == nullptr) separator = _langpack->digit_group_separator_currency;
 	buff = FormatNumber(buff, number, last, separator);
 	buff = strecpy(buff, multiplier, last);
 
@@ -935,7 +935,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 					char buf[256];
 					bool old_sgd = _scan_for_gender_data;
 					_scan_for_gender_data = true;
-					StringParameters tmp_params(args->GetPointerToOffset(offset), args->num_param - offset, NULL);
+					StringParameters tmp_params(args->GetPointerToOffset(offset), args->num_param - offset, nullptr);
 					p = FormatString(buf, input, &tmp_params, lastof(buf));
 					_scan_for_gender_data = old_sgd;
 					*p = '\0';
@@ -1014,8 +1014,8 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 				if (game_script && GetStringTab(str) != TEXT_TAB_GAMESCRIPT_START) break;
 				/* WARNING. It's prohibited for the included string to consume any arguments.
 				 * For included strings that consume argument, you should use STRING1, STRING2 etc.
-				 * To debug stuff you can set argv to NULL and it will tell you */
-				StringParameters tmp_params(args->GetDataPointer(), args->GetDataLeft(), NULL);
+				 * To debug stuff you can set argv to nullptr and it will tell you */
+				StringParameters tmp_params(args->GetDataPointer(), args->GetDataLeft(), nullptr);
 				buff = GetStringWithArgs(buff, str, &tmp_params, last, next_substr_case_index, game_script);
 				next_substr_case_index = 0;
 				break;
@@ -1268,9 +1268,9 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_COMPANY_NAME: { // {COMPANY}
 				const Company *c = Company::GetIfValid(args->GetInt32());
-				if (c == NULL) break;
+				if (c == nullptr) break;
 
-				if (c->name != NULL) {
+				if (c->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)c->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1305,7 +1305,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 				}
 
 				const Depot *d = Depot::Get(args->GetInt32());
-				if (d->name != NULL) {
+				if (d->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)d->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1319,14 +1319,14 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_ENGINE_NAME: { // {ENGINE}
 				const Engine *e = Engine::GetIfValid(args->GetInt32(SCC_ENGINE_NAME));
-				if (e == NULL) break;
+				if (e == nullptr) break;
 
-				if (e->name != NULL && e->IsEnabled()) {
+				if (e->name != nullptr && e->IsEnabled()) {
 					int64 args_array[] = {(int64)(size_t)e->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
 				} else {
-					StringParameters tmp_params(NULL, 0, NULL);
+					StringParameters tmp_params(nullptr, 0, nullptr);
 					buff = GetStringWithArgs(buff, e->info.string_id, &tmp_params, last);
 				}
 				break;
@@ -1334,9 +1334,9 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_GROUP_NAME: { // {GROUP}
 				const Group *g = Group::GetIfValid(args->GetInt32());
-				if (g == NULL) break;
+				if (g == nullptr) break;
 
-				if (g->name != NULL) {
+				if (g->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)g->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1351,12 +1351,12 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_INDUSTRY_NAME: { // {INDUSTRY}
 				const Industry *i = Industry::GetIfValid(args->GetInt32(SCC_INDUSTRY_NAME));
-				if (i == NULL) break;
+				if (i == nullptr) break;
 
 				if (_scan_for_gender_data) {
 					/* Gender is defined by the industry type.
 					 * STR_FORMAT_INDUSTRY_NAME may have the town first, so it would result in the gender of the town name */
-					StringParameters tmp_params(NULL, 0, NULL);
+					StringParameters tmp_params(nullptr, 0, nullptr);
 					buff = FormatString(buff, GetStringPtr(GetIndustrySpec(i->type)->name), &tmp_params, last, next_substr_case_index);
 				} else {
 					/* First print the town name and the industry type name. */
@@ -1371,9 +1371,9 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_PRESIDENT_NAME: { // {PRESIDENT_NAME}
 				const Company *c = Company::GetIfValid(args->GetInt32(SCC_PRESIDENT_NAME));
-				if (c == NULL) break;
+				if (c == nullptr) break;
 
-				if (c->president_name != NULL) {
+				if (c->president_name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)c->president_name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1389,16 +1389,16 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 				StationID sid = args->GetInt32(SCC_STATION_NAME);
 				const Station *st = Station::GetIfValid(sid);
 
-				if (st == NULL) {
+				if (st == nullptr) {
 					/* The station doesn't exist anymore. The only place where we might
 					 * be "drawing" an invalid station is in the case of cargo that is
 					 * in transit. */
-					StringParameters tmp_params(NULL, 0, NULL);
+					StringParameters tmp_params(nullptr, 0, nullptr);
 					buff = GetStringWithArgs(buff, STR_UNKNOWN_STATION, &tmp_params, last);
 					break;
 				}
 
-				if (st->name != NULL) {
+				if (st->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)st->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1416,8 +1416,9 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 						}
 					}
 
-					int64 args_array[] = {STR_TOWN_NAME, st->town->index, st->index};
-					StringParameters tmp_params(args_array);
+					uint64 args_array[] = {STR_TOWN_NAME, st->town->index, st->index};
+					WChar types_array[] = {0, SCC_TOWN_NAME, SCC_NUM};
+					StringParameters tmp_params(args_array, 3, types_array);
 					buff = GetStringWithArgs(buff, str, &tmp_params, last);
 				}
 				break;
@@ -1425,9 +1426,9 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_TOWN_NAME: { // {TOWN}
 				const Town *t = Town::GetIfValid(args->GetInt32(SCC_TOWN_NAME));
-				if (t == NULL) break;
+				if (t == nullptr) break;
 
-				if (t->name != NULL) {
+				if (t->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)t->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1439,9 +1440,9 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_WAYPOINT_NAME: { // {WAYPOINT}
 				Waypoint *wp = Waypoint::GetIfValid(args->GetInt32(SCC_WAYPOINT_NAME));
-				if (wp == NULL) break;
+				if (wp == nullptr) break;
 
-				if (wp->name != NULL) {
+				if (wp->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)wp->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1457,9 +1458,9 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_VEHICLE_NAME: { // {VEHICLE}
 				const Vehicle *v = Vehicle::GetIfValid(args->GetInt32(SCC_VEHICLE_NAME));
-				if (v == NULL) break;
+				if (v == nullptr) break;
 
-				if (v->name != NULL) {
+				if (v->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)v->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
@@ -1483,14 +1484,14 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 			case SCC_SIGN_NAME: { // {SIGN}
 				const Sign *si = Sign::GetIfValid(args->GetInt32());
-				if (si == NULL) break;
+				if (si == nullptr) break;
 
-				if (si->name != NULL) {
+				if (si->name != nullptr) {
 					int64 args_array[] = {(int64)(size_t)si->name};
 					StringParameters tmp_params(args_array);
 					buff = GetStringWithArgs(buff, STR_JUST_RAW_STRING, &tmp_params, last);
 				} else {
-					StringParameters tmp_params(NULL, 0, NULL);
+					StringParameters tmp_params(nullptr, 0, nullptr);
 					buff = GetStringWithArgs(buff, STR_DEFAULT_SIGN_NAME, &tmp_params, last);
 				}
 				break;
@@ -1670,7 +1671,7 @@ static char *GetSpecialNameString(char *buff, int ind, StringParameters *args, c
 	}
 
 	/* resolution size? */
-	if (IsInsideMM(ind, (SPECSTR_RESOLUTION_START - 0x70E4), (SPECSTR_RESOLUTION_END - 0x70E4) + 1)) {
+	if (IsInsideBS(ind, (SPECSTR_RESOLUTION_START - 0x70E4), _resolutions.size())) {
 		int i = ind - (SPECSTR_RESOLUTION_START - 0x70E4);
 		buff += seprintf(
 			buff, last, "%ux%u", _resolutions[i].width, _resolutions[i].height
@@ -1681,11 +1682,7 @@ static char *GetSpecialNameString(char *buff, int ind, StringParameters *args, c
 	NOT_REACHED();
 }
 
-#ifdef ENABLE_NETWORK
 extern void SortNetworkLanguages();
-#else /* ENABLE_NETWORK */
-static inline void SortNetworkLanguages() {}
-#endif /* ENABLE_NETWORK */
 
 /**
  * Check whether the header is a valid header for OpenTTD.
@@ -1718,7 +1715,7 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 	/* Current language pack */
 	size_t len;
 	LanguagePack *lang_pack = (LanguagePack *)ReadFileToMem(lang->file, &len, 1U << 20);
-	if (lang_pack == NULL) return false;
+	if (lang_pack == nullptr) return false;
 
 	/* End of read data (+ terminating zero added in ReadFileToMem()) */
 	const char *end = (char *)lang_pack + len + 1;
@@ -1796,24 +1793,24 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 	MacOSSetCurrentLocaleName(_current_language->isocode);
 #endif
 
-#ifdef WITH_ICU_SORT
+#ifdef WITH_ICU_I18N
 	/* Delete previous collator. */
-	if (_current_collator != NULL) {
+	if (_current_collator != nullptr) {
 		delete _current_collator;
-		_current_collator = NULL;
+		_current_collator = nullptr;
 	}
 
 	/* Create a collator instance for our current locale. */
 	UErrorCode status = U_ZERO_ERROR;
 	_current_collator = icu::Collator::createInstance(icu::Locale(_current_language->isocode), status);
 	/* Sort number substrings by their numerical value. */
-	if (_current_collator != NULL) _current_collator->setAttribute(UCOL_NUMERIC_COLLATION, UCOL_ON, status);
+	if (_current_collator != nullptr) _current_collator->setAttribute(UCOL_NUMERIC_COLLATION, UCOL_ON, status);
 	/* Avoid using the collator if it is not correctly set. */
 	if (U_FAILURE(status)) {
 		delete _current_collator;
-		_current_collator = NULL;
+		_current_collator = nullptr;
 	}
-#endif /* WITH_ICU_SORT */
+#endif /* WITH_ICU_I18N */
 
 	/* Some lists need to be sorted again after a language change. */
 	ReconsiderGameScriptLanguage();
@@ -1821,9 +1818,7 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 	SortIndustryTypes();
 	BuildIndustriesLegend();
 	SortNetworkLanguages();
-#ifdef ENABLE_NETWORK
 	BuildContentTypeStringList();
-#endif /* ENABLE_NETWORK */
 	InvalidateWindowClassesData(WC_BUILD_VEHICLE);      // Build vehicle window.
 	InvalidateWindowClassesData(WC_TRAINS_LIST);        // Train group window.
 	InvalidateWindowClassesData(WC_ROADVEH_LIST);       // Road vehicle group window.
@@ -1843,22 +1838,22 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
  * First check some default values, after this one we passed ourselves
  * and if none exist return the value for $LANG
  * @param param environment variable to check conditionally if default ones are not
- *        set. Pass NULL if you don't want additional checks.
- * @return return string containing current charset, or NULL if not-determinable
+ *        set. Pass nullptr if you don't want additional checks.
+ * @return return string containing current charset, or nullptr if not-determinable
  */
 const char *GetCurrentLocale(const char *param)
 {
 	const char *env;
 
 	env = getenv("LANGUAGE");
-	if (env != NULL) return env;
+	if (env != nullptr) return env;
 
 	env = getenv("LC_ALL");
-	if (env != NULL) return env;
+	if (env != nullptr) return env;
 
-	if (param != NULL) {
+	if (param != nullptr) {
 		env = getenv(param);
-		if (env != NULL) return env;
+		if (env != nullptr) return env;
 	}
 
 	return getenv("LANG");
@@ -1867,28 +1862,28 @@ const char *GetCurrentLocale(const char *param)
 const char *GetCurrentLocale(const char *param);
 #endif /* !(defined(_WIN32) || defined(__APPLE__)) */
 
-int CDECL StringIDSorter(const StringID *a, const StringID *b)
+bool StringIDSorter(const StringID &a, const StringID &b)
 {
 	char stra[512];
 	char strb[512];
-	GetString(stra, *a, lastof(stra));
-	GetString(strb, *b, lastof(strb));
+	GetString(stra, a, lastof(stra));
+	GetString(strb, b, lastof(strb));
 
-	return strnatcmp(stra, strb);
+	return strnatcmp(stra, strb) < 0;
 }
 
 /**
  * Get the language with the given NewGRF language ID.
  * @param newgrflangid NewGRF languages ID to check.
- * @return The language's metadata, or NULL if it is not known.
+ * @return The language's metadata, or nullptr if it is not known.
  */
 const LanguageMetadata *GetLanguage(byte newgrflangid)
 {
-	for (const LanguageMetadata *lang = _languages.Begin(); lang != _languages.End(); lang++) {
-		if (newgrflangid == lang->newgrflangid) return lang;
+	for (const LanguageMetadata &lang : _languages) {
+		if (newgrflangid == lang.newgrflangid) return &lang;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1900,7 +1895,7 @@ const LanguageMetadata *GetLanguage(byte newgrflangid)
 static bool GetLanguageFileHeader(const char *file, LanguagePackHeader *hdr)
 {
 	FILE *f = fopen(file, "rb");
-	if (f == NULL) return false;
+	if (f == nullptr) return false;
 
 	size_t read = fread(hdr, sizeof(*hdr), 1, f);
 	fclose(f);
@@ -1922,14 +1917,14 @@ static bool GetLanguageFileHeader(const char *file, LanguagePackHeader *hdr)
 static void GetLanguageList(const char *path)
 {
 	DIR *dir = ttd_opendir(path);
-	if (dir != NULL) {
+	if (dir != nullptr) {
 		struct dirent *dirent;
-		while ((dirent = readdir(dir)) != NULL) {
+		while ((dirent = readdir(dir)) != nullptr) {
 			const char *d_name    = FS2OTTD(dirent->d_name);
 			const char *extension = strrchr(d_name, '.');
 
 			/* Not a language file */
-			if (extension == NULL || strcmp(extension, ".lng") != 0) continue;
+			if (extension == nullptr || strcmp(extension, ".lng") != 0) continue;
 
 			LanguageMetadata lmd;
 			seprintf(lmd.file, lastof(lmd.file), "%s%s", path, d_name);
@@ -1937,10 +1932,10 @@ static void GetLanguageList(const char *path)
 			/* Check whether the file is of the correct version */
 			if (!GetLanguageFileHeader(lmd.file, &lmd)) {
 				DEBUG(misc, 3, "%s is not a valid language file", lmd.file);
-			} else if (GetLanguage(lmd.newgrflangid) != NULL) {
+			} else if (GetLanguage(lmd.newgrflangid) != nullptr) {
 				DEBUG(misc, 3, "%s's language ID is already known", lmd.file);
 			} else {
-				*_languages.Append() = lmd;
+				_languages.push_back(lmd);
 			}
 		}
 		closedir(dir);
@@ -1960,36 +1955,36 @@ void InitializeLanguagePacks()
 		FioAppendDirectory(path, lastof(path), sp, LANG_DIR);
 		GetLanguageList(path);
 	}
-	if (_languages.Length() == 0) usererror("No available language packs (invalid versions?)");
+	if (_languages.size() == 0) usererror("No available language packs (invalid versions?)");
 
 	/* Acquire the locale of the current system */
 	const char *lang = GetCurrentLocale("LC_MESSAGES");
-	if (lang == NULL) lang = "en_GB";
+	if (lang == nullptr) lang = "en_GB";
 
-	const LanguageMetadata *chosen_language   = NULL; ///< Matching the language in the configuration file or the current locale
-	const LanguageMetadata *language_fallback = NULL; ///< Using pt_PT for pt_BR locale when pt_BR is not available
-	const LanguageMetadata *en_GB_fallback    = _languages.Begin(); ///< Fallback when no locale-matching language has been found
+	const LanguageMetadata *chosen_language   = nullptr; ///< Matching the language in the configuration file or the current locale
+	const LanguageMetadata *language_fallback = nullptr; ///< Using pt_PT for pt_BR locale when pt_BR is not available
+	const LanguageMetadata *en_GB_fallback    = _languages.data(); ///< Fallback when no locale-matching language has been found
 
 	/* Find a proper language. */
-	for (const LanguageMetadata *lng = _languages.Begin(); lng != _languages.End(); lng++) {
+	for (const LanguageMetadata &lng : _languages) {
 		/* We are trying to find a default language. The priority is by
 		 * configuration file, local environment and last, if nothing found,
 		 * English. */
-		const char *lang_file = strrchr(lng->file, PATHSEPCHAR) + 1;
+		const char *lang_file = strrchr(lng.file, PATHSEPCHAR) + 1;
 		if (strcmp(lang_file, _config_language_file) == 0) {
-			chosen_language = lng;
+			chosen_language = &lng;
 			break;
 		}
 
-		if (strcmp (lng->isocode, "en_GB") == 0) en_GB_fallback    = lng;
-		if (strncmp(lng->isocode, lang, 5) == 0) chosen_language   = lng;
-		if (strncmp(lng->isocode, lang, 2) == 0) language_fallback = lng;
+		if (strcmp (lng.isocode, "en_GB") == 0) en_GB_fallback    = &lng;
+		if (strncmp(lng.isocode, lang, 5) == 0) chosen_language   = &lng;
+		if (strncmp(lng.isocode, lang, 2) == 0) language_fallback = &lng;
 	}
 
 	/* We haven't found the language in the config nor the one in the locale.
 	 * Now we set it to one of the fallback languages */
-	if (chosen_language == NULL) {
-		chosen_language = (language_fallback != NULL) ? language_fallback : en_GB_fallback;
+	if (chosen_language == nullptr) {
+		chosen_language = (language_fallback != nullptr) ? language_fallback : en_GB_fallback;
 	}
 
 	if (!ReadLanguagePack(chosen_language)) usererror("Can't read language pack '%s'", chosen_language->file);
@@ -2008,7 +2003,7 @@ const char *GetCurrentLanguageIsoCode()
  * Check whether there are glyphs missing in the current language.
  * @param[out] str Pointer to an address for storing the text pointer.
  * @return If glyphs are missing, return \c true, else return \c false.
- * @post If \c true is returned and str is not NULL, *str points to a string that is found to contain at least one missing glyph.
+ * @post If \c true is returned and str is not nullptr, *str points to a string that is found to contain at least one missing glyph.
  */
 int MissingGlyphSearcher::FindMissingGlyphs(const char **str)
 {
@@ -2021,9 +2016,9 @@ int MissingGlyphSearcher::FindMissingGlyphs(const char **str)
 
 	this->Reset();
 	int missing = 0;
-	for (const char *text = this->NextString(); text != NULL; text = this->NextString()) {
+	for (const char *text = this->NextString(); text != nullptr; text = this->NextString()) {
 		FontSize size = this->DefaultSize();
-		if (str != NULL) *str = text;
+		if (str != nullptr) *str = text;
 		for (WChar c = Utf8Consume(&text); c != '\0'; c = Utf8Consume(&text)) {
 			if (c >= SCC_FIRST_FONT && c <= SCC_LAST_FONT) {
 				size = (FontSize)(c - SCC_FIRST_FONT);
@@ -2041,20 +2036,20 @@ class LanguagePackGlyphSearcher : public MissingGlyphSearcher {
 	uint i; ///< Iterator for the primary language tables.
 	uint j; ///< Iterator for the secondary language tables.
 
-	/* virtual */ void Reset()
+	void Reset() override
 	{
 		this->i = 0;
 		this->j = 0;
 	}
 
-	/* virtual */ FontSize DefaultSize()
+	FontSize DefaultSize() override
 	{
 		return FS_NORMAL;
 	}
 
-	/* virtual */ const char *NextString()
+	const char *NextString() override
 	{
-		if (this->i >= TEXT_TAB_END) return NULL;
+		if (this->i >= TEXT_TAB_END) return nullptr;
 
 		const char *ret = _langpack_offs[_langtab_start[this->i] + this->j];
 
@@ -2067,18 +2062,23 @@ class LanguagePackGlyphSearcher : public MissingGlyphSearcher {
 		return ret;
 	}
 
-	/* virtual */ bool Monospace()
+	bool Monospace() override
 	{
 		return false;
 	}
 
-	/* virtual */ void SetFontNames(FreeTypeSettings *settings, const char *font_name)
+	void SetFontNames(FreeTypeSettings *settings, const char *font_name, const void *os_data) override
 	{
-#ifdef WITH_FREETYPE
+#if defined(WITH_FREETYPE) || defined(_WIN32)
 		strecpy(settings->small.font,  font_name, lastof(settings->small.font));
 		strecpy(settings->medium.font, font_name, lastof(settings->medium.font));
 		strecpy(settings->large.font,  font_name, lastof(settings->large.font));
-#endif /* WITH_FREETYPE */
+
+		free(settings->medium.os_handle); // Only free one, they are all the same pointer.
+		settings->small.os_handle = os_data;
+		settings->medium.os_handle = os_data;
+		settings->large.os_handle = os_data;
+#endif
 	}
 };
 
@@ -2093,21 +2093,27 @@ class LanguagePackGlyphSearcher : public MissingGlyphSearcher {
  * been added.
  * @param base_font Whether to look at the base font as well.
  * @param searcher  The methods to use to search for strings to check.
- *                  If NULL the loaded language pack searcher is used.
+ *                  If nullptr the loaded language pack searcher is used.
  */
 void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
 {
 	static LanguagePackGlyphSearcher pack_searcher;
-	if (searcher == NULL) searcher = &pack_searcher;
-	bool bad_font = !base_font || searcher->FindMissingGlyphs(NULL);
-#ifdef WITH_FREETYPE
+	if (searcher == nullptr) searcher = &pack_searcher;
+	bool bad_font = !base_font || searcher->FindMissingGlyphs(nullptr);
+#if defined(WITH_FREETYPE) || defined(_WIN32)
 	if (bad_font) {
 		/* We found an unprintable character... lets try whether we can find
 		 * a fallback font that can print the characters in the current language. */
 		FreeTypeSettings backup;
 		memcpy(&backup, &_freetype, sizeof(backup));
 
+		_freetype.mono.os_handle = nullptr;
+		_freetype.medium.os_handle = nullptr;
+
 		bad_font = !SetFallbackFont(&_freetype, _langpack->isocode, _langpack->winlangid, searcher);
+
+		free(_freetype.mono.os_handle);
+		free(_freetype.medium.os_handle);
 
 		memcpy(&_freetype, &backup, sizeof(backup));
 
@@ -2139,7 +2145,7 @@ void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
 	/* Update the font with cache */
 	LoadStringWidthTable(searcher->Monospace());
 
-#if !defined(WITH_ICU_LAYOUT) && !defined(WITH_UNISCRIBE) && !defined(WITH_COCOA)
+#if !defined(WITH_ICU_LX) && !defined(WITH_UNISCRIBE) && !defined(WITH_COCOA)
 	/*
 	 * For right-to-left languages we need the ICU library. If
 	 * we do not have support for that library we warn the user
@@ -2159,5 +2165,5 @@ void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
 		SetDParamStr(0, err_str);
 		ShowErrorMessage(STR_JUST_RAW_STRING, INVALID_STRING_ID, WL_ERROR);
 	}
-#endif /* !WITH_ICU_LAYOUT */
+#endif /* !WITH_ICU_LX */
 }

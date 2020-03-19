@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -8,8 +6,6 @@
  */
 
 /** @file network_server.cpp Server part of the network protocol. */
-
-#ifdef ENABLE_NETWORK
 
 #include "../stdafx.h"
 #include "../strings_func.h"
@@ -32,6 +28,8 @@
 #include "../core/pool_func.hpp"
 #include "../core/random_func.hpp"
 #include "../rev.h"
+#include <mutex>
+#include <condition_variable>
 
 #include "../safeguards.h"
 
@@ -60,47 +58,40 @@ struct PacketWriter : SaveFilter {
 	Packet *current;                    ///< The packet we're currently writing to.
 	size_t total_size;                  ///< Total size of the compressed savegame.
 	Packet *packets;                    ///< Packet queue of the savegame; send these "slowly" to the client.
-	ThreadMutex *mutex;                 ///< Mutex for making threaded saving safe.
+	std::mutex mutex;                   ///< Mutex for making threaded saving safe.
+	std::condition_variable exit_sig;   ///< Signal for threaded destruction of this packet writer.
 
 	/**
 	 * Create the packet writer.
 	 * @param cs The socket handler we're making the packets for.
 	 */
-	PacketWriter(ServerNetworkGameSocketHandler *cs) : SaveFilter(NULL), cs(cs), current(NULL), total_size(0), packets(NULL)
+	PacketWriter(ServerNetworkGameSocketHandler *cs) : SaveFilter(nullptr), cs(cs), current(nullptr), total_size(0), packets(nullptr)
 	{
-		this->mutex = ThreadMutex::New();
 	}
 
 	/** Make sure everything is cleaned up. */
 	~PacketWriter()
 	{
-		if (this->mutex != NULL) this->mutex->BeginCritical();
+		std::unique_lock<std::mutex> lock(this->mutex);
 
-		if (this->cs != NULL && this->mutex != NULL) {
-			this->mutex->WaitForSignal();
-		}
+		if (this->cs != nullptr) this->exit_sig.wait(lock);
 
 		/* This must all wait until the Destroy function is called. */
 
-		while (this->packets != NULL) {
+		while (this->packets != nullptr) {
 			Packet *p = this->packets->next;
 			delete this->packets;
 			this->packets = p;
 		}
 
 		delete this->current;
-
-		if (this->mutex != NULL) this->mutex->EndCritical();
-
-		delete this->mutex;
-		this->mutex = NULL;
 	}
 
 	/**
 	 * Begin the destruction of this packet writer. It can happen in two ways:
 	 * in the first case the client disconnected while saving the map. In this
 	 * case the saving has not finished and killed this PacketWriter. In that
-	 * case we simply set cs to NULL, triggering the appending to fail due to
+	 * case we simply set cs to nullptr, triggering the appending to fail due to
 	 * the connection problem and eventually triggering the destructor. In the
 	 * second case the destructor is already called, and it is waiting for our
 	 * signal which we will send. Only then the packets will be removed by the
@@ -108,13 +99,12 @@ struct PacketWriter : SaveFilter {
 	 */
 	void Destroy()
 	{
-		if (this->mutex != NULL) this->mutex->BeginCritical();
+		std::unique_lock<std::mutex> lock(this->mutex);
 
-		this->cs = NULL;
+		this->cs = nullptr;
 
-		if (this->mutex != NULL) this->mutex->SendSignal();
-
-		if (this->mutex != NULL) this->mutex->EndCritical();
+		this->exit_sig.notify_all();
+		lock.unlock();
 
 		/* Make sure the saving is completely cancelled. Yes,
 		 * we need to handle the save finish as well as the
@@ -132,7 +122,7 @@ struct PacketWriter : SaveFilter {
 	 */
 	bool HasPackets()
 	{
-		return this->packets != NULL;
+		return this->packets != nullptr;
 	}
 
 	/**
@@ -140,13 +130,11 @@ struct PacketWriter : SaveFilter {
 	 */
 	Packet *PopPacket()
 	{
-		if (this->mutex != NULL) this->mutex->BeginCritical();
+		std::lock_guard<std::mutex> lock(this->mutex);
 
 		Packet *p = this->packets;
 		this->packets = p->next;
-		p->next = NULL;
-
-		if (this->mutex != NULL) this->mutex->EndCritical();
+		p->next = nullptr;
 
 		return p;
 	}
@@ -154,25 +142,25 @@ struct PacketWriter : SaveFilter {
 	/** Append the current packet to the queue. */
 	void AppendQueue()
 	{
-		if (this->current == NULL) return;
+		if (this->current == nullptr) return;
 
 		Packet **p = &this->packets;
-		while (*p != NULL) {
+		while (*p != nullptr) {
 			p = &(*p)->next;
 		}
 		*p = this->current;
 
-		this->current = NULL;
+		this->current = nullptr;
 	}
 
-	/* virtual */ void Write(byte *buf, size_t size)
+	void Write(byte *buf, size_t size) override
 	{
 		/* We want to abort the saving when the socket is closed. */
-		if (this->cs == NULL) SlError(STR_NETWORK_ERROR_LOSTCONNECTION);
+		if (this->cs == nullptr) SlError(STR_NETWORK_ERROR_LOSTCONNECTION);
 
-		if (this->current == NULL) this->current = new Packet(PACKET_SERVER_MAP_DATA);
+		if (this->current == nullptr) this->current = new Packet(PACKET_SERVER_MAP_DATA);
 
-		if (this->mutex != NULL) this->mutex->BeginCritical();
+		std::lock_guard<std::mutex> lock(this->mutex);
 
 		byte *bufe = buf + size;
 		while (buf != bufe) {
@@ -187,17 +175,15 @@ struct PacketWriter : SaveFilter {
 			}
 		}
 
-		if (this->mutex != NULL) this->mutex->EndCritical();
-
 		this->total_size += size;
 	}
 
-	/* virtual */ void Finish()
+	void Finish() override
 	{
 		/* We want to abort the saving when the socket is closed. */
-		if (this->cs == NULL) SlError(STR_NETWORK_ERROR_LOSTCONNECTION);
+		if (this->cs == nullptr) SlError(STR_NETWORK_ERROR_LOSTCONNECTION);
 
-		if (this->mutex != NULL) this->mutex->BeginCritical();
+		std::lock_guard<std::mutex> lock(this->mutex);
 
 		/* Make sure the last packet is flushed. */
 		this->AppendQueue();
@@ -210,8 +196,6 @@ struct PacketWriter : SaveFilter {
 		Packet *p = new Packet(PACKET_SERVER_MAP_SIZE);
 		p->Send_uint32((uint32)this->total_size);
 		this->cs->NetworkTCPSocketHandler::SendPacket(p);
-
-		if (this->mutex != NULL) this->mutex->EndCritical();
 	}
 };
 
@@ -240,9 +224,9 @@ ServerNetworkGameSocketHandler::~ServerNetworkGameSocketHandler()
 	if (_redirect_console_to_client == this->client_id) _redirect_console_to_client = INVALID_CLIENT_ID;
 	OrderBackup::ResetUser(this->client_id);
 
-	if (this->savegame != NULL) {
+	if (this->savegame != nullptr) {
 		this->savegame->Destroy();
-		this->savegame = NULL;
+		this->savegame = nullptr;
 	}
 }
 
@@ -250,12 +234,12 @@ Packet *ServerNetworkGameSocketHandler::ReceivePacket()
 {
 	/* Only allow receiving when we have some buffer free; this value
 	 * can go negative, but eventually it will become positive again. */
-	if (this->receive_limit <= 0) return NULL;
+	if (this->receive_limit <= 0) return nullptr;
 
 	/* We can receive a packet, so try that and if needed account for
 	 * the amount of received data. */
 	Packet *p = this->NetworkTCPSocketHandler::ReceivePacket();
-	if (p != NULL) this->receive_limit -= p->size;
+	if (p != nullptr) this->receive_limit -= p->size;
 	return p;
 }
 
@@ -274,14 +258,13 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 	if (status != NETWORK_RECV_STATUS_CONN_LOST && !this->HasClientQuit() && this->status >= STATUS_AUTHORIZED) {
 		/* We did not receive a leave message from this client... */
 		char client_name[NETWORK_CLIENT_NAME_LENGTH];
-		NetworkClientSocket *new_cs;
 
 		this->GetClientName(client_name, lastof(client_name));
 
-		NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, NULL, STR_NETWORK_ERROR_CLIENT_CONNECTION_LOST);
+		NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, nullptr, STR_NETWORK_ERROR_CLIENT_CONNECTION_LOST);
 
 		/* Inform other clients of this... strange leaving ;) */
-		FOR_ALL_CLIENT_SOCKETS(new_cs) {
+		for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 			if (new_cs->status > STATUS_AUTHORIZED && this != new_cs) {
 				new_cs->SendErrorQuit(this->client_id, NETWORK_ERROR_CONNECTION_LOST);
 			}
@@ -326,8 +309,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 /** Send the packets for the server sockets. */
 /* static */ void ServerNetworkGameSocketHandler::Send()
 {
-	NetworkClientSocket *cs;
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		if (cs->writable) {
 			if (cs->SendPackets() != SPS_CLOSED && cs->status == STATUS_MAP) {
 				/* This client is in the middle of a map-send, call the function for that */
@@ -370,22 +352,21 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendCompanyInfo()
 
 	/* Make a list of all clients per company */
 	char clients[MAX_COMPANIES][NETWORK_CLIENTS_LENGTH];
-	NetworkClientSocket *csi;
 	memset(clients, 0, sizeof(clients));
 
 	/* Add the local player (if not dedicated) */
 	const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(CLIENT_ID_SERVER);
-	if (ci != NULL && Company::IsValidID(ci->client_playas)) {
+	if (ci != nullptr && Company::IsValidID(ci->client_playas)) {
 		strecpy(clients[ci->client_playas], ci->client_name, lastof(clients[ci->client_playas]));
 	}
 
-	FOR_ALL_CLIENT_SOCKETS(csi) {
+	for (NetworkClientSocket *csi : NetworkClientSocket::Iterate()) {
 		char client_name[NETWORK_CLIENT_NAME_LENGTH];
 
 		((ServerNetworkGameSocketHandler*)csi)->GetClientName(client_name, lastof(client_name));
 
 		ci = csi->GetInfo();
-		if (ci != NULL && Company::IsValidID(ci->client_playas)) {
+		if (ci != nullptr && Company::IsValidID(ci->client_playas)) {
 			if (!StrEmpty(clients[ci->client_playas])) {
 				strecat(clients[ci->client_playas], ", ", lastof(clients[ci->client_playas]));
 			}
@@ -396,10 +377,9 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendCompanyInfo()
 
 	/* Now send the data */
 
-	Company *company;
 	Packet *p;
 
-	FOR_ALL_COMPANIES(company) {
+	for (const Company *company : Company::Iterate()) {
 		p = new Packet(PACKET_SERVER_COMPANY_INFO);
 
 		p->Send_uint8 (NETWORK_COMPANY_INFO_VERSION);
@@ -427,13 +407,15 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendCompanyInfo()
 /**
  * Send an error to the client, and close its connection.
  * @param error The error to disconnect for.
+ * @param reason In case of kicking a client, specifies the reason for kicking the client.
  */
-NetworkRecvStatus ServerNetworkGameSocketHandler::SendError(NetworkErrorCode error)
+NetworkRecvStatus ServerNetworkGameSocketHandler::SendError(NetworkErrorCode error, const char *reason)
 {
 	char str[100];
 	Packet *p = new Packet(PACKET_SERVER_ERROR);
 
 	p->Send_uint8(error);
+	if (reason != nullptr) p->Send_string(reason);
 	this->SendPacket(p);
 
 	StringID strid = GetNetworkErrorMsg(error);
@@ -441,16 +423,19 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendError(NetworkErrorCode err
 
 	/* Only send when the current client was in game */
 	if (this->status > STATUS_AUTHORIZED) {
-		NetworkClientSocket *new_cs;
 		char client_name[NETWORK_CLIENT_NAME_LENGTH];
 
 		this->GetClientName(client_name, lastof(client_name));
 
 		DEBUG(net, 1, "'%s' made an error and has been disconnected. Reason: '%s'", client_name, str);
 
-		NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, NULL, strid);
+		if (error == NETWORK_ERROR_KICKED && reason != nullptr) {
+			NetworkTextMessage(NETWORK_ACTION_KICKED, CC_DEFAULT, false, client_name, reason, strid);
+		} else {
+			NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, nullptr, strid);
+		}
 
-		FOR_ALL_CLIENT_SOCKETS(new_cs) {
+		for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 			if (new_cs->status > STATUS_AUTHORIZED && new_cs != this) {
 				/* Some errors we filter to a more general error. Clients don't have to know the real
 				 *  reason a joining failed. */
@@ -477,12 +462,12 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendNewGRFCheck()
 	const GRFConfig *c;
 	uint grf_count = 0;
 
-	for (c = _grfconfig; c != NULL; c = c->next) {
+	for (c = _grfconfig; c != nullptr; c = c->next) {
 		if (!HasBit(c->flags, GCF_STATIC)) grf_count++;
 	}
 
 	p->Send_uint8 (grf_count);
-	for (c = _grfconfig; c != NULL; c = c->next) {
+	for (c = _grfconfig; c != nullptr; c = c->next) {
 		if (!HasBit(c->flags, GCF_STATIC)) this->SendGRFIdentifier(p, &c->ident);
 	}
 
@@ -526,7 +511,6 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendNeedCompanyPassword()
 NetworkRecvStatus ServerNetworkGameSocketHandler::SendWelcome()
 {
 	Packet *p;
-	NetworkClientSocket *new_cs;
 
 	/* Invalid packet when status is AUTH or higher */
 	if (this->status >= STATUS_AUTHORIZED) return this->CloseConnection(NETWORK_RECV_STATUS_MALFORMED_PACKET);
@@ -544,7 +528,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendWelcome()
 	this->SendPacket(p);
 
 	/* Transmit info about all the active clients */
-	FOR_ALL_CLIENT_SOCKETS(new_cs) {
+	for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 		if (new_cs != this && new_cs->status > STATUS_AUTHORIZED) {
 			this->SendClientInfo(new_cs->GetInfo());
 		}
@@ -557,11 +541,10 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendWelcome()
 NetworkRecvStatus ServerNetworkGameSocketHandler::SendWait()
 {
 	int waiting = 0;
-	NetworkClientSocket *new_cs;
 	Packet *p;
 
 	/* Count how many clients are waiting in the queue, in front of you! */
-	FOR_ALL_CLIENT_SOCKETS(new_cs) {
+	for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 		if (new_cs->status != STATUS_MAP_WAIT) continue;
 		if (new_cs->GetInfo()->join_date < this->GetInfo()->join_date || (new_cs->GetInfo()->join_date == this->GetInfo()->join_date && new_cs->client_id < this->client_id)) waiting++;
 	}
@@ -621,31 +604,30 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendMap()
 		if (last_packet) {
 			/* Done reading, make sure saving is done as well */
 			this->savegame->Destroy();
-			this->savegame = NULL;
+			this->savegame = nullptr;
 
 			/* Set the status to DONE_MAP, no we will wait for the client
 			 *  to send it is ready (maybe that happens like never ;)) */
 			this->status = STATUS_DONE_MAP;
 
 			/* Find the best candidate for joining, i.e. the first joiner. */
-			NetworkClientSocket *new_cs;
-			NetworkClientSocket *best = NULL;
-			FOR_ALL_CLIENT_SOCKETS(new_cs) {
+			NetworkClientSocket *best = nullptr;
+			for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 				if (new_cs->status == STATUS_MAP_WAIT) {
-					if (best == NULL || best->GetInfo()->join_date > new_cs->GetInfo()->join_date || (best->GetInfo()->join_date == new_cs->GetInfo()->join_date && best->client_id > new_cs->client_id)) {
+					if (best == nullptr || best->GetInfo()->join_date > new_cs->GetInfo()->join_date || (best->GetInfo()->join_date == new_cs->GetInfo()->join_date && best->client_id > new_cs->client_id)) {
 						best = new_cs;
 					}
 				}
 			}
 
 			/* Is there someone else to join? */
-			if (best != NULL) {
+			if (best != nullptr) {
 				/* Let the first start joining. */
 				best->status = STATUS_AUTHORIZED;
 				best->SendMap();
 
 				/* And update the rest. */
-				FOR_ALL_CLIENT_SOCKETS(new_cs) {
+				for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 					if (new_cs->status == STATUS_MAP_WAIT) new_cs->SendWait();
 				}
 			}
@@ -960,9 +942,9 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_JOIN(Packet *p)
 
 	this->status = STATUS_NEWGRFS_CHECK;
 
-	if (_grfconfig == NULL) {
+	if (_grfconfig == nullptr) {
 		/* Behave as if we received PACKET_CLIENT_NEWGRFS_CHECKED */
-		return this->Receive_CLIENT_NEWGRFS_CHECKED(NULL);
+		return this->Receive_CLIENT_NEWGRFS_CHECKED(nullptr);
 	}
 
 	return this->SendNewGRFCheck();
@@ -1017,7 +999,6 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_COMPANY_PASSWOR
 
 NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_GETMAP(Packet *p)
 {
-	NetworkClientSocket *new_cs;
 	/* The client was never joined.. so this is impossible, right?
 	 *  Ignore the packet, give the client a warning, and close his connection */
 	if (this->status < STATUS_AUTHORIZED || this->HasClientQuit()) {
@@ -1025,7 +1006,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_GETMAP(Packet *
 	}
 
 	/* Check if someone else is receiving the map */
-	FOR_ALL_CLIENT_SOCKETS(new_cs) {
+	for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 		if (new_cs->status == STATUS_MAP) {
 			/* Tell the new client to wait */
 			this->status = STATUS_MAP_WAIT;
@@ -1042,11 +1023,10 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_MAP_OK(Packet *
 	/* Client has the map, now start syncing */
 	if (this->status == STATUS_DONE_MAP && !this->HasClientQuit()) {
 		char client_name[NETWORK_CLIENT_NAME_LENGTH];
-		NetworkClientSocket *new_cs;
 
 		this->GetClientName(client_name, lastof(client_name));
 
-		NetworkTextMessage(NETWORK_ACTION_JOIN, CC_DEFAULT, false, client_name, NULL, this->client_id);
+		NetworkTextMessage(NETWORK_ACTION_JOIN, CC_DEFAULT, false, client_name, nullptr, this->client_id);
 
 		/* Mark the client as pre-active, and wait for an ACK
 		 *  so we know he is done loading and in sync with us */
@@ -1060,7 +1040,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_MAP_OK(Packet *
 		this->last_frame = _frame_counter;
 		this->last_frame_server = _frame_counter;
 
-		FOR_ALL_CLIENT_SOCKETS(new_cs) {
+		for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 			if (new_cs->status > STATUS_AUTHORIZED) {
 				new_cs->SendClientInfo(this->GetInfo());
 				new_cs->SendJoin(this->client_id);
@@ -1103,7 +1083,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_COMMAND(Packet 
 
 	NetworkClientInfo *ci = this->GetInfo();
 
-	if (err != NULL) {
+	if (err != nullptr) {
 		IConsolePrintF(CC_ERROR, "WARNING: %s from client %d (IP: %s).", err, ci->client_id, this->GetClientIP());
 		return this->SendError(NETWORK_ERROR_NOT_EXPECTED);
 	}
@@ -1152,7 +1132,6 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_ERROR(Packet *p
 {
 	/* This packets means a client noticed an error and is reporting this
 	 *  to us. Display the error and report it to the other clients */
-	NetworkClientSocket *new_cs;
 	char str[100];
 	char client_name[NETWORK_CLIENT_NAME_LENGTH];
 	NetworkErrorCode errorno = (NetworkErrorCode)p->Recv_uint8();
@@ -1169,9 +1148,9 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_ERROR(Packet *p
 
 	DEBUG(net, 2, "'%s' reported an error and is closing its connection (%s)", client_name, str);
 
-	NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, NULL, strid);
+	NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, nullptr, strid);
 
-	FOR_ALL_CLIENT_SOCKETS(new_cs) {
+	for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 		if (new_cs->status > STATUS_AUTHORIZED) {
 			new_cs->SendErrorQuit(this->client_id, errorno);
 		}
@@ -1186,7 +1165,6 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_QUIT(Packet *p)
 {
 	/* The client wants to leave. Display this and report it to the other
 	 *  clients. */
-	NetworkClientSocket *new_cs;
 	char client_name[NETWORK_CLIENT_NAME_LENGTH];
 
 	/* The client was never joined.. thank the client for the packet, but ignore it */
@@ -1196,9 +1174,9 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_QUIT(Packet *p)
 
 	this->GetClientName(client_name, lastof(client_name));
 
-	NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, NULL, STR_NETWORK_MESSAGE_CLIENT_LEAVING);
+	NetworkTextMessage(NETWORK_ACTION_LEAVE, CC_DEFAULT, false, client_name, nullptr, STR_NETWORK_MESSAGE_CLIENT_LEAVING);
 
-	FOR_ALL_CLIENT_SOCKETS(new_cs) {
+	for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
 		if (new_cs->status > STATUS_AUTHORIZED && new_cs != this) {
 			new_cs->SendQuit(this->client_id);
 		}
@@ -1220,7 +1198,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_ACK(Packet *p)
 
 	/* The client is trying to catch up with the server */
 	if (this->status == STATUS_PRE_ACTIVE) {
-		/* The client is not yet catched up? */
+		/* The client is not yet caught up? */
 		if (frame + DAY_TICKS < _frame_counter) return NETWORK_RECV_STATUS_OKAY;
 
 		/* Now he is! Unpause the game */
@@ -1267,7 +1245,6 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_ACK(Packet *p)
  */
 void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, const char *msg, ClientID from_id, int64 data, bool from_admin)
 {
-	NetworkClientSocket *cs;
 	const NetworkClientInfo *ci, *ci_own, *ci_to;
 
 	switch (desttype) {
@@ -1276,7 +1253,7 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 			if ((ClientID)dest == CLIENT_ID_SERVER) {
 				ci = NetworkClientInfo::GetByClientID(from_id);
 				/* Display the text locally, and that is it */
-				if (ci != NULL) {
+				if (ci != nullptr) {
 					NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), false, ci->client_name, msg, data);
 
 					if (_settings_client.network.server_admin_chat) {
@@ -1285,7 +1262,7 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 				}
 			} else {
 				/* Else find the client to send the message to */
-				FOR_ALL_CLIENT_SOCKETS(cs) {
+				for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 					if (cs->client_id == (ClientID)dest) {
 						cs->SendChat(action, from_id, false, msg, data);
 						break;
@@ -1298,11 +1275,11 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 				if (from_id == CLIENT_ID_SERVER) {
 					ci = NetworkClientInfo::GetByClientID(from_id);
 					ci_to = NetworkClientInfo::GetByClientID((ClientID)dest);
-					if (ci != NULL && ci_to != NULL) {
+					if (ci != nullptr && ci_to != nullptr) {
 						NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), true, ci_to->client_name, msg, data);
 					}
 				} else {
-					FOR_ALL_CLIENT_SOCKETS(cs) {
+					for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 						if (cs->client_id == from_id) {
 							cs->SendChat(action, (ClientID)dest, true, msg, data);
 							break;
@@ -1315,10 +1292,10 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 			/* If this is false, the message is already displayed on the client who sent it. */
 			bool show_local = true;
 			/* Find all clients that belong to this company */
-			ci_to = NULL;
-			FOR_ALL_CLIENT_SOCKETS(cs) {
+			ci_to = nullptr;
+			for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 				ci = cs->GetInfo();
-				if (ci != NULL && ci->client_playas == (CompanyID)dest) {
+				if (ci != nullptr && ci->client_playas == (CompanyID)dest) {
 					cs->SendChat(action, from_id, false, msg, data);
 					if (cs->client_id == from_id) show_local = false;
 					ci_to = ci; // Remember a client that is in the company for company-name
@@ -1332,17 +1309,17 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 
 			ci = NetworkClientInfo::GetByClientID(from_id);
 			ci_own = NetworkClientInfo::GetByClientID(CLIENT_ID_SERVER);
-			if (ci != NULL && ci_own != NULL && ci_own->client_playas == dest) {
+			if (ci != nullptr && ci_own != nullptr && ci_own->client_playas == dest) {
 				NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), false, ci->client_name, msg, data);
 				if (from_id == CLIENT_ID_SERVER) show_local = false;
 				ci_to = ci_own;
 			}
 
 			/* There is no such client */
-			if (ci_to == NULL) break;
+			if (ci_to == nullptr) break;
 
 			/* Display the message locally (so you know you have sent it) */
-			if (ci != NULL && show_local) {
+			if (ci != nullptr && show_local) {
 				if (from_id == CLIENT_ID_SERVER) {
 					char name[NETWORK_NAME_LENGTH];
 					StringID str = Company::IsValidID(ci_to->client_playas) ? STR_COMPANY_NAME : STR_NETWORK_SPECTATORS;
@@ -1350,7 +1327,7 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 					GetString(name, str, lastof(name));
 					NetworkTextMessage(action, GetDrawStringCompanyColour(ci_own->client_playas), true, name, msg, data);
 				} else {
-					FOR_ALL_CLIENT_SOCKETS(cs) {
+					for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 						if (cs->client_id == from_id) {
 							cs->SendChat(action, ci_to->client_id, true, msg, data);
 						}
@@ -1364,14 +1341,14 @@ void NetworkServerSendChat(NetworkAction action, DestType desttype, int dest, co
 			FALLTHROUGH;
 
 		case DESTTYPE_BROADCAST:
-			FOR_ALL_CLIENT_SOCKETS(cs) {
+			for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 				cs->SendChat(action, from_id, false, msg, data);
 			}
 
 			NetworkAdminChat(action, desttype, from_id, msg, data, from_admin);
 
 			ci = NetworkClientInfo::GetByClientID(from_id);
-			if (ci != NULL) {
+			if (ci != nullptr) {
 				NetworkTextMessage(action, GetDrawStringCompanyColour(ci->client_playas), false, ci->client_name, msg, data);
 			}
 			break;
@@ -1442,7 +1419,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_SET_NAME(Packet
 
 	if (this->HasClientQuit()) return NETWORK_RECV_STATUS_CONN_LOST;
 
-	if (ci != NULL) {
+	if (ci != nullptr) {
 		/* Display change */
 		if (NetworkFindName(client_name, lastof(client_name))) {
 			NetworkTextMessage(NETWORK_ACTION_NAME_CHANGE, CC_DEFAULT, false, ci->client_name, client_name);
@@ -1563,13 +1540,10 @@ void NetworkSocketHandler::SendCompanyInformation(Packet *p, const Company *c, c
  */
 void NetworkPopulateCompanyStats(NetworkCompanyStats *stats)
 {
-	const Vehicle *v;
-	const Station *s;
-
 	memset(stats, 0, sizeof(*stats) * MAX_COMPANIES);
 
 	/* Go through all vehicles and count the type of vehicles */
-	FOR_ALL_VEHICLES(v) {
+	for (const Vehicle *v : Vehicle::Iterate()) {
 		if (!Company::IsValidID(v->owner) || !v->IsPrimaryVehicle()) continue;
 		byte type = 0;
 		switch (v->type) {
@@ -1583,7 +1557,7 @@ void NetworkPopulateCompanyStats(NetworkCompanyStats *stats)
 	}
 
 	/* Go through all stations and count the types of stations */
-	FOR_ALL_STATIONS(s) {
+	for (const Station *s : Station::Iterate()) {
 		if (Company::IsValidID(s->owner)) {
 			NetworkCompanyStats *npi = &stats[s->owner];
 
@@ -1602,14 +1576,13 @@ void NetworkPopulateCompanyStats(NetworkCompanyStats *stats)
  */
 void NetworkUpdateClientInfo(ClientID client_id)
 {
-	NetworkClientSocket *cs;
 	NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(client_id);
 
-	if (ci == NULL) return;
+	if (ci == nullptr) return;
 
 	DEBUG(desync, 1, "client: %08x; %02x; %02x; %04x", _date, _date_fract, (int)ci->client_playas, client_id);
 
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		cs->SendClientInfo(ci);
 	}
 
@@ -1622,7 +1595,20 @@ static void NetworkCheckRestartMap()
 	if (_settings_client.network.restart_game_year != 0 && _cur_year >= _settings_client.network.restart_game_year) {
 		DEBUG(net, 0, "Auto-restarting map. Year %d reached", _cur_year);
 
-		StartNewGameWithoutGUI(GENERATE_NEW_SEED);
+		_settings_newgame.game_creation.generation_seed = GENERATE_NEW_SEED;
+		switch(_file_to_saveload.abstract_ftype) {
+			case FT_SAVEGAME:
+			case FT_SCENARIO:
+				_switch_mode = SM_LOAD_GAME;
+				break;
+
+			case FT_HEIGHTMAP:
+				_switch_mode = SM_START_HEIGHTMAP;
+				break;
+
+			default:
+				_switch_mode = SM_NEWGAME;
+		}
 	}
 }
 
@@ -1634,8 +1620,6 @@ static void NetworkCheckRestartMap()
  */
 static void NetworkAutoCleanCompanies()
 {
-	const NetworkClientInfo *ci;
-	const Company *c;
 	bool clients_in_company[MAX_COMPANIES];
 	int vehicles_in_company[MAX_COMPANIES];
 
@@ -1644,27 +1628,26 @@ static void NetworkAutoCleanCompanies()
 	memset(clients_in_company, 0, sizeof(clients_in_company));
 
 	/* Detect the active companies */
-	FOR_ALL_CLIENT_INFOS(ci) {
+	for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (Company::IsValidID(ci->client_playas)) clients_in_company[ci->client_playas] = true;
 	}
 
 	if (!_network_dedicated) {
-		ci = NetworkClientInfo::GetByClientID(CLIENT_ID_SERVER);
+		const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(CLIENT_ID_SERVER);
 		if (Company::IsValidID(ci->client_playas)) clients_in_company[ci->client_playas] = true;
 	}
 
 	if (_settings_client.network.autoclean_novehicles != 0) {
 		memset(vehicles_in_company, 0, sizeof(vehicles_in_company));
 
-		const Vehicle *v;
-		FOR_ALL_VEHICLES(v) {
+		for (const Vehicle *v : Vehicle::Iterate()) {
 			if (!Company::IsValidID(v->owner) || !v->IsPrimaryVehicle()) continue;
 			vehicles_in_company[v->owner]++;
 		}
 	}
 
 	/* Go through all the companies */
-	FOR_ALL_COMPANIES(c) {
+	for (const Company *c : Company::Iterate()) {
 		/* Skip the non-active once */
 		if (c->is_ai) continue;
 
@@ -1675,7 +1658,7 @@ static void NetworkAutoCleanCompanies()
 			/* Is the company empty for autoclean_unprotected-months, and is there no protection? */
 			if (_settings_client.network.autoclean_unprotected != 0 && _network_company_states[c->index].months_empty > _settings_client.network.autoclean_unprotected && StrEmpty(_network_company_states[c->index].password)) {
 				/* Shut the company down */
-				DoCommandP(0, CCA_DELETE | c->index << 16, CRR_AUTOCLEAN, CMD_COMPANY_CTRL);
+				DoCommandP(0, CCA_DELETE | c->index << 16 | CRR_AUTOCLEAN << 24, 0, CMD_COMPANY_CTRL);
 				IConsolePrintF(CC_DEFAULT, "Auto-cleaned company #%d with no password", c->index + 1);
 			}
 			/* Is the company empty for autoclean_protected-months, and there is a protection? */
@@ -1689,7 +1672,7 @@ static void NetworkAutoCleanCompanies()
 			/* Is the company empty for autoclean_novehicles-months, and has no vehicles? */
 			if (_settings_client.network.autoclean_novehicles != 0 && _network_company_states[c->index].months_empty > _settings_client.network.autoclean_novehicles && vehicles_in_company[c->index] == 0) {
 				/* Shut the company down */
-				DoCommandP(0, CCA_DELETE | c->index << 16, CRR_AUTOCLEAN, CMD_COMPANY_CTRL);
+				DoCommandP(0, CCA_DELETE | c->index << 16 | CRR_AUTOCLEAN << 24, 0, CMD_COMPANY_CTRL);
 				IConsolePrintF(CC_DEFAULT, "Auto-cleaned company #%d with no vehicles", c->index + 1);
 			}
 		} else {
@@ -1714,10 +1697,8 @@ bool NetworkFindName(char *new_name, const char *last)
 	strecpy(original_name, new_name, lastof(original_name));
 
 	while (!found_name) {
-		const NetworkClientInfo *ci;
-
 		found_name = true;
-		FOR_ALL_CLIENT_INFOS(ci) {
+		for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 			if (strcmp(ci->client_name, new_name) == 0) {
 				/* Name already in use */
 				found_name = false;
@@ -1725,8 +1706,8 @@ bool NetworkFindName(char *new_name, const char *last)
 			}
 		}
 		/* Check if it is the same as the server-name */
-		ci = NetworkClientInfo::GetByClientID(CLIENT_ID_SERVER);
-		if (ci != NULL) {
+		const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(CLIENT_ID_SERVER);
+		if (ci != nullptr) {
 			if (strcmp(ci->client_name, new_name) == 0) found_name = false; // name already in use
 		}
 
@@ -1750,14 +1731,13 @@ bool NetworkFindName(char *new_name, const char *last)
  */
 bool NetworkServerChangeClientName(ClientID client_id, const char *new_name)
 {
-	NetworkClientInfo *ci;
 	/* Check if the name's already in use */
-	FOR_ALL_CLIENT_INFOS(ci) {
+	for (NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (strcmp(ci->client_name, new_name) == 0) return false;
 	}
 
-	ci = NetworkClientInfo::GetByClientID(client_id);
-	if (ci == NULL) return false;
+	NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(client_id);
+	if (ci == nullptr) return false;
 
 	NetworkTextMessage(NETWORK_ACTION_NAME_CHANGE, CC_DEFAULT, true, ci->client_name, new_name);
 
@@ -1792,7 +1772,7 @@ void NetworkServerSetCompanyPassword(CompanyID company_id, const char *password,
 static void NetworkHandleCommandQueue(NetworkClientSocket *cs)
 {
 	CommandPacket *cp;
-	while ((cp = cs->outgoing_queue.Pop()) != NULL) {
+	while ((cp = cs->outgoing_queue.Pop()) != nullptr) {
 		cs->SendCommand(cp);
 		free(cp);
 	}
@@ -1804,7 +1784,6 @@ static void NetworkHandleCommandQueue(NetworkClientSocket *cs)
  */
 void NetworkServer_Tick(bool send_frame)
 {
-	NetworkClientSocket *cs;
 #ifndef ENABLE_NETWORK_SYNC_EVERY_FRAME
 	bool send_sync = false;
 #endif
@@ -1818,7 +1797,7 @@ void NetworkServer_Tick(bool send_frame)
 
 	/* Now we are done with the frame, inform the clients that they can
 	 *  do their frame! */
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		/* We allow a number of bytes per frame, but only to the burst amount
 		 * to be available for packet receiving at any particular time. */
 		cs->receive_limit = min(cs->receive_limit + _settings_client.network.bytes_per_frame,
@@ -1975,10 +1954,9 @@ void NetworkServerShowStatusToConsole()
 	};
 	assert_compile(lengthof(stat_str) == NetworkClientSocket::STATUS_END);
 
-	NetworkClientSocket *cs;
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		NetworkClientInfo *ci = cs->GetInfo();
-		if (ci == NULL) continue;
+		if (ci == nullptr) continue;
 		uint lag = NetworkCalculateLag(cs);
 		const char *status;
 
@@ -1995,9 +1973,7 @@ void NetworkServerShowStatusToConsole()
  */
 void NetworkServerSendConfigUpdate()
 {
-	NetworkClientSocket *cs;
-
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		if (cs->status >= NetworkClientSocket::STATUS_PRE_ACTIVE) cs->SendConfigUpdate();
 	}
 }
@@ -2014,8 +1990,7 @@ void NetworkServerUpdateCompanyPassworded(CompanyID company_id, bool passworded)
 	SB(_network_company_passworded, company_id, 1, !!passworded);
 	SetWindowClassesDirty(WC_COMPANY);
 
-	NetworkClientSocket *cs;
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		if (cs->status >= NetworkClientSocket::STATUS_PRE_ACTIVE) cs->SendCompanyUpdate();
 	}
 
@@ -2070,50 +2045,57 @@ void NetworkServerSendRcon(ClientID client_id, TextColour colour_code, const cha
 /**
  * Kick a single client.
  * @param client_id The client to kick.
+ * @param reason In case of kicking a client, specifies the reason for kicking the client.
  */
-void NetworkServerKickClient(ClientID client_id)
+void NetworkServerKickClient(ClientID client_id, const char *reason)
 {
 	if (client_id == CLIENT_ID_SERVER) return;
-	NetworkClientSocket::GetByClientID(client_id)->SendError(NETWORK_ERROR_KICKED);
+	NetworkClientSocket::GetByClientID(client_id)->SendError(NETWORK_ERROR_KICKED, reason);
 }
 
 /**
  * Ban, or kick, everyone joined from the given client's IP.
  * @param client_id The client to check for.
  * @param ban Whether to ban or kick.
+ * @param reason In case of kicking a client, specifies the reason for kicking the client.
  */
-uint NetworkServerKickOrBanIP(ClientID client_id, bool ban)
+uint NetworkServerKickOrBanIP(ClientID client_id, bool ban, const char *reason)
 {
-	return NetworkServerKickOrBanIP(NetworkClientSocket::GetByClientID(client_id)->GetClientIP(), ban);
+	return NetworkServerKickOrBanIP(NetworkClientSocket::GetByClientID(client_id)->GetClientIP(), ban, reason);
 }
 
 /**
  * Kick or ban someone based on an IP address.
  * @param ip The IP address/range to ban/kick.
  * @param ban Whether to ban or just kick.
+ * @param reason In case of kicking a client, specifies the reason for kicking the client.
  */
-uint NetworkServerKickOrBanIP(const char *ip, bool ban)
+uint NetworkServerKickOrBanIP(const char *ip, bool ban, const char *reason)
 {
 	/* Add address to ban-list */
 	if (ban) {
 		bool contains = false;
-		for (char **iter = _network_ban_list.Begin(); iter != _network_ban_list.End(); iter++) {
-			if (strcmp(*iter, ip) == 0) {
+		for (const auto &iter : _network_ban_list) {
+			if (iter == ip) {
 				contains = true;
 				break;
 			}
 		}
-		if (!contains) *_network_ban_list.Append() = stredup(ip);
+		if (!contains) _network_ban_list.emplace_back(ip);
 	}
 
 	uint n = 0;
 
-	/* There can be multiple clients with the same IP, kick them all */
-	NetworkClientSocket *cs;
-	FOR_ALL_CLIENT_SOCKETS(cs) {
+	/* There can be multiple clients with the same IP, kick them all but don't kill the server,
+	 * or the client doing the rcon. The latter can't be kicked because kicking frees closes
+	 * and subsequently free the connection related instances, which we would be reading from
+	 * and writing to after returning. So we would read or write data from freed memory up till
+	 * the segfault triggers. */
+	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		if (cs->client_id == CLIENT_ID_SERVER) continue;
-		if (cs->client_address.IsInNetmask(const_cast<char *>(ip))) {
-			NetworkServerKickClient(cs->client_id);
+		if (cs->client_id == _redirect_console_to_client) continue;
+		if (cs->client_address.IsInNetmask(ip)) {
+			NetworkServerKickClient(cs->client_id, reason);
 			n++;
 		}
 	}
@@ -2128,8 +2110,7 @@ uint NetworkServerKickOrBanIP(const char *ip, bool ban)
  */
 bool NetworkCompanyHasClients(CompanyID company)
 {
-	const NetworkClientInfo *ci;
-	FOR_ALL_CLIENT_INFOS(ci) {
+	for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (ci->client_playas == company) return true;
 	}
 	return false;
@@ -2145,7 +2126,7 @@ void ServerNetworkGameSocketHandler::GetClientName(char *client_name, const char
 {
 	const NetworkClientInfo *ci = this->GetInfo();
 
-	if (ci == NULL || StrEmpty(ci->client_name)) {
+	if (ci == nullptr || StrEmpty(ci->client_name)) {
 		seprintf(client_name, last, "Client #%4d", this->client_id);
 	} else {
 		strecpy(client_name, ci->client_name, last);
@@ -2157,8 +2138,7 @@ void ServerNetworkGameSocketHandler::GetClientName(char *client_name, const char
  */
 void NetworkPrintClients()
 {
-	NetworkClientInfo *ci;
-	FOR_ALL_CLIENT_INFOS(ci) {
+	for (NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {
 		if (_network_server) {
 			IConsolePrintF(CC_INFO, "Client #%1d  name: '%s'  company: %1d  IP: %s",
 					ci->client_id,
@@ -2176,12 +2156,12 @@ void NetworkPrintClients()
 
 /**
  * Perform all the server specific administration of a new company.
- * @param c  The newly created company; can't be NULL.
- * @param ci The client information of the client that made the company; can be NULL.
+ * @param c  The newly created company; can't be nullptr.
+ * @param ci The client information of the client that made the company; can be nullptr.
  */
 void NetworkServerNewCompany(const Company *c, NetworkClientInfo *ci)
 {
-	assert(c != NULL);
+	assert(c != nullptr);
 
 	if (!_network_server) return;
 
@@ -2189,22 +2169,20 @@ void NetworkServerNewCompany(const Company *c, NetworkClientInfo *ci)
 	_network_company_states[c->index].password[0] = '\0';
 	NetworkServerUpdateCompanyPassworded(c->index, false);
 
-	if (ci != NULL) {
-		/* ci is NULL when replaying, or for AIs. In neither case there is a client. */
+	if (ci != nullptr) {
+		/* ci is nullptr when replaying, or for AIs. In neither case there is a client. */
 		ci->client_playas = c->index;
 		NetworkUpdateClientInfo(ci->client_id);
-		NetworkSendCommand(0, 0, 0, CMD_RENAME_PRESIDENT, NULL, ci->client_name, c->index);
+		NetworkSendCommand(0, 0, 0, CMD_RENAME_PRESIDENT, nullptr, ci->client_name, c->index);
 	}
 
 	/* Announce new company on network. */
 	NetworkAdminCompanyInfo(c, true);
 
-	if (ci != NULL) {
-		/* ci is NULL when replaying, or for AIs. In neither case there is a client.
+	if (ci != nullptr) {
+		/* ci is nullptr when replaying, or for AIs. In neither case there is a client.
 		   We need to send Admin port update here so that they first know about the new company
 		   and then learn about a possibly joining client (see FS#6025) */
 		NetworkServerSendChat(NETWORK_ACTION_COMPANY_NEW, DESTTYPE_BROADCAST, 0, "", ci->client_id, c->index + 1);
 	}
 }
-
-#endif /* ENABLE_NETWORK */

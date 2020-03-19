@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -51,11 +49,11 @@ const SaveLoad *GetLinkGraphDesc()
  */
 const SaveLoad *GetLinkGraphJobDesc()
 {
-	static SmallVector<SaveLoad, 16> saveloads;
+	static std::vector<SaveLoad> saveloads;
 	static const char *prefix = "linkgraph.";
 
 	/* Build the SaveLoad array on first call and don't touch it later on */
-	if (saveloads.Length() == 0) {
+	if (saveloads.size() == 0) {
 		size_t offset_gamesettings = cpp_offsetof(GameSettings, linkgraph);
 		size_t offset_component = cpp_offsetof(LinkGraphJob, settings);
 
@@ -64,12 +62,12 @@ const SaveLoad *GetLinkGraphJobDesc()
 		int setting = 0;
 		const SettingDesc *desc = GetSettingDescription(setting);
 		while (desc->save.cmd != SL_END) {
-			if (desc->desc.name != NULL && strncmp(desc->desc.name, prefix, prefixlen) == 0) {
+			if (desc->desc.name != nullptr && strncmp(desc->desc.name, prefix, prefixlen) == 0) {
 				SaveLoad sl = desc->save;
 				char *&address = reinterpret_cast<char *&>(sl.address);
 				address -= offset_gamesettings;
 				address += offset_component;
-				*(saveloads.Append()) = sl;
+				saveloads.push_back(sl);
 			}
 			desc = GetSettingDescription(++setting);
 		}
@@ -82,8 +80,8 @@ const SaveLoad *GetLinkGraphJobDesc()
 
 		int i = 0;
 		do {
-			*(saveloads.Append()) = job_desc[i++];
-		} while (saveloads[saveloads.Length() - 1].cmd != SL_END);
+			saveloads.push_back(job_desc[i++]);
+		} while (saveloads[saveloads.size() - 1].cmd != SL_END);
 	}
 
 	return &saveloads[0];
@@ -230,18 +228,18 @@ static void Load_LGRS()
 void AfterLoadLinkGraphs()
 {
 	if (IsSavegameVersionBefore(SLV_191)) {
-		LinkGraph *lg;
-		FOR_ALL_LINK_GRAPHS(lg) {
+		for (LinkGraph *lg : LinkGraph::Iterate()) {
 			for (NodeID node_id = 0; node_id < lg->Size(); ++node_id) {
-				(*lg)[node_id].UpdateLocation(Station::Get((*lg)[node_id].Station())->xy);
+				const Station *st = Station::GetIfValid((*lg)[node_id].Station());
+				if (st != nullptr) (*lg)[node_id].UpdateLocation(st->xy);
 			}
 		}
 
-		LinkGraphJob *lgj;
-		FOR_ALL_LINK_GRAPH_JOBS(lgj) {
-			lg = &(const_cast<LinkGraph &>(lgj->Graph()));
+		for (LinkGraphJob *lgj : LinkGraphJob::Iterate()) {
+			LinkGraph *lg = &(const_cast<LinkGraph &>(lgj->Graph()));
 			for (NodeID node_id = 0; node_id < lg->Size(); ++node_id) {
-				(*lg)[node_id].UpdateLocation(Station::Get((*lg)[node_id].Station())->xy);
+				const Station *st = Station::GetIfValid((*lg)[node_id].Station());
+				if (st != nullptr) (*lg)[node_id].UpdateLocation(st->xy);
 			}
 		}
 	}
@@ -254,8 +252,7 @@ void AfterLoadLinkGraphs()
  */
 static void Save_LGRP()
 {
-	LinkGraph *lg;
-	FOR_ALL_LINK_GRAPHS(lg) {
+	for (LinkGraph *lg : LinkGraph::Iterate()) {
 		SlSetArrayIndex(lg->index);
 		SlAutolength((AutolengthProc*)DoSave_LGRP, lg);
 	}
@@ -266,8 +263,7 @@ static void Save_LGRP()
  */
 static void Save_LGRJ()
 {
-	LinkGraphJob *lgj;
-	FOR_ALL_LINK_GRAPH_JOBS(lgj) {
+	for (LinkGraphJob *lgj : LinkGraphJob::Iterate()) {
 		SlSetArrayIndex(lgj->index);
 		SlAutolength((AutolengthProc*)DoSave_LGRJ, lgj);
 	}
@@ -290,7 +286,7 @@ static void Ptrs_LGRS()
 }
 
 extern const ChunkHandler _linkgraph_chunk_handlers[] = {
-	{ 'LGRP', Save_LGRP, Load_LGRP, NULL,      NULL, CH_ARRAY },
-	{ 'LGRJ', Save_LGRJ, Load_LGRJ, NULL,      NULL, CH_ARRAY },
-	{ 'LGRS', Save_LGRS, Load_LGRS, Ptrs_LGRS, NULL, CH_LAST  }
+	{ 'LGRP', Save_LGRP, Load_LGRP, nullptr,   nullptr, CH_ARRAY },
+	{ 'LGRJ', Save_LGRJ, Load_LGRJ, nullptr,   nullptr, CH_ARRAY },
+	{ 'LGRS', Save_LGRS, Load_LGRS, Ptrs_LGRS, nullptr, CH_LAST  }
 };

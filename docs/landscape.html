@@ -16,7 +16,7 @@
   <a href="landscape_grid.html">Landscape grid</a> page.
  </p>
  <p>Nine attributes (counting &quot;<span style="font-weight: bold;">type</span>&quot; and
-  &quot;<span style="font-weight: bold;">height</span>&quot;) hold the informations about a tile.<BR>
+  &quot;<span style="font-weight: bold;">height</span>&quot;) hold the information about a tile.<BR>
   These attributes are referred to as
   &quot;<span style="font-weight: bold;">type</span>",
   &quot;<span style="font-weight: bold;">height</span>",
@@ -61,7 +61,7 @@
      <a name="tropic_zone"></a>
      Bits 1..0:
      <table border="1" style="width: 30em;">
-      <tr bgcolor="#CCCCCC"><td colspan="2">Only meaningfull in tropic climate. It contains the definition of the available zones</td></tr>
+      <tr bgcolor="#CCCCCC"><td colspan="2">Only meaningful in tropic climate. It contains the definition of the available zones</td></tr>
       <tr><td style="width: 5em;"><tt>00</tt></td><td>normal</td></tr>
       <tr><td><tt>01</tt></td><td>desert</td></tr>
       <tr><td><tt>02</tt></td><td>rain forest</td></tr>
@@ -98,6 +98,32 @@
     </li>
    </ul>
   </li>
+  <li><span style="font-weight: bold;">m4:</span><br>
+   <a name="RoadType"></a>
+   Road roadtype. Used for all tiles with road (road, station, tunnelbridge).
+   <ul>
+    <li>
+     Bits 5..0: Road roadtype, 0x3F for no road.
+    </li>
+   </ul>
+  </li>
+  <li><span style="font-weight: bold;">m8:</span><br>
+   <a name="TramType"></a>
+   Tram roadtype. Used for all tiles with road (road, station, tunnelbridge).
+   <ul>
+    <li>
+     Bits 11..6: Tram roadtype, 0x3F for no tram.
+    </li>
+   </ul>
+  </li>
+  <li><span style="font-weight: bold;">m8:</span><br>
+   <ul>
+    <li>
+     <a name="RailType"></a>
+     Bits 5..0: Railtype. Used for all tiles with rail (road, rail, station, tunnelbridge).
+    </li>
+   </ul>
+  </li>
   <li><span style="font-weight: bold;">m7:</span><br>
    Animation frame/state. Used for houses, industries, objects and stations.
   </li>
@@ -108,7 +134,7 @@
  <table border=1 cellpadding=3>
   <tr bgcolor="#0099FF">
    <th align=left><font color="#FFFFFF">Class</font></th>
-   <th align=left><font color="#FFFFFF">Meaning & details of encoding</font></th>
+   <th align=left><font color="#FFFFFF">Meaning &amp; details of encoding</font></th>
   </tr>
   <tr bgcolor="#CCCCCC">
    <td align=left><strong><a name="Class0"><tt> 0 </tt></a></strong></td>
@@ -223,6 +249,7 @@
    <td valign=top nowrap>&nbsp;</td>
    <td>
     <ul>
+     <li>m1 bit 7: Ship docking tile status (for half-tile with water)</li>
      <li>m1 bits 4..0: <a href="#OwnershipInfo">owner</a> of the tile</li>
      <li>m2: see signals</li>
      <li>m3 bits 7..4: see signals</li>
@@ -535,21 +562,10 @@
    <td>
     <ul>
      <li>m2: Index into the array of towns (owning town for town roads; closest town otherwise, INVALID_TOWN if there is no town or we are creating a town)</li>
-     <li>m7 bit 5 set = on snow or desert</li>
-     <li>m7 bits 7..6: present road types
-      <table>
-       <tr>
-        <td>bit 0&nbsp; </td>
-        <td>normal road</td>
-       </tr>
-
-       <tr>
-        <td>bit 1&nbsp; </td>
-        <td>tram</td>
-       </tr>
-      </table>
-     </li>
      <li>m3 bits 7..4: <a href="#OwnershipInfo">owner</a> of road type 1 (tram); OWNER_NONE (<tt>10</tt>) is stored as OWNER_TOWN (<tt>0F</tt>)
+     <li>m4 bits 5..0: <a href="#RoadType">Roadtype</a></li>
+     <li>m7 bit 5 set = on snow or desert</li>
+     <li>m8 bits 11..6: <a href="#TramType">Tramtype</a></li>
      <li>m5 bits 7 clear: road or level-crossing
       <ul>
        <li>m6 bits 5..3:
@@ -744,7 +760,7 @@
       </ul>
      </li>
     </ul>
-    <small><a name="newhouses"></a>Newhouses is the name englobing a newGRF feature developped by TTDPatch devs (mainly Csaboka).<br>
+    <small><a name="newhouses"></a>Newhouses is the name englobing a newGRF feature developed by TTDPatch devs (mainly Csaboka).<br>
     It allows the replacement of the properties as well as the graphics of houses in the game.<br>
     To distinguish between the standard behaviour and the newGRF one, HouseID (m4 + m3[6]) is tested for anything above 110.<br>
     110 is the count of standard houses. So above 110 means there is a new definition of at least one house</small>
@@ -856,12 +872,14 @@
    <td valign=top nowrap>&nbsp;</td>
    <td>
     <ul>
+     <li>m1 bit 7: Ship docking tile status (for buoys)</li>
      <li>m1 bits 6..5: water class for buoys, water part of docks and for airport tiles</li>
      <li>m1 bits 4..0: <a href="#OwnershipInfo">owner</a> of the station</li>
      <li>m2: index into the array of stations</li>
      <li>m3 bits 7..4: persistent random data for railway stations/waypoints and airports)</li>
      <li>m3 bits 7..4: <a href="#OwnershipInfo">owner</a> of tram tracks (road stop)</li>
      <li>m4: custom station id; 0 means standard graphics</li>
+     <li>m4: <a href="#RoadType">Roadtype</a> for road stops</li>
      <li>m5: graphics index (range from 0..255 for each station type):
       <table>
        <tr>
@@ -977,8 +995,8 @@
      <li>m6 bit 2: pbs reservation state for railway stations/waypoints</li>
 
      <li>m7 bits 4..0: <a href="#OwnershipInfo">owner</a> of road (road stops)</li>
-     <li>m7 bits 7..6: present road types (road stops)</li>
      <li>m7: animation frame (railway stations/waypoints, airports)</li>
+     <li>m8 bits 11..6: <a href="#TramType">Tramtype</a></li>
      <li>m8 bits 5..0: <a href="#TrackType">track type</a> for railway stations/waypoints</li>
     </ul>
    </td>
@@ -992,6 +1010,7 @@
    <td valign=top nowrap>&nbsp;</td>
    <td>
     <ul>
+     <li>m1 bit 7: Ship docking tile status</li>
      <li>m1 bits 6..5 : Water class (sea, canal or river)
      <li>m1 bits 4..0: <a href="#OwnershipInfo">owner</a> (for sea, rivers, and coasts normally <tt>11</tt>)</li>
      <li>m2: Depot index (for depots only)</li>
@@ -1443,8 +1462,10 @@
    <td valign=top nowrap>&nbsp;</td>
    <td>
     <ul>
+     <li>m1 bit 7: Ship docking tile status (for aqueducts)</li>
      <li>m1 bits 4..0: <a href="#OwnershipInfo">owner</a></li>
      <li>m3 bits 7..4: <a href="#OwnershipInfo">owner</a> of tram</li>
+     <li>m4: <a href="#RoadType">Roadtype</a></li>
      <li>m5 bit 4: pbs reservation state for railway</li>
      <li>m5 bits 7 clear: tunnel entrance/exit</li>
      <li>m5 bit 7 set: bridge ramp
@@ -1581,7 +1602,7 @@
      </li>
      <li>m7 bits 4..0: <a href="#OwnershipInfo">owner</a> of road</li>
      <li>m7 bit 5 set = on snow or desert</li>
-     <li>m7 bits 7..6: present road types for road</li>
+     <li>m8 bits 11..6: <a href="#TramType">Tramtype</a></li>
      <li>m8 bits 5..0: <a href="#TrackType">track type</a> for railway</li>
     </ul>
    </td>

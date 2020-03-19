@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -69,7 +67,7 @@ public:
 
 	T *data; ///< Pointer to data array.
 
-	TileMatrix() : area(INVALID_TILE, 0, 0), data(NULL) {}
+	TileMatrix() : area(INVALID_TILE, 0, 0), data(nullptr) {}
 
 	~TileMatrix()
 	{

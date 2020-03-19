@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -39,7 +37,7 @@
 
 /* static */ char *ScriptIndustry::GetName(IndustryID industry_id)
 {
-	if (!IsValidIndustry(industry_id)) return NULL;
+	if (!IsValidIndustry(industry_id)) return nullptr;
 
 	::SetDParam(0, industry_id);
 	return GetString(STR_INDUSTRY_NAME);
@@ -132,9 +130,7 @@
 	if (!IsValidIndustry(industry_id)) return -1;
 
 	Industry *ind = ::Industry::Get(industry_id);
-	StationList stations;
-	::FindStationsAroundTiles(ind->location, &stations);
-	return (int32)stations.Length();
+	return (int32)ind->stations_near.size();
 }
 
 /* static */ int32 ScriptIndustry::GetDistanceManhattanToTile(IndustryID industry_id, TileIndex tile)

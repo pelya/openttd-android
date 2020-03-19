@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -7,7 +5,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file str.hpp String formating? */
+/** @file str.hpp String formatting? */
 
 #ifndef STR_HPP
 #define STR_HPP
@@ -91,7 +89,7 @@ struct CStrA : public CBlobT<char>
 		return strcmp(base::Data(), other.Data()) < 0;
 	}
 
-	/** Add formated string (like vsprintf) at the end of existing contents. */
+	/** Add formatted string (like vsprintf) at the end of existing contents. */
 	int AddFormatL(const char *format, va_list args)
 	{
 		size_t addSize = max<size_t>(strlen(format), 16);
@@ -126,7 +124,7 @@ struct CStrA : public CBlobT<char>
 		return ret;
 	}
 
-	/** Add formated string (like sprintf) at the end of existing contents. */
+	/** Add formatted string (like sprintf) at the end of existing contents. */
 	int CDECL WARN_FORMAT(2, 3) AddFormat(const char *format, ...)
 	{
 		va_list args;
@@ -136,7 +134,7 @@ struct CStrA : public CBlobT<char>
 		return ret;
 	}
 
-	/** Assign formated string (like sprintf). */
+	/** Assign formatted string (like sprintf). */
 	int CDECL WARN_FORMAT(2, 3) Format(const char *format, ...)
 	{
 		base::Free();

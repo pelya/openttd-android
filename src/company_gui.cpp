@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -30,6 +28,7 @@
 #include "core/geometry_func.hpp"
 #include "object_type.h"
 #include "rail.h"
+#include "road.h"
 #include "engine_base.h"
 #include "window_func.h"
 #include "road_func.h"
@@ -285,7 +284,7 @@ struct CompanyFinancesWindow : Window {
 		this->owner = (Owner)this->window_number;
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_CF_CAPTION:
@@ -304,7 +303,7 @@ struct CompanyFinancesWindow : Window {
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		int type = _settings_client.gui.expenses_layout;
 		switch (widget) {
@@ -332,7 +331,7 @@ struct CompanyFinancesWindow : Window {
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_CF_EXPS_CATEGORY:
@@ -393,7 +392,7 @@ struct CompanyFinancesWindow : Window {
 		this->GetWidget<NWidgetStacked>(WID_CF_SEL_BUTTONS)->SetDisplayedPlane(plane);
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		if (!this->IsShaded()) {
 			if (!this->small) {
@@ -423,7 +422,7 @@ struct CompanyFinancesWindow : Window {
 		this->DrawWidgets();
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_CF_TOGGLE_SIZE: // toggle size
@@ -452,7 +451,7 @@ struct CompanyFinancesWindow : Window {
 		}
 	}
 
-	virtual void OnHundredthTick()
+	void OnHundredthTick() override
 	{
 		const Company *c = Company::Get((CompanyID)this->window_number);
 		if (c->money > CompanyFinancesWindow::max_money) {
@@ -520,24 +519,22 @@ class DropDownListColourItem : public DropDownListItem {
 public:
 	DropDownListColourItem(int result, bool masked) : DropDownListItem(result, masked) {}
 
-	virtual ~DropDownListColourItem() {}
-
 	StringID String() const
 	{
 		return this->result >= COLOUR_END ? STR_COLOUR_DEFAULT : _colour_dropdown[this->result];
 	}
 
-	uint Height(uint width) const
+	uint Height(uint width) const override
 	{
 		return GetMinSizing(NWST_STEP, max(FONT_HEIGHT_NORMAL, ScaleGUITrad(12) + 2));
 	}
 
-	bool Selectable() const
+	bool Selectable() const override
 	{
 		return true;
 	}
 
-	void Draw(int left, int right, int top, int bottom, bool sel, int bg_colour) const
+	void Draw(int left, int right, int top, int bottom, bool sel, Colours bg_colour) const override
 	{
 		bool rtl = _current_text_dir == TD_RTL;
 		int height = bottom - top;
@@ -565,20 +562,20 @@ private:
 	uint rows;
 	uint line_height;
 	GUIGroupList groups;
-	SmallVector<int, 32> indents;
+	std::vector<int> indents;
 	Scrollbar *vscroll;
 
 	void ShowColourDropDownMenu(uint32 widget)
 	{
 		uint32 used_colours = 0;
 		const Company *c;
-		const Livery *livery, *default_livery = NULL;
+		const Livery *livery, *default_livery = nullptr;
 		bool primary = widget == WID_SCL_PRI_COL_DROPDOWN;
 		byte default_col;
 
 		/* Disallow other company colours for the primary colour */
 		if (this->livery_class < LC_GROUP_RAIL && HasBit(this->sel, LS_DEFAULT) && primary) {
-			FOR_ALL_COMPANIES(c) {
+			for (const Company *c : Company::Iterate()) {
 				if (c->index != _local_company) SetBit(used_colours, c->colour);
 			}
 		}
@@ -605,49 +602,49 @@ private:
 			}
 		}
 
-		DropDownList *list = new DropDownList();
-		if (default_livery != NULL) {
+		DropDownList list;
+		if (default_livery != nullptr) {
 			/* Add COLOUR_END to put the colour out of range, but also allow us to show what the default is */
 			default_col = (primary ? default_livery->colour1 : default_livery->colour2) + COLOUR_END;
-			*list->Append() = new DropDownListColourItem(default_col, false);
+			list.emplace_back(new DropDownListColourItem(default_col, false));
 		}
 		for (uint i = 0; i < lengthof(_colour_dropdown); i++) {
-			*list->Append() = new DropDownListColourItem(i, HasBit(used_colours, i));
+			list.emplace_back(new DropDownListColourItem(i, HasBit(used_colours, i)));
 		}
 
-		byte sel = (default_livery == NULL || HasBit(livery->in_use, primary ? 0 : 1)) ? (primary ? livery->colour1 : livery->colour2) : default_col;
-		ShowDropDownList(this, list, sel, widget);
+		byte sel = (default_livery == nullptr || HasBit(livery->in_use, primary ? 0 : 1)) ? (primary ? livery->colour1 : livery->colour2) : default_col;
+		ShowDropDownList(this, std::move(list), sel, widget);
 	}
 
-	static int CDECL GroupNameSorter(const Group * const *a, const Group * const *b)
+	static bool GroupNameSorter(const Group * const &a, const Group * const &b)
 	{
-		static const Group *last_group[2] = { NULL, NULL };
+		static const Group *last_group[2] = { nullptr, nullptr };
 		static char         last_name[2][64] = { "", "" };
 
-		if (*a != last_group[0]) {
-			last_group[0] = *a;
-			SetDParam(0, (*a)->index);
+		if (a != last_group[0]) {
+			last_group[0] = a;
+			SetDParam(0, a->index);
 			GetString(last_name[0], STR_GROUP_NAME, lastof(last_name[0]));
 		}
 
-		if (*b != last_group[1]) {
-			last_group[1] = *b;
-			SetDParam(0, (*b)->index);
+		if (b != last_group[1]) {
+			last_group[1] = b;
+			SetDParam(0, b->index);
 			GetString(last_name[1], STR_GROUP_NAME, lastof(last_name[1]));
 		}
 
 		int r = strnatcmp(last_name[0], last_name[1]); // Sort by name (natural sorting).
-		if (r == 0) return (*a)->index - (*b)->index;
-		return r;
+		if (r == 0) return a->index < b->index;
+		return r < 0;
 	}
 
 	void AddChildren(GUIGroupList *source, GroupID parent, int indent)
 	{
-		for (const Group **g = source->Begin(); g != source->End(); g++) {
-			if ((*g)->parent != parent) continue;
-			*this->groups.Append() = *g;
-			*this->indents.Append() = indent;
-			AddChildren(source, (*g)->index, indent + 1);
+		for (const Group *g : *source) {
+			if (g->parent != parent) continue;
+			this->groups.push_back(g);
+			this->indents.push_back(indent);
+			AddChildren(source, g->index, indent + 1);
 		}
 	}
 
@@ -655,17 +652,16 @@ private:
 	{
 		if (!this->groups.NeedRebuild()) return;
 
-		this->groups.Clear();
-		this->indents.Clear();
+		this->groups.clear();
+		this->indents.clear();
 
 		if (this->livery_class >= LC_GROUP_RAIL) {
 			GUIGroupList list;
 			VehicleType vtype = (VehicleType)(this->livery_class - LC_GROUP_RAIL);
 
-			const Group *g;
-			FOR_ALL_GROUPS(g) {
+			for (const Group *g : Group::Iterate()) {
 				if (g->owner == owner && g->vehicle_type == vtype) {
-					*list.Append() = g;
+					list.push_back(g);
 				}
 			}
 
@@ -675,7 +671,7 @@ private:
 			AddChildren(&list, INVALID_GROUP, 0);
 		}
 
-		this->groups.Compact();
+		this->groups.shrink_to_fit();
 		this->groups.RebuildDone();
 	}
 
@@ -689,7 +685,7 @@ private:
 				}
 			}
 		} else {
-			this->rows = this->groups.Length();
+			this->rows = (uint)this->groups.size();
 		}
 
 		this->vscroll->SetCount(this->rows);
@@ -743,7 +739,7 @@ public:
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_SCL_SPACER_DROPDOWN: {
@@ -754,8 +750,7 @@ public:
 				}
 
 				/* And group names */
-				const Group *g;
-				FOR_ALL_GROUPS(g) {
+				for (const Group *g : Group::Iterate()) {
 					if (g->owner == (CompanyID)this->window_number) {
 						SetDParam(0, g->index);
 						d = maxdim(d, GetStringBoundingBox(STR_GROUP_NAME));
@@ -796,7 +791,7 @@ public:
 		}
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		bool local = (CompanyID)this->window_number == _local_company;
 
@@ -810,7 +805,7 @@ public:
 		this->DrawWidgets();
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_SCL_CAPTION:
@@ -850,7 +845,7 @@ public:
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (widget != WID_SCL_MATRIX) return;
 
@@ -905,7 +900,7 @@ public:
 				}
 			}
 		} else {
-			uint max = min(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), this->groups.Length());
+			uint max = min(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), (uint)this->groups.size());
 			for (uint i = this->vscroll->GetPosition(); i < max; ++i) {
 				const Group *g = this->groups[i];
 				SetDParam(0, g->index);
@@ -914,7 +909,7 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			/* Livery Class buttons */
@@ -945,7 +940,7 @@ public:
 					this->groups.ForceRebuild();
 					this->BuildGroupList((CompanyID)this->window_number);
 
-					if (this->groups.Length() > 0) {
+					if (this->groups.size() > 0) {
 						this->sel = this->groups[0]->index;
 					}
 				}
@@ -988,12 +983,12 @@ public:
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->vscroll->SetCapacityFromWidget(this, WID_SCL_MATRIX);
 	}
 
-	virtual void OnDropdownSelect(int widget, int index)
+	void OnDropdownSelect(int widget, int index) override
 	{
 		bool local = (CompanyID)this->window_number == _local_company;
 		if (!local) return;
@@ -1019,7 +1014,7 @@ public:
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 
@@ -1032,7 +1027,7 @@ public:
 
 				if (!Group::IsValidID(this->sel)) {
 					this->sel = INVALID_GROUP;
-					if (this->groups.Length() > 0) this->sel = this->groups[0]->index;
+					if (this->groups.size() > 0) this->sel = this->groups[0]->index;
 				}
 
 				this->SetDirty();
@@ -1103,7 +1098,7 @@ static WindowDesc _select_company_livery_desc(
 void ShowCompanyLiveryWindow(CompanyID company, GroupID group)
 {
 	SelectCompanyLiveryWindow *w = (SelectCompanyLiveryWindow *)BringWindowToFrontById(WC_COMPANY_COLOUR, company);
-	if (w == NULL) {
+	if (w == nullptr) {
 		new SelectCompanyLiveryWindow(&_select_company_livery_desc, company, group);
 	} else if (group != INVALID_GROUP) {
 		w->SetSelectedGroup(company, group);
@@ -1381,7 +1376,7 @@ public:
 		}
 	}
 
-	virtual void OnInit()
+	void OnInit() override
 	{
 		/* Size of the boolean yes/no button. */
 		Dimension yesno_dim = maxdim(GetStringBoundingBox(STR_FACE_YES), GetStringBoundingBox(STR_FACE_NO));
@@ -1408,7 +1403,7 @@ public:
 		this->number_dim = number_dim;
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_SCMF_FACE: {
@@ -1467,7 +1462,7 @@ public:
 		}
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		/* lower the non-selected gender button */
 		this->SetWidgetsLoweredState(!this->is_female, WID_SCMF_MALE, WID_SCMF_MALE2, WIDGET_LIST_END);
@@ -1528,7 +1523,7 @@ public:
 		this->DrawWidgets();
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_SCMF_HAS_MOUSTACHE_EARRING_TEXT:
@@ -1617,7 +1612,7 @@ public:
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			/* Toggle size, advanced/simple face selection */
@@ -1726,12 +1721,12 @@ public:
 		}
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
-		if (str == NULL) return;
+		if (str == nullptr) return;
 		/* Set a new company manager face number */
 		if (!StrEmpty(str)) {
-			this->face = strtoul(str, NULL, 10);
+			this->face = strtoul(str, nullptr, 10);
 			ScaleAllCompanyManagerFaceBits(this->face);
 			ShowErrorMessage(STR_FACE_FACECODE_SET, INVALID_STRING_ID, WL_INFO);
 			this->UpdateData();
@@ -1800,6 +1795,10 @@ static const NWidgetPart _nested_company_infrastructure_widgets[] = {
 				NWidget(WWT_EMPTY, COLOUR_GREY, WID_CI_ROAD_COUNT), SetMinimalTextLines(2, 0), SetFill(0, 1),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL), SetPIP(2, 4, 2),
+				NWidget(WWT_EMPTY, COLOUR_GREY, WID_CI_TRAM_DESC), SetMinimalTextLines(2, 0), SetFill(1, 0),
+				NWidget(WWT_EMPTY, COLOUR_GREY, WID_CI_TRAM_COUNT), SetMinimalTextLines(2, 0), SetFill(0, 1),
+			EndContainer(),
+			NWidget(NWID_HORIZONTAL), SetPIP(2, 4, 2),
 				NWidget(WWT_EMPTY, COLOUR_GREY, WID_CI_WATER_DESC), SetMinimalTextLines(2, 0), SetFill(1, 0),
 				NWidget(WWT_EMPTY, COLOUR_GREY, WID_CI_WATER_COUNT), SetMinimalTextLines(2, 0), SetFill(0, 1),
 			EndContainer(),
@@ -1836,11 +1835,10 @@ struct CompanyInfrastructureWindow : Window
 	void UpdateRailRoadTypes()
 	{
 		this->railtypes = RAILTYPES_NONE;
-		this->roadtypes = ROADTYPES_ROAD; // Road is always available.
+		this->roadtypes = ROADTYPES_NONE;
 
 		/* Find the used railtypes. */
-		Engine *e;
-		FOR_ALL_ENGINES_OF_TYPE(e, VEH_TRAIN) {
+		for (const Engine *e : Engine::IterateType(VEH_TRAIN)) {
 			if (!HasBit(e->info.climates, _settings_game.game_creation.landscape)) continue;
 
 			this->railtypes |= GetRailTypeInfo(e->u.rail.railtype)->introduces_railtypes;
@@ -1849,14 +1847,16 @@ struct CompanyInfrastructureWindow : Window
 		/* Get the date introduced railtypes as well. */
 		this->railtypes = AddDateIntroducedRailTypes(this->railtypes, MAX_DAY);
 
-		/* Tram is only visible when there will be a tram. */
-		FOR_ALL_ENGINES_OF_TYPE(e, VEH_ROAD) {
+		/* Find the used roadtypes. */
+		for (const Engine *e : Engine::IterateType(VEH_ROAD)) {
 			if (!HasBit(e->info.climates, _settings_game.game_creation.landscape)) continue;
-			if (!HasBit(e->info.misc_flags, EF_ROAD_TRAM)) continue;
 
-			this->roadtypes |= ROADTYPES_TRAM;
-			break;
+			this->roadtypes |= GetRoadTypeInfo(e->u.road.roadtype)->introduces_roadtypes;
 		}
+
+		/* Get the date introduced roadtypes as well. */
+		this->roadtypes = AddDateIntroducedRoadTypes(this->roadtypes, MAX_DAY);
+		this->roadtypes &= ~_roadtypes_hidden_mask;
 	}
 
 	/** Get total infrastructure maintenance cost. */
@@ -1871,8 +1871,11 @@ struct CompanyInfrastructureWindow : Window
 		}
 		total += SignalMaintenanceCost(c->infrastructure.signal);
 
-		if (HasBit(this->roadtypes, ROADTYPE_ROAD)) total += RoadMaintenanceCost(ROADTYPE_ROAD, c->infrastructure.road[ROADTYPE_ROAD]);
-		if (HasBit(this->roadtypes, ROADTYPE_TRAM)) total += RoadMaintenanceCost(ROADTYPE_TRAM, c->infrastructure.road[ROADTYPE_TRAM]);
+		uint32 road_total = c->infrastructure.GetRoadTotal();
+		uint32 tram_total = c->infrastructure.GetTramTotal();
+		for (RoadType rt = ROADTYPE_BEGIN; rt != ROADTYPE_END; rt++) {
+			if (HasBit(this->roadtypes, rt)) total += RoadMaintenanceCost(rt, c->infrastructure.road[rt], RoadTypeIsRoad(rt) ? road_total : tram_total);
+		}
 
 		total += CanalMaintenanceCost(c->infrastructure.water);
 		total += StationMaintenanceCost(c->infrastructure.station);
@@ -1881,7 +1884,7 @@ struct CompanyInfrastructureWindow : Window
 		return total;
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_CI_CAPTION:
@@ -1890,7 +1893,7 @@ struct CompanyInfrastructureWindow : Window
 		}
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		const Company *c = Company::Get((CompanyID)this->window_number);
 
@@ -1900,7 +1903,8 @@ struct CompanyInfrastructureWindow : Window
 
 				size->width = max(size->width, GetStringBoundingBox(STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT).width);
 
-				for (RailType rt = RAILTYPE_BEGIN; rt < RAILTYPE_END; rt++) {
+				RailType rt;
+				FOR_ALL_SORTED_RAILTYPES(rt) {
 					if (HasBit(this->railtypes, rt)) {
 						lines++;
 						SetDParam(0, GetRailTypeInfo(rt)->strings.name);
@@ -1916,18 +1920,19 @@ struct CompanyInfrastructureWindow : Window
 				break;
 			}
 
-			case WID_CI_ROAD_DESC: {
-				uint lines = 1;
+			case WID_CI_ROAD_DESC:
+			case WID_CI_TRAM_DESC: {
+				uint lines = 0;
 
-				size->width = max(size->width, GetStringBoundingBox(STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT).width);
+				size->width = max(size->width, GetStringBoundingBox(widget == WID_CI_ROAD_DESC ? STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT : STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT).width);
 
-				if (HasBit(this->roadtypes, ROADTYPE_ROAD)) {
-					lines++;
-					size->width = max(size->width, GetStringBoundingBox(STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD).width + WD_FRAMERECT_LEFT);
-				}
-				if (HasBit(this->roadtypes, ROADTYPE_TRAM)) {
-					lines++;
-					size->width = max(size->width, GetStringBoundingBox(STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY).width + WD_FRAMERECT_LEFT);
+				RoadType rt;
+				FOR_ALL_SORTED_ROADTYPES(rt) {
+					if (HasBit(this->roadtypes, rt) && RoadTypeIsRoad(rt) == (widget == WID_CI_ROAD_DESC)) {
+						lines++;
+						SetDParam(0, GetRoadTypeInfo(rt)->strings.name);
+						size->width = max(size->width, GetStringBoundingBox(STR_WHITE_STRING).width + WD_FRAMERECT_LEFT);
+					}
 				}
 
 				size->height = max(size->height, lines * FONT_HEIGHT_NORMAL);
@@ -1947,6 +1952,7 @@ struct CompanyInfrastructureWindow : Window
 
 			case WID_CI_RAIL_COUNT:
 			case WID_CI_ROAD_COUNT:
+			case WID_CI_TRAM_COUNT:
 			case WID_CI_WATER_COUNT:
 			case WID_CI_STATION_COUNT:
 			case WID_CI_TOTAL: {
@@ -1960,9 +1966,12 @@ struct CompanyInfrastructureWindow : Window
 				}
 				max_val = max(max_val, c->infrastructure.signal);
 				max_cost = max(max_cost, SignalMaintenanceCost(c->infrastructure.signal));
+				uint32 road_total = c->infrastructure.GetRoadTotal();
+				uint32 tram_total = c->infrastructure.GetTramTotal();
 				for (RoadType rt = ROADTYPE_BEGIN; rt < ROADTYPE_END; rt++) {
 					max_val = max(max_val, c->infrastructure.road[rt]);
-					max_cost = max(max_cost, RoadMaintenanceCost(rt, c->infrastructure.road[rt]));
+					max_cost = max(max_cost, RoadMaintenanceCost(rt, c->infrastructure.road[rt], RoadTypeIsRoad(rt) ? road_total : tram_total));
+
 				}
 				max_val = max(max_val, c->infrastructure.water);
 				max_cost = max(max_cost, CanalMaintenanceCost(c->infrastructure.water));
@@ -2013,7 +2022,7 @@ struct CompanyInfrastructureWindow : Window
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		const Company *c = Company::Get((CompanyID)this->window_number);
 		int y = r.top;
@@ -2058,26 +2067,32 @@ struct CompanyInfrastructureWindow : Window
 			}
 
 			case WID_CI_ROAD_DESC:
-				DrawString(r.left, r.right, y, STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT);
+			case WID_CI_TRAM_DESC: {
+				DrawString(r.left, r.right, y, widget == WID_CI_ROAD_DESC ? STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT : STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT);
 
-				if (this->roadtypes != ROADTYPES_NONE) {
-					if (HasBit(this->roadtypes, ROADTYPE_ROAD)) DrawString(r.left + offs_left, r.right - offs_right, y += FONT_HEIGHT_NORMAL, STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD);
-					if (HasBit(this->roadtypes, ROADTYPE_TRAM)) DrawString(r.left + offs_left, r.right - offs_right, y += FONT_HEIGHT_NORMAL, STR_COMPANY_INFRASTRUCTURE_VIEW_TRAMWAY);
-				} else {
-					/* No valid roadtypes. */
-					DrawString(r.left + offs_left, r.right - offs_right, y += FONT_HEIGHT_NORMAL, STR_COMPANY_VIEW_INFRASTRUCTURE_NONE);
+				/* Draw name of each valid roadtype. */
+				RoadType rt;
+				FOR_ALL_SORTED_ROADTYPES(rt) {
+					if (HasBit(this->roadtypes, rt) && RoadTypeIsRoad(rt) == (widget == WID_CI_ROAD_DESC)) {
+						SetDParam(0, GetRoadTypeInfo(rt)->strings.name);
+						DrawString(r.left + offs_left, r.right - offs_right, y += FONT_HEIGHT_NORMAL, STR_WHITE_STRING);
+					}
 				}
 
 				break;
+			}
 
 			case WID_CI_ROAD_COUNT:
-				if (HasBit(this->roadtypes, ROADTYPE_ROAD)) {
-					this->DrawCountLine(r, y, c->infrastructure.road[ROADTYPE_ROAD], RoadMaintenanceCost(ROADTYPE_ROAD, c->infrastructure.road[ROADTYPE_ROAD]));
-				}
-				if (HasBit(this->roadtypes, ROADTYPE_TRAM)) {
-					this->DrawCountLine(r, y, c->infrastructure.road[ROADTYPE_TRAM], RoadMaintenanceCost(ROADTYPE_TRAM, c->infrastructure.road[ROADTYPE_TRAM]));
+			case WID_CI_TRAM_COUNT: {
+				uint32 road_tram_total = widget == WID_CI_ROAD_COUNT ? c->infrastructure.GetRoadTotal() : c->infrastructure.GetTramTotal();
+				RoadType rt;
+				FOR_ALL_SORTED_ROADTYPES(rt) {
+					if (HasBit(this->roadtypes, rt) && RoadTypeIsRoad(rt) == (widget == WID_CI_ROAD_COUNT)) {
+						this->DrawCountLine(r, y, c->infrastructure.road[rt], RoadMaintenanceCost(rt, c->infrastructure.road[rt], road_tram_total));
+					}
 				}
 				break;
+			}
 
 			case WID_CI_WATER_DESC:
 				DrawString(r.left, r.right, y, STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT);
@@ -2116,7 +2131,7 @@ struct CompanyInfrastructureWindow : Window
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
 
@@ -2282,7 +2297,7 @@ struct CompanyWindow : Window
 		this->OnInvalidateData();
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		const Company *c = Company::Get((CompanyID)this->window_number);
 		bool local = this->window_number == _local_company;
@@ -2351,7 +2366,7 @@ struct CompanyWindow : Window
 		this->DrawWidgets();
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_C_FACE: {
@@ -2393,9 +2408,7 @@ struct CompanyWindow : Window
 				break;
 
 			case WID_C_DESC_OWNERS: {
-				const Company *c2;
-
-				FOR_ALL_COMPANIES(c2) {
+				for (const Company *c2 : Company::Iterate()) {
 					SetDParamMaxValue(0, 75);
 					SetDParam(1, c2->index);
 
@@ -2404,15 +2417,13 @@ struct CompanyWindow : Window
 				break;
 			}
 
-#ifdef ENABLE_NETWORK
 			case WID_C_HAS_PASSWORD:
 				*size = maxdim(*size, GetSpriteSize(SPR_LOCK));
 				break;
-#endif /* ENABLE_NETWORK */
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		const Company *c = Company::Get((CompanyID)this->window_number);
 		switch (widget) {
@@ -2499,10 +2510,9 @@ struct CompanyWindow : Window
 			}
 
 			case WID_C_DESC_OWNERS: {
-				const Company *c2;
 				uint y = r.top;
 
-				FOR_ALL_COMPANIES(c2) {
+				for (const Company *c2 : Company::Iterate()) {
 					uint amt = GetAmountOwnedBy(c, c2->index);
 					if (amt != 0) {
 						SetDParam(0, amt * 25);
@@ -2515,17 +2525,15 @@ struct CompanyWindow : Window
 				break;
 			}
 
-#ifdef ENABLE_NETWORK
 			case WID_C_HAS_PASSWORD:
 				if (_networking && NetworkCompanyIsPassworded(c->index)) {
 					DrawSprite(SPR_LOCK, PAL_NONE, r.left, r.top);
 				}
 				break;
-#endif /* ENABLE_NETWORK */
 		}
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_C_CAPTION:
@@ -2543,7 +2551,7 @@ struct CompanyWindow : Window
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_C_NEW_FACE: DoSelectCompanyManagerFace(this); break;
@@ -2611,7 +2619,6 @@ struct CompanyWindow : Window
 				DoCommandP(0, this->window_number, 0, CMD_SELL_SHARE_IN_COMPANY | CMD_MSG(STR_ERROR_CAN_T_SELL_25_SHARE_IN));
 				break;
 
-#ifdef ENABLE_NETWORK
 			case WID_C_COMPANY_PASSWORD:
 				if (this->window_number == _local_company) ShowNetworkCompanyPasswordWindow(this);
 				break;
@@ -2624,24 +2631,23 @@ struct CompanyWindow : Window
 					MarkWholeScreenDirty();
 				} else if (NetworkCompanyIsPassworded(company)) {
 					/* ask for the password */
-					ShowQueryString(STR_EMPTY, STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION, NETWORK_PASSWORD_LENGTH, this, CS_ALPHANUMERAL, QSF_NONE);
+					ShowQueryString(STR_EMPTY, STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION, NETWORK_PASSWORD_LENGTH, this, CS_ALPHANUMERAL, QSF_PASSWORD);
 				} else {
 					/* just send the join command */
 					NetworkClientRequestMove(company);
 				}
 				break;
 			}
-#endif /* ENABLE_NETWORK */
 		}
 	}
 
-	virtual void OnHundredthTick()
+	void OnHundredthTick() override
 	{
 		/* redraw the window every now and then */
 		this->SetDirty();
 	}
 
-	virtual void OnPlaceObject(Point pt, TileIndex tile)
+	void OnPlaceObject(Point pt, TileIndex tile) override
 	{
 		if (DoCommandP(tile, OBJECT_HQ, 0, CMD_BUILD_OBJECT | CMD_MSG(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS)) && !_shift_pressed) {
 			ResetObjectToPlace();
@@ -2649,31 +2655,29 @@ struct CompanyWindow : Window
 		}
 	}
 
-	virtual void OnPlaceObjectAbort()
+	void OnPlaceObjectAbort() override
 	{
 		this->RaiseButtons();
 	}
 
-	virtual void OnQueryTextFinished(char *str)
+	void OnQueryTextFinished(char *str) override
 	{
-		if (str == NULL) return;
+		if (str == nullptr) return;
 
 		switch (this->query_widget) {
 			default: NOT_REACHED();
 
 			case WID_C_PRESIDENT_NAME:
-				DoCommandP(0, 0, 0, CMD_RENAME_PRESIDENT | CMD_MSG(STR_ERROR_CAN_T_CHANGE_PRESIDENT), NULL, str);
+				DoCommandP(0, 0, 0, CMD_RENAME_PRESIDENT | CMD_MSG(STR_ERROR_CAN_T_CHANGE_PRESIDENT), nullptr, str);
 				break;
 
 			case WID_C_COMPANY_NAME:
-				DoCommandP(0, 0, 0, CMD_RENAME_COMPANY | CMD_MSG(STR_ERROR_CAN_T_CHANGE_COMPANY_NAME), NULL, str);
+				DoCommandP(0, 0, 0, CMD_RENAME_COMPANY | CMD_MSG(STR_ERROR_CAN_T_CHANGE_COMPANY_NAME), nullptr, str);
 				break;
 
-#ifdef ENABLE_NETWORK
 			case WID_C_COMPANY_JOIN:
 				NetworkClientRequestMove((CompanyID)this->window_number, str);
 				break;
-#endif /* ENABLE_NETWORK */
 		}
 	}
 
@@ -2683,7 +2687,7 @@ struct CompanyWindow : Window
 	 * @param data Information about the changed data.
 	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
 	 */
-	virtual void OnInvalidateData(int data = 0, bool gui_scope = true)
+	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (this->window_number == _local_company) return;
 
@@ -2742,7 +2746,7 @@ struct BuyCompanyWindow : Window {
 		this->InitNested(window_number);
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_BC_FACE:
@@ -2758,7 +2762,7 @@ struct BuyCompanyWindow : Window {
 		}
 	}
 
-	virtual void SetStringParameters(int widget) const
+	void SetStringParameters(int widget) const override
 	{
 		switch (widget) {
 			case WID_BC_CAPTION:
@@ -2768,7 +2772,7 @@ struct BuyCompanyWindow : Window {
 		}
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		switch (widget) {
 			case WID_BC_FACE: {
@@ -2787,7 +2791,7 @@ struct BuyCompanyWindow : Window {
 		}
 	}
 
-	virtual void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_BC_NO:
@@ -2821,7 +2825,7 @@ static const NWidgetPart _nested_buy_company_widgets[] = {
 };
 
 static WindowDesc _buy_company_desc(
-	WDP_AUTO, NULL, 0, 0,
+	WDP_AUTO, nullptr, 0, 0,
 	WC_BUY_COMPANY, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_buy_company_widgets, lengthof(_nested_buy_company_widgets)

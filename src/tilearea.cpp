@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -115,6 +113,27 @@ bool OrthogonalTileArea::Contains(TileIndex tile) const
 	uint tile_y = TileY(tile);
 
 	return IsInsideBS(tile_x, left, this->w) && IsInsideBS(tile_y, top, this->h);
+}
+
+/**
+ * Expand a tile area by rad tiles in each direction, keeping within map bounds.
+ * @param rad Number of tiles to expand
+ * @return The OrthogonalTileArea.
+ */
+OrthogonalTileArea &OrthogonalTileArea::Expand(int rad)
+{
+	int x = TileX(this->tile);
+	int y = TileY(this->tile);
+
+	int sx = max(x - rad, 0);
+	int sy = max(y - rad, 0);
+	int ex = min(x + this->w + rad, MapSizeX());
+	int ey = min(y + this->h + rad, MapSizeY());
+
+	this->tile = TileXY(sx, sy);
+	this->w    = ex - sx;
+	this->h    = ey - sy;
+	return *this;
 }
 
 /**

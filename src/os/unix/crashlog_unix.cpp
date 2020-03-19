@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -40,7 +38,7 @@ class CrashLogUnix : public CrashLog {
 	/** Signal that has been thrown. */
 	int signum;
 
-	/* virtual */ char *LogOSVersion(char *buffer, const char *last) const
+	char *LogOSVersion(char *buffer, const char *last) const override
 	{
 		struct utsname name;
 		if (uname(&name) < 0) {
@@ -60,7 +58,7 @@ class CrashLogUnix : public CrashLog {
 		);
 	}
 
-	/* virtual */ char *LogError(char *buffer, const char *last, const char *message) const
+	char *LogError(char *buffer, const char *last, const char *message) const override
 	{
 		return buffer + seprintf(buffer, last,
 				"Crash reason:\n"
@@ -68,7 +66,7 @@ class CrashLogUnix : public CrashLog {
 				" Message: %s\n\n",
 				strsignal(this->signum),
 				this->signum,
-				message == NULL ? "<none>" : message
+				message == nullptr ? "<none>" : message
 		);
 	}
 
@@ -105,7 +103,7 @@ class CrashLogUnix : public CrashLog {
 	}
 #endif
 
-	/* virtual */ char *LogStacktrace(char *buffer, const char *last) const
+	char *LogStacktrace(char *buffer, const char *last) const override
 	{
 		buffer += seprintf(buffer, last, "Stacktrace:\n");
 #if defined(__GLIBC__)

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -81,11 +79,11 @@ public:
 public:
 	/** default constructor */
 	inline CYapfBaseT()
-		: m_pBestDestNode(NULL)
-		, m_pBestIntermediateNode(NULL)
+		: m_pBestDestNode(nullptr)
+		, m_pBestIntermediateNode(nullptr)
 		, m_settings(&_settings_game.pf.yapf)
 		, m_max_search_nodes(PfGetSettings().max_search_nodes)
-		, m_veh(NULL)
+		, m_veh(nullptr)
 		, m_stats_cost_calcs(0)
 		, m_stats_cache_hits(0)
 		, m_num_steps(0)
@@ -131,12 +129,12 @@ public:
 		for (;;) {
 			m_num_steps++;
 			Node *n = m_nodes.GetBestOpenNode();
-			if (n == NULL) {
+			if (n == nullptr) {
 				break;
 			}
 
 			/* if the best open node was worse than the best path found, we can finish */
-			if (m_pBestDestNode != NULL && m_pBestDestNode->GetCost() < n->GetCostEstimate()) {
+			if (m_pBestDestNode != nullptr && m_pBestDestNode->GetCost() < n->GetCostEstimate()) {
 				break;
 			}
 
@@ -150,7 +148,7 @@ public:
 			}
 		}
 
-		bDestFound &= (m_pBestDestNode != NULL);
+		bDestFound &= (m_pBestDestNode != nullptr);
 
 		perf.Stop();
 		if (_debug_yapf_level >= 2) {
@@ -158,7 +156,7 @@ public:
 			_total_pf_time_us += t;
 
 			if (_debug_yapf_level >= 3) {
-				UnitID veh_idx = (m_veh != NULL) ? m_veh->unitnumber : 0;
+				UnitID veh_idx = (m_veh != nullptr) ? m_veh->unitnumber : 0;
 				char ttc = Yapf().TransportTypeChar();
 				float cache_hit_ratio = (m_stats_cache_hits == 0) ? 0.0f : ((float)m_stats_cache_hits / (float)(m_stats_cache_hits + m_stats_cost_calcs) * 100.0f);
 				int cost = bDestFound ? m_pBestDestNode->m_cost : -1;
@@ -180,7 +178,7 @@ public:
 	 */
 	inline Node *GetBestNode()
 	{
-		return (m_pBestDestNode != NULL) ? m_pBestDestNode : m_pBestIntermediateNode;
+		return (m_pBestDestNode != nullptr) ? m_pBestDestNode : m_pBestIntermediateNode;
 	}
 
 	/**
@@ -198,7 +196,7 @@ public:
 	{
 		Yapf().PfNodeCacheFetch(n);
 		/* insert the new node only if it is not there */
-		if (m_nodes.FindOpenNode(n.m_key) == NULL) {
+		if (m_nodes.FindOpenNode(n.m_key) == nullptr) {
 			m_nodes.InsertOpenNode(n);
 		} else {
 			/* if we are here, it means that node is already there - how it is possible?
@@ -229,7 +227,7 @@ public:
 	 */
 	void PruneIntermediateNodeBranch()
 	{
-		while (Yapf().m_pBestIntermediateNode != NULL && (Yapf().m_pBestIntermediateNode->m_segment->m_end_segment_reason & ESRB_CHOICE_FOLLOWS) == 0) {
+		while (Yapf().m_pBestIntermediateNode != nullptr && (Yapf().m_pBestIntermediateNode->m_segment->m_end_segment_reason & ESRB_CHOICE_FOLLOWS) == 0) {
 			Yapf().m_pBestIntermediateNode = Yapf().m_pBestIntermediateNode->m_parent;
 		}
 	}
@@ -262,20 +260,20 @@ public:
 		/* detect the destination */
 		bool bDestination = Yapf().PfDetectDestination(n);
 		if (bDestination) {
-			if (m_pBestDestNode == NULL || n < *m_pBestDestNode) {
+			if (m_pBestDestNode == nullptr || n < *m_pBestDestNode) {
 				m_pBestDestNode = &n;
 			}
 			m_nodes.FoundBestNode(n);
 			return;
 		}
 
-		if (m_max_search_nodes > 0 && (m_pBestIntermediateNode == NULL || (m_pBestIntermediateNode->GetCostEstimate() - m_pBestIntermediateNode->GetCost()) > (n.GetCostEstimate() - n.GetCost()))) {
+		if (m_max_search_nodes > 0 && (m_pBestIntermediateNode == nullptr || (m_pBestIntermediateNode->GetCostEstimate() - m_pBestIntermediateNode->GetCost()) > (n.GetCostEstimate() - n.GetCost()))) {
 			m_pBestIntermediateNode = &n;
 		}
 
 		/* check new node against open list */
 		Node *openNode = m_nodes.FindOpenNode(n.GetKey());
-		if (openNode != NULL) {
+		if (openNode != nullptr) {
 			/* another node exists with the same key in the open list
 			 * is it better than new one? */
 			if (n.GetCostEstimate() < openNode->GetCostEstimate()) {
@@ -290,7 +288,7 @@ public:
 
 		/* check new node against closed list */
 		Node *closedNode = m_nodes.FindClosedNode(n.GetKey());
-		if (closedNode != NULL) {
+		if (closedNode != nullptr) {
 			/* another node exists with the same key in the closed list
 			 * is it better than new one? */
 			int node_est = n.GetCostEstimate();
