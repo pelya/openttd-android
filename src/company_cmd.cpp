@@ -589,7 +589,7 @@ void StartupCompanies()
 }
 
 /** Start a new competitor company if possible. */
-static void MaybeStartNewCompany()
+static bool MaybeStartNewCompany()
 {
 	if (_networking && Company::GetNumItems() >= _settings_client.network.max_companies) return false;
 
@@ -602,8 +602,10 @@ static void MaybeStartNewCompany()
 	if (n < (uint)_settings_game.difficulty.max_no_competitors) {
 		/* Send a command to all clients to start up a new AI.
 		 * Works fine for Multiplayer and Singleplayer */
-		DoCommandP(0, CCA_NEW_AI | INVALID_COMPANY << 16, 0, CMD_COMPANY_CTRL);
+		return DoCommandP(0, CCA_NEW_AI | INVALID_COMPANY << 16, 0, CMD_COMPANY_CTRL);
 	}
+
+	return false;
 }
 
 /** Initialize the pool of companies. */
@@ -704,11 +706,19 @@ void OnTick_Companies()
 	}
 
 	if (_next_competitor_start == 0) {
-		_next_competitor_start = AI::GetStartNextTime() * DAY_TICKS;
+		/* AI::GetStartNextTime() can return 0. */
+		_next_competitor_start = max(1, AI::GetStartNextTime() * DAY_TICKS);
 	}
 
-	if (AI::CanStartNew() && _game_mode != GM_MENU && --_next_competitor_start == 0) {
-		MaybeStartNewCompany();
+	if (_game_mode != GM_MENU && AI::CanStartNew() && --_next_competitor_start == 0) {
+		/* Allow multiple AIs to possibly start in the same tick. */
+		do {
+			if (!MaybeStartNewCompany()) break;
+
+			/* In networking mode, we can only send a command to start but it
+			 * didn't execute yet, so we cannot loop. */
+			if (_networking) break;
+		} while (AI::GetStartNextTime() == 0);
 	}
 
 	_cur_company_tick_index = (_cur_company_tick_index + 1) % MAX_COMPANIES;
@@ -890,10 +900,7 @@ CommandCost CmdCompanyCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			Game::NewEvent(new ScriptEventCompanyBankrupt(c_index));
 			CompanyAdminRemove(c_index, (CompanyRemoveReason)reason);
 
-			if (StoryPage::GetNumItems() == 0 || Goal::GetNumItems() == 0) {
-				InvalidateWindowData(WC_MAIN_TOOLBAR, 0);
-				InvalidateWindowData(WC_MAIN_TOOLBAR_RIGHT, 0);
-			}
+			if (StoryPage::GetNumItems() == 0 || Goal::GetNumItems() == 0) InvalidateWindowData(WC_MAIN_TOOLBAR, 0);
 			break;
 		}
 
