@@ -8,3 +8,7 @@
 - Create auto-save when the app is put to background, and load it on the next start.
 
 - Two-finger cancel action does not work when confirmation dialog is disabled.
+
+- Cloud save is broken.
+
+- World map scrolling is broken.
