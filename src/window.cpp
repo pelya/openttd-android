@@ -1918,8 +1918,6 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 			NOT_REACHED();
 	}
 
-	// try to put it to
-
 	return pt;
 }
 
