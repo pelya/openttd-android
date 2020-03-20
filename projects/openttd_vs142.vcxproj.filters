@@ -1140,9 +1140,6 @@
     <ClInclude Include="..\src\timetable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\toolbar_type.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\toolbar_gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
