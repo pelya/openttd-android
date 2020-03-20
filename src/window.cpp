@@ -839,8 +839,6 @@ static void DispatchRightClickEvent(Window *w, int x, int y)
 
 	Point pt = { x, y };
 
-	Point pt = { x, y };
-
 	/* No widget to handle, or the window is not interested in it. */
 	if (wid->index >= 0) {
 		if (w->OnRightClick(pt, wid->index)) return;
@@ -866,8 +864,6 @@ static void DispatchHoverEvent(Window *w, int x, int y)
 
 	/* No widget to handle */
 	if (wid == nullptr) return;
-
-	Point pt = { x, y };
 
 	Point pt = { x, y };
 
@@ -1419,6 +1415,7 @@ static uint GetWindowZPriority(WindowClass wc)
 
 		case WC_STATUS_BAR:
 			++z_priority;
+			FALLTHROUGH;
 
 		case WC_NEWS_WINDOW:
 			++z_priority;
@@ -3141,7 +3138,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	int x = _cursor.pos.x;
 	int y = _cursor.pos.y;
 	Window *w = FindWindowFromPt(x, y);
-	if (w == NULL) return;
+	if (w == nullptr) return;
 	ViewPort *vp = IsPtInWindowViewport(w, x, y);
 
 	/* Don't allow any action in a viewport if either in menu or when having a modal progress window */
@@ -3164,13 +3161,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	bool scrollwheel_scrolling = _settings_client.gui.scrollwheel_scrolling == 1 && (_cursor.v_wheel != 0 || _cursor.h_wheel != 0);
 	if (click == MC_NONE && mousewheel == 0 && !scrollwheel_scrolling) return;
 
-	int x = _cursor.pos.x;
-	int y = _cursor.pos.y;
-	Window *w = FindWindowFromPt(x, y);
-	if (w == nullptr) return;
-
-	if (click != MC_HOVER && !MaybeBringWindowToFront(w)) return;
-	ViewPort *vp = IsPtInWindowViewport(w, x, y);
+	if (click != MC_HOVER && click != MC_NONE && click != MC_LEFT_UP && !MaybeBringWindowToFront(w)) return;
 
 	/* Don't allow any action in a viewport if either in menu or when having a modal progress window */
 	if (vp != nullptr && (_game_mode == GM_MENU || HasModalProgress())) return;

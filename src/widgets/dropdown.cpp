@@ -390,12 +390,12 @@ struct DropdownWindow : Window {
 		if (!this->left_button_scrolling &&
 			_left_button_down &&
 			this->left_button_scroll_pos != -1 &&
-			abs(this->left_button_scroll_pos - _cursor.pos.y) > (int)(*list)[0]->Height(this->width)) {
+			abs(this->left_button_scroll_pos - _cursor.pos.y) > (int)list[0]->Height(this->width)) {
 			this->left_button_scrolling = true;
 			this->mouse_capture_widget = WID_DM_ITEMS;
 		}
 		if (this->left_button_scrolling) {
-			int height = (*list)[0]->Height(this->width);
+			int height = list[0]->Height(this->width);
 			int pos = (this->left_button_scroll_pos - _cursor.pos.y) / height;
 			if (pos != 0) {
 				this->scrolling = pos;

@@ -793,7 +793,7 @@ struct BuildRailToolbarWindow : Window {
 		if (this->last_user_action_remove) BuildRailClick_Remove(this);
 	}
 
-	void OnPlacePresize(Point pt, TileIndex tile) override
+	void OnPlacePresize(Point pt, TileIndex tile_from) override
 	{
 		TileIndex tile_to = tile_from;
 

@@ -187,7 +187,7 @@ public:
 static void PopupMainToolbMenu(Window *w, int widget, DropDownList &&list, int def)
 {
 	if (!_settings_client.gui.vertical_toolbar) {
-		ShowDropDownList(w, std::move(list), def, widget, 0, true, list->Length() <= 1);
+		ShowDropDownList(w, std::move(list), def, widget, 0, true, list.size() <= 1);
 	} else {
 		Rect wi_rect;
 		NWidgetCore *nwi = w->GetWidget<NWidgetCore>(widget);
@@ -195,7 +195,7 @@ static void PopupMainToolbMenu(Window *w, int widget, DropDownList &&list, int d
 		wi_rect.right  = nwi->pos_x + nwi->current_x;
 		wi_rect.top    = nwi->pos_y;
 		wi_rect.bottom = nwi->pos_y + nwi->current_y;
-		ShowDropDownListAt(w, std::move(list), def, widget, wi_rect, nwi->colour, true, list->Length() <= 1);
+		ShowDropDownListAt(w, std::move(list), def, widget, wi_rect, nwi->colour, true, list.size() <= 1);
 	}
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 }
@@ -895,15 +895,15 @@ static CallBackFunction ToolbarZoomOutClick(Window *w)
 
 static CallBackFunction ToolbarBuildRailClick(Window *w)
 {
-	DropDownList *list = GetRailTypeDropDownList();
+	DropDownList list = GetRailTypeDropDownList();
 	if (_settings_client.gui.compact_vertical_toolbar) {
 		const Company *c = Company::Get(_local_company);
-		*list->Append() = new DropDownListStringItem(STR_ROAD_MENU_ROAD_CONSTRUCTION, RAILTYPE_END + ROADTYPE_ROAD, false);
-		*list->Append() = new DropDownListStringItem(STR_ROAD_MENU_TRAM_CONSTRUCTION, RAILTYPE_END + ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM));
-		*list->Append() = new DropDownListStringItem(STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, RAILTYPE_END + WID_TN_WATER, false);
-		*list->Append() = new DropDownListStringItem(STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, RAILTYPE_END + WID_TN_AIR, false);
+		list.emplace_back(new DropDownListStringItem(STR_ROAD_MENU_ROAD_CONSTRUCTION, RAILTYPE_END + ROADTYPE_ROAD, false));
+		list.emplace_back(new DropDownListStringItem(STR_ROAD_MENU_TRAM_CONSTRUCTION, RAILTYPE_END + ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM)));
+		list.emplace_back(new DropDownListStringItem(STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, RAILTYPE_END + WID_TN_WATER, false));
+		list.emplace_back(new DropDownListStringItem(STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, RAILTYPE_END + WID_TN_AIR, false));
 	}
-	ShowDropDownList(w, list, _last_built_railtype, WID_TN_RAILS, 140, true);
+	ShowDropDownList(w, std::move(list), _last_built_railtype, WID_TN_RAILS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -940,7 +940,7 @@ static CallBackFunction MenuClickBuildRail(int index)
 static CallBackFunction ToolbarBuildRoadClick(Window *w)
 {
 	DropDownList list = GetRoadTypeDropDownList(RTTB_ROAD);
-	ShowDropDownList(w, list, _last_built_roadtype, WID_TN_ROADS, 140, true, list->size() <= 1);
+	ShowDropDownList(w, std::move(list), _last_built_roadtype, WID_TN_ROADS, 140, true, list.size() <= 1);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 	return CBF_NONE;
 }
@@ -2932,8 +2932,7 @@ static Hotkey maintoolbar_hotkeys[] = {
 };
 HotkeyList MainToolbarWindow::hotkeys("maintoolbar", maintoolbar_hotkeys);
 
-static NWidgetBase *MakeMainToolbar(int *biggest_index)
-{
+namespace tbs {
 	/** Sprites to use for the different toolbar buttons */
 	static const SpriteID toolbar_button_sprites[] = {
 		SPR_IMG_PAUSE,           // WID_TN_PAUSE
@@ -2968,7 +2967,11 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 		SPR_IMG_QUERY,           // WID_TN_HELP
 		SPR_IMG_SWITCH_TOOLBAR,  // WID_TN_SWITCH_BAR
 	};
+};
+using namespace tbs;
 
+static NWidgetBase *MakeMainToolbar(int *biggest_index)
+{
 	NWidgetMainToolbarContainer *hor = new NWidgetMainToolbarContainer();
 	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
 		switch (i) {
@@ -2981,7 +2984,7 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 				hor->Add(new NWidgetSpacer(0, 0));
 				break;
 		}
-		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+		hor->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
 
 	hor->Add(new NWidgetSpacer(0, 0));
@@ -3009,7 +3012,7 @@ static NWidgetBase *MakeVerticalLeftToolbar(int *biggest_index)
 {
 	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(0);
 	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
-		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
 
 	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));
@@ -3036,7 +3039,7 @@ static NWidgetBase *MakeVerticalRightToolbar(int *biggest_index)
 {
 	NWidgetVerticalToolbarContainer *tb = new NWidgetVerticalToolbarContainer(1);
 	for (uint i = 0; i <= WID_TN_SWITCH_BAR; i++) {
-		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, _toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
+		tb->Add(new NWidgetLeaf(i == WID_TN_SAVE ? WWT_IMGBTN_2 : WWT_IMGBTN, COLOUR_GREY, i, toolbar_button_sprites[i], STR_TOOLBAR_TOOLTIP_PAUSE_GAME + i));
 	}
 
 	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_CTRL, STR_TABLET_CTRL, STR_TABLET_CTRL_TOOLTIP));

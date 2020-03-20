@@ -191,6 +191,7 @@ public:
 	void OnRealtimeTick(uint delta_ms) override;
 	void OnScroll(Point delta) override;
 	void OnMouseOver(Point pt, int widget) override;
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override;
 };
 
 #endif /* SMALLMAP_GUI_H */

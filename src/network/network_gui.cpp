@@ -1805,7 +1805,7 @@ struct NetworkClientListPopupWindow : Window {
 			}
 
 			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)), action.name, colour);
-			y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)
+			y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 		}
 	}
 
@@ -1831,7 +1831,7 @@ struct NetworkClientListPopupWindow : Window {
 	{
 		int index = (pt.y - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
 
-		if (index >= 0 && index < (int)this->actions.Length()) {
+		if (index >= 0 && index < (int)this->actions.size()) {
 			const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(this->client_id);
 			if (ci != NULL) this->actions[index].proc(ci);
 		}

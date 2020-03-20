@@ -301,14 +301,14 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_BUTTON_SIZE_DROPDOWN: // Dropdowns for size of all GUI elements and fonts
 			case WID_GO_TEXT_SIZE_DROPDOWN:
-				list = new DropDownList();
+				list = DropDownList();
 				*selected_index = (widget == WID_GO_BUTTON_SIZE_DROPDOWN) ?
 									_settings_client.gui.min_button :
 									_freetype.medium.size;
 				for (uint i = MIN_BUTTON_SIZE; i <= MAX_BUTTON_SIZE; i++) {
 					DropDownListParamStringItem *item = new DropDownListParamStringItem(STR_JUST_INT, i, false);
 					item->SetParam(0, i);
-					*list->Append() = item;
+					list.emplace_back(item);
 				}
 				break;
 
