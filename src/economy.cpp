@@ -1690,9 +1690,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 				}
 			}
 
-			if (payment != NULL) {
-				amount_unloaded = v->cargo.Unload(amount_unloaded, &ge->cargo, payment);
-			}
+			amount_unloaded = v->cargo.Unload(amount_unloaded, &ge->cargo, payment);
 			remaining = v->cargo.UnloadCount() > 0;
 			if (amount_unloaded > 0) {
 				dirty_vehicle = true;

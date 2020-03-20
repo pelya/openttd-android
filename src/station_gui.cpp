@@ -153,44 +153,44 @@ void CheckRedrawStationCoverage(const Window *w)
  * @param type   Cargo type
  * @param amount Cargo amount
  * @param rating ratings data for that particular cargo
+ *
+ * @note Each cargo-bar is 16 pixels wide and 6 pixels high
+ * @note Each rating 14 pixels wide and 1 pixel high and is 1 pixel below the cargo-bar
  */
 static void StationsWndShowStationRating(int left, int right, int y, CargoID type, uint amount, byte rating)
 {
-	static const uint units_full  = 1 << 9;     ///< Number of units to show station as full.
-	static const uint rating_full = 224;        ///< Rating needed so it is shown as full.
+	static const uint units_full  = 576; ///< number of units to show station as 'full'
+	static const uint rating_full = 224; ///< rating needed so it is shown as 'full'
 
 	const CargoSpec *cs = CargoSpec::Get(type);
 	if (!cs->IsValid()) return;
 
-	y++;                                        ///< Make boxes 1 pixel shorter.
-	int left_start = left;
-	int right_start = right;
-	int height = GetCharacterHeight(FS_SMALL) - 2;
 	int colour = cs->rating_colour;
+	TextColour tc = GetContrastColour(colour);
+	uint w = (minu(amount, units_full) + 5) / 36;
 
-	/* Get width of the box to draw. */
-	uint width = minu(amount, units_full) * (right - left) / units_full;
+	int height = GetCharacterHeight(FS_SMALL);
 
-	/* Update the end margin, adding the width of the box not to be drawn... */
-	if (width != 0) UpdateMarginsWidth(right - left - width, left_start, right_start, true);
-	/* ... or prepare margins in case width == 0 and amount > 0 (just one pixel bar). */
-	else left_start = right_start = _current_text_dir ? right : left;
+	/* Draw total cargo (limited) on station (fits into 16 pixels) */
+	if (w != 0) GfxFillRect(left, y, left + w - 1, y + height, colour);
 
-	/* Draw total cargo (limited) on station */
-	if (amount > 0) GfxFillRect(left_start, y, right_start, y + height, colour);
-
-	DrawString(left, right, y, cs->abbrev, GetContrastColour(colour), SA_CENTER);
-
-	/* Draw green/red ratings bar*/
-	y += height + 2;
-	left_start = left + 1;
-	right_start = right - 1;
-	if (rating != 0) {
-		GfxFillRect(left_start, y, right_start, y, PC_GREEN);
-		width = minu(rating, rating_full) * (right_start - left_start) / rating_full;
-		UpdateMarginsWidth(width, left_start, right_start, false);
+	/* Draw a one pixel-wide bar of additional cargo meter, useful
+	 * for stations with only a small amount (<=30) */
+	if (w == 0) {
+		uint rest = amount / 5;
+		if (rest != 0) {
+			w += left;
+			GfxFillRect(w, y + height - rest, w, y + height, colour);
+		}
 	}
-	GfxFillRect(left_start, y, right_start, y, PC_RED);
+
+	DrawString(left + 1, right, y, cs->abbrev, tc);
+
+	/* Draw green/red ratings bar (fits into 14 pixels) */
+	y += height + 2;
+	GfxFillRect(left + 1, y, left + 14, y, PC_RED);
+	rating = minu(rating, rating_full) / 16;
+	if (rating != 0) GfxFillRect(left + 1, y, left + rating, y, PC_GREEN);
 }
 
 typedef GUIList<const Station*> GUIStationList;
@@ -457,7 +457,6 @@ public:
 					SetDParam(0, st->index);
 					SetDParam(1, st->facilities);
 					int x = DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y, STR_STATION_LIST_STATION);
-
 					x += rtl ? -5 : 5;
 
 					/* show cargo waiting and station ratings */

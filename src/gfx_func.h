@@ -189,17 +189,6 @@ int GetCharacterHeight(FontSize size);
 /** Height of characters in the large (#FS_MONO) font. @note Some characters may be oversized. */
 #define FONT_HEIGHT_MONO  (GetCharacterHeight(FS_MONO))
 
-int InitTempMargin(int left, int right, bool to_end_line);
-void AddSpace(int space, int &here, bool to_end_line);
-
-void UpdateMarginEnd(int end, int &margin, bool to_end_line);
-void UpdateMarginWidth(int adding, int &margin, bool to_end_line);
-void UpdateMarginsEnd(int end, int &left, int &right, bool to_end_line);
-void UpdateMarginsWidth(int width, int &left, int &right, bool to_end_line);
-
-void DrawString2(int left, int right, int top, int &margin, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false);
-void DrawSprite2(int width, int left, int right, int top, int &margin, SpriteID img, PaletteID pal, bool to_end_line = false, SubSprite *sub = NULL);
-
 /**
  * Return where to start drawing a centered object inside a widget.
  * @param top The top coordinate (or the left coordinate) of the widget.
