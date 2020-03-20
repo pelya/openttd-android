@@ -1,14 +1,14 @@
 
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
-- Add 'Goal' menu item somewhere to compact toolbar.
-
-- Misclicking station from orders dialog should hide the dialog for 3 times.
-
 - Create auto-save when the app is put to background, and load it on the next start.
 
 - Two-finger cancel action does not work when confirmation dialog is disabled.
 
 - Cloud save is broken.
 
-- World map scrolling is broken.
+- World map is too wide.
+
+- Town directory window crashes the game.
+
+- Build rail window is ugly.
