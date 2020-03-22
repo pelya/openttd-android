@@ -9,6 +9,4 @@
 
 - World map is too wide.
 
-- Town directory window crashes the game.
-
 - Build rail window is ugly.
