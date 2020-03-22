@@ -138,7 +138,6 @@ static LegendAndColour _legend_land_owners[NUM_NO_COMPANY_ENTRIES + MAX_COMPANIE
 };
 
 #undef MK
-#undef MKB
 #undef MC
 #undef MS
 #undef MO
@@ -1729,7 +1728,7 @@ public:
 
 		this->smallmap_window = dynamic_cast<SmallMapWindow *>(w);
 		assert(this->smallmap_window != nullptr);
-		this->smallest_x = max(display->smallest_x, bar->smallest_x + smallmap_window->GetMinLegendWidth());
+		this->smallest_x = max(display->smallest_x, max(bar->smallest_x, smallmap_window->GetMinLegendWidth()));
 		this->smallest_y = display->smallest_y + max(bar->smallest_y, smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
 		this->fill_x = max(display->fill_x, bar->fill_x);
 		this->fill_y = (display->fill_y == 0 && bar->fill_y == 0) ? 0 : min(display->fill_y, bar->fill_y);
@@ -1878,7 +1877,7 @@ void ShowSmallMap()
 {
 	AllocateWindowDescFront<SmallMapWindow>(&_smallmap_desc, 0);
 	SmallMapWindow *w = dynamic_cast<SmallMapWindow *>(FindWindowByClass(WC_SMALLMAP));
-	if (w && w->GetMinLegendWidth() > w->width) {
+	if (w && (int)w->GetMinLegendWidth() > w->width) {
 		ResizeWindow(w, w->GetMinLegendWidth() - w->width, 0);
 	}
 }

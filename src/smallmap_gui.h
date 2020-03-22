@@ -175,7 +175,7 @@ public:
 	 * Compute minimal required width of the legends.
 	 * @return Minimally needed width for displaying the smallmap legends in pixels.
 	 */
-	inline int GetMinLegendWidth() const
+	inline uint GetMinLegendWidth() const
 	{
 		return WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width;
 	}
