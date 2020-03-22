@@ -9,4 +9,4 @@
 
 - World map is too wide.
 
-- Build rail window is ugly.
+- Build rail popup list is ugly.
