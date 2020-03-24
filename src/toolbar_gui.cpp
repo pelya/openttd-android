@@ -898,10 +898,10 @@ static CallBackFunction ToolbarBuildRailClick(Window *w)
 	DropDownList list = GetRailTypeDropDownList();
 	if (_settings_client.gui.compact_vertical_toolbar) {
 		const Company *c = Company::Get(_local_company);
-		list.emplace_back(new DropDownListStringItem(STR_ROAD_MENU_ROAD_CONSTRUCTION, RAILTYPE_END + ROADTYPE_ROAD, false));
-		list.emplace_back(new DropDownListStringItem(STR_ROAD_MENU_TRAM_CONSTRUCTION, RAILTYPE_END + ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM)));
-		list.emplace_back(new DropDownListStringItem(STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, RAILTYPE_END + WID_TN_WATER, false));
-		list.emplace_back(new DropDownListStringItem(STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, RAILTYPE_END + WID_TN_AIR, false));
+		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDROAD, PAL_NONE, STR_ROAD_MENU_ROAD_CONSTRUCTION, RAILTYPE_END + ROADTYPE_ROAD, false));
+		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDTRAMS, PAL_NONE, STR_ROAD_MENU_TRAM_CONSTRUCTION, RAILTYPE_END + ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM)));
+		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDWATER, PAL_NONE, STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, RAILTYPE_END + WID_TN_WATER, false));
+		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDAIR, PAL_NONE, STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, RAILTYPE_END + WID_TN_AIR, false));
 	}
 	ShowDropDownList(w, std::move(list), _last_built_railtype, WID_TN_RAILS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);

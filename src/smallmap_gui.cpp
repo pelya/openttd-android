@@ -36,7 +36,7 @@ static int _smallmap_company_count;  ///< Number of entries in the owner legend.
 static int _smallmap_cargo_count;    ///< Number of cargos in the link stats legend.
 
 /** Link stat colours shown in legenda. */
-static uint8 _linkstat_colours_in_legenda[] = {0, 1, 3, 5, 7};
+static uint8 _linkstat_colours_in_legenda[] = {0, 1, 3, 5, 7, 9};
 
 static const int NUM_NO_COMPANY_ENTRIES = 4; ///< Number of entries in the owner legend that are not companies.
 
@@ -1177,8 +1177,8 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 		}
 		this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
 		this->min_number_of_columns = max(this->min_number_of_columns, num_columns);
+		printf("i = %d this->min_number_of_fixed_rows %d this->min_number_of_columns %d num_columns %d\n", i, this->min_number_of_fixed_rows, this->min_number_of_columns, num_columns);
 	}
-
 	/* The width of a column is the minimum width of all texts + the size of the blob + some spacing */
 	this->column_width = min_width + LEGEND_BLOB_WIDTH + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 }
