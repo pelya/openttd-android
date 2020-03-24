@@ -6,5 +6,3 @@
 - Two-finger cancel action does not work when confirmation dialog is disabled.
 
 - Cloud save is broken.
-
-- Build rail popup list is ugly.
