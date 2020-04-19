@@ -4,3 +4,5 @@
 - Create auto-save when the app is put to background, and load it on the next start.
 
 - Two-finger cancel action does not work when confirmation dialog is disabled.
+
+- New road types menu is not shown when building roads (Rattroads grf, Heqs Ratt grf).
