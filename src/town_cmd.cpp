@@ -454,13 +454,22 @@ uint32 GetWorldPopulation()
 
 /**
  * Remove stations from nearby station list if a town is no longer in the catchment area of each.
+ * To improve performance only checks stations that cover the provided house area (doesn't need to contain an actual house).
  * @param t Town to work on
+ * @param tile Location of house area (north part)
+ * @param flags BuildingFlags containing the size of house area
  */
-static void RemoveNearbyStations(Town *t)
+static void RemoveNearbyStations(Town *t, TileIndex tile, BuildingFlags flags)
 {
 	for (StationList::iterator it = t->stations_near.begin(); it != t->stations_near.end(); /* incremented inside loop */) {
 		const Station *st = *it;
-		if (!st->CatchmentCoversTown(t->index)) {
+
+		bool covers_area = st->TileIsInCatchment(tile);
+		if (flags & BUILDING_2_TILES_Y)   covers_area |= st->TileIsInCatchment(tile + TileDiffXY(0, 1));
+		if (flags & BUILDING_2_TILES_X)   covers_area |= st->TileIsInCatchment(tile + TileDiffXY(1, 0));
+		if (flags & BUILDING_HAS_4_TILES) covers_area |= st->TileIsInCatchment(tile + TileDiffXY(1, 1));
+
+		if (covers_area && !st->CatchmentCoversTown(t->index)) {
 			it = t->stations_near.erase(it);
 		} else {
 			++it;
@@ -621,11 +630,7 @@ static void TileLoop_Town(TileIndex tile)
 		ClearTownHouse(t, tile);
 
 		/* Rebuild with another house? */
-		if (GB(r, 24, 8) < 12 || !BuildTownHouse(t, tile))
-		{
-			/* House wasn't replaced, so remove it */
-			if (!_generating_world) RemoveNearbyStations(t);
-		}
+		if (GB(r, 24, 8) >= 12) BuildTownHouse(t, tile);
 	}
 
 	cur_company.Restore();
@@ -654,7 +659,6 @@ static CommandCost ClearTile_Town(TileIndex tile, DoCommandFlag flags)
 	ChangeTownRating(t, -rating, RATING_HOUSE_MINIMUM, flags);
 	if (flags & DC_EXEC) {
 		ClearTownHouse(t, tile);
-		RemoveNearbyStations(t);
 	}
 
 	return cost;
@@ -2249,7 +2253,12 @@ static void MakeTownHouse(TileIndex t, Town *town, byte counter, byte stage, Hou
 	if (size & BUILDING_2_TILES_X)   ClearMakeHouseTile(t + TileDiffXY(1, 0), town, counter, stage, ++type, random_bits);
 	if (size & BUILDING_HAS_4_TILES) ClearMakeHouseTile(t + TileDiffXY(1, 1), town, counter, stage, ++type, random_bits);
 
-	if (!_generating_world) FindStationsAroundTiles(TileArea(t, (size & BUILDING_2_TILES_X) ? 2 : 1, (size & BUILDING_2_TILES_Y) ? 2 : 1), &town->stations_near, false);
+	if (!_generating_world) {
+		ForAllStationsAroundTiles(TileArea(t, (size & BUILDING_2_TILES_X) ? 2 : 1, (size & BUILDING_2_TILES_Y) ? 2 : 1), [town](Station *st, TileIndex tile) {
+			town->stations_near.insert(st);
+			return true;
+		});
+	}
 }
 
 
@@ -2661,11 +2670,12 @@ void ClearTownHouse(Town *t, TileIndex tile)
 	}
 
 	/* Do the actual clearing of tiles */
-	uint eflags = hs->building_flags;
 	DoClearTownHouseHelper(tile, t, house);
-	if (eflags & BUILDING_2_TILES_Y)   DoClearTownHouseHelper(tile + TileDiffXY(0, 1), t, ++house);
-	if (eflags & BUILDING_2_TILES_X)   DoClearTownHouseHelper(tile + TileDiffXY(1, 0), t, ++house);
-	if (eflags & BUILDING_HAS_4_TILES) DoClearTownHouseHelper(tile + TileDiffXY(1, 1), t, ++house);
+	if (hs->building_flags & BUILDING_2_TILES_Y)   DoClearTownHouseHelper(tile + TileDiffXY(0, 1), t, ++house);
+	if (hs->building_flags & BUILDING_2_TILES_X)   DoClearTownHouseHelper(tile + TileDiffXY(1, 0), t, ++house);
+	if (hs->building_flags & BUILDING_HAS_4_TILES) DoClearTownHouseHelper(tile + TileDiffXY(1, 1), t, ++house);
+
+	RemoveNearbyStations(t, tile, hs->building_flags);
 
 	UpdateTownRadius(t);
 

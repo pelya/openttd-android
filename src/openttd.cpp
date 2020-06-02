@@ -64,6 +64,7 @@
 #include "viewport_func.h"
 #include "viewport_sprite_sorter.h"
 #include "framerate_type.h"
+#include "industry.h"
 
 #include "linkgraph/linkgraphschedule.h"
 
@@ -1362,6 +1363,13 @@ static void CheckCaches()
 		assert(memcmp(&v->cargo, buff, sizeof(VehicleCargoList)) == 0);
 	}
 
+	/* Backup stations_near */
+	std::vector<StationList> old_town_stations_near;
+	for (Town *t : Town::Iterate()) old_town_stations_near.push_back(t->stations_near);
+
+	std::vector<StationList> old_industry_stations_near;
+	for (Industry *ind : Industry::Iterate())  old_industry_stations_near.push_back(ind->stations_near);
+
 	for (Station *st : Station::Iterate()) {
 		for (CargoID c = 0; c < NUM_CARGO; c++) {
 			byte buff[sizeof(StationCargoList)];
@@ -1369,6 +1377,46 @@ static void CheckCaches()
 			st->goods[c].cargo.InvalidateCache();
 			assert(memcmp(&st->goods[c].cargo, buff, sizeof(StationCargoList)) == 0);
 		}
+
+		/* Check docking tiles */
+		TileArea ta;
+		std::map<TileIndex, bool> docking_tiles;
+		TILE_AREA_LOOP(tile, st->docking_station) {
+			ta.Add(tile);
+			docking_tiles[tile] = IsDockingTile(tile);
+		}
+		UpdateStationDockingTiles(st);
+		if (ta.tile != st->docking_station.tile || ta.w != st->docking_station.w || ta.h != st->docking_station.h) {
+			DEBUG(desync, 2, "station docking mismatch: station %i, company %i", st->index, (int)st->owner);
+		}
+		TILE_AREA_LOOP(tile, ta) {
+			if (docking_tiles[tile] != IsDockingTile(tile)) {
+				DEBUG(desync, 2, "docking tile mismatch: tile %i", (int)tile);
+			}
+		}
+
+		/* Check industries_near */
+		IndustryList industries_near = st->industries_near;
+		st->RecomputeCatchment();
+		if (st->industries_near != industries_near) {
+			DEBUG(desync, 2, "station industries near mismatch: station %i", st->index);
+		}
+	}
+
+	/* Check stations_near */
+	i = 0;
+	for (Town *t : Town::Iterate()) {
+		if (t->stations_near != old_town_stations_near[i]) {
+			DEBUG(desync, 2, "town stations near mismatch: town %i", t->index);
+		}
+		i++;
+	}
+	i = 0;
+	for (Industry *ind : Industry::Iterate()) {
+		if (ind->stations_near != old_industry_stations_near[i]) {
+			DEBUG(desync, 2, "industry stations near mismatch: industry %i", ind->index);
+		}
+		i++;
 	}
 }
 
