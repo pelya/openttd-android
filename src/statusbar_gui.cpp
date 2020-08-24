@@ -199,15 +199,6 @@ struct StatusBarWindow : Window {
 				}
 				break;
 		}
-
-		int center_top = Center(r.top + WD_FRAMERECT_TOP, r.bottom - r.top);
-		if (str != INVALID_STRING_ID) DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, center_top, str, TC_FROMSTRING, SA_HOR_CENTER);
-
-		if (widget == WID_S_MIDDLE && !this->reminder_timeout.HasElapsed()) {
-			Dimension icon_size = GetSpriteSize(SPR_UNREAD_NEWS);
-			center_top = Center(r.top + WD_FRAMERECT_TOP, r.bottom - r.top,  icon_size.height);
-			DrawSprite(SPR_UNREAD_NEWS, PAL_NONE, r.right - WD_FRAMERECT_RIGHT - icon_size.width, center_top);
-		}
 	}
 
 	/**
