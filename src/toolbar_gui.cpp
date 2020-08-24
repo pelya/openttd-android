@@ -893,15 +893,24 @@ static CallBackFunction ToolbarZoomOutClick(Window *w)
 
 /* --- Rail button menu --- */
 
+enum { MENU_IDX_WATER = RAILTYPE_END + 1, MENU_IDX_AIR, MENU_IDX_TRAM, MENU_IDX_ROAD, };
+
 static CallBackFunction ToolbarBuildRailClick(Window *w)
 {
 	DropDownList list = GetRailTypeDropDownList();
 	if (_settings_client.gui.compact_vertical_toolbar) {
 		const Company *c = Company::Get(_local_company);
-		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDROAD, PAL_NONE, STR_ROAD_MENU_ROAD_CONSTRUCTION, RAILTYPE_END + ROADTYPE_ROAD, false));
-		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDTRAMS, PAL_NONE, STR_ROAD_MENU_TRAM_CONSTRUCTION, RAILTYPE_END + ROADTYPE_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM)));
-		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDWATER, PAL_NONE, STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, RAILTYPE_END + WID_TN_WATER, false));
-		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDAIR, PAL_NONE, STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, RAILTYPE_END + WID_TN_AIR, false));
+		DropDownList roads = GetRoadTypeDropDownList(RTTB_ROAD);
+		for (auto &&iter: roads) {
+			if (iter->result == INVALID_ROADTYPE) continue;
+			const DropDownListIconItem *ptr = static_cast<const DropDownListIconItem *>(iter.get());
+			DropDownListIconItem *elem = new DropDownListIconItem(*ptr);
+			elem->result += MENU_IDX_ROAD;
+			list.emplace_back(elem);
+		}
+		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDTRAMS, PAL_NONE, STR_ROAD_MENU_TRAM_CONSTRUCTION, MENU_IDX_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM)));
+		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDWATER, PAL_NONE, STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, MENU_IDX_WATER, false));
+		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDAIR, PAL_NONE, STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, MENU_IDX_AIR, false));
 	}
 	ShowDropDownList(w, std::move(list), _last_built_railtype, WID_TN_RAILS, 140, true);
 	if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
@@ -920,15 +929,17 @@ static CallBackFunction MenuClickBuildAir(int index);
  */
 static CallBackFunction MenuClickBuildRail(int index)
 {
-	switch (index) {
-		case RAILTYPE_END + ROADTYPE_ROAD:
-			return MenuClickBuildRoad(ROADTYPE_ROAD);
-		case RAILTYPE_END + ROADTYPE_TRAM:
-			return MenuClickBuildRoad(ROADTYPE_TRAM);
-		case RAILTYPE_END + WID_TN_WATER:
-			return MenuClickBuildWater(0);
-		case RAILTYPE_END + WID_TN_AIR:
-			return MenuClickBuildAir(0);
+	if (index >= MENU_IDX_ROAD) {
+		return MenuClickBuildRoad(index - MENU_IDX_ROAD);
+	}
+	if (index == MENU_IDX_TRAM) {
+		return MenuClickBuildRoad(ROADTYPE_TRAM);
+	}
+	if (index == MENU_IDX_WATER) {
+		return MenuClickBuildWater(0);
+	}
+	if (index == MENU_IDX_AIR) {
+		return MenuClickBuildAir(0);
 	}
 	_last_built_railtype = (RailType)index;
 	ShowBuildRailToolbar(_last_built_railtype);
