@@ -33,7 +33,7 @@ extern void Android_MidiMixMusic(Sint16 *stream, int len);
 static void CDECL fill_sound_buffer(void *userdata, Uint8 *stream, int len)
 {
 	MxMixSamples(stream, len / 4);
-#if defined(__ANDROID__) && defined(LIBTIMIDITY)
+#if defined(__ANDROID__)
 	Android_MidiMixMusic((Sint16 *)stream, len / 2);
 #endif
 }
