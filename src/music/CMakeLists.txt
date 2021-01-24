@@ -12,6 +12,12 @@ if(NOT OPTION_DEDICATED)
     )
 
     add_files(
+        libtimidity.cpp
+        libtimidity.h
+        CONDITION Timidity_FOUND
+    )
+
+    add_files(
         cocoa_m.cpp
         cocoa_m.h
         CONDITION APPLE

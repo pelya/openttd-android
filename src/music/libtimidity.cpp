@@ -68,17 +68,17 @@ void Android_MidiMixMusic(Sint16 *stream, int len)
 static FMusicDriver_LibTimidity iFMusicDriver_LibTimidity;
 
 enum { TIMIDITY_MAX_VOLUME = 50 };
-const char *MusicDriver_LibTimidity::Start(const char * const *param)
+const char *MusicDriver_LibTimidity::Start(const StringList &param)
 {
 	_midi.status = MIDI_STOPPED;
 	_midi.song = NULL;
 	volume = TIMIDITY_MAX_VOLUME; // Avoid clipping
 
-	if (mid_init(param == NULL ? NULL : const_cast<char *>(param[0])) < 0) {
+	if (mid_init(NULL) < 0) {
 		/* If init fails, it can be because no configuration was found.
 		 *  If it was not forced via param, try to load it without a
 		 *  configuration. Who knows that works. */
-		if (param != NULL || mid_init_no_config() < 0) {
+		if (mid_init_no_config() < 0) {
 			return "error initializing timidity";
 		}
 	}
