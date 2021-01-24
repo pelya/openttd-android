@@ -1,4 +1,6 @@
 
+- Cannot raise or lower terrain past one level in the scenario editor.
+
 - 'Place Sign' does not work. Landscaping - Place Sign works.
 
 - Create auto-save when the app is put to background, and load it on the next start.
