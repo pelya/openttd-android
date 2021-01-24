@@ -45,7 +45,7 @@ static const char * GetGamelogRevisionString()
 {
 	/* Allocate a buffer larger than necessary (git revision hash is 40 bytes) to avoid truncation later */
 	static char gamelog_revision[48] = { 0 };
-	assert_compile(lengthof(gamelog_revision) > GAMELOG_REVISION_LENGTH);
+	static_assert(lengthof(gamelog_revision) > GAMELOG_REVISION_LENGTH);
 
 	if (IsReleasedVersion()) {
 		return _openttd_revision;
@@ -85,6 +85,11 @@ void GamelogStopAction()
 	_gamelog_action_type = GLAT_NONE;
 
 	if (print) GamelogPrintDebug(5);
+}
+
+void GamelogStopAnyAction()
+{
+	if (_gamelog_action_type != GLAT_NONE) GamelogStopAction();
 }
 
 /**
@@ -162,7 +167,7 @@ static const char * const la_text[] = {
 	"emergency savegame",
 };
 
-assert_compile(lengthof(la_text) == GLAT_END);
+static_assert(lengthof(la_text) == GLAT_END);
 
 /**
  * Information about the presence of a Grf at a certain point during gamelog history
@@ -809,7 +814,7 @@ void GamelogInfo(LoggedAction *gamelog_action, uint gamelog_actions, uint32 *las
 
 				case GLCT_REVISION:
 					*last_ottd_rev = lc->revision.newgrf;
-					*ever_modified = max(*ever_modified, lc->revision.modified);
+					*ever_modified = std::max(*ever_modified, lc->revision.modified);
 					break;
 
 				case GLCT_GRFREM:

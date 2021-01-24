@@ -50,9 +50,9 @@ STR_CARGO_PLURAL_WHEAT                                          :{G=m}Frumento
 STR_CARGO_PLURAL_RUBBER                                         :{G=f}Gomma
 STR_CARGO_PLURAL_SUGAR                                          :{G=m}Zucchero
 STR_CARGO_PLURAL_TOYS                                           :{G=m}Giocattoli
-STR_CARGO_PLURAL_CANDY                                          :{G=f}Caramelle
+STR_CARGO_PLURAL_SWEETS                                         :{G=f}Caramelle
 STR_CARGO_PLURAL_COLA                                           :{G=f}Cola
-STR_CARGO_PLURAL_COTTON_CANDY                                   :{G=m}Zucchero filato
+STR_CARGO_PLURAL_CANDYFLOSS                                     :{G=m}Zucchero filato
 STR_CARGO_PLURAL_BUBBLES                                        :{G=f}Bollicine
 STR_CARGO_PLURAL_TOFFEE                                         :{G=m}Toffee
 STR_CARGO_PLURAL_BATTERIES                                      :{G=f}Batterie
@@ -84,9 +84,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :{G=m}Frumento
 STR_CARGO_SINGULAR_RUBBER                                       :{G=f}Gomma
 STR_CARGO_SINGULAR_SUGAR                                        :{G=m}Zucchero
 STR_CARGO_SINGULAR_TOY                                          :{G=m}Giocattolo
-STR_CARGO_SINGULAR_CANDY                                        :{G=f}Caramella
+STR_CARGO_SINGULAR_SWEETS                                       :{G=f}Caramella
 STR_CARGO_SINGULAR_COLA                                         :{G=f}Cola
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :{G=m}Zucchero filato
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :{G=m}Zucchero filato
 STR_CARGO_SINGULAR_BUBBLE                                       :{G=f}Bollicine
 STR_CARGO_SINGULAR_TOFFEE                                       :{G=m}Toffee
 STR_CARGO_SINGULAR_BATTERY                                      :{G=f}Batterie
@@ -235,8 +235,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Selezion
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Seleziona il criterio di ordinamento
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Seleziona il criterio di filtraggio
 STR_BUTTON_SORT_BY                                              :{BLACK}Ordina per
-STR_BUTTON_LOCATION                                             :{BLACK}Posizione
-STR_BUTTON_RENAME                                               :{BLACK}Rinomina
 STR_BUTTON_CATCHMENT                                            :{BLACK}Copertura
 STR_TOOLTIP_CATCHMENT                                           :{BLACK}Attiva/disattiva la visualizzazione dell'area di copertura
 
@@ -316,6 +314,8 @@ STR_SORT_BY_CARGO_CAPACITY                                      :Capacità di ca
 STR_SORT_BY_RANGE                                               :{G=f}Autonomia
 STR_SORT_BY_POPULATION                                          :Popolazione
 STR_SORT_BY_RATING                                              :Valutazione
+
+# Group by options for vehicle list
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Pausa
@@ -404,7 +404,7 @@ STR_FILE_MENU_EXIT                                              :Esci
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Mappa del mondo
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Mini visuale extra
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :Mini visuale extra
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Legenda rotte commerciali
 STR_MAP_MENU_SIGN_LIST                                          :Elenco cartelli
 
@@ -886,7 +886,7 @@ STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLAC
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}L'autorità locale di {TOWN} firma un accordo con la {STRING} per un anno di diritti di trasporto esclusivi!
 
 # Extra view window
-STR_EXTRA_VIEW_PORT_TITLE                                       :{WHITE}Mini visuale {COMMA}
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Mini visuale {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Cambia mini visuale
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Copia la posizione della visuale principale in questa mini visuale
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Cambia vis. principale
@@ -937,6 +937,7 @@ STR_GAME_OPTIONS_CURRENCY_MXN                                   :Peso messicano 
 STR_GAME_OPTIONS_CURRENCY_NTD                                   :Nuovo dollaro taiwanese (NTD)
 STR_GAME_OPTIONS_CURRENCY_CNY                                   :Renminbi cinese (CNY)
 STR_GAME_OPTIONS_CURRENCY_HKD                                   :Dollaro di Hong Kong (HKD)
+STR_GAME_OPTIONS_CURRENCY_INR                                   :Rupia indiana (INR)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Automezzi
@@ -1576,8 +1577,6 @@ STR_CONFIG_SETTING_ENDING_YEAR                                  :Punteggi a fine
 STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :Anno in cui il gioco finisce per poter calcolare i punteggi. Alla fine di ques'tanno il punteggio della compagnia viene registrato e viene mostrata la schermata con i punteggi più alti, ma il giocatore può continuare a giocare anche dopo.{}Se quest'anno precede quello di inizio, la schermata dei punteggi non verrà mai mostrata.
 STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Mai
-STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Abilita economia fluida (cambiamenti piccoli e frequenti): {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Se abilitata, la produzione industriale cambia più spesso e a passi più piccoli. Questa impostazione non ha in genere effetto per i tipi di industria aggiunti da un NewGRF
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Permetti l'acquisto di azioni di altre compagnie: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Se abilitata, consente l'acquisto e la vendita di azioni delle compagnie. Le azioni sono disponibili solo per le compagnie che hanno raggiunto una certa età minima
 STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Età minima della compagnia per lo scambio delle sue azioni: {STRING}
@@ -1629,9 +1628,6 @@ STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Lineare
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Collocazione di alberi durante la partita: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Controlla la comparsa casuale di alberi durante una partita. Può influenzare le industrie che dipendono dalla crescita degli alberi, come le segherie
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :Nessuna {RED}(funzionamento errato segherie)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :Solo nelle foreste pluviali
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :Ovunque
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Posizione barra degli strumenti principale: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Posizione orizzontale della barra degli strumenti principale sul bordo superiore dello schermo
@@ -1830,17 +1826,8 @@ STR_INTRO_TRANSLATION                                           :{BLACK}A questa
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Esci
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Si è sicuri di voler uscire da OpenTTD e tornare a {STRING}?
 STR_QUIT_YES                                                    :{BLACK}Sì
 STR_QUIT_NO                                                     :{BLACK}No
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Abbandona partita
@@ -1850,7 +1837,6 @@ STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Si è s
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Trucchi
 STR_CHEATS_TOOLTIP                                              :{BLACK}Le caselle indicano se un trucco è già stato usato una volta
-STR_CHEATS_WARNING                                              :{BLACK}Attenzione! Stai per tradire i tuoi avversari. Ricordati che un così grande disonore sarà ricordato per l'eternità
 STR_CHEAT_MONEY                                                 :{LTBLUE}Aumenta denaro di {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Compagnia controllata: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Bulldozer magico (rimuove industrie e oggetti fissi): {ORANGE}{STRING}
@@ -1962,10 +1948,6 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Cambia l
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multigiocatore
-STR_NETWORK_SERVER_LIST_ADVERTISED                              :{BLACK}Pubblico
-STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP                      :{BLACK}Sceglie fra partita pubblica (su Internet) o privata (su rete locale, LAN)
-STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :No
-STR_NETWORK_SERVER_LIST_ADVERTISED_YES                          :Sì
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nome giocatore:
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Questo è il nome con cui si verrà identificati dagli altri giocatori
 
@@ -2006,8 +1988,6 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Entra ne
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Aggiorna
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Aggiorna le informazioni sul server
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Trova server
-STR_NETWORK_SERVER_LIST_FIND_SERVER_TOOLTIP                     :{BLACK}Cerca un server sulla rete
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Aggiungi server
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Aggiunge un server alla lista di server in cui cercare sempre partite in corso
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Avvia server
@@ -2024,6 +2004,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Il nome 
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Imposta password
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Protegge la partita con una password in modo che non sia accessibile pubblicamente
 
+STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Pubblico
+STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Sceglie fra partita pubblica (su Internet) o privata (su rete locale, LAN)
 STR_NETWORK_START_SERVER_UNADVERTISED                           :No
 STR_NETWORK_START_SERVER_ADVERTISED                             :Sì
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} client
@@ -2137,7 +2119,6 @@ STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nuova compagnia
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Espelli
 STR_NETWORK_CLIENTLIST_BAN                                      :Bandisci
-STR_NETWORK_CLIENTLIST_GIVE_MONEY                               :Dona denaro
 STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Parla a tutti
 STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Parla alla compagnia
 STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Messaggio privato
@@ -2145,8 +2126,6 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Messaggio priva
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Client
 STR_NETWORK_SPECTATORS                                          :Spettatori
-
-STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Inserire la quantità di denaro da donare
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Non salvare la password inserita
@@ -2192,6 +2171,7 @@ STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Password
 STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}Il server è pieno
 STR_NETWORK_ERROR_SERVER_BANNED                                 :{WHITE}Sei stato bandito da questo server
 STR_NETWORK_ERROR_KICKED                                        :{WHITE}Sei stato espulso dalla partita
+STR_NETWORK_ERROR_KICK_MESSAGE                                  :{WHITE}Motivo: {STRING}
 STR_NETWORK_ERROR_CHEATER                                       :{WHITE}I trucchi non sono ammessi su questo server
 STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}Stavano venendo inviati troppi comandi al server
 STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}Si è impiegato troppo tempo ad inserire la password
@@ -2247,10 +2227,9 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} è
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} ha avviato una nuova compagnia (#{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} ha abbandonato la partita ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} ha cambiato nome in {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} ha donato alla tua compagnia {2:CURRENCY_LONG}
-STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY                             :*** Hai donato {2:CURRENCY_LONG} a {1:STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Il server ha chiuso la sessione
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Il server si sta riavviando...{}Attendere prego...
+STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} è stato espulso. Motivo: ({STRING})
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Download contenuti
@@ -2367,6 +2346,8 @@ STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Costrui
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Unisci waypoint
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Costruisci waypoint separato
+
+# Generic toolbar
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Costruzione ferrovie
@@ -2559,7 +2540,7 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Dimensio
 STR_OBJECT_CLASS_LTHS                                           :Fari
 STR_OBJECT_CLASS_TRNS                                           :Trasmettitori
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Alberi
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK}Seleziona il tipo di albero da piantare. Se nel riquadro sono già presenti alberi, ne aggiunge altri di vari tipi, indipendentemente dal tipo selezionato
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Alberi casuali
@@ -2764,7 +2745,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Terreno possedu
 STR_ABOUT_OPENTTD                                               :{WHITE}Informazioni su OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright originale {COPYRIGHT} 1995 Chris Sawyer, Tutti i diritti riservati
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versione {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 Il team OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} Il team OpenTTD
 
 # Framerate display window
 STR_FRAMERATE_CAPTION                                           :{WHITE}Frame rate
@@ -3765,10 +3746,6 @@ STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Fa sì c
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Centra la visuale principale sulla posizione del treno. CTRL+clic attiva l'inseguimento della visuale.
-STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Centra la visuale principale sulla posizione dell'automezzo. CTRL+clic attiva l'inseguimento della visuale.
-STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Centra la visuale principale sulla posizione della nave. CTRL+clic attiva l'inseguimento della visuale.
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Centra la visuale principale sulla posizione dell'aeromobile. CTRL+clic attiva l'inseguimento della visuale.
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Manda il treno al deposito. CTRL+clic per eseguire solo una manutenzione
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Manda l'automezzo al deposito. CTRL+clic per eseguire solo una manutenzione
@@ -3800,10 +3777,7 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Mostra i
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Mostra i dettagli sulla nave
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Mostra i dettagli sull'aeromobile
 
-STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Azione corrente del treno - fare clic per fermarlo/avviarlo. CTRL+clic visualizza la destinazione
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Azione corrente del veicolo - fare clic per fermarlo/avviarlo. CTRL+clic visualizza la destinazione
-STR_VEHICLE_VIEW_SHIP_STATE_START_STOP_TOOLTIP                  :{BLACK}Azione corrente della nave - fare clic per fermarla/avviarla. CTRL+clic visualizza la destinazione
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Azione corrente dell'aeromobile - fare clic per fermare/avviare l'aeromobile. CTRL+clic visualizza la destinazione
+
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Caricamento / Scaricamento
@@ -4513,7 +4487,6 @@ STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}Impossib
 STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :{WHITE}Impossibile convertire il tipo di tram qui...
 STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Nessuna strada adatta
 STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}Nessuna tranvia adatta
-STR_ERROR_INCOMPATIBLE_ROAD                                     :{WHITE}... strada non compatibile
 STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... tranvia non compatibile
 
 # Waterway construction errors

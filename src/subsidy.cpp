@@ -23,6 +23,7 @@
 #include "game/game.hpp"
 #include "command_func.h"
 #include "string_func.h"
+#include "tile_cmd.h"
 
 #include "table/strings.h"
 
@@ -328,20 +329,34 @@ bool FindSubsidyTownCargoRoute()
 	const Town *src_town = Town::GetRandom();
 	if (src_town->cache.population < SUBSIDY_CARGO_MIN_POPULATION) return false;
 
-	CargoTypes town_cargo_produced = src_town->cargo_produced;
+	/* Calculate the produced cargo of houses around town center. */
+	CargoArray town_cargo_produced;
+	TileArea ta = TileArea(src_town->xy, 1, 1).Expand(SUBSIDY_TOWN_CARGO_RADIUS);
+	TILE_AREA_LOOP(tile, ta) {
+		if (IsTileType(tile, MP_HOUSE)) {
+			AddProducedCargo(tile, town_cargo_produced);
+		}
+	}
 
 	/* Passenger subsidies are not handled here. */
-	ClrBit(town_cargo_produced, CT_PASSENGERS);
+	town_cargo_produced[CT_PASSENGERS] = 0;
+
+	uint8 cargo_count = 0;
+	for (CargoID i = 0; i < NUM_CARGO; i++) {
+		if (town_cargo_produced[i] > 0) cargo_count++;
+	}
 
 	/* No cargo produced at all? */
-	if (town_cargo_produced == 0) return false;
+	if (cargo_count == 0) return false;
 
 	/* Choose a random cargo that is produced in the town. */
-	uint8 cargo_number = RandomRange(CountBits(town_cargo_produced));
+	uint8 cargo_number = RandomRange(cargo_count);
 	CargoID cid;
-	FOR_EACH_SET_CARGO_ID(cid, town_cargo_produced) {
-		if (cargo_number == 0) break;
-		cargo_number--;
+	for (cid = 0; cid < NUM_CARGO; cid++) {
+		if (town_cargo_produced[cid] > 0) {
+			if (cargo_number == 0) break;
+			cargo_number--;
+		}
 	}
 
 	/* Avoid using invalid NewGRF cargoes. */
@@ -416,8 +431,8 @@ bool FindSubsidyIndustryCargoRoute()
  */
 bool FindSubsidyCargoDestination(CargoID cid, SourceType src_type, SourceID src)
 {
-	/* Choose a random destination. Only consider towns if they can accept the cargo. */
-	SourceType dst_type = (HasBit(_town_cargoes_accepted, cid) && Chance16(1, 2)) ? ST_TOWN : ST_INDUSTRY;
+	/* Choose a random destination. */
+	SourceType dst_type = Chance16(1, 2) ? ST_TOWN : ST_INDUSTRY;
 
 	SourceID dst;
 	switch (dst_type) {
@@ -425,8 +440,17 @@ bool FindSubsidyCargoDestination(CargoID cid, SourceType src_type, SourceID src)
 			/* Select a random town. */
 			const Town *dst_town = Town::GetRandom();
 
+			/* Calculate cargo acceptance of houses around town center. */
+			CargoArray town_cargo_accepted;
+			TileArea ta = TileArea(dst_town->xy, 1, 1).Expand(SUBSIDY_TOWN_CARGO_RADIUS);
+			TILE_AREA_LOOP(tile, ta) {
+				if (IsTileType(tile, MP_HOUSE)) {
+					AddAcceptedCargo(tile, town_cargo_accepted, nullptr);
+				}
+			}
+
 			/* Check if the town can accept this cargo. */
-			if (!HasBit(dst_town->cargo_accepted_total, cid)) return false;
+			if (town_cargo_accepted[cid] < 8) return false;
 
 			dst = dst_town->index;
 			break;

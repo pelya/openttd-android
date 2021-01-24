@@ -38,7 +38,7 @@ static void CDECL fill_sound_buffer(void *userdata, Uint8 *stream, int len)
 #endif
 }
 
-const char *SoundDriver_SDL::Start(const char * const *parm)
+const char *SoundDriver_SDL::Start(const StringList &parm)
 {
 	SDL_AudioSpec spec;
 

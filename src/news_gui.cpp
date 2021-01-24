@@ -44,6 +44,7 @@
 const NewsItem *_statusbar_news_item = nullptr;
 
 static uint MIN_NEWS_AMOUNT = 30;        ///< preferred minimum amount of news messages
+static uint MAX_NEWS_AMOUNT = 1 << 10;   ///< Do not exceed this number of news messages
 static uint _total_news = 0;             ///< current number of news items
 static NewsItem *_oldest_news = nullptr; ///< head of news items queue
 NewsItem *_latest_news = nullptr;        ///< tail of news items queue
@@ -243,7 +244,7 @@ static NewsTypeData _news_type_data[] = {
 	NewsTypeData("news_display.general",           60, SND_BEGIN       ),  ///< NT_GENERAL
 };
 
-assert_compile(lengthof(_news_type_data) == NT_END);
+static_assert(lengthof(_news_type_data) == NT_END);
 
 /**
  * Return the news display option.
@@ -507,8 +508,8 @@ struct NewsWindow : Window {
 					TileIndex tile1 = GetReferenceTile(this->ni->reftype1, this->ni->ref1);
 					TileIndex tile2 = GetReferenceTile(this->ni->reftype2, this->ni->ref2);
 					if (_ctrl_pressed) {
-						if (tile1 != INVALID_TILE) ShowExtraViewPortWindow(tile1);
-						if (tile2 != INVALID_TILE) ShowExtraViewPortWindow(tile2);
+						if (tile1 != INVALID_TILE) ShowExtraViewportWindow(tile1);
+						if (tile2 != INVALID_TILE) ShowExtraViewportWindow(tile2);
 					} else {
 						if ((tile1 == INVALID_TILE || !ScrollMainWindowToTile(tile1)) && tile2 != INVALID_TILE) {
 							ScrollMainWindowToTile(tile2);
@@ -517,16 +518,6 @@ struct NewsWindow : Window {
 				}
 				break;
 		}
-	}
-
-	EventState OnKeyPress(WChar key, uint16 keycode) override
-	{
-		if (keycode == WKC_SPACE) {
-			/* Don't continue. */
-			delete this;
-			return ES_HANDLED;
-		}
-		return ES_NOT_HANDLED;
 	}
 
 	/**
@@ -548,7 +539,7 @@ struct NewsWindow : Window {
 		int count = this->timer.CountElapsed(delta_ms);
 		if (count > 0) {
 			/* Scroll up newsmessages from the bottom */
-			int newtop = max(this->top - 2 * count, _screen.height - this->height - this->status_height - this->chat_height);
+			int newtop = std::max(this->top - 2 * count, _screen.height - this->height - this->status_height - this->chat_height);
 			this->SetWindowTop(newtop);
 		}
 
@@ -566,12 +557,12 @@ private:
 	{
 		if (this->top == newtop) return;
 
-		int mintop = min(newtop, this->top);
-		int maxtop = max(newtop, this->top);
+		int mintop = std::min(newtop, this->top);
+		int maxtop = std::max(newtop, this->top);
 		if (this->viewport != nullptr) this->viewport->top += newtop - this->top;
 		this->top = newtop;
 
-		SetDirtyBlocks(this->left, mintop, this->left + this->width, maxtop + this->height);
+		AddDirtyBlock(this->left, mintop, this->left + this->width, maxtop + this->height);
 	}
 
 	StringID GetCompanyMessageString() const
@@ -602,7 +593,6 @@ private:
 };
 
 /* static */ int NewsWindow::duration = 0; // Instance creation.
-
 
 /** Open up an own newspaper window for the news item */
 static void ShowNewspaper(const NewsItem *ni)
@@ -671,6 +661,11 @@ static bool ReadyForNextNewsItem()
 /** Move to the next ticker item */
 static void MoveToNextTickerItem()
 {
+	/* There is no status bar, so no reason to show news;
+	 * especially important with the end game screen when
+	 * there is no status bar but possible news. */
+	if (FindWindowById(WC_STATUS_BAR, 0) == nullptr) return;
+
 	InvalidateWindowData(WC_STATUS_BAR, 0, SBI_NEWS_DELETED); // invalidate the statusbar
 
 	/* if we're not at the last item, then move on */
@@ -702,6 +697,11 @@ static void MoveToNextTickerItem()
 /** Move to the next news item */
 static void MoveToNextNewsItem()
 {
+	/* There is no status bar, so no reason to show news;
+	 * especially important with the end game screen when
+	 * there is no status bar but possible news. */
+	if (FindWindowById(WC_STATUS_BAR, 0) == nullptr) return;
+
 	DeleteWindowById(WC_NEWS_WINDOW, 0); // close the newspapers window if shown
 	_forced_news = nullptr;
 
@@ -728,6 +728,50 @@ static void MoveToNextNewsItem()
 		}
 		return;
 	}
+}
+
+/** Delete a news item from the queue */
+static void DeleteNewsItem(NewsItem *ni)
+{
+	/* Delete the news from the news queue. */
+	if (ni->prev != nullptr) {
+		ni->prev->next = ni->next;
+	} else {
+		assert(_oldest_news == ni);
+		_oldest_news = ni->next;
+	}
+
+	if (ni->next != nullptr) {
+		ni->next->prev = ni->prev;
+	} else {
+		assert(_latest_news == ni);
+		_latest_news = ni->prev;
+	}
+
+	_total_news--;
+
+	if (_forced_news == ni || _current_news == ni) {
+		/* When we're the current news, go to the previous item first;
+		 * we just possibly made that the last news item. */
+		if (_current_news == ni) _current_news = ni->prev;
+
+		/* About to remove the currently forced item (shown as newspapers) ||
+		 * about to remove the currently displayed item (newspapers) */
+		MoveToNextNewsItem();
+	}
+
+	if (_statusbar_news_item == ni) {
+		/* When we're the current news, go to the previous item first;
+		 * we just possibly made that the last news item. */
+		_statusbar_news_item = ni->prev;
+
+		/* About to remove the currently displayed item (ticker, or just a reminder) */
+		MoveToNextTickerItem();
+	}
+
+	delete ni;
+
+	SetWindowDirty(WC_MESSAGE_HISTORY, 0);
 }
 
 /**
@@ -777,6 +821,11 @@ void AddNewsItem(StringID string, NewsType type, NewsFlag flags, NewsReferenceTy
 
 	ni->next = nullptr;
 	_latest_news = ni;
+
+	/* Keep the number of stored news items to a managable number */
+	if (_total_news > MAX_NEWS_AMOUNT) {
+		DeleteNewsItem(_oldest_news);
+	}
 
 	SetWindowDirty(WC_MESSAGE_HISTORY, 0);
 }
@@ -843,50 +892,6 @@ CommandCost CmdCustomNewsItem(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 	}
 
 	return CommandCost();
-}
-
-/** Delete a news item from the queue */
-static void DeleteNewsItem(NewsItem *ni)
-{
-	/* Delete the news from the news queue. */
-	if (ni->prev != nullptr) {
-		ni->prev->next = ni->next;
-	} else {
-		assert(_oldest_news == ni);
-		_oldest_news = ni->next;
-	}
-
-	if (ni->next != nullptr) {
-		ni->next->prev = ni->prev;
-	} else {
-		assert(_latest_news == ni);
-		_latest_news = ni->prev;
-	}
-
-	_total_news--;
-
-	if (_forced_news == ni || _current_news == ni) {
-		/* When we're the current news, go to the previous item first;
-		 * we just possibly made that the last news item. */
-		if (_current_news == ni) _current_news = ni->prev;
-
-		/* About to remove the currently forced item (shown as newspapers) ||
-		 * about to remove the currently displayed item (newspapers) */
-		MoveToNextNewsItem();
-	}
-
-	if (_statusbar_news_item == ni) {
-		/* When we're the current news, go to the previous item first;
-		 * we just possibly made that the last news item. */
-		_statusbar_news_item = ni->prev;
-
-		/* About to remove the currently displayed item (ticker, or just a reminder) */
-		MoveToNextTickerItem();
-	}
-
-	delete ni;
-
-	SetWindowDirty(WC_MESSAGE_HISTORY, 0);
 }
 
 /**
@@ -990,11 +995,6 @@ void NewsLoop()
 	/* no news item yet */
 	if (_total_news == 0) return;
 
-	/* There is no status bar, so no reason to show news;
-	 * especially important with the end game screen when
-	 * there is no status bar but possible news. */
-	if (FindWindowById(WC_STATUS_BAR, 0) == nullptr) return;
-
 	static byte _last_clean_month = 0;
 
 	if (_last_clean_month != _cur_month) {
@@ -1021,6 +1021,17 @@ static void ShowNewsMessage(const NewsItem *ni)
 		DeleteWindowById(WC_NEWS_WINDOW, 0);
 		ShowNewspaper(ni);
 	}
+}
+
+/**
+ * Close active news message window
+ * @return true if a window was closed.
+ */
+bool HideActiveNewsMessage() {
+	NewsWindow *w = (NewsWindow*)FindWindowById(WC_NEWS_WINDOW, 0);
+	if (w == nullptr) return false;
+	delete w;
+	return true;
 }
 
 /** Show previous news item */
@@ -1138,7 +1149,7 @@ struct MessageHistoryWindow : Window {
 			this->date_width = GetStringBoundingBox(STR_SHORT_DATE).width;
 
 			size->height = 4 * resize->height + this->top_spacing + this->bottom_spacing; // At least 4 lines are visible.
-			size->width = max(200u, size->width); // At least 200 pixels wide.
+			size->width = std::max(200u, size->width); // At least 200 pixels wide.
 		}
 	}
 

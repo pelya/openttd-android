@@ -67,7 +67,6 @@ RailType _last_built_railtype;
 RoadType _last_built_roadtype;
 RoadType _last_built_tramtype;
 
-static ScreenshotType _confirmed_screenshot_type; ///< Screenshot type the current query is about to confirm.
 int _last_clicked_toolbar_idx = 0;
 
 /** Toobar modes */
@@ -145,7 +144,7 @@ public:
 
 	uint Height(uint width) const override
 	{
-		return GetMinSizing(NWST_STEP, max(max(this->icon_size.height, this->lock_size.height) + 2U, (uint)FONT_HEIGHT_NORMAL));
+		return GetMinSizing(NWST_STEP, std::max(std::max(this->icon_size.height, this->lock_size.height) + 2U, (uint)FONT_HEIGHT_NORMAL));
 	}
 
 	void Draw(int left, int right, int top, int bottom, bool sel, Colours bg_colour) const override
@@ -480,7 +479,7 @@ static CallBackFunction ToolbarMapClick(Window *w)
 {
 	DropDownList list;
 	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_MAP_OF_WORLD,            MME_SHOW_SMALLMAP,          false));
-	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_EXTRA_VIEW_PORT,         MME_SHOW_EXTRAVIEWPORTS,    false));
+	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_EXTRA_VIEWPORT,          MME_SHOW_EXTRAVIEWPORTS,    false));
 	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_LINGRAPH_LEGEND,         MME_SHOW_LINKGRAPH,         false));
 	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_SIGN_LIST,               MME_SHOW_SIGNLISTS,         false));
 	PopupMainToolbMenu(w, WID_TN_SMALL_MAP, std::move(list), 0);
@@ -491,7 +490,7 @@ static CallBackFunction ToolbarScenMapTownDir(Window *w)
 {
 	DropDownList list;
 	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_MAP_OF_WORLD,            MME_SHOW_SMALLMAP,          false));
-	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_EXTRA_VIEW_PORT,         MME_SHOW_EXTRAVIEWPORTS,    false));
+	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_EXTRA_VIEWPORT,          MME_SHOW_EXTRAVIEWPORTS,    false));
 	list.emplace_back(new DropDownListStringItem(STR_MAP_MENU_SIGN_LIST,               MME_SHOW_SIGNLISTS,         false));
 	list.emplace_back(new DropDownListStringItem(STR_TOWN_MENU_TOWN_DIRECTORY,         MME_SHOW_TOWNDIRECTORY,     false));
 	list.emplace_back(new DropDownListStringItem(STR_INDUSTRY_MENU_INDUSTRY_DIRECTORY, MME_SHOW_INDUSTRYDIRECTORY, false));
@@ -508,12 +507,12 @@ static CallBackFunction ToolbarScenMapTownDir(Window *w)
 static CallBackFunction MenuClickMap(int index)
 {
 	switch (index) {
-		case MME_SHOW_SMALLMAP:       ShowSmallMap();            break;
-		case MME_SHOW_EXTRAVIEWPORTS: ShowExtraViewPortWindow(); break;
-		case MME_SHOW_LINKGRAPH:      ShowLinkGraphLegend();     break;
-		case MME_SHOW_SIGNLISTS:      ShowSignList();            break;
-		case MME_SHOW_TOWNDIRECTORY:  ShowTownDirectory();       break;
-		case MME_SHOW_INDUSTRYDIRECTORY: ShowIndustryDirectory(); break;
+		case MME_SHOW_SMALLMAP:          ShowSmallMap();            break;
+		case MME_SHOW_EXTRAVIEWPORTS:    ShowExtraViewportWindow(); break;
+		case MME_SHOW_LINKGRAPH:         ShowLinkGraphLegend();     break;
+		case MME_SHOW_SIGNLISTS:         ShowSignList();            break;
+		case MME_SHOW_TOWNDIRECTORY:     ShowTownDirectory();       break;
+		case MME_SHOW_INDUSTRYDIRECTORY: ShowIndustryDirectory();   break;
 	}
 	return CBF_NONE;
 }
@@ -1119,37 +1118,6 @@ static CallBackFunction ToolbarHelpClick(Window *w)
 }
 
 /**
- * Callback on the confirmation window for huge screenshots.
- * @param w Window with viewport
- * @param confirmed true on confirmation
- */
-static void ScreenshotConfirmCallback(Window *w, bool confirmed)
-{
-	if (confirmed) MakeScreenshot(_confirmed_screenshot_type, nullptr);
-}
-
-/**
- * Make a screenshot of the world.
- * Ask for confirmation if the screenshot will be huge.
- * @param t Screenshot type: World or viewport screenshot
- */
-static void MenuClickScreenshot(ScreenshotType t)
-{
-	ViewPort vp;
-	SetupScreenshotViewport(t, &vp);
-	if ((uint64)vp.width * (uint64)vp.height > 8192 * 8192) {
-		/* Ask for confirmation */
-		SetDParam(0, vp.width);
-		SetDParam(1, vp.height);
-		_confirmed_screenshot_type = t;
-		ShowQuery(STR_WARNING_SCREENSHOT_SIZE_CAPTION, STR_WARNING_SCREENSHOT_SIZE_MESSAGE, nullptr, ScreenshotConfirmCallback);
-	} else {
-		/* Less than 64M pixels, just do it */
-		MakeScreenshot(t, nullptr);
-	}
-}
-
-/**
  * Toggle drawing of sprites' bounding boxes.
  * @note has only an effect when newgrf_developer_tools are active.
  *
@@ -1472,16 +1440,16 @@ public:
 		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
 			child_wid->SetupSmallestSize(w, init_array);
 			if (type == NWID_HORIZONTAL) {
-				this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+				this->smallest_y = std::max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
 			} else {
-				this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+				this->smallest_x = std::max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
 			}
 			if (this->IsButton(child_wid->type)) {
 				nbuttons++;
 				if (type == NWID_HORIZONTAL) {
-					this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+					this->smallest_x = std::max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
 				} else {
-					this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+					this->smallest_y = std::max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
 				}
 			} else if (child_wid->type == NWID_SPACER) {
 				this->spacers++;
@@ -1538,7 +1506,7 @@ public:
 
 		/* Now assign the widgets to their rightful place */
 		uint position = 0; // Place to put next child relative to origin of the container.
-		uint spacer_space = max(0, (int)given_width - (int)(button_count * this->smallest_x)); // Remaining spacing for 'spacer' widgets
+		uint spacer_space = std::max(0, (int)given_width - (int)(button_count * this->smallest_x)); // Remaining spacing for 'spacer' widgets
 		uint button_space = given_width - spacer_space; // Remaining spacing for the buttons
 		if (type == NWID_VERTICAL) {
 			spacer_space = max(0, (int)given_height - (int)(button_count * this->smallest_y));
@@ -2702,6 +2670,7 @@ enum MainToolbarHotkeys {
 	MTHK_BUILD_AIRPORT,
 	MTHK_BUILD_TREES,
 	MTHK_MUSIC,
+	MTHK_LANDINFO,
 	MTHK_AI_DEBUG,
 	MTHK_SMALL_SCREENSHOT,
 	MTHK_ZOOMEDIN_SCREENSHOT,
@@ -2751,11 +2720,6 @@ struct MainToolbarWindow : Window {
 		this->SetWidgetDisabledState(WID_TN_GOAL, Goal::GetNumItems() == 0);
 		this->SetWidgetDisabledState(WID_TN_STORY, StoryPage::GetNumItems() == 0);
 
-		this->SetWidgetDisabledState(WID_TN_RAILS, !CanBuildVehicleInfrastructure(VEH_TRAIN));
-		this->SetWidgetDisabledState(WID_TN_ROADS, !CanBuildVehicleInfrastructure(VEH_ROAD, RTT_ROAD));
-		this->SetWidgetDisabledState(WID_TN_TRAMS, !CanBuildVehicleInfrastructure(VEH_ROAD, RTT_TRAM));
-		this->SetWidgetDisabledState(WID_TN_AIR, !CanBuildVehicleInfrastructure(VEH_AIRCRAFT));
-
 		this->DrawWidgets();
 	}
 
@@ -2776,6 +2740,7 @@ struct MainToolbarWindow : Window {
 
 	EventState OnHotkey(int hotkey) override
 	{
+		CallBackFunction cbf = CBF_NONE;
 		switch (hotkey) {
 			case MTHK_PAUSE: ToolbarPauseClick(this); break;
 			case MTHK_FASTFORWARD: ToolbarFastForwardClick(this); break;
@@ -2799,25 +2764,27 @@ struct MainToolbarWindow : Window {
 			case MTHK_AIRCRAFT_LIST: ShowVehicleListWindow(_local_company, VEH_AIRCRAFT); break;
 			case MTHK_ZOOM_IN: ToolbarZoomInClick(this); break;
 			case MTHK_ZOOM_OUT: ToolbarZoomOutClick(this); break;
-			case MTHK_BUILD_RAIL: if (CanBuildVehicleInfrastructure(VEH_TRAIN)) ShowBuildRailToolbar(_last_built_railtype); break;
+			case MTHK_BUILD_RAIL: ShowBuildRailToolbar(_last_built_railtype); break;
 			case MTHK_BUILD_ROAD: ShowBuildRoadToolbar(_last_built_roadtype); break;
-			case MTHK_BUILD_TRAM: if (CanBuildVehicleInfrastructure(VEH_ROAD, RTT_TRAM)) ShowBuildRoadToolbar(_last_built_tramtype); break;
+			case MTHK_BUILD_TRAM: ShowBuildRoadToolbar(_last_built_tramtype); break;
 			case MTHK_BUILD_DOCKS: ShowBuildDocksToolbar(); break;
-			case MTHK_BUILD_AIRPORT: if (CanBuildVehicleInfrastructure(VEH_AIRCRAFT)) ShowBuildAirToolbar(); break;
+			case MTHK_BUILD_AIRPORT: ShowBuildAirToolbar(); break;
 			case MTHK_BUILD_TREES: ShowBuildTreesToolbar(); break;
 			case MTHK_MUSIC: ShowMusicWindow(); break;
 			case MTHK_AI_DEBUG: ShowAIDebugWindow(); break;
-			case MTHK_SMALL_SCREENSHOT: MenuClickScreenshot(SC_VIEWPORT); break;
-			case MTHK_ZOOMEDIN_SCREENSHOT: MenuClickScreenshot(SC_ZOOMEDIN); break;
-			case MTHK_DEFAULTZOOM_SCREENSHOT: MenuClickScreenshot(SC_DEFAULTZOOM); break;
-			case MTHK_GIANT_SCREENSHOT: MenuClickScreenshot(SC_WORLD); break;
+			case MTHK_SMALL_SCREENSHOT: MakeScreenshotWithConfirm(SC_VIEWPORT); break;
+			case MTHK_ZOOMEDIN_SCREENSHOT: MakeScreenshotWithConfirm(SC_ZOOMEDIN); break;
+			case MTHK_DEFAULTZOOM_SCREENSHOT: MakeScreenshotWithConfirm(SC_DEFAULTZOOM); break;
+			case MTHK_GIANT_SCREENSHOT: MakeScreenshotWithConfirm(SC_WORLD); break;
 			case MTHK_CHEATS: if (!_networking) ShowCheatWindow(); break;
 			case MTHK_TERRAFORM: ShowTerraformToolbar(); break;
-			case MTHK_EXTRA_VIEWPORT: ShowExtraViewPortWindowForTileUnderCursor(); break;
+			case MTHK_EXTRA_VIEWPORT: ShowExtraViewportWindowForTileUnderCursor(); break;
 			case MTHK_CLIENT_LIST: if (_networking) ShowClientList(); break;
 			case MTHK_SIGN_LIST: ShowSignList(); break;
+			case MTHK_LANDINFO: cbf = PlaceLandBlockInfo(); break;
 			default: return ES_NOT_HANDLED;
 		}
+		if (cbf != CBF_NONE) _last_started_action = cbf;
 		return ES_HANDLED;
 	}
 
@@ -2928,6 +2895,7 @@ static Hotkey maintoolbar_hotkeys[] = {
 	Hotkey('V', "extra_viewport", MTHK_EXTRA_VIEWPORT),
 	Hotkey((uint16)0, "client_list", MTHK_CLIENT_LIST),
 	Hotkey((uint16)0, "sign_list", MTHK_SIGN_LIST),
+	Hotkey((uint16)0, "land_info", MTHK_LANDINFO),
 	HOTKEY_LIST_END
 };
 HotkeyList MainToolbarWindow::hotkeys("maintoolbar", maintoolbar_hotkeys);
@@ -2992,7 +2960,7 @@ static NWidgetBase *MakeMainToolbar(int *biggest_index)
 	hor->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
 	hor->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
 
-	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
+	*biggest_index = std::max<int>(*biggest_index, WID_TN_DELETE);
 	return hor;
 }
 
@@ -3197,13 +3165,13 @@ struct ScenarioEditorToolbarWindow : Window {
 	{
 		switch (widget) {
 			case WID_TE_SPACER:
-				size->width = max(GetStringBoundingBox(STR_SCENEDIT_TOOLBAR_OPENTTD).width, GetStringBoundingBox(STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR).width) + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
+				size->width = std::max(GetStringBoundingBox(STR_SCENEDIT_TOOLBAR_OPENTTD).width, GetStringBoundingBox(STR_SCENEDIT_TOOLBAR_SCENARIO_EDITOR).width) + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 				break;
 
 			case WID_TE_DATE:
 				SetDParam(0, ConvertYMDToDate(MAX_YEAR, 0, 1));
 				*size = GetStringBoundingBox(STR_WHITE_DATE_LONG);
-				size->height = max(size->height, GetSpriteSize(SPR_IMG_SAVE).height + WD_IMGBTN_TOP + WD_IMGBTN_BOTTOM);
+				size->height = std::max(size->height, GetSpriteSize(SPR_IMG_SAVE).height + WD_IMGBTN_TOP + WD_IMGBTN_BOTTOM);
 				break;
 		}
 	}
@@ -3240,15 +3208,15 @@ struct ScenarioEditorToolbarWindow : Window {
 			case MTEHK_SIGN:                   cbf = ToolbarScenPlaceSign(this); break;
 			case MTEHK_MUSIC:                  ShowMusicWindow(); break;
 			case MTEHK_LANDINFO:               cbf = PlaceLandBlockInfo(); break;
-			case MTEHK_SMALL_SCREENSHOT:       MenuClickScreenshot(SC_VIEWPORT); break;
-			case MTEHK_ZOOMEDIN_SCREENSHOT:    MenuClickScreenshot(SC_ZOOMEDIN); break;
-			case MTEHK_DEFAULTZOOM_SCREENSHOT: MenuClickScreenshot(SC_DEFAULTZOOM); break;
-			case MTEHK_GIANT_SCREENSHOT:       MenuClickScreenshot(SC_WORLD); break;
+			case MTEHK_SMALL_SCREENSHOT:       MakeScreenshotWithConfirm(SC_VIEWPORT); break;
+			case MTEHK_ZOOMEDIN_SCREENSHOT:    MakeScreenshotWithConfirm(SC_ZOOMEDIN); break;
+			case MTEHK_DEFAULTZOOM_SCREENSHOT: MakeScreenshotWithConfirm(SC_DEFAULTZOOM); break;
+			case MTEHK_GIANT_SCREENSHOT:       MakeScreenshotWithConfirm(SC_WORLD); break;
 			case MTEHK_ZOOM_IN:                ToolbarZoomInClick(this); break;
 			case MTEHK_ZOOM_OUT:               ToolbarZoomOutClick(this); break;
 			case MTEHK_TERRAFORM:              ShowEditorTerraformToolbar(); break;
 			case MTEHK_SMALLMAP:               ShowSmallMap(); break;
-			case MTEHK_EXTRA_VIEWPORT:         ShowExtraViewPortWindowForTileUnderCursor(); break;
+			case MTEHK_EXTRA_VIEWPORT:         ShowExtraViewportWindowForTileUnderCursor(); break;
 			default: return ES_NOT_HANDLED;
 		}
 		if (cbf != CBF_NONE) _last_started_action = cbf;

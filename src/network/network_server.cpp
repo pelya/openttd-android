@@ -41,9 +41,9 @@ DECLARE_POSTFIX_INCREMENT(ClientID)
 static ClientID _network_client_id = CLIENT_ID_FIRST;
 
 /** Make very sure the preconditions given in network_type.h are actually followed */
-assert_compile(MAX_CLIENT_SLOTS > MAX_CLIENTS);
+static_assert(MAX_CLIENT_SLOTS > MAX_CLIENTS);
 /** Yes... */
-assert_compile(NetworkClientSocketPool::MAX_SIZE == MAX_CLIENT_SLOTS);
+static_assert(NetworkClientSocketPool::MAX_SIZE == MAX_CLIENT_SLOTS);
 
 /** The pool with clients. */
 NetworkClientSocketPool _networkclientsocket_pool("NetworkClientSocket");
@@ -153,6 +153,16 @@ struct PacketWriter : SaveFilter {
 		this->current = nullptr;
 	}
 
+	/** Prepend the current packet to the queue. */
+	void PrependQueue()
+	{
+		if (this->current == nullptr) return;
+
+		this->current->next = this->packets;
+		this->packets = this->current;
+		this->current = nullptr;
+	}
+
 	void Write(byte *buf, size_t size) override
 	{
 		/* We want to abort the saving when the socket is closed. */
@@ -164,7 +174,7 @@ struct PacketWriter : SaveFilter {
 
 		byte *bufe = buf + size;
 		while (buf != bufe) {
-			size_t to_write = min(SEND_MTU - this->current->size, bufe - buf);
+			size_t to_write = std::min<size_t>(SEND_MTU - this->current->size, bufe - buf);
 			memcpy(this->current->buffer + this->current->size, buf, to_write);
 			this->current->size += (PacketSize)to_write;
 			buf += to_write;
@@ -193,9 +203,9 @@ struct PacketWriter : SaveFilter {
 		this->AppendQueue();
 
 		/* Fast-track the size to the client. */
-		Packet *p = new Packet(PACKET_SERVER_MAP_SIZE);
-		p->Send_uint32((uint32)this->total_size);
-		this->cs->NetworkTCPSocketHandler::SendPacket(p);
+		this->current = new Packet(PACKET_SERVER_MAP_SIZE);
+		this->current->Send_uint32((uint32)this->total_size);
+		this->PrependQueue();
 	}
 };
 
@@ -213,7 +223,7 @@ ServerNetworkGameSocketHandler::ServerNetworkGameSocketHandler(SOCKET s) : Netwo
 	/* The Socket and Info pools need to be the same in size. After all,
 	 * each Socket will be associated with at most one Info object. As
 	 * such if the Socket was allocated the Info object can as well. */
-	assert_compile(NetworkClientSocketPool::MAX_SIZE == NetworkClientInfoPool::MAX_SIZE);
+	static_assert(NetworkClientSocketPool::MAX_SIZE == NetworkClientInfoPool::MAX_SIZE);
 }
 
 /**
@@ -301,7 +311,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 
 	/* We can't go over the MAX_CLIENTS limit here. However, the
 	 * pool must have place for all clients and ourself. */
-	assert_compile(NetworkClientSocketPool::MAX_SIZE == MAX_CLIENTS + 1);
+	static_assert(NetworkClientSocketPool::MAX_SIZE == MAX_CLIENTS + 1);
 	assert(!accept || ServerNetworkGameSocketHandler::CanAllocateItem());
 	return accept;
 }
@@ -1372,9 +1382,6 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_CHAT(Packet *p)
 
 	NetworkClientInfo *ci = this->GetInfo();
 	switch (action) {
-		case NETWORK_ACTION_GIVE_MONEY:
-			if (!Company::IsValidID(ci->client_playas)) break;
-			FALLTHROUGH;
 		case NETWORK_ACTION_CHAT:
 		case NETWORK_ACTION_CHAT_CLIENT:
 		case NETWORK_ACTION_CHAT_COMPANY:
@@ -1800,7 +1807,7 @@ void NetworkServer_Tick(bool send_frame)
 	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		/* We allow a number of bytes per frame, but only to the burst amount
 		 * to be available for packet receiving at any particular time. */
-		cs->receive_limit = min(cs->receive_limit + _settings_client.network.bytes_per_frame,
+		cs->receive_limit = std::min<int>(cs->receive_limit + _settings_client.network.bytes_per_frame,
 				_settings_client.network.bytes_per_frame_burst);
 
 		/* Check if the speed of the client is what we can expect from a client */
@@ -1952,7 +1959,7 @@ void NetworkServerShowStatusToConsole()
 		"ready",
 		"active"
 	};
-	assert_compile(lengthof(stat_str) == NetworkClientSocket::STATUS_END);
+	static_assert(lengthof(stat_str) == NetworkClientSocket::STATUS_END);
 
 	for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
 		NetworkClientInfo *ci = cs->GetInfo();

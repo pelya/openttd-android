@@ -405,8 +405,8 @@ static bool ShipAccelerate(Vehicle *v)
 	uint spd;
 	byte t;
 
-	spd = min(v->cur_speed + 1, v->vcache.cached_max_speed);
-	spd = min(spd, v->current_order.GetMaxSpeed() * 2);
+	spd = std::min<uint>(v->cur_speed + 1, v->vcache.cached_max_speed);
+	spd = std::min<uint>(spd, v->current_order.GetMaxSpeed() * 2);
 
 	/* updates statusbar only if speed have changed to save CPU time */
 	if (spd != v->cur_speed) {
@@ -613,6 +613,7 @@ bool IsShipDestinationTile(TileIndex tile, StationID station)
 			const Industry *i = Industry::GetByTile(t);
 			if (i->neutral_station != nullptr && i->neutral_station->index == station) return true;
 		}
+		if (IsTileType(t, MP_STATION) && IsOilRig(t) && GetStationIndex(t) == station) return true;
 	}
 	return false;
 }
@@ -645,6 +646,8 @@ static void ShipController(Ship *v)
 		if ((v->tick_counter & 7) == 0) {
 			DirDiff diff = DirDifference(v->direction, v->rotation);
 			v->rotation = ChangeDir(v->rotation, diff > DIRDIFF_REVERSE ? DIRDIFF_45LEFT : DIRDIFF_45RIGHT);
+			/* Invalidate the sprite cache direction to force recalculation of viewport */
+			v->sprite_cache.last_direction = INVALID_DIR;
 			v->UpdateViewport(true, true);
 		}
 		return;
@@ -863,7 +866,7 @@ CommandCost CmdBuildShip(TileIndex tile, DoCommandFlag flags, const Engine *e, u
 		v->SetServiceInterval(Company::Get(_current_company)->settings.vehicle.servint_ships);
 		v->date_of_last_service = _date;
 		v->build_year = _cur_year;
-		v->sprite_seq.Set(SPR_IMG_QUERY);
+		v->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
 		v->random_bits = VehicleRandomBits();
 
 		v->UpdateCache();

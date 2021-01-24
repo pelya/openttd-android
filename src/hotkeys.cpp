@@ -16,7 +16,7 @@
 
 #include "safeguards.h"
 
-char *_hotkeys_file;
+std::string _hotkeys_file;
 
 /**
  * List of all HotkeyLists.
@@ -67,17 +67,25 @@ static const KeycodeNames _keycode_to_name[] = {
 	{"NUM_PLUS", WKC_NUM_PLUS},
 	{"NUM_ENTER", WKC_NUM_ENTER},
 	{"NUM_DOT", WKC_NUM_DECIMAL},
-	{"/", WKC_SLASH},
-	{";", WKC_SEMICOLON},
-	{"=", WKC_EQUALS},
-	{"[", WKC_L_BRACKET},
-	{"\\", WKC_BACKSLASH},
-	{"]", WKC_R_BRACKET},
-	{"'", WKC_SINGLEQUOTE},
-	{",", WKC_COMMA},
-	{"COMMA", WKC_COMMA}, // legacy variant, should be below ","
-	{".", WKC_PERIOD},
-	{"-", WKC_MINUS},
+	{"SLASH", WKC_SLASH},
+	{"/", WKC_SLASH}, /* deprecated, use SLASH */
+	{"SEMICOLON", WKC_SEMICOLON},
+	{";", WKC_SEMICOLON}, /* deprecated, use SEMICOLON */
+	{"EQUALS", WKC_EQUALS},
+	{"=", WKC_EQUALS}, /* deprecated, use EQUALS */
+	{"L_BRACKET", WKC_L_BRACKET},
+	{"[", WKC_L_BRACKET}, /* deprecated, use L_BRACKET */
+	{"BACKSLASH", WKC_BACKSLASH},
+	{"\\", WKC_BACKSLASH}, /* deprecated, use BACKSLASH */
+	{"R_BRACKET", WKC_R_BRACKET},
+	{"]", WKC_R_BRACKET}, /* deprecated, use R_BRACKET */
+	{"SINGLEQUOTE", WKC_SINGLEQUOTE},
+	{"'", WKC_SINGLEQUOTE}, /* deprecated, use SINGLEQUOTE */
+	{"COMMA", WKC_COMMA},
+	{"PERIOD", WKC_PERIOD},
+	{".", WKC_PERIOD}, /* deprecated, use PERIOD */
+	{"MINUS", WKC_MINUS},
+	{"-", WKC_MINUS}, /* deprecated, use MINUS */
 };
 
 /**
@@ -290,7 +298,7 @@ void HotkeyList::Load(IniFile *ini)
 		IniItem *item = group->GetItem(hotkey->name, false);
 		if (item != nullptr) {
 			hotkey->keycodes.clear();
-			if (item->value != nullptr) ParseHotkeys(hotkey, item->value);
+			if (item->value.has_value()) ParseHotkeys(hotkey, item->value->c_str());
 		}
 	}
 }

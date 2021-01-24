@@ -248,7 +248,14 @@ CommandCost CmdBuildObject(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			} else {
 				if (!allow_ground) return_cmd_error(STR_ERROR_MUST_BE_BUILT_ON_WATER);
 				/* For non-water tiles, we'll have to clear it before building. */
-				cost.AddCost(DoCommand(t, 0, 0, flags & ~DC_EXEC, CMD_LANDSCAPE_CLEAR));
+
+				/* When relocating HQ, allow it to be relocated (partial) on itself. */
+				if (!(type == OBJECT_HQ &&
+						IsTileType(t, MP_OBJECT) &&
+						IsTileOwner(t, _current_company) &&
+						IsObjectType(t, OBJECT_HQ))) {
+					cost.AddCost(DoCommand(t, 0, 0, flags & ~DC_EXEC, CMD_LANDSCAPE_CLEAR));
+				}
 			}
 		}
 
@@ -545,14 +552,14 @@ static void AddAcceptedCargo_Object(TileIndex tile, CargoArray &acceptance, Carg
 
 	/* Top town building generates 10, so to make HQ interesting, the top
 	 * type makes 20. */
-	acceptance[CT_PASSENGERS] += max(1U, level);
+	acceptance[CT_PASSENGERS] += std::max(1U, level);
 	SetBit(*always_accepted, CT_PASSENGERS);
 
 	/* Top town building generates 4, HQ can make up to 8. The
 	 * proportion passengers:mail is different because such a huge
 	 * commercial building generates unusually high amount of mail
 	 * correspondence per physical visitor. */
-	acceptance[CT_MAIL] += max(1U, level / 2);
+	acceptance[CT_MAIL] += std::max(1U, level / 2);
 	SetBit(*always_accepted, CT_MAIL);
 }
 

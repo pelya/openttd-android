@@ -61,7 +61,7 @@ RoadTypes _roadtypes_type;
  */
 void ResetRoadTypes()
 {
-	assert_compile(lengthof(_original_roadtypes) <= lengthof(_roadtypes));
+	static_assert(lengthof(_original_roadtypes) <= lengthof(_roadtypes));
 
 	uint i = 0;
 	for (; i < lengthof(_original_roadtypes); i++) _roadtypes[i] = _original_roadtypes[i];
@@ -1109,7 +1109,8 @@ CommandCost CmdRemoveLongRoad(TileIndex start_tile, DoCommandFlag flags, uint32 
 		p2 ^= IsInsideMM(p2 & 3, 1, 3) ? 3 : 0;
 	}
 
-	Money money = GetAvailableMoneyForCommand();
+	Money money_available = GetAvailableMoneyForCommand();
+	Money money_spent = 0;
 	TileIndex tile = start_tile;
 	CommandCost last_error = CMD_ERROR;
 	bool had_success = false;
@@ -1126,8 +1127,8 @@ CommandCost CmdRemoveLongRoad(TileIndex start_tile, DoCommandFlag flags, uint32 
 			CommandCost ret = RemoveRoad(tile, flags & ~DC_EXEC, bits, rtt, true);
 			if (ret.Succeeded()) {
 				if (flags & DC_EXEC) {
-					money -= ret.GetCost();
-					if (money < 0) {
+					money_spent += ret.GetCost();
+					if (money_spent > 0 && money_spent > money_available) {
 						_additional_cash_required = DoCommand(start_tile, end_tile, p2, flags & ~DC_EXEC, CMD_REMOVE_LONG_ROAD).GetCost();
 						return cost;
 					}
@@ -1191,7 +1192,7 @@ CommandCost CmdBuildRoadDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 		dep->build_date = _date;
 
 		/* A road depot has two road bits. */
-		UpdateCompanyRoadInfrastructure(rt, _current_company, 2);
+		UpdateCompanyRoadInfrastructure(rt, _current_company, ROAD_DEPOT_TRACKBIT_FACTOR);
 
 		MakeRoadDepot(tile, _current_company, dep->index, dir, rt);
 		MarkTileDirtyByTile(tile);
@@ -1217,7 +1218,7 @@ static CommandCost RemoveRoadDepot(TileIndex tile, DoCommandFlag flags)
 			/* A road depot has two road bits. */
 			RoadType rt = GetRoadTypeRoad(tile);
 			if (rt == INVALID_ROADTYPE) rt = GetRoadTypeTram(tile);
-			c->infrastructure.road[rt] -= 2;
+			c->infrastructure.road[rt] -= ROAD_DEPOT_TRACKBIT_FACTOR;
 			DirtyCompanyInfrastructureWindows(c->index);
 		}
 
@@ -1474,14 +1475,15 @@ void DrawRoadCatenary(const TileInfo *ti)
  * @param dx  the offset from the top of the BB of the tile
  * @param dy  the offset from the top of the BB of the tile
  * @param h   the height of the sprite to draw
+ * @param transparent  whether the sprite should be transparent (used for roadside trees)
  */
-static void DrawRoadDetail(SpriteID img, const TileInfo *ti, int dx, int dy, int h)
+static void DrawRoadDetail(SpriteID img, const TileInfo *ti, int dx, int dy, int h, bool transparent)
 {
 	int x = ti->x | dx;
 	int y = ti->y | dy;
 	int z = ti->z;
 	if (ti->tileh != SLOPE_FLAT) z = GetSlopePixelZ(x, y);
-	AddSortableSpriteToDraw(img, PAL_NONE, x, y, 2, 2, h, z);
+	AddSortableSpriteToDraw(img, PAL_NONE, x, y, 2, 2, h, z, transparent);
 }
 
 /**
@@ -1634,9 +1636,12 @@ static void DrawRoadBits(TileInfo *ti)
 	/* If there are no road bits, return, as there is nothing left to do */
 	if (HasAtMostOneBit(road)) return;
 
+	if (roadside == ROADSIDE_TREES && IsInvisibilitySet(TO_TREES)) return;
+	bool is_transparent = roadside == ROADSIDE_TREES && IsTransparencySet(TO_TREES);
+
 	/* Draw extra details. */
 	for (const DrawRoadTileStruct *drts = _road_display_table[roadside][road | tram]; drts->image != 0; drts++) {
-		DrawRoadDetail(drts->image, ti, drts->subcoord_x, drts->subcoord_y, 0x10);
+		DrawRoadDetail(drts->image, ti, drts->subcoord_x, drts->subcoord_y, 0x10, is_transparent);
 	}
 }
 
@@ -2384,6 +2389,17 @@ CommandCost CmdConvertRoad(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			}
 		}
 
+		/* Base the ability to replace town roads and bridges on the town's
+		 * acceptance of destructive actions. */
+		if (owner == OWNER_TOWN) {
+			Town *t = ClosestTownFromTile(tile, _settings_game.economy.dist_local_authority);
+			CommandCost ret = CheckforTownRating(DC_NONE, t, tt == MP_TUNNELBRIDGE ? TUNNELBRIDGE_REMOVE : ROAD_REMOVE);
+			if (ret.Failed()) {
+				error = ret;
+				continue;
+			}
+		}
+
 		/* Vehicle on the tile when not converting normal <-> powered
 		 * Tunnels and bridges have special check later */
 		if (tt != MP_TUNNELBRIDGE) {
@@ -2395,19 +2411,28 @@ CommandCost CmdConvertRoad(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 				}
 
 				if (rtt == RTT_ROAD && owner == OWNER_TOWN) {
-					error.MakeError(STR_ERROR_INCOMPATIBLE_ROAD);
+					error.MakeError(STR_ERROR_OWNED_BY);
+					GetNameOfOwner(OWNER_TOWN, tile);
 					continue;
 				}
 			}
 
-			uint num_pieces = CountBits(GetAnyRoadBits(tile, rtt));;
+			uint num_pieces = CountBits(GetAnyRoadBits(tile, rtt));
+			if (tt == MP_STATION && IsStandardRoadStopTile(tile)) {
+				num_pieces *= ROAD_STOP_TRACKBIT_FACTOR;
+			} else if (tt == MP_ROAD && IsRoadDepot(tile)) {
+				num_pieces *= ROAD_DEPOT_TRACKBIT_FACTOR;
+			}
+
 			found_convertible_road = true;
 			cost.AddCost(num_pieces * RoadConvertCost(from_type, to_type));
 
 			if (flags & DC_EXEC) { // we can safely convert, too
 				/* Update the company infrastructure counters. */
-				if (!IsRoadStopTile(tile) && owner == _current_company) {
-					ConvertRoadTypeOwner(tile, num_pieces, owner, from_type, to_type);
+				if (owner == _current_company) {
+					Company * c = Company::Get(_current_company);
+					c->infrastructure.road[from_type] -= num_pieces;
+					c->infrastructure.road[to_type] += num_pieces;
 				}
 
 				/* Perform the conversion */
@@ -2441,7 +2466,8 @@ CommandCost CmdConvertRoad(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 				}
 
 				if (rtt == RTT_ROAD && owner == OWNER_TOWN) {
-					error.MakeError(STR_ERROR_INCOMPATIBLE_ROAD);
+					error.MakeError(STR_ERROR_OWNED_BY);
+					GetNameOfOwner(OWNER_TOWN, tile);
 					continue;
 				}
 			}
@@ -2454,8 +2480,9 @@ CommandCost CmdConvertRoad(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 			if (flags & DC_EXEC) {
 				/* Update the company infrastructure counters. */
 				if (owner == _current_company) {
-					ConvertRoadTypeOwner(tile, num_pieces, owner, from_type, to_type);
-					ConvertRoadTypeOwner(endtile, num_pieces, owner, from_type, to_type);
+					/* Each piece should be counted TUNNELBRIDGE_TRACKBIT_FACTOR times
+					 * for the infrastructure counters (cause of #8297). */
+					ConvertRoadTypeOwner(tile, num_pieces * TUNNELBRIDGE_TRACKBIT_FACTOR, owner, from_type, to_type);
 					SetTunnelBridgeOwner(tile, endtile, _current_company);
 				}
 

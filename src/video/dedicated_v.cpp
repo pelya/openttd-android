@@ -128,13 +128,15 @@ static void *_dedicated_video_mem;
 /* Whether a fork has been done. */
 bool _dedicated_forks;
 
-extern bool SafeLoad(const char *filename, SaveLoadOperation fop, DetailedFileType dft, GameMode newgm, Subdirectory subdir, struct LoadFilter *lf = nullptr);
+extern bool SafeLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, GameMode newgm, Subdirectory subdir, struct LoadFilter *lf = nullptr);
 
 static FVideoDriver_Dedicated iFVideoDriver_Dedicated;
 
 
-const char *VideoDriver_Dedicated::Start(const char * const *parm)
+const char *VideoDriver_Dedicated::Start(const StringList &parm)
 {
+	this->UpdateAutoResolution();
+
 	int bpp = BlitterFactory::GetCurrentBlitter()->GetScreenDepth();
 	_dedicated_video_mem = (bpp == 0) ? nullptr : MallocT<byte>(_cur_resolution.width * _cur_resolution.height * (bpp / 8));
 
@@ -227,7 +229,7 @@ static void DedicatedHandleKeyInput()
 	if (fgets(input_line, lengthof(input_line), stdin) == nullptr) return;
 #else
 	/* Handle console input, and signal console thread, it can accept input again */
-	assert_compile(lengthof(_win_console_thread_buffer) <= lengthof(input_line));
+	static_assert(lengthof(_win_console_thread_buffer) <= lengthof(input_line));
 	strecpy(input_line, _win_console_thread_buffer, lastof(input_line));
 	SetEvent(_hWaitForInputHandling);
 #endif

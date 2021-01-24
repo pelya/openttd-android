@@ -48,9 +48,9 @@ STR_CARGO_PLURAL_WHEAT                                          :Garia
 STR_CARGO_PLURAL_RUBBER                                         :Goma
 STR_CARGO_PLURAL_SUGAR                                          :Azukrea
 STR_CARGO_PLURAL_TOYS                                           :Jostailuak
-STR_CARGO_PLURAL_CANDY                                          :Gozokiak
+STR_CARGO_PLURAL_SWEETS                                         :Gozokiak
 STR_CARGO_PLURAL_COLA                                           :Kola
-STR_CARGO_PLURAL_COTTON_CANDY                                   :Kotoiezko Azukrea
+STR_CARGO_PLURAL_CANDYFLOSS                                     :Kotoiezko Azukrea
 STR_CARGO_PLURAL_BUBBLES                                        :Burbuilak
 STR_CARGO_PLURAL_TOFFEE                                         :Gozoki lehengaia
 STR_CARGO_PLURAL_BATTERIES                                      :Pilak
@@ -82,9 +82,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :Garia
 STR_CARGO_SINGULAR_RUBBER                                       :Goma
 STR_CARGO_SINGULAR_SUGAR                                        :Azukrea
 STR_CARGO_SINGULAR_TOY                                          :Jostailua
-STR_CARGO_SINGULAR_CANDY                                        :Gozoki
+STR_CARGO_SINGULAR_SWEETS                                       :Gozoki
 STR_CARGO_SINGULAR_COLA                                         :Kola
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :Kotoiezko Azukrea
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :Kotoiezko Azukrea
 STR_CARGO_SINGULAR_BUBBLE                                       :Burbuila
 STR_CARGO_SINGULAR_TOFFEE                                       :Gozoki lehengaia
 STR_CARGO_SINGULAR_BATTERY                                      :Pila
@@ -187,6 +187,7 @@ STR_COLOUR_ORANGE                                               :Laranja
 STR_COLOUR_BROWN                                                :Marroia
 STR_COLOUR_GREY                                                 :Grisa
 STR_COLOUR_WHITE                                                :Zuria
+STR_COLOUR_DEFAULT                                              :Lehenetsia
 
 # Units used in OpenTTD
 STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}mph
@@ -231,8 +232,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Hautatu 
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Aukeratu ordenatze irizpideak
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Aukeratu iragazki irizpideak
 STR_BUTTON_SORT_BY                                              :{BLACK}Ordenatu
-STR_BUTTON_LOCATION                                             :{BLACK}Kokapena
-STR_BUTTON_RENAME                                               :{BLACK}Berrizendatu
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Lehioa itxi
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Leiho izena - Arrastatu hau leihoa mugitzeko
@@ -252,6 +251,7 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Ezkutuak
 STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Ezkutuak erakutsi
 
 STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN_TOOLTIP                   :{BLACK}Botoi hau gaituz, ezkutuak dauden trenak erakusten dira
+STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP_TOOLTIP                    :{BLACK}Botoi hau gaituz, ezkutuko itsasontziak ere erakusten dira
 
 # Query window
 STR_BUTTON_DEFAULT                                              :{BLACK}Lehenetsia
@@ -305,6 +305,8 @@ STR_SORT_BY_CARGO_CAPACITY                                      :Zama edukiera
 STR_SORT_BY_RANGE                                               :Irismena
 STR_SORT_BY_POPULATION                                          :Biztanleria
 STR_SORT_BY_RATING                                              :Balorazioa
+
+# Group by options for vehicle list
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Jokoa pausatu
@@ -390,7 +392,7 @@ STR_FILE_MENU_EXIT                                              :Irten
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Munduko mapa
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :lehio extra
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :lehio extra
 STR_MAP_MENU_SIGN_LIST                                          :Seinale zerrenda
 
 ############ range for town menu starts
@@ -859,7 +861,7 @@ STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLAC
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}{TOWN}ko udaletxeak {STRING}rekin urte beterako erabateko garraio-eskubideen kontratua sinatu du!
 
 # Extra view window
-STR_EXTRA_VIEW_PORT_TITLE                                       :{WHITE}Leihoa {COMMA}
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Leihoa {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Leihora kopiatu
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK} Leiho nagusian ikusten dena leiho honetara kopiatu
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Aldatu ikuspen nagusia
@@ -960,6 +962,7 @@ STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Pantaila
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Pantailaren resulozioa aukeratu
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :besteak
 
+STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Interfaze tamaina
 
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normala
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Tamaina doblea
@@ -1091,6 +1094,7 @@ STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_DEFAULT             :Ezarpenak lehen
 STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_NEW                 :Balio ezberdinak dituzten ezarpenak zure joko berriaren ezarpenekin alderatuta
 
 STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT                         :Bezero ezarpenak (ez dira partidatan gordetzen; joko guztiei eragiten die)
+STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Jokoaren ezarpenak (gordetako partidetan bilduta; bakarrik partida berriei eragiten die)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Enpresa ezarpenak (partidan gordeta; bakarrik uneko enpresari eragiten dio)
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Ezer ez -
 
@@ -1270,6 +1274,7 @@ STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Zakarra
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Oso Zakarra
 STR_CONFIG_SETTING_VARIETY                                      :Barietateen distribuzioa: {STRING}
 STR_CONFIG_SETTING_RIVER_AMOUNT                                 :Ibai kantitatea: {STRING}
+STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :Aukeratu zenbat ibai sortuko diren
 STR_CONFIG_SETTING_TREE_PLACER                                  :Zuhaitz kokatzeko algoritmoa: {STRING}
 STR_CONFIG_SETTING_TREE_PLACER_NONE                             :Ezer ez
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Jatorrizkoa
@@ -1446,8 +1451,7 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :Betea
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR                           :Kolorezko albisteak {STRING}. urtean agertzen dira
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :Egunkarien mezuak kolorean imprimatuko diren urtea. Urte hau baino lehenago txuri/beltz monokromoa erabiliko da
 STR_CONFIG_SETTING_STARTING_YEAR                                :Hasierako urtea: {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Gaitu ekonomia leuna (aldaketa gehiago baina txikiagoak): {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Gaitua dagoenean, industrien ekoizpena gehiagotan aldatuko da baina urrats txikiagotan. Aukera honek gehienetan ez du eraginik izango industriak NewGRF batek ezartzen baditu
+STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Beste konpainien akzioak erostea baimendu: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Gaitua dagoenean, konpainiaren akzioak erostea eta saltzea baimendu. Konpainiak akzioak izateko gutxiengo adin batera iritsi beharko dira
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Elikadura sistemetan ordaindu beharreko irabazien ehunekoa: {STRING}
@@ -1493,9 +1497,6 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Gaitua herrien 
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Zuhaitzen landaketa jokoan: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Jokoa bitartean zuhaitzen ausazko landatzea kontrolatu. Zuhaitzen landatzean oinarritzen diren industriei eragin dezake, zerrategiei adibidez
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :Ezer ez {RED}(Paisai tropikalean zerrategiak hautsiko ditu)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :Bakarrik basoetan
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :Leku guztietan
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Tresna barra nagusiaren kokapena: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Tresna barra nagusia posizio horizontalean pantailaren goiko aldean
@@ -1551,6 +1552,7 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_METRIC              :Metrikoa (zp)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_SI                  :SI (kW)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT                    :Pisu unitateak: {STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_HELPTEXT           :Pisu bat erabiltzaile interfazean erakusten denean, aukeratutako unitateetan erakutsi
 STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_IMPERIAL           :Imperial (ton/tona)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_METRIC             :Metrikoa (t/tona)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_SI                 :SI (kg)
@@ -1576,6 +1578,7 @@ STR_CONFIG_SETTING_INTERFACE                                    :{ORANGE}Interfa
 STR_CONFIG_SETTING_INTERFACE_GENERAL                            :{ORANGE}Orokorra
 STR_CONFIG_SETTING_INTERFACE_VIEWPORTS                          :{ORANGE}Leihoak
 STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION                       :{ORANGE}Eraikuntza
+STR_CONFIG_SETTING_ADVISORS                                     :{ORANGE}Albisteak / Aholkulariak
 STR_CONFIG_SETTING_COMPANY                                      :{ORANGE}Konpainia
 STR_CONFIG_SETTING_VEHICLES                                     :{ORANGE}Ibilgailuak
 STR_CONFIG_SETTING_VEHICLES_PHYSICS                             :{ORANGE}Fisika
@@ -1666,17 +1669,8 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Itzultze
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Irten
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Zihur zaude OpenTTD-tik irten nahi duzula eta {STRING}-ra itzuli?
 STR_QUIT_YES                                                    :{BLACK}Bai
 STR_QUIT_NO                                                     :{BLACK}Ez
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Jokoa Utzi
@@ -1686,7 +1680,6 @@ STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}¿Segur
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Trukoak
 STR_CHEATS_TOOLTIP                                              :{BLACK}Kontrol laukiek erakutsiko dute trukoak erabili badituzu
-STR_CHEATS_WARNING                                              :{BLACK}Abisua! Zure kideak traizionatzear zaude. Gogoratu traizioa ez dela inoiz ahaztuko
 STR_CHEAT_MONEY                                                 :{LTBLUE}Dirua {CURRENCY_LONG}-etan areagotu
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE} {ORANGE}{COMMA} konpainiarekin jolastu
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Bulldozer magikoa (edozer ezabatzen du): {ORANGE}{STRING}
@@ -1795,8 +1788,6 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Aldatu k
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multijokalaria
-STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :Ez
-STR_NETWORK_SERVER_LIST_ADVERTISED_YES                          :Bai
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Jokalariaren izena:
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Izen honen bidez ezagutua izango zara beste jokalarien artean
 
@@ -1837,8 +1828,6 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Jokoan s
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Zerbitzaria freskatu
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Zerbitzariaren informazioa freskatu
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Zerbitzaria bilatu
-STR_NETWORK_SERVER_LIST_FIND_SERVER_TOOLTIP                     :{BLACK}Sarean zerbitzariak bilatu
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Zerbitzaria gehitu
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Zerrendara zerbitzari bat gehitu martxa dauden jokoak bilatuko dituena
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Zerbitzari bat sortu
@@ -1967,7 +1956,6 @@ STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Konpainia berri
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Kanporatu
 STR_NETWORK_CLIENTLIST_BAN                                      :Debekatu
-STR_NETWORK_CLIENTLIST_GIVE_MONEY                               :Dirua eman
 STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Guztiei hitz egin
 STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Konpainiari hitz egin
 STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Mezu pribatua
@@ -1975,8 +1963,6 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Mezu pribatua
 STR_NETWORK_SERVER                                              :Zerbitzaria
 STR_NETWORK_CLIENT                                              :Bezeroa
 STR_NETWORK_SPECTATORS                                          :Ikusleak
-
-STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Eman nahi duzun diru kantitatea ezarri
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Ez gorde sartutako pasahitza
@@ -2077,8 +2063,6 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} ik
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} konpainia berria sortu du (#{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} jokoa utzi du ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING}-k bere izena {STRING}-ra aldatu du
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} zure empresa eman {2:CURRENCY_LONG}
-STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY                             :*** Zuk eman diozu {1:STRING} {2:CURRENCY_LONG}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Zebitzariak saioa itxi du
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Zerbitzaria berriro hasten ari da...{}Mesedez itxaron...
 
@@ -2190,6 +2174,8 @@ STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Geltoki
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Bidepuntua lotu
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Ibilbide puntu bereizitua eraiki
 
+# Generic toolbar
+
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Trenbidea eraiki
 STR_RAIL_TOOLBAR_ELRAIL_CONSTRUCTION_CAPTION                    :Trenbide elektrikoa eraiki
@@ -2253,7 +2239,7 @@ STR_BUILD_SIGNAL_ELECTRIC_PBS_TOOLTIP                           :{BLACK}Bide sei
 STR_BUILD_SIGNAL_ELECTRIC_PBS_OWAY_TOOLTIP                      :{BLACK}Norabide bakarreko bide seinalea (elektrikoa){}Norabide bakarreko bide seinalea bloke berdinean tren bat baino gehiago egotea ahalbidetzen du, trenak gelditzeko tokia aurkitu badezake. Ezin dira atzekaldetik pasa
 STR_BUILD_SIGNAL_CONVERT_TOOLTIP                                :{BLACK}Seinaleak aldatu{}Aukeratua dagoenean, aukeratutako seinalea aldatuko da hautatutako seinale motagatik. Krtl+Klik mota aldatuko du, Shift+Klik gutxi gora beherako kostea erakutsiko du
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP                   :{BLACK}Arrastratzerakoan seinale dentsitatea
-STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}Seinale dentsitatea jeitsi
+STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}Seinale distantzia jaitsi
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}Seinale dentsitatea igo
 
 # Bridge selection window
@@ -2373,7 +2359,7 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Tamainua
 STR_OBJECT_CLASS_LTHS                                           :Itsasargiak
 STR_OBJECT_CLASS_TRNS                                           :Igorgailuak
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Zuhaitzak
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK} Aukeratu landatuko diren zuhaitz motak. Laukiak zuhaitza badauka mota ezberdinetako zuhaitz gehio geituko ditu
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Ausazko zuhaitz motak
@@ -2575,14 +2561,18 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Konpainia jabe 
 STR_ABOUT_OPENTTD                                               :{WHITE}OpenTTD-ri buruz
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original copyright {COPYRIGHT} 1995 Chris Sawyer, All rights reserved
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD bertsioa {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} The OpenTTD team
 
 # Framerate display window
+STR_FRAMERATE_FPS_BAD                                           :{RED}{DECIMAL} koadroak/s
+STR_FRAMERATE_GRAPH_MILLISECONDS                                :{TINY_FONT}{COMMA} ms
 ############ Leave those lines in this order!!
+STR_FRAMERATE_GL_ECONOMY                                        :{BLACK}  Zama kudeaketa:
 STR_FRAMERATE_GL_TRAINS                                         :{WHITE}  Trenen tick-ak:
 STR_FRAMERATE_GL_SHIPS                                          :{WHITE}  Itsasontzien tick-ak:
 ############ End of leave-in-this-order
 ############ Leave those lines in this order!!
+STR_FRAMETIME_CAPTION_GAMESCRIPT                                :Jokoaren scripta
 ############ End of leave-in-this-order
 
 
@@ -2647,6 +2637,7 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Garaiera
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}Tamaina:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
+STR_MAPGEN_MAX_HEIGHTLEVEL_QUERY_CAPT                           :{WHITE}Aldatu maparen garaiera maximoa
 STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}Elur garaiera aldatu
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}Hasierako urtea aldatu
 
@@ -2718,6 +2709,7 @@ STR_NEWGRF_SETTINGS_VERSION                                     :{BLACK}Bertsioa
 STR_NEWGRF_SETTINGS_MIN_VERSION                                 :{BLACK}Gutxienezko bertsio bateragarria: {SILVER}{NUM}
 STR_NEWGRF_SETTINGS_MD5SUM                                      :{BLACK}MD5sum: {SILVER}{STRING}
 STR_NEWGRF_SETTINGS_PALETTE                                     :{BLACK}Paleta: {SILVER}{STRING}
+STR_NEWGRF_SETTINGS_PALETTE_DEFAULT_32BPP                       :Aurrezarria (D) / 32 bpp
 STR_NEWGRF_SETTINGS_PARAMETER                                   :{BLACK}Parametroak: {SILVER}{STRING}
 
 STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}Ez dago informaziorik
@@ -3428,6 +3420,7 @@ STR_REPLACE_ELRAIL_VEHICLES                                     :Tren ibilgailu 
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monorail trenak
 STR_REPLACE_MAGLEV_VEHICLES                                     :Tren magnetikoak
 
+STR_REPLACE_TRAM_VEHICLES                                       :Tranbia ibilgailuak
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Bagoiak ezabatu: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ordezkatze automatikoari agindu trenaren luzera errespetatzea, bagoiak ezabatuz luzera handitzen badute (trenaren hasierako bagoietik hasita)
@@ -3435,10 +3428,6 @@ STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ordezkat
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Ikuspegi nagusia trenean kokatu. Ktrl+klik trena ikuspegi nagusiarekin jarraitzeko
-STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Ikuspegi nagusia errepide ibilgailuan kokatu. Ktrl+klik errepide ibilgailua ikuspegi nagusiarekin jarraitzeko
-STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Ikuspegi nagusia itsasontzian kokatu. Ktrl+klik itsasontzia ikuspegi nagusiarekin jarraitzeko
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Ikuspegi nagusia hegazkinean kokatu. Ktrl+klik hegazkina ikuspegi nagusiarekin jarraitzeko
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Trena gordailura bidali. Ktrl+klik bakarrik mantenimendua egiteko
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Errepide ibilgailua gordailura bidali. Ktrl+klik bakarrik mantenimendua egiteko
@@ -3470,10 +3459,7 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Errepide
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Itsasontziaren xehetasunak ikusi
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Hegazkinaren xehetasunak ikusi
 
-STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Trena orain egiten ari den ekitza - Klik trena gelditzeko/abiarazteko. Krtl+klik helmugara bideratzeko
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Ibilgailua orain egiten ari duen ekitza - Klik ibilgailua gelditzeko/abiarazteko. Krtl+klik helmugara bideratzeko
-STR_VEHICLE_VIEW_SHIP_STATE_START_STOP_TOOLTIP                  :{BLACK}Itsasontzia orain egiten ari duen ekitza - Klik itsasontzia gelditzeko/abiarazteko. Krtl+klik helmugara bideratzeko
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Hegazkina orain egiten ari duen ekitza - Klik hegazkina gelditzeko/abiarazteko. Krtl+klik helmugara bideratzeko
+
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Kargatzen/Deskargatzen

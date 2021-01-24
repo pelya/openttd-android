@@ -34,8 +34,8 @@
 /* DestinationID must be at least as large as every these below, because it can
  * be any of them
  */
-assert_compile(sizeof(DestinationID) >= sizeof(DepotID));
-assert_compile(sizeof(DestinationID) >= sizeof(StationID));
+static_assert(sizeof(DestinationID) >= sizeof(DepotID));
+static_assert(sizeof(DestinationID) >= sizeof(StationID));
 
 OrderPool _order_pool("Order");
 INSTANTIATE_POOL_METHODS(Order)
@@ -713,7 +713,7 @@ uint GetOrderDistance(const Order *prev, const Order *cur, const Vehicle *v, int
 
 		int dist1 = GetOrderDistance(prev, v->GetOrder(cur->GetConditionSkipToOrder()), v, conditional_depth);
 		int dist2 = GetOrderDistance(prev, cur->next == nullptr ? v->orders.list->GetFirstOrder() : cur->next, v, conditional_depth);
-		return max(dist1, dist2);
+		return std::max(dist1, dist2);
 	}
 
 	TileIndex prev_tile = prev->GetLocation(v, true);
@@ -969,8 +969,7 @@ void InsertOrder(Vehicle *v, Order *new_o, VehicleOrderID sel_ord)
 
 	/* As we insert an order, the order to skip to will be 'wrong'. */
 	VehicleOrderID cur_order_id = 0;
-	Order *order;
-	FOR_VEHICLE_ORDERS(v, order) {
+	for (Order *order : v->Orders()) {
 		if (order->IsType(OT_CONDITIONAL)) {
 			VehicleOrderID order_id = order->GetConditionSkipToOrder();
 			if (order_id >= sel_ord) {
@@ -1090,12 +1089,11 @@ void DeleteOrder(Vehicle *v, VehicleOrderID sel_ord)
 
 	/* As we delete an order, the order to skip to will be 'wrong'. */
 	VehicleOrderID cur_order_id = 0;
-	Order *order = nullptr;
-	FOR_VEHICLE_ORDERS(v, order) {
+	for (Order *order : v->Orders()) {
 		if (order->IsType(OT_CONDITIONAL)) {
 			VehicleOrderID order_id = order->GetConditionSkipToOrder();
 			if (order_id >= sel_ord) {
-				order_id = max(order_id - 1, 0);
+				order_id = std::max(order_id - 1, 0);
 			}
 			if (order_id == cur_order_id) {
 				order_id = (order_id + 1) % v->GetNumOrders();
@@ -1225,8 +1223,7 @@ CommandCost CmdMoveOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 		}
 
 		/* As we move an order, the order to skip to will be 'wrong'. */
-		Order *order;
-		FOR_VEHICLE_ORDERS(v, order) {
+		for (Order *order : v->Orders()) {
 			if (order->IsType(OT_CONDITIONAL)) {
 				VehicleOrderID order_id = order->GetConditionSkipToOrder();
 				if (order_id == moving_order) {
@@ -1560,9 +1557,7 @@ CommandCost CmdCloneOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 			/* Is the vehicle already in the shared list? */
 			if (src->FirstShared() == dst->FirstShared()) return CMD_ERROR;
 
-			const Order *order;
-
-			FOR_VEHICLE_ORDERS(src, order) {
+			for (const Order *order : src->Orders()) {
 				if (!OrderGoesToStation(dst, order)) continue;
 
 				/* Allow copying unreachable destinations if they were already unreachable for the source.
@@ -1613,8 +1608,7 @@ CommandCost CmdCloneOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 
 			/* Trucks can't copy all the orders from busses (and visa versa),
 			 * and neither can helicopters and aircraft. */
-			const Order *order;
-			FOR_VEHICLE_ORDERS(src, order) {
+			for (const Order *order : src->Orders()) {
 				if (OrderGoesToStation(dst, order) &&
 						!CanVehicleUseStation(dst, Station::Get(order->GetDestination()))) {
 					return_cmd_error(STR_ERROR_CAN_T_COPY_SHARE_ORDER);
@@ -1632,7 +1626,6 @@ CommandCost CmdCloneOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 			}
 
 			if (flags & DC_EXEC) {
-				const Order *order;
 				Order *first = nullptr;
 				Order **order_dst;
 
@@ -1642,7 +1635,7 @@ CommandCost CmdCloneOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 				DeleteVehicleOrders(dst, true, dst->GetNumOrders() != src->GetNumOrders());
 
 				order_dst = &first;
-				FOR_VEHICLE_ORDERS(src, order) {
+				for (const Order *order : src->Orders()) {
 					*order_dst = new Order();
 					(*order_dst)->AssignOrder(*order);
 					order_dst = &(*order_dst)->next;
@@ -1749,13 +1742,12 @@ void CheckOrders(const Vehicle *v)
 
 	/* Only check every 20 days, so that we don't flood the message log */
 	if (v->owner == _local_company && v->day_counter % 20 == 0) {
-		const Order *order;
 		StringID message = INVALID_STRING_ID;
 
 		/* Check the order list */
 		int n_st = 0;
 
-		FOR_VEHICLE_ORDERS(v, order) {
+		for (const Order *order : v->Orders()) {
 			/* Dummy order? */
 			if (order->IsType(OT_DUMMY)) {
 				message = STR_NEWS_VEHICLE_HAS_VOID_ORDER;
@@ -1829,7 +1821,7 @@ void RemoveOrderFromAllVehicles(OrderType type, DestinationID destination, bool 
 
 		/* Clear the order from the order-list */
 		int id = -1;
-		FOR_VEHICLE_ORDERS(v, order) {
+		for (Order *order : v->Orders()) {
 			id++;
 restart:
 
@@ -1879,9 +1871,7 @@ restart:
  */
 bool Vehicle::HasDepotOrder() const
 {
-	const Order *order;
-
-	FOR_VEHICLE_ORDERS(this, order) {
+	for (const Order *order : this->Orders()) {
 		if (order->IsType(OT_GOTO_DEPOT)) return true;
 	}
 
@@ -1940,9 +1930,7 @@ uint16 GetServiceIntervalClamped(uint interval, bool ispercent)
  */
 static bool CheckForValidOrders(const Vehicle *v)
 {
-	const Order *order;
-
-	FOR_VEHICLE_ORDERS(v, order) {
+	for (const Order *order : v->Orders()) {
 		switch (order->GetType()) {
 			case OT_GOTO_STATION:
 			case OT_GOTO_DEPOT:
@@ -1997,7 +1985,7 @@ VehicleOrderID ProcessConditionalOrder(const Order *order, const Vehicle *v)
 		case OCV_AGE:                skip_order = OrderConditionCompare(occ, v->age / DAYS_IN_LEAP_YEAR,        value); break;
 		case OCV_REQUIRES_SERVICE:   skip_order = OrderConditionCompare(occ, v->NeedsServicing(),               value); break;
 		case OCV_UNCONDITIONALLY:    skip_order = true; break;
-		case OCV_REMAINING_LIFETIME: skip_order = OrderConditionCompare(occ, max(v->max_age - v->age + DAYS_IN_LEAP_YEAR - 1, 0) / DAYS_IN_LEAP_YEAR, value); break;
+		case OCV_REMAINING_LIFETIME: skip_order = OrderConditionCompare(occ, std::max(v->max_age - v->age + DAYS_IN_LEAP_YEAR - 1, 0) / DAYS_IN_LEAP_YEAR, value); break;
 		default: NOT_REACHED();
 	}
 

@@ -130,12 +130,12 @@ Point InverseRemapCoords2(int x, int y, bool clamp_to_map, bool *clamped)
 	 * So give it a z-malus of 4 in the first iterations. */
 	int z = 0;
 	if (clamp_to_map) {
-		for (int i = 0; i < 5; i++) z = GetSlopePixelZ(Clamp(pt.x + max(z, 4) - 4, min_coord, max_x), Clamp(pt.y + max(z, 4) - 4, min_coord, max_y)) / 2;
-		for (int m = 3; m > 0; m--) z = GetSlopePixelZ(Clamp(pt.x + max(z, m) - m, min_coord, max_x), Clamp(pt.y + max(z, m) - m, min_coord, max_y)) / 2;
+		for (int i = 0; i < 5; i++) z = GetSlopePixelZ(Clamp(pt.x + std::max(z, 4) - 4, min_coord, max_x), Clamp(pt.y + std::max(z, 4) - 4, min_coord, max_y)) / 2;
+		for (int m = 3; m > 0; m--) z = GetSlopePixelZ(Clamp(pt.x + std::max(z, m) - m, min_coord, max_x), Clamp(pt.y + std::max(z, m) - m, min_coord, max_y)) / 2;
 		for (int i = 0; i < 5; i++) z = GetSlopePixelZ(Clamp(pt.x + z,             min_coord, max_x), Clamp(pt.y + z,             min_coord, max_y)) / 2;
 	} else {
-		for (int i = 0; i < 5; i++) z = GetSlopePixelZOutsideMap(pt.x + max(z, 4) - 4, pt.y + max(z, 4) - 4) / 2;
-		for (int m = 3; m > 0; m--) z = GetSlopePixelZOutsideMap(pt.x + max(z, m) - m, pt.y + max(z, m) - m) / 2;
+		for (int i = 0; i < 5; i++) z = GetSlopePixelZOutsideMap(pt.x + std::max(z, 4) - 4, pt.y + std::max(z, 4) - 4) / 2;
+		for (int m = 3; m > 0; m--) z = GetSlopePixelZOutsideMap(pt.x + std::max(z, m) - m, pt.y + std::max(z, m) - m) / 2;
 		for (int i = 0; i < 5; i++) z = GetSlopePixelZOutsideMap(pt.x + z,             pt.y + z            ) / 2;
 	}
 
@@ -630,8 +630,8 @@ void SetSnowLine(byte table[SNOW_LINE_MONTHS][SNOW_LINE_DAYS])
 
 	for (uint i = 0; i < SNOW_LINE_MONTHS; i++) {
 		for (uint j = 0; j < SNOW_LINE_DAYS; j++) {
-			_snow_line->highest_value = max(_snow_line->highest_value, table[i][j]);
-			_snow_line->lowest_value = min(_snow_line->lowest_value, table[i][j]);
+			_snow_line->highest_value = std::max(_snow_line->highest_value, table[i][j]);
+			_snow_line->lowest_value = std::min(_snow_line->lowest_value, table[i][j]);
 		}
 	}
 }
@@ -811,7 +811,7 @@ void RunTileLoop()
 	static const uint32 feedbacks[] = {
 		0xD8F, 0x1296, 0x2496, 0x4357, 0x8679, 0x1030E, 0x206CD, 0x403FE, 0x807B8, 0x1004B2, 0x2006A8, 0x4004B2, 0x800B87
 	};
-	assert_compile(lengthof(feedbacks) == 2 * MAX_MAP_SIZE_BITS - 2 * MIN_MAP_SIZE_BITS + 1);
+	static_assert(lengthof(feedbacks) == 2 * MAX_MAP_SIZE_BITS - 2 * MIN_MAP_SIZE_BITS + 1);
 	const uint32 feedback = feedbacks[MapLogX() + MapLogY() - 2 * MIN_MAP_SIZE_BITS];
 
 	/* We update every tile every 256 ticks, so divide the map size by 2^8 = 256 */
@@ -865,7 +865,8 @@ static void GenerateTerrain(int type, uint flag)
 	uint x = r & MapMaxX();
 	uint y = (r >> MapLogX()) & MapMaxY();
 
-	if (x < 2 || y < 2) return;
+	uint edge_distance = 1 + (_settings_game.construction.freeform_edges ? 1 : 0);
+	if (x <= edge_distance || y <= edge_distance) return;
 
 	DiagDirection direction = (DiagDirection)GB(r, 22, 2);
 	uint w = templ->width;
@@ -900,8 +901,8 @@ static void GenerateTerrain(int type, uint flag)
 		}
 	}
 
-	if (x + w >= MapMaxX() - 1) return;
-	if (y + h >= MapMaxY() - 1) return;
+	if (x + w >= MapMaxX()) return;
+	if (y + h >= MapMaxY()) return;
 
 	TileIndex tile = TileXY(x, y);
 
@@ -1186,8 +1187,8 @@ static void BuildRiver(TileIndex begin, TileIndex end)
  */
 static bool FlowRiver(TileIndex spring, TileIndex begin)
 {
-	#define SET_MARK(x) marks.insert(x)
-	#define IS_MARKED(x) (marks.find(x) != marks.end())
+#	define SET_MARK(x) marks.insert(x)
+#	define IS_MARKED(x) (marks.find(x) != marks.end())
 
 	uint height = TileHeight(begin);
 	if (IsWaterTile(begin)) return DistanceManhattan(spring, begin) > _settings_game.game_creation.min_river_length;
@@ -1304,7 +1305,7 @@ void GenerateLandscape(byte mode)
 
 	if (mode == GWM_HEIGHTMAP) {
 		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_HEIGHTMAP);
-		LoadHeightmap(_file_to_saveload.detail_ftype, _file_to_saveload.name);
+		LoadHeightmap(_file_to_saveload.detail_ftype, _file_to_saveload.name.c_str());
 		IncreaseGeneratingWorldProgress(GWP_LANDSCAPE);
 	} else if (_settings_game.game_creation.land_generator == LG_TERRAGENESIS) {
 		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_TERRAGENESIS);

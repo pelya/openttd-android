@@ -577,8 +577,8 @@ public:
 			}
 
 			case WID_NCL_MATRIX:
-				resize->height = SETTING_BUTTON_HEIGHT;
-				size->height = 6 * resize->height;
+				resize->height = std::max(this->checkbox_size.height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
+				size->height = 10 * resize->height;
 				break;
 		}
 	}
@@ -628,7 +628,7 @@ public:
 		const NWidgetBase *nwi_name = this->GetWidget<NWidgetBase>(WID_NCL_NAME);
 		const NWidgetBase *nwi_type = this->GetWidget<NWidgetBase>(WID_NCL_TYPE);
 
-		int line_height = max(this->checkbox_size.height, (uint)FONT_HEIGHT_NORMAL);
+		int line_height = std::max(this->checkbox_size.height, (uint)FONT_HEIGHT_NORMAL);
 
 		/* Fill the matrix with the information */
 		int sprite_y_offset = WD_MATRIX_TOP + (line_height - this->checkbox_size.height) / 2 - 1 + (this->resize.step_height - line_height) / 2;
@@ -879,7 +879,7 @@ public:
 				break;
 			case WKC_PAGEDOWN:
 				/* scroll down a page */
-				this->list_pos = min(this->list_pos + this->vscroll->GetCapacity(), (int)this->content.size() - 1);
+				this->list_pos = std::min(this->list_pos + this->vscroll->GetCapacity(), (int)this->content.size() - 1);
 				break;
 			case WKC_HOME:
 				/* jump to beginning */
@@ -953,7 +953,7 @@ public:
 	{
 		if (this->auto_select && !rci->IsSelected()) _network_content_client.ToggleSelectedState(rci);
 		this->content.ForceRebuild();
-		this->InvalidateData();
+		this->InvalidateData(0, false);
 	}
 
 	void OnDownloadComplete(ContentID cid) override

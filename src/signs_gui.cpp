@@ -26,6 +26,7 @@
 #include "core/geometry_func.hpp"
 #include "hotkeys.h"
 #include "transparency.h"
+#include "gui.h"
 
 #include "widgets/sign_widget.h"
 
@@ -76,11 +77,8 @@ struct SignList {
 		 * a lot of them. Therefore a worthwhile performance gain can be made by
 		 * directly comparing Sign::name instead of going through the string
 		 * system for each comparison. */
-		const char *a_name = a->name;
-		const char *b_name = b->name;
-
-		if (a_name == nullptr) a_name = SignList::default_name;
-		if (b_name == nullptr) b_name = SignList::default_name;
+		const char *a_name = a->name.empty() ? SignList::default_name : a->name.c_str();
+		const char *b_name = b->name.empty() ? SignList::default_name : b->name.c_str();
 
 		int r = strnatcmp(a_name, b_name); // Sort by name (natural sorting).
 
@@ -96,9 +94,7 @@ struct SignList {
 	static bool CDECL SignNameFilter(const Sign * const *a, StringFilter &filter)
 	{
 		/* Same performance benefit as above for sorting. */
-		const char *a_name = (*a)->name;
-
-		if (a_name == nullptr) a_name = SignList::default_name;
+		const char *a_name = (*a)->name.empty() ? SignList::default_name : (*a)->name.c_str();
 
 		filter.ResetState();
 		filter.AddLine(a_name);
@@ -269,7 +265,8 @@ struct SignListWindow : Window, SignList {
 			case WID_SIL_LIST: {
 				Dimension spr_dim = GetSpriteSize(SPR_COMPANY_ICON);
 				this->text_offset = WD_FRAMETEXT_LEFT + spr_dim.width + 2; // 2 pixels space between icon and the sign text.
-				resize->height = max<uint>(GetMinSizing(NWST_STEP), spr_dim.height);
+				resize->height = std::max<uint>(FONT_HEIGHT_NORMAL, spr_dim.height);
+				resize->height = GetMinSizing(NWST_STEP), resize->height);
 				Dimension d = {(uint)(this->text_offset + WD_FRAMETEXT_RIGHT), WD_FRAMERECT_TOP + 5 * resize->height + WD_FRAMERECT_BOTTOM};
 				*size = maxdim(*size, d);
 				break;
@@ -441,7 +438,7 @@ struct SignWindow : Window, SignList {
 	void UpdateSignEditWindow(const Sign *si)
 	{
 		/* Display an empty string when the sign hasn't been edited yet */
-		if (si->name != nullptr) {
+		if (!si->name.empty()) {
 			SetDParam(0, si->index);
 			this->name_editbox.text.Assign(STR_SIGN_NAME);
 		} else {
@@ -493,6 +490,17 @@ struct SignWindow : Window, SignList {
 	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
+			case WID_QES_LOCATION: {
+				const Sign *si = Sign::Get(this->cur_sign);
+				TileIndex tile = TileVirtXY(si->x, si->y);
+				if (_ctrl_pressed) {
+					ShowExtraViewportWindow(tile);
+				} else {
+					ScrollMainWindowToTile(tile);
+				}
+				break;
+			}
+
 			case WID_QES_PREVIOUS:
 			case WID_QES_NEXT: {
 				const Sign *si = this->PrevNextSign(widget == WID_QES_NEXT);
@@ -530,6 +538,7 @@ static const NWidgetPart _nested_query_sign_edit_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_QES_CAPTION), SetDataTip(STR_WHITE_STRING, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_QES_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, STR_EDIT_SIGN_LOCATION_TOOLTIP),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_QES_TEXT), SetMinimalSize(256, 12), SetDataTip(STR_EDIT_SIGN_SIGN_OSKTITLE, STR_NULL), SetPadding(2, 2, 2, 2),

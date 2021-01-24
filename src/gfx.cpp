@@ -268,8 +268,8 @@ void GfxFillPolygon(const std::vector<Point> &shape, int colour, FillRectMode mo
 		std::sort(intersections.begin(), intersections.end());
 		for (size_t i = 1; i < intersections.size(); i += 2) {
 			/* Check clipping. */
-			const int x1 = max(0, intersections[i - 1]);
-			const int x2 = min(intersections[i], dpi->width);
+			const int x1 = std::max(0, intersections[i - 1]);
+			const int x2 = std::min(intersections[i], dpi->width);
 			if (x2 < 0) continue;
 			if (x1 >= dpi->width) continue;
 
@@ -332,7 +332,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 
 	/* prevent integer overflows. */
 	int margin = 1;
-	while (INT_MAX / abs(grade_y) < max(abs(clip.left - x), abs(clip.right - x))) {
+	while (INT_MAX / abs(grade_y) < std::max(abs(clip.left - x), abs(clip.right - x))) {
 		grade_y /= 2;
 		grade_x /= 2;
 		margin  *= 2; // account for rounding errors
@@ -641,7 +641,7 @@ static int DrawLayoutLine(const ParagraphLayouter::Line &line, int y, int left, 
 int DrawString(int left, int right, int top, const char *str, TextColour colour, StringAlignment align, bool underline, FontSize fontsize)
 {
 	/* The string may contain control chars to change the font, just use the biggest font for clipping. */
-	int max_height = max(max(FONT_HEIGHT_SMALL, FONT_HEIGHT_NORMAL), max(FONT_HEIGHT_LARGE, FONT_HEIGHT_MONO));
+	int max_height = std::max({FONT_HEIGHT_SMALL, FONT_HEIGHT_NORMAL, FONT_HEIGHT_LARGE, FONT_HEIGHT_MONO});
 
 	/* Funny glyphs may extent outside the usual bounds, so relax the clipping somewhat. */
 	int extra = max_height / 2;
@@ -907,6 +907,7 @@ void DrawCharCentered(WChar c, int x, int y, TextColour colour)
  * Get the size of a sprite.
  * @param sprid Sprite to examine.
  * @param[out] offset Optionally returns the sprite position offset.
+ * @param zoom The zoom level applicable to the sprite.
  * @return Sprite size in pixels.
  * @note The size assumes (0, 0) as top-left coordinate and ignores any part of the sprite drawn at the left or above that position.
  */
@@ -920,8 +921,8 @@ Dimension GetSpriteSize(SpriteID sprid, Point *offset, ZoomLevel zoom)
 	}
 
 	Dimension d;
-	d.width  = max<int>(0, UnScaleByZoom(sprite->x_offs + sprite->width, zoom));
-	d.height = max<int>(0, UnScaleByZoom(sprite->y_offs + sprite->height, zoom));
+	d.width  = std::max<int>(0, UnScaleByZoom(sprite->x_offs + sprite->width, zoom));
+	d.height = std::max<int>(0, UnScaleByZoom(sprite->y_offs + sprite->height, zoom));
 	return d;
 }
 
@@ -1072,10 +1073,10 @@ static void GfxBlitter(const Sprite * const sprite, int x, int y, BlitterMode mo
 		bp.height = UnScaleByZoom(sprite->height, zoom);
 	} else {
 		/* Amount of pixels to clip from the source sprite */
-		int clip_left   = max(0,                   -sprite->x_offs +  sub->left        * ZOOM_BASE );
-		int clip_top    = max(0,                   -sprite->y_offs +  sub->top         * ZOOM_BASE );
-		int clip_right  = max(0, sprite->width  - (-sprite->x_offs + (sub->right + 1)  * ZOOM_BASE));
-		int clip_bottom = max(0, sprite->height - (-sprite->y_offs + (sub->bottom + 1) * ZOOM_BASE));
+		int clip_left   = std::max(0,                   -sprite->x_offs +  sub->left        * ZOOM_BASE );
+		int clip_top    = std::max(0,                   -sprite->y_offs +  sub->top         * ZOOM_BASE );
+		int clip_right  = std::max(0, sprite->width  - (-sprite->x_offs + (sub->right + 1)  * ZOOM_BASE));
+		int clip_bottom = std::max(0, sprite->height - (-sprite->y_offs + (sub->bottom + 1) * ZOOM_BASE));
 
 		if (clip_left + clip_right >= sprite->width) return;
 		if (clip_top + clip_bottom >= sprite->height) return;
@@ -1353,7 +1354,7 @@ byte GetDigitWidth(FontSize size)
 {
 	byte width = 0;
 	for (char c = '0'; c <= '9'; c++) {
-		width = max(GetCharacterWidth(size, c), width);
+		width = std::max(GetCharacterWidth(size, c), width);
 	}
 	return width;
 }
@@ -1466,6 +1467,16 @@ void DrawMouseCursor()
 	_cursor.dirty = false;
 }
 
+/**
+ * Repaints a specific rectangle of the screen.
+ *
+ * @param left,top,right,bottom The area of the screen that needs repainting
+ * @pre The rectangle should have been previously marked dirty with \c AddDirtyBlock.
+ * @see AddDirtyBlock
+ * @see DrawDirtyBlocks
+ * @ingroup dirty
+ *
+ */
 void RedrawScreenRect(int left, int top, int right, int bottom)
 {
 	assert(right <= _screen.width && bottom <= _screen.height);
@@ -1488,7 +1499,9 @@ void RedrawScreenRect(int left, int top, int right, int bottom)
 /**
  * Repaints the rectangle blocks which are marked as 'dirty'.
  *
- * @see SetDirtyBlocks
+ * @see AddDirtyBlock
+ *
+ * @ingroup dirty
  */
 void DrawDirtyBlocks()
 {
@@ -1591,21 +1604,18 @@ void DrawDirtyBlocks()
 }
 
 /**
- * This function extends the internal _invalid_rect rectangle as it
- * now contains the rectangle defined by the given parameters. Note
- * the point (0,0) is top left.
+ * Extend the internal _invalid_rect rectangle to contain the rectangle
+ * defined by the given parameters. Note the point (0,0) is top left.
  *
  * @param left The left edge of the rectangle
  * @param top The top edge of the rectangle
  * @param right The right edge of the rectangle
  * @param bottom The bottom edge of the rectangle
  * @see DrawDirtyBlocks
+ * @ingroup dirty
  *
- * @todo The name of the function should be called like @c AddDirtyBlock as
- *       it neither set a dirty rect nor add several dirty rects although
- *       the function name is in plural. (Progman)
  */
-void SetDirtyBlocks(int left, int top, int right, int bottom)
+void AddDirtyBlock(int left, int top, int right, int bottom)
 {
 	byte *b;
 	int width;
@@ -1650,7 +1660,7 @@ void SetDirtyBlocks(int left, int top, int right, int bottom)
  */
 void MarkWholeScreenDirty()
 {
-	SetDirtyBlocks(0, 0, _screen.width, _screen.height);
+	AddDirtyBlock(0, 0, _screen.width, _screen.height);
 }
 
 /**
@@ -1722,7 +1732,7 @@ void UpdateCursorSize()
 	/* Ignore setting any cursor before the sprites are loaded. */
 	if (GetMaxSpriteID() == 0) return;
 
-	assert_compile(lengthof(_cursor.sprite_seq) == lengthof(_cursor.sprite_pos));
+	static_assert(lengthof(_cursor.sprite_seq) == lengthof(_cursor.sprite_pos));
 	assert(_cursor.sprite_count <= lengthof(_cursor.sprite_seq));
 	for (uint i = 0; i < _cursor.sprite_count; ++i) {
 		const Sprite *p = GetSprite(GB(_cursor.sprite_seq[i].sprite, 0, SPRITE_WIDTH), ST_NORMAL);
@@ -1736,8 +1746,8 @@ void UpdateCursorSize()
 			_cursor.total_offs = offs;
 			_cursor.total_size = size;
 		} else {
-			int right  = max(_cursor.total_offs.x + _cursor.total_size.x, offs.x + size.x);
-			int bottom = max(_cursor.total_offs.y + _cursor.total_size.y, offs.y + size.y);
+			int right  = std::max(_cursor.total_offs.x + _cursor.total_size.x, offs.x + size.x);
+			int bottom = std::max(_cursor.total_offs.y + _cursor.total_size.y, offs.y + size.y);
 			if (offs.x < _cursor.total_offs.x) _cursor.total_offs.x = offs.x;
 			if (offs.y < _cursor.total_offs.y) _cursor.total_offs.y = offs.y;
 			_cursor.total_size.x = right  - _cursor.total_offs.x;
@@ -1823,6 +1833,30 @@ void SetAnimatedMouseCursor(const AnimCursor *table)
 	_cursor.animate_cur = nullptr;
 	_cursor.sprite_seq[0].pal = PAL_NONE;
 	SwitchAnimatedCursor();
+}
+
+/**
+ * Update cursor position on mouse movement for relative modes.
+ * @param delta_x How much change in the X position.
+ * @param delta_y How much change in the Y position.
+ */
+void CursorVars::UpdateCursorPositionRelative(int delta_x, int delta_y)
+{
+	if (this->fix_at) {
+		this->delta.x = delta_x;
+		this->delta.y = delta_y;
+	} else {
+		int last_position_x = this->pos.x;
+		int last_position_y = this->pos.y;
+
+		this->pos.x = Clamp(this->pos.x + delta_x, 0, _cur_resolution.width - 1);
+		this->pos.y = Clamp(this->pos.y + delta_y, 0, _cur_resolution.height - 1);
+
+		this->delta.x = last_position_x - this->pos.x;
+		this->delta.y = last_position_y - this->pos.y;
+
+		this->dirty = true;
+	}
 }
 
 /**

@@ -160,7 +160,7 @@ struct BaseSetTextfileWindow : public TextfileWindow {
 	{
 		if (widget == WID_TF_CAPTION) {
 			SetDParam(0, content_type);
-			SetDParamStr(1, this->baseset->name);
+			SetDParamStr(1, this->baseset->name.c_str());
 		}
 	}
 };
@@ -359,10 +359,10 @@ struct GameOptionsWindow : Window {
 			case WID_GO_TEXT_SIZE_DROPDOWN:  SetDParam(0, _freetype.medium.size); break;
 			case WID_GO_GUI_ZOOM_DROPDOWN:   SetDParam(0, _gui_zoom_dropdown[ZOOM_LVL_OUT_4X - _gui_zoom]); break;
 			case WID_GO_FONT_ZOOM_DROPDOWN:  SetDParam(0, _font_zoom_dropdown[ZOOM_LVL_OUT_4X - _font_zoom]); break;
-			case WID_GO_BASE_GRF_DROPDOWN:   SetDParamStr(0, BaseGraphics::GetUsedSet()->name); break;
+			case WID_GO_BASE_GRF_DROPDOWN:   SetDParamStr(0, BaseGraphics::GetUsedSet()->name.c_str()); break;
 			case WID_GO_BASE_GRF_STATUS:     SetDParam(0, BaseGraphics::GetUsedSet()->GetNumInvalid()); break;
-			case WID_GO_BASE_SFX_DROPDOWN:   SetDParamStr(0, BaseSounds::GetUsedSet()->name); break;
-			case WID_GO_BASE_MUSIC_DROPDOWN: SetDParamStr(0, BaseMusic::GetUsedSet()->name); break;
+			case WID_GO_BASE_SFX_DROPDOWN:   SetDParamStr(0, BaseSounds::GetUsedSet()->name.c_str()); break;
+			case WID_GO_BASE_MUSIC_DROPDOWN: SetDParamStr(0, BaseMusic::GetUsedSet()->name.c_str()); break;
 			case WID_GO_BASE_MUSIC_STATUS:   SetDParam(0, BaseMusic::GetUsedSet()->GetNumInvalid()); break;
 		}
 	}
@@ -394,7 +394,7 @@ struct GameOptionsWindow : Window {
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseGraphics::GetNumSets(); i++) {
 					SetDParamStr(0, "123");
-					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
+					size->height = std::max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
 
@@ -413,7 +413,7 @@ struct GameOptionsWindow : Window {
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseSounds::GetNumSets(); i++) {
 					SetDParamStr(0, "123");
-					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
+					size->height = std::max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
 
@@ -421,7 +421,7 @@ struct GameOptionsWindow : Window {
 				/* Find the biggest description for the default size. */
 				for (int i = 0; i < BaseMusic::GetNumSets(); i++) {
 					SetDParamStr(0, "123");
-					size->height = max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
+					size->height = std::max(size->height, (uint)GetStringHeight(STR_BLACK_RAW_STRING, size->width));
 				}
 				break;
 
@@ -553,10 +553,9 @@ struct GameOptionsWindow : Window {
 	void SetMediaSet(int index)
 	{
 		if (_game_mode == GM_MENU) {
-			const char *name = T::GetSet(index)->name;
+			auto name = T::GetSet(index)->name;
 
-			free(T::ini_set);
-			T::ini_set = stredup(name);
+			T::ini_set = name;
 
 			T::SetSet(name);
 			this->reload = true;
@@ -1383,7 +1382,7 @@ uint SettingsContainer::GetMaxHelpHeight(int maxw)
 {
 	uint biggest = 0;
 	for (EntryVector::const_iterator it = this->entries.begin(); it != this->entries.end(); ++it) {
-		biggest = max(biggest, (*it)->GetMaxHelpHeight(maxw));
+		biggest = std::max(biggest, (*it)->GetMaxHelpHeight(maxw));
 	}
 	return biggest;
 }
@@ -1665,7 +1664,6 @@ static SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.persistent_buildingtools"));
 				construction->Add(new SettingEntry("gui.quick_goto"));
 				construction->Add(new SettingEntry("gui.default_rail_type"));
-				construction->Add(new SettingEntry("gui.disable_unsuitable_building"));
 			}
 
 			interface->Add(new SettingEntry("gui.autosave"));
@@ -1714,6 +1712,7 @@ static SettingsContainer &GetSettingsTree()
 			company->Add(new SettingEntry("gui.default_signal_type"));
 			company->Add(new SettingEntry("gui.cycle_signal_types"));
 			company->Add(new SettingEntry("gui.drag_signals_fixed_distance"));
+			company->Add(new SettingEntry("gui.auto_remove_signals"));
 			company->Add(new SettingEntry("gui.new_nonstop"));
 			company->Add(new SettingEntry("gui.stop_location"));
 			company->Add(new SettingEntry("gui.starting_colour"));
@@ -1844,7 +1843,7 @@ static SettingsContainer &GetSettingsTree()
 				industries->Add(new SettingEntry("construction.industry_platform"));
 				industries->Add(new SettingEntry("economy.multiple_industry_per_town"));
 				industries->Add(new SettingEntry("game_creation.oil_refinery_limit"));
-				industries->Add(new SettingEntry("economy.smooth_economy"));
+				industries->Add(new SettingEntry("economy.type"));
 				industries->Add(new SettingEntry("station.serve_neutral_industries"));
 			}
 
@@ -1898,7 +1897,7 @@ static const StringID _game_settings_restrict_dropdown[] = {
 	STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_DEFAULT,          // RM_CHANGED_AGAINST_DEFAULT
 	STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_NEW,              // RM_CHANGED_AGAINST_NEW
 };
-assert_compile(lengthof(_game_settings_restrict_dropdown) == RM_END);
+static_assert(lengthof(_game_settings_restrict_dropdown) == RM_END);
 
 /** Warnings about hidden search results. */
 enum WarnHiddenResult {
@@ -1971,7 +1970,7 @@ struct GameSettingsWindow : Window {
 	{
 		switch (widget) {
 			case WID_GS_OPTIONSPANEL:
-				resize->height = SETTING_HEIGHT = GetMinSizing(NWST_STEP, max(max<int>(_circle_size.height, SETTING_BUTTON_HEIGHT), FONT_HEIGHT_NORMAL) + 1);
+				resize->height = SETTING_HEIGHT = GetMinSizing(NWST_STEP, std::max({(int)_circle_size.height, SETTING_BUTTON_HEIGHT, FONT_HEIGHT_NORMAL}) + 1);
 				resize->width  = 1;
 
 				size->height = 5 * resize->height + SETTINGTREE_TOP_OFFSET + SETTINGTREE_BOTTOM_OFFSET;
@@ -1985,16 +1984,16 @@ struct GameSettingsWindow : Window {
 				};
 				for (uint i = 0; i < lengthof(setting_types); i++) {
 					SetDParam(0, setting_types[i]);
-					size->width = max(size->width, GetStringBoundingBox(STR_CONFIG_SETTING_TYPE).width);
+					size->width = std::max(size->width, GetStringBoundingBox(STR_CONFIG_SETTING_TYPE).width);
 				}
 				size->height = 2 * FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL +
-						max(size->height, GetSettingsTree().GetMaxHelpHeight(size->width));
+						std::max(size->height, GetSettingsTree().GetMaxHelpHeight(size->width));
 				break;
 			}
 
 			case WID_GS_RESTRICT_CATEGORY:
 			case WID_GS_RESTRICT_TYPE:
-				size->width = max(GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_CATEGORY).width, GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_TYPE).width);
+				size->width = std::max(GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_CATEGORY).width, GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_TYPE).width);
 				break;
 
 			default:
@@ -2307,12 +2306,14 @@ struct GameSettingsWindow : Window {
 		} else {
 			/* Only open editbox if clicked for the second time, and only for types where it is sensible for. */
 			if (this->last_clicked == pe && sd->desc.cmd != SDT_BOOLX && !(sd->desc.flags & SGF_MULTISTRING)) {
+				int64 value64 = value;
 				/* Show the correct currency-translated value */
-				if (sd->desc.flags & SGF_CURRENCY) value *= _currency->rate;
+				if (sd->desc.flags & SGF_CURRENCY) value64 *= _currency->rate;
 
 				this->valuewindow_entry = pe;
-				SetDParam(0, value);
-				ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, 10, this, CS_NUMERAL, QSF_ENABLE_DEFAULT);
+				SetDParam(0, value64);
+				/* Limit string length to 14 so that MAX_INT32 * max currency rate doesn't exceed MAX_INT64. */
+				ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, 15, this, CS_NUMERAL, QSF_ENABLE_DEFAULT);
 			}
 			this->SetDisplayedHelpText(pe);
 		}
@@ -2337,10 +2338,12 @@ struct GameSettingsWindow : Window {
 
 		int32 value;
 		if (!StrEmpty(str)) {
-			value = atoi(str);
+			long long llvalue = atoll(str);
 
 			/* Save the correct currency-translated value */
-			if (sd->desc.flags & SGF_CURRENCY) value /= _currency->rate;
+			if (sd->desc.flags & SGF_CURRENCY) llvalue /= _currency->rate;
+
+			value = (int32)ClampToI32(llvalue);
 		} else {
 			value = (int32)(size_t)sd->desc.def;
 		}
@@ -2746,7 +2749,7 @@ struct CustomCurrencyWindow : Window {
 			case WID_CC_YEAR: { // Year to switch to euro
 				int val = atoi(str);
 
-				_custom_currency.to_euro = (val < 2000 ? CF_NOEURO : min(val, MAX_YEAR));
+				_custom_currency.to_euro = (val < 2000 ? CF_NOEURO : std::min(val, MAX_YEAR));
 				break;
 			}
 		}

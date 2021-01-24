@@ -92,7 +92,7 @@ void CcPlaySound_SPLAT_RAIL(const CommandCost &result, TileIndex tile, uint32 p1
 
 static void GenericPlaceRail(TileIndex tile, int cmd)
 {
-	DoCommandP(tile, _cur_railtype, cmd,
+	DoCommandP(tile, _cur_railtype, cmd | (_settings_client.gui.auto_remove_signals << 3),
 			_remove_button_clicked ?
 			CMD_REMOVE_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
 			CMD_BUILD_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK),
@@ -108,10 +108,11 @@ static void GenericPlaceRail(TileIndex tile, int cmd)
  */
 static void PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track)
 {
-	if (GetRailTileType(tile) != RAIL_TILE_NORMAL) return;
+	if (GetRailTileType(tile) == RAIL_TILE_DEPOT) return;
+	if (GetRailTileType(tile) == RAIL_TILE_SIGNALS && !_settings_client.gui.auto_remove_signals) return;
 	if ((GetTrackBits(tile) & DiagdirReachesTracks(dir)) == 0) return;
 
-	DoCommandP(tile, _cur_railtype, track, CMD_BUILD_SINGLE_RAIL);
+	DoCommandP(tile, _cur_railtype, track | (_settings_client.gui.auto_remove_signals << 3), CMD_BUILD_SINGLE_RAIL);
 }
 
 /** Additional pieces of track to add at the entrance of a depot. */
@@ -330,7 +331,8 @@ static void BuildRailClick_Remove(Window *w)
 
 static void DoRailroadTrack(int mode)
 {
-	DoCommandP(TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y), _cur_railtype | (mode << 6),
+	uint32 p2 = _cur_railtype | (mode << 6) | (_settings_client.gui.auto_remove_signals << 11);
+	DoCommandP(TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y), p2,
 			_remove_button_clicked ?
 			CMD_REMOVE_RAILROAD_TRACK | CMD_MSG(STR_ERROR_CAN_T_REMOVE_RAILROAD_TRACK) :
 			CMD_BUILD_RAILROAD_TRACK  | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK),
@@ -415,18 +417,6 @@ struct BuildRailToolbarWindow : Window {
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (this->IsWidgetLowered(WID_RAT_BUILD_STATION)) SetViewportCatchmentStation(nullptr, true);
 		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
-	}
-
-	/**
-	 * Some data on this window has become invalid.
-	 * @param data Information about the changed data.
-	 * @param gui_scope Whether the call is done from GUI scope. You may not do everything when not in GUI scope. See #InvalidateWindowData() for details.
-	 */
-	void OnInvalidateData(int data = 0, bool gui_scope = true) override
-	{
-		if (!gui_scope) return;
-
-		if (!CanBuildVehicleInfrastructure(VEH_TRAIN)) delete this;
 	}
 
 	/**
@@ -825,7 +815,7 @@ struct BuildRailToolbarWindow : Window {
  */
 static EventState RailToolbarGlobalHotkeys(int hotkey)
 {
-	if (_game_mode != GM_NORMAL || !CanBuildVehicleInfrastructure(VEH_TRAIN)) return ES_NOT_HANDLED;
+	if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
 	extern RailType _last_built_railtype;
 	Window *w = ShowBuildRailToolbar(_last_built_railtype);
 	if (w == nullptr) return ES_NOT_HANDLED;
@@ -1021,7 +1011,7 @@ public:
 		}
 		if (newstation) {
 			_railstation.station_count = StationClass::Get(_railstation.station_class)->GetSpecCount();
-			_railstation.station_type = min(_railstation.station_type, _railstation.station_count - 1);
+			_railstation.station_type = std::min<int>(_railstation.station_type, _railstation.station_count - 1);
 
 			int count = 0;
 			for (uint i = 0; i < StationClass::GetClassCount(); i++) {
@@ -1029,7 +1019,7 @@ public:
 				count++;
 			}
 			this->vscroll->SetCount(count);
-			this->vscroll->SetPosition(Clamp(_railstation.station_class - 2, 0, max(this->vscroll->GetCount() - this->vscroll->GetCapacity(), 0)));
+			this->vscroll->SetPosition(Clamp(_railstation.station_class - 2, 0, std::max(this->vscroll->GetCount() - this->vscroll->GetCapacity(), 0)));
 
 			NWidgetMatrix *matrix = this->GetWidget<NWidgetMatrix>(WID_BRAS_MATRIX);
 			matrix->SetScrollbar(this->vscroll2, this->vscroll2 ? WID_BRAS_MATRIX_SCROLL : -1);
@@ -1103,8 +1093,9 @@ public:
 					if (i == STAT_CLASS_WAYP) continue;
 					d = maxdim(d, GetStringBoundingBox(StationClass::Get((StationClassID)i)->name));
 				}
-				size->width = max(size->width, d.width + padding.width);
-				this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				size->width = std::max(size->width, d.width + padding.width);
+				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
+				this->line_height = GetMinSizing(NWST_STEP, this->line_height);
 				size->height = 3 * this->line_height;
 				resize->height = this->line_height;
 				break;
@@ -1129,7 +1120,7 @@ public:
 						d = maxdim(d, GetStringBoundingBox(str));
 					}
 				}
-				size->width = max(size->width, d.width + padding.width);
+				size->width = std::max(size->width, d.width + padding.width);
 				break;
 			}
 
@@ -1373,6 +1364,7 @@ public:
 				this->SetWidgetLoweredState(WID_BRAS_HIGHLIGHT_ON, _settings_client.gui.station_show_coverage);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
+				SetViewportCatchmentStation(nullptr, true);
 				break;
 
 			case WID_BRAS_NEWST_LIST: {
@@ -1385,7 +1377,7 @@ public:
 							_railstation.station_class = (StationClassID)i;
 							StationClass *stclass = StationClass::Get(_railstation.station_class);
 							_railstation.station_count = stclass->GetSpecCount();
-							_railstation.station_type  = min((int)_railstation.station_type, max(0, (int)_railstation.station_count - 1));
+							_railstation.station_type  = std::min((int)_railstation.station_type, std::max(0, (int)_railstation.station_count - 1));
 
 							this->CheckSelectedSize(stclass->GetSpec(_railstation.station_type));
 
@@ -1605,9 +1597,9 @@ public:
 				for (uint lowered = 0; lowered < 2; lowered++) {
 					Point offset;
 					Dimension sprite_size = GetSpriteSize(rti->gui_sprites.signals[type][variant][lowered], &offset);
-					this->sig_sprite_bottom_offset = max<int>(this->sig_sprite_bottom_offset, sprite_size.height);
-					this->sig_sprite_size.width = max<int>(this->sig_sprite_size.width, sprite_size.width - offset.x);
-					this->sig_sprite_size.height = max<int>(this->sig_sprite_size.height, sprite_size.height - offset.y);
+					this->sig_sprite_bottom_offset = std::max<int>(this->sig_sprite_bottom_offset, sprite_size.height);
+					this->sig_sprite_size.width = std::max<int>(this->sig_sprite_size.width, sprite_size.width - offset.x);
+					this->sig_sprite_size.height = std::max<int>(this->sig_sprite_size.height, sprite_size.height - offset.y);
 				}
 			}
 		}
@@ -1617,10 +1609,10 @@ public:
 	{
 		if (widget == WID_BS_DRAG_SIGNALS_DENSITY_LABEL) {
 			/* Two digits for signals density. */
-			size->width = max(size->width, 2 * GetDigitWidth() + padding.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT);
+			size->width = std::max(size->width, 2 * GetDigitWidth() + padding.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT);
 		} else if (IsInsideMM(widget, WID_BS_SEMAPHORE_NORM, WID_BS_ELECTRIC_PBS_OWAY + 1)) {
-			size->width = max(size->width, this->sig_sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT);
-			size->height = max(size->height, this->sig_sprite_size.height + WD_IMGBTN_TOP + WD_IMGBTN_BOTTOM);
+			size->width = std::max(size->width, this->sig_sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT);
+			size->height = std::max(size->height, this->sig_sprite_size.height + WD_IMGBTN_TOP + WD_IMGBTN_BOTTOM);
 		}
 	}
 

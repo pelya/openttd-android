@@ -36,6 +36,7 @@
 #include "animated_tile_func.h"
 #include "elrail_func.h"
 #include "station_base.h"
+#include "station_func.h"
 #include "station_kdtree.h"
 #include "roadstop_base.h"
 #include "newgrf_railtype.h"
@@ -400,13 +401,10 @@ void Station::GetTileArea(TileArea *ta, StationType type) const
 		case STATION_DOCK:
 		case STATION_OILRIG:
 			*ta = this->docking_station;
-			break;
+			return;
 
 		default: NOT_REACHED();
 	}
-
-	ta->w = 1;
-	ta->h = 1;
 }
 
 /**
@@ -1071,10 +1069,10 @@ CommandCost CanExpandRailStation(const BaseStation *st, TileArea &new_ta, Axis a
 	TileArea cur_ta = st->train_station;
 
 	/* determine new size of train station region.. */
-	int x = min(TileX(cur_ta.tile), TileX(new_ta.tile));
-	int y = min(TileY(cur_ta.tile), TileY(new_ta.tile));
-	new_ta.w = max(TileX(cur_ta.tile) + cur_ta.w, TileX(new_ta.tile) + new_ta.w) - x;
-	new_ta.h = max(TileY(cur_ta.tile) + cur_ta.h, TileY(new_ta.tile) + new_ta.h) - y;
+	int x = std::min(TileX(cur_ta.tile), TileX(new_ta.tile));
+	int y = std::min(TileY(cur_ta.tile), TileY(new_ta.tile));
+	new_ta.w = std::max(TileX(cur_ta.tile) + cur_ta.w, TileX(new_ta.tile) + new_ta.w) - x;
+	new_ta.h = std::max(TileY(cur_ta.tile) + cur_ta.h, TileY(new_ta.tile) + new_ta.h) - y;
 	new_ta.tile = TileXY(x, y);
 
 	/* make sure the final size is not too big. */
@@ -1327,7 +1325,7 @@ CommandCost CmdBuildRailStation(TileIndex tile_org, DoCommandFlag flags, uint32 
 		/* Perform NewStation checks */
 
 		/* Check if the station size is permitted */
-		if (HasBit(statspec->disallowed_platforms, min(numtracks - 1, 7)) || HasBit(statspec->disallowed_lengths, min(plat_len - 1, 7))) {
+		if (HasBit(statspec->disallowed_platforms, std::min(numtracks - 1, 7)) || HasBit(statspec->disallowed_lengths, std::min(plat_len - 1, 7))) {
 			return CMD_ERROR;
 		}
 
@@ -1935,8 +1933,8 @@ CommandCost CmdBuildRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 				if (road_rt == INVALID_ROADTYPE && RoadTypeIsRoad(rt)) road_rt = rt;
 				if (tram_rt == INVALID_ROADTYPE && RoadTypeIsTram(rt)) tram_rt = rt;
 
-				UpdateCompanyRoadInfrastructure(road_rt, road_owner, 2);
-				UpdateCompanyRoadInfrastructure(tram_rt, tram_owner, 2);
+				UpdateCompanyRoadInfrastructure(road_rt, road_owner, ROAD_STOP_TRACKBIT_FACTOR);
+				UpdateCompanyRoadInfrastructure(tram_rt, tram_owner, ROAD_STOP_TRACKBIT_FACTOR);
 
 				MakeDriveThroughRoadStop(cur_tile, st->owner, road_owner, tram_owner, st->index, rs_type, road_rt, tram_rt, axis);
 				road_stop->MakeDriveThrough();
@@ -1944,7 +1942,7 @@ CommandCost CmdBuildRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 				if (road_rt == INVALID_ROADTYPE && RoadTypeIsRoad(rt)) road_rt = rt;
 				if (tram_rt == INVALID_ROADTYPE && RoadTypeIsTram(rt)) tram_rt = rt;
 				/* Non-drive-through stop never overbuild and always count as two road bits. */
-				Company::Get(st->owner)->infrastructure.road[rt] += 2;
+				Company::Get(st->owner)->infrastructure.road[rt] += ROAD_STOP_TRACKBIT_FACTOR;
 				MakeRoadStop(cur_tile, st->owner, st->index, rs_type, road_rt, tram_rt, ddir);
 			}
 			Company::Get(st->owner)->infrastructure.station++;
@@ -2033,7 +2031,7 @@ static CommandCost RemoveRoadStop(TileIndex tile, DoCommandFlag flags)
 		/* Update company infrastructure counts. */
 		FOR_ALL_ROADTRAMTYPES(rtt) {
 			RoadType rt = GetRoadType(tile, rtt);
-			UpdateCompanyRoadInfrastructure(rt, GetRoadOwner(tile, rtt), -2);
+			UpdateCompanyRoadInfrastructure(rt, GetRoadOwner(tile, rtt), -static_cast<int>(ROAD_STOP_TRACKBIT_FACTOR));
 		}
 
 		Company::Get(st->owner)->infrastructure.station--;
@@ -2488,8 +2486,7 @@ bool HasStationInUse(StationID station, bool include_company, CompanyID company)
 {
 	for (const Vehicle *v : Vehicle::Iterate()) {
 		if ((v->owner == company) == include_company) {
-			const Order *order;
-			FOR_VEHICLE_ORDERS(v, order) {
+			for (const Order *order : v->Orders()) {
 				if ((order->IsType(OT_GOTO_STATION) || order->IsType(OT_GOTO_WAYPOINT)) && order->GetDestination() == station) {
 					return true;
 				}
@@ -2538,8 +2535,10 @@ CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 
 	if (IsBridgeAbove(tile)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 
+	CommandCost cost(EXPENSES_CONSTRUCTION, _price[PR_BUILD_STATION_DOCK]);
 	ret = DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
 	if (ret.Failed()) return ret;
+	cost.AddCost(ret);
 
 	TileIndex tile_cur = tile + TileOffsByDiagDir(direction);
 
@@ -2594,7 +2593,7 @@ CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 		st->AfterStationTileSetChange(true, STATION_DOCK);
 	}
 
-	return CommandCost(EXPENSES_CONSTRUCTION, _price[PR_BUILD_STATION_DOCK]);
+	return cost;
 }
 
 void RemoveDockingTile(TileIndex t)
@@ -2604,7 +2603,8 @@ void RemoveDockingTile(TileIndex t)
 		if (!IsValidTile(tile)) continue;
 
 		if (IsTileType(tile, MP_STATION)) {
-			UpdateStationDockingTiles(Station::GetByTile(tile));
+			Station *st = Station::GetByTile(tile);
+			if (st != nullptr) UpdateStationDockingTiles(st);
 		} else if (IsTileType(tile, MP_INDUSTRY)) {
 			Station *neutral = Industry::GetByTile(tile)->neutral_station;
 			if (neutral != nullptr) UpdateStationDockingTiles(neutral);
@@ -3364,7 +3364,7 @@ static VehicleEnterTileStatus VehicleEnter_Station(Vehicle *v, TileIndex tile, i
 				return VETSB_ENTERED_STATION | (VehicleEnterTileStatus)(station_id << VETS_STATION_ID_OFFSET); // enter station
 			} else if (x < stop) {
 				v->vehstatus |= VS_TRAIN_SLOWING;
-				uint16 spd = max(0, (stop - x) * 20 - 15);
+				uint16 spd = std::max(0, (stop - x) * 20 - 15);
 				if (spd < v->cur_speed) v->cur_speed = spd;
 			}
 		}
@@ -3456,7 +3456,7 @@ static void TruncateCargo(const CargoSpec *cs, GoodsEntry *ge, uint amount = UIN
 		if (source_station == nullptr) continue;
 
 		GoodsEntry &source_ge = source_station->goods[cs->Index()];
-		source_ge.max_waiting_cargo = max(source_ge.max_waiting_cargo, i->second);
+		source_ge.max_waiting_cargo = std::max(source_ge.max_waiting_cargo, i->second);
 	}
 }
 
@@ -3512,7 +3512,9 @@ static void UpdateStationRating(Station *st)
 				/* NewGRFs expect last speed to be 0xFF when no vehicle has arrived yet. */
 				uint last_speed = ge->HasVehicleEverTriedLoading() ? ge->last_speed : 0xFF;
 
-				uint32 var18 = min(ge->time_since_pickup, 0xFF) | (min(ge->max_waiting_cargo, 0xFFFF) << 8) | (min(last_speed, 0xFF) << 24);
+				uint32 var18 = std::min<uint>(ge->time_since_pickup, 0xFFu)
+					| (std::min<uint>(ge->max_waiting_cargo, 0xFFFFu) << 8)
+					| (std::min<uint>(last_speed, 0xFFu) << 24);
 				/* Convert to the 'old' vehicle types */
 				uint32 var10 = (st->last_vehicle_type == VEH_INVALID) ? 0x0 : (st->last_vehicle_type + 0x10);
 				uint16 callback = GetCargoCallback(CBID_CARGO_STATION_RATING_CALC, var10, var18, cs);
@@ -3571,7 +3573,7 @@ static void UpdateStationRating(Station *st)
 					uint32 r = Random();
 					if (rating <= (int)GB(r, 0, 7)) {
 						/* Need to have int, otherwise it will just overflow etc. */
-						waiting = max((int)waiting - (int)((GB(r, 8, 2) - 1) * num_dests), 0);
+						waiting = std::max((int)waiting - (int)((GB(r, 8, 2) - 1) * num_dests), 0);
 						waiting_changed = true;
 					}
 				}
@@ -3587,7 +3589,7 @@ static void UpdateStationRating(Station *st)
 					uint difference = waiting - WAITING_CARGO_THRESHOLD;
 					waiting -= (difference / WAITING_CARGO_CUT_FACTOR);
 
-					waiting = min(waiting, MAX_WAITING_CARGO);
+					waiting = std::min(waiting, MAX_WAITING_CARGO);
 					waiting_changed = true;
 				}
 
@@ -3801,7 +3803,7 @@ void IncreaseStats(Station *st, const Vehicle *front, StationID next_station_id)
 			 * As usage is not such an important figure anyway we just
 			 * ignore the additional cargo then.*/
 			IncreaseStats(st, v->cargo_type, next_station_id, v->refit_cap,
-					min(v->refit_cap, v->cargo.StoredCount()), EUM_INCREASE);
+					std::min<uint>(v->refit_cap, v->cargo.StoredCount()), EUM_INCREASE);
 		}
 	}
 }
@@ -3918,7 +3920,7 @@ static uint UpdateStationWaiting(Station *st, CargoID type, uint amount, SourceT
 static bool IsUniqueStationName(const char *name)
 {
 	for (const Station *st : Station::Iterate()) {
-		if (st->name != nullptr && strcmp(st->name, name) == 0) return false;
+		if (!st->name.empty() && st->name == name) return false;
 	}
 
 	return true;
@@ -3950,8 +3952,11 @@ CommandCost CmdRenameStation(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 
 	if (flags & DC_EXEC) {
 		st->cached_name.clear();
-		free(st->name);
-		st->name = reset ? nullptr : stredup(text);
+		if (reset) {
+			st->name.clear();
+		} else {
+			st->name = text;
+		}
 
 		st->UpdateVirtCoord();
 		InvalidateWindowData(WC_STATION_LIST, st->owner, 1);
@@ -3968,68 +3973,27 @@ static void AddNearbyStationsByCatchment(TileIndex tile, StationList *stations, 
 }
 
 /**
- * Find all stations around a rectangular producer (industry, house, headquarter, ...)
- *
- * @param location The location/area of the producer
- * @param[out] stations The list to store the stations in
- * @param use_nearby Use nearby station list of industry/town associated with location.tile
- */
-void FindStationsAroundTiles(const TileArea &location, StationList * const stations, bool use_nearby)
-{
-	if (use_nearby) {
-		/* Industries and towns maintain a list of nearby stations */
-		if (IsTileType(location.tile, MP_INDUSTRY)) {
-			/* Industry nearby stations are already filtered by catchment. */
-			*stations = Industry::GetByTile(location.tile)->stations_near;
-			return;
-		} else if (IsTileType(location.tile, MP_HOUSE)) {
-			/* Town nearby stations need to be filtered per tile. */
-			assert(location.w == 1 && location.h == 1);
-			AddNearbyStationsByCatchment(location.tile, stations, Town::GetByTile(location.tile)->stations_near);
-			return;
-		}
-	}
-
-	/* Not using, or don't have a nearby stations list, so we need to scan. */
-	std::set<StationID> seen_stations;
-
-	/* Scan an area around the building covering the maximum possible station
-	 * to find the possible nearby stations. */
-	uint max_c = _settings_game.station.modified_catchment ? MAX_CATCHMENT : CA_UNMODIFIED;
-	TileArea ta = TileArea(location).Expand(max_c);
-	TILE_AREA_LOOP(tile, ta) {
-		if (IsTileType(tile, MP_STATION)) seen_stations.insert(GetStationIndex(tile));
-	}
-
-	for (StationID stationid : seen_stations) {
-		Station *st = Station::GetIfValid(stationid);
-		if (st == nullptr) continue; /* Waypoint */
-
-		/* Check if station is attached to an industry */
-		if (!_settings_game.station.serve_neutral_industries && st->industry != nullptr) continue;
-
-		/* Test if the tile is within the station's catchment */
-		TILE_AREA_LOOP(tile, location) {
-			if (st->TileIsInCatchment(tile)) {
-				stations->insert(st);
-				break;
-			}
-		}
-	}
-}
-
-/**
  * Run a tile loop to find stations around a tile, on demand. Cache the result for further requests
  * @return pointer to a StationList containing all stations found
  */
 const StationList *StationFinder::GetStations()
 {
 	if (this->tile != INVALID_TILE) {
-		FindStationsAroundTiles(*this, &this->stations);
+		if (IsTileType(this->tile, MP_HOUSE)) {
+			/* Town nearby stations need to be filtered per tile. */
+			assert(this->w == 1 && this->h == 1);
+			AddNearbyStationsByCatchment(this->tile, &this->stations, Town::GetByTile(this->tile)->stations_near);
+		} else {
+			ForAllStationsAroundTiles(*this, [this](Station *st, TileIndex tile) {
+				this->stations.insert(st);
+				return true;
+			});
+		}
 		this->tile = INVALID_TILE;
 	}
 	return &this->stations;
 }
+
 
 static bool CanMoveGoodsToStation(const Station *st, CargoID type)
 {
@@ -4052,7 +4016,7 @@ static bool CanMoveGoodsToStation(const Station *st, CargoID type)
 	return true;
 }
 
-uint MoveGoodsToStation(CargoID type, uint amount, SourceType source_type, SourceID source_id, const StationList *all_stations)
+uint MoveGoodsToStation(CargoID type, uint amount, SourceType source_type, SourceID source_id, const StationList *all_stations, Owner exclusivity)
 {
 	/* Return if nothing to do. Also the rounding below fails for 0. */
 	if (all_stations->empty()) return 0;
@@ -4063,6 +4027,7 @@ uint MoveGoodsToStation(CargoID type, uint amount, SourceType source_type, Sourc
 	std::vector<StationInfo> used_stations;
 
 	for (Station *st : *all_stations) {
+		if (exclusivity != INVALID_OWNER && exclusivity != st->owner) continue;
 		if (!CanMoveGoodsToStation(st, type)) continue;
 
 		/* Avoid allocating a vector if there is only one station to significantly
@@ -4150,11 +4115,11 @@ void UpdateStationDockingTiles(Station *st)
 
 	/* Expand the area by a tile on each side while
 	 * making sure that we remain inside the map. */
-	int x2 = min(x + area->w + 1, MapSizeX());
-	int x1 = max(x - 1, 0);
+	int x2 = std::min<int>(x + area->w + 1, MapSizeX());
+	int x1 = std::max<int>(x - 1, 0);
 
-	int y2 = min(y + area->h + 1, MapSizeY());
-	int y1 = max(y - 1, 0);
+	int y2 = std::min<int>(y + area->h + 1, MapSizeY());
+	int y1 = std::max<int>(y - 1, 0);
 
 	TileArea ta(TileXY(x1, y1), TileXY(x2 - 1, y2 - 1));
 	TILE_AREA_LOOP(tile, ta) {
@@ -4623,7 +4588,7 @@ void FlowStat::ScaleToMonthly(uint runtime)
 	SharesMap new_shares;
 	uint share = 0;
 	for (SharesMap::iterator i = this->shares.begin(); i != this->shares.end(); ++i) {
-		share = max(share + 1, i->first * 30 / runtime);
+		share = std::max(share + 1, i->first * 30 / runtime);
 		new_shares[share] = i->second;
 		if (this->unrestricted == i->first) this->unrestricted = share;
 	}

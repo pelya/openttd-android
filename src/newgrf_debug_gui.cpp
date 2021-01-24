@@ -374,12 +374,12 @@ struct NewGRFInspectWindow : Window {
 			case WID_NGRFI_VEH_CHAIN: {
 				assert(this->HasChainIndex());
 				GrfSpecFeature f = GetFeatureNum(this->window_number);
-				size->height = max(size->height, GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height + 2 + WD_BEVEL_TOP + WD_BEVEL_BOTTOM);
+				size->height = std::max(size->height, GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height + 2 + WD_BEVEL_TOP + WD_BEVEL_BOTTOM);
 				break;
 			}
 
 			case WID_NGRFI_MAINPANEL:
-				resize->height = max(11, FONT_HEIGHT_NORMAL + 1);
+				resize->height = std::max(11, FONT_HEIGHT_NORMAL + 1);
 				resize->width  = 1;
 
 				size->height = 5 * resize->height + TOP_OFFSET + BOTTOM_OFFSET;
@@ -430,7 +430,7 @@ struct NewGRFInspectWindow : Window {
 				int skip = 0;
 				if (total_width > width) {
 					int sel_center = (sel_start + sel_end) / 2;
-					if (sel_center > width / 2) skip = min(total_width - width, sel_center - width / 2);
+					if (sel_center > width / 2) skip = std::min(total_width - width, sel_center - width / 2);
 				}
 
 				GrfSpecFeature f = GetFeatureNum(this->window_number);
@@ -804,7 +804,7 @@ GrfSpecFeature GetGrfSpecFeature(VehicleType type)
 
 /** Window used for aligning sprites. */
 struct SpriteAlignerWindow : Window {
-	typedef SmallPair<int16, int16> XyOffs;    ///< Pair for x and y offsets of the sprite before alignment. First value contains the x offset, second value y offset.
+	typedef std::pair<int16, int16> XyOffs;    ///< Pair for x and y offsets of the sprite before alignment. First value contains the x offset, second value y offset.
 
 	SpriteID current_sprite;                   ///< The currently shown sprite.
 	Scrollbar *vscroll;
@@ -856,13 +856,18 @@ struct SpriteAlignerWindow : Window {
 
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
-		if (widget != WID_SA_LIST) return;
-
-		resize->height = GetMinSizing(NWST_STEP, max(11, FONT_HEIGHT_NORMAL + 1));
-		resize->width  = 1;
-
-		/* Resize to about 200 pixels (for the preview) */
-		size->height = (1 + 200 / resize->height) * resize->height;
+		switch (widget) {
+			case WID_SA_SPRITE:
+				size->height = ScaleGUITrad(200);
+				break;
+			case WID_SA_LIST:
+				resize->height = std::max(11, FONT_HEIGHT_NORMAL + 1);
+				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->width  = 1;
+				break;
+			default:
+				break;
+		}
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
@@ -893,7 +898,7 @@ struct SpriteAlignerWindow : Window {
 				int step_size = nwid->resize_y;
 
 				std::vector<SpriteID> &list = _newgrf_debug_sprite_picker.sprites;
-				int max = min<int>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), (uint)list.size());
+				int max = std::min<int>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), (uint)list.size());
 
 				int y = Center(r.top + WD_FRAMERECT_TOP, step_size, FONT_HEIGHT_NORMAL);
 				for (int i = this->vscroll->GetPosition(); i < max; i++) {

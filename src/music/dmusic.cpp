@@ -7,12 +7,10 @@
 
 /** @file dmusic.cpp Playing music via DirectMusic. */
 
-#ifdef WIN32_ENABLE_DIRECTMUSIC_SUPPORT
-
 #define INITGUID
 #include "../stdafx.h"
 #ifdef WIN32_LEAN_AND_MEAN
-	#undef WIN32_LEAN_AND_MEAN // Don't exclude rarely-used stuff from Windows headers
+#	undef WIN32_LEAN_AND_MEAN // Don't exclude rarely-used stuff from Windows headers
 #endif
 #include "../debug.h"
 #include "../os/windows/win32.h"
@@ -27,7 +25,6 @@
 #include <windows.h>
 #include <dmksctrl.h>
 #include <dmusicc.h>
-#include <algorithm>
 #include <mutex>
 
 #include "../safeguards.h"
@@ -1071,7 +1068,7 @@ static const char *LoadDefaultDLSFile(const char *user_dls)
 }
 
 
-const char *MusicDriver_DMusic::Start(const char * const *parm)
+const char *MusicDriver_DMusic::Start(const StringList &parm)
 {
 	/* Initialize COM */
 	if (FAILED(CoInitializeEx(nullptr, COINITBASE_MULTITHREADED))) return "COM initialization failed";
@@ -1241,6 +1238,3 @@ void MusicDriver_DMusic::SetVolume(byte vol)
 {
 	_playback.new_volume = vol;
 }
-
-
-#endif /* WIN32_ENABLE_DIRECTMUSIC_SUPPORT */

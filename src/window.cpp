@@ -92,7 +92,7 @@ SpecialMouseMode _special_mouse_mode; ///< Mode of the mouse.
 static std::vector<WindowDesc*> *_window_descs = nullptr;
 
 /** Config file to store WindowDesc */
-char *_windows_file;
+std::string _windows_file;
 
 /** Window description constructor. */
 WindowDesc::WindowDesc(WindowPosition def_pos, const char *ini_key, int16 def_width_trad, int16 def_height_trad,
@@ -662,7 +662,7 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 	WidgetType widget_type = (nw != nullptr) ? nw->type : WWT_EMPTY;
 
 	bool focused_widget_changed = false;
-	/* If clicked on a window that previously did dot have focus */
+	/* If clicked on a window that previously did not have focus */
 	if (_focused_window != w &&                 // We already have focus, right?
 			(w->window_desc->flags & WDF_NO_FOCUS) == 0 &&  // Don't lose focus to toolbars
 			widget_type != WWT_CLOSEBOX) {          // Don't change focused window if 'X' (close button) was clicked
@@ -750,8 +750,8 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 				w->window_desc->pref_width = w->width;
 				w->window_desc->pref_height = w->height;
 			} else {
-				int16 def_width = max<int16>(min(w->window_desc->GetDefaultWidth(), _screen.width), w->nested_root->smallest_x);
-				int16 def_height = max<int16>(min(w->window_desc->GetDefaultHeight(), _screen.height - 50), w->nested_root->smallest_y);
+				int16 def_width = std::max<int16>(std::min<int16>(w->window_desc->GetDefaultWidth(), _screen.width), w->nested_root->smallest_x);
+				int16 def_height = std::max<int16>(std::min<int16>(w->window_desc->GetDefaultHeight(), _screen.height - 50), w->nested_root->smallest_y);
 
 				int dx = (w->resize.step_width  == 0) ? 0 : def_width  - w->width;
 				int dy = (w->resize.step_height == 0) ? 0 : def_height - w->height;
@@ -1022,7 +1022,7 @@ void DrawOverlappedWindowForAll(int left, int top, int right, int bottom)
 				left < w->left + w->width &&
 				top < w->top + w->height) {
 			/* Window w intersects with the rectangle => needs repaint */
-			DrawOverlappedWindow(w, max(left, w->left), max(top, w->top), min(right, w->left + w->width), min(bottom, w->top + w->height));
+			DrawOverlappedWindow(w, std::max(left, w->left), std::max(top, w->top), std::min(right, w->left + w->width), std::min(bottom, w->top + w->height));
 		}
 	}
 	_cur_dpi = old_dpi;
@@ -1034,7 +1034,7 @@ void DrawOverlappedWindowForAll(int left, int top, int right, int bottom)
  */
 void Window::SetDirty() const
 {
-	SetDirtyBlocks(this->left, this->top, this->left + this->width, this->top + this->height);
+	AddDirtyBlock(this->left, this->top, this->left + this->width, this->top + this->height);
 }
 
 /**
@@ -1061,8 +1061,8 @@ void Window::ReInit(int rx, int ry)
 	this->resize.step_height = this->nested_root->resize_y;
 
 	/* Resize as close to the original size + requested resize as possible. */
-	window_width  = max(window_width  + rx, this->width);
-	window_height = max(window_height + ry, this->height);
+	window_width  = std::max(window_width  + rx, this->width);
+	window_height = std::max(window_height + ry, this->height);
 	int dx = (this->resize.step_width  == 0) ? 0 : window_width  - this->width;
 	int dy = (this->resize.step_height == 0) ? 0 : window_height - this->height;
 	/* dx and dy has to go by step.. calculate it.
@@ -1442,6 +1442,7 @@ static void AddWindowToZOrdering(Window *w)
 		/* Search down the z-ordering for its location. */
 		Window *v = _z_front_window;
 		uint last_z_priority = UINT_MAX;
+		(void)last_z_priority; // Unused without asserts
 		while (v != nullptr && (v->window_class == WC_INVALID || GetWindowZPriority(v->window_class) > GetWindowZPriority(w->window_class))) {
 			if (v->window_class != WC_INVALID) {
 				/* Sanity check z-ordering, while we're at it. */
@@ -1588,8 +1589,8 @@ void Window::InitializePositionSize(int x, int y, int sm_width, int sm_height)
  */
 void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 {
-	def_width  = max(def_width,  this->width); // Don't allow default size to be smaller than smallest size
-	def_height = max(def_height, this->height);
+	def_width  = std::max(def_width,  this->width); // Don't allow default size to be smaller than smallest size
+	def_height = std::max(def_height, this->height);
 	bool vertical_toolbar = _settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR;
 	/* Try to make windows smaller when our window is too small.
 	 * w->(width|height) is normally the same as min_(width|height),
@@ -1604,8 +1605,8 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 		wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
 		if (wt != nullptr && !vertical_toolbar) free_height -= wt->height;
 
-		int enlarge_x = max(min(def_width  - this->width,  _screen.width - this->width),  0);
-		int enlarge_y = max(min(def_height - this->height, free_height   - this->height), 0);
+		int enlarge_x = std::max(std::min(def_width  - this->width,  _screen.width - this->width),  0);
+		int enlarge_y = std::max(std::min(def_height - this->height, free_height   - this->height), 0);
 		if (wt && vertical_toolbar && enlarge_x > _screen.width - wt->width * 2) {
 			enlarge_x = _screen.width - wt->width * 2;
 		}
@@ -1630,11 +1631,11 @@ void Window::FindWindowPlacementAndResize(int def_width, int def_height)
 
 	const Window *wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
 	if (!vertical_toolbar) {
-		ny = max(ny, (wt == nullptr || this == wt || this->top == 0) ? 0 : wt->height);
-		nx = max(nx, 0);
+		ny = std::max(ny, (wt == nullptr || this == wt || this->top == 0) ? 0 : wt->height);
+		nx = std::max(nx, 0);
 	} else {
-		nx = max(nx, (wt == nullptr || this == wt || this == FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0) || this->left == 0) ? 0 : wt->width);
-		ny = max(ny, 0);
+		nx = std::max(nx, (wt == nullptr || this == wt || this == FindWindowById(WC_MAIN_TOOLBAR_RIGHT, 0) || this->left == 0) ? 0 : wt->width);
+		ny = std::max(ny, 0);
 	}
 
 	if (this->viewport != nullptr) {
@@ -1798,7 +1799,7 @@ static Point GetAutoPlacePosition(int width, int height)
 		top = 0;
 	}
 	int offset_x = rtl ? -(int)NWidgetLeaf::closebox_dimension.width : (int)NWidgetLeaf::closebox_dimension.width;
-	int offset_y = max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM);
+	int offset_y = std::max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM);
 
 restart:
 	FOR_ALL_WINDOWS_FROM_BACK(w) {
@@ -1855,8 +1856,8 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 	Point pt;
 	const Window *w;
 
-	int16 default_width  = max(desc->GetDefaultWidth(),  sm_width);
-	int16 default_height = max(desc->GetDefaultHeight(), sm_height);
+	int16 default_width  = std::max(desc->GetDefaultWidth(),  sm_width);
+	int16 default_height = std::max(desc->GetDefaultHeight(), sm_height);
 
 	if (desc->parent_cls != WC_NONE && (w = FindWindowById(desc->parent_cls, window_number)) != nullptr &&
 			w->left < _screen.width - 20 && w->left > -60 && w->top < _screen.height - 20) {
@@ -1878,16 +1879,16 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 			 *  - Y position: closebox of parent + closebox of child + statusbar
 			 *  - X position: closebox on left/right, resizebox on right/left (depending on ltr/rtl)
 			 */
-			int indent_y = max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM);
+			int indent_y = std::max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM);
 			if (w->top + 3 * indent_y < _screen.height && _settings_client.gui.windows_titlebars) {
 				pt.y = w->top + indent_y;
 				int indent_close = NWidgetLeaf::closebox_dimension.width;
 				int indent_resize = NWidgetLeaf::resizebox_dimension.width;
 				if (_current_text_dir == TD_RTL) {
-					pt.x = max(w->left + w->width - default_width - indent_close, 0);
+					pt.x = std::max(w->left + w->width - default_width - indent_close, 0);
 					if (pt.x + default_width >= indent_close && pt.x + indent_resize <= _screen.width) return pt;
 				} else {
-					pt.x = min(w->left + indent_close, _screen.width - default_width);
+					pt.x = std::min(w->left + indent_close, _screen.width - default_width);
 					if (pt.x + default_width >= indent_resize && pt.x + indent_close <= _screen.width) return pt;
 				}
 			}
@@ -2060,10 +2061,15 @@ void ResetWindowSystem()
 
 static void DecreaseWindowCounters()
 {
+	static byte hundredth_tick_timeout = 100;
+
 	if (_scroller_click_timeout != 0) _scroller_click_timeout--;
+	if (hundredth_tick_timeout != 0) hundredth_tick_timeout--;
 
 	Window *w;
 	FOR_ALL_WINDOWS_FROM_FRONT(w) {
+		if (!_network_dedicated && hundredth_tick_timeout == 0) w->OnHundredthTick();
+
 		if (_scroller_click_timeout == 0) {
 			/* Unclick scrollbar buttons if they are pressed. */
 			for (uint i = 0; i < w->nested_array_size; i++) {
@@ -2095,6 +2101,8 @@ static void DecreaseWindowCounters()
 			w->RaiseButtons(true);
 		}
 	}
+
+	if (hundredth_tick_timeout == 0) hundredth_tick_timeout = 100;
 }
 
 static void HandlePlacePresize()
@@ -2327,14 +2335,14 @@ void ResizeWindow(Window *w, int delta_x, int delta_y, bool clamp_to_screen)
 			 * the resolution clamp it in such a manner that it stays within the bounds. */
 			int new_right  = w->left + w->width  + delta_x;
 			int new_bottom = w->top  + w->height + delta_y;
-			if (new_right  >= (int)_cur_resolution.width)  delta_x -= Ceil(new_right  - _cur_resolution.width,  max(1U, w->nested_root->resize_x));
-			if (new_bottom >= (int)_cur_resolution.height) delta_y -= Ceil(new_bottom - _cur_resolution.height, max(1U, w->nested_root->resize_y));
+			if (new_right  >= (int)_cur_resolution.width)  delta_x -= Ceil(new_right  - _cur_resolution.width,  std::max(1U, w->nested_root->resize_x));
+			if (new_bottom >= (int)_cur_resolution.height) delta_y -= Ceil(new_bottom - _cur_resolution.height, std::max(1U, w->nested_root->resize_y));
 		}
 
 		w->SetDirty();
 
-		uint new_xinc = max(0, (w->nested_root->resize_x == 0) ? 0 : (int)(w->nested_root->current_x - w->nested_root->smallest_x) + delta_x);
-		uint new_yinc = max(0, (w->nested_root->resize_y == 0) ? 0 : (int)(w->nested_root->current_y - w->nested_root->smallest_y) + delta_y);
+		uint new_xinc = std::max(0, (w->nested_root->resize_x == 0) ? 0 : (int)(w->nested_root->current_x - w->nested_root->smallest_x) + delta_x);
+		uint new_yinc = std::max(0, (w->nested_root->resize_y == 0) ? 0 : (int)(w->nested_root->current_y - w->nested_root->smallest_y) + delta_y);
 		assert(w->nested_root->resize_x == 0 || new_xinc % w->nested_root->resize_x == 0);
 		assert(w->nested_root->resize_y == 0 || new_yinc % w->nested_root->resize_y == 0);
 
@@ -2648,8 +2656,8 @@ static void HandleScrollbarScrolling(Window *w)
 	}
 
 	/* Find the item we want to move to and make sure it's inside bounds. */
-	int pos = min(RoundDivSU(max(0, i + _scrollbar_start_pos) * sb->GetCount(), _scrollbar_size), max(0, sb->GetCount() - sb->GetCapacity()));
-	if (rtl) pos = max(0, sb->GetCount() - sb->GetCapacity() - pos);
+	int pos = std::min(RoundDivSU(std::max(0, i + _scrollbar_start_pos) * sb->GetCount(), _scrollbar_size), std::max(0, sb->GetCount() - sb->GetCapacity()));
+	if (rtl) pos = std::max(0, sb->GetCount() - sb->GetCapacity() - pos);
 	if (pos != sb->GetPosition()) {
 		sb->SetPosition(pos);
 		w->SetDirty();
@@ -3022,7 +3030,7 @@ static void HandleAutoscroll()
 	if (w == nullptr || w->flags & WF_DISABLE_VP_SCROLL) return;
 	if (_settings_client.gui.auto_scrolling != VA_EVERY_VIEWPORT && w->window_class != WC_MAIN_WINDOW) return;
 
-	ViewPort *vp = IsPtInWindowViewport(w, x, y);
+	Viewport *vp = IsPtInWindowViewport(w, x, y);
 	if (vp == nullptr) return;
 
 	x -= vp->left;
@@ -3139,7 +3147,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	int y = _cursor.pos.y;
 	Window *w = FindWindowFromPt(x, y);
 	if (w == nullptr) return;
-	ViewPort *vp = IsPtInWindowViewport(w, x, y);
+	Viewport *vp = IsPtInWindowViewport(w, x, y);
 
 	/* Don't allow any action in a viewport if either in menu or when having a modal progress window */
 	if (vp != NULL && (_game_mode == GM_MENU || HasModalProgress())) return;
@@ -3447,6 +3455,12 @@ void UpdateWindows()
 
 	Window *w;
 
+	/* Process invalidations before anything else. */
+	FOR_ALL_WINDOWS_FROM_FRONT(w) {
+		w->ProcessScheduledInvalidations();
+		w->ProcessHighlightedInvalidations();
+	}
+
 	static GUITimer window_timer = GUITimer(1);
 	if (window_timer.Elapsed(delta_ms)) {
 		if (_network_dedicated) window_timer.SetInterval(MILLISECONDS_PER_TICK);
@@ -3468,23 +3482,9 @@ void UpdateWindows()
 
 	if (!_pause_mode || _game_mode == GM_EDITOR || _settings_game.construction.command_pause_level > CMDPL_NO_CONSTRUCTION) MoveAllTextEffects(delta_ms);
 
-	FOR_ALL_WINDOWS_FROM_FRONT(w) {
-		w->ProcessScheduledInvalidations();
-		w->ProcessHighlightedInvalidations();
-	}
-
 	/* Skip the actual drawing on dedicated servers without screen.
 	 * But still empty the invalidation queues above. */
 	if (_network_dedicated) return;
-
-	static GUITimer hundredth_timer = GUITimer(1);
-	if (hundredth_timer.Elapsed(delta_ms)) {
-		hundredth_timer.SetInterval(3000); // Historical reason: 100 * MILLISECONDS_PER_TICK
-
-		FOR_ALL_WINDOWS_FROM_FRONT(w) {
-			w->OnHundredthTick();
-		}
-	}
 
 	if (window_timer.HasElapsed()) {
 		window_timer.SetInterval(MILLISECONDS_PER_TICK);
@@ -3815,7 +3815,7 @@ static int PositionWindow(Window *w, WindowClass clss, int setting)
 		default: w->left = 0; break;
 	}
 	if (w->viewport != nullptr) w->viewport->left += w->left - old_left;
-	SetDirtyBlocks(0, w->top, _screen.width, w->top + w->height); // invalidate the whole row
+	AddDirtyBlock(0, w->top, _screen.width, w->top + w->height); // invalidate the whole row
 	return w->left;
 }
 
@@ -3903,14 +3903,14 @@ void RelocateAllWindows(int neww, int newh)
 				continue;
 
 			case WC_MAIN_TOOLBAR:
-				ResizeWindow(w, min(neww, _toolbar_width) - w->width, 0, false);
+				ResizeWindow(w, std::min<uint>(neww, _toolbar_width) - w->width, 0, false);
 
 				top = w->top;
 				left = PositionMainToolbar(w); // changes toolbar orientation
 				break;
 
 			case WC_MAIN_TOOLBAR_RIGHT:
-				ResizeWindow(w, min(neww, _toolbar_width) - w->width, 0, false);
+				ResizeWindow(w, std::min<uint>(neww, _toolbar_width) - w->width, 0, false);
 
 				top = w->top;
 				left = neww - w->width;
@@ -3922,14 +3922,14 @@ void RelocateAllWindows(int neww, int newh)
 				break;
 
 			case WC_STATUS_BAR:
-				ResizeWindow(w, min(neww, min(_toolbar_width, _screen.width - SETTING_BUTTON_HEIGHT * 2)) - w->width, 0, false);
+				ResizeWindow(w, std::min<uint>(neww, std::min(_toolbar_width, _screen.width - SETTING_BUTTON_HEIGHT * 2)) - w->width, 0, false);
 
 				top = newh - w->height;
 				left = PositionStatusbar(w);
 				break;
 
 			case WC_SEND_NETWORK_MSG:
-				ResizeWindow(w, min(neww, _toolbar_width) - w->width, 0, false);
+				ResizeWindow(w, std::min<uint>(neww, _toolbar_width) - w->width, 0, false);
 
 				top = newh - w->height - FindWindowById(WC_STATUS_BAR, 0)->height;
 				left = PositionNetworkChatWindow(w);

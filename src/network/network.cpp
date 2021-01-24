@@ -43,7 +43,7 @@ bool _ddc_fastforward = true;
 #endif /* DEBUG_DUMP_COMMANDS */
 
 /** Make sure both pools have the same size. */
-assert_compile(NetworkClientInfoPool::MAX_SIZE == NetworkClientSocketPool::MAX_SIZE);
+static_assert(NetworkClientInfoPool::MAX_SIZE == NetworkClientSocketPool::MAX_SIZE);
 
 /** The pool with client information. */
 NetworkClientInfoPool _networkclientinfo_pool("NetworkClientInfo");
@@ -80,8 +80,8 @@ uint8 _network_advertise_retries;     ///< The number of advertisement retries w
 CompanyMask _network_company_passworded; ///< Bitmask of the password status of all companies.
 
 /* Check whether NETWORK_NUM_LANDSCAPES is still in sync with NUM_LANDSCAPE */
-assert_compile((int)NETWORK_NUM_LANDSCAPES == (int)NUM_LANDSCAPE);
-assert_compile((int)NETWORK_COMPANY_NAME_LENGTH == MAX_LENGTH_COMPANY_NAME_CHARS * MAX_CHAR_LENGTH);
+static_assert((int)NETWORK_NUM_LANDSCAPES == (int)NUM_LANDSCAPE);
+static_assert((int)NETWORK_COMPANY_NAME_LENGTH == MAX_LENGTH_COMPANY_NAME_CHARS * MAX_CHAR_LENGTH);
 
 extern NetworkUDPSocketHandler *_udp_client_socket; ///< udp client socket
 extern NetworkUDPSocketHandler *_udp_server_socket; ///< udp server socket
@@ -245,7 +245,7 @@ void NetworkTextMessage(NetworkAction action, TextColour colour, bool self_send,
 			break;
 		case NETWORK_ACTION_LEAVE:          strid = STR_NETWORK_MESSAGE_CLIENT_LEFT; break;
 		case NETWORK_ACTION_NAME_CHANGE:    strid = STR_NETWORK_MESSAGE_NAME_CHANGE; break;
-		case NETWORK_ACTION_GIVE_MONEY:     strid = self_send ? STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY : STR_NETWORK_MESSAGE_GIVE_MONEY;   break;
+		case NETWORK_ACTION_GIVE_MONEY:     strid = STR_NETWORK_MESSAGE_GIVE_MONEY; break;
 		case NETWORK_ACTION_CHAT_COMPANY:   strid = self_send ? STR_NETWORK_CHAT_TO_COMPANY : STR_NETWORK_CHAT_COMPANY; break;
 		case NETWORK_ACTION_CHAT_CLIENT:    strid = self_send ? STR_NETWORK_CHAT_TO_CLIENT  : STR_NETWORK_CHAT_CLIENT;  break;
 		case NETWORK_ACTION_KICKED:         strid = STR_NETWORK_MESSAGE_KICKED; break;
@@ -322,7 +322,7 @@ StringID GetNetworkErrorMsg(NetworkErrorCode err)
 		STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP,
 		STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN,
 	};
-	assert_compile(lengthof(network_error_strings) == NETWORK_ERROR_END);
+	static_assert(lengthof(network_error_strings) == NETWORK_ERROR_END);
 
 	if (err >= (ptrdiff_t)lengthof(network_error_strings)) err = NETWORK_ERROR_GENERAL;
 
@@ -342,7 +342,8 @@ void NetworkHandlePauseChange(PauseMode prev_mode, PauseMode changed_mode)
 		case PM_PAUSED_NORMAL:
 		case PM_PAUSED_JOIN:
 		case PM_PAUSED_GAME_SCRIPT:
-		case PM_PAUSED_ACTIVE_CLIENTS: {
+		case PM_PAUSED_ACTIVE_CLIENTS:
+		case PM_PAUSED_LINK_GRAPH: {
 			bool changed = ((_pause_mode == PM_UNPAUSED) != (prev_mode == PM_UNPAUSED));
 			bool paused = (_pause_mode != PM_UNPAUSED);
 			if (!paused && !changed) return;
@@ -355,6 +356,7 @@ void NetworkHandlePauseChange(PauseMode prev_mode, PauseMode changed_mode)
 				if ((_pause_mode & PM_PAUSED_JOIN) != PM_UNPAUSED)           SetDParam(++i, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_CONNECTING_CLIENTS);
 				if ((_pause_mode & PM_PAUSED_GAME_SCRIPT) != PM_UNPAUSED)    SetDParam(++i, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_GAME_SCRIPT);
 				if ((_pause_mode & PM_PAUSED_ACTIVE_CLIENTS) != PM_UNPAUSED) SetDParam(++i, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_NOT_ENOUGH_PLAYERS);
+				if ((_pause_mode & PM_PAUSED_LINK_GRAPH) != PM_UNPAUSED)     SetDParam(++i, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH);
 				str = STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_1 + i;
 			} else {
 				switch (changed_mode) {
@@ -362,6 +364,7 @@ void NetworkHandlePauseChange(PauseMode prev_mode, PauseMode changed_mode)
 					case PM_PAUSED_JOIN:           SetDParam(0, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_CONNECTING_CLIENTS); break;
 					case PM_PAUSED_GAME_SCRIPT:    SetDParam(0, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_GAME_SCRIPT); break;
 					case PM_PAUSED_ACTIVE_CLIENTS: SetDParam(0, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_NOT_ENOUGH_PLAYERS); break;
+					case PM_PAUSED_LINK_GRAPH:     SetDParam(0, STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH); break;
 					default: NOT_REACHED();
 				}
 				str = paused ? STR_NETWORK_SERVER_MESSAGE_GAME_PAUSED : STR_NETWORK_SERVER_MESSAGE_GAME_UNPAUSED;
@@ -917,7 +920,8 @@ void NetworkGameLoop()
 				if (*p == ' ') p++;
 				cp = CallocT<CommandPacket>(1);
 				int company;
-				int ret = sscanf(p, "%x; %x; %x; %x; %x; %x; %x; \"%[^\"]\"", &next_date, &next_date_fract, &company, &cp->tile, &cp->p1, &cp->p2, &cp->cmd, cp->text);
+				static_assert(sizeof(cp->text) == 128);
+				int ret = sscanf(p, "%x; %x; %x; %x; %x; %x; %x; \"%127[^\"]\"", &next_date, &next_date_fract, &company, &cp->tile, &cp->p1, &cp->p2, &cp->cmd, cp->text);
 				/* There are 8 pieces of data to read, however the last is a
 				 * string that might or might not exist. Ignore it if that
 				 * string misses because in 99% of the time it's not used. */
@@ -1153,3 +1157,14 @@ bool IsNetworkCompatibleVersion(const char *other)
 	const char *hash2 = ExtractNetworkRevisionHash(other);
 	return hash1 && hash2 && (strncmp(hash1, hash2, GITHASH_SUFFIX_LEN) == 0);
 }
+
+#ifdef __EMSCRIPTEN__
+extern "C" {
+
+void CDECL em_openttd_add_server(const char *host, int port)
+{
+	NetworkUDPQueryServer(NetworkAddress(host, port), true);
+}
+
+}
+#endif

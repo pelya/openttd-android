@@ -58,6 +58,7 @@ ScriptInstance::ScriptInstance(const char *APIName) :
 	is_save_data_on_stack(false),
 	suspend(0),
 	is_paused(false),
+	in_shutdown(false),
 	callback(nullptr)
 {
 	this->storage = new ScriptStorage();
@@ -115,17 +116,16 @@ bool ScriptInstance::LoadCompatibilityScripts(const char *api_version, Subdirect
 {
 	char script_name[32];
 	seprintf(script_name, lastof(script_name), "compat_%s.nut", api_version);
-	char buf[MAX_PATH];
 	Searchpath sp;
 	FOR_ALL_SEARCHPATHS(sp) {
-		FioAppendDirectory(buf, lastof(buf), sp, dir);
-		strecat(buf, script_name, lastof(buf));
+		std::string buf = FioGetDirectory(sp, dir);
+		buf += script_name;
 		if (!FileExists(buf)) continue;
 
-		if (this->engine->LoadScript(buf)) return true;
+		if (this->engine->LoadScript(buf.c_str())) return true;
 
 		ScriptLog::Error("Failed to load API compatibility script");
-		DEBUG(script, 0, "Error compiling / running API compatibility script: %s", buf);
+		DEBUG(script, 0, "Error compiling / running API compatibility script: %s", buf.c_str());
 		return false;
 	}
 
@@ -136,6 +136,7 @@ bool ScriptInstance::LoadCompatibilityScripts(const char *api_version, Subdirect
 ScriptInstance::~ScriptInstance()
 {
 	ScriptObject::ActiveInstance active(this);
+	this->in_shutdown = true;
 
 	if (instance != nullptr) this->engine->ReleaseObject(this->instance);
 	if (engine != nullptr) delete this->engine;
@@ -154,6 +155,7 @@ void ScriptInstance::Died()
 {
 	DEBUG(script, 0, "The script died unexpectedly.");
 	this->is_dead = true;
+	this->in_shutdown = true;
 
 	this->last_allocated_memory = this->GetAllocatedMemory(); // Update cache
 
@@ -717,4 +719,9 @@ size_t ScriptInstance::GetAllocatedMemory() const
 {
 	if (this->engine == nullptr) return this->last_allocated_memory;
 	return this->engine->GetAllocatedMemory();
+}
+
+void ScriptInstance::ReleaseSQObject(HSQOBJECT *obj)
+{
+	if (!this->in_shutdown) this->engine->ReleaseObject(obj);
 }

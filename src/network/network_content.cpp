@@ -23,6 +23,10 @@
 #include <zlib.h>
 #endif
 
+#ifdef __EMSCRIPTEN__
+#	include <emscripten.h>
+#endif
+
 #include "../safeguards.h"
 
 extern bool HasScenario(const ContentInfo *ci, bool md5sum);
@@ -217,7 +221,7 @@ void ClientNetworkContentSocketHandler::RequestContentList(uint count, const Con
 		 * A packet begins with the packet size and a byte for the type.
 		 * Then this packet adds a uint16 for the count in this packet.
 		 * The rest of the packet can be used for the IDs. */
-		uint p_count = min(count, (SEND_MTU - sizeof(PacketSize) - sizeof(byte) - sizeof(uint16)) / sizeof(uint32));
+		uint p_count = std::min<uint>(count, (SEND_MTU - sizeof(PacketSize) - sizeof(byte) - sizeof(uint16)) / sizeof(uint32));
 
 		Packet *p = new Packet(PACKET_CONTENT_CLIENT_INFO_ID);
 		p->Send_uint16(p_count);
@@ -289,6 +293,13 @@ void ClientNetworkContentSocketHandler::DownloadSelectedContent(uint &files, uin
 {
 	bytes = 0;
 
+#ifdef __EMSCRIPTEN__
+	/* Emscripten is loaded via an HTTPS connection. As such, it is very
+	 * difficult to make HTTP connections. So always use the TCP method of
+	 * downloading content. */
+	fallback = true;
+#endif
+
 	ContentIDList content;
 	for (const ContentInfo *ci : this->infos) {
 		if (!ci->IsSelected() || ci->state == ContentInfo::ALREADY_HERE) continue;
@@ -352,7 +363,7 @@ void ClientNetworkContentSocketHandler::DownloadSelectedContentFallback(const Co
 		 * A packet begins with the packet size and a byte for the type.
 		 * Then this packet adds a uint16 for the count in this packet.
 		 * The rest of the packet can be used for the IDs. */
-		uint p_count = min(count, (SEND_MTU - sizeof(PacketSize) - sizeof(byte) - sizeof(uint16)) / sizeof(uint32));
+		uint p_count = std::min<uint>(count, (SEND_MTU - sizeof(PacketSize) - sizeof(byte) - sizeof(uint16)) / sizeof(uint32));
 
 		Packet *p = new Packet(PACKET_CONTENT_CLIENT_CONTENT);
 		p->Send_uint16(p_count);
@@ -374,14 +385,14 @@ void ClientNetworkContentSocketHandler::DownloadSelectedContentFallback(const Co
  * @return a statically allocated buffer with the filename or
  *         nullptr when no filename could be made.
  */
-static char *GetFullFilename(const ContentInfo *ci, bool compressed)
+static std::string GetFullFilename(const ContentInfo *ci, bool compressed)
 {
 	Subdirectory dir = GetContentInfoSubDir(ci->type);
-	if (dir == NO_DIRECTORY) return nullptr;
+	if (dir == NO_DIRECTORY) return {};
 
-	static char buf[MAX_PATH];
-	FioGetFullPath(buf, lastof(buf), SP_AUTODOWNLOAD_DIR, dir, ci->filename);
-	strecat(buf, compressed ? ".tar.gz" : ".tar", lastof(buf));
+	std::string buf = FioGetDirectory(SP_AUTODOWNLOAD_DIR, dir);
+	buf += ci->filename;
+	buf += compressed ? ".tar.gz" : ".tar";
 
 	return buf;
 }
@@ -397,13 +408,13 @@ static bool GunzipFile(const ContentInfo *ci)
 	bool ret = true;
 
 	/* Need to open the file with fopen() to support non-ASCII on Windows. */
-	FILE *ftmp = fopen(GetFullFilename(ci, true), "rb");
+	FILE *ftmp = fopen(GetFullFilename(ci, true).c_str(), "rb");
 	if (ftmp == nullptr) return false;
 	/* Duplicate the handle, and close the FILE*, to avoid double-closing the handle later. */
 	gzFile fin = gzdopen(dup(fileno(ftmp)), "rb");
 	fclose(ftmp);
 
-	FILE *fout = fopen(GetFullFilename(ci, false), "wb");
+	FILE *fout = fopen(GetFullFilename(ci, false).c_str(), "wb");
 
 	if (fin == nullptr || fout == nullptr) {
 		ret = false;
@@ -498,8 +509,8 @@ bool ClientNetworkContentSocketHandler::BeforeDownload()
 
 	if (this->curInfo->filesize != 0) {
 		/* The filesize is > 0, so we are going to download it */
-		const char *filename = GetFullFilename(this->curInfo, true);
-		if (filename == nullptr || (this->curFile = fopen(filename, "wb")) == nullptr) {
+		std::string filename = GetFullFilename(this->curInfo, true);
+		if (filename.empty() || (this->curFile = fopen(filename.c_str(), "wb")) == nullptr) {
 			/* Unless that fails of course... */
 			DeleteWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_CONTENT_DOWNLOAD);
 			ShowErrorMessage(STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD, STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD_FILE_NOT_WRITABLE, WL_ERROR);
@@ -521,19 +532,24 @@ void ClientNetworkContentSocketHandler::AfterDownload()
 	this->curFile = nullptr;
 
 	if (GunzipFile(this->curInfo)) {
-		unlink(GetFullFilename(this->curInfo, true));
+		unlink(GetFullFilename(this->curInfo, true).c_str());
 
 		Subdirectory sd = GetContentInfoSubDir(this->curInfo->type);
 		if (sd == NO_DIRECTORY) NOT_REACHED();
 
 		TarScanner ts;
-		ts.AddFile(sd, GetFullFilename(this->curInfo, false));
+		std::string fname = GetFullFilename(this->curInfo, false);
+		ts.AddFile(sd, fname);
 
 		if (this->curInfo->type == CONTENT_TYPE_BASE_MUSIC) {
 			/* Music can't be in a tar. So extract the tar! */
-			ExtractTar(GetFullFilename(this->curInfo, false), BASESET_DIR);
-			unlink(GetFullFilename(this->curInfo, false));
+			ExtractTar(fname, BASESET_DIR);
+			unlink(fname.c_str());
 		}
+
+#ifdef __EMSCRIPTEN__
+		EM_ASM(if (window["openttd_syncfs"]) openttd_syncfs());
+#endif
 
 		this->OnDownloadComplete(this->curInfo->id);
 	} else {
@@ -727,6 +743,7 @@ public:
 	void OnConnect(SOCKET s) override
 	{
 		assert(_network_content_client.sock == INVALID_SOCKET);
+		_network_content_client.lastActivity = _realtime_tick;
 		_network_content_client.isConnecting = false;
 		_network_content_client.sock = s;
 		_network_content_client.Reopen();
@@ -739,8 +756,6 @@ public:
  */
 void ClientNetworkContentSocketHandler::Connect()
 {
-	this->lastActivity = _realtime_tick;
-
 	if (this->sock != INVALID_SOCKET || this->isConnecting) return;
 	this->isConnecting = true;
 	new NetworkContentConnecter(NetworkAddress(NETWORK_CONTENT_SERVER_HOST, NETWORK_CONTENT_SERVER_PORT, AF_UNSPEC));
@@ -888,7 +903,7 @@ void ClientNetworkContentSocketHandler::ToggleSelectedState(const ContentInfo *c
  */
 void ClientNetworkContentSocketHandler::ReverseLookupDependency(ConstContentVector &parents, const ContentInfo *child) const
 {
-	for (const ContentInfo * const &ci : this->infos) {
+	for (const ContentInfo *ci : this->infos) {
 		if (ci == child) continue;
 
 		for (uint i = 0; i < ci->dependency_count; i++) {

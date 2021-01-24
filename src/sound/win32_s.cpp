@@ -58,7 +58,7 @@ static DWORD WINAPI SoundThread(LPVOID arg)
 	return 0;
 }
 
-const char *SoundDriver_Win32::Start(const char * const *parm)
+const char *SoundDriver_Win32::Start(const StringList &parm)
 {
 	WAVEFORMATEX wfex;
 	wfex.wFormatTag = WAVE_FORMAT_PCM;
@@ -70,7 +70,7 @@ const char *SoundDriver_Win32::Start(const char * const *parm)
 
 	/* Limit buffer size to prevent overflows. */
 	_bufsize = GetDriverParamInt(parm, "bufsize", (GB(GetVersion(), 0, 8) > 5) ? 8192 : 4096);
-	_bufsize = min(_bufsize, UINT16_MAX);
+	_bufsize = std::min<int>(_bufsize, UINT16_MAX);
 
 	try {
 		if (nullptr == (_event = CreateEvent(nullptr, FALSE, FALSE, nullptr))) throw "Failed to create event";

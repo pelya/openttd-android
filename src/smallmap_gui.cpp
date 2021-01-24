@@ -115,6 +115,7 @@ static const LegendAndColour _legend_vegetation[] = {
 	MK(PC_ROUGH_LAND,      STR_SMALLMAP_LEGENDA_ROUGH_LAND),
 	MK(PC_GRASS_LAND,      STR_SMALLMAP_LEGENDA_GRASS_LAND),
 	MK(PC_BARE_LAND,       STR_SMALLMAP_LEGENDA_BARE_LAND),
+	MK(PC_RAINFOREST,      STR_SMALLMAP_LEGENDA_RAINFOREST),
 	MK(PC_FIELDS,          STR_SMALLMAP_LEGENDA_FIELDS),
 	MK(PC_TREES,           STR_SMALLMAP_LEGENDA_TREES),
 
@@ -533,7 +534,11 @@ static inline uint32 GetSmallMapVegetationPixels(TileIndex tile, TileType t)
 {
 	switch (t) {
 		case MP_CLEAR:
-			return (IsClearGround(tile, CLEAR_GRASS) && GetClearDensity(tile) < 3) ? MKCOLOUR_XXXX(PC_BARE_LAND) : _vegetation_clear_bits[GetClearGround(tile)];
+			if (IsClearGround(tile, CLEAR_GRASS)) {
+				if (GetClearDensity(tile) < 3) return MKCOLOUR_XXXX(PC_BARE_LAND);
+				if (GetTropicZone(tile) == TROPICZONE_RAINFOREST) return MKCOLOUR_XXXX(PC_RAINFOREST);
+			}
+			return _vegetation_clear_bits[GetClearGround(tile)];
 
 		case MP_INDUSTRY:
 			return IsTileForestIndustry(tile) ? MKCOLOUR_XXXX(PC_GREEN) : MKCOLOUR_XXXX(PC_DARK_RED);
@@ -542,7 +547,7 @@ static inline uint32 GetSmallMapVegetationPixels(TileIndex tile, TileType t)
 			if (GetTreeGround(tile) == TREE_GROUND_SNOW_DESERT || GetTreeGround(tile) == TREE_GROUND_ROUGH_SNOW) {
 				return (_settings_game.game_creation.landscape == LT_ARCTIC) ? MKCOLOUR_XYYX(PC_LIGHT_BLUE, PC_TREES) : MKCOLOUR_XYYX(PC_ORANGE, PC_TREES);
 			}
-			return MKCOLOUR_XYYX(PC_GRASS_LAND, PC_TREES);
+			return (GetTropicZone(tile) == TROPICZONE_RAINFOREST) ? MKCOLOUR_XYYX(PC_RAINFOREST, PC_TREES) : MKCOLOUR_XYYX(PC_GRASS_LAND, PC_TREES);
 
 		default:
 			return ApplyMask(MKCOLOUR_XXXX(PC_GRASS_LAND), &_smallmap_vehicles_andor[t]);
@@ -847,7 +852,7 @@ void SmallMapWindow::DrawSmallMapColumn(void *dst, uint xc, uint yc, int pitch, 
 		if (min_xy == 1 && (xc == 0 || yc == 0)) {
 			if (this->zoom == 1) continue; // The tile area is empty, don't draw anything.
 
-			ta = TileArea(TileXY(max(min_xy, xc), max(min_xy, yc)), this->zoom - (xc == 0), this->zoom - (yc == 0));
+			ta = TileArea(TileXY(std::max(min_xy, xc), std::max(min_xy, yc)), this->zoom - (xc == 0), this->zoom - (yc == 0));
 		} else {
 			ta = TileArea(TileXY(xc, yc), this->zoom, this->zoom);
 		}
@@ -855,8 +860,8 @@ void SmallMapWindow::DrawSmallMapColumn(void *dst, uint xc, uint yc, int pitch, 
 
 		uint32 val = this->GetTileColours(ta);
 		uint8 *val8 = (uint8 *)&val;
-		int idx = max(0, -start_pos);
-		for (int pos = max(0, start_pos); pos < end_pos; pos++) {
+		int idx = std::max(0, -start_pos);
+		for (int pos = std::max(0, start_pos); pos < end_pos; pos++) {
 			blitter->SetPixel(dst, idx, 0, val8[idx]);
 			idx++;
 		}
@@ -933,7 +938,7 @@ void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi) const
 void SmallMapWindow::DrawMapIndicators() const
 {
 	/* Find main viewport. */
-	const ViewPort *vp = FindWindowById(WC_MAIN_WINDOW, 0)->viewport;
+	const Viewport *vp = FindWindowById(WC_MAIN_WINDOW, 0)->viewport;
 
 	Point upper_left_smallmap_coord  = InverseRemapCoords2(vp->virtual_left, vp->virtual_top);
 	Point lower_right_smallmap_coord = InverseRemapCoords2(vp->virtual_left + vp->virtual_width - 1, vp->virtual_top + vp->virtual_height - 1);
@@ -988,7 +993,7 @@ void SmallMapWindow::DrawSmallMap(DrawPixelInfo *dpi) const
 		if (x >= -3) {
 			if (x >= dpi->width) break; // Exit the loop.
 
-			int end_pos = min(dpi->width, x + 4);
+			int end_pos = std::min(dpi->width, x + 4);
 			int reps = (dpi->height - y + 1) / 2; // Number of lines.
 			if (reps > 0) {
 				this->DrawSmallMapColumn(ptr, tile_x, tile_y, dpi->pitch * 2, reps, x, end_pos, blitter);
@@ -1168,16 +1173,15 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 				str = tbl->legend;
 			}
 			if (tbl->col_break) {
-				this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
+				this->min_number_of_fixed_rows = std::max(this->min_number_of_fixed_rows, height);
 				height = 0;
 				num_columns++;
 			}
 			height++;
 			min_width = max(GetStringBoundingBox(str).width, min_width);
 		}
-		this->min_number_of_fixed_rows = max(this->min_number_of_fixed_rows, height);
-		this->min_number_of_columns = max(this->min_number_of_columns, num_columns);
-		printf("i = %d this->min_number_of_fixed_rows %d this->min_number_of_columns %d num_columns %d\n", i, this->min_number_of_fixed_rows, this->min_number_of_columns, num_columns);
+		this->min_number_of_fixed_rows = std::max(this->min_number_of_fixed_rows, height);
+		this->min_number_of_columns = std::max(this->min_number_of_columns, num_columns);
 	}
 	/* The width of a column is the minimum width of all texts + the size of the blob + some spacing */
 	this->column_width = min_width + LEGEND_BLOB_WIDTH + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
@@ -1661,13 +1665,13 @@ void SmallMapWindow::SetNewScroll(int sx, int sy, int sub)
  */
 void SmallMapWindow::SmallMapCenterOnCurrentPos()
 {
-	const ViewPort *vp = FindWindowById(WC_MAIN_WINDOW, 0)->viewport;
+	const Viewport *vp = FindWindowById(WC_MAIN_WINDOW, 0)->viewport;
 	Point viewport_center = InverseRemapCoords2(vp->virtual_left + vp->virtual_width / 2, vp->virtual_top + vp->virtual_height / 2);
 
 	int sub;
 	const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_SM_MAP);
 	Point sxy = this->ComputeScroll(viewport_center.x / (int)TILE_SIZE, viewport_center.y / (int)TILE_SIZE,
-			max(0, (int)wid->current_x / 2 - 2), wid->current_y / 2, &sub);
+			std::max(0, (int)wid->current_x / 2 - 2), wid->current_y / 2, &sub);
 	this->SetNewScroll(sxy.x, sxy.y, sub);
 	this->SetDirty();
 }
@@ -1728,12 +1732,12 @@ public:
 
 		this->smallmap_window = dynamic_cast<SmallMapWindow *>(w);
 		assert(this->smallmap_window != nullptr);
-		this->smallest_x = max(display->smallest_x, max(bar->smallest_x, smallmap_window->GetMinLegendWidth()));
-		this->smallest_y = display->smallest_y + max(bar->smallest_y, smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
-		this->fill_x = max(display->fill_x, bar->fill_x);
-		this->fill_y = (display->fill_y == 0 && bar->fill_y == 0) ? 0 : min(display->fill_y, bar->fill_y);
-		this->resize_x = max(display->resize_x, bar->resize_x);
-		this->resize_y = min(display->resize_y, bar->resize_y);
+		this->smallest_x = std::max(display->smallest_x, std::max(bar->smallest_x, smallmap_window->GetMinLegendWidth()));
+		this->smallest_y = display->smallest_y + std::max(bar->smallest_y, smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
+		this->fill_x = std::max(display->fill_x, bar->fill_x);
+		this->fill_y = (display->fill_y == 0 && bar->fill_y == 0) ? 0 : std::min(display->fill_y, bar->fill_y);
+		this->resize_x = std::max(display->resize_x, bar->resize_x);
+		this->resize_y = std::min(display->resize_y, bar->resize_y);
 	}
 
 	void AssignSizePosition(SizingType sizing, uint x, uint y, uint given_width, uint given_height, bool rtl) override
@@ -1754,7 +1758,7 @@ public:
 			bar->AssignSizePosition(ST_SMALLEST, x, y + display->smallest_y, bar->smallest_x, bar->smallest_y, rtl);
 		}
 
-		uint bar_height = max(bar->smallest_y, this->smallmap_window->GetLegendHeight(this->smallmap_window->GetNumberColumnsLegend(given_width - bar->smallest_x)));
+		uint bar_height = std::max(bar->smallest_y, this->smallmap_window->GetLegendHeight(this->smallmap_window->GetNumberColumnsLegend(given_width - bar->smallest_x)));
 		uint display_height = given_height - bar_height;
 		display->AssignSizePosition(ST_RESIZE, x, y, given_width, display_height, rtl);
 		bar->AssignSizePosition(ST_RESIZE, x, y + display_height, given_width, bar_height, rtl);

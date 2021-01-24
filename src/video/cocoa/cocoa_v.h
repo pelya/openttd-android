@@ -11,10 +11,17 @@
 #define VIDEO_COCOA_H
 
 #include "../video_driver.hpp"
+#include "../../core/geometry_type.hpp"
+
+
+extern bool _cocoa_video_started;
 
 class VideoDriver_Cocoa : public VideoDriver {
+private:
+	Dimension orig_res;          ///< Saved window size for non-fullscreen mode.
+
 public:
-	const char *Start(const char * const *param) override;
+	const char *Start(const StringList &param) override;
 
 	/** Stop the video driver */
 	void Stop() override;
@@ -57,6 +64,19 @@ public:
 	 * @return driver name
 	 */
 	const char *GetName() const override { return "cocoa"; }
+
+	/* --- The following methods should be private, but can't be due to Obj-C limitations. --- */
+
+	/** Main game loop. */
+	void GameLoop(); // In event.mm.
+
+protected:
+	Dimension GetScreenSize() const override;
+
+private:
+	friend class WindowQuartzSubdriver;
+
+	void GameSizeChanged();
 };
 
 class FVideoDriver_Cocoa : public DriverFactoryBase {
@@ -84,6 +104,7 @@ public:
 	int buffer_depth;     ///< Colour depth of used frame buffer
 	void *pixel_buffer;   ///< used for direct pixel access
 	void *window_buffer;  ///< Colour translation from palette to screen
+	CGColorSpaceRef color_space; //< Window color space
 	id window;            ///< Pointer to window object
 
 #	define MAX_DIRTY_RECTS 100
@@ -137,7 +158,7 @@ public:
 	/** Toggle between fullscreen and windowed mode
 	 * @return whether switch was successful
 	 */
-	virtual bool ToggleFullscreen() { return false; };
+	virtual bool ToggleFullscreen(bool fullscreen) { return false; };
 
 	/** Return the width of the current view
 	 * @return width of the current view
@@ -177,9 +198,6 @@ public:
 	 */
 	virtual bool IsActive() = 0;
 
-	/** Makes the *game region* of the window 100% opaque. */
-	virtual void SetPortAlphaOpaque() { return; };
-
 	/** Whether the window was successfully resized
 	 * @return whether the window was successfully resized
 	 */
@@ -188,89 +206,8 @@ public:
 
 extern CocoaSubdriver *_cocoa_subdriver;
 
-CocoaSubdriver *QZ_CreateFullscreenSubdriver(int width, int height, int bpp);
-
-#ifdef ENABLE_COCOA_QUICKDRAW
-CocoaSubdriver *QZ_CreateWindowQuickdrawSubdriver(int width, int height, int bpp);
-#endif
-
-#ifdef ENABLE_COCOA_QUARTZ
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 CocoaSubdriver *QZ_CreateWindowQuartzSubdriver(int width, int height, int bpp);
-#endif
-#endif
-
-void QZ_GameSizeChanged();
-
-void QZ_GameLoop();
 
 uint QZ_ListModes(OTTD_Point *modes, uint max_modes, CGDirectDisplayID display_id, int display_depth);
-
-/** Category of NSCursor to allow cursor showing/hiding */
-@interface NSCursor (OTTD_QuickdrawCursor)
-+ (NSCursor *) clearCocoaCursor;
-@end
-
-/** Subclass of NSWindow to cater our special needs */
-@interface OTTD_CocoaWindow : NSWindow {
-	CocoaSubdriver *driver;
-}
-
-- (void)setDriver:(CocoaSubdriver*)drv;
-
-- (void)miniaturize:(id)sender;
-- (void)display;
-- (void)setFrame:(NSRect)frameRect display:(BOOL)flag;
-- (void)appDidHide:(NSNotification*)note;
-- (void)appWillUnhide:(NSNotification*)note;
-- (void)appDidUnhide:(NSNotification*)note;
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag;
-@end
-
-/** Subclass of NSView to fix Quartz rendering and mouse awareness */
-@interface OTTD_CocoaView : NSView
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-#	if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4
-		<NSTextInputClient, NSTextInput>
-#	else
-		<NSTextInputClient>
-#	endif /* MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 */
-#else
-	<NSTextInput>
-#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 */
-{
-	CocoaSubdriver *driver;
-	NSTrackingRectTag trackingtag;
-}
-- (void)setDriver:(CocoaSubdriver*)drv;
-- (void)drawRect:(NSRect)rect;
-- (BOOL)isOpaque;
-- (BOOL)acceptsFirstResponder;
-- (BOOL)becomeFirstResponder;
-- (void)setTrackingRect;
-- (void)clearTrackingRect;
-- (void)resetCursorRects;
-- (void)viewWillMoveToWindow:(NSWindow *)win;
-- (void)viewDidMoveToWindow;
-- (void)mouseEntered:(NSEvent *)theEvent;
-- (void)mouseExited:(NSEvent *)theEvent;
-@end
-
-/** Delegate for our NSWindow to send ask for quit on close */
-@interface OTTD_CocoaWindowDelegate : NSObject
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-	<NSWindowDelegate>
-#endif
-{
-	CocoaSubdriver *driver;
-}
-
-- (void)setDriver:(CocoaSubdriver*)drv;
-
-- (BOOL)windowShouldClose:(id)sender;
-- (void)windowDidEnterFullScreen:(NSNotification *)aNotification;
-- (void)windowDidChangeScreenProfile:(NSNotification *)aNotification;
-@end
-
 
 #endif /* VIDEO_COCOA_H */

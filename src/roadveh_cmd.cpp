@@ -60,7 +60,7 @@ static const uint16 _roadveh_full_adder[] = {
 	 0,  16,  16,   0,   8,   8,   8,   8,
 	 0,   0,   0,   8,   8,   8,   8
 };
-assert_compile(lengthof(_roadveh_images) == lengthof(_roadveh_full_adder));
+static_assert(lengthof(_roadveh_images) == lengthof(_roadveh_full_adder));
 
 template <>
 bool IsValidImageIndex<VEH_ROAD>(uint8 image_index)
@@ -301,7 +301,7 @@ CommandCost CmdBuildRoadVehicle(TileIndex tile, DoCommandFlag flags, const Engin
 		v->date_of_last_service = _date;
 		v->build_year = _cur_year;
 
-		v->sprite_seq.Set(SPR_IMG_QUERY);
+		v->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
 		v->random_bits = VehicleRandomBits();
 		v->SetFrontEngine();
 
@@ -453,11 +453,11 @@ inline int RoadVehicle::GetCurrentMaxSpeed() const
 
 		/* Vehicle is on the middle part of a bridge. */
 		if (u->state == RVSB_WORMHOLE && !(u->vehstatus & VS_HIDDEN)) {
-			max_speed = min(max_speed, GetBridgeSpec(GetBridgeType(u->tile))->speed * 2);
+			max_speed = std::min(max_speed, GetBridgeSpec(GetBridgeType(u->tile))->speed * 2);
 		}
 	}
 
-	return min(max_speed, this->current_order.GetMaxSpeed() * 2);
+	return std::min(max_speed, this->current_order.GetMaxSpeed() * 2);
 }
 
 /**
@@ -552,12 +552,8 @@ static void RoadVehCrash(RoadVehicle *v)
 	Game::NewEvent(new ScriptEventVehicleCrashed(v->index, v->tile, ScriptEventVehicleCrashed::CRASH_RV_LEVEL_CROSSING));
 
 	SetDParam(0, pass);
-	AddVehicleNewsItem(
-		(pass == 1) ?
-			STR_NEWS_ROAD_VEHICLE_CRASH_DRIVER : STR_NEWS_ROAD_VEHICLE_CRASH,
-		NT_ACCIDENT,
-		v->index
-	);
+	StringID newsitem = (pass == 1) ? STR_NEWS_ROAD_VEHICLE_CRASH_DRIVER : STR_NEWS_ROAD_VEHICLE_CRASH;
+	AddTileNewsItem(newsitem, NT_ACCIDENT, v->tile);
 
 	ModifyStationRatingAround(v->tile, v->owner, -160, 22);
 	if (_settings_client.sound.disaster) SndPlayVehicleFx(SND_12_EXPLOSION, v);
@@ -1393,7 +1389,16 @@ again:
 		int y = TileY(v->tile) * TILE_SIZE + rdp[turn_around_start_frame].y;
 
 		Direction new_dir = RoadVehGetSlidingDirection(v, x, y);
-		if (v->IsFrontEngine() && RoadVehFindCloseTo(v, x, y, new_dir) != nullptr) return false;
+		if (v->IsFrontEngine() && RoadVehFindCloseTo(v, x, y, new_dir) != nullptr) {
+			/* We are blocked. */
+			v->cur_speed = 0;
+			if (!v->path.empty()) {
+				/* Prevent pathfinding rerun as we already know where we are heading to. */
+				v->path.tile.push_front(v->tile);
+				v->path.td.push_front(dir);
+			}
+			return false;
+		}
 
 		uint32 r = VehicleEnterTile(v, v->tile, x, y);
 		if (HasBit(r, VETS_CANNOT_ENTER)) {

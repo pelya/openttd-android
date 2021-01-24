@@ -244,11 +244,11 @@ CommandCost CmdSetGoalCompleted(TileIndex tile, DoCommandFlag flags, uint32 p1, 
  */
 CommandCost CmdGoalQuestion(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
 {
-	uint16 uniqueid = (GoalType)GB(p1, 0, 16);
+	uint16 uniqueid = (uint16)GB(p1, 0, 16);
 	CompanyID company = (CompanyID)GB(p1, 16, 8);
 	ClientID client = (ClientID)GB(p1, 16, 16);
 
-	assert_compile(GOAL_QUESTION_BUTTON_COUNT < 29);
+	static_assert(GOAL_QUESTION_BUTTON_COUNT < 29);
 	uint32 button_mask = GB(p2, 0, GOAL_QUESTION_BUTTON_COUNT);
 	byte type = GB(p2, 29, 2);
 	bool is_client = HasBit(p2, 31);

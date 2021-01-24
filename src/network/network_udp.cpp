@@ -244,7 +244,7 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_GET_NEWGRFS(Packet *p, Networ
 	uint8 in_reply_count = 0;
 	size_t packet_len = 0;
 
-	DEBUG(net, 6, "[udp] newgrf data request from %s", client_addr->GetAddressAsString());
+	DEBUG(net, 6, "[udp] newgrf data request from %s", client_addr->GetAddressAsString().c_str());
 
 	num_grfs = p->Recv_uint8 ();
 	if (num_grfs > NETWORK_MAX_GRF_COUNT) return;
@@ -263,7 +263,7 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_GET_NEWGRFS(Packet *p, Networ
 		 * the current list and do not send the other data.
 		 * The name could be an empty string, if so take the filename. */
 		packet_len += sizeof(c.grfid) + sizeof(c.md5sum) +
-				min(strlen(f->GetName()) + 1, (size_t)NETWORK_GRF_NAME_LENGTH);
+				std::min(strlen(f->GetName()) + 1, (size_t)NETWORK_GRF_NAME_LENGTH);
 		if (packet_len > SEND_MTU - 4) { // 4 is 3 byte header + grf count in reply
 			break;
 		}
@@ -307,7 +307,7 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_RESPONSE(Packet *p, NetworkAd
 	/* Just a fail-safe.. should never happen */
 	if (_network_udp_server) return;
 
-	DEBUG(net, 4, "[udp] server response from %s", client_addr->GetAddressAsString());
+	DEBUG(net, 4, "[udp] server response from %s", client_addr->GetAddressAsString().c_str());
 
 	/* Find next item */
 	item = NetworkGameListAddItem(*client_addr);
@@ -407,7 +407,7 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_NEWGRFS(Packet *p, NetworkAdd
 	uint8 num_grfs;
 	uint i;
 
-	DEBUG(net, 6, "[udp] newgrf data reply from %s", client_addr->GetAddressAsString());
+	DEBUG(net, 6, "[udp] newgrf data reply from %s", client_addr->GetAddressAsString().c_str());
 
 	num_grfs = p->Recv_uint8 ();
 	if (num_grfs > NETWORK_MAX_GRF_COUNT) return;
@@ -426,9 +426,9 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_NEWGRFS(Packet *p, NetworkAdd
 		/* Try to find the GRFTextWrapper for the name of this GRF ID and MD5sum tuple.
 		 * If it exists and not resolved yet, then name of the fake GRF is
 		 * overwritten with the name from the reply. */
-		GRFTextWrapper *unknown_name = FindUnknownGRFName(c.grfid, c.md5sum, false);
-		if (unknown_name != nullptr && strcmp(GetGRFStringFromGRFText(unknown_name->text), UNKNOWN_GRF_NAME_PLACEHOLDER) == 0) {
-			AddGRFTextToList(&unknown_name->text, name);
+		GRFTextWrapper unknown_name = FindUnknownGRFName(c.grfid, c.md5sum, false);
+		if (unknown_name && strcmp(GetGRFStringFromGRFText(unknown_name), UNKNOWN_GRF_NAME_PLACEHOLDER) == 0) {
+			AddGRFTextToList(unknown_name, name);
 		}
 	}
 }
@@ -441,21 +441,13 @@ void ClientNetworkUDPSocketHandler::HandleIncomingNetworkGameInfoGRFConfig(GRFCo
 		/* Don't know the GRF, so mark game incompatible and the (possibly)
 		 * already resolved name for this GRF (another server has sent the
 		 * name of the GRF already */
-		config->name->Release();
 		config->name = FindUnknownGRFName(config->ident.grfid, config->ident.md5sum, true);
-		config->name->AddRef();
 		config->status = GCS_NOT_FOUND;
 	} else {
 		config->filename = f->filename;
-		config->name->Release();
 		config->name = f->name;
-		config->name->AddRef();
-		config->info->Release();
 		config->info = f->info;
-		config->info->AddRef();
-		config->url->Release();
 		config->url = f->url;
-		config->url->AddRef();
 	}
 	SetBit(config->flags, GCF_COPY);
 }
@@ -485,7 +477,7 @@ void NetworkUDPQueryMasterServer()
 
 	_udp_client_socket->SendPacket(&p, &out_addr, true);
 
-	DEBUG(net, 2, "[udp] master server queried at %s", out_addr.GetAddressAsString());
+	DEBUG(net, 2, "[udp] master server queried at %s", out_addr.GetAddressAsString().c_str());
 }
 
 /** Find all servers */
@@ -549,8 +541,8 @@ static void NetworkUDPAdvertiseThread()
 	if (_session_key == 0 && session_key_retries++ == 2) {
 		DEBUG(net, 0, "[udp] advertising to the master server is failing");
 		DEBUG(net, 0, "[udp]   we are not receiving the session key from the server");
-		DEBUG(net, 0, "[udp]   please allow udp packets from %s to you to be delivered", out_addr.GetAddressAsString(false));
-		DEBUG(net, 0, "[udp]   please allow udp packets from you to %s to be delivered", out_addr.GetAddressAsString(false));
+		DEBUG(net, 0, "[udp]   please allow udp packets from %s to you to be delivered", out_addr.GetAddressAsString(false).c_str());
+		DEBUG(net, 0, "[udp]   please allow udp packets from you to %s to be delivered", out_addr.GetAddressAsString(false).c_str());
 	}
 	if (_session_key != 0 && _network_advertise_retries == 0) {
 		DEBUG(net, 0, "[udp] advertising to the master server is failing");

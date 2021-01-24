@@ -51,7 +51,6 @@ void RebuildStationKdtree()
 
 BaseStation::~BaseStation()
 {
-	free(this->name);
 	free(this->speclist);
 
 	if (CleaningPool()) return;
@@ -321,11 +320,11 @@ uint Station::GetCatchmentRadius() const
 	uint ret = CA_NONE;
 
 	if (_settings_game.station.modified_catchment) {
-		if (this->bus_stops          != nullptr)         ret = max<uint>(ret, CA_BUS);
-		if (this->truck_stops        != nullptr)         ret = max<uint>(ret, CA_TRUCK);
-		if (this->train_station.tile != INVALID_TILE) ret = max<uint>(ret, CA_TRAIN);
-		if (this->ship_station.tile  != INVALID_TILE) ret = max<uint>(ret, CA_DOCK);
-		if (this->airport.tile       != INVALID_TILE) ret = max<uint>(ret, this->airport.GetSpec()->catchment);
+		if (this->bus_stops          != nullptr)      ret = std::max<uint>(ret, CA_BUS);
+		if (this->truck_stops        != nullptr)      ret = std::max<uint>(ret, CA_TRUCK);
+		if (this->train_station.tile != INVALID_TILE) ret = std::max<uint>(ret, CA_TRAIN);
+		if (this->ship_station.tile  != INVALID_TILE) ret = std::max<uint>(ret, CA_DOCK);
+		if (this->airport.tile       != INVALID_TILE) ret = std::max<uint>(ret, this->airport.GetSpec()->catchment);
 	} else {
 		if (this->bus_stops != nullptr || this->truck_stops != nullptr || this->train_station.tile != INVALID_TILE || this->ship_station.tile != INVALID_TILE || this->airport.tile != INVALID_TILE) {
 			ret = CA_UNMODIFIED;
@@ -347,10 +346,10 @@ Rect Station::GetCatchmentRect() const
 	int catchment_radius = this->GetCatchmentRadius();
 
 	Rect ret = {
-		max<int>(this->rect.left   - catchment_radius, 0),
-		max<int>(this->rect.top    - catchment_radius, 0),
-		min<int>(this->rect.right  + catchment_radius, MapMaxX()),
-		min<int>(this->rect.bottom + catchment_radius, MapMaxY())
+		std::max<int>(this->rect.left   - catchment_radius, 0),
+		std::max<int>(this->rect.top    - catchment_radius, 0),
+		std::min<int>(this->rect.right  + catchment_radius, MapMaxX()),
+		std::min<int>(this->rect.bottom + catchment_radius, MapMaxY())
 	};
 
 	return ret;
@@ -359,12 +358,11 @@ Rect Station::GetCatchmentRect() const
 /**
  * Add nearby industry to station's industries_near list if it accepts cargo.
  * @param ind Industry
- * @param st Station
  */
-static void AddIndustryToDeliver(Industry *ind, Station *st)
+void Station::AddIndustryToDeliver(Industry *ind)
 {
 	/* Don't check further if this industry is already in the list */
-	if (st->industries_near.find(ind) != st->industries_near.end()) return;
+	if (this->industries_near.find(ind) != this->industries_near.end()) return;
 
 	/* Include only industries that can accept cargo */
 	uint cargo_index;
@@ -373,7 +371,7 @@ static void AddIndustryToDeliver(Industry *ind, Station *st)
 	}
 	if (cargo_index >= lengthof(ind->accepts_cargo)) return;
 
-	st->industries_near.insert(ind);
+	this->industries_near.insert(ind);
 }
 
 /**
@@ -464,7 +462,7 @@ void Station::RecomputeCatchment()
 			i->stations_near.insert(this);
 
 			/* Add if we can deliver to this industry as well */
-			AddIndustryToDeliver(i, this);
+			this->AddIndustryToDeliver(i);
 		}
 	}
 }
@@ -525,7 +523,7 @@ CommandCost StationRect::BeforeAddTile(TileIndex tile, StationRectMode mode)
 	} else if (!this->PtInExtendedRect(x, y)) {
 		/* current rect is not empty and new point is outside this rect
 		 * make new spread-out rectangle */
-		Rect new_rect = {min(x, this->left), min(y, this->top), max(x, this->right), max(y, this->bottom)};
+		Rect new_rect = {std::min(x, this->left), std::min(y, this->top), std::max(x, this->right), std::max(y, this->bottom)};
 
 		/* check new rect dimensions against preset max */
 		int w = new_rect.right - new_rect.left + 1;

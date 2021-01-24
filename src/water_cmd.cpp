@@ -196,6 +196,10 @@ void CheckForDockingTile(TileIndex t)
 				SetDockingTile(t, true);
 			}
 		}
+		if (IsTileType(tile, MP_STATION) && IsOilRig(tile)) {
+			Station::GetByTile(tile)->docking_station.Add(t);
+			SetDockingTile(t, true);
+		}
 	}
 }
 
@@ -301,7 +305,7 @@ static CommandCost DoBuildLock(TileIndex tile, DiagDirection dir, DoCommandFlag 
 	if (ret.Failed()) return ret;
 
 	/* middle tile */
-	WaterClass wc_middle = IsWaterTile(tile) ? GetWaterClass(tile) : WATER_CLASS_CANAL;
+	WaterClass wc_middle = HasTileWaterGround(tile) ? GetWaterClass(tile) : WATER_CLASS_CANAL;
 	ret = DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
 	if (ret.Failed()) return ret;
 	cost.AddCost(ret);
@@ -973,7 +977,7 @@ static void FloodVehicle(Vehicle *v)
 	AI::NewEvent(v->owner, new ScriptEventVehicleCrashed(v->index, v->tile, ScriptEventVehicleCrashed::CRASH_FLOODED));
 	Game::NewEvent(new ScriptEventVehicleCrashed(v->index, v->tile, ScriptEventVehicleCrashed::CRASH_FLOODED));
 	SetDParam(0, pass);
-	AddVehicleNewsItem(STR_NEWS_DISASTER_FLOOD_VEHICLE, NT_ACCIDENT, v->index);
+	AddTileNewsItem(STR_NEWS_DISASTER_FLOOD_VEHICLE, NT_ACCIDENT, v->tile);
 	CreateEffectVehicleRel(v, 4, 4, 8, EV_EXPLOSION_LARGE);
 	if (_settings_client.sound.disaster) SndPlayVehicleFx(SND_12_EXPLOSION, v);
 }

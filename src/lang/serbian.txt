@@ -119,18 +119,18 @@ STR_CARGO_PLURAL_TOYS                                           :igračke
 STR_CARGO_PLURAL_TOYS.big                                       :Igračke
 STR_CARGO_PLURAL_TOYS.gen                                       :igračaka
 STR_CARGO_PLURAL_TOYS.aku                                       :igračke
-STR_CARGO_PLURAL_CANDY                                          :slatkiši
-STR_CARGO_PLURAL_CANDY.big                                      :Slatkiši
-STR_CARGO_PLURAL_CANDY.gen                                      :slatkiša
-STR_CARGO_PLURAL_CANDY.aku                                      :slatkiše
+STR_CARGO_PLURAL_SWEETS                                         :slatkiši
+STR_CARGO_PLURAL_SWEETS.big                                     :Slatkiši
+STR_CARGO_PLURAL_SWEETS.gen                                     :slatkiša
+STR_CARGO_PLURAL_SWEETS.aku                                     :slatkiše
 STR_CARGO_PLURAL_COLA                                           :kola
 STR_CARGO_PLURAL_COLA.big                                       :Kola
 STR_CARGO_PLURAL_COLA.gen                                       :kole
 STR_CARGO_PLURAL_COLA.aku                                       :kolu
-STR_CARGO_PLURAL_COTTON_CANDY                                   :šećerna vuna
-STR_CARGO_PLURAL_COTTON_CANDY.big                               :Šećerna vuna
-STR_CARGO_PLURAL_COTTON_CANDY.gen                               :šećerne vune
-STR_CARGO_PLURAL_COTTON_CANDY.aku                               :šećernu vunu
+STR_CARGO_PLURAL_CANDYFLOSS                                     :šećerna vuna
+STR_CARGO_PLURAL_CANDYFLOSS.big                                 :Šećerna vuna
+STR_CARGO_PLURAL_CANDYFLOSS.gen                                 :šećerne vune
+STR_CARGO_PLURAL_CANDYFLOSS.aku                                 :šećernu vunu
 STR_CARGO_PLURAL_BUBBLES                                        :mehurići
 STR_CARGO_PLURAL_BUBBLES.big                                    :Mehurići
 STR_CARGO_PLURAL_BUBBLES.gen                                    :mehurića
@@ -246,18 +246,18 @@ STR_CARGO_SINGULAR_TOY                                          :igračka
 STR_CARGO_SINGULAR_TOY.big                                      :Igračka
 STR_CARGO_SINGULAR_TOY.gen                                      :igračke
 STR_CARGO_SINGULAR_TOY.aku                                      :igračku
-STR_CARGO_SINGULAR_CANDY                                        :slatkiš
-STR_CARGO_SINGULAR_CANDY.big                                    :Slatkiš
-STR_CARGO_SINGULAR_CANDY.gen                                    :slatkiša
-STR_CARGO_SINGULAR_CANDY.aku                                    :slatkiš
+STR_CARGO_SINGULAR_SWEETS                                       :slatkiš
+STR_CARGO_SINGULAR_SWEETS.big                                   :Slatkiš
+STR_CARGO_SINGULAR_SWEETS.gen                                   :slatkiša
+STR_CARGO_SINGULAR_SWEETS.aku                                   :slatkiš
 STR_CARGO_SINGULAR_COLA                                         :kola
 STR_CARGO_SINGULAR_COLA.big                                     :Kola
 STR_CARGO_SINGULAR_COLA.gen                                     :kole
 STR_CARGO_SINGULAR_COLA.aku                                     :kolu
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :šećerna vuna
-STR_CARGO_SINGULAR_COTTON_CANDY.big                             :Šećerna vuna
-STR_CARGO_SINGULAR_COTTON_CANDY.gen                             :šećerne vune
-STR_CARGO_SINGULAR_COTTON_CANDY.aku                             :šećernu vunu
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :šećerna vuna
+STR_CARGO_SINGULAR_CANDYFLOSS.big                               :Šećerna vuna
+STR_CARGO_SINGULAR_CANDYFLOSS.gen                               :šećerne vune
+STR_CARGO_SINGULAR_CANDYFLOSS.aku                               :šećernu vunu
 STR_CARGO_SINGULAR_BUBBLE                                       :mehurić
 STR_CARGO_SINGULAR_BUBBLE.big                                   :Mehurić
 STR_CARGO_SINGULAR_BUBBLE.gen                                   :mehurića
@@ -419,8 +419,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Odaberit
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Odaberite kriterijum za sortiranje
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Izaberite način filtriranja
 STR_BUTTON_SORT_BY                                              :{BLACK}Sortiraj po
-STR_BUTTON_LOCATION                                             :{BLACK}Mesto
-STR_BUTTON_RENAME                                               :{BLACK}Preimenuj
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Zatvori prozor
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Naslov - povucite mišem da biste pomerili prozor
@@ -497,6 +495,8 @@ STR_SORT_BY_CARGO_CAPACITY                                      :Nosivosti teret
 STR_SORT_BY_RANGE                                               :Dometu
 STR_SORT_BY_POPULATION                                          :Naseljenosti
 STR_SORT_BY_RATING                                              :Rejtingu
+
+# Group by options for vehicle list
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Pauziranje partije
@@ -583,7 +583,7 @@ STR_FILE_MENU_EXIT                                              :Izađi
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Karta sveta
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Dodatno gledište
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :Dodatno gledište
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Legenda protoka tereta
 STR_MAP_MENU_SIGN_LIST                                          :Lista Znakova
 
@@ -1068,7 +1068,7 @@ STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLAC
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}Vlasti grada {TOWN} su potpisale ugovor sa preduzećem {STRING} o ekskluzivnom pravu prevoza na godinu dana!
 
 # Extra view window
-STR_EXTRA_VIEW_PORT_TITLE                                       :{WHITE}Pogled{COMMA}
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Pogled{COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK} Kopiraj u prozor za pogled
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Premešta pogled na trenutnu poziciju glavnog pogleda
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Promenite glavni prikaz
@@ -1713,8 +1713,6 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :Potpuno
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR                           :Vesti u boji se objavljuju počev od godine: {STRING}
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :Godina počev od koje se vesti objavljuju u boji. Pre ove godine se objavljuju u crno/beloj tehnici.
 STR_CONFIG_SETTING_STARTING_YEAR                                :Početna godina: {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Uključena glatka ekonomija (više, manjih promena): {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Ako je omogućeno, industrijska proizvodnja se češće menja u manjim koracima. Ako se vrste industrija učitavaju preko NewGRF dodataka ovo podešavanje uglavnom nema efekta
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Dozvoljena kupovina deonica drugih preduzeća: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Ako je omogućeno, dozvoljava kupovinu i prodaju deonica preduzeća. Deonice su dostupne tek kad preduzeće dostigne određenu starost
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Procenat prihoda koji će biti predan srednjim dionicama prevoza u fider sustavima: {STRING}
@@ -1760,9 +1758,6 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :dozvoljeno, zas
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Rasejavanje drveća tokom partije: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Kontrola nasumične pojave drveća u toku igre. Ovo može uticati na industrije koje zavise o rastu drveća, na primer pilana
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :{G=srednji}nikakvo {RED}(onesposobljava rad drvnih kombinata)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :samo u tropskim šumama
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :svuda
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Lokacija glavne trake sa alatima: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Horizontalna pozicija glavne trake s alatkama na vrhu ekrana
@@ -1960,17 +1955,8 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Ovom pre
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Izlaz
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Da li ste sigurni da želite da napustite OpenTTD i vratite se u {STRING}?
 STR_QUIT_YES                                                    :{BLACK}Da
 STR_QUIT_NO                                                     :{BLACK}Ne
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Napuštanje partije
@@ -1980,7 +1966,6 @@ STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Da li s
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Varanja
 STR_CHEATS_TOOLTIP                                              :{BLACK}Štiklirano polje označava da ste i ranije koristili ovu opciju
-STR_CHEATS_WARNING                                              :{BLACK}Upozorenje! Upravo ćete prevariti vaše saradnike. Imajte na umu da će takav loš postupak biti trajno upamćen
 STR_CHEAT_MONEY                                                 :{LTBLUE}Dodati još {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Upravljanje preduzećem: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Magični buldožer (uklanja fabrike, nepokretnosti): {ORANGE}{STRING}
@@ -2091,10 +2076,6 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Promena 
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Mrežna partija
-STR_NETWORK_SERVER_LIST_ADVERTISED                              :{BLACK} Sa reklamama
-STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP                      :{BLACK}Odaberite između igre s oglasima (internet) i bez oglasa (Local Area Network, LAN)
-STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :Ne
-STR_NETWORK_SERVER_LIST_ADVERTISED_YES                          :Da
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Ime igrača:
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Sa ovim imenom će Vas drugi igrači (pre)poznavati
 
@@ -2135,8 +2116,6 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Priklju�
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Ažuriranje servera
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Ažurirajte podatke sa servera
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Pronađi server
-STR_NETWORK_SERVER_LIST_FIND_SERVER_TOOLTIP                     :{BLACK}Pretražuje mrežu kako bi pronašao servere
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Dodaj server
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Dodaje server na spisak na kojem se uvek proverava za aktivne partije
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Pokreni server
@@ -2153,6 +2132,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Naziv pa
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Postavi lozinku
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Ukoliko ne želite da bude javno dostupna zaštitite Vašu partiju lozinkom
 
+STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK} Sa reklamama
+STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Odaberite između igre s oglasima (internet) i bez oglasa (Local Area Network, LAN)
 STR_NETWORK_START_SERVER_UNADVERTISED                           :Ne
 STR_NETWORK_START_SERVER_ADVERTISED                             :Da
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} igrač{P "" a a}
@@ -2265,7 +2246,6 @@ STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Novo preduzeće
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Izbaci
 STR_NETWORK_CLIENTLIST_BAN                                      :Zabrani pristup
-STR_NETWORK_CLIENTLIST_GIVE_MONEY                               :Daj novac
 STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Razgovaraj sa svima
 STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Razgovaraj sa ekipom
 STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privatna poruka
@@ -2273,8 +2253,6 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privatna poruka
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Igrač
 STR_NETWORK_SPECTATORS                                          :Posmatrači
-
-STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Unesite svotu novca koju želite dati
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Otkaži unetu lozinku
@@ -2375,8 +2353,6 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} se
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} je osnovao novo preduzeće (#{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} je napustio partiju ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} je promenio/la ime u {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} je dao vašem preduzeću {2:CURRENCY_LONG}
-STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY                             :*** Dali ste {1:STRING} {2:CURRENCY_LONG}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Server je zatvorio sesiju
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Server se ponovo pokreće...{}Molimo sačekajte...
 
@@ -2493,6 +2469,8 @@ STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Izgradi
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Spoji putanje
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Napravi zasebnu putanju
+
+# Generic toolbar
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Izgradnja železnice
@@ -2677,7 +2655,7 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Veličin
 STR_OBJECT_CLASS_LTHS                                           :Svetionici
 STR_OBJECT_CLASS_TRNS                                           :Repetitori
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Drveće
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK}Izbor vrste drveća za sađenje. Ako pločica već ima drveće, ovim će se dodati još drveća ali mešanih vrsta, bez obzira na odabranu vrstu
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Drveće proizvoljne vrste
@@ -2879,7 +2857,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Zemljište u po
 STR_ABOUT_OPENTTD                                               :{WHITE}O OpenTTD-u
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Originalni kopirajt {COPYRIGHT} 1995 Chris Sawyer, Sva prava zadržana
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD verzija {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 OpenTTD tim
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} OpenTTD tim
 
 # Framerate display window
 ############ Leave those lines in this order!!
@@ -3793,10 +3771,6 @@ STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Ukoliko 
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Prebacuje glavni pogled na lokaciju voza. Ctrl+Klik će pratiti voz u glavnom pogledu
-STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Prebacuje glavni pogled na lokaciju vozila. Ctrl+Klik će pratiti vozilo u glavnom pogledu
-STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Prebacuje glavni pogled na lokaciju broda. Ctrl+Klik će pratiti brod u glavnom pogledu
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Prebacuje glavni pogled na lokaciju letilice. Ctrl+Klik će pratiti letelicu u glavnom pogledu
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Pošaljite voz u depo. Sa Ctrl+Klik će otići samo na servis
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Pošaljite vozilo u depo. Sa Ctrl+Klik će otići samo na servis
@@ -3828,10 +3802,7 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Prikazuj
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Prikazuje podatke o brodu
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Prikazuje podatke o letilici
 
-STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Trenutno stanje voza - kliknite ovde za zaustavljanje/pokretanje voza. Ctrl+Klik pomera pogled na odredište
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Trenutno stanje vozila - kliknite ovde za zaustavljanje/pokretanje vozila. Ctrl+Klik pomera pogled na odredište
-STR_VEHICLE_VIEW_SHIP_STATE_START_STOP_TOOLTIP                  :{BLACK}Trenutno stanje broda - kliknite ovde za zaustavljanje/pokretanje broda. Ctrl+Klik pomera pogled na odredište
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Trenutno stanje letilice - kliknite ovde za zaustavljanje/pokretanje letilice. Ctrl+Klik pomera pogled na odredište
+
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Utovarivanje / Istovarivanje

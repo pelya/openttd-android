@@ -309,7 +309,7 @@ CommandCost CmdBuildAircraft(TileIndex tile, DoCommandFlag flags, const Engine *
 		v->cargo_type = e->GetDefaultCargoType();
 		u->cargo_type = CT_MAIL;
 
-		v->name = nullptr;
+		v->name.clear();
 		v->last_station_visited = INVALID_STATION;
 		v->last_loading_station = INVALID_STATION;
 
@@ -341,8 +341,8 @@ CommandCost CmdBuildAircraft(TileIndex tile, DoCommandFlag flags, const Engine *
 		v->date_of_last_service = _date;
 		v->build_year = u->build_year = _cur_year;
 
-		v->sprite_seq.Set(SPR_IMG_QUERY);
-		u->sprite_seq.Set(SPR_IMG_QUERY);
+		v->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
+		u->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
 
 		v->random_bits = VehicleRandomBits();
 		u->random_bits = VehicleRandomBits();
@@ -374,7 +374,7 @@ CommandCost CmdBuildAircraft(TileIndex tile, DoCommandFlag flags, const Engine *
 			w->vehstatus = VS_HIDDEN | VS_UNCLICKABLE;
 			w->spritenum = 0xFF;
 			w->subtype = AIR_ROTOR;
-			w->sprite_seq.Set(SPR_ROTOR_STOPPED);
+			w->sprite_cache.sprite_seq.Set(SPR_ROTOR_STOPPED);
 			w->random_bits = VehicleRandomBits();
 			/* Use rotor's air.state to store the rotor animation frame */
 			w->state = HRS_ROTOR_STOPPED;
@@ -497,7 +497,7 @@ static void HelicopterTickHandler(Aircraft *v)
 	if (spd == 0) {
 		u->state = HRS_ROTOR_STOPPED;
 		GetRotorImage(v, EIT_ON_MAP, &seq);
-		if (u->sprite_seq == seq) return;
+		if (u->sprite_cache.sprite_seq == seq) return;
 	} else if (tick >= spd) {
 		u->tick_counter = 0;
 		u->state++;
@@ -507,7 +507,7 @@ static void HelicopterTickHandler(Aircraft *v)
 		return;
 	}
 
-	u->sprite_seq = seq;
+	u->sprite_cache.sprite_seq = seq;
 
 	u->UpdatePositionAndViewport();
 }
@@ -528,7 +528,7 @@ void SetAircraftPosition(Aircraft *v, int x, int y, int z)
 	v->UpdatePosition();
 	v->UpdateViewport(true, false);
 	if (v->subtype == AIR_HELICOPTER) {
-		GetRotorImage(v, EIT_ON_MAP, &v->Next()->Next()->sprite_seq);
+		GetRotorImage(v, EIT_ON_MAP, &v->Next()->Next()->sprite_cache.sprite_seq);
 	}
 
 	Aircraft *u = v->Next();
@@ -540,7 +540,7 @@ void SetAircraftPosition(Aircraft *v, int x, int y, int z)
 
 	safe_y = Clamp(u->y_pos, 0, MapMaxY() * TILE_SIZE);
 	u->z_pos = GetSlopePixelZ(safe_x, safe_y);
-	u->sprite_seq.CopyWithoutPalette(v->sprite_seq); // the shadow is never coloured
+	u->sprite_cache.sprite_seq.CopyWithoutPalette(v->sprite_cache.sprite_seq); // the shadow is never coloured
 
 	u->UpdatePositionAndViewport();
 
@@ -652,7 +652,7 @@ static int UpdateAircraftSpeed(Aircraft *v, uint speed_limit = SPEED_LIMIT_NONE,
 	/* adjust speed for broken vehicles */
 	if (v->vehstatus & VS_AIRCRAFT_BROKEN) {
 		if (SPEED_LIMIT_BROKEN < speed_limit) hard_limit = false;
-		speed_limit = min(speed_limit, SPEED_LIMIT_BROKEN);
+		speed_limit = std::min<uint>(speed_limit, SPEED_LIMIT_BROKEN);
 	}
 
 	if (v->vcache.cached_max_speed < speed_limit) {
@@ -669,10 +669,10 @@ static int UpdateAircraftSpeed(Aircraft *v, uint speed_limit = SPEED_LIMIT_NONE,
 	 * speeds to that aircraft do not get to taxi speed straight after
 	 * touchdown. */
 	if (!hard_limit && v->cur_speed > speed_limit) {
-		speed_limit = v->cur_speed - max(1, ((v->cur_speed * v->cur_speed) / 16384) / _settings_game.vehicle.plane_speed);
+		speed_limit = v->cur_speed - std::max(1, ((v->cur_speed * v->cur_speed) / 16384) / _settings_game.vehicle.plane_speed);
 	}
 
-	spd = min(v->cur_speed + (spd >> 8) + (v->subspeed < t), speed_limit);
+	spd = std::min(v->cur_speed + (spd >> 8) + (v->subspeed < t), speed_limit);
 
 	/* updates statusbar only if speed have changed to save CPU time */
 	if (spd != v->cur_speed) {
@@ -737,7 +737,7 @@ void GetAircraftFlightLevelBounds(const Vehicle *v, int *min_level, int *max_lev
 	}
 
 	/* Make faster planes fly higher so that they can overtake slower ones */
-	base_altitude += min(20 * (v->vcache.cached_max_speed / 200) - 90, 0);
+	base_altitude += std::min(20 * (v->vcache.cached_max_speed / 200) - 90, 0);
 
 	if (min_level != nullptr) *min_level = base_altitude + AIRCRAFT_MIN_FLYING_ALTITUDE;
 	if (max_level != nullptr) *max_level = base_altitude + AIRCRAFT_MAX_FLYING_ALTITUDE;
@@ -856,8 +856,6 @@ static void MaybeCrashAirplane(Aircraft *v);
  */
 static bool AircraftController(Aircraft *v)
 {
-	int count;
-
 	/* nullptr if station is invalid */
 	const Station *st = Station::GetIfValid(v->targetairport);
 	/* INVALID_TILE if there is no station */
@@ -908,12 +906,16 @@ static bool AircraftController(Aircraft *v)
 			v->cur_speed = 0;
 			if (--u->cur_speed == 32) {
 				if (!PlayVehicleSound(v, VSE_START)) {
-					SndPlayVehicleFx(SND_18_HELICOPTER, v);
+					SoundID sfx = AircraftVehInfo(v->engine_type)->sfx;
+					/* For compatibility with old NewGRF we ignore the sfx property, unless a NewGRF-defined sound is used.
+					 * The baseset has only one helicopter sound, so this only limits using plane or cow sounds. */
+					if (sfx < ORIGINAL_SAMPLE_COUNT) sfx = SND_18_HELICOPTER;
+					SndPlayVehicleFx(sfx, v);
 				}
 			}
 		} else {
 			u->cur_speed = 32;
-			count = UpdateAircraftSpeed(v);
+			int count = UpdateAircraftSpeed(v);
 			if (count > 0) {
 				v->tile = 0;
 
@@ -925,7 +927,7 @@ static bool AircraftController(Aircraft *v)
 					v->cur_speed = 0;
 					return true;
 				}
-				SetAircraftPosition(v, v->x_pos, v->y_pos, min(v->z_pos + count, z_dest));
+				SetAircraftPosition(v, v->x_pos, v->y_pos, std::min(v->z_pos + count, z_dest));
 			}
 		}
 		return false;
@@ -945,7 +947,14 @@ static bool AircraftController(Aircraft *v)
 			return false;
 		}
 
-		/* Vehicle is now at the airport. */
+		/* Vehicle is now at the airport.
+		 * Helicopter has arrived at the target landing pad, so the current position is also where it should land.
+		 * Except for Oilrigs which are special due to being a 1x1 station, and helicopters land outside it. */
+		if (st->airport.type != AT_OILRIG) {
+			x = v->x_pos;
+			y = v->y_pos;
+			tile = TileVirtXY(x, y);
+		}
 		v->tile = tile;
 
 		/* Find altitude of landing position. */
@@ -961,12 +970,12 @@ static bool AircraftController(Aircraft *v)
 			}
 			u->cur_speed += 4;
 		} else {
-			count = UpdateAircraftSpeed(v);
+			int count = UpdateAircraftSpeed(v);
 			if (count > 0) {
 				if (v->z_pos > z) {
-					SetAircraftPosition(v, v->x_pos, v->y_pos, max(v->z_pos - count, z));
+					SetAircraftPosition(v, v->x_pos, v->y_pos, std::max(v->z_pos - count, z));
 				} else {
-					SetAircraftPosition(v, v->x_pos, v->y_pos, min(v->z_pos + count, z));
+					SetAircraftPosition(v, v->x_pos, v->y_pos, std::min(v->z_pos + count, z));
 				}
 			}
 		}
@@ -1012,8 +1021,15 @@ static bool AircraftController(Aircraft *v)
 	if (amd.flag & AMED_LAND)       { speed_limit = SPEED_LIMIT_APPROACH; hard_limit = false; }
 	if (amd.flag & AMED_BRAKE)      { speed_limit = SPEED_LIMIT_TAXI;     hard_limit = false; }
 
-	count = UpdateAircraftSpeed(v, speed_limit, hard_limit);
+	int count = UpdateAircraftSpeed(v, speed_limit, hard_limit);
 	if (count == 0) return false;
+
+	/* If the plane will be a few subpixels away from the destination after
+	 * this movement loop, start nudging him towards the exact position for
+	 * the whole loop. Otherwise, heavily depending on the speed of the plane,
+	 * it is possible we totally overshoot the target, causing the plane to
+	 * make a loop, and trying again, and again, and again .. */
+	bool nudge_towards_target = static_cast<uint>(count) + 3 > dist;
 
 	if (v->turn_counter != 0) v->turn_counter--;
 
@@ -1021,7 +1037,7 @@ static bool AircraftController(Aircraft *v)
 
 		GetNewVehiclePosResult gp;
 
-		if (dist < 4 || (amd.flag & AMED_LAND)) {
+		if (nudge_towards_target || (amd.flag & AMED_LAND)) {
 			/* move vehicle one pixel towards target */
 			gp.x = (v->x_pos != (x + amd.x)) ?
 					v->x_pos + ((x + amd.x > v->x_pos) ? 1 : -1) :
@@ -1088,6 +1104,19 @@ static bool AircraftController(Aircraft *v)
 			z = GetAircraftFlightLevel(v);
 		}
 
+		/* NewGRF airports (like a rotated intercontinental from OpenGFX+Airports) can be non-rectangular
+		 * and their primary (north-most) tile does not have to be part of the airport.
+		 * As such, the height of the primary tile can be different from the rest of the airport.
+		 * Given we are landing/breaking, and as such are not a helicopter, we know that there has to be a hangar.
+		 * We also know that the airport itself has to be completely flat (otherwise it is not a valid airport).
+		 * Therefore, use the height of this hangar to calculate our z-value. */
+		int airport_z = v->z_pos;
+		if ((amd.flag & (AMED_LAND | AMED_BRAKE)) && st != nullptr) {
+			assert(st->airport.HasHangar());
+			TileIndex hangar_tile = st->airport.GetHangarTile(0);
+			airport_z = GetTileMaxPixelZ(hangar_tile) + 1; // To avoid clashing with the shadow
+		}
+
 		if (amd.flag & AMED_LAND) {
 			if (st->airport.tile == INVALID_TILE) {
 				/* Airport has been removed, abort the landing procedure */
@@ -1099,27 +1128,24 @@ static bool AircraftController(Aircraft *v)
 				continue;
 			}
 
-			int curz = GetSlopePixelZ(x + amd.x, y + amd.y) + 1;
-
 			/* We're not flying below our destination, right? */
-			assert(curz <= z);
-			int t = max(1U, dist - 4);
-			int delta = z - curz;
+			assert(airport_z <= z);
+			int t = std::max(1U, dist - 4);
+			int delta = z - airport_z;
 
 			/* Only start lowering when we're sufficiently close for a 1:1 glide */
 			if (delta >= t) {
-				z -= CeilDiv(z - curz, t);
+				z -= CeilDiv(z - airport_z, t);
 			}
-			if (z < curz) z = curz;
+			if (z < airport_z) z = airport_z;
 		}
 
 		/* We've landed. Decrease speed when we're reaching end of runway. */
 		if (amd.flag & AMED_BRAKE) {
-			int curz = GetSlopePixelZ(x, y) + 1;
 
-			if (z > curz) {
+			if (z > airport_z) {
 				z--;
-			} else if (z < curz) {
+			} else if (z < airport_z) {
 				z++;
 			}
 
@@ -1274,7 +1300,7 @@ void Aircraft::MarkDirty()
 	this->colourmap = PAL_NONE;
 	this->UpdateViewport(true, false);
 	if (this->subtype == AIR_HELICOPTER) {
-		GetRotorImage(this, EIT_ON_MAP, &this->Next()->Next()->sprite_seq);
+		GetRotorImage(this, EIT_ON_MAP, &this->Next()->Next()->sprite_cache.sprite_seq);
 	}
 }
 
@@ -1312,7 +1338,7 @@ static void CrashAirplane(Aircraft *v)
 	AI::NewEvent(v->owner, new ScriptEventVehicleCrashed(v->index, v->tile, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
 	Game::NewEvent(new ScriptEventVehicleCrashed(v->index, v->tile, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
 
-	AddVehicleNewsItem(newsitem, NT_ACCIDENT, v->index, st != nullptr ? st->index : INVALID_STATION);
+	AddTileNewsItem(newsitem, NT_ACCIDENT, v->tile, nullptr, st != nullptr ? st->index : INVALID_STATION);
 
 	ModifyStationRatingAround(v->tile, v->owner, -160, 30);
 	if (_settings_client.sound.disaster) SndPlayVehicleFx(SND_12_EXPLOSION, v);

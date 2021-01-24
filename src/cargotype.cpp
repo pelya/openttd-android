@@ -12,7 +12,6 @@
 #include "newgrf_cargo.h"
 #include "string_func.h"
 #include "strings_func.h"
-#include <algorithm>
 
 #include "table/sprites.h"
 #include "table/strings.h"
@@ -42,8 +41,8 @@ void SetupCargoForClimate(LandscapeID l)
 	assert(l < lengthof(_default_climate_cargo));
 
 	/* Reset and disable all cargo types */
-	memset(CargoSpec::array, 0, sizeof(CargoSpec::array));
 	for (CargoID i = 0; i < lengthof(CargoSpec::array); i++) {
+		*CargoSpec::Get(i) = {};
 		CargoSpec::Get(i)->bitnum = INVALID_CARGO;
 
 		/* Set defaults for newer properties, which old GRFs do not know */

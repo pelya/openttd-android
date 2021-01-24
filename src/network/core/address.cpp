@@ -96,12 +96,11 @@ void NetworkAddress::GetAddressAsString(char *buffer, const char *last, bool wit
  * Get the address as a string, e.g. 127.0.0.1:12345.
  * @param with_family whether to add the family (e.g. IPvX).
  * @return the address
- * @note NOT thread safe
  */
-const char *NetworkAddress::GetAddressAsString(bool with_family)
+std::string NetworkAddress::GetAddressAsString(bool with_family)
 {
 	/* 6 = for the : and 5 for the decimal port number */
-	static char buf[NETWORK_HOSTNAME_LENGTH + 6 + 7];
+	char buf[NETWORK_HOSTNAME_LENGTH + 6 + 7];
 	this->GetAddressAsString(buf, lastof(buf), with_family);
 	return buf;
 }
@@ -268,6 +267,18 @@ SOCKET NetworkAddress::Resolve(int family, int socktype, int flags, SocketList *
 			this->address_length = (int)runp->ai_addrlen;
 			assert(sizeof(this->address) >= runp->ai_addrlen);
 			memcpy(&this->address, runp->ai_addr, runp->ai_addrlen);
+#ifdef __EMSCRIPTEN__
+			/* Emscripten doesn't zero sin_zero, but as we compare addresses
+			 * to see if they are the same address, we need them to be zero'd.
+			 * Emscripten is, as far as we know, the only OS not doing this.
+			 *
+			 * https://github.com/emscripten-core/emscripten/issues/12998
+			 */
+			if (this->address.ss_family == AF_INET) {
+				sockaddr_in *address_ipv4 = (sockaddr_in *)&this->address;
+				memset(address_ipv4->sin_zero, 0, sizeof(address_ipv4->sin_zero));
+			}
+#endif
 			break;
 		}
 
@@ -289,7 +300,8 @@ static SOCKET ConnectLoopProc(addrinfo *runp)
 {
 	const char *type = NetworkAddress::SocketTypeAsString(runp->ai_socktype);
 	const char *family = NetworkAddress::AddressFamilyAsString(runp->ai_family);
-	const char *address = NetworkAddress(runp->ai_addr, (int)runp->ai_addrlen).GetAddressAsString();
+	char address[NETWORK_HOSTNAME_LENGTH + 6 + 7];
+	NetworkAddress(runp->ai_addr, (int)runp->ai_addrlen).GetAddressAsString(address, lastof(address));
 
 	SOCKET sock = socket(runp->ai_family, runp->ai_socktype, runp->ai_protocol);
 	if (sock == INVALID_SOCKET) {
@@ -299,7 +311,15 @@ static SOCKET ConnectLoopProc(addrinfo *runp)
 
 	if (!SetNoDelay(sock)) DEBUG(net, 1, "[%s] setting TCP_NODELAY failed", type);
 
-	if (connect(sock, runp->ai_addr, (int)runp->ai_addrlen) != 0) {
+	int err = connect(sock, runp->ai_addr, (int)runp->ai_addrlen);
+#ifdef __EMSCRIPTEN__
+	/* Emscripten is asynchronous, and as such a connect() is still in
+	 * progress by the time the call returns. */
+	if (err != 0 && errno != EINPROGRESS)
+#else
+	if (err != 0)
+#endif
+	{
 		DEBUG(net, 1, "[%s] could not connect %s socket: %s", type, family, strerror(errno));
 		closesocket(sock);
 		return INVALID_SOCKET;
@@ -319,7 +339,7 @@ static SOCKET ConnectLoopProc(addrinfo *runp)
  */
 SOCKET NetworkAddress::Connect()
 {
-	DEBUG(net, 1, "Connecting to %s", this->GetAddressAsString());
+	DEBUG(net, 1, "Connecting to %s", this->GetAddressAsString().c_str());
 
 	return this->Resolve(AF_UNSPEC, SOCK_STREAM, AI_ADDRCONFIG, nullptr, ConnectLoopProc);
 }
@@ -333,7 +353,8 @@ static SOCKET ListenLoopProc(addrinfo *runp)
 {
 	const char *type = NetworkAddress::SocketTypeAsString(runp->ai_socktype);
 	const char *family = NetworkAddress::AddressFamilyAsString(runp->ai_family);
-	const char *address = NetworkAddress(runp->ai_addr, (int)runp->ai_addrlen).GetAddressAsString();
+	char address[NETWORK_HOSTNAME_LENGTH + 6 + 7];
+	NetworkAddress(runp->ai_addr, (int)runp->ai_addrlen).GetAddressAsString(address, lastof(address));
 
 	SOCKET sock = socket(runp->ai_family, runp->ai_socktype, runp->ai_protocol);
 	if (sock == INVALID_SOCKET) {

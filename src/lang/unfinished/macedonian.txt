@@ -48,9 +48,9 @@ STR_CARGO_PLURAL_WHEAT                                          :Пченица
 STR_CARGO_PLURAL_RUBBER                                         :Гума
 STR_CARGO_PLURAL_SUGAR                                          :Шеќер
 STR_CARGO_PLURAL_TOYS                                           :Играчки
-STR_CARGO_PLURAL_CANDY                                          :Колачиња
+STR_CARGO_PLURAL_SWEETS                                         :Колачиња
 STR_CARGO_PLURAL_COLA                                           :Кола (сок)
-STR_CARGO_PLURAL_COTTON_CANDY                                   :Суровина за колачиња
+STR_CARGO_PLURAL_CANDYFLOSS                                     :Суровина за колачиња
 STR_CARGO_PLURAL_BUBBLES                                        :Меурчиња
 STR_CARGO_PLURAL_TOFFEE                                         :Карамели
 STR_CARGO_PLURAL_BATTERIES                                      :Батерии
@@ -82,9 +82,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :Пченица
 STR_CARGO_SINGULAR_RUBBER                                       :Гума
 STR_CARGO_SINGULAR_SUGAR                                        :Шеќер
 STR_CARGO_SINGULAR_TOY                                          :Играчка
-STR_CARGO_SINGULAR_CANDY                                        :Колаче
+STR_CARGO_SINGULAR_SWEETS                                       :Колаче
 STR_CARGO_SINGULAR_COLA                                         :Кола (сок)
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :Суровина за колачиња
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :Суровина за колачиња
 STR_CARGO_SINGULAR_BUBBLE                                       :Меурче
 STR_CARGO_SINGULAR_TOFFEE                                       :Карамела
 STR_CARGO_SINGULAR_BATTERY                                      :Батерија
@@ -222,8 +222,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Избе
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Изберете критериум за сортирање
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Изберете филтрирање критериуми
 STR_BUTTON_SORT_BY                                              :{BLACK}Сортирање според
-STR_BUTTON_LOCATION                                             :{BLACK}Локација
-STR_BUTTON_RENAME                                               :{BLACK}Преименувај
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Затвори го прозорецот
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Наслов на прозорец - влечи тука за да го поместиш прозорецот
@@ -289,6 +287,8 @@ STR_SORT_BY_CARGO_CAPACITY                                      :Капацит�
 STR_SORT_BY_RANGE                                               :опсег
 STR_SORT_BY_POPULATION                                          :Населеност
 STR_SORT_BY_RATING                                              :Рејтинг
+
+# Group by options for vehicle list
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Паузирај ја играта
@@ -372,7 +372,7 @@ STR_FILE_MENU_EXIT                                              :Излез
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Мапа на светот
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :екстра прозорец
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :екстра прозорец
 STR_MAP_MENU_SIGN_LIST                                          :Си листа
 
 ############ range for town menu starts
@@ -938,16 +938,8 @@ STR_INTRO_TOOLTIP_SCRIPT_SETTINGS                               :{BLACK}Пока
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Напушти
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Дали сте сигурни дека сакате да ја напуштите OpenTTD и да се вратите во {STRING}?
 STR_QUIT_YES                                                    :{BLACK}Да
 STR_QUIT_NO                                                     :{BLACK}Не
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Напушти ја Играта
@@ -1000,7 +992,6 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 # Network client list
 
 
-
 # Network set password
 
 # Network company info join/password
@@ -1050,6 +1041,8 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Зали
 
 # Join station window
 
+
+# Generic toolbar
 
 # Rail construction toolbar
 
@@ -1118,7 +1111,7 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Голе
 STR_OBJECT_CLASS_LTHS                                           :Светилници
 STR_OBJECT_CLASS_TRNS                                           :Предаватели
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 
 # Land generation window (SE)
 STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION                   :{WHITE}Генерирање на терен
@@ -1194,7 +1187,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Компани�
 STR_ABOUT_OPENTTD                                               :{WHITE}За OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Оригинален copyright {COPYRIGHT} 1995 Chris Sawyer, Сите права се задржани
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD верзија {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 OpenTTD тимот
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-{STRING} OpenTTD тимот
 
 # Framerate display window
 ############ Leave those lines in this order!!
@@ -1520,7 +1513,6 @@ STR_REPLACE_VEHICLE_AIRCRAFT                                    :Летало
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Центар главниот приказ на локација авионот. Ctrl + клик ќе го следат авион во главниот приказ
 
 STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Прати го авионот во хангар. CTRL+клик ќе го прати само на сервис
 
@@ -1533,7 +1525,7 @@ STR_VEHICLE_VIEW_AIRCRAFT_ORDERS_TOOLTIP                        :{BLACK}Прик
 
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Прикажи детали за авионот
 
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Сега авиони акција - кликни за да се запре / проектот авиони. Ctrl + Кликнете да дојдете до дестинацијата
+
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_AIRCRAFT_TOO_FAR                             :{ORANGE}Премногу далеку за да следната дестинација

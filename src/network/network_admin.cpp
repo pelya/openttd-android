@@ -54,7 +54,7 @@ static const AdminUpdateFrequency _admin_update_type_frequencies[] = {
 	                       ADMIN_FREQUENCY_AUTOMATIC,                                                                                                      ///< ADMIN_UPDATE_GAMESCRIPT
 };
 /** Sanity check. */
-assert_compile(lengthof(_admin_update_type_frequencies) == ADMIN_UPDATE_END);
+static_assert(lengthof(_admin_update_type_frequencies) == ADMIN_UPDATE_END);
 
 /**
  * Create a new socket for the server side of the admin network.
@@ -86,7 +86,7 @@ ServerNetworkAdminSocketHandler::~ServerNetworkAdminSocketHandler()
 	bool accept = !StrEmpty(_settings_client.network.admin_password) && _network_admins_connected < MAX_ADMINS;
 	/* We can't go over the MAX_ADMINS limit here. However, if we accept
 	 * the connection, there has to be space in the pool. */
-	assert_compile(NetworkAdminSocketPool::MAX_SIZE == MAX_ADMINS);
+	static_assert(NetworkAdminSocketPool::MAX_SIZE == MAX_ADMINS);
 	assert(!accept || ServerNetworkAdminSocketHandler::CanAllocateItem());
 	return accept;
 }
@@ -413,13 +413,13 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::SendCompanyEconomy()
 		p->Send_uint64(company->money);
 		p->Send_uint64(company->current_loan);
 		p->Send_uint64(income);
-		p->Send_uint16(min(UINT16_MAX, company->cur_economy.delivered_cargo.GetSum<OverflowSafeInt64>()));
+		p->Send_uint16(static_cast<uint16>(std::min<uint64>(UINT16_MAX, company->cur_economy.delivered_cargo.GetSum<OverflowSafeInt64>())));
 
 		/* Send stats for the last 2 quarters. */
 		for (uint i = 0; i < 2; i++) {
 			p->Send_uint64(company->old_economy[i].company_value);
 			p->Send_uint16(company->old_economy[i].performance_history);
-			p->Send_uint16(min(UINT16_MAX, company->old_economy[i].delivered_cargo.GetSum<OverflowSafeInt64>()));
+			p->Send_uint16(static_cast<uint16>(std::min<uint64>(UINT16_MAX, company->old_economy[i].delivered_cargo.GetSum<OverflowSafeInt64>())));
 		}
 
 		this->SendPacket(p);

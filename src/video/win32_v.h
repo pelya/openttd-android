@@ -15,7 +15,7 @@
 /** The video driver for windows. */
 class VideoDriver_Win32 : public VideoDriver {
 public:
-	const char *Start(const char * const *param) override;
+	const char *Start(const StringList &param) override;
 
 	void Stop() override;
 
@@ -40,6 +40,9 @@ public:
 	const char *GetName() const override { return "win32"; }
 
 	bool MakeWindow(bool full_screen);
+
+protected:
+	Dimension GetScreenSize() const override;
 };
 
 /** The factory for Windows' video driver. */

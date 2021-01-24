@@ -26,7 +26,6 @@
 #include "safeguards.h"
 
 static const int ASCII_LETTERSTART = 32; ///< First printable ASCII letter.
-static const int MAX_FONT_SIZE     = 72; ///< Maximum font size.
 
 /** Default heights for the different sizes of fonts. */
 static const int _default_font_height[FS_END]   = {10, 6, 18, 10};
@@ -105,13 +104,13 @@ SpriteFontCache::~SpriteFontCache()
 	this->ClearGlyphToSpriteMap();
 }
 
-SpriteID SpriteFontCache::GetUnicodeGlyph(GlyphID key)
+SpriteID SpriteFontCache::GetUnicodeGlyph(WChar key)
 {
 	if (this->glyph_to_spriteid_map[GB(key, 8, 8)] == nullptr) return 0;
 	return this->glyph_to_spriteid_map[GB(key, 8, 8)][GB(key, 0, 8)];
 }
 
-void SpriteFontCache::SetUnicodeGlyph(GlyphID key, SpriteID sprite)
+void SpriteFontCache::SetUnicodeGlyph(WChar key, SpriteID sprite)
 {
 	if (this->glyph_to_spriteid_map == nullptr) this->glyph_to_spriteid_map = CallocT<SpriteID*>(256);
 	if (this->glyph_to_spriteid_map[GB(key, 8, 8)] == nullptr) this->glyph_to_spriteid_map[GB(key, 8, 8)] = CallocT<SpriteID>(256);
@@ -202,6 +201,8 @@ bool SpriteFontCache::GetDrawGlyphShadow()
 
 FreeTypeSettings _freetype;
 
+static const int MAX_FONT_SIZE = 72; ///< Maximum font size.
+
 static const byte FACE_COLOUR = 1;
 static const byte SHADOW_COLOUR = 2;
 
@@ -211,7 +212,7 @@ protected:
 	int req_size;  ///< Requested font size.
 	int used_size; ///< Used font size.
 
-	typedef SmallMap<uint32, SmallPair<size_t, const void*> > FontTable; ///< Table with font table cache
+	typedef SmallMap<uint32, std::pair<size_t, const void*> > FontTable; ///< Table with font table cache
 	FontTable font_tables; ///< Cached font tables.
 
 	/** Container for information about a glyph. */
@@ -434,7 +435,7 @@ const void *TrueTypeFontCache::GetFontTable(uint32 tag, size_t &length)
 
 	const void *result = this->InternalGetFontTable(tag, length);
 
-	this->font_tables.Insert(tag, SmallPair<size_t, const void *>(length, result));
+	this->font_tables.Insert(tag, std::pair<size_t, const void *>(length, result));
 	return result;
 }
 
@@ -491,7 +492,7 @@ void FreeTypeFontCache::SetFontSize(FontSize fs, FT_Face face, int pixels)
 			/* Font height is minimum height plus the difference between the default
 			 * height for this font size and the small size. */
 			int diff = scaled_height - ScaleFontTrad(_default_font_height[FS_SMALL]);
-			pixels = Clamp(min(head->Lowest_Rec_PPEM, 20) + diff, scaled_height, MAX_FONT_SIZE);
+			pixels = Clamp(std::min<uint>(head->Lowest_Rec_PPEM, 20u) + diff, scaled_height, MAX_FONT_SIZE);
 		}
 	} else {
 		pixels = ScaleFontTrad(pixels);
@@ -560,8 +561,27 @@ static void LoadFreeTypeFont(FontSize fs)
 	}
 
 	FT_Face face = nullptr;
+
+	/* If font is an absolute path to a ttf, try loading that first. */
 	FT_Error error = FT_New_Face(_library, settings->font, 0, &face);
 
+#if defined(WITH_COCOA)
+	extern void MacOSRegisterExternalFont(const char *file_path);
+	if (error == FT_Err_Ok) MacOSRegisterExternalFont(settings->font);
+#endif
+
+	if (error != FT_Err_Ok) {
+		/* Check if font is a relative filename in one of our search-paths. */
+		std::string full_font = FioFindFullPath(BASE_DIR, settings->font);
+		if (!full_font.empty()) {
+			error = FT_New_Face(_library, full_font.c_str(), 0, &face);
+#if defined(WITH_COCOA)
+			if (error == FT_Err_Ok) MacOSRegisterExternalFont(full_font.c_str());
+#endif
+		}
+	}
+
+	/* Try loading based on font face name (OS-wide fonts). */
 	if (error != FT_Err_Ok) error = GetFontByFaceName(settings->font, &face);
 
 	if (error == FT_Err_Ok) {
@@ -636,8 +656,8 @@ const Sprite *FreeTypeFontCache::InternalGetGlyph(GlyphID key, bool aa)
 	aa = (slot->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY);
 
 	/* Add 1 pixel for the shadow on the medium font. Our sprite must be at least 1x1 pixel */
-	uint width  = max(1U, (uint)slot->bitmap.width + (this->fs == FS_NORMAL));
-	uint height = max(1U, (uint)slot->bitmap.rows  + (this->fs == FS_NORMAL));
+	uint width  = std::max(1U, (uint)slot->bitmap.width + (this->fs == FS_NORMAL));
+	uint height = std::max(1U, (uint)slot->bitmap.rows  + (this->fs == FS_NORMAL));
 
 	/* Limit glyph size to prevent overflows later on. */
 	if (width > 256 || height > 256) usererror("Font glyph is too large");
@@ -777,7 +797,7 @@ void Win32FontCache::SetFontSize(FontSize fs, int pixels)
 			/* Font height is minimum height plus the difference between the default
 			 * height for this font size and the small size. */
 			int diff = scaled_height - ScaleFontTrad(_default_font_height[FS_SMALL]);
-			pixels = Clamp(min(otm->otmusMinimumPPEM, 20) + diff, scaled_height, MAX_FONT_SIZE);
+			pixels = Clamp(std::min(otm->otmusMinimumPPEM, 20u) + diff, scaled_height, MAX_FONT_SIZE);
 
 			SelectObject(dc, old);
 			DeleteObject(temp);
@@ -831,7 +851,7 @@ void Win32FontCache::ClearFontCache()
 	MAT2 mat = { {0, 1}, {0, 0}, {0, 0}, {0, 1} };
 
 	/* Make a guess for the needed memory size. */
-	DWORD size = this->glyph_size.cy * Align(aa ? this->glyph_size.cx : max(this->glyph_size.cx / 8l, 1l), 4); // Bitmap data is DWORD-aligned rows.
+	DWORD size = this->glyph_size.cy * Align(aa ? this->glyph_size.cx : std::max(this->glyph_size.cx / 8l, 1l), 4); // Bitmap data is DWORD-aligned rows.
 	byte *bmp = AllocaM(byte, size);
 	size = GetGlyphOutline(this->dc, key, GGO_GLYPH_INDEX | (aa ? GGO_GRAY8_BITMAP : GGO_BITMAP), &gm, size, bmp, &mat);
 
@@ -848,8 +868,8 @@ void Win32FontCache::ClearFontCache()
 	}
 
 	/* Add 1 pixel for the shadow on the medium font. Our sprite must be at least 1x1 pixel. */
-	uint width = max(1U, (uint)gm.gmBlackBoxX + (this->fs == FS_NORMAL));
-	uint height = max(1U, (uint)gm.gmBlackBoxY + (this->fs == FS_NORMAL));
+	uint width = std::max(1U, (uint)gm.gmBlackBoxX + (this->fs == FS_NORMAL));
+	uint height = std::max(1U, (uint)gm.gmBlackBoxY + (this->fs == FS_NORMAL));
 
 	/* Limit glyph size to prevent overflows later on. */
 	if (width > 256 || height > 256) usererror("Font glyph is too large");
@@ -869,7 +889,7 @@ void Win32FontCache::ClearFontCache()
 		 * For anti-aliased rendering, GDI uses the strange value range of 0 to 64,
 		 * inclusively. To map this to 0 to 255, we shift left by two and then
 		 * subtract one. */
-		uint pitch = Align(aa ? gm.gmBlackBoxX : max(gm.gmBlackBoxX / 8u, 1u), 4);
+		uint pitch = Align(aa ? gm.gmBlackBoxX : std::max(gm.gmBlackBoxX / 8u, 1u), 4);
 
 		/* Draw shadow for medium size. */
 		if (this->fs == FS_NORMAL && !aa) {
@@ -969,42 +989,55 @@ static void LoadWin32Font(FontSize fs)
 
 	if (settings->os_handle != nullptr) {
 		logfont = *(const LOGFONT *)settings->os_handle;
-	} else if (strchr(settings->font, '.') != nullptr && FileExists(settings->font)) {
+	} else if (strchr(settings->font, '.') != nullptr) {
 		/* Might be a font file name, try load it. */
-		TCHAR fontPath[MAX_PATH];
-		convert_to_fs(settings->font, fontPath, lengthof(fontPath), false);
 
-		if (AddFontResourceEx(fontPath, FR_PRIVATE, 0) != 0) {
-			/* Try a nice little undocumented function first for getting the internal font name.
-			 * Some documentation is found at: http://www.undocprint.org/winspool/getfontresourceinfo */
-			typedef BOOL(WINAPI * PFNGETFONTRESOURCEINFO)(LPCTSTR, LPDWORD, LPVOID, DWORD);
+		TCHAR fontPath[MAX_PATH] = {};
+
+		/* See if this is an absolute path. */
+		if (FileExists(settings->font)) {
+			convert_to_fs(settings->font, fontPath, lengthof(fontPath), false);
+		} else {
+			/* Scan the search-paths to see if it can be found. */
+			std::string full_font = FioFindFullPath(BASE_DIR, settings->font);
+			if (!full_font.empty()) {
+				convert_to_fs(full_font.c_str(), fontPath, lengthof(fontPath), false);
+			}
+		}
+
+		if (fontPath[0] != 0) {
+			if (AddFontResourceEx(fontPath, FR_PRIVATE, 0) != 0) {
+				/* Try a nice little undocumented function first for getting the internal font name.
+				* Some documentation is found at: http://www.undocprint.org/winspool/getfontresourceinfo */
+				typedef BOOL(WINAPI * PFNGETFONTRESOURCEINFO)(LPCTSTR, LPDWORD, LPVOID, DWORD);
 #ifdef UNICODE
-			static PFNGETFONTRESOURCEINFO GetFontResourceInfo = (PFNGETFONTRESOURCEINFO)GetProcAddress(GetModuleHandle(_T("Gdi32")), "GetFontResourceInfoW");
+				static PFNGETFONTRESOURCEINFO GetFontResourceInfo = (PFNGETFONTRESOURCEINFO)GetProcAddress(GetModuleHandle(_T("Gdi32")), "GetFontResourceInfoW");
 #else
-			static PFNGETFONTRESOURCEINFO GetFontResourceInfo = (PFNGETFONTRESOURCEINFO)GetProcAddress(GetModuleHandle(_T("Gdi32")), "GetFontResourceInfoA");
+				static PFNGETFONTRESOURCEINFO GetFontResourceInfo = (PFNGETFONTRESOURCEINFO)GetProcAddress(GetModuleHandle(_T("Gdi32")), "GetFontResourceInfoA");
 #endif
 
-			if (GetFontResourceInfo != nullptr) {
-				/* Try to query an array of LOGFONTs that describe the file. */
-				DWORD len = 0;
-				if (GetFontResourceInfo(fontPath, &len, nullptr, 2) && len >= sizeof(LOGFONT)) {
-					LOGFONT *buf = (LOGFONT *)AllocaM(byte, len);
-					if (GetFontResourceInfo(fontPath, &len, buf, 2)) {
-						logfont = *buf; // Just use first entry.
+				if (GetFontResourceInfo != nullptr) {
+					/* Try to query an array of LOGFONTs that describe the file. */
+					DWORD len = 0;
+					if (GetFontResourceInfo(fontPath, &len, nullptr, 2) && len >= sizeof(LOGFONT)) {
+						LOGFONT *buf = (LOGFONT *)AllocaM(byte, len);
+						if (GetFontResourceInfo(fontPath, &len, buf, 2)) {
+							logfont = *buf; // Just use first entry.
+						}
 					}
 				}
-			}
 
-			/* No dice yet. Use the file name as the font face name, hoping it matches. */
-			if (logfont.lfFaceName[0] == 0) {
-				TCHAR fname[_MAX_FNAME];
-				_tsplitpath(fontPath, nullptr, nullptr, fname, nullptr);
+				/* No dice yet. Use the file name as the font face name, hoping it matches. */
+				if (logfont.lfFaceName[0] == 0) {
+					TCHAR fname[_MAX_FNAME];
+					_tsplitpath(fontPath, nullptr, nullptr, fname, nullptr);
 
-				_tcsncpy_s(logfont.lfFaceName, lengthof(logfont.lfFaceName), fname, _TRUNCATE);
-				logfont.lfWeight = strcasestr(settings->font, " bold") != nullptr || strcasestr(settings->font, "-bold") != nullptr ? FW_BOLD : FW_NORMAL; // Poor man's way to allow selecting bold fonts.
+					_tcsncpy_s(logfont.lfFaceName, lengthof(logfont.lfFaceName), fname, _TRUNCATE);
+					logfont.lfWeight = strcasestr(settings->font, " bold") != nullptr || strcasestr(settings->font, "-bold") != nullptr ? FW_BOLD : FW_NORMAL; // Poor man's way to allow selecting bold fonts.
+				}
+			} else {
+				ShowInfoF("Unable to load file '%s' for %s font, using default windows font selection instead", settings->font, SIZE_TO_NAME[fs]);
 			}
-		} else {
-			ShowInfoF("Unable to load file '%s' for %s font, using default windows font selection instead", settings->font, SIZE_TO_NAME[fs]);
 		}
 	}
 

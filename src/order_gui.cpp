@@ -28,6 +28,7 @@
 #include "hotkeys.h"
 #include "aircraft.h"
 #include "engine_func.h"
+#include "vehicle_func.h"
 
 #include "widgets/order_widget.h"
 
@@ -258,8 +259,9 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
 		case OT_GOTO_STATION: {
 			OrderLoadFlags load = order->GetLoadType();
 			OrderUnloadFlags unload = order->GetUnloadType();
+			bool valid_station = CanVehicleUseStation(v, Station::Get(order->GetDestination()));
 
-			SetDParam(0, STR_ORDER_GO_TO_STATION);
+			SetDParam(0, valid_station ? STR_ORDER_GO_TO_STATION : STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION);
 			SetDParam(1, STR_ORDER_GO_TO + (v->IsGroundVehicle() ? order->GetNonStopType() : 0));
 			SetDParam(2, order->GetDestination());
 
@@ -796,8 +798,7 @@ public:
 		if (_settings_client.gui.quick_goto && v->owner == _local_company) {
 			/* If there are less than 2 station, make Go To active. */
 			int station_orders = 0;
-			const Order *order;
-			FOR_VEHICLE_ORDERS(v, order) {
+			for(const Order *order : v->Orders()) {
 				if (order->IsType(OT_GOTO_STATION)) station_orders++;
 			}
 
@@ -1111,8 +1112,8 @@ public:
 				if (i != this->selected_order && i == this->order_over) {
 					/* Highlight dragged order destination. */
 					int top = (this->order_over < this->selected_order ? y : y + line_height) - WD_FRAMERECT_TOP;
-					int bottom = min(top + 2, r.bottom - WD_FRAMERECT_BOTTOM);
-					top = max(top - 3, r.top + WD_FRAMERECT_TOP);
+					int bottom = std::min(top + 2, r.bottom - WD_FRAMERECT_BOTTOM);
+					top = std::max(top - 3, r.top + WD_FRAMERECT_TOP);
 					GfxFillRect(r.left + WD_FRAMETEXT_LEFT, top, r.right - WD_FRAMETEXT_RIGHT, bottom, _colour_gradient[COLOUR_GREY][7]);
 					break;
 				}

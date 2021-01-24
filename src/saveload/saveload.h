@@ -12,6 +12,7 @@
 
 #include "../fileio_type.h"
 #include "../strings_type.h"
+#include <string>
 
 /** SaveLoad versions
  * Previous savegame versions, the trunk revision where they were
@@ -301,7 +302,28 @@ enum SaveLoadVersion : uint16 {
 	SLV_SCRIPT_MEMLIMIT,                    ///< 215  PR#7516 Limit on AI/GS memory consumption.
 	SLV_MULTITILE_DOCKS,                    ///< 216  PR#7380 Multiple docks per station.
 	SLV_TRADING_AGE,                        ///< 217  PR#7780 Configurable company trading age.
-	SLV_ENDING_YEAR,                        ///< 218  PR#7747 Configurable ending year.
+	SLV_ENDING_YEAR,                        ///< 218  PR#7747 v1.10 Configurable ending year.
+	SLV_REMOVE_TOWN_CARGO_CACHE,            ///< 219  PR#8258 Remove town cargo acceptance and production caches.
+
+	/* Patchpacks for a while considered it a good idea to jump a few versions
+	 * above our version for their savegames. But as time continued, this gap
+	 * has been closing, up to the point we would start to reuse versions from
+	 * their patchpacks. This is not a problem from our perspective: the
+	 * savegame will simply fail to load because they all contain chunks we
+	 * cannot digest. But, this gives for ugly errors. As we have plenty of
+	 * versions anyway, we simply skip the versions we know belong to
+	 * patchpacks. This way we can present the user with a clean error
+	 * indicate he is loading a savegame from a patchpack.
+	 * For future patchpack creators: please follow a system like JGRPP, where
+	 * the version is masked with 0x8000, and the true version is stored in
+	 * its own chunk with feature toggles.
+	 */
+	SLV_START_PATCHPACKS,                   ///< 220  First known patchpack to use a version just above ours.
+	SLV_END_PATCHPACKS = 286,               ///< 286  Last known patchpack to use a version just above ours.
+
+	SLV_GS_INDUSTRY_CONTROL,                ///< 287  PR#7912 and PR#8115 GS industry control.
+	SLV_VEH_MOTION_COUNTER,                 ///< 288  PR#8591 Desync safe motion counter
+	SLV_INDUSTRY_TEXT,                      ///< 289  PR#8576 Additional GS text for industries.
 
 	SL_MAX_VERSION,                         ///< Highest possible saveload version
 };
@@ -318,7 +340,7 @@ struct FileToSaveLoad {
 	SaveLoadOperation file_op;           ///< File operation to perform.
 	DetailedFileType detail_ftype;   ///< Concrete file type (PNG, BMP, old save, etc).
 	AbstractFileType abstract_ftype; ///< Abstract type of file (scenario, heightmap, etc).
-	char name[MAX_PATH];             ///< Name of the file.
+	std::string name;                ///< Name of the file.
 	char title[255];                 ///< Internal name of the game.
 
 	void SetMode(FiosType ft);
@@ -342,7 +364,7 @@ extern FileToSaveLoad _file_to_saveload;
 void GenerateDefaultSaveName(char *buf, const char *last);
 void SetSaveLoadError(StringID str);
 const char *GetSaveLoadErrorString();
-SaveOrLoadResult SaveOrLoad(const char *filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded = true);
+SaveOrLoadResult SaveOrLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded = true);
 void WaitTillSaved();
 void ProcessAsyncSaveFinish();
 void DoExitSave();
@@ -390,7 +412,6 @@ enum ChunkType {
 	CH_SPARSE_ARRAY =  2,
 	CH_TYPE_MASK    =  3,
 	CH_LAST         =  8, ///< Last chunk in this array.
-	CH_AUTO_LENGTH  = 16,
 };
 
 /**
@@ -485,6 +506,7 @@ enum SaveLoadTypes {
 	SL_STR         =  3, ///< Save/load a string.
 	SL_LST         =  4, ///< Save/load a list.
 	SL_DEQUE       =  5, ///< Save/load a deque.
+	SL_STDSTR      =  6, ///< Save/load a \c std::string.
 	/* non-normal save-load types */
 	SL_WRITEBYTE   =  8,
 	SL_VEH_INCLUDE =  9,
@@ -568,6 +590,16 @@ typedef SaveLoad SaveLoadGlobVarList;
 #define SLE_CONDSTR(base, variable, type, length, from, to) SLE_GENERAL(SL_STR, base, variable, type, length, from, to)
 
 /**
+ * Storage of a \c std::string in some savegame versions.
+ * @param base     Name of the class or struct containing the string.
+ * @param variable Name of the variable in the class or struct referenced by \a base.
+ * @param type     Storage of the data in memory and in the savegame.
+ * @param from     First savegame version that has the string.
+ * @param to       Last savegame version that has the string.
+ */
+#define SLE_CONDSSTR(base, variable, type, from, to) SLE_GENERAL(SL_STDSTR, base, variable, type, 0, from, to)
+
+/**
  * Storage of a list in some savegame versions.
  * @param base     Name of the class or struct containing the list.
  * @param variable Name of the variable in the class or struct referenced by \a base.
@@ -620,6 +652,14 @@ typedef SaveLoad SaveLoadGlobVarList;
  * @param length   Number of elements in the string (only used for fixed size buffers).
  */
 #define SLE_STR(base, variable, type, length) SLE_CONDSTR(base, variable, type, length, SL_MIN_VERSION, SL_MAX_VERSION)
+
+/**
+ * Storage of a \c std::string in every savegame version.
+ * @param base     Name of the class or struct containing the string.
+ * @param variable Name of the variable in the class or struct referenced by \a base.
+ * @param type     Storage of the data in memory and in the savegame.
+ */
+#define SLE_SSTR(base, variable, type) SLE_CONDSSTR(base, variable, type, SL_MIN_VERSION, SL_MAX_VERSION)
 
 /**
  * Storage of a list in every savegame version.
@@ -702,6 +742,15 @@ typedef SaveLoad SaveLoadGlobVarList;
 #define SLEG_CONDSTR(variable, type, length, from, to) SLEG_GENERAL(SL_STR, variable, type, length, from, to)
 
 /**
+ * Storage of a global \c std::string in some savegame versions.
+ * @param variable Name of the global variable.
+ * @param type     Storage of the data in memory and in the savegame.
+ * @param from     First savegame version that has the string.
+ * @param to       Last savegame version that has the string.
+ */
+#define SLEG_CONDSSTR(variable, type, from, to) SLEG_GENERAL(SL_STDSTR, variable, type, 0, from, to)
+
+/**
  * Storage of a global list in some savegame versions.
  * @param variable Name of the global variable.
  * @param type     Storage of the data in memory and in the savegame.
@@ -739,6 +788,13 @@ typedef SaveLoad SaveLoadGlobVarList;
 #define SLEG_STR(variable, type) SLEG_CONDSTR(variable, type, sizeof(variable), SL_MIN_VERSION, SL_MAX_VERSION)
 
 /**
+ * Storage of a global \c std::string in every savegame version.
+ * @param variable Name of the global variable.
+ * @param type     Storage of the data in memory and in the savegame.
+ */
+#define SLEG_SSTR(variable, type) SLEG_CONDSSTR(variable, type, SL_MIN_VERSION, SL_MAX_VERSION)
+
+/**
  * Storage of a global list in every savegame version.
  * @param variable Name of the global variable.
  * @param type     Storage of the data in memory and in the savegame.
@@ -767,6 +823,19 @@ static inline bool IsSavegameVersionBefore(SaveLoadVersion major, byte minor = 0
 	extern SaveLoadVersion _sl_version;
 	extern byte            _sl_minor_version;
 	return _sl_version < major || (minor > 0 && _sl_version == major && _sl_minor_version < minor);
+}
+
+/**
+ * Checks whether the savegame is below or at \a major. This should be used to repair data from existing
+ * savegames which is no longer corrupted in new savegames, but for which otherwise no savegame
+ * bump is required.
+ * @param major Major number of the version to check against.
+ * @return Savegame version is at most the specified version.
+ */
+static inline bool IsSavegameVersionUntil(SaveLoadVersion major)
+{
+	extern SaveLoadVersion _sl_version;
+	return _sl_version <= major;
 }
 
 /**
@@ -824,7 +893,18 @@ static inline bool IsNumericType(VarType conv)
  */
 static inline void *GetVariableAddress(const void *object, const SaveLoad *sld)
 {
-	return const_cast<byte *>((const byte*)(sld->global ? nullptr : object) + (ptrdiff_t)sld->address);
+	/* Entry is a global address. */
+	if (sld->global) return sld->address;
+
+	/* Entry is a null-variable, mostly used to read old savegames etc. */
+	if (GetVarMemType(sld->conv) == SLE_VAR_NULL) {
+		assert(sld->address == nullptr);
+		return nullptr;
+	}
+
+	/* Everything else should be a non-null pointer. */
+	assert(object != nullptr);
+	return const_cast<byte *>((const byte *)object + (ptrdiff_t)sld->address);
 }
 
 int64 ReadValue(const void *ptr, VarType conv);
@@ -848,9 +928,19 @@ void SlObject(void *object, const SaveLoad *sld);
 bool SlObjectMember(void *object, const SaveLoad *sld);
 void NORETURN SlError(StringID string, const char *extra_msg = nullptr);
 void NORETURN SlErrorCorrupt(const char *msg);
-void NORETURN SlErrorCorruptFmt(const char *format, ...);
+void NORETURN SlErrorCorruptFmt(const char *format, ...) WARN_FORMAT(1, 2);
 
 bool SaveloadCrashWithMissingNewGRFs();
+
+/**
+ * Read in bytes from the file/data structure but don't do
+ * anything with them, discarding them in effect
+ * @param length The amount of bytes that is being treated this way
+ */
+static inline void SlSkipBytes(size_t length)
+{
+	for (; length != 0; length--) SlReadByte();
+}
 
 extern char _savegame_format[8];
 extern bool _do_autosave;

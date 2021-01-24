@@ -43,7 +43,11 @@
 static const NWidgetPart _nested_train_depot_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_D_SHOW_RENAME), // rename button
+			NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_RENAME), SetMinimalSize(12, 14), SetDataTip(SPR_RENAME, STR_DEPOT_RENAME_TOOLTIP),
+		EndContainer(),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_D_CAPTION), SetDataTip(STR_DEPOT_CAPTION, STR_NULL),
+		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_LOCATION), SetMinimalSize(12, 14), SetDataTip(SPR_GOTO_LOCATION, STR_NULL),
 		NWidget(WWT_SHADEBOX, COLOUR_GREY),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
@@ -68,10 +72,6 @@ static const NWidgetPart _nested_train_depot_widgets[] = {
 	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_D_BUILD), SetDataTip(0x0, STR_NULL), SetFill(1, 1), SetResize(1, 0),
 		NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_D_CLONE), SetDataTip(0x0, STR_NULL), SetFill(1, 1), SetResize(1, 0),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_D_LOCATION), SetDataTip(STR_BUTTON_LOCATION, STR_NULL), SetFill(1, 1), SetResize(1, 0),
-		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_D_SHOW_RENAME), // rename button
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_D_RENAME), SetDataTip(STR_BUTTON_RENAME, STR_DEPOT_RENAME_TOOLTIP), SetFill(1, 1), SetResize(1, 0),
-		EndContainer(),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_D_VEHICLE_LIST), SetDataTip(0x0, STR_NULL), SetFill(0, 1),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_STOP_ALL), SetDataTip(SPR_FLAG_VEH_STOPPED, STR_NULL), SetFill(0, 1),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_GREY, WID_D_START_ALL), SetDataTip(SPR_FLAG_VEH_RUNNING, STR_NULL), SetFill(0, 1),
@@ -194,12 +194,12 @@ static void InitBlocksizeForVehicles(VehicleType type, EngineImageType image_typ
 
 	switch (image_type) {
 		case EIT_IN_DEPOT:
-			_base_block_sizes_depot[type].height       = max<uint>(ScaleGUITrad(GetVehicleHeight(type)), max_height);
+			_base_block_sizes_depot[type].height       = std::max<uint>(ScaleGUITrad(GetVehicleHeight(type)), max_height);
 			_base_block_sizes_depot[type].extend_left  = Clamp(max_extend_left, min_extend, max_extend);
 			_base_block_sizes_depot[type].extend_right = Clamp(max_extend_right, min_extend, max_extend);
 			break;
 		case EIT_PURCHASE:
-			_base_block_sizes_purchase[type].height       = max<uint>(ScaleGUITrad(GetVehicleHeight(type)), max_height);
+			_base_block_sizes_purchase[type].height       = std::max<uint>(ScaleGUITrad(GetVehicleHeight(type)), max_height);
 			_base_block_sizes_purchase[type].extend_left  = Clamp(max_extend_left, min_extend, max_extend);
 			_base_block_sizes_purchase[type].extend_right = Clamp(max_extend_right, min_extend, max_extend);
 			break;
@@ -397,7 +397,7 @@ struct DepotWindow : Window {
 		uint16 rows_in_display = wid->current_y / wid->resize_y;
 
 		uint16 num = this->vscroll->GetPosition() * this->num_columns;
-		int maxval = min((uint)this->vehicle_list.size(), num + (rows_in_display * this->num_columns));
+		uint maxval = static_cast<uint>(std::min<size_t>(this->vehicle_list.size(), num + (rows_in_display * this->num_columns)));
 		int y;
 		for (y = r.top; num < maxval; y += this->resize.step_height) { // Draw the rows
 			for (byte i = 0; i < this->num_columns && num < maxval; i++, num++) {
@@ -412,7 +412,7 @@ struct DepotWindow : Window {
 			}
 		}
 
-		maxval = min((uint)this->vehicle_list.size() + (uint)this->wagon_list.size(), (this->vscroll->GetPosition() * this->num_columns) + (rows_in_display * this->num_columns));
+		maxval = static_cast<uint>(std::min<size_t>(this->vehicle_list.size() + this->wagon_list.size(), (this->vscroll->GetPosition() * this->num_columns) + (rows_in_display * this->num_columns)));
 
 		/* Draw the train wagons without an engine in front. */
 		for (; num < maxval; num++, y += this->resize.step_height) {
@@ -670,15 +670,15 @@ struct DepotWindow : Window {
 				this->flag_height = UnScaleGUI(spr->height);
 
 				if (this->type == VEH_TRAIN || this->type == VEH_ROAD) {
-					min_height = max<uint>(unumber.height + WD_MATRIX_TOP, UnScaleGUI(spr->height));
+					min_height = std::max<uint>(unumber.height + WD_MATRIX_TOP, UnScaleGUI(spr->height));
 					this->header_width = unumber.width + this->flag_width + WD_FRAMERECT_LEFT;
 				} else {
 					min_height = unumber.height + UnScaleGUI(spr->height) + WD_MATRIX_TOP + WD_PAR_VSEP_NORMAL + WD_MATRIX_BOTTOM;
-					this->header_width = max<uint>(unumber.width, this->flag_width) + WD_FRAMERECT_RIGHT;
+					this->header_width = std::max<uint>(unumber.width, this->flag_width) + WD_FRAMERECT_RIGHT;
 				}
 				int base_width = this->count_width + this->header_width;
 
-				resize->height = max<uint>(GetVehicleImageCellSize(this->type, EIT_IN_DEPOT).height, min_height);
+				resize->height = std::max<uint>(GetVehicleImageCellSize(this->type, EIT_IN_DEPOT).height, min_height);
 				resize->height = GetMinSizing(NWST_STEP, resize->height);
 				if (this->type == VEH_TRAIN) {
 					resize->width = 1;
@@ -731,7 +731,7 @@ struct DepotWindow : Window {
 				for (const Train *v = Train::From(this->vehicle_list[num]); v != nullptr; v = v->Next()) {
 					width += v->GetDisplayImageWidth();
 				}
-				max_width = max(max_width, width);
+				max_width = std::max(max_width, width);
 			}
 			/* Always have 1 empty row, so people can change the setting of the train */
 			this->vscroll->SetCount((uint)this->vehicle_list.size() + (uint)this->wagon_list.size() + 1);
@@ -790,7 +790,7 @@ struct DepotWindow : Window {
 
 			case WID_D_LOCATION:
 				if (_ctrl_pressed) {
-					ShowExtraViewPortWindow(this->window_number);
+					ShowExtraViewportWindow(this->window_number);
 				} else {
 					ScrollMainWindowToTile(this->window_number);
 				}

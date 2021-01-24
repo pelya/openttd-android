@@ -50,8 +50,8 @@ void ResetViewportAfterLoadGame()
 	w->viewport->dest_scrollpos_x = _saved_scrollpos_x;
 	w->viewport->dest_scrollpos_y = _saved_scrollpos_y;
 
-	ViewPort *vp = w->viewport;
-	vp->zoom = (ZoomLevel)min(_saved_scrollpos_zoom, ZOOM_LVL_MAX);
+	Viewport *vp = w->viewport;
+	vp->zoom = std::min(_saved_scrollpos_zoom, ZOOM_LVL_MAX);
 	vp->virtual_width = ScaleByZoom(vp->width, vp->zoom);
 	vp->virtual_height = ScaleByZoom(vp->height, vp->zoom);
 

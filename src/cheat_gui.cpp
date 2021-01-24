@@ -192,7 +192,7 @@ static const CheatEntry _cheats_ui[] = {
 	{SLE_INT32, STR_CHEAT_CHANGE_DATE,     &_cur_year,                              &_cheats.change_date.been_used,      &ClickChangeDateCheat    },
 };
 
-assert_compile(CHT_NUM_CHEATS == lengthof(_cheats_ui));
+static_assert(CHT_NUM_CHEATS == lengthof(_cheats_ui));
 
 /** Widget definitions of the cheat GUI. */
 static const NWidgetPart _nested_cheat_widgets[] = {
@@ -203,12 +203,14 @@ static const NWidgetPart _nested_cheat_widgets[] = {
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_C_PANEL), SetDataTip(0x0, STR_CHEATS_TOOLTIP), EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY),
+		NWidget(WWT_LABEL, COLOUR_GREY, WID_C_NOTE), SetFill(1, 1), SetDataTip(STR_CHEATS_NOTE, STR_NULL), SetPadding(WD_PAR_VSEP_NORMAL, 4, WD_PAR_VSEP_NORMAL, 4),
+	EndContainer(),
 };
 
 /** GUI for the cheats. */
 struct CheatWindow : Window {
 	int clicked;
-	int header_height;
 	int clicked_widget;
 	uint line_height;
 	int box_width;
@@ -223,8 +225,7 @@ struct CheatWindow : Window {
 	{
 		if (widget != WID_C_PANEL) return;
 
-		int y = r.top + WD_FRAMERECT_TOP + this->header_height;
-		DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_LEFT, r.top + WD_FRAMERECT_TOP, y, STR_CHEATS_WARNING, TC_FROMSTRING, SA_CENTER);
+		int y = r.top + WD_FRAMERECT_TOP + WD_PAR_VSEP_NORMAL;
 
 		bool rtl = _current_text_dir == TD_RTL;
 		uint box_left    = rtl ? r.right - this->box_width - 5 : r.left + 5;
@@ -291,9 +292,9 @@ struct CheatWindow : Window {
 			switch (ce->type) {
 				case SLE_BOOL:
 					SetDParam(0, STR_CONFIG_SETTING_ON);
-					width = max(width, GetStringBoundingBox(ce->str).width);
+					width = std::max(width, GetStringBoundingBox(ce->str).width);
 					SetDParam(0, STR_CONFIG_SETTING_OFF);
-					width = max(width, GetStringBoundingBox(ce->str).width);
+					width = std::max(width, GetStringBoundingBox(ce->str).width);
 					break;
 
 				default:
@@ -301,37 +302,36 @@ struct CheatWindow : Window {
 						/* Display date for change date cheat */
 						case STR_CHEAT_CHANGE_DATE:
 							SetDParam(0, ConvertYMDToDate(MAX_YEAR, 11, 31));
-							width = max(width, GetStringBoundingBox(ce->str).width);
+							width = std::max(width, GetStringBoundingBox(ce->str).width);
 							break;
 
 						/* Draw coloured flag for change company cheat */
 						case STR_CHEAT_CHANGE_COMPANY:
 							SetDParamMaxValue(0, MAX_COMPANIES);
-							width = max(width, GetStringBoundingBox(ce->str).width + 10 + 10);
+							width = std::max(width, GetStringBoundingBox(ce->str).width + 10 + 10);
 							break;
 
 						default:
 							SetDParam(0, INT64_MAX);
-							width = max(width, GetStringBoundingBox(ce->str).width);
+							width = std::max(width, GetStringBoundingBox(ce->str).width);
 							break;
 					}
 					break;
 			}
 		}
 
-		this->line_height = max(GetSpriteSize(SPR_BOX_CHECKED).height, GetSpriteSize(SPR_BOX_EMPTY).height);
-		this->line_height = max<uint>(this->line_height, SETTING_BUTTON_HEIGHT);
-		this->line_height = max<uint>(this->line_height, FONT_HEIGHT_NORMAL) + WD_PAR_VSEP_NORMAL;
+		this->line_height = std::max(GetSpriteSize(SPR_BOX_CHECKED).height, GetSpriteSize(SPR_BOX_EMPTY).height);
+		this->line_height = std::max<uint>(this->line_height, SETTING_BUTTON_HEIGHT);
+		this->line_height = std::max<uint>(this->line_height, FONT_HEIGHT_NORMAL) + WD_PAR_VSEP_NORMAL;
 
 		size->width = width + 20 + this->box_width + SETTING_BUTTON_WIDTH /* stuff on the left */ + 10 /* extra spacing on right */;
-		this->header_height = GetStringHeight(STR_CHEATS_WARNING, size->width - WD_FRAMERECT_LEFT - WD_FRAMERECT_RIGHT) + WD_PAR_VSEP_WIDE;
-		size->height = this->header_height + WD_FRAMERECT_TOP + WD_PAR_VSEP_NORMAL + WD_FRAMERECT_BOTTOM + this->line_height * lengthof(_cheats_ui);
+		size->height = WD_FRAMERECT_TOP + WD_PAR_VSEP_NORMAL + WD_FRAMERECT_BOTTOM + this->line_height * lengthof(_cheats_ui);
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override
 	{
 		const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_C_PANEL);
-		uint btn = (pt.y - wid->pos_y - WD_FRAMERECT_TOP - this->header_height) / this->line_height;
+		uint btn = (pt.y - wid->pos_y - WD_FRAMERECT_TOP - WD_PAR_VSEP_NORMAL) / this->line_height;
 		int x = pt.x - wid->pos_x;
 		bool rtl = _current_text_dir == TD_RTL;
 		if (rtl) x = wid->current_x - x;

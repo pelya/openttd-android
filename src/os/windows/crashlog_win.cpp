@@ -219,7 +219,7 @@ static char *PrintModuleInfo(char *output, const char *last, HMODULE mod)
 			res = EnumProcessModules(proc, modules, sizeof(modules), &needed);
 			CloseHandle(proc);
 			if (res) {
-				size_t count = min(needed / sizeof(HMODULE), lengthof(modules));
+				size_t count = std::min<DWORD>(needed / sizeof(HMODULE), lengthof(modules));
 
 				for (size_t i = 0; i != count; i++) output = PrintModuleInfo(output, last, modules[i]);
 				return output + seprintf(output, last, "\n");
@@ -499,7 +499,7 @@ char *CrashLogWindows::AppendDecodedStacktrace(char *buffer, const char *last) c
 				CONST PMINIDUMP_CALLBACK_INFORMATION);
 		MiniDumpWriteDump_t funcMiniDumpWriteDump = (MiniDumpWriteDump_t)GetProcAddress(dbghelp, "MiniDumpWriteDump");
 		if (funcMiniDumpWriteDump != nullptr) {
-			seprintf(filename, filename_last, "%scrash.dmp", _personal_dir);
+			seprintf(filename, filename_last, "%scrash.dmp", _personal_dir.c_str());
 			HANDLE file  = CreateFile(OTTD2FS(filename), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, 0);
 			HANDLE proc  = GetCurrentProcess();
 			DWORD procid = GetCurrentProcessId();
@@ -540,6 +540,9 @@ void *_safe_esp = nullptr;
 
 static LONG WINAPI ExceptionHandler(EXCEPTION_POINTERS *ep)
 {
+	/* Disable our event loop. */
+	SetWindowLongPtr(GetActiveWindow(), GWLP_WNDPROC, (LONG_PTR)&DefWindowProc);
+
 	if (CrashLogWindows::current != nullptr) {
 		CrashLog::AfterCrashLogCleanup();
 		ExitProcess(2);

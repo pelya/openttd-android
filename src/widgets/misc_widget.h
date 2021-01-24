@@ -12,6 +12,7 @@
 
 /** Widgets of the #LandInfoWindow class. */
 enum LandInfoWidgets {
+	WID_LI_LOCATION, ///< Scroll to location.
 	WID_LI_BACKGROUND, ///< Background of the window.
 };
 
@@ -24,6 +25,7 @@ enum ToolTipsWidgets {
 enum AboutWidgets {
 	WID_A_SCROLLING_TEXT, ///< The actually scrolling text.
 	WID_A_WEBSITE,        ///< URL of OpenTTD website.
+	WID_A_COPYRIGHT,      ///< Copyright string
 };
 
 /** Widgets of the #QueryStringWindow class. */

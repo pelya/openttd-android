@@ -49,9 +49,9 @@ STR_CARGO_PLURAL_WHEAT                                          :Blé
 STR_CARGO_PLURAL_RUBBER                                         :Caoutchouc
 STR_CARGO_PLURAL_SUGAR                                          :Sucre
 STR_CARGO_PLURAL_TOYS                                           :Jouets
-STR_CARGO_PLURAL_CANDY                                          :Bonbons
+STR_CARGO_PLURAL_SWEETS                                         :Bonbons
 STR_CARGO_PLURAL_COLA                                           :Cola
-STR_CARGO_PLURAL_COTTON_CANDY                                   :Barbe à papa
+STR_CARGO_PLURAL_CANDYFLOSS                                     :Barbe à papa
 STR_CARGO_PLURAL_BUBBLES                                        :Bulles
 STR_CARGO_PLURAL_TOFFEE                                         :Caramel
 STR_CARGO_PLURAL_BATTERIES                                      :Batteries
@@ -83,9 +83,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :Blé
 STR_CARGO_SINGULAR_RUBBER                                       :Caoutchouc
 STR_CARGO_SINGULAR_SUGAR                                        :Sucre
 STR_CARGO_SINGULAR_TOY                                          :Jouet
-STR_CARGO_SINGULAR_CANDY                                        :Bonbon
+STR_CARGO_SINGULAR_SWEETS                                       :Bonbon
 STR_CARGO_SINGULAR_COLA                                         :Cola
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :Barbe à papa
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :Barbe à papa
 STR_CARGO_SINGULAR_BUBBLE                                       :Bulle
 STR_CARGO_SINGULAR_TOFFEE                                       :Caramel
 STR_CARGO_SINGULAR_BATTERY                                      :Batterie
@@ -195,6 +195,7 @@ STR_COLOUR_DEFAULT                                              :Défaut
 STR_UNITS_VELOCITY_IMPERIAL                                     :{COMMA}{NBSP}mph
 STR_UNITS_VELOCITY_METRIC                                       :{COMMA}{NBSP}km/h
 STR_UNITS_VELOCITY_SI                                           :{COMMA}{NBSP}m/s
+STR_UNITS_VELOCITY_GAMEUNITS                                    :{DECIMAL}{NBSP}cases/jour
 
 STR_UNITS_POWER_IMPERIAL                                        :{COMMA}{NBSP}hp
 STR_UNITS_POWER_METRIC                                          :{COMMA}{NBSP}ch
@@ -234,8 +235,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Choisir 
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Choisir le critère de tri
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Choisir le critère de filtrage
 STR_BUTTON_SORT_BY                                              :{BLACK}Trier par
-STR_BUTTON_LOCATION                                             :{BLACK}Emplacement
-STR_BUTTON_RENAME                                               :{BLACK}Renommer
 STR_BUTTON_CATCHMENT                                            :{BLACK}Couverture
 STR_TOOLTIP_CATCHMENT                                           :{BLACK}Basculer l'affichage de la zone couverte
 
@@ -315,6 +314,15 @@ STR_SORT_BY_CARGO_CAPACITY                                      :Capacité
 STR_SORT_BY_RANGE                                               :Rayon d'action
 STR_SORT_BY_POPULATION                                          :Population
 STR_SORT_BY_RATING                                              :Qualité de service
+STR_SORT_BY_NUM_VEHICLES                                        :Nombre de véhicules
+STR_SORT_BY_TOTAL_PROFIT_LAST_YEAR                              :Profit total l'année précédente
+STR_SORT_BY_TOTAL_PROFIT_THIS_YEAR                              :Profit total cette année
+STR_SORT_BY_AVERAGE_PROFIT_LAST_YEAR                            :Profit moyen l'année précédente
+STR_SORT_BY_AVERAGE_PROFIT_THIS_YEAR                            :Profit moyen cette année
+
+# Group by options for vehicle list
+STR_GROUP_BY_NONE                                               :Aucun
+STR_GROUP_BY_SHARED_ORDERS                                      :Ordres partagés
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Mettre le jeu en pause
@@ -403,7 +411,7 @@ STR_FILE_MENU_EXIT                                              :Quitter le jeu
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Carte du monde
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Vue supplémentaire
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :Vue supplémentaire
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Légende du flux de marchandises
 STR_MAP_MENU_SIGN_LIST                                          :Liste des panneaux
 
@@ -740,6 +748,7 @@ STR_SMALLMAP_LEGENDA_DOCK                                       :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_ROUGH_LAND                                 :{TINY_FONT}{BLACK}Terre en friche
 STR_SMALLMAP_LEGENDA_GRASS_LAND                                 :{TINY_FONT}{BLACK}Herbe
 STR_SMALLMAP_LEGENDA_BARE_LAND                                  :{TINY_FONT}{BLACK}Terre nue
+STR_SMALLMAP_LEGENDA_RAINFOREST                                 :{TINY_FONT}{BLACK}Région tropicale
 STR_SMALLMAP_LEGENDA_FIELDS                                     :{TINY_FONT}{BLACK}Champs
 STR_SMALLMAP_LEGENDA_TREES                                      :{TINY_FONT}{BLACK}Arbres
 STR_SMALLMAP_LEGENDA_ROCKS                                      :{TINY_FONT}{BLACK}Rochers
@@ -771,6 +780,7 @@ STR_SMALLMAP_TOOLTIP_ENABLE_ALL_CARGOS                          :{BLACK}Afficher
 STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}Afficher le dernier message ou bulletin
 STR_STATUSBAR_COMPANY_NAME                                      :{SILVER}- -  {COMPANY}  - -
 STR_STATUSBAR_PAUSED                                            :{YELLOW}*  *  SUSPENDU  *  *
+STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}*  *  SUSPENDU (en attente du recalcul des liens du graphique)  *  *
 STR_STATUSBAR_AUTOSAVE                                          :{RED}ENREGISTREMENT AUTOMATIQUE
 STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  SAUVEGARDE EN COURS  *  *
 
@@ -885,7 +895,7 @@ STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLAC
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}Les autorités locales de {TOWN} signent avec {STRING} un contrat d'exclusivité des transports valable un an{NBSP}!
 
 # Extra view window
-STR_EXTRA_VIEW_PORT_TITLE                                       :{WHITE}Vue {COMMA}
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Vue {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Modifier cette vue
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Copier l'emplacement de la vue principale vers cette vue
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Modifier la vue principale
@@ -936,6 +946,7 @@ STR_GAME_OPTIONS_CURRENCY_MXN                                   :Peso méxicain 
 STR_GAME_OPTIONS_CURRENCY_NTD                                   :Nouveau Dollar de Taïwan (TWD)
 STR_GAME_OPTIONS_CURRENCY_CNY                                   :Renminbi Chinois (CNY)
 STR_GAME_OPTIONS_CURRENCY_HKD                                   :Dollar de Hong Kong (HKD)
+STR_GAME_OPTIONS_CURRENCY_INR                                   :Roupie indienne (INR)
 ############ end of currency region
 
 STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Véhicules routiers
@@ -1310,6 +1321,7 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Afficher la pop
 STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Afficher la population des villes dans leur label sur la carte
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Épaisseur des lignes dans les graphiques{NBSP}: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Épaisseur de la ligne dans les graphiques. Une ligne fine est lisible plus précisément, une ligne épaisse est plus facile à voir et les couleurs sont plus facile à distinguer
+STR_CONFIG_SETTING_SHOW_NEWGRF_NAME                             :Afficher le nom du NewGRF dans la fenêtre d'achat des véhicules{NBSP}: {STRING}
 STR_CONFIG_SETTING_SHOW_NEWGRF_NAME_HELPTEXT                    :Ajoute une ligne à la fenêtre d'achat des véhicules, montrant de quel NewGRF provient le véhicule sélectionné.
 
 STR_CONFIG_SETTING_LANDSCAPE                                    :Paysage{NBSP}: {STRING}
@@ -1439,6 +1451,8 @@ STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS                     :Conserver les o
 STR_CONFIG_SETTING_PERSISTENT_BUILDINGTOOLS_HELPTEXT            :Garde les outils de construction de ponts, tunnels, etc. ouverts après usage
 STR_CONFIG_SETTING_EXPENSES_LAYOUT                              :Regrouper les dépenses dans la fenêtre des finances{NBSP}: {STRING}
 STR_CONFIG_SETTING_EXPENSES_LAYOUT_HELPTEXT                     :Définit la mise en forme de la fenêtre des dépenses de la compagnie
+STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS                          :Retire automatiquement les signaux durant la construction de la voie ferrée: {STRING}
+STR_CONFIG_SETTING_AUTO_REMOVE_SIGNALS_HELPTEXT                 :Retire automatiquement les signaux durant la construction de la voie ferrée si les signaux sont sur le chemin. A noter que ça peut potentiellement mener à des accidents de trains.
 
 STR_CONFIG_SETTING_SOUND_TICKER                                 :Bulletin{NBSP}: {STRING}
 STR_CONFIG_SETTING_SOUND_TICKER_HELPTEXT                        :Jouer un son pour les bulletins
@@ -1552,8 +1566,11 @@ STR_CONFIG_SETTING_ENDING_YEAR                                  :Année de fin d
 STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :À la fin de cette année, le score de la compagnie est enregistré et la fenêtre des meilleurs scores est affichée. Il est quand même possible de continuer de jouer après, mais le score ne sera pas enregistré.{}Si le jeu commence après cette année, les meilleurs scores ne sont jamais affichés.
 STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Jamais
-STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Permettre une économie stable (petits changements plus nombreux){NBSP}: {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Lorsqu'il est activé, la production des industries change plus souvent, et plus faiblement. Ce paramètre est généralement sans effets si les types d'industries sont fournis par un NewGRF
+STR_CONFIG_SETTING_ECONOMY_TYPE                                 :Type d'économie{NBSP}: {STRING}
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :Une économie stable entraîne des changements de production plus fréquents, mais de plus faible intensité. Une économie gelée bloque les changements de production et les fermetures d'industries. Ce paramètre peut n'avoir aucun effet si les types d'industries proviennent d'un NewGRF.
+STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :Original
+STR_CONFIG_SETTING_ECONOMY_TYPE_SMOOTH                          :Stable
+STR_CONFIG_SETTING_ECONOMY_TYPE_FROZEN                          :Gelée
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Permettre d'acheter des actions d'autres compagnies{NBSP}: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Lorsqu'il est activé, l'achat et la vente des parts de compagnie sont autorisées. Les parts ne seront disponibles que pour les compagnies ayant atteint un certain âge
 STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Âge minimum de la compagnie pour la vente d'actions{NBSP}: {STRING}
@@ -1605,9 +1622,10 @@ STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Linéaire
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Plantation d'arbres durant la partie{NBSP}: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Contrôle l'apparition aléatoire des arbres durant la partie. Cela peut affecter les industries qui dépendent de la croissance des arbres, par exemple les scieries
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :Nulle part {RED}(les scieries ne fonctionneront plus)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :Seulement dans les forêts tropicales
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :Partout
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_SPREAD               :Croissance sans propagation {RED}(casse les scieries)
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_RAINFOREST       :Croissance mais propagation uniquement dans les régions tropicales
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_SPREAD_ALL              :Croissance et propagation partout
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NO_GROWTH_NO_SPREAD     :Pas de croissance, pas de propagation {RED}(casse les scieries)
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Position de la barre d'outils principale{NBSP}: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Position horizontale de la barre d'outils principale en haut de l'écran
@@ -1645,10 +1663,10 @@ STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Aucune
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Multiplicateur initial pour la taille des métropoles{NBSP}: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Taille moyenne des métropoles par rapport aux villes normales au début de la partie
 
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Réactualiser le graphique de la distribution tous les {STRING}{NBSP}jour{P 0:2 "" s}
-STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Intervalle entre la recalculation des liens du graphique. À chaque itération, une seule composante du graphique est recalculée. Donc, une valeur X pour ce réglage ne signifie pas que le graphique est réactualisé entièrement tous les X jours. Plus l'intervalle est court, plus de temps CPU est nécessaire pour la recalculation. Plus il est long, et plus de temps sera nécessaire pour que la distribution s'effectue sur de nouvelles routes.
+STR_CONFIG_SETTING_LINKGRAPH_INTERVAL                           :Recalculer le graphe de distribution tous les {STRING}{NBSP}jour{P 0:2 "" s}
+STR_CONFIG_SETTING_LINKGRAPH_INTERVAL_HELPTEXT                  :Intervalle entre le recalcul du graphe de distribution. À chaque itération, une seule composante du graphe est recalculée. Donc, une valeur X pour ce réglage ne signifie pas que le graphe est réactualisé entièrement tous les X jours. Plus l'intervalle est court, plus de temps CPU est nécessaire pour la recalcul. Plus il est long, et plus de temps sera nécessaire pour que la distribution s'effectue sur de nouvelles routes.
 STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Prendre {STRING}{NBSP}jour{P 0:2 "" s} pour recalculer le graphe de distribution
-STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :Durée maximale (en jours) de la réactualisation d'une composante du graphique. À chaque itération, un thread est initié, qui a une durée maximale définie par ce réglage. Plus celui-ci est court, plus la probabilité que le thread ne termine pas sa tâche à temps est élevée. Le jeu s'interrompt alors jusqu'à la fin de la recalculation ("lag"). Plus le réglage est long, et moins rapidement la distribution sera réactualisée en cas de changement de routes.
+STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :Durée maximale (en jours) du recalcul d'une composante du graphe. À chaque itération, un thread est initié, qui a une durée maximale définie par ce réglage. Plus celui-ci est court, plus la probabilité que le thread ne termine pas sa tâche à temps est élevée. Le jeu s'interrompt alors jusqu'à la fin du recalcul ("lag"). Plus le réglage est long, et moins rapidement la distribution sera réactualisée en cas de changement de routes.
 STR_CONFIG_SETTING_DISTRIBUTION_MANUAL                          :manuel
 STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :asymétrique
 STR_CONFIG_SETTING_DISTRIBUTION_SYMMETRIC                       :symétrique
@@ -1661,7 +1679,7 @@ STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :La classe de ca
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Type de distribution pour les autres classes de cargaison{NBSP}: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"asymétrique" signifie qu'une quantité arbitraire de cargaison peut être envoyée dans les deux directions. "manuel" signifie qu'aucune distribution n'est mise en place pour la cargaison.
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Précision de la distribution{NBSP}: {STRING}
-STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Plus ce réglage est élevé, plus la réactualisation du graphique de distribution occupe de temps CPU. S'il est trop élevé, cela peut produire de la latence ("lag"). Au contraire, plus la valeur est basse, plus la distribution sera imprécise et l'on risque de voir des cargaisons ne pas aller vers la destination attendue.
+STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Plus ce réglage est élevé, plus le recalcul du graphe de distribution occupe de temps CPU. S'il est trop élevé, cela peut produire de la latence ("lag"). Au contraire, plus la valeur est basse, plus la distribution sera imprécise et l'on risque de voir des cargaisons ne pas aller vers la destination attendue.
 STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Effet de la distance sur la demande{NBSP}: {STRING}
 STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Si cette valeur est supérieure à 0, la distance entre la station d'origine A d'une cargaison et une possible destination B a un impact sur la quantité de cargaison envoyée de A vers B. Plus la distance est grande entre les deux, moins de cargaison sera envoyée. Plus cette valeur est élevée, moins de cargaison sera envoyée vers des stations lointaines, et plus vers les stations plus proches.
 STR_CONFIG_SETTING_DEMAND_SIZE                                  :Quantité de cargaison renvoyée en mode symétrique{NBSP}: {STRING}
@@ -1674,6 +1692,7 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_HELPTEXT         :Quand une vites
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_IMPERIAL         :Impérial (mph)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_METRIC           :Métrique (km/h)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_SI               :SI (m/s)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_GAMEUNITS        :Unités du jeu (cases/jour)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER                     :Unité de puissance de véhicule{NBSP}: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_HELPTEXT            :Quand une puissance de véhicule est affichée dans l'interface utilisateur, utiliser l'unité sélectionnée
@@ -1806,17 +1825,9 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Il manqu
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Quitter
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Êtes-vous sûr de vouloir quitter OpenTTD et retourner à {STRING}{NBSP}?
+STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Êtes-vous sûr de vouloir quitter OpenTTD{NBSP}?
 STR_QUIT_YES                                                    :{BLACK}Oui
 STR_QUIT_NO                                                     :{BLACK}Non
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Abandonner la partie
@@ -1826,7 +1837,7 @@ STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Êtes-v
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Triches
 STR_CHEATS_TOOLTIP                                              :{BLACK}Les cases à cocher montrent si vous avez déjà utilisé cette triche auparavant
-STR_CHEATS_WARNING                                              :{BLACK}Attention{NBSP}! Vous êtes sur le point de trahir vos adversaires. Vous et votre famille serez déshonoré pour l'éternité.
+STR_CHEATS_NOTE                                                 :{BLACK}Note{}: tout usage de ces paramètres sera enregistré dans la sauvegarde
 STR_CHEAT_MONEY                                                 :{LTBLUE}Augmenter l'argent de {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Jouer en tant que compagnie{NBSP}: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Bulldozer magique (enlèvement des industries et des objets fixes){NBSP}: {ORANGE}{STRING}
@@ -1938,10 +1949,6 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Modifier
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multijoueurs
-STR_NETWORK_SERVER_LIST_ADVERTISED                              :{BLACK}Publiée
-STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP                      :{BLACK}Choisir entre une partie publiée (internet) et une partie non publiée (Réseau local, LAN)
-STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :Non
-STR_NETWORK_SERVER_LIST_ADVERTISED_YES                          :Oui
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nom du joueur{NBSP}:
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Ceci est le nom sous lequel vous serez connu des autres joueurs
 
@@ -1982,8 +1989,10 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Rejoindr
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Actualiser
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Actualiser les informations sur le serveur
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Trouver un serveur
-STR_NETWORK_SERVER_LIST_FIND_SERVER_TOOLTIP                     :{BLACK}Chercher un serveur sur le réseau
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET                  :{BLACK}Recherche internet
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET_TOOLTIP          :{BLACK}Rechercher des serveurs publiés sur internet
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN                       :{BLACK}Recherche LAN
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN_TOOLTIP               :{BLACK}Rechercher des serveurs sur le réseau local
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Ajouter un serveur
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Ajouter un serveur à la liste de ceux parmi lesquels des parties en cours seront toujours cherchées
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Démarrer le serveur
@@ -2000,6 +2009,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Les autr
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Choisir le mot de passe
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Protégez votre partie avec un mot de passe si vous ne souhaitez pas que d'autres l'utilisent
 
+STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Publiée
+STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Choisir entre une partie publiée (internet) et une partie non publiée (Réseau local, LAN)
 STR_NETWORK_START_SERVER_UNADVERTISED                           :Non
 STR_NETWORK_START_SERVER_ADVERTISED                             :Oui
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} client{P "" s}
@@ -2113,7 +2124,6 @@ STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nouvelle compag
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Exclure
 STR_NETWORK_CLIENTLIST_BAN                                      :Bannir
-STR_NETWORK_CLIENTLIST_GIVE_MONEY                               :Donner de l'argent
 STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Parler à tous
 STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Parler à la compagnie
 STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Message privé
@@ -2121,8 +2131,6 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Message privé
 STR_NETWORK_SERVER                                              :Serveur
 STR_NETWORK_CLIENT                                              :Client
 STR_NETWORK_SPECTATORS                                          :Spectateurs
-
-STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Entrer le montant que vous voulez donner
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Ne pas sauver le mot de passe entré
@@ -2168,6 +2176,7 @@ STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Mot de p
 STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}Le serveur est complet
 STR_NETWORK_ERROR_SERVER_BANNED                                 :{WHITE}Vous êtes banni de ce serveur
 STR_NETWORK_ERROR_KICKED                                        :{WHITE}Vous avez été exclu de la partie
+STR_NETWORK_ERROR_KICK_MESSAGE                                  :{WHITE}Raison{NBSP}: {STRING}
 STR_NETWORK_ERROR_CHEATER                                       :{WHITE}Tricher n'est pas autorisé sur ce serveur
 STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}Vous envoyiez trop de commandes au serveur
 STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}Vous avez mis trop de temps pour entrer le mot de passe
@@ -2209,11 +2218,13 @@ STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_1                  :Partie toujours
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_2                  :Partie toujours suspendue ({STRING}, {STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_3                  :Partie toujours suspendue ({STRING}, {STRING}, {STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_4                  :Partie toujours suspendue ({STRING}, {STRING}, {STRING}, {STRING})
+STR_NETWORK_SERVER_MESSAGE_GAME_STILL_PAUSED_5                  :Partie toujours suspendue ({STRING}, {STRING}, {STRING}, {STRING}, {STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_UNPAUSED                        :Reprise de la partie ({STRING})
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_NOT_ENOUGH_PLAYERS       :nombre de joueurs
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_CONNECTING_CLIENTS       :connexion de clients
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_MANUAL                   :manuel
 STR_NETWORK_SERVER_MESSAGE_GAME_REASON_GAME_SCRIPT              :script de jeu
+STR_NETWORK_SERVER_MESSAGE_GAME_REASON_LINK_GRAPH               :en attente du recalcul du graphe de liens
 ############ End of leave-in-this-order
 STR_NETWORK_MESSAGE_CLIENT_LEAVING                              :départ
 STR_NETWORK_MESSAGE_CLIENT_JOINED                               :*** {STRING} a rejoint la partie
@@ -2223,10 +2234,10 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} a 
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} a lancé une nouvelle compagnie (n°{NBSP}{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} a quitté la partie ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} a changé son nom en {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} a donné {2:CURRENCY_LONG} à votre compagnie
-STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY                             :*** Vous avez donné {2:CURRENCY_LONG} à {1:STRING}
+STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} a donné {2:CURRENCY_LONG} à {1:STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Le serveur a fermé la session
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Le serveur redémarre...{}Veuillez patienter...
+STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} a été exclu. Raison{NBSP}: ({STRING})
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Téléchargement de modules
@@ -2341,6 +2352,9 @@ STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Constru
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Joindre un point de contrôle
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Construire un point de contrôle séparé
+
+# Generic toolbar
+STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Désactivé car aucun véhicule n'est actuellement disponible pour cette infrastructure
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Construction de voie ferrée
@@ -2529,13 +2543,19 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Taille{N
 STR_OBJECT_CLASS_LTHS                                           :Phares
 STR_OBJECT_CLASS_TRNS                                           :Transmetteurs
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Arbres
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK}Choix du type d'arbre. S'il y a déjà un arbre dans la case, plusieurs arbres de types différents y seront ajoutés, indépendamment du type sélectionné.
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Au hasard
 STR_TREES_RANDOM_TYPE_TOOLTIP                                   :{BLACK}Planter des arbres provenant d'espèces choisies au hasard.{}Shift pour afficher seulement le coût estimé.
 STR_TREES_RANDOM_TREES_BUTTON                                   :{BLACK}Ajouter des arbres au hasard
 STR_TREES_RANDOM_TREES_TOOLTIP                                  :{BLACK}Semer des arbres au hasard sur l'ensemble du terrain
+STR_TREES_MODE_NORMAL_BUTTON                                    :{BLACK}Normal
+STR_TREES_MODE_NORMAL_TOOLTIP                                   :{BLACK}Planter de simples arbres en glissant sur le terrain
+STR_TREES_MODE_FOREST_SM_BUTTON                                 :{BLACK}Bosquet
+STR_TREES_MODE_FOREST_SM_TOOLTIP                                :{BLACK}Planter de petites forêts en glissant sur le terrain
+STR_TREES_MODE_FOREST_LG_BUTTON                                 :{BLACK}Forêt
+STR_TREES_MODE_FOREST_LG_TOOLTIP                                :{BLACK}Planter de larges forêts en glissant sur le terrain
 
 # Land generation window (SE)
 STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION                   :{WHITE}Création du terrain
@@ -2612,6 +2632,7 @@ STR_INDUSTRY_CARGOES_SELECT_INDUSTRY_TOOLTIP                    :{BLACK}Choisir 
 
 # Land area window
 STR_LAND_AREA_INFORMATION_CAPTION                               :{WHITE}Informations sur le terrain
+STR_LAND_AREA_INFORMATION_LOCATION_TOOLTIP                      :{BLACK}Centrer la vue sur la case. Ctrl-clic pour ouvrir une nouvelle vue sur la case
 STR_LAND_AREA_INFORMATION_COST_TO_CLEAR_N_A                     :{BLACK}Coût si démolition{NBSP}: {LTBLUE}N/D
 STR_LAND_AREA_INFORMATION_COST_TO_CLEAR                         :{BLACK}Coût si démolition{NBSP}: {RED}{CURRENCY_LONG}
 STR_LAND_AREA_INFORMATION_REVENUE_WHEN_CLEARED                  :{BLACK}Gain si démolition{NBSP}: {LTBLUE}{CURRENCY_LONG}
@@ -2734,7 +2755,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Terrain apparte
 STR_ABOUT_OPENTTD                                               :{WHITE}À propos de OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright original {COPYRIGHT} 1995 Chris Sawyer, Tous droits réservés
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD version {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 L'équipe OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} L'équipe OpenTTD
 
 # Framerate display window
 STR_FRAMERATE_CAPTION                                           :{WHITE}Fréquence d'images
@@ -2768,7 +2789,7 @@ STR_FRAMERATE_GL_ROADVEHS                                       :{WHITE}  Ticks 
 STR_FRAMERATE_GL_SHIPS                                          :{BLACK}  Ticks des navires{NBSP}:
 STR_FRAMERATE_GL_AIRCRAFT                                       :{BLACK}  Ticks des aéroplanes{NBSP}:
 STR_FRAMERATE_GL_LANDSCAPE                                      :{BLACK}  Ticks du monde{NBSP}:
-STR_FRAMERATE_GL_LINKGRAPH                                      :{BLACK}  Délai du flux des marchandises{NBSP}:
+STR_FRAMERATE_GL_LINKGRAPH                                      :{BLACK}  Délai du graphe de distribution{NBSP}:
 STR_FRAMERATE_DRAWING                                           :{BLACK}Rendu des graphismes{NBSP}:
 STR_FRAMERATE_DRAWING_VIEWPORTS                                 :{BLACK}  Vues{NBSP}:
 STR_FRAMERATE_VIDEO                                             :{BLACK}Sortie vidéo{NBSP}:
@@ -2785,7 +2806,7 @@ STR_FRAMETIME_CAPTION_GL_ROADVEHS                               :Ticks des véhi
 STR_FRAMETIME_CAPTION_GL_SHIPS                                  :Ticks des navires
 STR_FRAMETIME_CAPTION_GL_AIRCRAFT                               :Ticks des aéroplanes
 STR_FRAMETIME_CAPTION_GL_LANDSCAPE                              :Ticks du monde
-STR_FRAMETIME_CAPTION_GL_LINKGRAPH                              :Délai du flux des marchandises
+STR_FRAMETIME_CAPTION_GL_LINKGRAPH                              :Délai du graphe de distribution
 STR_FRAMETIME_CAPTION_DRAWING                                   :Rendu des graphismes
 STR_FRAMETIME_CAPTION_DRAWING_VIEWPORTS                         :Rendu des vues
 STR_FRAMETIME_CAPTION_VIDEO                                     :Sortie vidéo
@@ -3082,6 +3103,7 @@ STR_SIGN_LIST_MATCH_CASE_TOOLTIP                                :{BLACK}Activer 
 
 # Sign window
 STR_EDIT_SIGN_CAPTION                                           :{WHITE}Éditer le texte du panneau
+STR_EDIT_SIGN_LOCATION_TOOLTIP                                  :{BLACK}Centrer la vue sur le panneau. Ctrl-clic pour ouvrir une nouvelle vue sur le panneau
 STR_EDIT_SIGN_NEXT_SIGN_TOOLTIP                                 :{BLACK}Aller au panneau suivant
 STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK}Aller au panneau précédent
 
@@ -3165,10 +3187,10 @@ STR_GOALS_COMPANY_TITLE                                         :{BLACK}Objectif
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Cliquer sur l'objectif pour centrer la vue principale sur l'industrie, la ville ou la case. Ctrl-clic pour ouvrir une nouvelle vue sur l'industrie, la ville ou la case.
 
 # Goal question window
-STR_GOAL_QUESTION_CAPTION_QUESTION                              :Question
-STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informations
-STR_GOAL_QUESTION_CAPTION_WARNING                               :Attention
-STR_GOAL_QUESTION_CAPTION_ERROR                                 :Erreur
+STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}Question
+STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}Informations
+STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}Attention
+STR_GOAL_QUESTION_CAPTION_ERROR                                 :{YELLOW}Erreur
 
 ############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Annuler
@@ -3358,6 +3380,8 @@ STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}Déména
 STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}Reconstruire ailleurs le siège de la compagnie pour le prix de 1{NBSP}% de sa valeur.{}Shift-clic pour afficher seulement le coût estimé.
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}Détails
 STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}Afficher le détail des calculs d'infrastructure
+STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :Donner de l’argent
+STR_COMPANY_VIEW_GIVE_MONEY_TOOLTIP                             :{BLACK}Donner de l’argent à cette compagnie
 
 STR_COMPANY_VIEW_NEW_FACE_BUTTON                                :{BLACK}Nouveau visage
 STR_COMPANY_VIEW_NEW_FACE_TOOLTIP                               :{BLACK}Choix d'un nouveau visage pour le P.D.G.
@@ -3375,6 +3399,7 @@ STR_COMPANY_VIEW_SELL_SHARE_TOOLTIP                             :{BLACK}Vendre 2
 
 STR_COMPANY_VIEW_COMPANY_NAME_QUERY_CAPTION                     :Nom de la société
 STR_COMPANY_VIEW_PRESIDENT_S_NAME_QUERY_CAPTION                 :Nom du P.D.G.
+STR_COMPANY_VIEW_GIVE_MONEY_QUERY_CAPTION                       :Entrer le montant que vous souhaiter donner
 
 STR_BUY_COMPANY_MESSAGE                                         :{WHITE}Nous sommes à la recherche d'un repreneur pour notre compagnie{}{}Voulez-vous acheter {COMPANY} pour {CURRENCY_LONG}{NBSP}?
 
@@ -3735,10 +3760,10 @@ STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Si l'aut
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Centrer la vue sur le train. Ctrl-clic pour le suivre dans la vue principale.
-STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Centrer la vue sur le véhicule. Ctrl-clic pour le suivre dans la vue principale.
-STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Centrer la vue sur le navire. Ctrl-clic pour le suivre dans la vue principale.
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Centrer la vue sur l'aéronef. Ctrl-clic pour le suivre dans la vue principale.
+STR_VEHICLE_VIEW_TRAIN_CENTER_TOOLTIP                           :{BLACK}Centrer la vue sur le train. Double clic pour le suivre dans la vue principale. Ctrl-clic pour ouvrir une nouvelle vue sur le train
+STR_VEHICLE_VIEW_ROAD_VEHICLE_CENTER_TOOLTIP                    :{BLACK}Centrer la vue sur le véhicule. Double clic pour le suivre dans la vue principale. Ctrl-clic pour ouvrir une nouvelle vue sur le véhicule
+STR_VEHICLE_VIEW_SHIP_CENTER_TOOLTIP                            :{BLACK}Centrer la vue sur le navire. Double clic pour le suivre dans la vue principale. Ctrl-clic pour ouvrir une nouvelle vue sur le navire
+STR_VEHICLE_VIEW_AIRCRAFT_CENTER_TOOLTIP                        :{BLACK}Centrer la vue sur l'aéronef. Double clic pour le suivre dans la vue principale. Ctrl-clic pour ouvrir une nouvelle vue sur l'aéronef
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Envoyer le train au dépôt.{}Ctrl-clic pour un entretien seul.
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Envoyer le véhicule au dépôt.{}Ctrl-clic pour un entretien seul.
@@ -3770,10 +3795,12 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Afficher
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Afficher les détails du navire
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Afficher les détails de l'aéronef
 
-STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Action courante du train - Cliquer pour le démarrer/l'arrêter. Ctrl-clic pour centrer la vue sur sa destination.
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Action courante du véhicule routier - Cliquer pour le démarrer/l'arrêter. Ctrl-clic pour centrer la vue sur sa destination.
-STR_VEHICLE_VIEW_SHIP_STATE_START_STOP_TOOLTIP                  :{BLACK}Action courante du navire - Cliquer pour le démarrer/l'arrêter. Ctrl-clic pour centrer la vue sur sa destination.
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Action courante de l'aéronef - Cliquer pour le démarrer/l'arrêter. Ctrl-clic pour centrer la vue sur sa destination.
+STR_VEHICLE_VIEW_TRAIN_STATUS_START_STOP_TOOLTIP                :{BLACK}Action courante du train - cliquer pour le démarrer/l'arrêter
+STR_VEHICLE_VIEW_ROAD_VEHICLE_STATUS_START_STOP_TOOLTIP         :{BLACK}Action courante du véhicule - cliquer pour le démarrer/l'arrêter
+STR_VEHICLE_VIEW_SHIP_STATE_STATUS_STOP_TOOLTIP                 :{BLACK}Action courante du navire - cliquer pour le démarrer/l'arrêter
+STR_VEHICLE_VIEW_AIRCRAFT_STATUS_START_STOP_TOOLTIP             :{BLACK}Action courante de l'aéronef - cliquer pour le démarrer/l'arrêter
+
+STR_VEHICLE_VIEW_ORDER_LOCATION_TOOLTIP                         :{BLACK}Centrer la vue sur la destination. Ctrl-clic pour ouvrir une nouvelle vue sur la destination
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Chargement/Déchargement
@@ -4001,6 +4028,7 @@ STR_ORDER_REFIT_STOP_ORDER                                      :(Réaménager p
 STR_ORDER_STOP_ORDER                                            :(Arrêt)
 
 STR_ORDER_GO_TO_STATION                                         :{STRING} {STATION} {STRING}
+STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{RED}(Station inutilisable){POP_COLOUR} {STRING} {STATION} {STRING}
 
 STR_ORDER_IMPLICIT                                              :(Implicite)
 
@@ -4245,6 +4273,7 @@ STR_GAME_SAVELOAD_ERROR_TOO_NEW_SAVEGAME                        :Sauvegarde modi
 STR_GAME_SAVELOAD_ERROR_FILE_NOT_READABLE                       :Fichier illisible
 STR_GAME_SAVELOAD_ERROR_FILE_NOT_WRITEABLE                      :Fichier protégé en écriture
 STR_GAME_SAVELOAD_ERROR_DATA_INTEGRITY_CHECK_FAILED             :Échec du contrôle d'intégrité des données
+STR_GAME_SAVELOAD_ERROR_PATCHPACK                               :Sauvegarde créée avec une version modifiée
 STR_GAME_SAVELOAD_NOT_AVAILABLE                                 :<non disponible>
 STR_WARNING_LOADGAME_REMOVED_TRAMS                              :{WHITE}Partie sauvegardée avec une version sans support des tramways. Tous les tramways ont été supprimés.
 
@@ -4325,6 +4354,7 @@ STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... empr
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} nécessaires
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Impossible de rembourser...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Impossible de distribuer de l'argent emprunté à la banque...
+STR_ERROR_CAN_T_GIVE_MONEY                                      :{WHITE}Vous ne pouvez pas donner de l’argent à cette compagnie
 STR_ERROR_CAN_T_BUY_COMPANY                                     :{WHITE}Impossible d'acheter la compagnie...
 STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS                      :{WHITE}Impossible de construire le siège...
 STR_ERROR_CAN_T_BUY_25_SHARE_IN_THIS                            :{WHITE}Impossible d'acheter 25{NBSP}% des parts...
@@ -4451,6 +4481,8 @@ STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Dépôt incompa
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}{VEHICLE} est trop long après remplacement
 STR_ERROR_AUTOREPLACE_NOTHING_TO_DO                             :{WHITE}Aucune règle de remplacement/renouvellement automatique appliquée
 STR_ERROR_AUTOREPLACE_MONEY_LIMIT                               :(limite d'argent)
+STR_ERROR_AUTOREPLACE_INCOMPATIBLE_CARGO                        :{WHITE}Le nouveau véhicule ne peut pas transporter {STRING}
+STR_ERROR_AUTOREPLACE_INCOMPATIBLE_REFIT                        :{WHITE}Le nouveau véhicule ne peut être réaménagé à l'ordre {NUM}
 
 # Rail construction errors
 STR_ERROR_IMPOSSIBLE_TRACK_COMBINATION                          :{WHITE}Combinaison de rails impossible
@@ -4483,7 +4515,6 @@ STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}Impossib
 STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :{WHITE}Impossible de convertir le type de voie de tramway...
 STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Aucune route convenable
 STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}Aucune voie de tramway convenable
-STR_ERROR_INCOMPATIBLE_ROAD                                     :{WHITE}... route incompatible
 STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... voie de tramway incompatible
 
 # Waterway construction errors
@@ -5038,6 +5069,7 @@ STR_FORMAT_BUOY_NAME                                            :Bouée de {TOWN
 STR_FORMAT_BUOY_NAME_SERIAL                                     :Bouée de {TOWN} n°{NBSP}{COMMA}
 STR_FORMAT_COMPANY_NUM                                          :(Compagnie {COMMA})
 STR_FORMAT_GROUP_NAME                                           :Groupe {COMMA}
+STR_FORMAT_GROUP_VEHICLE_NAME                                   :{GROUP} {COMMA}
 STR_FORMAT_INDUSTRY_NAME                                        :{TOWN} - {STRING}
 STR_FORMAT_WAYPOINT_NAME                                        :Point de contrôle de {TOWN}
 STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :Point de contrôle de {TOWN} n°{NBSP}{COMMA}

@@ -48,9 +48,9 @@ STR_CARGO_PLURAL_WHEAT                                          :Тулă
 STR_CARGO_PLURAL_RUBBER                                         :Каучук
 STR_CARGO_PLURAL_SUGAR                                          :Сахăр
 STR_CARGO_PLURAL_TOYS                                           :Теттесем
-STR_CARGO_PLURAL_CANDY                                          :Канфетсем
+STR_CARGO_PLURAL_SWEETS                                         :Канфетсем
 STR_CARGO_PLURAL_COLA                                           :Кола
-STR_CARGO_PLURAL_COTTON_CANDY                                   :Сахăр ваткĕ
+STR_CARGO_PLURAL_CANDYFLOSS                                     :Сахăр ваткĕ
 STR_CARGO_PLURAL_BUBBLES                                        :Хӑмпӑҫӑмсем
 STR_CARGO_PLURAL_TOFFEE                                         :Карамель
 STR_CARGO_PLURAL_BATTERIES                                      :Батарейкасем
@@ -82,9 +82,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :Тулă
 STR_CARGO_SINGULAR_RUBBER                                       :Каучук
 STR_CARGO_SINGULAR_SUGAR                                        :Сахăр
 STR_CARGO_SINGULAR_TOY                                          :Тетте
-STR_CARGO_SINGULAR_CANDY                                        :Канфетсем
+STR_CARGO_SINGULAR_SWEETS                                       :Канфетсем
 STR_CARGO_SINGULAR_COLA                                         :Кола
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :Сахăр ваткĕ
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :Сахăр ваткĕ
 STR_CARGO_SINGULAR_BUBBLE                                       :Хӑмпӑҫӑм
 STR_CARGO_SINGULAR_TOFFEE                                       :Карамель
 STR_CARGO_SINGULAR_BATTERY                                      :Батарейкасем
@@ -165,7 +165,6 @@ STR_UNITS_POWER_SI                                              :{COMMA}кВт
 
 # Common window strings
 
-STR_BUTTON_RENAME                                               :{BLACK}Ята улӑштар
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Чӳречене хуп
 
@@ -202,6 +201,8 @@ STR_SORT_BY_LENGTH                                              :Тӑршшӗ
 STR_SORT_BY_COST                                                :Хак
 STR_SORT_BY_POWER                                               :Хӑватлӑх
 STR_SORT_BY_POPULATION                                          :Ҫынисем
+
+# Group by options for vehicle list
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Вӑййи тӑхтав
@@ -609,8 +610,6 @@ STR_CONFIG_SETTING_TOWN_LAYOUT_DEFAULT                          :чӑн
 STR_CONFIG_SETTING_TOWN_LAYOUT_2X2_GRID                         :2x2
 STR_CONFIG_SETTING_TOWN_LAYOUT_3X3_GRID                         :3x3
 
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :ҫук {RED}(breaks lumber mill)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :таҫта та
 
 STR_CONFIG_SETTING_TOWN_GROWTH_NONE                             :Ҫук
 STR_CONFIG_SETTING_TOWN_GROWTH_SLOW                             :Вӑрах
@@ -654,14 +653,6 @@ STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}'OpenTTD
 STR_QUIT_CAPTION                                                :{WHITE}Вӗҫле
 STR_QUIT_YES                                                    :{BLACK}Ийя
 STR_QUIT_NO                                                     :{BLACK}Ҫук
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Вӑййи ан килӗш
@@ -761,7 +752,6 @@ STR_NETWORK_SERVER_LIST_GRF_MISMATCH                            :{SILVER}ХИР�
 
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Сервер ҫӗнет
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Сервер туп
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Сервер хуш
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Сервер пуҫ
 
@@ -794,7 +784,6 @@ STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Вырн
 # Network company list added strings
 
 # Network client list
-
 
 
 # Network set password
@@ -835,6 +824,8 @@ STR_CONTENT_DETAIL_VERSION                                      :{SILVER}Вер�
 
 # Join station window
 
+
+# Generic toolbar
 
 # Rail construction toolbar
 
@@ -900,7 +891,7 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Виҫе
 STR_OBJECT_CLASS_LTHS                                           :Маяксем
 STR_OBJECT_CLASS_TRNS                                           :Передатчиксем
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 
 # Land generation window (SE)
 
@@ -1188,6 +1179,7 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
+
 
 
 

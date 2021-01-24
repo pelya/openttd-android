@@ -49,9 +49,9 @@ STR_CARGO_PLURAL_WHEAT                                          :Hveiti
 STR_CARGO_PLURAL_RUBBER                                         :Gúmmí
 STR_CARGO_PLURAL_SUGAR                                          :Sykur
 STR_CARGO_PLURAL_TOYS                                           :Leikföng
-STR_CARGO_PLURAL_CANDY                                          :Sælgæti
+STR_CARGO_PLURAL_SWEETS                                         :Sælgæti
 STR_CARGO_PLURAL_COLA                                           :Kóladrykkir
-STR_CARGO_PLURAL_COTTON_CANDY                                   :Sykurfrauð
+STR_CARGO_PLURAL_CANDYFLOSS                                     :Sykurfrauð
 STR_CARGO_PLURAL_BUBBLES                                        :Kúlur
 STR_CARGO_PLURAL_TOFFEE                                         :Toffý
 STR_CARGO_PLURAL_BATTERIES                                      :Rafhlöður
@@ -83,9 +83,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :Hveitis
 STR_CARGO_SINGULAR_RUBBER                                       :Gúmmí
 STR_CARGO_SINGULAR_SUGAR                                        :Sykur
 STR_CARGO_SINGULAR_TOY                                          :Leikfanga
-STR_CARGO_SINGULAR_CANDY                                        :Sælgætis
+STR_CARGO_SINGULAR_SWEETS                                       :Sælgætis
 STR_CARGO_SINGULAR_COLA                                         :Kóladrykkja
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :Sykurfrauðs
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :Sykurfrauðs
 STR_CARGO_SINGULAR_BUBBLE                                       :Kúlu
 STR_CARGO_SINGULAR_TOFFEE                                       :Toffý
 STR_CARGO_SINGULAR_BATTERY                                      :Rafhlöðu
@@ -224,8 +224,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Velja up
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Velja uppröðun
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Veldu hvers kyns farartæki þú vilt kaupa
 STR_BUTTON_SORT_BY                                              :{BLACK}Flokka eftir
-STR_BUTTON_LOCATION                                             :{BLACK}Staðsetning
-STR_BUTTON_RENAME                                               :{BLACK}Endurnefna
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Loka glugga
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Haus glugga - dragðu með músinni til að færa gluggann
@@ -291,6 +289,8 @@ STR_SORT_BY_CARGO_CAPACITY                                      :Burðargeta
 STR_SORT_BY_RANGE                                               :Drægni
 STR_SORT_BY_POPULATION                                          :Fólksfjöldi
 STR_SORT_BY_RATING                                              :Einkunn
+
+# Group by options for vehicle list
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Stöðva leik
@@ -374,7 +374,7 @@ STR_FILE_MENU_EXIT                                              :Hætta
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Heimskort
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Auka sjónarhorn
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :Auka sjónarhorn
 STR_MAP_MENU_SIGN_LIST                                          :Skiltalisti
 
 ############ range for town menu starts
@@ -840,7 +840,7 @@ STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLAC
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}Bæjarstjórn {TOWN} skrifar undir eins árs sérleyfis samning við {STRING} til flutningar á öllum varningi.
 
 # Extra view window
-STR_EXTRA_VIEW_PORT_TITLE                                       :{WHITE}Sjónarhorn {COMMA}
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Sjónarhorn {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Afrita í sjónarhorn
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Afrita aðalsjónarhornið í þetta sjónarhorn
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Afrita frá sjónarhorni
@@ -1440,8 +1440,6 @@ STR_CONFIG_SETTING_NEWS_MESSAGES_FULL                           :Allt
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR                           :Fréttir byrja að birtast í lit árið: {STRING}
 STR_CONFIG_SETTING_COLOURED_NEWS_YEAR_HELPTEXT                  :Árið sem tilkynningar í dagblöðuðum byrja að vera í lit. Fram að þessum tíma eru blöð í svart/hvítu
 STR_CONFIG_SETTING_STARTING_YEAR                                :Upphafsár: {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Virkja jafnan efnahag (fleiri og minni breytingar): {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Ef þessi stilling er virk breytist framleiðsla í iðnaði oftar og í smærri skrefum. Þessi stilling hefur yfirleitt engin áhrif ef tegund iðnaðar er ákveðinn með NewGRF
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Leyfa hlutabréfakaup í öðrum fyrirtækjum: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Ef þessi stilling er virk er hægt að kaupa og selja hlutabréf í fyrirtækjum. Hlutabréf eru aðeins aðgengileg fyrir fyrirtæki sem hafa náð ákveðnum aldri
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Hlutfall hagnaðar sem greiðist til tengiþjónustu: {STRING}
@@ -1487,9 +1485,6 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :Leyft, sérsni�
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Staðsetning trjáa í leik: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Stjórnar hvernig tré birtast meðan á leiknum stendur. Þessi stilling getur haft áhrif á iðnað sem byggir á trjám, til dæmis timburverksmiðjur
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :Engin {RED}(skemmir timburverksmiðjur)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :aðeins í regnskógum
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :allstaðar
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Staðsetning tækjasláar: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Lárétt staða aðal tækjasláar efst á skjánum
@@ -1618,17 +1613,8 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Það va
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Hætta
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Ertu viss um að þú viljir hætta í OpenTTD og fara aftur í {STRING}?
 STR_QUIT_YES                                                    :{BLACK}Já
 STR_QUIT_NO                                                     :{BLACK}Nei
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Hætta leik
@@ -1638,7 +1624,6 @@ STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Ertu vi
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Svindl
 STR_CHEATS_TOOLTIP                                              :{BLACK}Valreitur segir til um ef þú hefur notað þetta svindl áður
-STR_CHEATS_WARNING                                              :{BLACK}Aðvörun! Þú ert í þann mund að svíkja keppinauta þína. Hafðu í huga að þess lags svívirðing mun ætíð höfð í minnum
 STR_CHEAT_MONEY                                                 :{LTBLUE}Auka pening um {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Spila sem fyrirtæki: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Töfrajarðýta (eyðir iðnaði, óeyðanlegum hlutum): {ORANGE}{STRING}
@@ -1787,8 +1772,6 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Tengjast
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Endurnýja þjón
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Endurnýja upplýsingar um þjón
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Finna þjón
-STR_NETWORK_SERVER_LIST_FIND_SERVER_TOOLTIP                     :{BLACK}Leita að þjónum á neti
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Bæta við þjóni
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Bætir þjóni við listann, hann mun alltaf vera athugaður þegar leitað er eftir leikjum í gangi
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Hefja þjón
@@ -1915,7 +1898,6 @@ STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nýtt fyrirtæk
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Sparka
 STR_NETWORK_CLIENTLIST_BAN                                      :Banna
-STR_NETWORK_CLIENTLIST_GIVE_MONEY                               :Gefa pening
 STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Tala við alla
 STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Tala við fyrirtæki
 STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Einkaskilaboð
@@ -1923,8 +1905,6 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Einkaskilaboð
 STR_NETWORK_SERVER                                              :Þjónn
 STR_NETWORK_CLIENT                                              :Notandi
 STR_NETWORK_SPECTATORS                                          :Áhorfendur
-
-STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Sláðu inn peningaupphæð sem þú vilt láta af hendi rakna
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Ekki vista innslegið lykilorð
@@ -2025,8 +2005,6 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} ho
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} stofnaði nýtt fyrirtæki (#{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} yfirgefur leikinn ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} heitir nú {STRING}
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} sendi þér {2:CURRENCY_LONG}
-STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY                             :*** Þú gafst {1:STRING} {2:CURRENCY_LONG}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}Þjónninn sleit tengingunni
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}Verið er að endurræsa þjóninn...{}Vinsamlega bíðið...
 
@@ -2135,6 +2113,8 @@ STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Reisa a
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Tengja millistöð
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Reisa aðra millistöð
+
+# Generic toolbar
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Járnbrautarspors framkvæmdir
@@ -2319,7 +2299,7 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Stærð:
 STR_OBJECT_CLASS_LTHS                                           :Vitar
 STR_OBJECT_CLASS_TRNS                                           :Sendar
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Tré
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK}Veldu trjátegund sem á að gróðursetja. Ef það er fyrir tré á reitnum, verðu fleiri trjám mismunandi trjám plantað óhað hvaða tegund hefur verið valin
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Tré af handahófskenndri gerð
@@ -2519,7 +2499,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Land í eigu fy
 STR_ABOUT_OPENTTD                                               :{WHITE}Um OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Upphaflegur höfundarréttur {COPYRIGHT} 1995 Chris Sawyer, Öll réttindi áskilin
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD útgáfa {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2019 OpenTTD hópurinn
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-{STRING} OpenTTD hópurinn
 
 # Framerate display window
 ############ Leave those lines in this order!!
@@ -3326,10 +3306,6 @@ STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Heldur l
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Miðstilla sjónarhorn á staðsetningu lestar. Ctrl+smella til að fylgja lestina í aðal sjónarhorni
-STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Miðja aðalsjónarhornið á bifreið. Ctrl smelltu til að fylgja bifreiðina í aðalglugga
-STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Miðja aðalsjónarhorn á staðsetningu skips. Ctrl smelltu til að fylgja skipi í aðalglugga
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Miðja aðalsjónarhorn á flugvélina. Ctrl smelltu til að fylgja flugvél í aðalglugga
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Senda lest í skýli. Ctrl+smella til þjóna lestinni einungis
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Senda bifreið í skýli
@@ -3361,10 +3337,7 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Sýna up
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Sýna nánari upplýsingar um skip
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Sýna nánari upplýsingar um skip
 
-STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Núverandi aðgerð lestar - smelltu hér til að stöðva/ræsa lestina. Ctrl+smella til að fara á áfangastað
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Núverandi aðgerð bifreiðar - smelltu hér til að stöðva/ræsa bifreið. Ctrl+Smella til að fara á áfangastað
-STR_VEHICLE_VIEW_SHIP_STATE_START_STOP_TOOLTIP                  :{BLACK}Núverandi aðgerð skips - smelltu hér til að stöðva/ræsa skipið. Ctrl+Smella til at fara á áfangastað
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Núverandi aðgerð - smelltu hér til að stöðva/ræsa flugvél. Ctrl+Smella til at fara á áfangastað
+
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Ferma / Afferma

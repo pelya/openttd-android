@@ -257,7 +257,7 @@ static inline void DrawLabel(const Rect &r, WidgetType type, bool clicked, Strin
 	if (str == STR_NULL) return;
 	if ((type & WWT_MASK) == WWT_TEXTBTN_2 && clicked) str++;
 	Dimension d = GetStringBoundingBox(str);
-	int offset = max(0, ((int)(r.bottom - r.top + 1) - (int)d.height) / 2); // Offset for rendering the text vertically centered
+	int offset = std::max(0, ((int)(r.bottom - r.top + 1) - (int)d.height) / 2); // Offset for rendering the text vertically centered
 	DrawString(r.left + clicked, r.right + clicked, r.top + offset + clicked, str, TC_FROMSTRING, SA_HOR_CENTER);
 }
 
@@ -270,7 +270,7 @@ static inline void DrawLabel(const Rect &r, WidgetType type, bool clicked, Strin
 static inline void DrawText(const Rect &r, TextColour colour, StringID str)
 {
 	Dimension d = GetStringBoundingBox(str);
-	int offset = max(0, ((int)(r.bottom - r.top + 1) - (int)d.height) / 2); // Offset for rendering the text vertically centered
+	int offset = std::max(0, ((int)(r.bottom - r.top + 1) - (int)d.height) / 2); // Offset for rendering the text vertically centered
 	if (str != STR_NULL) DrawString(r.left, r.right, r.top + offset, str, colour);
 }
 
@@ -569,7 +569,7 @@ void DrawCaption(const Rect &r, Colours colour, Owner owner, StringID str, const
 
 	if (str != STR_NULL) {
 		Dimension d = GetStringBoundingBox(str);
-		int offset = max(0, ((int)(r.bottom - r.top + 1) - (int)d.height) / 2); // Offset for rendering the text vertically centered
+		int offset = std::max(0, ((int)(r.bottom - r.top + 1) - (int)d.height) / 2); // Offset for rendering the text vertically centered
 		DrawString(r.left + WD_CAPTIONTEXT_LEFT, r.right - WD_CAPTIONTEXT_RIGHT, r.top + offset, str, TC_FROMSTRING, SA_HOR_CENTER);
 	}
 }
@@ -586,11 +586,11 @@ void DrawCaption(const Rect &r, Colours colour, Owner owner, StringID str, const
  */
 static inline void DrawButtonDropdown(const Rect &r, Colours colour, bool clicked_button, bool clicked_dropdown, StringID str)
 {
-	int text_offset = max(0, ((int)(r.bottom - r.top + 1) - FONT_HEIGHT_NORMAL) / 2); // Offset for rendering the text vertically centered
+	int text_offset = std::max(0, ((int)(r.bottom - r.top + 1) - FONT_HEIGHT_NORMAL) / 2); // Offset for rendering the text vertically centered
 
 	int dd_width  = GetMinSizing(NWST_STEP, NWidgetLeaf::dropdown_dimension.width);
 	int dd_height = GetMinSizing(NWST_STEP, NWidgetLeaf::dropdown_dimension.height);
-	int image_offset = max(0, ((int)(r.bottom - r.top + 1) - dd_height) / 2);
+	int image_offset = std::max(0, ((int)(r.bottom - r.top + 1) - dd_height) / 2);
 
 	if (_current_text_dir == TD_LTR) {
 		DrawFrameRect(r.left, r.top, r.right - dd_width, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
@@ -799,7 +799,7 @@ void NWidgetBase::SetDirty(const Window *w) const
 {
 	int abs_left = w->left + this->pos_x;
 	int abs_top = w->top + this->pos_y;
-	SetDirtyBlocks(abs_left, abs_top, abs_left + this->current_x, abs_top + this->current_y);
+	AddDirtyBlock(abs_left, abs_top, abs_left + this->current_x, abs_top + this->current_y);
 }
 
 /**
@@ -840,8 +840,8 @@ NWidgetResizeBase::NWidgetResizeBase(WidgetType tp, uint fill_x, uint fill_y) : 
  */
 void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
 {
-	this->min_x = max(this->min_x, min_x);
-	this->min_y = max(this->min_y, min_y);
+	this->min_x = std::max(this->min_x, min_x);
+	this->min_y = std::max(this->min_y, min_y);
 	uint min_size = 0;
 	switch (this->sizing_type) {
 		case NWST_NONE:
@@ -861,8 +861,8 @@ void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
 	}
 	min_size = RescaleFrom854x480(min_size);
 
-	this->min_x = max(min_x, min_size);
-	this->min_y = max(min_y, min_size);
+	this->min_x = std::max(this->min_x, min_size);
+	this->min_y = std::max(this->min_y, min_size);
 }
 
 /**
@@ -940,6 +940,15 @@ void NWidgetCore::SetIndex(int index)
 void NWidgetCore::SetDataTip(uint32 widget_data, StringID tool_tip)
 {
 	this->widget_data = widget_data;
+	this->tool_tip = tool_tip;
+}
+
+/**
+ * Set the tool tip of the nested widget.
+ * @param tool_tip Tool tip string to use.
+ */
+void NWidgetCore::SetToolTip(StringID tool_tip)
+{
 	this->tool_tip = tool_tip;
 }
 
@@ -1245,8 +1254,8 @@ void NWidgetStacked::SetupSmallestSize(Window *w, bool init_array)
 	for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
 		child_wid->SetupSmallestSize(w, init_array);
 
-		this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
-		this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+		this->smallest_x = std::max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+		this->smallest_y = std::max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
 		this->fill_x = LeastCommonMultiple(this->fill_x, child_wid->fill_x);
 		this->fill_y = LeastCommonMultiple(this->fill_y, child_wid->fill_y);
 		this->resize_x = LeastCommonMultiple(this->resize_x, child_wid->resize_x);
@@ -1376,9 +1385,9 @@ void NWidgetHorizontal::SetupSmallestSize(Window *w, bool init_array)
 	uint max_vert_fill = 0; // Biggest vertical fill step.
 	for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
 		child_wid->SetupSmallestSize(w, init_array);
-		longest = max(longest, child_wid->smallest_x);
-		max_vert_fill = max(max_vert_fill, child_wid->GetVerticalStepSize(ST_SMALLEST));
-		this->smallest_y = max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
+		longest = std::max(longest, child_wid->smallest_x);
+		max_vert_fill = std::max(max_vert_fill, child_wid->GetVerticalStepSize(ST_SMALLEST));
+		this->smallest_y = std::max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
 	}
 	/* 1b. Make the container higher if needed to accommodate all children nicely. */
 	uint max_smallest = this->smallest_y + 3 * max_vert_fill; // Upper limit to computing smallest height.
@@ -1466,7 +1475,7 @@ void NWidgetHorizontal::AssignSizePosition(SizingType sizing, uint x, uint y, ui
 		uint hor_step = child_wid->GetHorizontalStepSize(sizing);
 		if (hor_step > 0) {
 			num_changing_childs++;
-			biggest_stepsize = max(biggest_stepsize, hor_step);
+			biggest_stepsize = std::max(biggest_stepsize, hor_step);
 		} else {
 			child_wid->current_x = child_wid->smallest_x;
 		}
@@ -1489,7 +1498,7 @@ void NWidgetHorizontal::AssignSizePosition(SizingType sizing, uint x, uint y, ui
 				additional_length -= increment;
 				continue;
 			}
-			next_biggest_stepsize = max(next_biggest_stepsize, hor_step);
+			next_biggest_stepsize = std::max(next_biggest_stepsize, hor_step);
 		}
 		biggest_stepsize = next_biggest_stepsize;
 	}
@@ -1541,9 +1550,9 @@ void NWidgetVertical::SetupSmallestSize(Window *w, bool init_array)
 	uint max_hor_fill = 0; // Biggest horizontal fill step.
 	for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
 		child_wid->SetupSmallestSize(w, init_array);
-		highest = max(highest, child_wid->smallest_y);
-		max_hor_fill = max(max_hor_fill, child_wid->GetHorizontalStepSize(ST_SMALLEST));
-		this->smallest_x = max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
+		highest = std::max(highest, child_wid->smallest_y);
+		max_hor_fill = std::max(max_hor_fill, child_wid->GetHorizontalStepSize(ST_SMALLEST));
+		this->smallest_x = std::max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
 	}
 	/* 1b. Make the container wider if needed to accommodate all children nicely. */
 	uint max_smallest = this->smallest_x + 3 * max_hor_fill; // Upper limit to computing smallest height.
@@ -1622,7 +1631,7 @@ void NWidgetVertical::AssignSizePosition(SizingType sizing, uint x, uint y, uint
 		uint vert_step = child_wid->GetVerticalStepSize(sizing);
 		if (vert_step > 0) {
 			num_changing_childs++;
-			biggest_stepsize = max(biggest_stepsize, vert_step);
+			biggest_stepsize = std::max(biggest_stepsize, vert_step);
 		} else {
 			child_wid->current_y = child_wid->smallest_y;
 		}
@@ -1645,7 +1654,7 @@ void NWidgetVertical::AssignSizePosition(SizingType sizing, uint x, uint y, uint
 				additional_length -= increment;
 				continue;
 			}
-			next_biggest_stepsize = max(next_biggest_stepsize, vert_step);
+			next_biggest_stepsize = std::max(next_biggest_stepsize, vert_step);
 		}
 		biggest_stepsize = next_biggest_stepsize;
 	}
@@ -2017,14 +2026,14 @@ void NWidgetBackground::SetupSmallestSize(Window *w, bool init_array)
 		if (w != nullptr && this->type == WWT_FRAME) {
 			this->child->padding_left   = WD_FRAMETEXT_LEFT;
 			this->child->padding_right  = WD_FRAMETEXT_RIGHT;
-			this->child->padding_top    = max((int)WD_FRAMETEXT_TOP, this->widget_data != STR_NULL ? FONT_HEIGHT_NORMAL + WD_FRAMETEXT_TOP / 2 : 0);
+			this->child->padding_top    = std::max((int)WD_FRAMETEXT_TOP, this->widget_data != STR_NULL ? FONT_HEIGHT_NORMAL + WD_FRAMETEXT_TOP / 2 : 0);
 			this->child->padding_bottom = WD_FRAMETEXT_BOTTOM;
 
 			this->smallest_x += this->child->padding_left + this->child->padding_right;
 			this->smallest_y += this->child->padding_top + this->child->padding_bottom;
 
 			if (this->index >= 0) w->SetStringParameters(this->index);
-			this->smallest_x = max(this->smallest_x, GetStringBoundingBox(this->widget_data).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT);
+			this->smallest_x = std::max(this->smallest_x, GetStringBoundingBox(this->widget_data).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT);
 		}
 	} else {
 		Dimension d = {this->min_x, this->min_y};
@@ -2181,7 +2190,7 @@ void NWidgetViewport::InitializeViewport(Window *w, uint32 follow_flags, ZoomLev
  */
 void NWidgetViewport::UpdateViewportCoordinates(Window *w)
 {
-	ViewPort *vp = w->viewport;
+	Viewport *vp = w->viewport;
 	if (vp != nullptr) {
 		vp->left = w->left + this->pos_x;
 		vp->top  = w->top + this->pos_y;
@@ -2583,8 +2592,8 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 		}
 		case WWT_EDITBOX: {
 			Dimension sprite_size = GetSpriteSize(_current_text_dir == TD_RTL ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
-			size.width = max(size.width, 30 + sprite_size.width);
-			size.height = max(sprite_size.height, GetStringBoundingBox("_").height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
+			size.width = std::max(size.width, 30 + sprite_size.width);
+			size.height = std::max(sprite_size.height, GetStringBoundingBox("_").height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
 			size.height = GetMinSizing(NWST_BUTTON, size.height);
 		}
 		FALLTHROUGH;
@@ -2672,7 +2681,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			if (this->index >= 0) w->SetStringParameters(this->index);
 			Dimension d2 = GetStringBoundingBox(this->widget_data);
 			d2.width += extra.width;
-			d2.height = max(d2.height, NWidgetLeaf::dropdown_dimension.height) + extra.height;
+			d2.height = std::max(d2.height, NWidgetLeaf::dropdown_dimension.height) + extra.height;
 			size = maxdim(size, d2);
 			break;
 		}
@@ -2893,7 +2902,7 @@ static int MakeNWidget(const NWidgetPart *parts, int count, NWidgetBase **dest, 
 			case WWT_FRAME:
 				if (*dest != nullptr) return num_used;
 				*dest = new NWidgetBackground(parts->type, parts->u.widget.colour, parts->u.widget.index);
-				*biggest_index = max(*biggest_index, (int)parts->u.widget.index);
+				*biggest_index = std::max(*biggest_index, (int)parts->u.widget.index);
 				*fill_dest = true;
 				break;
 
@@ -2910,7 +2919,7 @@ static int MakeNWidget(const NWidgetPart *parts, int count, NWidgetBase **dest, 
 				*fill_dest = true;
 				nwm->SetIndex(parts->u.widget.index);
 				nwm->SetColour(parts->u.widget.colour);
-				*biggest_index = max(*biggest_index, (int)parts->u.widget.index);
+				*biggest_index = std::max(*biggest_index, (int)parts->u.widget.index);
 				break;
 			}
 
@@ -2919,7 +2928,7 @@ static int MakeNWidget(const NWidgetPart *parts, int count, NWidgetBase **dest, 
 				/* Ensure proper functioning even when the called code simply writes its largest index. */
 				int biggest = -1;
 				*dest = parts->u.func_ptr(&biggest);
-				*biggest_index = max(*biggest_index, biggest);
+				*biggest_index = std::max(*biggest_index, biggest);
 				*fill_dest = false;
 				break;
 			}
@@ -3003,14 +3012,14 @@ static int MakeNWidget(const NWidgetPart *parts, int count, NWidgetBase **dest, 
 			case NWID_VIEWPORT:
 				if (*dest != nullptr) return num_used;
 				*dest = new NWidgetViewport(parts->u.widget.index);
-				*biggest_index = max(*biggest_index, (int)parts->u.widget.index);
+				*biggest_index = std::max(*biggest_index, (int)parts->u.widget.index);
 				break;
 
 			case NWID_HSCROLLBAR:
 			case NWID_VSCROLLBAR:
 				if (*dest != nullptr) return num_used;
 				*dest = new NWidgetScrollbar(parts->type, parts->u.widget.colour, parts->u.widget.index);
-				*biggest_index = max(*biggest_index, (int)parts->u.widget.index);
+				*biggest_index = std::max(*biggest_index, (int)parts->u.widget.index);
 				break;
 
 			case NWID_SELECTION: {
@@ -3019,7 +3028,7 @@ static int MakeNWidget(const NWidgetPart *parts, int count, NWidgetBase **dest, 
 				*dest = nws;
 				*fill_dest = true;
 				nws->SetIndex(parts->u.widget.index);
-				*biggest_index = max(*biggest_index, (int)parts->u.widget.index);
+				*biggest_index = std::max(*biggest_index, (int)parts->u.widget.index);
 				break;
 			}
 
@@ -3027,7 +3036,7 @@ static int MakeNWidget(const NWidgetPart *parts, int count, NWidgetBase **dest, 
 				if (*dest != nullptr) return num_used;
 				assert((parts->type & WWT_MASK) < WWT_LAST || (parts->type & WWT_MASK) == NWID_BUTTON_DROPDOWN);
 				*dest = new NWidgetLeaf(parts->type, parts->u.widget.colour, parts->u.widget.index, 0x0, STR_NULL);
-				*biggest_index = max(*biggest_index, (int)parts->u.widget.index);
+				*biggest_index = std::max(*biggest_index, (int)parts->u.widget.index);
 				break;
 		}
 		num_used++;
@@ -3160,7 +3169,7 @@ NWidgetContainer *MakeWindowNWidgetTree(const NWidgetPart *parts, int count, int
 	int biggest2 = -1;
 	MakeNWidgets(parts, count, &biggest2, body);
 
-	*biggest_index = max(*biggest_index, biggest2);
+	*biggest_index = std::max(*biggest_index, biggest2);
 	return root;
 }
 

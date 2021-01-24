@@ -169,7 +169,7 @@ CargoArray GetCapacityOfArticulatedParts(EngineID engine)
  * @param cargo_type Selected refitted cargo type
  * @param cargo_capacity Capacity of selected refitted cargo type
  */
-void GetArticulatedVehicleCargoesAndRefits(EngineID engine, CargoArray *cargoes, CargoTypes *refits, CargoID cargo_type, uint16 cargo_capacity)
+void GetArticulatedVehicleCargoesAndRefits(EngineID engine, CargoArray *cargoes, CargoTypes *refits, CargoID cargo_type, uint cargo_capacity)
 {
 	cargoes->Clear();
 	*refits = 0;
@@ -439,7 +439,7 @@ void AddArticulatedParts(Vehicle *first)
 		v->max_age = 0;
 		v->engine_type = engine_type;
 		v->value = 0;
-		v->sprite_seq.Set(SPR_IMG_QUERY);
+		v->sprite_cache.sprite_seq.Set(SPR_IMG_QUERY);
 		v->random_bits = VehicleRandomBits();
 
 		if (flip_image) v->spritenum++;

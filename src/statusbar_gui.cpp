@@ -107,7 +107,7 @@ struct StatusBarWindow : Window {
 
 	void FindWindowPlacementAndResize(int def_width, int def_height) override
 	{
-		Window::FindWindowPlacementAndResize(min(_toolbar_width, _screen.width - GetMinSizing(NWST_STEP) * 2), def_height);
+		Window::FindWindowPlacementAndResize(std::min(_toolbar_width, _screen.width - GetMinSizing(NWST_STEP) * 2), def_height);
 	}
 
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
@@ -121,7 +121,7 @@ struct StatusBarWindow : Window {
 				d = GetStringBoundingBox(STR_WHITE_DATE_LONG);
 
 				int64 max_money = UINT32_MAX;
-				for (const Company *c : Company::Iterate()) max_money = max<int64>(c->money, max_money);
+				for (const Company *c : Company::Iterate()) max_money = std::max<int64>(c->money, max_money);
 				SetDParam(0, 100LL * max_money);
 				d = maxdim(d, GetStringBoundingBox(STR_COMPANY_MONEY));
 				break;
@@ -129,7 +129,7 @@ struct StatusBarWindow : Window {
 
 			case WID_S_MIDDLE:
 				d = GetStringBoundingBox(STR_STATUSBAR_AUTOSAVE);
-				d = maxdim(d,    GetStringBoundingBox(STR_STATUSBAR_PAUSED));
+				d = maxdim(d, GetStringBoundingBox(STR_STATUSBAR_PAUSED));
 
 				if (Company::IsValidID(_local_company)) {
 					SetDParam(0, _local_company);
@@ -148,13 +148,13 @@ struct StatusBarWindow : Window {
 
 	void DrawWidget(const Rect &r, int widget) const override
 	{
-		StringID str = INVALID_STRING_ID;
-
+		int text_offset = std::max(0, ((int)(r.bottom - r.top + 1) - FONT_HEIGHT_NORMAL) / 2); // Offset for rendering the text vertically centered
+		int text_top = r.top + text_offset;
 		switch (widget) {
 			case WID_S_LEFT:
 				/* Draw the date */
 				SetDParam(0, _date);
-				str = STR_WHITE_DATE_LONG;
+				DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_WHITE_DATE_LONG, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 
 			case WID_S_RIGHT: {
@@ -162,7 +162,7 @@ struct StatusBarWindow : Window {
 				const Company *c = Company::GetIfValid(_local_company);
 				if (c != nullptr) {
 					SetDParam(0, c->money);
-					str = STR_COMPANY_MONEY;
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_COMPANY_MONEY, TC_FROMSTRING, SA_HOR_CENTER);
 				}
 				break;
 			}
@@ -170,38 +170,35 @@ struct StatusBarWindow : Window {
 			case WID_S_MIDDLE:
 				/* Draw status bar */
 				if (this->saving) { // true when saving is active
-					str = STR_STATUSBAR_SAVING_GAME;
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_STATUSBAR_SAVING_GAME, TC_FROMSTRING, SA_HOR_CENTER | SA_VERT_CENTER);
 				} else if (_do_autosave) {
-					str = STR_STATUSBAR_AUTOSAVE;
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_STATUSBAR_AUTOSAVE, TC_FROMSTRING, SA_HOR_CENTER);
 				} else if (_pause_mode != PM_UNPAUSED) {
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, STR_STATUSBAR_PAUSED, TC_FROMSTRING, SA_HOR_CENTER);
-				} else if (this->ticker_scroll < TICKER_STOP && FindWindowById(WC_NEWS_WINDOW, 0) == NULL && _statusbar_news_item != nullptr && _statusbar_news_item->string_id != 0) {
+					StringID msg = (_pause_mode & PM_PAUSED_LINK_GRAPH) ? STR_STATUSBAR_PAUSED_LINK_GRAPH : STR_STATUSBAR_PAUSED;
+					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, msg, TC_FROMSTRING, SA_HOR_CENTER);
+				} else if (this->ticker_scroll < TICKER_STOP && _statusbar_news_item != nullptr && _statusbar_news_item->string_id != 0) {
 					/* Draw the scrolling news text */
 					if (!DrawScrollingStatusText(_statusbar_news_item, ScaleGUITrad(this->ticker_scroll), r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_FRAMERECT_TOP, r.bottom)) {
 						InvalidateWindowData(WC_STATUS_BAR, 0, SBI_NEWS_DELETED);
 						if (Company::IsValidID(_local_company)) {
 							/* This is the default text */
 							SetDParam(0, _local_company);
-							str = STR_STATUSBAR_COMPANY_NAME;
+							DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_STATUSBAR_COMPANY_NAME, TC_FROMSTRING, SA_HOR_CENTER);
 						}
 					}
 				} else {
 					if (Company::IsValidID(_local_company)) {
 						/* This is the default text */
 						SetDParam(0, _local_company);
-						str = STR_STATUSBAR_COMPANY_NAME;
+						DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, text_top, STR_STATUSBAR_COMPANY_NAME, TC_FROMSTRING, SA_HOR_CENTER);
 					}
 				}
+
+				if (!this->reminder_timeout.HasElapsed()) {
+					Dimension icon_size = GetSpriteSize(SPR_UNREAD_NEWS);
+					DrawSprite(SPR_UNREAD_NEWS, PAL_NONE, r.right - WD_FRAMERECT_RIGHT - icon_size.width, r.top + std::max(0, ((int)(r.bottom - r.top + 1) - (int)icon_size.height) / 2));
+				}
 				break;
-		}
-
-		int center_top = Center(r.top + WD_FRAMERECT_TOP, r.bottom - r.top);
-		if (str != INVALID_STRING_ID) DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, center_top, str, TC_FROMSTRING, SA_HOR_CENTER);
-
-		if (widget == WID_S_MIDDLE && !this->reminder_timeout.HasElapsed()) {
-			Dimension icon_size = GetSpriteSize(SPR_UNREAD_NEWS);
-			center_top = Center(r.top + WD_FRAMERECT_TOP, r.bottom - r.top,  icon_size.height);
-			DrawSprite(SPR_UNREAD_NEWS, PAL_NONE, r.right - WD_FRAMERECT_RIGHT - icon_size.width, center_top);
 		}
 	}
 

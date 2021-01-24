@@ -36,6 +36,8 @@
 #include "newgrf_profiling.h"
 #include "console_func.h"
 #include "engine_base.h"
+#include "road.h"
+#include "rail.h"
 #include "game/game.hpp"
 #include "table/strings.h"
 #include <time.h>
@@ -145,7 +147,7 @@ DEF_CONSOLE_HOOK(ConHookNeedNetwork)
 }
 
 /**
- * Check whether we are in single player mode.
+ * Check whether we are in singleplayer mode.
  * @return True when no network is active.
  */
 DEF_CONSOLE_HOOK(ConHookNoNetwork)
@@ -543,7 +545,7 @@ DEF_CONSOLE_CMD(ConKick)
 	/* Reason for kicking supplied */
 	size_t kick_message_length = strlen(argv[2]);
 	if (kick_message_length >= 255) {
-		IConsolePrintF(CC_ERROR, "ERROR: Maximum kick message length is 254 characters. You entered %d characters.", kick_message_length);
+		IConsolePrintF(CC_ERROR, "ERROR: Maximum kick message length is 254 characters. You entered " PRINTF_SIZE " characters.", kick_message_length);
 		return false;
 	} else {
 		return ConKickOrBan(argv[1], false, argv[2]);
@@ -567,7 +569,7 @@ DEF_CONSOLE_CMD(ConBan)
 	/* Reason for kicking supplied */
 	size_t kick_message_length = strlen(argv[2]);
 	if (kick_message_length >= 255) {
-		IConsolePrintF(CC_ERROR, "ERROR: Maximum kick message length is 254 characters. You entered %d characters.", kick_message_length);
+		IConsolePrintF(CC_ERROR, "ERROR: Maximum kick message length is 254 characters. You entered " PRINTF_SIZE " characters.", kick_message_length);
 		return false;
 	} else {
 		return ConKickOrBan(argv[1], true, argv[2]);
@@ -620,6 +622,7 @@ DEF_CONSOLE_CMD(ConBanList)
 	uint i = 1;
 	for (const auto &entry : _network_ban_list) {
 		IConsolePrintF(CC_DEFAULT, "  %d) %s", i, entry.c_str());
+		i++;
 	}
 
 	return true;
@@ -1086,6 +1089,23 @@ DEF_CONSOLE_CMD(ConRestart)
 	return true;
 }
 
+DEF_CONSOLE_CMD(ConReload)
+{
+	if (argc == 0) {
+		IConsoleHelp("Reload game. Usage: 'reload'");
+		IConsoleHelp("Reloads a game.");
+		IConsoleHelp(" * if you started from a savegame / scenario / heightmap, that exact same savegame / scenario / heightmap will be loaded.");
+		IConsoleHelp(" * if you started from a new game, this acts the same as 'restart'.");
+		return true;
+	}
+
+	/* Don't copy the _newgame pointers to the real pointers, so call SwitchToMode directly */
+	_settings_game.game_creation.map_x = MapLogX();
+	_settings_game.game_creation.map_y = FindFirstBit(MapSizeY());
+	_switch_mode = SM_RELOADGAME;
+	return true;
+}
+
 /**
  * Print a text buffer line by line to the console. Lines are separated by '\n'.
  * @param buf The buffer to print.
@@ -1185,7 +1205,24 @@ DEF_CONSOLE_CMD(ConStartAI)
 
 	AIConfig *config = AIConfig::GetConfig((CompanyID)n);
 	if (argc >= 2) {
-		config->Change(argv[1], -1, true);
+		config->Change(argv[1], -1, false);
+
+		/* If the name is not found, and there is a dot in the name,
+		 * try again with the assumption everything right of the dot is
+		 * the version the user wants to load. */
+		if (!config->HasScript()) {
+			char *name = stredup(argv[1]);
+			char *e = strrchr(name, '.');
+			if (e != nullptr) {
+				*e = '\0';
+				e++;
+
+				int version = atoi(e);
+				config->Change(name, version, true);
+			}
+			free(name);
+		}
+
 		if (!config->HasScript()) {
 			IConsoleWarning("Failed to load the specified AI");
 			return true;
@@ -1225,7 +1262,8 @@ DEF_CONSOLE_CMD(ConReloadAI)
 		return true;
 	}
 
-	if (Company::IsHumanID(company_id)) {
+	/* In singleplayer mode the player can be in an AI company, after cheating or loading network save with an AI in first slot. */
+	if (Company::IsHumanID(company_id) || company_id == _local_company) {
 		IConsoleWarning("Company is not controlled by an AI.");
 		return true;
 	}
@@ -1262,6 +1300,7 @@ DEF_CONSOLE_CMD(ConStopAI)
 		return true;
 	}
 
+	/* In singleplayer mode the player can be in an AI company, after cheating or loading network save with an AI in first slot. */
 	if (Company::IsHumanID(company_id) || company_id == _local_company) {
 		IConsoleWarning("Company is not controlled by an AI.");
 		return true;
@@ -1756,7 +1795,7 @@ struct ConsoleContentCallback : public ContentCallback {
 static void OutputContentState(const ContentInfo *const ci)
 {
 	static const char * const types[] = { "Base graphics", "NewGRF", "AI", "AI library", "Scenario", "Heightmap", "Base sound", "Base music", "Game script", "GS library" };
-	assert_compile(lengthof(types) == CONTENT_TYPE_END - CONTENT_TYPE_BEGIN);
+	static_assert(lengthof(types) == CONTENT_TYPE_END - CONTENT_TYPE_BEGIN);
 	static const char * const states[] = { "Not selected", "Selected", "Dep Selected", "Installed", "Unknown" };
 	static const TextColour state_to_colour[] = { CC_COMMAND, CC_INFO, CC_INFO, CC_WHITE, CC_ERROR };
 
@@ -1774,10 +1813,10 @@ DEF_CONSOLE_CMD(ConContent)
 	}
 
 	if (argc <= 1) {
-		IConsoleHelp("Query, select and download content. Usage: 'content update|upgrade|select [all|id]|unselect [all|id]|state [filter]|download'");
+		IConsoleHelp("Query, select and download content. Usage: 'content update|upgrade|select [id]|unselect [all|id]|state [filter]|download'");
 		IConsoleHelp("  update: get a new list of downloadable content; must be run first");
 		IConsoleHelp("  upgrade: select all items that are upgrades");
-		IConsoleHelp("  select: select a specific item given by its id or 'all' to select all. If no parameter is given, all selected content will be listed");
+		IConsoleHelp("  select: select a specific item given by its id. If no parameter is given, all selected content will be listed");
 		IConsoleHelp("  unselect: unselect a specific item given by its id or 'all' to unselect all");
 		IConsoleHelp("  state: show the download/select state of all downloadable content. Optionally give a filter string");
 		IConsoleHelp("  download: download all content you've selected");
@@ -1803,7 +1842,13 @@ DEF_CONSOLE_CMD(ConContent)
 				OutputContentState(*iter);
 			}
 		} else if (strcasecmp(argv[2], "all") == 0) {
-			_network_content_client.SelectAll();
+			/* The intention of this function was that you could download
+			 * everything after a filter was applied; but this never really
+			 * took off. Instead, a select few people used this functionality
+			 * to download every available package on BaNaNaS. This is not in
+			 * the spirit of this service. Additionally, these few people were
+			 * good for 70% of the consumed bandwidth of BaNaNaS. */
+			IConsolePrintF(CC_ERROR, "'select all' is no longer supported since 1.11");
 		} else {
 			_network_content_client.Select((ContentID)atoi(argv[2]));
 		}
@@ -2005,7 +2050,7 @@ DEF_CONSOLE_CMD(ConNewGRFProfile)
 		if (started > 0) {
 			IConsolePrintF(CC_DEBUG, "Started profiling for GRFID%s %s", (started > 1) ? "s" : "", grfids.c_str());
 			if (argc >= 3) {
-				int days = max(atoi(argv[2]), 1);
+				int days = std::max(atoi(argv[2]), 1);
 				_newgrf_profile_end_date = _date + days;
 
 				char datestrbuf[32]{ 0 };
@@ -2085,6 +2130,159 @@ DEF_CONSOLE_CMD(ConFramerateWindow)
 	return true;
 }
 
+static void ConDumpRoadTypes()
+{
+	IConsolePrintF(CC_DEFAULT, "  Flags:");
+	IConsolePrintF(CC_DEFAULT, "    c = catenary");
+	IConsolePrintF(CC_DEFAULT, "    l = no level crossings");
+	IConsolePrintF(CC_DEFAULT, "    X = no houses");
+	IConsolePrintF(CC_DEFAULT, "    h = hidden");
+	IConsolePrintF(CC_DEFAULT, "    T = buildable by towns");
+
+	std::map<uint32, const GRFFile *> grfs;
+	for (RoadType rt = ROADTYPE_BEGIN; rt < ROADTYPE_END; rt++) {
+		const RoadTypeInfo *rti = GetRoadTypeInfo(rt);
+		if (rti->label == 0) continue;
+		uint32 grfid = 0;
+		const GRFFile *grf = rti->grffile[ROTSG_GROUND];
+		if (grf != nullptr) {
+			grfid = grf->grfid;
+			grfs.emplace(grfid, grf);
+		}
+		IConsolePrintF(CC_DEFAULT, "  %02u %s %c%c%c%c, Flags: %c%c%c%c%c, GRF: %08X, %s",
+				(uint) rt,
+				RoadTypeIsTram(rt) ? "Tram" : "Road",
+				rti->label >> 24, rti->label >> 16, rti->label >> 8, rti->label,
+				HasBit(rti->flags, ROTF_CATENARY)          ? 'c' : '-',
+				HasBit(rti->flags, ROTF_NO_LEVEL_CROSSING) ? 'l' : '-',
+				HasBit(rti->flags, ROTF_NO_HOUSES)         ? 'X' : '-',
+				HasBit(rti->flags, ROTF_HIDDEN)            ? 'h' : '-',
+				HasBit(rti->flags, ROTF_TOWN_BUILD)        ? 'T' : '-',
+				BSWAP32(grfid),
+				GetStringPtr(rti->strings.name)
+		);
+	}
+	for (const auto &grf : grfs) {
+		IConsolePrintF(CC_DEFAULT, "  GRF: %08X = %s", BSWAP32(grf.first), grf.second->filename);
+	}
+}
+
+static void ConDumpRailTypes()
+{
+	IConsolePrintF(CC_DEFAULT, "  Flags:");
+	IConsolePrintF(CC_DEFAULT, "    c = catenary");
+	IConsolePrintF(CC_DEFAULT, "    l = no level crossings");
+	IConsolePrintF(CC_DEFAULT, "    h = hidden");
+	IConsolePrintF(CC_DEFAULT, "    s = no sprite combine");
+	IConsolePrintF(CC_DEFAULT, "    a = always allow 90 degree turns");
+	IConsolePrintF(CC_DEFAULT, "    d = always disallow 90 degree turns");
+
+	std::map<uint32, const GRFFile *> grfs;
+	for (RailType rt = RAILTYPE_BEGIN; rt < RAILTYPE_END; rt++) {
+		const RailtypeInfo *rti = GetRailTypeInfo(rt);
+		if (rti->label == 0) continue;
+		uint32 grfid = 0;
+		const GRFFile *grf = rti->grffile[RTSG_GROUND];
+		if (grf != nullptr) {
+			grfid = grf->grfid;
+			grfs.emplace(grfid, grf);
+		}
+		IConsolePrintF(CC_DEFAULT, "  %02u %c%c%c%c, Flags: %c%c%c%c%c%c, GRF: %08X, %s",
+				(uint) rt,
+				rti->label >> 24, rti->label >> 16, rti->label >> 8, rti->label,
+				HasBit(rti->flags, RTF_CATENARY)          ? 'c' : '-',
+				HasBit(rti->flags, RTF_NO_LEVEL_CROSSING) ? 'l' : '-',
+				HasBit(rti->flags, RTF_HIDDEN)            ? 'h' : '-',
+				HasBit(rti->flags, RTF_NO_SPRITE_COMBINE) ? 's' : '-',
+				HasBit(rti->flags, RTF_ALLOW_90DEG)       ? 'a' : '-',
+				HasBit(rti->flags, RTF_DISALLOW_90DEG)    ? 'd' : '-',
+				BSWAP32(grfid),
+				GetStringPtr(rti->strings.name)
+		);
+	}
+	for (const auto &grf : grfs) {
+		IConsolePrintF(CC_DEFAULT, "  GRF: %08X = %s", BSWAP32(grf.first), grf.second->filename);
+	}
+}
+
+static void ConDumpCargoTypes()
+{
+	IConsolePrintF(CC_DEFAULT, "  Cargo classes:");
+	IConsolePrintF(CC_DEFAULT, "    p = passenger");
+	IConsolePrintF(CC_DEFAULT, "    m = mail");
+	IConsolePrintF(CC_DEFAULT, "    x = express");
+	IConsolePrintF(CC_DEFAULT, "    a = armoured");
+	IConsolePrintF(CC_DEFAULT, "    b = bulk");
+	IConsolePrintF(CC_DEFAULT, "    g = piece goods");
+	IConsolePrintF(CC_DEFAULT, "    l = liquid");
+	IConsolePrintF(CC_DEFAULT, "    r = refrigerated");
+	IConsolePrintF(CC_DEFAULT, "    h = hazardous");
+	IConsolePrintF(CC_DEFAULT, "    c = covered/sheltered");
+	IConsolePrintF(CC_DEFAULT, "    S = special");
+
+	std::map<uint32, const GRFFile *> grfs;
+	for (CargoID i = 0; i < NUM_CARGO; i++) {
+		const CargoSpec *spec = CargoSpec::Get(i);
+		if (!spec->IsValid()) continue;
+		uint32 grfid = 0;
+		const GRFFile *grf = spec->grffile;
+		if (grf != nullptr) {
+			grfid = grf->grfid;
+			grfs.emplace(grfid, grf);
+		}
+		IConsolePrintF(CC_DEFAULT, "  %02u Bit: %2u, Label: %c%c%c%c, Callback mask: 0x%02X, Cargo class: %c%c%c%c%c%c%c%c%c%c%c, GRF: %08X, %s",
+				(uint) i,
+				spec->bitnum,
+				spec->label >> 24, spec->label >> 16, spec->label >> 8, spec->label,
+				spec->callback_mask,
+				(spec->classes & CC_PASSENGERS)   != 0 ? 'p' : '-',
+				(spec->classes & CC_MAIL)         != 0 ? 'm' : '-',
+				(spec->classes & CC_EXPRESS)      != 0 ? 'x' : '-',
+				(spec->classes & CC_ARMOURED)     != 0 ? 'a' : '-',
+				(spec->classes & CC_BULK)         != 0 ? 'b' : '-',
+				(spec->classes & CC_PIECE_GOODS)  != 0 ? 'g' : '-',
+				(spec->classes & CC_LIQUID)       != 0 ? 'l' : '-',
+				(spec->classes & CC_REFRIGERATED) != 0 ? 'r' : '-',
+				(spec->classes & CC_HAZARDOUS)    != 0 ? 'h' : '-',
+				(spec->classes & CC_COVERED)      != 0 ? 'c' : '-',
+				(spec->classes & CC_SPECIAL)      != 0 ? 'S' : '-',
+				BSWAP32(grfid),
+				GetStringPtr(spec->name)
+		);
+	}
+	for (const auto &grf : grfs) {
+		IConsolePrintF(CC_DEFAULT, "  GRF: %08X = %s", BSWAP32(grf.first), grf.second->filename);
+	}
+}
+
+
+DEF_CONSOLE_CMD(ConDumpInfo)
+{
+	if (argc != 2) {
+		IConsoleHelp("Dump debugging information.");
+		IConsoleHelp("Usage: dump_info roadtypes|railtypes|cargotypes");
+		IConsoleHelp("  Show information about road/tram types, rail types or cargo types.");
+		return true;
+	}
+
+	if (strcasecmp(argv[1], "roadtypes") == 0) {
+		ConDumpRoadTypes();
+		return true;
+	}
+
+	if (strcasecmp(argv[1], "railtypes") == 0) {
+		ConDumpRailTypes();
+		return true;
+	}
+
+	if (strcasecmp(argv[1], "cargotypes") == 0) {
+		ConDumpCargoTypes();
+		return true;
+	}
+
+	return false;
+}
+
 /*******************************
  * console command registration
  *******************************/
@@ -2103,6 +2301,7 @@ void IConsoleStdLibRegister()
 	IConsoleCmdRegister("list_aliases", ConListAliases);
 	IConsoleCmdRegister("newgame",      ConNewGame);
 	IConsoleCmdRegister("restart",      ConRestart);
+	IConsoleCmdRegister("reload",       ConReload);
 	IConsoleCmdRegister("getseed",      ConGetSeed);
 	IConsoleCmdRegister("getdate",      ConGetDate);
 	IConsoleCmdRegister("getsysdate",   ConGetSysDate);
@@ -2223,4 +2422,6 @@ void IConsoleStdLibRegister()
 	/* NewGRF development stuff */
 	IConsoleCmdRegister("reload_newgrfs",  ConNewGRFReload, ConHookNewGRFDeveloperTool);
 	IConsoleCmdRegister("newgrf_profile",  ConNewGRFProfile, ConHookNewGRFDeveloperTool);
+
+	IConsoleCmdRegister("dump_info", ConDumpInfo);
 }

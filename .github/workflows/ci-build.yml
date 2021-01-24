@@ -1,0 +1,274 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+jobs:
+  emscripten:
+    name: Emscripten
+
+    runs-on: ubuntu-20.04
+    container:
+      # If you change this version, change the number in the cache step too.
+      image: emscripten/emsdk:2.0.10
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup cache
+      uses: actions/cache@v2
+      with:
+        path: /emsdk/upstream/emscripten/cache
+        key: 2.0.10-${{ runner.os }}
+
+    - name: Build (host tools)
+      run: |
+        mkdir build-host
+        cd build-host
+
+        echo "::group::CMake"
+        cmake .. -DOPTION_TOOLS_ONLY=ON
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        echo "Running on $(nproc) cores"
+        make -j$(nproc) tools
+        echo "::endgroup::"
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        emcmake cmake .. -DHOST_BINARY_DIR=../build-host
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        echo "Running on $(nproc) cores"
+        emmake make -j$(nproc)
+        echo "::endgroup::"
+
+  linux:
+    name: Linux
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - compiler: clang
+            cxxcompiler: clang++
+          - compiler: gcc
+            cxxcompiler: g++
+
+    runs-on: ubuntu-20.04
+    env:
+      CC: ${{ matrix.compiler }}
+      CXX: ${{ matrix.cxxcompiler }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        echo "::group::Update apt"
+        sudo apt-get update
+        echo "::endgroup::"
+
+        echo "::group::Install dependencies"
+        sudo apt-get install -y --no-install-recommends \
+          libfontconfig-dev \
+          libicu-dev \
+          liblzma-dev \
+          liblzo2-dev \
+          libsdl1.2-dev \
+          libsdl2-dev \
+          zlib1g-dev \
+          # EOF
+        echo "::endgroup::"
+      env:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Get OpenGFX
+      run: |
+        mkdir -p ~/.local/share/openttd/baseset
+        cd ~/.local/share/openttd/baseset
+
+        echo "::group::Download OpenGFX"
+        curl -L https://cdn.openttd.org/opengfx-releases/0.6.0/opengfx-0.6.0-all.zip -o opengfx-all.zip
+        echo "::endgroup::"
+
+        echo "::group::Unpack OpenGFX"
+        unzip opengfx-all.zip
+        echo "::endgroup::"
+
+        rm -f opengfx-all.zip
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake ..
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        echo "Running on $(nproc) cores"
+        make -j$(nproc)
+        echo "::endgroup::"
+
+    - name: Test
+      run: |
+        cd build
+        make -j$(nproc) test
+
+  macos:
+    name: Mac OS
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - arch: x64
+          full_arch: x86_64
+
+    runs-on: macos-latest
+    env:
+      MACOSX_DEPLOYMENT_TARGET: 10.9
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Prepare vcpkg (with cache)
+      uses: lukka/run-vcpkg@v6
+      with:
+        vcpkgDirectory: '/usr/local/share/vcpkg'
+        doNotUpdateVcpkg: true
+        vcpkgArguments: 'freetype liblzma lzo'
+        vcpkgTriplet: '${{ matrix.arch }}-osx'
+
+    - name: Install OpenGFX
+      run: |
+        mkdir -p ~/Documents/OpenTTD/baseset
+        cd ~/Documents//OpenTTD/baseset
+
+        echo "::group::Download OpenGFX"
+        curl -L https://cdn.openttd.org/opengfx-releases/0.6.0/opengfx-0.6.0-all.zip -o opengfx-all.zip
+        echo "::endgroup::"
+
+        echo "::group::Unpack OpenGFX"
+        unzip opengfx-all.zip
+        echo "::endgroup::"
+
+        rm -f opengfx-all.zip
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake ${GITHUB_WORKSPACE} \
+          -DCMAKE_OSX_ARCHITECTURES=${{ matrix.full_arch }} \
+          -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-osx \
+          -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        echo "Running on $(sysctl -n hw.logicalcpu) cores"
+        make -j$(sysctl -n hw.logicalcpu)
+        echo "::endgroup::"
+
+    - name: Test
+      run: |
+        cd build
+        make -j$(sysctl -n hw.logicalcpu) test
+
+  windows:
+    name: Windows
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - arch: x86
+        - arch: x64
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # "restore-cache" which is done by "run-vcpkg" uses Windows tar.
+    # A git clone on windows marks a few files as read-only; when Windows tar
+    # tries to extract the cache over this folder, it fails, despite the files
+    # being identical. This failure shows up as an warning in the logs. We
+    # avoid this by simply removing the read-only mark from the git folder.
+    # In other words: this is a hack!
+    # See: https://github.com/lukka/run-vcpkg/issues/61
+    - name: Remove read-only flag from vcpkg git folder
+      shell: powershell
+      run: |
+        attrib -r "c:\vcpkg\.git\*.*" /s
+
+    - name: Prepare vcpkg (with cache)
+      uses: lukka/run-vcpkg@v6
+      with:
+        vcpkgDirectory: 'c:/vcpkg'
+        doNotUpdateVcpkg: true
+        vcpkgArguments: 'liblzma libpng lzo zlib'
+        vcpkgTriplet: '${{ matrix.arch }}-windows-static'
+
+    - name: Install OpenGFX
+      shell: bash
+      run: |
+        mkdir -p "C:/Users/Public/Documents/OpenTTD/baseset"
+        cd "C:/Users/Public/Documents/OpenTTD/baseset"
+
+        echo "::group::Download OpenGFX"
+        curl -L https://cdn.openttd.org/opengfx-releases/0.6.0/opengfx-0.6.0-all.zip -o opengfx-all.zip
+        echo "::endgroup::"
+
+        echo "::group::Unpack OpenGFX"
+        unzip opengfx-all.zip
+        echo "::endgroup::"
+
+        rm -f opengfx-all.zip
+
+    - name: Install MSVC problem matcher
+      uses: ammaraskar/msvc-problem-matcher@master
+
+    - name: Build
+      uses: lukka/run-cmake@v3
+      with:
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        useVcpkgToolchainFile: true
+        buildDirectory: '${{ github.workspace }}/build'
+        cmakeAppendedArgs: ' -GNinja'
+
+    - name: Test
+      shell: bash
+      run: |
+        cd ${GITHUB_WORKSPACE}/build
+        ctest -C Debug

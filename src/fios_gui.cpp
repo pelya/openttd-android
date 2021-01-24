@@ -376,22 +376,24 @@ public:
 
 		/* Select the initial directory. */
 		o_dir.type = FIOS_TYPE_DIRECT;
+		std::string dir;
 		switch (this->abstract_filetype) {
 			case FT_SAVEGAME:
-				FioGetDirectory(o_dir.name, lastof(o_dir.name), SAVE_DIR);
+				dir = FioFindDirectory(SAVE_DIR);
 				break;
 
 			case FT_SCENARIO:
-				FioGetDirectory(o_dir.name, lastof(o_dir.name), SCENARIO_DIR);
+				dir = FioFindDirectory(SCENARIO_DIR);
 				break;
 
 			case FT_HEIGHTMAP:
-				FioGetDirectory(o_dir.name, lastof(o_dir.name), HEIGHTMAP_DIR);
+				dir = FioFindDirectory(HEIGHTMAP_DIR);
 				break;
 
 			default:
-				strecpy(o_dir.name, _personal_dir, lastof(o_dir.name));
+				dir = _personal_dir;
 		}
+		strecpy(o_dir.name, dir.c_str(), lastof(o_dir.name));
 
 		switch (this->fop) {
 			case SLO_SAVE:
@@ -541,9 +543,9 @@ public:
 						for (auto &pair : _load_check_data.companies) {
 							SetDParam(0, pair.first + 1);
 							const CompanyProperties &c = *pair.second;
-							if (c.name != nullptr) {
+							if (!c.name.empty()) {
 								SetDParam(1, STR_JUST_RAW_STRING);
-								SetDParamStr(2, c.name);
+								SetDParamStr(2, c.name.c_str());
 							} else {
 								SetDParam(1, c.name_1);
 								SetDParam(2, c.name_2);
@@ -798,14 +800,14 @@ public:
 			}
 		} else if (this->IsWidgetLowered(WID_SL_SAVE_GAME)) { // Save button clicked
 			if (this->abstract_filetype == FT_SAVEGAME || this->abstract_filetype == FT_SCENARIO) {
-				FiosMakeSavegameName(_file_to_saveload.name, this->filename_editbox.text.buf, lastof(_file_to_saveload.name));
+				_file_to_saveload.name = FiosMakeSavegameName(this->filename_editbox.text.buf);
 				if (FioCheckFileExists(_file_to_saveload.name, Subdirectory::SAVE_DIR)) {
 					ShowQuery(STR_SAVELOAD_OVERWRITE_TITLE, STR_SAVELOAD_OVERWRITE_WARNING, this, SaveLoadWindow::SaveGameConfirmationCallback);
 				} else {
 					_switch_mode = SM_SAVE_GAME;
 				}
 			} else {
-				FiosMakeHeightmapName(_file_to_saveload.name, this->filename_editbox.text.buf, lastof(_file_to_saveload.name));
+				_file_to_saveload.name = FiosMakeHeightmapName(this->filename_editbox.text.buf);
 				if (FioCheckFileExists(_file_to_saveload.name, Subdirectory::SAVE_DIR)) {
 					ShowQuery(STR_SAVELOAD_OVERWRITE_TITLE, STR_SAVELOAD_OVERWRITE_WARNING, this, SaveLoadWindow::SaveHeightmapConfirmationCallback);
 				} else {
@@ -955,8 +957,6 @@ void ShowSaveLoadDialog(AbstractFileType abstract_filetype, SaveLoadOperation fo
 		/* Dialogue for loading a file. */
 		sld = (abstract_filetype == FT_HEIGHTMAP) ? &_load_heightmap_dialog_desc : &_load_dialog_desc;
 	}
-
-	_file_to_saveload.abstract_ftype = abstract_filetype;
 
 	new SaveLoadWindow(sld, abstract_filetype, fop);
 }

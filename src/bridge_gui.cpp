@@ -198,7 +198,7 @@ public:
 				}
 				sprite_dim.height++; // Sprite is rendered one pixel down in the matrix field.
 				text_dim.height++; // Allowing the bottom row pixels to be rendered on the edge of the matrix field.
-				resize->height = max(sprite_dim.height, text_dim.height) + 2; // Max of both sizes + account for matrix edges.
+				resize->height = std::max(sprite_dim.height, text_dim.height) + 2; // Max of both sizes + account for matrix edges.
 				resize->height = GetMinSizing(NWST_STEP, resize->height);
 
 				this->bridgetext_offset = WD_MATRIX_LEFT + sprite_dim.width + 1; // Left edge of text, 1 pixel distance from the sprite.
@@ -429,18 +429,26 @@ void ShowBuildBridgeWindow(TileIndex start, TileIndex end, TransportType transpo
 			default: break;
 		}
 
+		bool any_available = false;
+		CommandCost type_check;
 		/* loop for all bridgetypes */
 		for (BridgeType brd_type = 0; brd_type != MAX_BRIDGES; brd_type++) {
-			if (CheckBridgeAvailability(brd_type, bridge_len).Succeeded()) {
+			type_check = CheckBridgeAvailability(brd_type, bridge_len);
+			if (type_check.Succeeded()) {
 				/* bridge is accepted, add to list */
-				/*C++17: BuildBridgeData &item = */ bl->emplace_back();
-				BuildBridgeData &item = bl->back();
+				BuildBridgeData &item = bl->emplace_back();
 				item.index = brd_type;
 				item.spec = GetBridgeSpec(brd_type);
 				/* Add to terraforming & bulldozing costs the cost of the
 				 * bridge itself (not computed with DC_QUERY_COST) */
 				item.cost = ret.GetCost() + (((int64)tot_bridgedata_len * _price[PR_BUILD_BRIDGE] * item.spec->price) >> 8) + infra_cost;
+				any_available = true;
 			}
+		}
+		/* give error cause if no bridges available here*/
+		if (!any_available)
+		{
+			errmsg = type_check.GetErrorMessage();
 		}
 	}
 

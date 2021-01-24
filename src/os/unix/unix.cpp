@@ -24,14 +24,18 @@
 #include <time.h>
 #include <signal.h>
 
+#ifdef WITH_SDL2
+#include <SDL.h>
+#endif
+
 #ifdef __APPLE__
-	#include <sys/mount.h>
+#	include <sys/mount.h>
 #elif ((defined(_POSIX_VERSION) && _POSIX_VERSION >= 200112L) || defined(__GLIBC__)) && !defined(__ANDROID__)
-	#define HAS_STATVFS
+#	define HAS_STATVFS
 #endif
 
 #if defined(OPENBSD) || defined(__NetBSD__) || defined(__FreeBSD__)
-	#define HAS_SYSCTL
+#	define HAS_SYSCTL
 #endif
 
 #ifdef HAS_STATVFS
@@ -238,8 +242,8 @@ void ShowOSErrorBox(const char *buf, bool system)
 #endif
 
 #ifdef WITH_COCOA
-void cocoaSetupAutoreleasePool();
-void cocoaReleaseAutoreleasePool();
+void CocoaSetupAutoreleasePool();
+void CocoaReleaseAutoreleasePool();
 #endif
 
 #ifdef __ANDROID__
@@ -253,7 +257,7 @@ int CDECL main(int argc, char *argv[])
 	for (int i = 0; i < argc; i++) ValidateString(argv[i]);
 
 #ifdef WITH_COCOA
-	cocoaSetupAutoreleasePool();
+	CocoaSetupAutoreleasePool();
 	/* This is passed if we are launched by double-clicking */
 	if (argc >= 2 && strncmp(argv[1], "-psn", 4) == 0) {
 		argv[1] = nullptr;
@@ -269,7 +273,7 @@ int CDECL main(int argc, char *argv[])
 	int ret = openttd_main(argc, argv);
 
 #ifdef WITH_COCOA
-	cocoaReleaseAutoreleasePool();
+	CocoaReleaseAutoreleasePool();
 #endif
 
 	return ret;
@@ -278,6 +282,19 @@ int CDECL main(int argc, char *argv[])
 #ifndef WITH_COCOA
 bool GetClipboardContents(char *buffer, const char *last)
 {
+#ifdef WITH_SDL2
+	if (SDL_HasClipboardText() == SDL_FALSE) {
+		return false;
+	}
+
+	char *clip = SDL_GetClipboardText();
+	if (clip != NULL) {
+		strecpy(buffer, clip, last);
+		SDL_free(clip);
+		return true;
+	}
+#endif
+
 	return false;
 }
 #endif

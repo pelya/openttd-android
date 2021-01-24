@@ -167,15 +167,15 @@ char *CrashLog::LogConfiguration(char *buffer, const char *last) const
 			" Sound set:    %s (%u)\n"
 			" Video driver: %s\n\n",
 			BlitterFactory::GetCurrentBlitter() == nullptr ? "none" : BlitterFactory::GetCurrentBlitter()->GetName(),
-			BaseGraphics::GetUsedSet() == nullptr ? "none" : BaseGraphics::GetUsedSet()->name,
+			BaseGraphics::GetUsedSet() == nullptr ? "none" : BaseGraphics::GetUsedSet()->name.c_str(),
 			BaseGraphics::GetUsedSet() == nullptr ? UINT32_MAX : BaseGraphics::GetUsedSet()->version,
 			_current_language == nullptr ? "none" : _current_language->file,
 			MusicDriver::GetInstance() == nullptr ? "none" : MusicDriver::GetInstance()->GetName(),
-			BaseMusic::GetUsedSet() == nullptr ? "none" : BaseMusic::GetUsedSet()->name,
+			BaseMusic::GetUsedSet() == nullptr ? "none" : BaseMusic::GetUsedSet()->name.c_str(),
 			BaseMusic::GetUsedSet() == nullptr ? UINT32_MAX : BaseMusic::GetUsedSet()->version,
 			_networking ? (_network_server ? "server" : "client") : "no",
 			SoundDriver::GetInstance() == nullptr ? "none" : SoundDriver::GetInstance()->GetName(),
-			BaseSounds::GetUsedSet() == nullptr ? "none" : BaseSounds::GetUsedSet()->name,
+			BaseSounds::GetUsedSet() == nullptr ? "none" : BaseSounds::GetUsedSet()->name.c_str(),
 			BaseSounds::GetUsedSet() == nullptr ? UINT32_MAX : BaseSounds::GetUsedSet()->version,
 			VideoDriver::GetInstance() == nullptr ? "none" : VideoDriver::GetInstance()->GetName()
 	);
@@ -368,7 +368,7 @@ char *CrashLog::FillCrashLog(char *buffer, const char *last) const
  */
 bool CrashLog::WriteCrashLog(const char *buffer, char *filename, const char *filename_last) const
 {
-	seprintf(filename, filename_last, "%scrash.log", _personal_dir);
+	seprintf(filename, filename_last, "%scrash.log", _personal_dir.c_str());
 
 	FILE *file = FioFOpenFile(filename, "w", NO_DIRECTORY);
 	if (file == nullptr) return false;
@@ -403,7 +403,7 @@ bool CrashLog::WriteSavegame(char *filename, const char *filename_last) const
 	try {
 		GamelogEmergency();
 
-		seprintf(filename, filename_last, "%scrash.sav", _personal_dir);
+		seprintf(filename, filename_last, "%scrash.sav", _personal_dir.c_str());
 
 		/* Don't do a threaded saveload. */
 		return SaveOrLoad(filename, SLO_SAVE, DFT_GAME_FILE, NO_DIRECTORY, false) == SL_OK;

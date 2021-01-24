@@ -7,8 +7,6 @@
 
 /** @file string_uniscribe.cpp Functions related to laying out text on Win32. */
 
-#if defined(WITH_UNISCRIBE)
-
 #include "../../stdafx.h"
 #include "../../debug.h"
 #include "string_uniscribe.h"
@@ -304,7 +302,7 @@ static std::vector<SCRIPT_ITEM> UniscribeItemizeString(UniscribeParagraphLayoutF
 	for (auto const &i : fontMapping) {
 		while (cur_pos < i.first && cur_item != items.end() - 1) {
 			/* Add a range that spans the intersection of the remaining item and font run. */
-			int stop_pos = min(i.first, (cur_item + 1)->iCharPos);
+			int stop_pos = std::min(i.first, (cur_item + 1)->iCharPos);
 			assert(stop_pos - cur_pos > 0);
 			ranges.push_back(UniscribeRun(cur_pos, stop_pos - cur_pos, i.second, cur_item->a));
 
@@ -454,7 +452,7 @@ int UniscribeParagraphLayout::UniscribeLine::GetLeading() const
 {
 	int leading = 0;
 	for (const auto &run : *this) {
-		leading = max(leading, run.GetLeading());
+		leading = std::max(leading, run.GetLeading());
 	}
 
 	return leading;
@@ -620,5 +618,3 @@ const int *UniscribeParagraphLayout::UniscribeVisualRun::GetGlyphToCharMap() con
 
 	return this->utf16_to_utf8[this->cur_pos];
 }
-
-#endif /* defined(WITH_UNISCRIBE) */

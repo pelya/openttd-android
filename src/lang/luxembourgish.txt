@@ -48,9 +48,9 @@ STR_CARGO_PLURAL_WHEAT                                          :Weess
 STR_CARGO_PLURAL_RUBBER                                         :Kautschuk
 STR_CARGO_PLURAL_SUGAR                                          :Zocker
 STR_CARGO_PLURAL_TOYS                                           :Spillsaachen
-STR_CARGO_PLURAL_CANDY                                          :Séissegkeeten
+STR_CARGO_PLURAL_SWEETS                                         :Séissegkeeten
 STR_CARGO_PLURAL_COLA                                           :Cola
-STR_CARGO_PLURAL_COTTON_CANDY                                   :Zockerwatt
+STR_CARGO_PLURAL_CANDYFLOSS                                     :Zockerwatt
 STR_CARGO_PLURAL_BUBBLES                                        :Blosen
 STR_CARGO_PLURAL_TOFFEE                                         :Karamell
 STR_CARGO_PLURAL_BATTERIES                                      :Batterien
@@ -82,9 +82,9 @@ STR_CARGO_SINGULAR_WHEAT                                        :Weess
 STR_CARGO_SINGULAR_RUBBER                                       :Kautschuck
 STR_CARGO_SINGULAR_SUGAR                                        :Zocker
 STR_CARGO_SINGULAR_TOY                                          :Spillsaach
-STR_CARGO_SINGULAR_CANDY                                        :Séissegkeet
+STR_CARGO_SINGULAR_SWEETS                                       :Séissegkeet
 STR_CARGO_SINGULAR_COLA                                         :Cola
-STR_CARGO_SINGULAR_COTTON_CANDY                                 :Zockerwatt
+STR_CARGO_SINGULAR_CANDYFLOSS                                   :Zockerwatt
 STR_CARGO_SINGULAR_BUBBLE                                       :Blos
 STR_CARGO_SINGULAR_TOFFEE                                       :Karamell
 STR_CARGO_SINGULAR_BATTERY                                      :Batterie
@@ -233,8 +233,6 @@ STR_TOOLTIP_SORT_ORDER                                          :{BLACK}Richtung
 STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Argument fir ze sortéieren
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Filterkritère wielen
 STR_BUTTON_SORT_BY                                              :{BLACK}Sortéier no
-STR_BUTTON_LOCATION                                             :{BLACK}Plaz
-STR_BUTTON_RENAME                                               :{BLACK}Ëmbenennen
 STR_BUTTON_CATCHMENT                                            :{BLACK}Reechwäit
 STR_TOOLTIP_CATCHMENT                                           :{BLACK}Reechwäit uweisen un/ausschalten
 
@@ -314,6 +312,8 @@ STR_SORT_BY_CARGO_CAPACITY                                      :Luedungskapazit
 STR_SORT_BY_RANGE                                               :Längt
 STR_SORT_BY_POPULATION                                          :Bevölkerung
 STR_SORT_BY_RATING                                              :Rating
+
+# Group by options for vehicle list
 
 # Tooltips for the main toolbar
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Spill pausen
@@ -402,7 +402,7 @@ STR_FILE_MENU_EXIT                                              :Eraus
 
 # map menu
 STR_MAP_MENU_MAP_OF_WORLD                                       :Weltkaart
-STR_MAP_MENU_EXTRA_VIEW_PORT                                    :Extra Usiicht
+STR_MAP_MENU_EXTRA_VIEWPORT                                     :Extra Usiicht
 STR_MAP_MENU_LINGRAPH_LEGEND                                    :Cargo Flow Legend
 STR_MAP_MENU_SIGN_LIST                                          :Schëlderlëscht
 
@@ -884,7 +884,7 @@ STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLAC
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION                           :{BIG_FONT}{BLACK}D'Gemeng {TOWN} ënnerschreiwt Kontrakt mat {STRING} fir ee Joer laang exklusiv Transportrechter!
 
 # Extra view window
-STR_EXTRA_VIEW_PORT_TITLE                                       :{WHITE}Usiicht {COMMA}
+STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}Usiicht {COMMA}
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN                                :{BLACK}Ännert d'Usiicht
 STR_EXTRA_VIEW_MOVE_VIEW_TO_MAIN_TT                             :{BLACK}Kopéiert d'Plaz vun der globaler Usiicht op des Usiicht
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Haptusiicht änneren
@@ -1309,6 +1309,8 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Weis d'Awunnerz
 STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Weis d'Awunnerzuel vu Stied an deenen hirem Label un op der Kaart
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Déckt vun de Linnen vun de Grafiken: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Breed vun de Linnen an de Grafiken. Eng dënn Linn kann méi präzis gelies ginn, eng méi déck kann besser gesinn ginn an d'Faarwen sinn besser ze ënnerscheeden
+STR_CONFIG_SETTING_SHOW_NEWGRF_NAME                             :Den NewGRF Numm an der Gefier-kafen Fënster uweisen: {STRING}
+STR_CONFIG_SETTING_SHOW_NEWGRF_NAME_HELPTEXT                    :Weist eng Zeil an der Fënster un wou Gefier kaf ginn, aus wéi engem NewGRF dat Gefier geluede gouf.
 
 STR_CONFIG_SETTING_LANDSCAPE                                    :Landschaft: {STRING}
 STR_CONFIG_SETTING_LANDSCAPE_HELPTEXT                           :Landschaften definéiren basis Spillszenarien mat verschiddenen Wueren an Stiedwuesstumviraussetzungen. NewGRF an Gamescripter erlaben méi fein Astellungen.
@@ -1550,8 +1552,6 @@ STR_CONFIG_SETTING_ENDING_YEAR                                  :End-Joer vum Sc
 STR_CONFIG_SETTING_ENDING_YEAR_HELPTEXT                         :Joer wou d'Spill opgrond vum Scoring ophält. Um Enn vun desem Joer gëtt der Firma hiere Score  gespäichert an an der Highscore-Lëscht ugewisen, mee de Spiller kann dono weider spillen.{}Wann dese Wert virum Startjoer ass, gëtt d'Highscorelëscht nie ugewisen.
 STR_CONFIG_SETTING_ENDING_YEAR_VALUE                            :{NUM}
 STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :Nie
-STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Gläichméisseg Wiertschaft aschalten (méi oft an kleng Wiessel): {STRING}
-STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Wann ugeschalt, ännert d'Industrieproduktioun méi oft, an méi kléngen Schrëtter. Dës Astellung huet keng Auswierkung op NewGRF-Industrien
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Undeeler vun aaneren Firmen kafen: {STRING}
 STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Wann ugeschalt, dierfen Aktien vu Firmen kaf an verkaf ginn. Aktien si just fir Firme verfügbar, déi en gewëssen Alter erreecht hunn
 STR_CONFIG_SETTING_MIN_YEARS_FOR_SHARES                         :Minimalt Firmenalter fir Aktien ze handelen: {STRING}
@@ -1603,9 +1603,6 @@ STR_CONFIG_SETTING_TOWN_CARGOGENMODE_BITCOUNT                   :Linear
 
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Bamplazéirung: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_HELPTEXT                :Kontrolléiert zoufälleg Optauche vu Beem während dem Spill. Dëst kann Industrie beaflossen, déi op d'Wuessen vu Beem ugewisen sinn
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :Keng{RED}(zerstéiert Bauholzfabrik)
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :Nëmmen am Reebësch
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :Iwwerall
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Positioun vun der Haapt-Toolbar: {STRING}
 STR_CONFIG_SETTING_TOOLBAR_POS_HELPTEXT                         :Horizontal Positioun vun der Haapt-Toolbar uewen um Schierm
@@ -1804,17 +1801,8 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Dës Iww
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Eraus
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Bass du sécher, dass du aus OpenTTD eraus wëlls, an an den {STRING} zeréck?
 STR_QUIT_YES                                                    :{BLACK}Jo
 STR_QUIT_NO                                                     :{BLACK}Nee
-
-# Supported OSes
-STR_OSNAME_WINDOWS                                              :Windows
-STR_OSNAME_UNIX                                                 :Unix
-STR_OSNAME_OSX                                                  :OS{NBSP}X
-STR_OSNAME_HAIKU                                                :Haiku
-STR_OSNAME_OS2                                                  :OS/2
-STR_OSNAME_SUNOS                                                :SunOS
 
 # Abandon game
 STR_ABANDON_GAME_CAPTION                                        :{WHITE}Spill ofbriechen
@@ -1824,7 +1812,6 @@ STR_ABANDON_SCENARIO_QUERY                                      :{YELLOW}Sécher
 # Cheat window
 STR_CHEATS                                                      :{WHITE}Cheater
 STR_CHEATS_TOOLTIP                                              :{BLACK}Checkboxen weisen un dass du den Cheat schon eng Kéier benotzt hues
-STR_CHEATS_WARNING                                              :{BLACK}Warnung! Du bass um Wee de Géigner ze verroden. Sou eng Ongnod gëtt bis an all Éiwegkeet behalen
 STR_CHEAT_MONEY                                                 :{LTBLUE}Suen ëm {CURRENCY_LONG} erhéijen
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Als Firma {ORANGE}{COMMA} spillen
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Magësche Bulldozer (Industrien ofrappen, onzerstéierbar Objeten): {ORANGE}{STRING}
@@ -1936,10 +1923,6 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Krawatt 
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multiplayer
-STR_NETWORK_SERVER_LIST_ADVERTISED                              :{BLACK}Ugekënnegt
-STR_NETWORK_SERVER_LIST_ADVERTISED_TOOLTIP                      :{BLACK}Wiel tëschent engem ugekënnegten (Internet) an net ugekënnegten (LAN) Spill
-STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :Nee
-STR_NETWORK_SERVER_LIST_ADVERTISED_YES                          :Jo
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Spillernumm:
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Daat ass den Numm mat deem iech déi aner Spiller Identifizéieren kënnen
 
@@ -1980,8 +1963,6 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Spill b�
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Server erneieren
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Serverinfo erneieren
 
-STR_NETWORK_SERVER_LIST_FIND_SERVER                             :{BLACK}Server sichen
-STR_NETWORK_SERVER_LIST_FIND_SERVER_TOOLTIP                     :{BLACK}Am Netzwierk no engem Server sichen
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Server bäisetzen
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Setzt en Server op d'Lëscht wou ëmmer no enger Partie gesicht gëtt
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Server starten
@@ -1998,6 +1979,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Den Numm
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Passwuert setzen
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}En Passwuert fir d'Spill setzen, dass et net Public accessibel ass
 
+STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Ugekënnegt
+STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Wiel tëschent engem ugekënnegten (Internet) an net ugekënnegten (LAN) Spill
 STR_NETWORK_START_SERVER_UNADVERTISED                           :Nee
 STR_NETWORK_START_SERVER_ADVERTISED                             :Jo
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} Spiller
@@ -2111,7 +2094,6 @@ STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nei Firma
 # Network client list
 STR_NETWORK_CLIENTLIST_KICK                                     :Kicken
 STR_NETWORK_CLIENTLIST_BAN                                      :Bannen
-STR_NETWORK_CLIENTLIST_GIVE_MONEY                               :Sue ginn
 STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Mat alle schwetzen
 STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Mat der Firma schwetzen
 STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privatmessage
@@ -2119,8 +2101,6 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privatmessage
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Spiller
 STR_NETWORK_SPECTATORS                                          :Zuschauer
-
-STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Gëff de Betrag un deens du wëlls ginn
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Späicher d'Passwuert net
@@ -2166,6 +2146,7 @@ STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Falscht 
 STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}De Server ass voll
 STR_NETWORK_ERROR_SERVER_BANNED                                 :{WHITE}Du bass vun dësem Server gebannt
 STR_NETWORK_ERROR_KICKED                                        :{WHITE}Du goufs aus dem Spill geheit
+STR_NETWORK_ERROR_KICK_MESSAGE                                  :{WHITE}Grond: {STRING}
 STR_NETWORK_ERROR_CHEATER                                       :{WHITE}Cheaten ass op dësem Server net erlaabt
 STR_NETWORK_ERROR_TOO_MANY_COMMANDS                             :{WHITE}Du hues zevill Befehler un de Server geschéckt
 STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}Du hues ze laang gebraucht fir e Passwuert anzeginn
@@ -2221,10 +2202,9 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} as
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} huet eng nei Firma gegrënnt (#{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} huet d'Spill verlooss ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} huet säin Numm op {STRING} gewiesselt
-STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} huet ärer Firma {2:CURRENCY_LONG} ginn
-STR_NETWORK_MESSAGE_GAVE_MONEY_AWAY                             :*** Du hues dem {1:STRING} {2:CURRENCY_LONG} ginn
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}De Server huet d'Sessioun zougemaach
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}De Server gëtt nei gestart...{}W.e.g. waarden...
+STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} gouf gekickt. Grond: ({STRING})
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}Lueden Inhalt erof
@@ -2339,6 +2319,8 @@ STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Eng sep
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Weepunkt verbannen
 STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Separate Weepunkt bauen
+
+# Generic toolbar
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Schinnebau
@@ -2527,7 +2509,7 @@ STR_OBJECT_BUILD_SIZE                                           :{BLACK}Gréisst
 STR_OBJECT_CLASS_LTHS                                           :Liichttierm
 STR_OBJECT_CLASS_TRNS                                           :Antennen
 
-# Tree planting window (last two for SE only)
+# Tree planting window (last eight for SE only)
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Beem
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK}Wielt de Baamtyp. Wann d'Feld schons e Baam huet, ginn méi Beem vu verschiddenen Arten gesat
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Zoufälleg Beem
@@ -2732,7 +2714,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Land am Firmenb
 STR_ABOUT_OPENTTD                                               :{WHITE}Iwwert OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original Copyright {COPYRIGHT} 1995 Chris Sawyer, All Rechter virbehalen
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD Versioun {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2019 D'OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-{STRING} D'OpenTTD team
 
 # Framerate display window
 STR_FRAMERATE_CAPTION                                           :{WHITE}Biller pro Sekonn
@@ -3399,6 +3381,10 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} an nach {NUM} méi...
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Industrienimm - klick op en Numm fir d'Usiicht do drop ze zentréieren. Ctrl+Klick erstellt eng nei Usiicht op d'Industrie
+STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Akzeptéiert Wuer: {SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Produzéiert Wuer: {SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :All Wuerentypen
+STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :Keng
 
 # Industry view
 STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTRY}
@@ -3729,10 +3715,6 @@ STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Mécht d
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
 
-STR_VEHICLE_VIEW_TRAIN_LOCATION_TOOLTIP                         :{BLACK}Zentréiert d'Usiicht op den Zuch. Ctrl+Klick follegt dem Zuch an der Haaptusiicht
-STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Zentréiert d'Usiicht op d'Gefier. Ctrl+Klick follegt dem Gefier an der Haaptusiicht
-STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Zentréiert d'Usiicht op d'Schëff. Ctrl+Klick follegt dem Schëff an der Haaptusiicht
-STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Zentréiert d'Usiicht op de Fliger. Ctrl+Klick follegt dem Fliger an der Haaptusiicht
 
 STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Schéckt den Zuch an de Schapp. Ctrl+Klick fir nëmmen Revisioun
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Schéckt d'Gefier an den Depot. Ctrl+Klick fir nëmmen Revisioun
@@ -3764,10 +3746,7 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Weist St
 STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Weis Schëffsdetailer
 STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Weist d'Fligerdetailer
 
-STR_VEHICLE_VIEW_TRAIN_STATE_START_STOP_TOOLTIP                 :{BLACK}Momentan Aktioun - klick hei fir den Zuch ze stoppen/starten. Ctrl+Klick fir op Destinatioun ze scrollen
-STR_VEHICLE_VIEW_ROAD_VEHICLE_STATE_START_STOP_TOOLTIP          :{BLACK}Momentan Aktioun - klick hei fir d'Gefier ze stoppen/starten. Ctrl+Klick fir op Destinatioun ze scrollen
-STR_VEHICLE_VIEW_SHIP_STATE_START_STOP_TOOLTIP                  :{BLACK}Momentan Aktioun - Klick hei fir d'Schëff ze stoppen/starten. Ctrl+Klick fir op Destinatioun ze scrollen
-STR_VEHICLE_VIEW_AIRCRAFT_STATE_START_STOP_TOOLTIP              :{BLACK}Momentan Aktioun - Klick hei fir de Fliger ze stoppen/starten. Ctrl+Klick fir op Destinatioun ze scrollen
+
 
 # Messages in the start stop button in the vehicle view
 STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}Lueden / Entlueden
@@ -4179,6 +4158,7 @@ STR_SCREENSHOT_ZOOMIN_SCREENSHOT                                :{BLACK}Voll gez
 STR_SCREENSHOT_DEFAULTZOOM_SCREENSHOT                           :{BLACK}Standard Zoom-Screenshot
 STR_SCREENSHOT_WORLD_SCREENSHOT                                 :{BLACK}Screenshot vun der ganzer Kaart
 STR_SCREENSHOT_HEIGHTMAP_SCREENSHOT                             :{BLACK}Héichtekaartscreenshot
+STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Minimap-Screenshot
 
 # AI Parameters
 STR_AI_SETTINGS_CAPTION                                         :{WHITE}{STRING} Parameter
@@ -4476,7 +4456,6 @@ STR_ERROR_CAN_T_CONVERT_ROAD                                    :{WHITE}Kann den
 STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :{WHITE}Kann den Tramwaytyp hei net konvertéiren...
 STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Keng geeegent Strooss
 STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}Kee passenden Tramway
-STR_ERROR_INCOMPATIBLE_ROAD                                     :{WHITE}... inkompatibel Strooss
 STR_ERROR_INCOMPATIBLE_TRAMWAY                                  :{WHITE}... inkompatiblen Tramway
 
 # Waterway construction errors

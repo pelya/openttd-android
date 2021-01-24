@@ -253,7 +253,7 @@ static const int WHITE_BORDER_DURATION = 3; ///< The initial timeout value for W
  * The actual location being shown is #scrollpos_x, #scrollpos_y.
  * @see InitializeViewport(), UpdateViewportPosition(), UpdateViewportCoordinates().
  */
-struct ViewportData : ViewPort {
+struct ViewportData : Viewport {
 	VehicleID follow_vehicle; ///< VehicleID to follow if following a vehicle, #INVALID_VEHICLE otherwise.
 	int32 scrollpos_x;        ///< Currently shown x coordinate (virtual screen coordinate of topleft corner of the viewport).
 	int32 scrollpos_y;        ///< Currently shown y coordinate (virtual screen coordinate of topleft corner of the viewport).
@@ -691,7 +691,9 @@ public:
 	virtual void OnGameTick() {}
 
 	/**
-	 * Called once every 100 (game) ticks.
+	 * Called once every 100 (game) ticks, or once every 3s, whichever comes last.
+	 * In normal game speed the frequency is 1 call every 100 ticks (can be more than 3s).
+	 * In fast-forward the frequency is 1 call every ~3s (can be more than 100 ticks).
 	 */
 	virtual void OnHundredthTick() {}
 
@@ -913,9 +915,10 @@ extern bool _mouse_hovering;
 /** Mouse modes. */
 enum SpecialMouseMode {
 	WSM_NONE,     ///< No special mouse mode.
-	WSM_DRAGDROP, ///< Dragging an object.
+	WSM_DRAGDROP, ///< Drag&drop an object.
 	WSM_SIZING,   ///< Sizing mode.
 	WSM_PRESIZE,  ///< Presizing mode (docks, tunnels).
+	WSM_DRAGGING, ///< Dragging mode (trees).
 };
 extern SpecialMouseMode _special_mouse_mode;
 

@@ -58,7 +58,7 @@ struct EndGameHighScoreBaseWindow : Window {
 	/** Return the coordinate of the screen such that a window of 640x480 is centered at the screen. */
 	Point GetTopLeft(int x, int y)
 	{
-		Point pt = {max(0, (_screen.width / 2) - (x / 2)), max(0, (_screen.height / 2) - (y / 2))};
+		Point pt = {std::max(0, (_screen.width / 2) - (x / 2)), std::max(0, (_screen.height / 2) - (y / 2))};
 		return pt;
 	}
 
@@ -113,7 +113,7 @@ struct EndGameWindow : EndGameHighScoreBaseWindow {
 			this->window_number = SP_MULTIPLAYER;
 			this->rank = SaveHighScoreValueNetwork();
 		} else {
-			/* in single player _local company is always valid */
+			/* in singleplayer mode _local company is always valid */
 			const Company *c = Company::Get(_local_company);
 			this->window_number = SP_CUSTOM;
 			this->rank = SaveHighScoreValue(c);
