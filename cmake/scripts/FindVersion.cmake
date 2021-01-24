@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.5)
 
 find_package(Git QUIET)
 # ${CMAKE_SOURCE_DIR}/.git may be a directory or a regular file
-if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git" AND NOT ANDROID)
     # Make sure LC_ALL is set to something desirable
     set(SAVED_LC_ALL "$ENV{LC_ALL}")
     set(ENV{LC_ALL} C)
