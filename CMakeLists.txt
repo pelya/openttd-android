@@ -101,6 +101,10 @@ if(OPTION_TOOLS_ONLY)
     return()
 endif()
 
+if(ANDROID)
+include(AndroidSDL)
+endif()
+
 # Prefer -pthread over -lpthread, which is often the better option of the two.
 set(CMAKE_THREAD_PREFER_PTHREAD YES)
 # Make sure we have Threads available.
@@ -176,7 +180,13 @@ include_directories(${CMAKE_SOURCE_DIR}/src/3rdparty/squirrel/include)
 
 include(MSVCFilters)
 
+if(ANDROID)
+add_library(openttd SHARED ${GENERATED_SOURCE_FILES})
+target_link_libraries(openttd log z)
+else()
 add_executable(openttd WIN32 ${GENERATED_SOURCE_FILES})
+endif()
+
 set_target_properties(openttd PROPERTIES OUTPUT_NAME "${BINARY_NAME}")
 # All other files are added via target_sources()
 
