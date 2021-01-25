@@ -2360,7 +2360,7 @@ bool HandleViewportClicked(const Viewport *vp, int x, int y)
 	return false;
 }
 
-bool HandleViewportMouseUp(const ViewPort *vp, int x, int y)
+bool HandleViewportMouseUp(const Viewport *vp, int x, int y)
 {
 	if (_move_pressed) return false;
 

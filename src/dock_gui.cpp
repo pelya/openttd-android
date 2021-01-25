@@ -306,10 +306,10 @@ struct BuildDocksToolbarWindow : Window {
 		DeleteWindowById(WC_SELECT_STATION, 0);
 	}
 
-	virtual void SelectLastTool()
+	void SelectLastTool() override
 	{
 		// User misplaced something - activate last selected tool again
-		if (this->last_clicked_widget == WIDGET_LIST_END)
+		if (this->last_clicked_widget == WID_DT_INVALID)
 			return;
 		Point dummy = {0, 0};
 		this->RaiseWidget(this->last_clicked_widget);

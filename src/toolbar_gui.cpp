@@ -1520,7 +1520,7 @@ public:
 		uint spacer_space = std::max(0, (int)given_width - (int)(button_count * this->smallest_x)); // Remaining spacing for 'spacer' widgets
 		uint button_space = given_width - spacer_space; // Remaining spacing for the buttons
 		if (type == NWID_VERTICAL) {
-			spacer_space = max(0, (int)given_height - (int)(button_count * this->smallest_y));
+			spacer_space = std::max(0, (int)given_height - (int)(button_count * this->smallest_y));
 			button_space = given_height - spacer_space;
 		}
 		uint spacer_i = 0;
@@ -2250,7 +2250,7 @@ class NWidgetMainToolbarContainer : public NWidgetToolbarContainer {
 		};
 
 		/* If at least BIGGEST_ARRANGEMENT fit, just spread all the buttons nicely */
-		uint full_buttons = max(CeilDiv(width, this->smallest_x), SMALLEST_ARRANGEMENT);
+		uint full_buttons = std::max(CeilDiv(width, this->smallest_x), SMALLEST_ARRANGEMENT);
 		if (full_buttons > BIGGEST_ARRANGEMENT) {
 			button_count = arrangable_count = _settings_client.gui.build_confirmation ? lengthof(arrange_all) : lengthof(arrange_all_shift);
 			spacer_count = this->spacers;
@@ -2998,7 +2998,7 @@ static NWidgetBase *MakeVerticalLeftToolbar(int *biggest_index)
 	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
 	tb->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
 
-	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
+	*biggest_index = std::max<int>(*biggest_index, WID_TN_DELETE);
 	return tb;
 }
 
@@ -3025,7 +3025,7 @@ static NWidgetBase *MakeVerticalRightToolbar(int *biggest_index)
 	tb->Add(new NWidgetLeaf(WWT_TEXTBTN, COLOUR_GREY, WID_TN_SHIFT, STR_TABLET_SHIFT, STR_TABLET_SHIFT_TOOLTIP));
 	tb->Add(new NWidgetLeaf(WWT_PUSHTXTBTN, COLOUR_GREY, WID_TN_DELETE, STR_TABLET_CLOSE, STR_TABLET_CLOSE_TOOLTIP));
 
-	*biggest_index = max<int>(*biggest_index, WID_TN_DELETE);
+	*biggest_index = std::max<int>(*biggest_index, WID_TN_DELETE);
 	return tb;
 }
 
@@ -3403,7 +3403,7 @@ void AllocateToolbar()
 			w->left = 0;
 			w = new MainToolbarWindow(&_toolb_vertical_right_desc, &_last_clicked_toolbar_idx, 1);
 			w->left = _screen.width - w->width;
-			SetDirtyBlocks(0, w->top, _screen.width, w->top + w->height);
+			AddDirtyBlock(0, w->top, _screen.width, w->top + w->height);
 		} else {
 			new MainToolbarWindow(&_toolb_normal_desc);
 		}

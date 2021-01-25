@@ -1772,15 +1772,15 @@ struct NetworkClientListPopupWindow : Window {
 	void OnMouseLoop() override
 	{
 		/* We selected an action */
-		uint index = (_cursor.pos.y - this->top - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
+		int index = (_cursor.pos.y - this->top - WD_FRAMERECT_TOP) / FONT_HEIGHT_NORMAL;
 
 		if (_left_button_down) {
-			if (index == this->sel_index || index >= this->actions.size()) return;
+			if (index == this->sel_index || index >= (int)this->actions.size()) return;
 
 			this->sel_index = index;
 			this->SetDirty();
 		} else {
-			if (index < this->actions.size() && _cursor.pos.y >= this->top) {
+			if (index < (int)this->actions.size() && _cursor.pos.y >= this->top) {
 				const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(this->client_id);
 				if (ci != nullptr) this->actions[index].proc(ci);
 			}
@@ -1862,7 +1862,7 @@ struct NetworkClientListWindow : Window {
 
 		int cols = 1 + (num - 1) / MAX_ROWS;
 		cols *= this->line_width;
-		num = min(num, MAX_ROWS);
+		num = std::min<int>(num, MAX_ROWS);
 		num *= this->line_height;
 
 		int diffx = (cols + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT) - (this->GetWidget<NWidgetBase>(WID_CL_PANEL)->current_x);

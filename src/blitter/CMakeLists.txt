@@ -13,6 +13,10 @@ add_files(
     8bpp_optimized.hpp
     8bpp_simple.cpp
     8bpp_simple.hpp
+    16bpp_base.cpp
+    16bpp_base.hpp
+    16bpp_simple.cpp
+    16bpp_simple.hpp
     CONDITION NOT OPTION_DEDICATED
 )
 

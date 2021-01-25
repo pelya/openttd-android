@@ -208,7 +208,7 @@ static inline int Center(int top, int height, uint size = FONT_HEIGHT_NORMAL)
  */
 static inline int RescaleFrom854x480(int value)
 {
-	return min(value * _cur_resolution.width / 854, value * _cur_resolution.height / 480);
+	return std::min(value * _cur_resolution.width / 854, value * _cur_resolution.height / 480);
 }
 
 extern DrawPixelInfo *_cur_dpi;

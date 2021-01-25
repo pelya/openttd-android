@@ -143,7 +143,7 @@ Sprite *Blitter_16bppSimple::Encode(const SpriteLoader::Sprite *sprite, Allocato
 			dst[i].v = 0;
 		} else {
 			/* Get brightest value */
-			uint8 rgb_max = max(src->r, max(src->g, src->b));
+			uint8 rgb_max = std::max(src->r, std::max(src->g, src->b));
 #if 0
 			/* Pre-convert the mapping channel to a RGB value,
 			   use 32bpp AdjustBrightness() variant for better colors,

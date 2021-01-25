@@ -754,7 +754,7 @@ struct RefitWindow : public Window {
 				break;
 
 			case WID_VR_VEHICLE_PANEL_DISPLAY:
-				size->height = max((int)GetMinSizing(NWST_STEP), ScaleGUITrad(GetVehicleHeight(Vehicle::Get(this->window_number)->type)));
+				size->height = std::max<uint>(GetMinSizing(NWST_STEP), ScaleGUITrad(GetVehicleHeight(Vehicle::Get(this->window_number)->type)));
 				break;
 
 			case WID_VR_INFO:

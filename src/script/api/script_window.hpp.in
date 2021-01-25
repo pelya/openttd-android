@@ -19,6 +19,7 @@
 #include "../../widgets/autoreplace_widget.h"
 #include "../../widgets/bootstrap_widget.h"
 #include "../../widgets/bridge_widget.h"
+#include "../../widgets/build_confirmation_widget.h"
 #include "../../widgets/build_vehicle_widget.h"
 #include "../../widgets/cheat_widget.h"
 #include "../../widgets/company_widget.h"

@@ -227,7 +227,7 @@ static const int INTER_KEY_SPACE = 2; // Number of pixels between two keys.
  */
 static void AddKey(NWidgetHorizontal *hor, int height, int num_half, WidgetType widtype, int widnum, uint16 widdata, int *biggest_index)
 {
-	int min_half_key = max<int>(GetMinSizing(NWST_BUTTON), HALF_KEY_WIDTH);
+	int min_half_key = std::max<int>(GetMinSizing(NWST_BUTTON), HALF_KEY_WIDTH);
 	int key_width = min_half_key + (INTER_KEY_SPACE + min_half_key) * (num_half - 1);
 
 	if (widtype == NWID_SPACER) {

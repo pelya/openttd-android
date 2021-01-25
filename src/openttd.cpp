@@ -1173,17 +1173,16 @@ void SwitchToMode(SwitchMode new_mode)
 				DeleteWindowById(WC_SAVELOAD, 0);
 #ifdef __ANDROID__
 				if (_settings_client.gui.save_to_network) {
-					char screenshotFile[PATH_MAX] = "";
-					const char* lastPart = strrchr(_file_to_saveload.name, PATHSEPCHAR);
+					const char* lastPart = strrchr(_file_to_saveload.name.c_str(), PATHSEPCHAR);
 					if (!lastPart) {
-						lastPart = _file_to_saveload.name;
+						lastPart = _file_to_saveload.name.c_str();
 					} else {
 						lastPart++;
 					}
 					MakeScreenshot(SC_VIEWPORT, NETWORK_SAVE_SCREENSHOT_FILE);
-					FioFindFullPath(screenshotFile, lastof(screenshotFile), SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
+					std::string screenshotFile = FioFindFullPath(SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
 					uint64_t playedTime = abs(_date - DAYS_TILL(_settings_newgame.game_creation.starting_year)) * 1000;
-					int ret = SDL_ANDROID_CloudSave(_file_to_saveload.name, lastPart, "OpenTTD", lastPart, screenshotFile, playedTime);
+					int ret = SDL_ANDROID_CloudSave(_file_to_saveload.name.c_str(), lastPart, "OpenTTD", lastPart, screenshotFile.c_str(), playedTime);
 					if (_settings_client.gui.save_to_network == 2) {
 						_settings_client.gui.save_to_network = ret ? 1 : 0;
 					}

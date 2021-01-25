@@ -3063,7 +3063,7 @@ static void HandleContinuousScroll()
 	if (_scrolling_viewport && _right_button_down) {
 		Window *w = FindWindowFromPt(_right_button_down_pos.x, _right_button_down_pos.y);
 		if (w == NULL || w->flags & WF_DISABLE_VP_SCROLL) return;
-		ViewPort *vp = IsPtInWindowViewport(w, _right_button_down_pos.x, _right_button_down_pos.y);
+		Viewport *vp = IsPtInWindowViewport(w, _right_button_down_pos.x, _right_button_down_pos.y);
 		if (vp == NULL) return;
 
 		w->viewport->dest_scrollpos_x += ScaleByZoom(scrollspeed * (_right_button_down_pos.x - _cursor.pos.x), vp->zoom);
@@ -3922,7 +3922,7 @@ void RelocateAllWindows(int neww, int newh)
 				break;
 
 			case WC_STATUS_BAR:
-				ResizeWindow(w, std::min<uint>(neww, std::min(_toolbar_width, _screen.width - SETTING_BUTTON_HEIGHT * 2)) - w->width, 0, false);
+				ResizeWindow(w, std::min<uint>(neww, std::min<int>(_toolbar_width, _screen.width - SETTING_BUTTON_HEIGHT * 2)) - w->width, 0, false);
 
 				top = newh - w->height;
 				left = PositionStatusbar(w);

@@ -68,7 +68,7 @@ struct BuildInfoWindow : public Window
 		CLRBITS(this->flags, WF_WHITE_BORDER);
 	}
 
-	virtual Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number)
+	Point OnInitialPosition(int16 sm_width, int16 sm_height, int window_number) override
 	{
 		Point pt;
 		pt.y = GetMainViewTop();
@@ -76,7 +76,7 @@ struct BuildInfoWindow : public Window
 		return pt;
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		size->width  = GetStringBoundingBox(STR_STATION_BUILD_COVERAGE_AREA_TITLE).width * 2.5;
 		size->height = GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, size->width) * (this->station ? 3 : 1);
@@ -86,7 +86,7 @@ struct BuildInfoWindow : public Window
 		size->height += 2 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 	}
 
-	virtual void DrawWidget(const Rect &r, int widget) const
+	void DrawWidget(const Rect &r, int widget) const override
 	{
 		/* There is only one widget. */
 		GfxFillRect(r.left, r.top, r.right, r.bottom, PC_BLACK);
@@ -164,7 +164,7 @@ struct BuildConfirmationWindow : Window {
 		BuildConfirmationWindow::shown = false;
 	}
 
-	void OnClick(Point pt, int widget, int click_count)
+	void OnClick(Point pt, int widget, int click_count) override
 	{
 		switch (widget) {
 			case WID_BC_OK:
@@ -185,7 +185,7 @@ struct BuildConfirmationWindow : Window {
 		HideBuildConfirmationWindow(); // this == NULL after this call
 	}
 
-	virtual void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize)
+	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		switch (widget) {
 			case WID_BC_OK:
@@ -195,7 +195,7 @@ struct BuildConfirmationWindow : Window {
 		}
 	}
 
-	virtual void OnPaint()
+	void OnPaint() override
 	{
 		this->DrawWidgets();
 
@@ -255,7 +255,7 @@ void ShowBuildConfirmationWindow()
 	w->viewport->left += w->left - old_left;
 	w->viewport->top += w->top - old_top;
 	w->SetDirty();
-	SetDirtyBlocks(0, 0, _screen.width, _screen.height); // I don't know what does this do, but it looks important
+	MarkWholeScreenDirty(); // I don't know what does this do, but it looks important
 
 	BuildInfoWindow::show();
 }

@@ -104,7 +104,7 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		w->mouse_capture_widget = sb->index;
 		_cursorpos_drag_start.x = x;
 		_cursorpos_drag_start.y = y;
-		_scrollbar_size = max(1, (int) sb->current_y * sb->GetCount() / sb->GetCapacity());
+		_scrollbar_size = std::max(1, (int) sb->current_y * sb->GetCount() / sb->GetCapacity());
 		_scrollbar_start_pos = sb->GetPosition() * _scrollbar_size / sb->GetCount();
 		w->SetDirty();
 		return;
@@ -3259,5 +3259,5 @@ uint GetMinSizing(NWidSizingType type, uint min_1)
 	}
 	min_sizing = RescaleFrom854x480(min_sizing);
 
-	return max(min_sizing, min_1);
+	return std::max(min_sizing, min_1);
 }

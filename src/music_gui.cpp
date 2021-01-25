@@ -543,7 +543,7 @@ struct MusicTrackSelectionWindow : public Window {
 				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK);
 
 				int y = r.top + WD_FRAMERECT_TOP;
-				uint vscroll_max = min(this->left_sb->GetPosition() + this->left_sb->GetCapacity(), NUM_SONGS_AVAILABLE);
+				uint vscroll_max = std::min<uint>(this->left_sb->GetPosition() + this->left_sb->GetCapacity(), NUM_SONGS_AVAILABLE);
 				uint i = 0;
 				for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song, i++) {
 					if (i < this->left_sb->GetPosition()) continue;
@@ -561,7 +561,7 @@ struct MusicTrackSelectionWindow : public Window {
 				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK);
 
 				int y = r.top + WD_FRAMERECT_TOP;
-				uint vscroll_max = min(this->right_sb->GetPosition() + this->right_sb->GetCapacity(), this->GetNumberOfTracksOfTracklist());
+				uint vscroll_max = std::min<uint>(this->right_sb->GetPosition() + this->right_sb->GetCapacity(), this->GetNumberOfTracksOfTracklist());
 				uint i = 0;
 				for (MusicSystem::Playlist::const_iterator song = _music.music_set.begin(); song != _music.music_set.end(); ++song, i++) {
 					if (i < this->right_sb->GetPosition()) continue;
@@ -620,7 +620,7 @@ struct MusicTrackSelectionWindow : public Window {
 		}
 	}
 
-	virtual void OnResize()
+	void OnResize() override
 	{
 		this->left_sb->SetCapacityFromWidget(this, WID_MTS_LIST_LEFT);
 		this->right_sb->SetCapacityFromWidget(this, WID_MTS_LIST_RIGHT);

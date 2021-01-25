@@ -34,6 +34,7 @@
 #include "error.h"
 #include "news_gui.h"
 #include "tutorial_gui.h"
+#include "gui.h"
 
 #include "saveload/saveload.h"
 

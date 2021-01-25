@@ -286,7 +286,7 @@ struct TerraformToolbarWindow : Window {
 		this->RaiseButtons();
 	}
 
-	virtual void SelectLastTool()
+	void SelectLastTool() override
 	{
 		// User misplaced something - activate last selected tool again
 		if (this->last_user_action == WIDGET_LIST_END)

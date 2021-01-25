@@ -217,9 +217,9 @@ public:
 
 		/* Reduce overbright strength */
 		ob /= 2;
-		return Colour16(	r >= 31 ? 31 : min(r + ob * (31 - r) / 32, 31),
-							g >= 63 ? 63 : min(g + ob * (63 - g) / 64, 63),
-							b >= 31 ? 31 : min(b + ob * (31 - b) / 32, 31) );
+		return Colour16(	r >= 31 ? 31 : std::min(r + ob * (31 - r) / 32, 31),
+							g >= 63 ? 63 : std::min(g + ob * (63 - g) / 64, 63),
+							b >= 31 ? 31 : std::min(b + ob * (31 - b) / 32, 31) );
 	}
 };
 

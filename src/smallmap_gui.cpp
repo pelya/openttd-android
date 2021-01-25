@@ -1077,7 +1077,7 @@ void SmallMapWindow::SetupWidgetData()
 
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 		Window(desc),
-		row_height(max(GetMinSizing(NWST_STEP, FONT_HEIGHT_SMALL) * 2 / 3, uint(FONT_HEIGHT_SMALL))), // Default spacing makes legend too tall - shrink it by 1/3
+		row_height(std::max(GetMinSizing(NWST_STEP, FONT_HEIGHT_SMALL) * 2 / 3, uint(FONT_HEIGHT_SMALL))), // Default spacing makes legend too tall - shrink it by 1/3
 		refresh(GUITimer(FORCE_REFRESH_PERIOD))
 {
 	_smallmap_industry_highlight = INVALID_INDUSTRYTYPE;
@@ -1178,7 +1178,7 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 				num_columns++;
 			}
 			height++;
-			min_width = max(GetStringBoundingBox(str).width, min_width);
+			min_width = std::max(GetStringBoundingBox(str).width, min_width);
 		}
 		this->min_number_of_fixed_rows = std::max(this->min_number_of_fixed_rows, height);
 		this->min_number_of_columns = std::max(this->min_number_of_columns, num_columns);

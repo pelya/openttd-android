@@ -500,8 +500,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_8BPP_BUTTON:
 				if (this->IsWidgetLowered(WID_GO_8BPP_BUTTON)) break;
-				free(_ini_blitter);
-				_ini_blitter = stredup("8bpp-optimized");
+				_ini_blitter = "8bpp-optimized";
 				_exit_game = true;
 				_restart_game = true;
 				#ifdef __ANDROID__
@@ -511,8 +510,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_16BPP_BUTTON:
 				if (this->IsWidgetLowered(WID_GO_16BPP_BUTTON)) break;
-				free(_ini_blitter);
-				_ini_blitter = stredup("16bpp-simple");
+				_ini_blitter = "16bpp-simple";
 				_exit_game = true;
 				_restart_game = true;
 				#ifdef __ANDROID__
@@ -522,8 +520,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_32BPP_BUTTON:
 				if (this->IsWidgetLowered(WID_GO_32BPP_BUTTON)) break;
-				free(_ini_blitter);
-				_ini_blitter = stredup("32bpp-anim");
+				_ini_blitter = "32bpp-anim";
 				_exit_game = true;
 				_restart_game = true;
 				#ifdef __ANDROID__
@@ -667,9 +664,9 @@ struct GameOptionsWindow : Window {
 #ifdef WIN32
 		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
 #else
-		this->SetWidgetLoweredState(WID_GO_8BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "8bpp-optimized") == 0);
-		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == NULL || strcmp(_ini_blitter, "16bpp-simple") == 0);
-		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter != NULL && strcmp(_ini_blitter, "32bpp-anim") == 0);
+		this->SetWidgetLoweredState(WID_GO_8BPP_BUTTON, _ini_blitter == "8bpp-optimized");
+		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == "16bpp-simple");
+		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter == "32bpp-anim" || _ini_blitter == "");
 #endif
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;

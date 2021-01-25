@@ -732,15 +732,14 @@ public:
 				break;
 
 			case WID_SL_LOAD_NETWORK_BUTTON: {
-					char savePath[PATH_MAX];
-					FiosMakeSavegameName(savePath, NETWORK_SAVE_FILENAME, lastof(savePath));
+					std::string savePath = FiosMakeSavegameName(NETWORK_SAVE_FILENAME);
 #ifdef __ANDROID__
-					if (!SDL_ANDROID_CloudLoad(savePath, NULL, "OpenTTD")) {
+					if (!SDL_ANDROID_CloudLoad(savePath.c_str(), NULL, "OpenTTD")) {
 						break;
 					}
 #endif
 					_file_to_saveload.SetMode(FIOS_TYPE_FILE);
-					_file_to_saveload.SetName(savePath);
+					_file_to_saveload.SetName(savePath.c_str());
 					_file_to_saveload.SetTitle("Network Save");
 					_switch_mode = SM_LOAD_GAME;
 					break;

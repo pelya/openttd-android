@@ -387,7 +387,7 @@ struct NewsWindow : Window {
 					Dimension d2 = GetStringBoundingBox(this->GetWidget<NWidgetCore>(WID_N_SHOW_GROUP)->widget_data);
 					d2.height += WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM;
 					d2.width += WD_CAPTIONTEXT_LEFT + WD_CAPTIONTEXT_RIGHT;
-					d2.width = max(d2.width, GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL));
+					d2.width = std::max(d2.width, GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL));
 					*size = d2;
 				} else {
 					/* Hide 'Show group window' button if this news is not about a vehicle. */

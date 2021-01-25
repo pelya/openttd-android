@@ -59,6 +59,8 @@ add_files(
     base_media_base.h
     base_media_func.h
     base_station_base.h
+    build_confirmation_func.h
+    build_confirmation_gui.cpp
     bitmap_type.h
     bmp.cpp
     bmp.h
@@ -447,6 +449,8 @@ add_files(
     tunnelbridge.h
     tunnelbridge_cmd.cpp
     tunnelbridge_map.h
+    tutorial_gui.cpp
+    tutorial_gui.h
     vehicle.cpp
     vehicle_base.h
     vehicle_cmd.cpp

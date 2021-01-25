@@ -53,8 +53,8 @@ void Android_MidiMixMusic(Sint16 *stream, int len)
 		Sint16 buf[16384];
 		while( len > 0 )
 		{
-			int minlen = min(sizeof(buf), len);
-			mid_song_read_wave(_midi.song, buf, min(sizeof(buf), len*2));
+			int minlen = std::min<int>(sizeof(buf), len);
+			mid_song_read_wave(_midi.song, buf, std::min<int>(sizeof(buf), len*2));
 			for( Uint16 i = 0; i < minlen; i++ )
 				stream[i] += buf[i];
 			stream += minlen;
