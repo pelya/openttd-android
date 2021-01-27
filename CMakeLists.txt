@@ -184,6 +184,7 @@ include(MSVCFilters)
 
 if(ANDROID)
     add_library(openttd SHARED ${GENERATED_SOURCE_FILES})
+    set(BINARY_NAME application)
     target_link_libraries(openttd log z)
 else()
     add_executable(openttd WIN32 ${GENERATED_SOURCE_FILES})
