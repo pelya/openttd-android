@@ -185,9 +185,7 @@ struct DropdownWindow : Window {
 		/* Capacity is the average number of items visible */
 		this->vscroll->SetCapacity(size.height * (uint16)this->list.size() / list_height);
 		this->vscroll->SetCount((uint16)this->list.size());
-		if (this->vscroll->GetCount() <= this->vscroll->GetCapacity()) {
-			scroll_pos = 0;
-		}
+		scroll_pos = std::min(scroll_pos, std::max(0, this->vscroll->GetCount() - this->vscroll->GetCapacity()));
 		this->vscroll->SetPosition(scroll_pos);
 		this->vscroll->UpdatePosition(0);
 
