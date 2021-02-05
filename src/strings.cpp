@@ -2019,16 +2019,19 @@ int MissingGlyphSearcher::FindMissingGlyphs()
 			} else if (!IsInsideMM(c, SCC_SPRITE_START, SCC_SPRITE_END) && IsPrintable(c) && !IsTextDirectionChar(c) && c != '?' && GetGlyph(size, c) == question_mark[size]) {
 				/* The character is printable, but not in the normal font. This is the case we were testing for. */
 				std::string size_name;
+				std::string font_name;
+				char char_name[5] = {0};
+				Utf8Encode(char_name, c);
 
 				switch (size) {
-					case 0: size_name = "medium"; break;
-					case 1: size_name = "small"; break;
-					case 2: size_name = "large"; break;
-					case 3: size_name = "mono"; break;
+					case 0: size_name = "medium"; font_name = _freetype.medium.font; break;
+					case 1: size_name = "small";  font_name = _freetype.small.font;  break;
+					case 2: size_name = "large";  font_name = _freetype.large.font;  break;
+					case 3: size_name = "mono";   font_name = _freetype.mono.font;   break;
 					default: NOT_REACHED();
 				}
 
-				DEBUG(freetype, 0, "Font is missing glyphs to display char 0x%X in %s font size", c, size_name.c_str());
+				DEBUG(freetype, 1, "Font %s is missing glyphs to display char 0x%X '%s' in %s font size", font_name.c_str(), c, char_name, size_name.c_str());
 				missing++;
 			}
 		}
@@ -2129,10 +2132,12 @@ void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
 			 * future, so for safety we just Utf8 Encode it into the string,
 			 * which takes exactly three characters, so it replaces the "XXX"
 			 * with the colour marker. */
+#ifndef __ANDROID__
 			static char *err_str = stredup("XXXThe current font is missing some of the characters used in the texts for this language. Using system fallback font instead.");
 			Utf8Encode(err_str, SCC_YELLOW);
 			SetDParamStr(0, err_str);
 			ShowErrorMessage(STR_JUST_RAW_STRING, INVALID_STRING_ID, WL_WARNING);
+#endif
 		}
 
 		if (bad_font && base_font) {
