@@ -1078,12 +1078,12 @@ void SmallMapWindow::SetupWidgetData()
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 		Window(desc),
 		row_height(std::max(GetMinSizing(NWST_STEP, FONT_HEIGHT_SMALL) * 2 / 3, uint(FONT_HEIGHT_SMALL))), // Default spacing makes legend too tall - shrink it by 1/3
+		show_legend(false),
 		refresh(GUITimer(FORCE_REFRESH_PERIOD))
 {
 	_smallmap_industry_highlight = INVALID_INDUSTRYTYPE;
 	this->overlay = new LinkGraphOverlay(this, WID_SM_MAP, 0, this->GetOverlayCompanyMask(), 1);
 	this->InitNested(window_number);
-	this->LowerWidget(this->map_type + WID_SM_CONTOUR);
 
 	this->RebuildColourIndexIfNecessary();
 
@@ -1458,7 +1458,14 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 		case WID_SM_ROUTES:     // Show transport routes
 		case WID_SM_VEGETATION: // Show vegetation
 		case WID_SM_OWNERS:     // Show land owners
-			this->SwitchMapType((SmallMapType)(widget - WID_SM_CONTOUR));
+			if (this->map_type == (SmallMapType)(widget - WID_SM_CONTOUR) && this->IsWidgetLowered(widget)) {
+				this->RaiseWidget(widget);
+				this->ShowLegend(false);
+			} else {
+				this->ShowLegend(true);
+				this->SwitchMapType((SmallMapType)(widget - WID_SM_CONTOUR));
+			}
+
 			if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 			break;
 
@@ -1532,6 +1539,14 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 			this->SetDirty();
 			break;
 	}
+}
+
+void SmallMapWindow::ShowLegend(bool show)
+{
+	int oldHeight = this->GetLegendHeight(this->min_number_of_columns);
+	this->show_legend = show;
+	this->ReInit(0, this->GetLegendHeight(this->min_number_of_columns) - oldHeight);
+	this->SetDirty();
 }
 
 /**
@@ -1783,7 +1798,7 @@ public:
 /** Widget parts of the smallmap display. */
 static const NWidgetPart _nested_smallmap_display[] = {
 	NWidget(WWT_PANEL, COLOUR_BROWN, WID_SM_MAP_BORDER),
-		NWidget(WWT_INSET, COLOUR_BROWN, WID_SM_MAP), SetMinimalSize(100, 140), SetResize(1, 1), SetPadding(2, 2, 2, 2), EndContainer(),
+		NWidget(WWT_INSET, COLOUR_BROWN, WID_SM_MAP), SetMinimalSize(346, 140), SetResize(1, 1), SetPadding(2, 2, 2, 2), EndContainer(),
 	EndContainer(),
 };
 
@@ -1868,7 +1883,7 @@ static const NWidgetPart _nested_smallmap_widgets[] = {
 };
 
 static WindowDesc _smallmap_desc(
-	WDP_AUTO, "smallmap", 180, 180,
+	WDP_AUTO, "smallmap", 200, 314,
 	WC_SMALLMAP, WC_NONE,
 	0,
 	_nested_smallmap_widgets, lengthof(_nested_smallmap_widgets)

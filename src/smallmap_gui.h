@@ -73,6 +73,7 @@ protected:
 	uint min_number_of_fixed_rows; ///< Minimal number of rows in the legends for the fixed layouts only (all except #SMT_INDUSTRY).
 	uint column_width;             ///< Width of a column in the #WID_SM_LEGEND widget.
 	const uint row_height;         ///< Heigth of each row in the #WID_SM_LEGEND widget.
+	bool show_legend;              ///< Display map legend.
 	Point lmb_scroll_pt;           ///< Starting point for scrolling minimap with left mouse button.
 
 	int32 scroll_x;  ///< Horizontal world coordinate of the base tile left of the top-left corner of the smallmap display.
@@ -126,6 +127,7 @@ protected:
 	 */
 	inline uint GetLegendHeight(uint num_columns) const
 	{
+		if (!this->show_legend) return 0;
 		return WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
 				this->min_number_of_fixed_rows * this->row_height;
 	}
@@ -177,8 +179,11 @@ public:
 	 */
 	inline uint GetMinLegendWidth() const
 	{
+		if (!this->show_legend) return 0;
 		return WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width;
 	}
+
+	void ShowLegend(bool show);
 
 	void SetStringParameters(int widget) const override;
 	void OnInit() override;
