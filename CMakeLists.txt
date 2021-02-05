@@ -214,11 +214,6 @@ if(IPO_FOUND)
 endif()
 set_target_properties(openttd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 process_compile_flags()
-if(ANDROID)
-    # A bug in Android NDK r22: https://github.com/android/ndk/issues/1418
-    #get_source_file_property(TMP_CFLAGS ${CMAKE_SOURCE_DIR}/src/settings.cpp COMPILE_FLAGS)
-    set_source_files_properties(${CMAKE_SOURCE_DIR}/src/settings.cpp PROPERTIES COMPILE_FLAGS "-O1")
-endif()
 
 include(LinkPackage)
 link_package(PNG TARGET PNG::PNG ENCOURAGED)
@@ -237,6 +232,14 @@ if(NOT OPTION_DEDICATED)
     link_package(ICU_lx)
     link_package(ICU_i18n)
 endif()
+
+if(ANDROID)
+    target_link_libraries(openttd
+        ${EXPAT_LIBRARY}
+    )
+    # A bug in Android NDK r22: https://github.com/android/ndk/issues/1418
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/src/settings.cpp PROPERTIES COMPILE_FLAGS "-O1")
+endif(ANDROID)
 
 if(APPLE)
     link_package(Iconv TARGET Iconv::Iconv)
