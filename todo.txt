@@ -7,8 +7,6 @@
 
 - Two-finger cancel action does not work when confirmation dialog is disabled.
 
-- Mouse wheel does not work for Bluetooth mouse.
-
 - Tram type menu missing. https://github.com/pelya/openttd-android/issues/7
 
 - Unable to search for server, input text in wrong box. https://github.com/pelya/openttd-android/issues/5
