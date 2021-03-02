@@ -265,7 +265,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 	 */
 	if (this->sock == INVALID_SOCKET) return status;
 
-	if (status != NETWORK_RECV_STATUS_CONN_LOST && !this->HasClientQuit() && this->status >= STATUS_AUTHORIZED) {
+	if (status != NETWORK_RECV_STATUS_CONN_LOST && status != NETWORK_RECV_STATUS_SERVER_ERROR && !this->HasClientQuit() && this->status >= STATUS_AUTHORIZED) {
 		/* We did not receive a leave message from this client... */
 		char client_name[NETWORK_CLIENT_NAME_LENGTH];
 
@@ -279,6 +279,16 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 				new_cs->SendErrorQuit(this->client_id, NETWORK_ERROR_CONNECTION_LOST);
 			}
 		}
+	}
+
+	/* If we were transfering a map to this client, stop the savegame creation
+	 * process and queue the next client to receive the map. */
+	if (this->status == STATUS_MAP) {
+		/* Ensure the saving of the game is stopped too. */
+		this->savegame->Destroy();
+		this->savegame = nullptr;
+
+		this->CheckNextClientToSendMap(this);
 	}
 
 	NetworkAdminClientError(this->client_id, NETWORK_ERROR_CONNECTION_LOST);
@@ -550,7 +560,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendWelcome()
 /** Tell the client that its put in a waiting queue. */
 NetworkRecvStatus ServerNetworkGameSocketHandler::SendWait()
 {
-	int waiting = 0;
+	int waiting = 1; // current player getting the map counts as 1
 	Packet *p;
 
 	/* Count how many clients are waiting in the queue, in front of you! */
@@ -563,6 +573,33 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendWait()
 	p->Send_uint8(waiting);
 	this->SendPacket(p);
 	return NETWORK_RECV_STATUS_OKAY;
+}
+
+void ServerNetworkGameSocketHandler::CheckNextClientToSendMap(NetworkClientSocket *ignore_cs)
+{
+	/* Find the best candidate for joining, i.e. the first joiner. */
+	NetworkClientSocket *best = nullptr;
+	for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
+		if (ignore_cs == new_cs) continue;
+
+		if (new_cs->status == STATUS_MAP_WAIT) {
+			if (best == nullptr || best->GetInfo()->join_date > new_cs->GetInfo()->join_date || (best->GetInfo()->join_date == new_cs->GetInfo()->join_date && best->client_id > new_cs->client_id)) {
+				best = new_cs;
+			}
+		}
+	}
+
+	/* Is there someone else to join? */
+	if (best != nullptr) {
+		/* Let the first start joining. */
+		best->status = STATUS_AUTHORIZED;
+		best->SendMap();
+
+		/* And update the rest. */
+		for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
+			if (new_cs->status == STATUS_MAP_WAIT) new_cs->SendWait();
+		}
+	}
 }
 
 /** This sends the map to the client */
@@ -620,27 +657,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendMap()
 			 *  to send it is ready (maybe that happens like never ;)) */
 			this->status = STATUS_DONE_MAP;
 
-			/* Find the best candidate for joining, i.e. the first joiner. */
-			NetworkClientSocket *best = nullptr;
-			for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
-				if (new_cs->status == STATUS_MAP_WAIT) {
-					if (best == nullptr || best->GetInfo()->join_date > new_cs->GetInfo()->join_date || (best->GetInfo()->join_date == new_cs->GetInfo()->join_date && best->client_id > new_cs->client_id)) {
-						best = new_cs;
-					}
-				}
-			}
-
-			/* Is there someone else to join? */
-			if (best != nullptr) {
-				/* Let the first start joining. */
-				best->status = STATUS_AUTHORIZED;
-				best->SendMap();
-
-				/* And update the rest. */
-				for (NetworkClientSocket *new_cs : NetworkClientSocket::Iterate()) {
-					if (new_cs->status == STATUS_MAP_WAIT) new_cs->SendWait();
-				}
-			}
+			this->CheckNextClientToSendMap();
 		}
 
 		switch (this->SendPackets()) {
@@ -1100,12 +1117,12 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_COMMAND(Packet 
 
 
 	if ((GetCommandFlags(cp.cmd) & CMD_SERVER) && ci->client_id != CLIENT_ID_SERVER) {
-		IConsolePrintF(CC_ERROR, "WARNING: server only command from: client %d (IP: %s), kicking...", ci->client_id, this->GetClientIP());
+		IConsolePrintF(CC_ERROR, "WARNING: server only command %u from client %u (IP: %s), kicking...", cp.cmd & CMD_ID_MASK, ci->client_id, this->GetClientIP());
 		return this->SendError(NETWORK_ERROR_KICKED);
 	}
 
 	if ((GetCommandFlags(cp.cmd) & CMD_SPECTATOR) == 0 && !Company::IsValidID(cp.company) && ci->client_id != CLIENT_ID_SERVER) {
-		IConsolePrintF(CC_ERROR, "WARNING: spectator issuing command from client %d (IP: %s), kicking...", ci->client_id, this->GetClientIP());
+		IConsolePrintF(CC_ERROR, "WARNING: spectator (client: %u, IP: %s) issued non-spectator command %u, kicking...", ci->client_id, this->GetClientIP(), cp.cmd & CMD_ID_MASK);
 		return this->SendError(NETWORK_ERROR_KICKED);
 	}
 
@@ -1816,7 +1833,7 @@ void NetworkServer_Tick(bool send_frame)
 			case NetworkClientSocket::STATUS_ACTIVE:
 				if (lag > _settings_client.network.max_lag_time) {
 					/* Client did still not report in within the specified limit. */
-					IConsolePrintF(CC_ERROR, cs->last_packet + lag * MILLISECONDS_PER_TICK > _realtime_tick ?
+					IConsolePrintF(CC_ERROR, cs->last_packet + std::chrono::milliseconds(lag * MILLISECONDS_PER_TICK) > std::chrono::steady_clock::now() ?
 							/* A packet was received in the last three game days, so the client is likely lagging behind. */
 								"Client #%d is dropped because the client's game state is more than %d ticks behind" :
 							/* No packet was received in the last three game days; sounds like a lost connection. */
@@ -1827,11 +1844,11 @@ void NetworkServer_Tick(bool send_frame)
 				}
 
 				/* Report once per time we detect the lag, and only when we
-				 * received a packet in the last 2000 milliseconds. If we
+				 * received a packet in the last 2 seconds. If we
 				 * did not receive a packet, then the client is not just
 				 * slow, but the connection is likely severed. Mentioning
 				 * frame_freq is not useful in this case. */
-				if (lag > (uint)DAY_TICKS && cs->lag_test == 0 && cs->last_packet + 2000 > _realtime_tick) {
+				if (lag > (uint)DAY_TICKS && cs->lag_test == 0 && cs->last_packet + std::chrono::seconds(2) > std::chrono::steady_clock::now()) {
 					IConsolePrintF(CC_WARNING, "[%d] Client #%d is slow, try increasing [network.]frame_freq to a higher value!", _frame_counter, cs->client_id);
 					cs->lag_test = 1;
 				}
@@ -1853,6 +1870,21 @@ void NetworkServer_Tick(bool send_frame)
 					IConsolePrintF(CC_ERROR, "Client #%d is dropped because it took longer than %d ticks to start the joining process", cs->client_id, _settings_client.network.max_init_time);
 					cs->SendError(NETWORK_ERROR_TIMEOUT_COMPUTER);
 					continue;
+				}
+				break;
+
+			case NetworkClientSocket::STATUS_MAP_WAIT:
+				/* Send every two seconds a packet to the client, to make sure
+				 * he knows the server is still there; just someone else is
+				 * still receiving the map. */
+				if (std::chrono::steady_clock::now() > cs->last_packet + std::chrono::seconds(2)) {
+					cs->SendWait();
+					/* We need to reset the timer, as otherwise we will be
+					 * spamming the client. Strictly speaking this variable
+					 * tracks when we last received a packet from the client,
+					 * but as he is waiting, he will not send us any till we
+					 * start sending him data. */
+					cs->last_packet = std::chrono::steady_clock::now();
 				}
 				break;
 
@@ -1883,11 +1915,6 @@ void NetworkServer_Tick(bool send_frame)
 					cs->SendError(NETWORK_ERROR_TIMEOUT_PASSWORD);
 					continue;
 				}
-				break;
-
-			case NetworkClientSocket::STATUS_MAP_WAIT:
-				/* This is an internal state where we do not wait
-				 * on the client to move to a different state. */
 				break;
 
 			case NetworkClientSocket::STATUS_END:

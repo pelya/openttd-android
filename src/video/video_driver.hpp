@@ -13,6 +13,10 @@
 #include "../driver.h"
 #include "../core/geometry_type.hpp"
 #include "../core/math_func.hpp"
+#include "../gfx_func.h"
+#include "../settings_type.h"
+#include "../zoom_type.h"
+#include <chrono>
 #include <vector>
 
 extern std::string _ini_videodriver;
@@ -83,6 +87,20 @@ public:
 	}
 
 	/**
+	 * Get whether the mouse cursor is drawn by the video driver.
+	 * @return True if cursor drawing is done by the video driver.
+	 */
+	virtual bool UseSystemCursor()
+	{
+		return false;
+	}
+
+	/**
+	 * Clear all cached sprites.
+	 */
+	virtual void ClearSystemSprites() {}
+
+	/**
 	 * Whether the driver has a graphical user interface with the end user.
 	 * Or in other words, whether we should spawn a thread for world generation
 	 * and NewGRF scanning so the graphical updates can keep coming. Otherwise
@@ -96,6 +114,33 @@ public:
 	}
 
 	/**
+	 * Has this video driver an efficient code path for palette animated 8-bpp sprites?
+	 * @return True if the driver has an efficient code path for 8-bpp.
+	 */
+	virtual bool HasEfficient8Bpp() const
+	{
+		return false;
+	}
+
+	/**
+	 * Does this video driver support a separate animation buffer in addition to the colour buffer?
+	 * @return True if a separate animation buffer is supported.
+	 */
+	virtual bool HasAnimBuffer()
+	{
+		return false;
+	}
+
+	/**
+	 * Get a pointer to the animation buffer of the video back-end.
+	 * @return Pointer to the buffer or nullptr if no animation buffer is supported.
+	 */
+	virtual uint8 *GetAnimBuffer()
+	{
+		return nullptr;
+	}
+
+	/**
 	 * An edit box lost the input focus. Abort character compositing if necessary.
 	 */
 	virtual void EditBoxLostFocus() {}
@@ -106,17 +151,56 @@ public:
 	virtual void EditBoxGainedFocus() {}
 
 	/**
+	 * Get a suggested default GUI zoom taking screen DPI into account.
+	 */
+	virtual ZoomLevel GetSuggestedUIZoom()
+	{
+		float dpi_scale = this->GetDPIScale();
+
+		if (dpi_scale >= 3.0f) return ZOOM_LVL_NORMAL;
+		if (dpi_scale >= 1.5f) return ZOOM_LVL_OUT_2X;
+		return ZOOM_LVL_OUT_4X;
+	}
+
+	/**
 	 * Get the currently active instance of the video driver.
 	 */
 	static VideoDriver *GetInstance() {
 		return static_cast<VideoDriver*>(*DriverFactoryBase::GetActiveDriver(Driver::DT_VIDEO));
 	}
 
+	/**
+	 * Helper struct to ensure the video buffer is locked and ready for drawing. The destructor
+	 * will make sure the buffer is unlocked no matter how the scope is exited.
+	 */
+	struct VideoBufferLocker {
+		VideoBufferLocker()
+		{
+			this->unlock = VideoDriver::GetInstance()->LockVideoBuffer();
+		}
+
+		~VideoBufferLocker()
+		{
+			if (this->unlock) VideoDriver::GetInstance()->UnlockVideoBuffer();
+		}
+
+	private:
+		bool unlock; ///< Stores if the lock did anything that has to be undone.
+	};
+
 protected:
-	/*
+	const uint ALLOWED_DRIFT = 5; ///< How many times videodriver can miss deadlines without it being overly compensated.
+
+	/**
 	 * Get the resolution of the main screen.
 	 */
 	virtual Dimension GetScreenSize() const { return { DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT }; }
+
+	/**
+	 * Get DPI scaling factor of the screen OTTD is displayed on.
+	 * @return 1.0 for default platform DPI, > 1.0 for higher DPI values, and < 1.0 for smaller DPI values.
+	 */
+	virtual float GetDPIScale() { return 1.0f; }
 
 	/**
 	 * Apply resolution auto-detection and clamp to sensible defaults.
@@ -132,6 +216,77 @@ protected:
 			_cur_resolution.height = ClampU(res.height * 3 / 4, DEFAULT_WINDOW_HEIGHT, UINT16_MAX / 2);
 		}
 	}
+
+	/**
+	 * Handle input logic, is CTRL pressed, should we fast-forward, etc.
+	 */
+	virtual void InputLoop() {}
+
+	/**
+	 * Make sure the video buffer is ready for drawing.
+	 * @returns True if the video buffer has to be unlocked.
+	 */
+	virtual bool LockVideoBuffer() {
+		return false;
+	}
+
+	/**
+	 * Unlock a previously locked video buffer.
+	 */
+	virtual void UnlockVideoBuffer() {}
+
+	/**
+	 * Paint the window.
+	 */
+	virtual void Paint() {}
+
+	/**
+	 * Thread function for threaded drawing.
+	 */
+	virtual void PaintThread() {}
+
+	/**
+	 * Process any pending palette animation.
+	 */
+	virtual void CheckPaletteAnim() {}
+
+	/**
+	 * Process a single system event.
+	 * @returns False if there are no more events to process.
+	 */
+	virtual bool PollEvent() { return false; };
+
+	/**
+	 * Run the game for a single tick, processing boththe game-tick and draw-tick.
+	 * @returns True if the driver should redraw the screen.
+	 */
+	bool Tick();
+
+	/**
+	 * Sleep till the next tick is about to happen.
+	 */
+	void SleepTillNextTick();
+
+	std::chrono::steady_clock::duration GetGameInterval()
+	{
+		/* If we are paused, run on normal speed. */
+		if (_pause_mode) return std::chrono::milliseconds(MILLISECONDS_PER_TICK);
+		/* Infinite speed, as quickly as you can. */
+		if (_game_speed == 0) return std::chrono::microseconds(0);
+
+		return std::chrono::microseconds(MILLISECONDS_PER_TICK * 1000 * 100 / _game_speed);
+	}
+
+	std::chrono::steady_clock::duration GetDrawInterval()
+	{
+		return std::chrono::microseconds(1000000 / _settings_client.gui.refresh_rate);
+	}
+
+	std::chrono::steady_clock::time_point next_game_tick;
+	std::chrono::steady_clock::time_point next_draw_tick;
+
+	bool fast_forward_key_pressed; ///< The fast-forward key is being pressed.
+	bool fast_forward_via_key; ///< The fast-forward was enabled by key press.
 };
 
 #endif /* VIDEO_VIDEO_DRIVER_HPP */

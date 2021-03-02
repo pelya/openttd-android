@@ -17,10 +17,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - compiler: clang
-            cxxcompiler: clang++
-          - compiler: gcc
-            cxxcompiler: g++
+        - compiler: clang
+          cxxcompiler: clang++
+          libsdl: libsdl2-dev
+        - compiler: gcc
+          cxxcompiler: g++
+          libsdl: libsdl2-dev
+        - compiler: gcc
+          cxxcompiler: g++
+          libsdl: libsdl1.2-dev
 
     runs-on: ubuntu-20.04
     env:
@@ -39,12 +44,12 @@ jobs:
 
         echo "::group::Install dependencies"
         sudo apt-get install -y --no-install-recommends \
+          liballegro4-dev \
           libfontconfig-dev \
           libicu-dev \
           liblzma-dev \
           liblzo2-dev \
-          libsdl1.2-dev \
-          libsdl2-dev \
+          ${{ matrix.libsdl }} \
           zlib1g-dev \
           # EOF
         echo "::endgroup::"
@@ -80,13 +85,13 @@ jobs:
 
         echo "::group::Build"
         echo "Running on $(nproc) cores"
-        make -j$(nproc)
+        cmake --build . -j $(nproc)
         echo "::endgroup::"
 
     - name: Test
       run: |
         cd build
-        make -j$(nproc) test
+        ctest -j $(nproc)
 
   macos:
     name: Mac OS
@@ -106,13 +111,25 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Prepare vcpkg (with cache)
-      uses: lukka/run-vcpkg@v6
+    - name: Prepare cache key
+      id: key
+      run: |
+        echo "::set-output name=image::$ImageOS-$ImageVersion"
+
+    - name: Enable vcpkg cache
+      uses: actions/cache@v2
       with:
-        vcpkgDirectory: '/usr/local/share/vcpkg'
-        doNotUpdateVcpkg: true
-        vcpkgArguments: 'freetype liblzma lzo'
-        vcpkgTriplet: '${{ matrix.arch }}-osx'
+        path: /usr/local/share/vcpkg/installed
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+
+    - name: Prepare vcpkg
+      run: |
+        vcpkg install --triplet=${{ matrix.arch }}-osx \
+          liblzma \
+          libpng \
+          lzo \
+          zlib \
+          # EOF
 
     - name: Install OpenGFX
       run: |
@@ -147,11 +164,11 @@ jobs:
 
         echo "::group::Build"
         echo "Running on $(sysctl -n hw.logicalcpu) cores"
-        make -j$(sysctl -n hw.logicalcpu)
+        cmake --build . -j $(sysctl -n hw.logicalcpu)
         echo "::endgroup::"
 
     - name: Test
       run: |
         cd build
-        make -j$(sysctl -n hw.logicalcpu) test
+        ctest -j $(sysctl -n hw.logicalcpu)
 

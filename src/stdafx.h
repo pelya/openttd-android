@@ -157,22 +157,12 @@
 /* Stuff for MSVC */
 #if defined(_MSC_VER)
 #	pragma once
-#	ifdef _WIN64
-		/* No 64-bit Windows below XP, so we can safely assume it as the target platform. */
-#		define NTDDI_VERSION NTDDI_WINXP // Windows XP
-#		define _WIN32_WINNT 0x501        // Windows XP
-#		define _WIN32_WINDOWS 0x501      // Windows XP
-#		define WINVER 0x0501             // Windows XP
-#		define _WIN32_IE_ 0x0600         // 6.0 (XP+)
-#	else
-		/* Define a win32 target platform, to override defaults of the SDK
-		 * We need to define NTDDI version for Vista SDK, but win2k is minimum */
-#		define NTDDI_VERSION NTDDI_WIN2K // Windows 2000
-#		define _WIN32_WINNT 0x0500       // Windows 2000
-#		define _WIN32_WINDOWS 0x400      // Windows 95
-#		define WINVER 0x0400             // Windows NT 4.0 / Windows 95
-#		define _WIN32_IE_ 0x0401         // 4.01 (win98 and NT4SP5+)
-#	endif
+#	define NTDDI_VERSION NTDDI_WINXP // Windows XP
+#	define _WIN32_WINNT 0x501        // Windows XP
+#	define _WIN32_WINDOWS 0x501      // Windows XP
+#	define WINVER 0x0501             // Windows XP
+#	define _WIN32_IE_ 0x0600         // 6.0 (XP+)
+
 #	define NOMINMAX                // Disable min/max macros in windows.h.
 
 #	pragma warning(disable: 4244)  // 'conversion' conversion from 'type1' to 'type2', possible loss of data
@@ -270,12 +260,12 @@
 #		include <tchar.h>
 #		include <io.h>
 
-		namespace std { using ::_tfopen; }
-#		define fopen(file, mode) _tfopen(OTTD2FS(file), _T(mode))
-#		define unlink(file) _tunlink(OTTD2FS(file))
+		namespace std { using ::_wfopen; }
+#		define fopen(file, mode) _wfopen(OTTD2FS(file), _T(mode))
+#		define unlink(file) _wunlink(OTTD2FS(file))
 
-		const char *FS2OTTD(const TCHAR *name);
-		const TCHAR *OTTD2FS(const char *name, bool console_cp = false);
+		const char *FS2OTTD(const wchar_t *name);
+		const wchar_t *OTTD2FS(const char *name, bool console_cp = false);
 #	else
 #		define fopen(file, mode) fopen(OTTD2FS(file), mode)
 		const char *FS2OTTD(const char *name);
@@ -316,8 +306,8 @@
 
 typedef unsigned char byte;
 
-/* This is already defined in unix, but not in QNX Neutrino (6.x)*/
-#if (!defined(UNIX) && !defined(__HAIKU__)) || defined(__QNXNTO__)
+/* This is already defined in unix, but not in QNX Neutrino (6.x) or Cygwin. */
+#if (!defined(UNIX) && !defined(__HAIKU__)) || defined(__QNXNTO__) || defined(__CYGWIN__)
 	typedef unsigned int uint;
 #endif
 
@@ -392,18 +382,13 @@ static_assert(SIZE_MAX >= UINT32_MAX);
  */
 #define lastof(x) (&x[lengthof(x) - 1])
 
-#define cpp_offsetof(s, m)   (((size_t)&reinterpret_cast<const volatile char&>((((s*)(char*)8)->m))) - 8)
-#if !defined(offsetof)
-#	define offsetof(s, m) cpp_offsetof(s, m)
-#endif /* offsetof */
-
 /**
  * Gets the size of a variable within a class.
  * @param base     The class the variable is in.
  * @param variable The variable to get the size of.
  * @return the size of the variable
  */
-#define cpp_sizeof(base, variable) (sizeof(((base*)8)->variable))
+#define cpp_sizeof(base, variable) (sizeof(std::declval<base>().variable))
 
 /**
  * Gets the length of an array variable within a class.

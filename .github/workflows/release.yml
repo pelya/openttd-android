@@ -230,7 +230,7 @@ jobs:
         echo "::endgroup::"
 
         echo "::group::Build"
-        make docs
+        cmake --build . --target docs
         echo "::endgroup::"
 
     - name: Create bundles
@@ -265,7 +265,104 @@ jobs:
         retention-days: 5
 
   linux:
-    name: Linux
+    name: Linux (Generic)
+    needs: source
+
+    runs-on: ubuntu-20.04
+    container:
+      # manylinux2014 is based on CentOS 7, but already has a lot of things
+      # installed and preconfigured. It makes it easier to build OpenTTD.
+      image: quay.io/pypa/manylinux2014_x86_64
+
+    steps:
+    - name: Download source
+      uses: actions/download-artifact@v2
+      with:
+        name: internal-source
+
+    - name: Unpack source
+      run: |
+        tar -xf source.tar.gz --strip-components=1
+
+    - name: Install dependencies
+      run: |
+        echo "::group::Install dependencies"
+        yum install -y \
+          fontconfig-devel \
+          freetype-devel \
+          libicu-devel \
+          libpng-devel \
+          libpng-devel \
+          lzo-devel \
+          SDL2-devel \
+          wget \
+          xz-devel \
+          zlib-devel \
+          # EOF
+        echo "::endgroup::"
+
+        # The yum variant of fluidsynth depends on all possible audio drivers,
+        # like jack, ALSA, pulseaudio, etc. This is not really useful for us,
+        # as we route the output of fluidsynth back via our sound driver, and
+        # as such do not use these audio driver outputs at all. So instead,
+        # we compile fluidsynth ourselves, with as little dependencies as
+        # possible. This currently means it picks up SDL2, but this is fine,
+        # as we need SDL2 anyway.
+        echo "::group::Install fluidsynth"
+        wget https://github.com/FluidSynth/fluidsynth/archive/v2.1.6.tar.gz
+        tar xf v2.1.6.tar.gz
+        (
+          cd fluidsynth-2.1.6
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build . -j $(nproc)
+          cmake --install .
+        )
+        echo "::endgroup::"
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build
+      run: |
+        mkdir -p build
+        cd build
+
+        echo "::group::CMake"
+        cmake ${GITHUB_WORKSPACE} \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DOPTION_PACKAGE_DEPENDENCIES=ON \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        echo "Running on $(nproc) cores"
+        cmake --build . -j $(nproc)
+        echo "::endgroup::"
+
+    - name: Create bundles
+      run: |
+        cd ${GITHUB_WORKSPACE}/build
+        echo "::group::Run CPack"
+        cpack
+        echo "::endgroup::"
+
+        echo "::group::Cleanup"
+        # Remove the sha256 files CPack generates; we will do this ourself at
+        # the end of this workflow.
+        rm -f bundles/*.sha256
+        echo "::endgroup::"
+
+    - name: Store bundles
+      uses: actions/upload-artifact@v2
+      with:
+        name: openttd-linux-generic
+        path: build/bundles
+        retention-days: 5
+
+  linux-distro:
+    name: Linux (Distros)
     needs: source
 
     if: needs.source.outputs.is_tag == 'true'
@@ -317,7 +414,6 @@ jobs:
           liblzma-dev \
           liblzo2-dev \
           libsdl2-dev \
-          libxdg-basedir-dev \
           lsb-release \
           zlib1g-dev \
           # EOF
@@ -342,12 +438,22 @@ jobs:
 
         echo "::group::Build"
         echo "Running on $(nproc) cores"
-        make -j$(nproc) package
+        # Ubuntu 18.04 cmake does not support -j so we pass the option to the native tool
+        cmake --build . -- -j $(nproc)
         echo "::endgroup::"
 
+    - name: Create bundles
+      run: |
+        cd ${GITHUB_WORKSPACE}/build
+        echo "::group::Run CPack"
+        cpack
+        echo "::endgroup::"
+
+        echo "::group::Cleanup"
         # Remove the sha256 files CPack generates; we will do this ourself at
         # the end of this workflow.
         rm -f bundles/*.sha256
+        echo "::endgroup::"
 
     - name: Store bundles
       uses: actions/upload-artifact@v2
@@ -374,21 +480,39 @@ jobs:
       run: |
         tar -xf source.tar.gz --strip-components=1
 
-    # The following step can be removed when the build VM is updated with a revision of
-    # vcpkg dating from roughly 01/01/2021 or later. At that point, `doNotUpdateVcpkg`
-    # can be set to `true` and the `vcpkgGitCommitId` can be removed.
-    - name: Update vcpkg
+    - name: Install dependencies
+      env:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
       run: |
-        cd /usr/local/share/vcpkg
-        git fetch --unshallow
+        brew install pandoc
 
-    - name: Prepare vcpkg (with cache)
-      uses: lukka/run-vcpkg@v6
+    - name: Prepare cache key
+      id: key
+      run: |
+        echo "::set-output name=image::$ImageOS-$ImageVersion"
+
+    - name: Enable vcpkg cache
+      uses: actions/cache@v2
       with:
-        vcpkgDirectory: '/usr/local/share/vcpkg'
-        doNotUpdateVcpkg: false
-        vcpkgGitCommitId: 2a42024b53ebb512fb5dd63c523338bf26c8489c
-        vcpkgArguments: 'freetype:x64-osx liblzma:x64-osx lzo:x64-osx freetype:arm64-osx liblzma:arm64-osx lzo:arm64-osx'
+        path: /usr/local/share/vcpkg/installed
+        key: ${{ steps.key.outputs.image }}-vcpkg-release
+
+    - name: Prepare vcpkg
+      run: |
+        vcpkg install \
+          liblzma:x64-osx \
+          liblzma:arm64-osx \
+          libpng:x64-osx \
+          libpng:arm64-osx \
+          lzo:x64-osx \
+          lzo:arm64-osx \
+          zlib:x64-osx \
+          zlib:arm64-osx \
+          # EOF
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
 
     - name: Build tools
       run: |
@@ -404,11 +528,8 @@ jobs:
 
         echo "::group::Build tools"
         echo "Running on $(sysctl -n hw.logicalcpu) cores"
-        make -j$(sysctl -n hw.logicalcpu) tools
+        cmake --build . -j $(sysctl -n hw.logicalcpu) --target tools
         echo "::endgroup::"
-
-    - name: Install GCC problem matcher
-      uses: ammaraskar/gcc-problem-matcher@master
 
     - name: Import code signing certificates
       uses: Apple-Actions/import-codesign-certs@v1
@@ -437,7 +558,7 @@ jobs:
 
         echo "::group::Build"
         echo "Running on $(sysctl -n hw.logicalcpu) cores"
-        make -j$(sysctl -n hw.logicalcpu)
+        cmake --build . -j $(sysctl -n hw.logicalcpu)
         echo "::endgroup::"
 
     - name: Build x64
@@ -460,25 +581,28 @@ jobs:
 
         echo "::group::Build"
         echo "Running on $(sysctl -n hw.logicalcpu) cores"
-        make -j$(sysctl -n hw.logicalcpu)
+        cmake --build . -j $(sysctl -n hw.logicalcpu)
         echo "::endgroup::"
 
-    - name: Build package
+    - name: Create bundles
       run: |
         cd build-x64
 
+        echo "::group::Create universal binary"
         # Combine the `openttd` binaries from each build into a single file
         lipo -create -output openttd-universal ../build-*/openttd
         mv openttd-universal openttd
-
-        echo "::group::Build"
-        echo "Running on $(sysctl -n hw.logicalcpu) cores"
-        make -j$(sysctl -n hw.logicalcpu) package
         echo "::endgroup::"
 
+        echo "::group::Run CPack"
+        cpack
+        echo "::endgroup::"
+
+        echo "::group::Cleanup"
         # Remove the sha256 files CPack generates; we will do this ourself at
         # the end of this workflow.
         rm -f bundles/*.sha256
+        echo "::endgroup::"
 
     - name: Install gon
       env:
@@ -496,6 +620,29 @@ jobs:
         cd build-x64
         ../os/macosx/notarize.sh
 
+    - name: Build zip
+      run: |
+        cd build-x64
+
+        pushd _CPack_Packages/*/Bundle/openttd-*/
+
+        # Remove the Applications symlink from the staging folder
+        rm -f Applications
+
+        # Remove the original dmg built by CPack to avoid a conflict when resolving
+        # the zip_filename variable below
+        rm -f ../*.dmg
+
+        zip_filename=(../openttd-*)
+
+        # Package up the existing, notarised .app into a zip file
+        zip -r -9 ${zip_filename}.zip OpenTTD.app
+
+        popd
+
+        # Now move it into place to be uploaded
+        mv _CPack_Packages/*/Bundle/openttd-*.zip bundles/
+
     - name: Store bundles
       uses: actions/upload-artifact@v2
       with:
@@ -512,8 +659,11 @@ jobs:
       matrix:
         include:
         - arch: x86
+          host: x86
         - arch: x64
+          host: x64
         - arch: arm64
+          host: x64_arm64
 
     runs-on: windows-latest
 
@@ -528,55 +678,109 @@ jobs:
       run: |
         tar -xf source.tar.gz --strip-components=1
 
-    # "restore-cache" which is done by "run-vcpkg" uses Windows tar.
-    # A git clone on windows marks a few files as read-only; when Windows tar
-    # tries to extract the cache over this folder, it fails, despite the files
-    # being identical. This failure shows up as an warning in the logs. We
-    # avoid this by simply removing the read-only mark from the git folder.
-    # In other words: this is a hack!
-    # See: https://github.com/lukka/run-vcpkg/issues/61
-    - name: Remove read-only flag from vcpkg git folder
+    - name: Install dependencies
+      shell: bash
+      run: |
+        choco install pandoc
+
+    - name: Prepare cache key
+      id: key
       shell: powershell
       run: |
-        attrib -r "c:\vcpkg\.git\*.*" /s
+        # Work around caching failure with GNU tar
+        New-Item -Type Junction -Path vcpkg -Target c:\vcpkg
 
-    - name: Prepare vcpkg (with cache)
-      uses: lukka/run-vcpkg@v6
-      with:
-        vcpkgDirectory: 'c:/vcpkg'
-        doNotUpdateVcpkg: true
-        vcpkgArguments: 'liblzma libpng lzo zlib'
-        vcpkgTriplet: '${{ matrix.arch }}-windows-static'
+        Write-Output "::set-output name=image::$env:ImageOS-$env:ImageVersion"
 
-    - name: Build tools
-      uses: lukka/run-cmake@v3
+    - name: Enable vcpkg cache
+      uses: actions/cache@v2
       with:
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-        useVcpkgToolchainFile: false
-        buildDirectory: '${{ github.workspace }}/build-host'
-        buildWithCMakeArgs: '--target tools'
-        cmakeAppendedArgs: ' -GNinja -DOPTION_TOOLS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+        path: vcpkg/installed
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+
+    - name: Prepare vcpkg
+      shell: bash
+      run: |
+        vcpkg install --triplet=${{ matrix.arch }}-windows-static \
+          liblzma \
+          libpng \
+          lzo \
+          zlib \
+          # EOF
 
     - name: Install MSVC problem matcher
       uses: ammaraskar/msvc-problem-matcher@master
 
+    - name: Configure developer command prompt for tools
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Build tools
+      shell: bash
+      run: |
+        mkdir build-host
+        cd build-host
+
+        echo "::group::CMake"
+        cmake ${GITHUB_WORKSPACE} \
+          -GNinja \
+          -DOPTION_TOOLS_ONLY=ON \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        cmake --build . --target tools
+        echo "::endgroup::"
+
+    - name: Configure developer command prompt for ${{ matrix.arch }}
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ matrix.host }}
+
     - name: Build (with installer)
       if: needs.source.outputs.is_tag == 'true'
-      uses: lukka/run-cmake@v3
-      with:
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-        useVcpkgToolchainFile: true
-        buildDirectory: '${{ github.workspace }}/build'
-        cmakeAppendedArgs: ' -GNinja -DOPTION_USE_NSIS=ON -DHOST_BINARY_DIR=${{ github.workspace }}/build-host -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+      shell: bash
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake ${GITHUB_WORKSPACE} \
+          -GNinja \
+          -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-windows-static \
+          -DCMAKE_TOOLCHAIN_FILE="c:\vcpkg\scripts\buildsystems\vcpkg.cmake" \
+          -DOPTION_USE_NSIS=ON \
+          -DHOST_BINARY_DIR=${GITHUB_WORKSPACE}/build-host \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        cmake --build .
+        echo "::endgroup::"
 
     - name: Build (without installer)
       if: needs.source.outputs.is_tag != 'true'
-      uses: lukka/run-cmake@v3
-      with:
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-        useVcpkgToolchainFile: true
-        buildDirectory: '${{ github.workspace }}/build'
-        cmakeAppendedArgs: ' -GNinja -DHOST_BINARY_DIR=${{ github.workspace }}/build-host -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+      shell: bash
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake ${GITHUB_WORKSPACE} \
+          -GNinja \
+          -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-windows-static \
+          -DCMAKE_TOOLCHAIN_FILE="c:\vcpkg\scripts\buildsystems\vcpkg.cmake" \
+          -DHOST_BINARY_DIR=${GITHUB_WORKSPACE}/build-host \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        cmake --build .
+        echo "::endgroup::"
 
     - name: Create bundles
       shell: bash
@@ -606,11 +810,12 @@ jobs:
         retention-days: 5
 
   upload:
-    name: Upload
+    name: Upload (AWS)
     needs:
     - source
     - docs
     - linux
+    - linux-distro
     - macos
     - windows
 
@@ -619,7 +824,7 @@ jobs:
     # "always()" is important here, it is the keyword to use to stop skipping
     # this job if any dependency is skipped. It looks a bit silly, but it is
     # how GitHub Actions work ;)
-    if: always() && needs.source.result == 'success' && needs.docs.result == 'success' && (needs.linux.result == 'success' || needs.linux.result == 'skipped') && needs.macos.result == 'success' && needs.windows.result == 'success'
+    if: always() && needs.source.result == 'success' && needs.docs.result == 'success' && needs.linux.result == 'success' && (needs.linux-distro.result == 'success' || needs.linux-distro.result == 'skipped') && needs.macos.result == 'success' && needs.windows.result == 'success'
 
     runs-on: ubuntu-20.04
 
@@ -663,3 +868,80 @@ jobs:
         repository: OpenTTD/workflows
         event-type: ${{ needs.source.outputs.trigger_type }}
         client-payload: '{"version": "${{ needs.source.outputs.version }}", "folder": "${{ needs.source.outputs.folder }}"}'
+
+  upload-steam:
+    name: Upload (Steam)
+    needs:
+    - source
+    - linux
+    - macos
+    - windows
+
+    if: needs.source.outputs.trigger_type == 'new-master' || needs.source.outputs.trigger_type == 'new-tag'
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Download all bundles
+      uses: actions/download-artifact@v2
+
+    - name: Setup steamcmd
+      uses: CyberAndrii/setup-steamcmd@v1
+
+    - name: Generate Steam auth code
+      id: steam-totp
+      uses: CyberAndrii/steam-totp@v1
+      with:
+        shared_secret: ${{ secrets.STEAM_SHARED_SECRET }}
+
+    - name: Upload to Steam
+      run: |
+        echo "::group::Extracting source"
+        mkdir source
+        (
+          cd source
+          tar -xf ../internal-source/source.tar.gz --strip-components=1
+        )
+        echo "::endgroup::"
+
+        mkdir steam
+        (
+          cd steam
+
+          echo "::group::Prepare Win32"
+          unzip ../openttd-windows-x86/openttd-*-windows-win32.zip
+          mv openttd-*-windows-win32 steam-win32
+          echo "::endgroup::"
+
+          echo "::group::Prepare Win64"
+          unzip ../openttd-windows-x64/openttd-*-windows-win64.zip
+          mv openttd-*-windows-win64 steam-win64
+          echo "::endgroup::"
+
+          echo "::group::Prepare macOS"
+          mkdir steam-macos
+          (
+            cd steam-macos
+            unzip ../../openttd-macos-universal/openttd-*-macos-universal.zip
+          )
+          echo "::endgroup::"
+
+          echo "::group::Prepare Linux"
+          tar xvf ../openttd-linux-generic/openttd-*-linux-generic-amd64.tar.xz
+          mv openttd-*-linux-generic-amd64 steam-linux
+          echo "::endgroup::"
+
+          echo "::group::Preparing build file"
+          if [ "${{ needs.source.outputs.trigger_type }}" = "new-tag" ]; then
+            BRANCH="testing"
+          else
+            BRANCH="nightly"
+          fi
+          cat ../source/os/steam/release.vdf | sed 's/@@DESCRIPTION@@/openttd-${{ needs.source.outputs.version }}/;s/@@BRANCH@@/'${BRANCH}'/' > release.vdf
+          cat release.vdf
+          echo "::endgroup::"
+
+          echo "::group::Upload to Steam"
+          steamcmd +login ${{ secrets.STEAM_USERNAME }} ${{ secrets.STEAM_PASSWORD }} ${{ steps.steam-totp.outputs.code }} +run_app_build $(pwd)/release.vdf +quit
+          echo "::endgroup::"
+        )

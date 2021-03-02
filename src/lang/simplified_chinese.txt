@@ -568,8 +568,8 @@ STR_MONTH_DEC                                                   :12月
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK}索引
 STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}显示图表的公司索引
-STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
-STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
+STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}
+STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
 
@@ -938,8 +938,6 @@ STR_GAME_OPTIONS_CURRENCY_HKD                                   :港币 (HKD)
 STR_GAME_OPTIONS_CURRENCY_INR                                   :印度卢布（INR）
 ############ end of currency region
 
-STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}汽车行驶
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}选择汽车行驶的方向
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :左侧通行
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :右侧通行
 
@@ -2820,7 +2818,6 @@ STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}雪线�
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}提高雪线高度
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}降低雪线高度
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}生成地形：
-STR_MAPGEN_TREE_PLACER                                          :{BLACK}生成树木：
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}地形特点：
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}海洋面积：
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}河流数量:

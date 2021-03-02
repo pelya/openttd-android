@@ -578,8 +578,8 @@ STR_MONTH_DEC                                                   :Decembris
 # Graph window
 STR_GRAPH_KEY_BUTTON                                            :{BLACK}Apzīmējumu atslēga
 STR_GRAPH_KEY_TOOLTIP                                           :{BLACK}Diagrammās rādīt apzīmējumu atslēgas
-STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}{} {STRING}
-STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{} {STRING}{}{NUM}
+STR_GRAPH_X_LABEL_MONTH                                         :{TINY_FONT}{STRING}
+STR_GRAPH_X_LABEL_MONTH_YEAR                                    :{TINY_FONT}{STRING}{}{NUM}
 STR_GRAPH_Y_LABEL                                               :{TINY_FONT}{STRING}
 STR_GRAPH_Y_LABEL_NUMBER                                        :{TINY_FONT}{COMMA}
 
@@ -949,8 +949,6 @@ STR_GAME_OPTIONS_CURRENCY_HKD                                   :Honkongas dolā
 STR_GAME_OPTIONS_CURRENCY_INR                                   :Indijas rūpija (INR)
 ############ end of currency region
 
-STR_GAME_OPTIONS_ROAD_VEHICLES_FRAME                            :{BLACK}Autotransporta līdzekļi
-STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_TOOLTIP                 :{BLACK}Ceļa braucamās puses izvēle
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Brauc pa kreiso pusi
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Brauc pa labo pusi
 
@@ -2857,7 +2855,6 @@ STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Sniega l
 STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Paaugstināt sniega līnijas augstumu
 STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Pazemināt sniega līnijas augstumu
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Zemes radītājs:
-STR_MAPGEN_TREE_PLACER                                          :{BLACK}Koku algoritms:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Apvidus reljefs:
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}Jūras līmenis:
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Upes:

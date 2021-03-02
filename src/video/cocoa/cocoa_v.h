@@ -16,198 +16,114 @@
 
 extern bool _cocoa_video_started;
 
+@class OTTD_CocoaWindowDelegate;
+@class OTTD_CocoaWindow;
+@class OTTD_CocoaView;
+
 class VideoDriver_Cocoa : public VideoDriver {
 private:
-	Dimension orig_res;          ///< Saved window size for non-fullscreen mode.
+	Dimension orig_res;   ///< Saved window size for non-fullscreen mode.
 
 public:
-	const char *Start(const StringList &param) override;
+	bool setup; ///< Window is currently being created.
 
-	/** Stop the video driver */
+	OTTD_CocoaWindow *window;    ///< Pointer to window object
+	OTTD_CocoaView *cocoaview;   ///< Pointer to view object
+	CGColorSpaceRef color_space; ///< Window color space
+
+	OTTD_CocoaWindowDelegate *delegate; //!< Window delegate object
+
+public:
+	VideoDriver_Cocoa();
+
 	void Stop() override;
-
-	/** Mark dirty a screen region
-	 * @param left x-coordinate of left border
-	 * @param top  y-coordinate of top border
-	 * @param width width or dirty rectangle
-	 * @param height height of dirty rectangle
-	 */
-	void MakeDirty(int left, int top, int width, int height) override;
-
-	/** Programme main loop */
 	void MainLoop() override;
 
-	/** Change window resolution
-	 * @param w New window width
-	 * @param h New window height
-	 * @return Whether change was successful
-	 */
-	bool ChangeResolution(int w, int h) override;
-
-	/** Set a new window mode
-	 * @param fullscreen Whether to set fullscreen mode or not
-	 * @return Whether changing the screen mode was successful
-	 */
-	bool ToggleFullscreen(bool fullscreen) override;
-
-	/** Callback invoked after the blitter was changed.
-	 * @return True if no error.
-	 */
+	void MakeDirty(int left, int top, int width, int height) override;
 	bool AfterBlitterChange() override;
 
-	/**
-	 * An edit box lost the input focus. Abort character compositing if necessary.
-	 */
-	void EditBoxLostFocus() override;
+	bool ChangeResolution(int w, int h) override;
+	bool ToggleFullscreen(bool fullscreen) override;
 
-	/** Return driver name
-	 * @return driver name
-	 */
-	const char *GetName() const override { return "cocoa"; }
+	void EditBoxLostFocus() override;
 
 	/* --- The following methods should be private, but can't be due to Obj-C limitations. --- */
 
-	/** Main game loop. */
-	void GameLoop(); // In event.mm.
+	void MainLoopReal();
+
+	virtual void AllocateBackingStore(bool force = false) = 0;
 
 protected:
-	Dimension GetScreenSize() const override;
+	Rect dirty_rect;    ///< Region of the screen that needs redrawing.
+	bool buffer_locked; ///< Video buffer was locked by the main thread.
 
-private:
-	friend class WindowQuartzSubdriver;
+	Dimension GetScreenSize() const override;
+	float GetDPIScale() override;
+	void InputLoop() override;
+	bool LockVideoBuffer() override;
+	void UnlockVideoBuffer() override;
+	bool PollEvent() override;
 
 	void GameSizeChanged();
+
+	const char *Initialize();
+
+	void UpdateVideoModes();
+
+	bool MakeWindow(int width, int height);
+
+	virtual NSView* AllocateDrawView() = 0;
+
+	/** Get a pointer to the video buffer. */
+	virtual void *GetVideoPointer() = 0;
+	/** Hand video buffer back to the drawing backend. */
+	virtual void ReleaseVideoPointer() {}
+
+private:
+	bool IsFullscreen();
 };
 
-class FVideoDriver_Cocoa : public DriverFactoryBase {
-public:
-	FVideoDriver_Cocoa() : DriverFactoryBase(Driver::DT_VIDEO, 10, "cocoa", "Cocoa Video Driver") {}
-	Driver *CreateInstance() const override { return new VideoDriver_Cocoa(); }
-};
-
-
-/**
- * Generic display driver for cocoa
- * On grounds to not duplicate some code, it contains a few variables
- * which are not used by all device drivers.
- */
-class CocoaSubdriver {
-public:
-	int device_width;     ///< Width of device in pixel
-	int device_height;    ///< Height of device in pixel
-	int device_depth;     ///< Colour depth of device in bit
+class VideoDriver_CocoaQuartz : public VideoDriver_Cocoa {
+private:
+	int buffer_depth;     ///< Colour depth of used frame buffer
+	void *pixel_buffer;   ///< used for direct pixel access
+	void *window_buffer;  ///< Colour translation from palette to screen
 
 	int window_width;     ///< Current window width in pixel
 	int window_height;    ///< Current window height in pixel
 	int window_pitch;
 
-	int buffer_depth;     ///< Colour depth of used frame buffer
-	void *pixel_buffer;   ///< used for direct pixel access
-	void *window_buffer;  ///< Colour translation from palette to screen
-	CGColorSpaceRef color_space; //< Window color space
-	id window;            ///< Pointer to window object
-
-#	define MAX_DIRTY_RECTS 100
-	Rect dirty_rects[MAX_DIRTY_RECTS]; ///< dirty rectangles
-	int num_dirty_rects;  ///< Number of dirty rectangles
 	uint32 palette[256];  ///< Colour Palette
 
-	bool active;          ///< Whether the window is visible
-	bool setup;
+	void BlitIndexedToView32(int left, int top, int right, int bottom);
+	void UpdatePalette(uint first_color, uint num_colors);
 
-	id cocoaview;         ///< Pointer to view object
+public:
+	CGContextRef cgcontext;      ///< Context reference for Quartz subdriver
 
-	/* Separate driver vars for Quarz
-	 * Needed here in order to avoid much code duplication */
-	CGContextRef cgcontext;    ///< Context reference for Quartz subdriver
+	VideoDriver_CocoaQuartz();
 
-	/* Driver methods */
-	/** Initialize driver */
-	virtual ~CocoaSubdriver() {}
+	const char *Start(const StringList &param) override;
+	void Stop() override;
 
-	/** Draw window
-	 * @param force_update Whether to redraw unconditionally
-	 */
-	virtual void Draw(bool force_update = false) = 0;
+	/** Return driver name */
+	const char *GetName() const override { return "cocoa"; }
 
-	/** Mark dirty a screen region
-	 * @param left x-coordinate of left border
-	 * @param top  y-coordinate of top border
-	 * @param width width or dirty rectangle
-	 * @param height height of dirty rectangle
-	 */
-	virtual void MakeDirty(int left, int top, int width, int height) = 0;
+	void AllocateBackingStore(bool force = false) override;
 
-	/** Update the palette */
-	virtual void UpdatePalette(uint first_color, uint num_colors) = 0;
+protected:
+	void Paint() override;
+	void CheckPaletteAnim() override;
 
-	virtual uint ListModes(OTTD_Point *modes, uint max_modes) = 0;
+	NSView* AllocateDrawView() override;
 
-	/** Change window resolution
-	 * @param w New window width
-	 * @param h New window height
-	 * @return Whether change was successful
-	 */
-	virtual bool ChangeResolution(int w, int h, int bpp) = 0;
-
-	/** Are we in fullscreen mode
-	 * @return whether fullscreen mode is currently used
-	 */
-	virtual bool IsFullscreen() = 0;
-
-	/** Toggle between fullscreen and windowed mode
-	 * @return whether switch was successful
-	 */
-	virtual bool ToggleFullscreen(bool fullscreen) { return false; };
-
-	/** Return the width of the current view
-	 * @return width of the current view
-	 */
-	virtual int GetWidth() = 0;
-
-	/** Return the height of the current view
-	 * @return height of the current view
-	 */
-	virtual int GetHeight() = 0;
-
-	/** Return the current pixel buffer
-	 * @return pixelbuffer
-	 */
-	virtual void *GetPixelBuffer() = 0;
-
-	/** Convert local coordinate to window server (CoreGraphics) coordinate
-	 * @param p local coordinates
-	 * @return window driver coordinates
-	 */
-	virtual CGPoint PrivateLocalToCG(NSPoint *p) = 0;
-
-	/** Return the mouse location
-	 * @param event UI event
-	 * @return mouse location as NSPoint
-	 */
-	virtual NSPoint GetMouseLocation(NSEvent *event) = 0;
-
-	/** Return whether the mouse is within our view
-	 * @param pt Mouse coordinates
-	 * @return Whether mouse coordinates are within view
-	 */
-	virtual bool MouseIsInsideView(NSPoint *pt) = 0;
-
-	/** Return whether the window is active (visible)
-	 * @return whether the window is visible or not
-	 */
-	virtual bool IsActive() = 0;
-
-	/** Whether the window was successfully resized
-	 * @return whether the window was successfully resized
-	 */
-	virtual bool WindowResized() { return false; };
+	void *GetVideoPointer() override { return this->buffer_depth == 8 ? this->pixel_buffer : this->window_buffer; }
 };
 
-extern CocoaSubdriver *_cocoa_subdriver;
-
-CocoaSubdriver *QZ_CreateWindowQuartzSubdriver(int width, int height, int bpp);
-
-uint QZ_ListModes(OTTD_Point *modes, uint max_modes, CGDirectDisplayID display_id, int display_depth);
+class FVideoDriver_CocoaQuartz : public DriverFactoryBase {
+public:
+	FVideoDriver_CocoaQuartz() : DriverFactoryBase(Driver::DT_VIDEO, 10, "cocoa", "Cocoa Video Driver") {}
+	Driver *CreateInstance() const override { return new VideoDriver_CocoaQuartz(); }
+};
 
 #endif /* VIDEO_COCOA_H */

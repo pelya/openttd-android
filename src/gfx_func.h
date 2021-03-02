@@ -56,8 +56,7 @@ extern CursorVars _cursor;
 extern bool _ctrl_pressed;   ///< Is Ctrl pressed?
 extern bool _shift_pressed;  ///< Is Shift pressed?
 extern bool _move_pressed;
-
-extern byte _fast_forward;
+extern uint16 _game_speed;
 
 extern bool _left_button_down;
 extern bool _left_button_clicked;
@@ -77,10 +76,12 @@ void HandleTextInput(const char *str, bool marked = false, const char *caret = n
 void HandleCtrlChanged();
 void HandleMouseEvents();
 void UpdateWindows();
+void ChangeGameSpeed(bool enable_fast_forward);
 
 void DrawMouseCursor();
 void ScreenSizeChanged();
 void GameSizeChanged();
+void UpdateGUIZoom();
 void UndrawMouseCursor();
 
 /** Size of the buffer used for drawing strings. */

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.9)
 
 if(NOT BINARY_NAME)
     set(BINARY_NAME openttd)
@@ -23,9 +23,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
 
 # Use GNUInstallDirs to allow customisation
-# but set our own default data dir
+# but set our own default data and bin dir
 if(NOT CMAKE_INSTALL_DATADIR)
     set(CMAKE_INSTALL_DATADIR "share/games")
+endif()
+if(NOT CMAKE_INSTALL_BINDIR)
+    set(CMAKE_INSTALL_BINDIR "games")
 endif()
 include(GNUInstallDirs)
 
@@ -106,6 +109,11 @@ if(ANDROID)
 include(AndroidSDL)
 endif()
 
+if(APPLE)
+	# Avoid searching for headers in Frameworks, and libraries in LIBDIR.
+	set(CMAKE_FIND_FRAMEWORK LAST)
+endif()
+
 # Prefer -pthread over -lpthread, which is often the better option of the two.
 set(CMAKE_THREAD_PREFER_PTHREAD YES)
 # Make sure we have Threads available.
@@ -118,8 +126,8 @@ find_package(PNG)
 
 if(NOT WIN32)
     find_package(Allegro)
-    find_package(Freetype)
     if(NOT APPLE)
+        find_package(Freetype)
         find_package(SDL2)
         if(NOT SDL2_FOUND)
             find_package(SDL)
@@ -134,7 +142,12 @@ if(NOT WIN32)
         find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
         find_library(AUDIOUNIT_LIBRARY AudioUnit)
         find_library(COCOA_LIBRARY Cocoa)
+        find_library(QUARTZCORE_LIBRARY QuartzCore)
     endif()
+endif()
+
+if(NOT EMSCRIPTEN)
+    find_package(OpenGL COMPONENTS OpenGL)
 endif()
 
 if(MSVC)
@@ -146,19 +159,14 @@ find_package(Xaudio2)
 
 find_package(Grfcodec)
 
-# IPO is only properly supported from CMake 3.9. Despite the fact we are
-# CMake 3.5, still enable IPO if we detect we are 3.9+.
-if(POLICY CMP0069)
-    cmake_policy(SET CMP0069 NEW)
-    include(CheckIPOSupported)
-    check_ipo_supported(RESULT IPO_FOUND)
-endif()
+include(CheckIPOSupported)
+check_ipo_supported(RESULT IPO_FOUND)
 
 show_options()
 
 if(UNIX AND NOT APPLE AND NOT OPTION_DEDICATED)
-    if(NOT SDL_FOUND AND NOT SDL2_FOUND)
-        message(FATAL_ERROR "SDL or SDL2 is required for this platform")
+    if(NOT SDL_FOUND AND NOT SDL2_FOUND AND NOT ALLEGRO_FOUND)
+        message(FATAL_ERROR "SDL, SDL2 or Allegro is required for this platform")
     endif()
 endif()
 if(APPLE)
@@ -171,6 +179,30 @@ if(APPLE)
     if(NOT COCOA_LIBRARY)
         message(FATAL_ERROR "Cocoa is required for this platform")
     endif()
+    if(NOT QUARTZCORE_LIBRARY)
+        message(FATAL_ERROR "QuartzCore is required for this platform")
+    endif()
+endif()
+
+if(OPTION_PACKAGE_DEPENDENCIES)
+    if(NOT UNIX)
+        message(FATAL_ERROR "Can only package dependencies on Linux")
+    endif()
+    if(OPTION_INSTALL_FHS)
+        message(FATAL_ERROR "Cannot install in FHS folders when we are packaging dependencies")
+    endif()
+    if(${CMAKE_VERSION} VERSION_LESS "3.16.0")
+        message(FATAL_ERROR "OPTION_PACKAGE_DEPENDENCIES can only work with CMake 3.16+; you are using ${CMAKE_VERSION}")
+    endif()
+
+    # If we are packaging dependencies, we do two things:
+    # 1) set the RPATH to include $ORIGIN/lib; $ORIGIN (that literal string)
+    #    is a Linux indicator for "path where application is". In CMake, we
+    #    have to do this before add_executable() is executed.
+    # 2) copy the libraries that we compile against to the "lib" folder.
+    #    This is done in InstallAndPackage.cmake.
+    set(CMAKE_INSTALL_RPATH "\$ORIGIN/lib")
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 endif()
 
 include(SourceList)
@@ -192,6 +224,11 @@ endif()
 
 set_target_properties(openttd PROPERTIES OUTPUT_NAME "${BINARY_NAME}")
 # All other files are added via target_sources()
+
+if(MSVC)
+    # Add DPI manifest to project; other WIN32 targets get this via ottdres.rc
+    target_sources(openttd PRIVATE "${CMAKE_SOURCE_DIR}/os/windows/openttd.manifest")
+endif()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/media/baseset)
@@ -231,6 +268,16 @@ if(NOT OPTION_DEDICATED)
     link_package(Fontconfig TARGET Fontconfig::Fontconfig)
     link_package(ICU_lx)
     link_package(ICU_i18n)
+
+    if(SDL2_FOUND AND OPENGL_FOUND AND UNIX)
+        # SDL2 dynamically loads OpenGL if needed, so do not link to OpenGL when
+        # on Linux. For Windows, we need to link to OpenGL as we also have a win32
+        # driver using it.
+        add_definitions(-DWITH_OPENGL)
+        message(STATUS "OpenGL found -- -DWITH_OPENGL -- (via SDL2)")
+    else()
+        link_package(OpenGL TARGET OpenGL::GL)
+    endif()
 endif()
 
 if(ANDROID)
@@ -250,6 +297,7 @@ if(APPLE)
         ${AUDIOTOOLBOX_LIBRARY}
         ${AUDIOUNIT_LIBRARY}
         ${COCOA_LIBRARY}
+        ${QUARTZCORE_LIBRARY}
     )
 
     add_definitions(
@@ -336,5 +384,9 @@ endif()
 
 include(CreateRegression)
 create_regression()
+
+if(APPLE OR WIN32)
+    find_package(Pandoc)
+endif()
 
 include(InstallAndPackage)

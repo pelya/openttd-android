@@ -256,12 +256,16 @@ CommandCost CmdGoalQuestion(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	if (StrEmpty(text)) return CMD_ERROR;
 	if (is_client) {
-		if (NetworkClientInfo::GetByClientID(client) == nullptr) return CMD_ERROR;
+		/* Only check during pre-flight; the client might have left between
+		 * testing and executing. In that case it is fine to just ignore the
+		 * fact the client is no longer here. */
+		if (!(flags & DC_EXEC) && _network_server && NetworkClientInfo::GetByClientID(client) == nullptr) return CMD_ERROR;
 	} else {
 		if (company != INVALID_COMPANY && !Company::IsValidID(company)) return CMD_ERROR;
 	}
-	if (CountBits(button_mask) < 1 || CountBits(button_mask) > 3) return CMD_ERROR;
-	if (type >= GOAL_QUESTION_TYPE_COUNT) return CMD_ERROR;
+	uint min_buttons = (type == GQT_QUESTION ? 1 : 0);
+	if (CountBits(button_mask) < min_buttons || CountBits(button_mask) > 3) return CMD_ERROR;
+	if (type >= GQT_END) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
 		if (is_client) {
