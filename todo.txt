@@ -16,3 +16,5 @@
 - Crash on GRF settings in 'Load game' dialogs and inside the game. https://github.com/pelya/openttd-android/issues/8
 
 - Default tramway button not appearing in vertical toolbar when compact toolbar is disabled. https://github.com/pelya/commandergenius/issues/119
+
+- Checkboxes are too narrow in 'Check online content' dialog.
