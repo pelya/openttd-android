@@ -564,7 +564,7 @@ public:
 				break;
 
 			case WID_NCL_CHECKBOX:
-				size->width = this->checkbox_size.width + WD_MATRIX_RIGHT + WD_MATRIX_LEFT;
+				size->width = GetMinSizing(NWST_BUTTON, this->checkbox_size.width) + WD_MATRIX_RIGHT + WD_MATRIX_LEFT;
 				break;
 
 			case WID_NCL_TYPE: {
@@ -654,7 +654,7 @@ public:
 				case ContentInfo::DOES_NOT_EXIST: sprite = SPR_BLOT; pal = PALETTE_TO_RED;   break;
 				default: NOT_REACHED();
 			}
-			DrawSprite(sprite, pal, nwi_checkbox->pos_x + (pal == PAL_NONE ? 2 : 3), y + sprite_y_offset + (pal == PAL_NONE ? 1 : 0));
+			DrawSprite(sprite, pal, nwi_checkbox->pos_x + (nwi_checkbox->current_x - this->checkbox_size.width) / 2 + (pal == PAL_NONE ? 2 : 3), y + sprite_y_offset + (pal == PAL_NONE ? 1 : 0));
 
 			StringID str = STR_CONTENT_TYPE_BASE_GRAPHICS + ci->type - CONTENT_TYPE_BASE_GRAPHICS;
 			DrawString(nwi_type->pos_x, nwi_type->pos_x + nwi_type->current_x - 1, y + text_y_offset, str, TC_BLACK, SA_HOR_CENTER);
@@ -837,10 +837,6 @@ public:
 				this->InvalidateData();
 				break;
 
-			case WID_NCL_CANCEL:
-				delete this;
-				break;
-
 			case WID_NCL_OPEN_URL:
 				if (this->selected != nullptr) {
 					extern void OpenBrowser(const char *url);
@@ -1013,8 +1009,6 @@ public:
 		for (TextfileType tft = TFT_BEGIN; tft < TFT_END; tft++) {
 			this->SetWidgetDisabledState(WID_NCL_TEXTFILE + tft, this->selected == nullptr || this->selected->state != ContentInfo::ALREADY_HERE || this->selected->GetTextfile(tft) == nullptr);
 		}
-
-		this->GetWidget<NWidgetCore>(WID_NCL_CANCEL)->widget_data = this->filesize_sum == 0 ? STR_AI_SETTINGS_CLOSE : STR_AI_LIST_CANCEL;
 	}
 };
 
@@ -1106,17 +1100,11 @@ static const NWidgetPart _nested_network_content_list_widgets[] = {
 			NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_SEARCH_EXTERNAL), SetResize(1, 0), SetFill(1, 0),
 										SetDataTip(STR_CONTENT_SEARCH_EXTERNAL, STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP),
 			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, 8, 0),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_CANCEL), SetResize(1, 0), SetFill(1, 0),
-											SetDataTip(STR_BUTTON_CANCEL, STR_NULL),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NCL_DOWNLOAD), SetResize(1, 0), SetFill(1, 0),
 											SetDataTip(STR_CONTENT_DOWNLOAD_CAPTION, STR_CONTENT_DOWNLOAD_CAPTION_TOOLTIP),
+				/* Resize button. */
+				NWidget(WWT_RESIZEBOX, COLOUR_LIGHT_BLUE),
 			EndContainer(),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 2), SetResize(1, 0),
-		/* Resize button. */
-		NWidget(NWID_HORIZONTAL),
-			NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-			NWidget(WWT_RESIZEBOX, COLOUR_LIGHT_BLUE),
 		EndContainer(),
 	EndContainer(),
 };
