@@ -893,13 +893,12 @@ static CallBackFunction ToolbarZoomOutClick(Window *w)
 
 /* --- Rail button menu --- */
 
-enum { MENU_IDX_WATER = RAILTYPE_END + 1, MENU_IDX_AIR, MENU_IDX_TRAM, MENU_IDX_ROAD, };
+enum { MENU_IDX_WATER = RAILTYPE_END + 1, MENU_IDX_AIR, MENU_IDX_TRAM, MENU_IDX_ROAD = MENU_IDX_TRAM + ROADTYPE_END + 1, };
 
 static CallBackFunction ToolbarBuildRailClick(Window *w)
 {
 	DropDownList list = GetRailTypeDropDownList();
 	if (_settings_client.gui.compact_vertical_toolbar) {
-		const Company *c = Company::Get(_local_company);
 		DropDownList roads = GetRoadTypeDropDownList(RTTB_ROAD);
 		for (auto &&iter: roads) {
 			if (iter->result == INVALID_ROADTYPE) continue;
@@ -908,7 +907,14 @@ static CallBackFunction ToolbarBuildRailClick(Window *w)
 			elem->result += MENU_IDX_ROAD;
 			list.emplace_back(elem);
 		}
-		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDTRAMS, PAL_NONE, STR_ROAD_MENU_TRAM_CONSTRUCTION, MENU_IDX_TRAM, !HasBit(c->avail_roadtypes, ROADTYPE_TRAM)));
+		DropDownList trams = GetRoadTypeDropDownList(RTTB_TRAM);
+		for (auto &&iter: trams) {
+			if (iter->result == INVALID_ROADTYPE) continue;
+			const DropDownListIconItem *ptr = static_cast<const DropDownListIconItem *>(iter.get());
+			DropDownListIconItem *elem = new DropDownListIconItem(*ptr);
+			elem->result += MENU_IDX_TRAM;
+			list.emplace_back(elem);
+		}
 		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDWATER, PAL_NONE, STR_WATERWAYS_MENU_WATERWAYS_CONSTRUCTION, MENU_IDX_WATER, false));
 		list.emplace_back(new DropDownListIconItem(SPR_IMG_BUILDAIR, PAL_NONE, STR_AIRCRAFT_MENU_AIRPORT_CONSTRUCTION, MENU_IDX_AIR, false));
 	}
@@ -920,6 +926,7 @@ static CallBackFunction ToolbarBuildRailClick(Window *w)
 static CallBackFunction MenuClickBuildRoad(int index);
 static CallBackFunction MenuClickBuildWater(int index);
 static CallBackFunction MenuClickBuildAir(int index);
+static CallBackFunction ToolbarBuildTramClick(Window *w);
 
 /**
  * Handle click on the entry in the Build Rail menu.
@@ -932,8 +939,8 @@ static CallBackFunction MenuClickBuildRail(int index)
 	if (index >= MENU_IDX_ROAD) {
 		return MenuClickBuildRoad(index - MENU_IDX_ROAD);
 	}
-	if (index == MENU_IDX_TRAM) {
-		return MenuClickBuildRoad(ROADTYPE_TRAM);
+	if (index >= MENU_IDX_TRAM && index < MENU_IDX_ROAD) {
+		return MenuClickBuildRoad(index - MENU_IDX_TRAM);
 	}
 	if (index == MENU_IDX_WATER) {
 		return MenuClickBuildWater(0);
