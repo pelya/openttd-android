@@ -13,6 +13,4 @@
 
 - Cannot click on a depot if scroll mode is set to VSM_VIEWPORT_RMB_FIXED. https://github.com/pelya/openttd-android/issues/3
 
-- Crash on GRF settings in 'Load game' dialogs and inside the game. https://github.com/pelya/openttd-android/issues/8
-
 - Default tramway button not appearing in vertical toolbar when compact toolbar is disabled. https://github.com/pelya/commandergenius/issues/119
