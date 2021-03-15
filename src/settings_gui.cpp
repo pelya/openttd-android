@@ -653,7 +653,6 @@ struct GameOptionsWindow : Window {
 		this->SetWidgetLoweredState(WID_GO_8BPP_BUTTON, _ini_blitter == "8bpp-optimized");
 		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == "16bpp-simple");
 		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter == "32bpp-anim" || _ini_blitter == "");
-		this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);
@@ -680,6 +679,14 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_AUTOSAVE_FRAME, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_AUTOSAVE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_GUI_ZOOM_FRAME, STR_NULL),
+					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_GUI_ZOOM_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP), SetFill(1, 0),
+				EndContainer(),
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_WINDOWS_TITLEBARS, STR_NULL),
+					NWidget(NWID_HORIZONTAL),
+						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_WINDOWS_TITLEBARS), SetMinimalSize(21, 9), SetDataTip(STR_CONFIG_SETTING_WINDOWS_TITLEBARS, STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT), SetFill(1, 0),
+					EndContainer(),
+				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_RESOLUTION, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_RESOLUTION_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_RESOLUTION_TOOLTIP), SetFill(1, 0), SetPadding(0, 0, 3, 0),
 					NWidget(NWID_HORIZONTAL),
@@ -690,14 +697,6 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_8BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_8BPP, STR_CONFIG_SETTING_VIDEO_8BPP_HELPTEXT),
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_16BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_16BPP, STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT),
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_32BPP_BUTTON), SetMinimalSize(9, 9), SetDataTip(STR_CONFIG_SETTING_VIDEO_24BPP, STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT),
-					EndContainer(),
-				EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_GUI_ZOOM_FRAME, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_GUI_ZOOM_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP), SetFill(1, 0),
-				EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY),
-					NWidget(NWID_HORIZONTAL),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_WINDOWS_TITLEBARS), SetMinimalSize(21, 9), SetDataTip(STR_CONFIG_SETTING_WINDOWS_TITLEBARS, STR_CONFIG_SETTING_WINDOWS_TITLEBARS_HELPTEXT), SetFill(1, 0),
 					EndContainer(),
 				EndContainer(),
 			EndContainer(),
@@ -712,13 +711,13 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_BUTTON_SIZE, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_BUTTON_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
-				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_FONT_SIZE, STR_NULL),
-					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_TEXT_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP), SetFill(1, 0),
-				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_FONT_ZOOM, STR_NULL),
+					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_TEXT_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_FONT_SIZE_TOOLTIP), SetFill(1, 0),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_FONT_ZOOM_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_TOOLTIP), SetFill(1, 0),
 				EndContainer(),
+			EndContainer(),
 
+			NWidget(NWID_VERTICAL), SetPIP(0, 6, 0),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_BASE_GRF, STR_NULL), SetPadding(0, 10, 0, 10),
 					NWidget(NWID_HORIZONTAL), SetPIP(0, 30, 0),
 						NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_BASE_GRF_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_RAW_STRING, STR_GAME_OPTIONS_BASE_GRF_TOOLTIP),
