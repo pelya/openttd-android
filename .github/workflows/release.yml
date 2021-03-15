@@ -496,7 +496,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /usr/local/share/vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-release
+        key: ${{ steps.key.outputs.image }}-vcpkg-release-0 # Increase the number whenever dependencies are modified
+        restore-keys: |
+          ${{ steps.key.outputs.image }}-vcpkg-release
+          ${{ steps.key.outputs.image }}-vcpkg-x64
 
     - name: Prepare vcpkg
       run: |
@@ -696,7 +699,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-0 # Increase the number whenever dependencies are modified
+        restore-keys: |
+          ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
 
     - name: Prepare vcpkg
       shell: bash
@@ -859,7 +864,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
     - name: Trigger 'New OpenTTD release'
       uses: peter-evans/repository-dispatch@v1

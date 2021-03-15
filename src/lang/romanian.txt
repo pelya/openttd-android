@@ -234,6 +234,7 @@ STR_TOOLTIP_SORT_CRITERIA                                       :{BLACK}Alegeți
 STR_TOOLTIP_FILTER_CRITERIA                                     :{BLACK}Alegeți criteriul de filtrare
 STR_BUTTON_SORT_BY                                              :{BLACK}Ordonează
 STR_BUTTON_CATCHMENT                                            :Arie de acoperire
+STR_TOOLTIP_CATCHMENT                                           :{BLACK}Comută afișajul ariei de acoperire
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Închide fereastra
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Titlul ferestrei - trage de aici pentru a muta fereastra
@@ -977,12 +978,16 @@ STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Rezoluţ
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Alege rezoluţia dorită pentru joc
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :(alta/nespecificată)
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Mărime interfată
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Alege mărimea elementelor de interfaţa
 
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normală
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_2X_ZOOM                      :Mărime dublă
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_4X_ZOOM                      :Mărime împătrită
+
+
+STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM                     :Mărime dublă
 
 
 
@@ -1665,6 +1670,7 @@ STR_CONFIG_SETTING_VEHICLES_ROUTING                             :{ORANGE}Direcţ
 STR_CONFIG_SETTING_ACCIDENTS                                    :{ORANGE}Dezastre / Accidente
 STR_CONFIG_SETTING_GENWORLD                                     :{ORANGE}Generare lume
 STR_CONFIG_SETTING_ENVIRONMENT                                  :{ORANGE}Mediu
+STR_CONFIG_SETTING_ENVIRONMENT_AUTHORITIES                      :{ORANGE}Autorități
 STR_CONFIG_SETTING_ENVIRONMENT_TOWNS                            :{ORANGE}Oraşe
 STR_CONFIG_SETTING_ENVIRONMENT_INDUSTRIES                       :{ORANGE}Industrii
 STR_CONFIG_SETTING_ENVIRONMENT_CARGODIST                        :{ORANGE}Distribuţie cargo
@@ -1704,6 +1710,8 @@ STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... setu
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... setul de bază pentru muzică '{STRING}' este ignorat: nu a fost găsit
 STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Fără memorie
 STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Nu s-au putut rezerva {BYTES} pentru cache al sprite-urilor. Mărimea cache-ului a fost redusă la {BYTES}. Performanța OpenTTD va fi redusă. Pentru a micșora cerințele jocului cu privire la memorie, poți încerca să dezactivezi modul grafic 32bpp și/sau reducerea numărului de nivele zoom
+
+# Video initalization errors
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -1747,6 +1755,7 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Acestei 
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Ieşire din joc
+STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Eşti sigur că vrei să abandonezi jocul curent?
 STR_QUIT_YES                                                    :{BLACK}Da
 STR_QUIT_NO                                                     :{BLACK}Nu
 
@@ -2223,6 +2232,7 @@ STR_MISSING_GRAPHICS_SET_MESSAGE                                :{BLACK}OpenTTD 
 STR_MISSING_GRAPHICS_YES_DOWNLOAD                               :{BLACK}Da, descarcă pachetele grafice
 STR_MISSING_GRAPHICS_NO_QUIT                                    :{BLACK}Nu, ieși din OpenTTD
 
+
 # Transparency settings window
 STR_TRANSPARENCY_CAPTION                                        :{WHITE}Optiuni transparenţă
 STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Comută transparenţa pentru nume/semne. Ctrl+Click pentru blocare
@@ -2505,7 +2515,7 @@ STR_FOUND_TOWN_SELECT_LAYOUT_RANDOM                             :{BLACK}Aleator
 # Fund new industry window
 STR_FUND_INDUSTRY_CAPTION                                       :{WHITE}Construieşte un nou obiectiv industrial
 STR_FUND_INDUSTRY_SELECTION_TOOLTIP                             :{BLACK}Alege industria potrivită din acestă listă
-STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES                        :Multe industrii aleatoare
+STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES                        :{BLACK}Creează multe industrii aleatoare
 STR_FUND_INDUSTRY_MANY_RANDOM_INDUSTRIES_TOOLTIP                :{BLACK}Umple harta cu industrii generate aleator
 STR_FUND_INDUSTRY_INDUSTRY_BUILD_COST                           :{BLACK}Cost: {YELLOW}{CURRENCY_LONG}
 STR_FUND_INDUSTRY_PROSPECT_NEW_INDUSTRY                         :{BLACK}Prospectează
@@ -2661,6 +2671,7 @@ STR_FRAMERATE_MEMORYUSE                                         :{WHITE}Memorie
 STR_FRAMERATE_DATA_POINTS                                       :{BLACK}Date bazate pe măsurători {COMMA}
 STR_FRAMERATE_MS_GOOD                                           :{LTBLUE}{DECIMAL} ms
 STR_FRAMERATE_FPS_BAD                                           :{RED}{DECIMAL} cadre/s
+STR_FRAMERATE_BYTES_WARN                                        :{YELLOW}{BYTES}
 STR_FRAMERATE_GRAPH_MILLISECONDS                                :{TINY_FONT}{COMMA} ms
 ############ Leave those lines in this order!!
 STR_FRAMERATE_VIDEO                                             :{BLACK}Ieșire video:
@@ -3011,20 +3022,17 @@ STR_LOCAL_AUTHORITY_ACTION_TOOLTIP_BRIBE                        :{YELLOW}Mituie�
 # Goal window
 STR_GOALS_CAPTION                                               :{WHITE}{COMPANY} Scopuri
 STR_GOALS_SPECTATOR_CAPTION                                     :{WHITE}Scopuri globale
-STR_GOALS_GLOBAL_TITLE                                          :{BLACK}Ţinte globale:
 STR_GOALS_TEXT                                                  :{ORANGE}{STRING}
 STR_GOALS_NONE                                                  :{ORANGE}- Nici unul -
-STR_GOALS_SPECTATOR_NONE                                        :{ORANGE}- Nu este aplicabil -
 STR_GOALS_PROGRESS                                              :{ORANGE}{STRING}
 STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
-STR_GOALS_COMPANY_TITLE                                         :{BLACK}Ţintele companiei:
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Click pe ţintă pentru a centra ecranul principal pe industrie/oraş/zonă. Ctrl+Click deschide o fereastră nouă de vizualizare a industriei/oraşului/zonei
 
 # Goal question window
-STR_GOAL_QUESTION_CAPTION_QUESTION                              :Întrebare
-STR_GOAL_QUESTION_CAPTION_INFORMATION                           :Informație
-STR_GOAL_QUESTION_CAPTION_WARNING                               :Atenționare
-STR_GOAL_QUESTION_CAPTION_ERROR                                 :Eroare
+STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}Întrebare
+STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}Informație
+STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}Atenționare
+STR_GOAL_QUESTION_CAPTION_ERROR                                 :{YELLOW}Eroare
 
 ############ Start of Goal Question button list
 STR_GOAL_QUESTION_BUTTON_CANCEL                                 :Anulează
@@ -3249,6 +3257,7 @@ STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industri
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Nimic-
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_LIST_CAPTION                             :{BLACK}Numele industriilor - clic pe nume pentru focalizarea pe industrie. Ctrl+Click deschide o fereastră cu locaţia industriei
+STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :Toate tipurile de mărfuri
 
 # Industry view
 STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTRY}
@@ -3541,6 +3550,8 @@ STR_REPLACE_ELRAIL_VEHICLES                                     :Vehicule Electr
 STR_REPLACE_MONORAIL_VEHICLES                                   :Vehicule Monorail
 STR_REPLACE_MAGLEV_VEHICLES                                     :Vehicule Pernă Magnetică
 
+STR_REPLACE_ROAD_VEHICLES                                       :Autovehicule
+STR_REPLACE_TRAM_VEHICLES                                       :Tramvaie
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Retragere vagoane: {ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Fă optiunea de autoînlocuire să păstreze identică lungimea unui tren prin eliminarea vagoanelor (începând din faţă) dacă înlocuirea locomotivei ar face trenul mai lung
@@ -4525,10 +4536,10 @@ STR_INDUSTRY_NAME_SUGAR_MINE                                    :Mină de zahăr
 ##id 0x6000
 STR_SV_EMPTY                                                    :
 STR_SV_UNNAMED                                                  :NoName
-STR_SV_TRAIN_NAME                                               :Trenul {COMMA}
-STR_SV_ROAD_VEHICLE_NAME                                        :Autovehiculul {COMMA}
-STR_SV_SHIP_NAME                                                :Nava {COMMA}
-STR_SV_AIRCRAFT_NAME                                            :Aeronava {COMMA}
+STR_SV_TRAIN_NAME                                               :Trenul #{COMMA}
+STR_SV_ROAD_VEHICLE_NAME                                        :Autovehiculul #{COMMA}
+STR_SV_SHIP_NAME                                                :Nava #{COMMA}
+STR_SV_AIRCRAFT_NAME                                            :Aeronava #{COMMA}
 
 STR_SV_STNAME                                                   :{STRING}
 STR_SV_STNAME_NORTH                                             :{STRING} Nord

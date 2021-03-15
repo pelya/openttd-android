@@ -45,7 +45,7 @@
 #include "safeguards.h"
 
 /* scriptfile handling */
-static bool _script_running; ///< Script is running (used to abort execution when #ConReturn is encountered).
+static uint _script_current_depth; ///< Depth of scripts running (used to abort execution when #ConReturn is encountered).
 
 /** File list storage for the console, for caching the last 'ls' command. */
 class ConsoleFileList : public FileList {
@@ -974,10 +974,16 @@ DEF_CONSOLE_CMD(ConExec)
 		return true;
 	}
 
-	_script_running = true;
+	if (_script_current_depth == 11) {
+		IConsoleError("Maximum 'exec' depth reached; script A is calling script B is calling script C ... more than 10 times.");
+		return true;
+	}
+
+	_script_current_depth++;
+	uint script_depth = _script_current_depth;
 
 	char cmdline[ICON_CMDLN_SIZE];
-	while (_script_running && fgets(cmdline, sizeof(cmdline), script_file) != nullptr) {
+	while (fgets(cmdline, sizeof(cmdline), script_file) != nullptr) {
 		/* Remove newline characters from the executing script */
 		for (char *cmdptr = cmdline; *cmdptr != '\0'; cmdptr++) {
 			if (*cmdptr == '\n' || *cmdptr == '\r') {
@@ -986,13 +992,18 @@ DEF_CONSOLE_CMD(ConExec)
 			}
 		}
 		IConsoleCmdExec(cmdline);
+		/* Ensure that we are still on the same depth or that we returned via 'return'. */
+		assert(_script_current_depth == script_depth || _script_current_depth == script_depth - 1);
+
+		/* The 'return' command was executed. */
+		if (_script_current_depth == script_depth - 1) break;
 	}
 
 	if (ferror(script_file)) {
 		IConsoleError("Encountered error while trying to read from script file");
 	}
 
-	_script_running = false;
+	if (_script_current_depth == script_depth) _script_current_depth--;
 	FioFCloseFile(script_file);
 	return true;
 }
@@ -1004,7 +1015,7 @@ DEF_CONSOLE_CMD(ConReturn)
 		return true;
 	}
 
-	_script_running = false;
+	_script_current_depth--;
 	return true;
 }
 
@@ -1354,7 +1365,7 @@ DEF_CONSOLE_CMD(ConRescanNewGRF)
 		return true;
 	}
 
-	ScanNewGRFFiles(nullptr);
+	RequestNewGRFScan();
 
 	return true;
 }
@@ -1423,46 +1434,80 @@ DEF_CONSOLE_CMD(ConAlias)
 DEF_CONSOLE_CMD(ConScreenShot)
 {
 	if (argc == 0) {
-		IConsoleHelp("Create a screenshot of the game. Usage: 'screenshot [big | giant | no_con | minimap] [file name]'");
-		IConsoleHelp("'big' makes a zoomed-in screenshot of the visible area, 'giant' makes a screenshot of the "
-				"whole map, 'no_con' hides the console to create the screenshot. 'big' or 'giant' "
-				"screenshots are always drawn without console. "
-				"'minimap' makes a top-viewed minimap screenshot of whole world which represents one tile by one pixel.");
+		IConsoleHelp("Create a screenshot of the game. Usage: 'screenshot [viewport | normal | big | giant | heightmap | minimap] [no_con] [size <width> <height>] [<filename>]'");
+		IConsoleHelp("'viewport' (default) makes a screenshot of the current viewport (including menus, windows, ..), "
+				"'normal' makes a screenshot of the visible area, "
+				"'big' makes a zoomed-in screenshot of the visible area, "
+				"'giant' makes a screenshot of the whole map, "
+				"'heightmap' makes a heightmap screenshot of the map that can be loaded in as heightmap, "
+				"'minimap' makes a top-viewed minimap screenshot of the whole world which represents one tile by one pixel. "
+				"'no_con' hides the console to create the screenshot (only useful in combination with 'viewport'). "
+				"'size' sets the width and height of the viewport to make a screenshot of (only useful in combination with 'normal' or 'big').");
 		return true;
 	}
 
-	if (argc > 3) return false;
+	if (argc > 7) return false;
 
 	ScreenshotType type = SC_VIEWPORT;
+	uint32 width = 0;
+	uint32 height = 0;
 	const char *name = nullptr;
+	uint32 arg_index = 1;
 
-	if (argc > 1) {
-		if (strcmp(argv[1], "big") == 0) {
-			/* screenshot big [filename] */
+	if (argc > arg_index) {
+		if (strcmp(argv[arg_index], "viewport") == 0) {
+			type = SC_VIEWPORT;
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "normal") == 0) {
+			type = SC_DEFAULTZOOM;
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "big") == 0) {
 			type = SC_ZOOMEDIN;
-			if (argc > 2) name = argv[2];
-		} else if (strcmp(argv[1], "giant") == 0) {
-			/* screenshot giant [filename] */
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "giant") == 0) {
 			type = SC_WORLD;
-			if (argc > 2) name = argv[2];
-		} else if (strcmp(argv[1], "minimap") == 0) {
-			/* screenshot minimap [filename] */
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "heightmap") == 0) {
+			type = SC_HEIGHTMAP;
+			arg_index += 1;
+		} else if (strcmp(argv[arg_index], "minimap") == 0) {
 			type = SC_MINIMAP;
-			if (argc > 2) name = argv[2];
-		} else if (strcmp(argv[1], "no_con") == 0) {
-			/* screenshot no_con [filename] */
-			IConsoleClose();
-			if (argc > 2) name = argv[2];
-		} else if (argc == 2) {
-			/* screenshot filename */
-			name = argv[1];
-		} else {
-			/* screenshot argv[1] argv[2] - invalid */
-			return false;
+			arg_index += 1;
 		}
 	}
 
-	MakeScreenshot(type, name);
+	if (argc > arg_index && strcmp(argv[arg_index], "no_con") == 0) {
+		if (type != SC_VIEWPORT) {
+			IConsoleError("'no_con' can only be used in combination with 'viewport'");
+			return true;
+		}
+		IConsoleClose();
+		arg_index += 1;
+	}
+
+	if (argc > arg_index + 2 && strcmp(argv[arg_index], "size") == 0) {
+		/* size <width> <height> */
+		if (type != SC_DEFAULTZOOM && type != SC_ZOOMEDIN) {
+			IConsoleError("'size' can only be used in combination with 'normal' or 'big'");
+			return true;
+		}
+		GetArgumentInteger(&width, argv[arg_index + 1]);
+		GetArgumentInteger(&height, argv[arg_index + 2]);
+		arg_index += 3;
+	}
+
+	if (argc > arg_index) {
+		/* Last parameter that was not one of the keywords must be the filename. */
+		name = argv[arg_index];
+		arg_index += 1;
+	}
+
+	if (argc > arg_index) {
+		/* We have parameters we did not process; means we misunderstood any of the above. */
+		return false;
+	}
+
+	MakeScreenshot(type, name, width, height);
 	return true;
 }
 
@@ -1848,7 +1893,7 @@ DEF_CONSOLE_CMD(ConContent)
 			 * to download every available package on BaNaNaS. This is not in
 			 * the spirit of this service. Additionally, these few people were
 			 * good for 70% of the consumed bandwidth of BaNaNaS. */
-			IConsolePrintF(CC_ERROR, "'select all' is no longer supported since 1.11");
+			IConsoleError("'select all' is no longer supported since 1.11");
 		} else {
 			_network_content_client.Select((ContentID)atoi(argv[2]));
 		}

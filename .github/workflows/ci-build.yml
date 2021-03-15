@@ -26,6 +26,9 @@ jobs:
         - compiler: gcc
           cxxcompiler: g++
           libsdl: libsdl1.2-dev
+        - compiler: gcc
+          cxxcompiler: g++
+          extra-cmake-parameters: -DOPTION_DEDICATED=ON
 
     runs-on: ubuntu-20.04
     env:
@@ -80,7 +83,7 @@ jobs:
         cd build
 
         echo "::group::CMake"
-        cmake ..
+        cmake .. ${{ matrix.extra-cmake-parameters }}
         echo "::endgroup::"
 
         echo "::group::Build"
@@ -120,7 +123,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /usr/local/share/vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-0 # Increase the number whenever dependencies are modified
+        restore-keys: |
+          ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
 
     - name: Prepare vcpkg
       run: |

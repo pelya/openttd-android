@@ -124,29 +124,32 @@ find_package(LibLZMA)
 find_package(LZO)
 find_package(PNG)
 
-if(NOT WIN32)
-    find_package(Allegro)
-    if(NOT APPLE)
-        find_package(Freetype)
-        find_package(SDL2)
-        if(NOT SDL2_FOUND)
-            find_package(SDL)
+if(NOT OPTION_DEDICATED)
+    if(NOT WIN32)
+        find_package(Allegro)
+        if(NOT APPLE)
+            find_package(Freetype)
+            find_package(SDL2)
+            if(NOT SDL2_FOUND)
+                find_package(SDL)
+            endif()
+            find_package(Fluidsynth)
+            find_package(Timidity)
+            find_package(Fontconfig)
+            find_package(ICU OPTIONAL_COMPONENTS i18n lx)
         endif()
-        find_package(Fluidsynth)
-        find_package(Timidity)
-        find_package(Fontconfig)
-        find_package(ICU OPTIONAL_COMPONENTS i18n lx)
-    else()
-        find_package(Iconv)
-
-        find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
-        find_library(AUDIOUNIT_LIBRARY AudioUnit)
-        find_library(COCOA_LIBRARY Cocoa)
-        find_library(QUARTZCORE_LIBRARY QuartzCore)
     endif()
 endif()
+if(APPLE)
+    find_package(Iconv)
 
-if(NOT EMSCRIPTEN)
+    find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
+    find_library(AUDIOUNIT_LIBRARY AudioUnit)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(QUARTZCORE_LIBRARY QuartzCore)
+endif()
+
+if(NOT EMSCRIPTEN AND NOT OPTION_DEDICATED)
     find_package(OpenGL COMPONENTS OpenGL)
 endif()
 
@@ -231,7 +234,7 @@ if(MSVC)
 endif()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-add_subdirectory(${CMAKE_SOURCE_DIR}/media/baseset)
+add_subdirectory(${CMAKE_SOURCE_DIR}/media)
 
 add_dependencies(openttd
     find_version)
@@ -239,6 +242,7 @@ add_dependencies(openttd
 target_link_libraries(openttd
     openttd::languages
     openttd::settings
+    openttd::media
     openttd::basesets
     openttd::script_api
     Threads::Threads

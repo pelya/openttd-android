@@ -11,12 +11,9 @@
 #define THREAD_H
 
 #include "debug.h"
+#include "crashlog.h"
 #include <system_error>
 #include <thread>
-
-/** Signal used for signalling we knowingly want to end the thread. */
-class OTTDThreadExitSignal { };
-
 
 /**
  * Sleep on the current thread for a defined time.
@@ -51,10 +48,10 @@ inline bool StartNewThread(std::thread *thr, const char *name, TFn&& _Fx, TArgs&
 	try {
 		std::thread t([] (const char *name, TFn&& F, TArgs&&... A) {
 				SetCurrentThreadName(name);
+				CrashLog::InitThread();
 				try {
 					/* Call user function with the given arguments. */
 					F(A...);
-				} catch (OTTDThreadExitSignal&) {
 				} catch (...) {
 					NOT_REACHED();
 				}

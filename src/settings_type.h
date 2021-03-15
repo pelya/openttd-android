@@ -21,6 +21,15 @@
 #include "zoom_type.h"
 #include "openttd.h"
 
+/* Used to validate sizes of "max" value in settings. */
+const size_t MAX_SLE_UINT8 = UINT8_MAX;
+const size_t MAX_SLE_UINT16 = UINT16_MAX;
+const size_t MAX_SLE_UINT32 = UINT32_MAX;
+const size_t MAX_SLE_UINT = UINT_MAX;
+const size_t MAX_SLE_INT8 = INT8_MAX;
+const size_t MAX_SLE_INT16 = INT16_MAX;
+const size_t MAX_SLE_INT32 = INT32_MAX;
+const size_t MAX_SLE_INT = INT_MAX;
 
 /** Settings profiles and highscore tables. */
 enum SettingsProfile {
@@ -115,6 +124,7 @@ struct GUISettings {
 	uint8  window_soft_limit;                ///< soft limit of maximum number of non-stickied non-vital windows (0 = no limit)
 	ZoomLevel zoom_min;                      ///< minimum zoom out level
 	ZoomLevel zoom_max;                      ///< maximum zoom out level
+	ZoomLevel sprite_zoom_min;               ///< maximum zoom level at which higher-resolution alternative sprites will be used (if available) instead of scaling a lower resolution sprite
 	byte   autosave;                         ///< how often should we do autosaves?
 	byte   save_to_network;                  ///< backup all savegames to network
 	bool   threaded_saves;                   ///< should we do threaded saves?

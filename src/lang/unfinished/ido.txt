@@ -481,6 +481,9 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :altra
 
 
 
+
+
+
 # Custom currency window
 
 
@@ -567,6 +570,8 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
 
 
 # Config errors
+
+# Video initalization errors
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -661,6 +666,7 @@ STR_NETWORK_SERVER_MESSAGE                                      :*** {1:STRING}
 # Content downloading progress window
 
 # Content downloading error messages
+
 
 
 # Transparency settings window

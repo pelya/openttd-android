@@ -185,3 +185,7 @@ static void CDECL HandleCrash(int signum)
 		signal(*i, HandleCrash);
 	}
 }
+
+/* static */ void CrashLog::InitThread()
+{
+}
