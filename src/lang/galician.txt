@@ -1180,8 +1180,6 @@ STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Activa os desas
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Actitude das autoridades locáis cara a restruturacións de áreas: {STRING}
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :Escolle ata que punto o ruido e danos medioambientais producidos polas compañias afectan á súa valoración municipal e ás próximas actividades construtivas na súa área
 
-STR_CONFIG_SETTING_MAX_HEIGHTLEVEL                              :Altura máxima do mapa: {STRING}
-STR_CONFIG_SETTING_MAX_HEIGHTLEVEL_HELPTEXT                     :Establecer a altura máxima permitida para os montes do mapa
 STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN                            :{WHITE}Non podes establecer a altura máxima do mapa a este valor. Canda menos un monte do mapa é maior
 STR_CONFIG_SETTING_AUTOSLOPE                                    :Permitir modificacións do terreo baixo edificios, vías, etc. (autopendente): {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Permite modificar o terreo baixo edificacións e vías sen retiralos
@@ -2198,6 +2196,7 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_SPECTATE                     :*** {STRING} un
 STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} comezou unha nova compañía (#{2:NUM})
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} saiu da partida ({2:STRING})
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} cambiou o seu nome a {STRING}
+STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {STRING} deu {2:CURRENCY_LONG} a {1:STRING}
 STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}O servidor pechou a sesión
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}O servidor estase a reiniciar...{}Agarda por favor...
 
@@ -2808,12 +2807,6 @@ STR_MAPGEN_BY                                                   :{BLACK}*
 STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}Nº de cidades:
 STR_MAPGEN_DATE                                                 :{BLACK}Data:
 STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Nº de industrias:
-STR_MAPGEN_MAX_HEIGHTLEVEL                                      :{BLACK}Altura máxima do mapa:
-STR_MAPGEN_MAX_HEIGHTLEVEL_UP                                   :{BLACK}Aumenta a altura máxima dos montes do mapa en un
-STR_MAPGEN_MAX_HEIGHTLEVEL_DOWN                                 :{BLACK}Diminiuir a altura máxima dos montes do mapa en un
-STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Cota de neve:
-STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Subir a cota de neve unha altura
-STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Baixar a cota de neve unha altura
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Xerador de terreo:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Tipo de terreo:
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}Nivel do mar:
@@ -2839,8 +2832,6 @@ STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Nome do 
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}Tamaño:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
-STR_MAPGEN_MAX_HEIGHTLEVEL_QUERY_CAPT                           :{WHITE}Cambiar altura máxima do mapa
-STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}Cambiar a altura da cota de neve
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}Cambia-lo ano de inicio
 
 # SE Map generation
