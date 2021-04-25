@@ -465,7 +465,7 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 		/* restore saved music volume */
 		MusicDriver::GetInstance()->SetVolume(_settings_client.music.music_vol);
 
-		if (startyear != INVALID_YEAR) _settings_newgame.game_creation.starting_year = startyear;
+		if (startyear != INVALID_YEAR) IConsoleSetSetting("game_creation.starting_year", startyear);
 		if (generation_seed != GENERATE_NEW_SEED) _settings_newgame.game_creation.generation_seed = generation_seed;
 
 		if (dedicated_host != nullptr) {
@@ -1501,11 +1501,15 @@ static void DoAutosave()
  * done in the game-thread, and not in the draw-thread (which most often
  * triggers this request).
  * @param callback Optional callback to call when NewGRF scan is completed.
+ * @return True when the NewGRF scan was actually requested, false when the scan was already running.
  */
-void RequestNewGRFScan(NewGRFScanCallback *callback)
+bool RequestNewGRFScan(NewGRFScanCallback *callback)
 {
+	if (_request_newgrf_scan) return false;
+
 	_request_newgrf_scan = true;
 	_request_newgrf_scan_callback = callback;
+	return true;
 }
 
 void GameLoop()

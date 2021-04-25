@@ -247,7 +247,7 @@ bool FiosGetDiskFreeSpace(const char *path, uint64 *tot)
 
 	ULARGE_INTEGER bytes_free;
 	bool retval = GetDiskFreeSpaceEx(OTTD2FS(path), &bytes_free, nullptr, nullptr);
-	if (retval) *tot = bytes_free.QuadPart;
+	if (retval && tot != nullptr) *tot = bytes_free.QuadPart;
 
 	SetErrorMode(sem); // reset previous setting
 	return retval;
@@ -625,9 +625,12 @@ wchar_t *convert_to_fs(const char *name, wchar_t *system_buf, size_t buflen, boo
 /** Determine the current user's locale. */
 const char *GetCurrentLocale(const char *)
 {
+	const LANGID userUiLang = GetUserDefaultUILanguage();
+	const LCID userUiLocale = MAKELCID(userUiLang, SORT_DEFAULT);
+
 	char lang[9], country[9];
-	if (GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, lang, lengthof(lang)) == 0 ||
-	    GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, country, lengthof(country)) == 0) {
+	if (GetLocaleInfoA(userUiLocale, LOCALE_SISO639LANGNAME, lang, lengthof(lang)) == 0 ||
+	    GetLocaleInfoA(userUiLocale, LOCALE_SISO3166CTRYNAME, country, lengthof(country)) == 0) {
 		/* Unable to retrieve the locale. */
 		return nullptr;
 	}

@@ -510,7 +510,7 @@ OpenGLBackend::~OpenGLBackend()
 		_glDeleteBuffers(1, &this->anim_pbo);
 	}
 	if (_glDeleteTextures != nullptr) {
-		ClearCursorCache();
+		this->InternalClearCursorCache();
 		OpenGLSprite::Destroy();
 
 		_glDeleteTextures(1, &this->vid_texture);
@@ -1053,18 +1053,20 @@ void OpenGLBackend::Paint()
  */
 void OpenGLBackend::DrawMouseCursor()
 {
+	if (!this->cursor_in_window) return;
+
 	/* Draw cursor on screen */
 	_cur_dpi = &_screen;
-	for (uint i = 0; i < _cursor.sprite_count; ++i) {
-		SpriteID sprite = _cursor.sprite_seq[i].sprite;
+	for (uint i = 0; i < this->cursor_sprite_count; ++i) {
+		SpriteID sprite = this->cursor_sprite_seq[i].sprite;
 
 		/* Sprites are cached by PopulateCursorCache(). */
 		if (this->cursor_cache.Contains(sprite)) {
-			const Sprite *spr = GetSprite(sprite, ST_NORMAL);
+			Sprite *spr = this->cursor_cache.Get(sprite);
 
-			this->RenderOglSprite((OpenGLSprite *)this->cursor_cache.Get(sprite)->data, _cursor.sprite_seq[i].pal,
-					_cursor.pos.x + _cursor.sprite_pos[i].x + UnScaleByZoom(spr->x_offs, ZOOM_LVL_GUI),
-					_cursor.pos.y + _cursor.sprite_pos[i].y + UnScaleByZoom(spr->y_offs, ZOOM_LVL_GUI),
+			this->RenderOglSprite((OpenGLSprite *)spr->data, this->cursor_sprite_seq[i].pal,
+					this->cursor_pos.x + this->cursor_sprite_pos[i].x + UnScaleByZoom(spr->x_offs, ZOOM_LVL_GUI),
+					this->cursor_pos.y + this->cursor_sprite_pos[i].y + UnScaleByZoom(spr->y_offs, ZOOM_LVL_GUI),
 					ZOOM_LVL_GUI);
 		}
 	}
@@ -1072,20 +1074,24 @@ void OpenGLBackend::DrawMouseCursor()
 
 void OpenGLBackend::PopulateCursorCache()
 {
+	static_assert(lengthof(_cursor.sprite_seq) == lengthof(this->cursor_sprite_seq));
+	static_assert(lengthof(_cursor.sprite_pos) == lengthof(this->cursor_sprite_pos));
+
 	if (this->clear_cursor_cache) {
 		/* We have a pending cursor cache clear to do first. */
 		this->clear_cursor_cache = false;
 		this->last_sprite_pal = (PaletteID)-1;
 
-		Sprite *sp;
-		while ((sp = this->cursor_cache.Pop()) != nullptr) {
-			OpenGLSprite *sprite = (OpenGLSprite *)sp->data;
-			sprite->~OpenGLSprite();
-			free(sp);
-		}
+		this->InternalClearCursorCache();
 	}
 
+	this->cursor_pos = _cursor.pos;
+	this->cursor_sprite_count = _cursor.sprite_count;
+	this->cursor_in_window = _cursor.in_window;
+
 	for (uint i = 0; i < _cursor.sprite_count; ++i) {
+		this->cursor_sprite_seq[i] = _cursor.sprite_seq[i];
+		this->cursor_sprite_pos[i] = _cursor.sprite_pos[i];
 		SpriteID sprite = _cursor.sprite_seq[i].sprite;
 
 		if (!this->cursor_cache.Contains(sprite)) {
@@ -1101,6 +1107,19 @@ void OpenGLBackend::PopulateCursorCache()
 
 /**
  * Clear all cached cursor sprites.
+ */
+void OpenGLBackend::InternalClearCursorCache()
+{
+	Sprite *sp;
+	while ((sp = this->cursor_cache.Pop()) != nullptr) {
+		OpenGLSprite *sprite = (OpenGLSprite *)sp->data;
+		sprite->~OpenGLSprite();
+		free(sp);
+	}
+}
+
+/**
+ * Queue a request for cursor cache clear.
  */
 void OpenGLBackend::ClearCursorCache()
 {

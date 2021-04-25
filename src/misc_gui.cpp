@@ -505,7 +505,7 @@ struct AboutWindow : public Window {
 	int line_height;                         ///< The height of a single line
 	static const int num_visible_lines = 19; ///< The number of lines visible simultaneously
 
-	static const uint TIMER_INTERVAL = 150;  ///< Scrolling interval in ms
+	static const uint TIMER_INTERVAL = 2100; ///< Scrolling interval, scaled by line text line height. This value chosen to maintain parity: 2100 / FONT_HEIGHT_NORMAL = 150ms
 	GUITimer timer;
 
 	AboutWindow() : Window(&_about_desc)
@@ -513,7 +513,6 @@ struct AboutWindow : public Window {
 		this->InitNested(WN_GAME_OPTIONS_ABOUT);
 
 		this->text_position = this->GetWidget<NWidgetBase>(WID_A_SCROLLING_TEXT)->pos_y + this->GetWidget<NWidgetBase>(WID_A_SCROLLING_TEXT)->current_y;
-		this->timer.SetInterval(TIMER_INTERVAL);
 	}
 
 	void SetStringParameters(int widget) const override
@@ -536,6 +535,10 @@ struct AboutWindow : public Window {
 			d.width = std::max(d.width, GetStringBoundingBox(_credits[i]).width);
 		}
 		*size = maxdim(*size, d);
+
+		/* Set scroll interval based on required speed. To keep scrolling smooth,
+		 * the interval is adjusted rather than the distance moved. */
+		this->timer.SetInterval(TIMER_INTERVAL / FONT_HEIGHT_NORMAL);
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
@@ -786,6 +789,12 @@ struct TooltipsWindow : public Window
 			case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
 			case TCC_HOVER: if (!_mouse_hovering) delete this; break;
 			case TCC_NONE: break;
+
+			case TCC_EXIT_VIEWPORT: {
+				Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+				if (w == nullptr || IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y) == nullptr) delete this;
+				break;
+			}
 		}
 	}
 };
@@ -802,7 +811,7 @@ void GuiShowTooltips(Window *parent, StringID str, uint paramcount, const uint64
 {
 	DeleteWindowById(WC_TOOLTIPS, 0);
 
-	if (str == STR_NULL) return;
+	if (str == STR_NULL || !_cursor.in_window) return;
 
 	new TooltipsWindow(parent, str, paramcount, params, close_tooltip);
 }

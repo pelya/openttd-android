@@ -1365,7 +1365,9 @@ DEF_CONSOLE_CMD(ConRescanNewGRF)
 		return true;
 	}
 
-	RequestNewGRFScan();
+	if (!RequestNewGRFScan()) {
+		IConsoleWarning("NewGRF scanning is already running. Please wait until completed to run again.");
+	}
 
 	return true;
 }

@@ -5,21 +5,17 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file network_udp.h Sending and receiving UDP messages. */
+/** @file slider_type.h Types related to the horizontal slider widget. */
 
-#ifndef NETWORK_UDP_H
-#define NETWORK_UDP_H
+#ifndef WIDGETS_SLIDER_TYPE_H
+#define WIDGETS_SLIDER_TYPE_H
 
-#include "core/address.h"
+#include "../window_type.h"
+#include "../gfx_func.h"
 
-void NetworkUDPInitialize();
-void NetworkUDPSearchGame();
-void NetworkUDPQueryMasterServer();
-void NetworkUDPQueryServer(NetworkAddress address, bool manually = false);
-void NetworkUDPAdvertise();
-void NetworkUDPRemoveAdvertise(bool blocking);
-void NetworkUDPClose();
-void NetworkUDPServerListen();
-void NetworkBackgroundUDPLoop();
 
-#endif /* NETWORK_UDP_H */
+void DrawVolumeSliderWidget(Rect r, byte value);
+bool ClickVolumeSliderWidget(Rect r, Point pt, byte &value);
+
+
+#endif /* WIDGETS_SLIDER_TYPE_H */

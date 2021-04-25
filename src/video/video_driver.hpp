@@ -28,6 +28,7 @@ extern std::vector<Dimension> _resolutions;
 extern Dimension _cur_resolution;
 extern bool _rightclick_emulate;
 extern bool _video_hw_accel;
+extern bool _video_vsync;
 
 /** The base of all video drivers. */
 class VideoDriver : public Driver {
@@ -35,7 +36,7 @@ class VideoDriver : public Driver {
 	const uint DEFAULT_WINDOW_HEIGHT = 480u; ///< Default window height.
 
 public:
-	VideoDriver() : is_game_threaded(true), change_blitter(nullptr) {}
+	VideoDriver() : fast_forward_key_pressed(false), fast_forward_via_key(false), is_game_threaded(true), change_blitter(nullptr) {}
 
 	/**
 	 * Mark a particular area dirty.
@@ -65,6 +66,12 @@ public:
 	 * @return True if the change succeeded.
 	 */
 	virtual bool ToggleFullscreen(bool fullscreen) = 0;
+
+	/**
+	 * Change the vsync setting.
+	 * @param vsync The new setting.
+	 */
+	virtual void ToggleVsync(bool vsync) {}
 
 	/**
 	 * Callback invoked after the blitter was changed.

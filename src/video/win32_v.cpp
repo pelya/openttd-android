@@ -552,14 +552,6 @@ LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			uint scancode = GB(lParam, 16, 8);
 			keycode = scancode == 41 ? (uint)WKC_BACKQUOTE : MapWindowsKey(wParam);
 
-			/* Silently drop all messages handled by WM_CHAR. */
-			MSG msg;
-			if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE)) {
-				if ((msg.message == WM_CHAR || msg.message == WM_DEADCHAR) && GB(lParam, 16, 8) == GB(msg.lParam, 16, 8)) {
-					return 0;
-				}
-			}
-
 			uint charcode = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
 
 			/* No character translation? */
@@ -568,21 +560,26 @@ LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 0;
 			}
 
-			/* Is the console key a dead key? If yes, ignore the first key down event. */
-			if (HasBit(charcode, 31) && !console) {
-				if (scancode == 41) {
-					console = true;
-					return 0;
+			/* If an edit box is in focus, wait for the corresponding WM_CHAR message. */
+			if (!EditBoxInGlobalFocus()) {
+				/* Is the console key a dead key? If yes, ignore the first key down event. */
+				if (HasBit(charcode, 31) && !console) {
+					if (scancode == 41) {
+						console = true;
+						return 0;
+					}
 				}
+				console = false;
+
+				/* IMEs and other input methods sometimes send a WM_CHAR without a WM_KEYDOWN,
+				 * clear the keycode so a previous WM_KEYDOWN doesn't become 'stuck'. */
+				uint cur_keycode = keycode;
+				keycode = 0;
+
+				return HandleCharMsg(cur_keycode, LOWORD(charcode));
 			}
-			console = false;
 
-			/* IMEs and other input methods sometimes send a WM_CHAR without a WM_KEYDOWN,
-			 * clear the keycode so a previous WM_KEYDOWN doesn't become 'stuck'. */
-			uint cur_keycode = keycode;
-			keycode = 0;
-
-			return HandleCharMsg(cur_keycode, LOWORD(charcode));
+			return 0;
 		}
 
 		case WM_SYSKEYDOWN: // user presses F10 or Alt, both activating the title-menu
@@ -1293,7 +1290,6 @@ const char *VideoDriver_Win32OpenGL::Start(const StringList &param)
 	if (BlitterFactory::GetCurrentBlitter()->GetScreenDepth() == 0) return "Only real blitters supported";
 
 	Dimension old_res = _cur_resolution; // Save current screen resolution in case of errors, as MakeWindow invalidates it.
-	this->vsync = GetDriverParamBool(param, "vsync");
 
 	LoadWGLExtensions();
 
@@ -1309,6 +1305,12 @@ const char *VideoDriver_Win32OpenGL::Start(const StringList &param)
 	}
 
 	this->ClientSizeChanged(this->width, this->height, true);
+	/* We should have a valid screen buffer now. If not, something went wrong and we should abort. */
+	if (_screen.dst_ptr == nullptr) {
+		this->Stop();
+		_cur_resolution = old_res;
+		return "Can't get pointer to screen buffer";
+	}
 
 	MarkWholeScreenDirty();
 
@@ -1335,6 +1337,15 @@ void VideoDriver_Win32OpenGL::DestroyContext()
 	if (this->dc != nullptr) {
 		ReleaseDC(this->main_wnd, this->dc);
 		this->dc = nullptr;
+	}
+}
+
+void VideoDriver_Win32OpenGL::ToggleVsync(bool vsync)
+{
+	if (_wglSwapIntervalEXT != nullptr) {
+		_wglSwapIntervalEXT(vsync);
+	} else if (vsync) {
+		DEBUG(driver, 0, "OpenGL: Vsync requested, but not supported by driver");
 	}
 }
 
@@ -1366,12 +1377,7 @@ const char *VideoDriver_Win32OpenGL::AllocateContext()
 	}
 	if (!wglMakeCurrent(this->dc, rc)) return "Can't active GL context";
 
-	/* Enable/disable Vsync if supported. */
-	if (_wglSwapIntervalEXT != nullptr) {
-		_wglSwapIntervalEXT(this->vsync ? 1 : 0);
-	} else if (vsync) {
-		DEBUG(driver, 0, "OpenGL: Vsync requested, but not supported by driver");
-	}
+	this->ToggleVsync(_video_vsync);
 
 	this->gl_rc = rc;
 	return OpenGLBackend::Create(&GetOGLProcAddressCallback);
@@ -1457,7 +1463,7 @@ void VideoDriver_Win32OpenGL::Paint()
 	}
 
 	OpenGLBackend::Get()->Paint();
-	if (_cursor.in_window) OpenGLBackend::Get()->DrawMouseCursor();
+	OpenGLBackend::Get()->DrawMouseCursor();
 
 	SwapBuffers(this->dc);
 }

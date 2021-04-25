@@ -21,6 +21,7 @@
 #include "string_func.h"
 #include "widgets/dropdown_type.h"
 #include "widgets/dropdown_func.h"
+#include "widgets/slider_func.h"
 #include "highscore.h"
 #include "base_media_base.h"
 #include "company_base.h"
@@ -37,6 +38,7 @@
 #include "settings_func.h"
 #include "zoom_func.h"
 #include "video/video_driver.hpp"
+#include "music/music_driver.hpp"
 
 #include <vector>
 #include <iterator>
@@ -359,6 +361,14 @@ struct GameOptionsWindow : Window {
 				SetDParamStr(0, BaseMusic::GetUsedSet()->GetDescription(GetCurrentLanguageIsoCode()));
 				DrawString(r.left, r.right, r.top, STR_BLACK_RAW_STRING);
 				break;
+
+			case WID_GO_BASE_SFX_VOLUME:
+				DrawVolumeSliderWidget(r, _settings_client.music.effect_vol);
+				break;
+
+			case WID_GO_BASE_MUSIC_VOLUME:
+				DrawVolumeSliderWidget(r, _settings_client.music.music_vol);
+				break;
 		}
 	}
 
@@ -409,6 +419,16 @@ struct GameOptionsWindow : Window {
 					SetDParam(0, invalid_files);
 					*size = maxdim(*size, GetStringBoundingBox(STR_GAME_OPTIONS_BASE_MUSIC_STATUS));
 				}
+				break;
+
+			case WID_GO_BASE_SFX_VOLUME:
+			case WID_GO_BASE_MUSIC_VOLUME:
+				size->width = ScaleGUITrad(67);
+				size->height = ScaleGUITrad(12);
+				resize->width = 0;
+				resize->height = 0;
+				fill->width = 0;
+				fill->height = 0;
 				break;
 
 			default: {
@@ -507,8 +527,34 @@ struct GameOptionsWindow : Window {
 				_video_hw_accel = !_video_hw_accel;
 				ShowErrorMessage(STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART, INVALID_STRING_ID, WL_INFO);
 				this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
+#ifndef __APPLE__
+				this->SetWidgetDisabledState(WID_GO_VIDEO_VSYNC_BUTTON, !_video_hw_accel);
+#endif
 				this->SetDirty();
 				break;
+
+			case WID_GO_VIDEO_VSYNC_BUTTON:
+				if (!_video_hw_accel) break;
+
+				_video_vsync = !_video_vsync;
+				VideoDriver::GetInstance()->ToggleVsync(_video_vsync);
+
+				this->SetWidgetLoweredState(WID_GO_VIDEO_VSYNC_BUTTON, _video_vsync);
+				this->SetDirty();
+				break;
+
+			case WID_GO_BASE_SFX_VOLUME:
+			case WID_GO_BASE_MUSIC_VOLUME: {
+				byte &vol = (widget == WID_GO_BASE_MUSIC_VOLUME) ? _settings_client.music.music_vol : _settings_client.music.effect_vol;
+				if (ClickVolumeSliderWidget(this->GetWidget<NWidgetBase>(widget)->GetCurrentRect(), pt, vol)) {
+					if (widget == WID_GO_BASE_MUSIC_VOLUME) MusicDriver::GetInstance()->SetVolume(vol);
+					this->SetDirty();
+					SetWindowClassesDirty(WC_MUSIC_WINDOW);
+				}
+
+				if (click_count > 0) this->mouse_capture_widget = widget;
+				break;
+			}
 
 			default: {
 				int selected;
@@ -653,6 +699,11 @@ struct GameOptionsWindow : Window {
 		this->SetWidgetLoweredState(WID_GO_8BPP_BUTTON, _ini_blitter == "8bpp-optimized");
 		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == "16bpp-simple");
 		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter == "32bpp-anim" || _ini_blitter == "");
+
+#ifndef __APPLE__
+		this->SetWidgetLoweredState(WID_GO_VIDEO_VSYNC_BUTTON, _video_vsync);
+		this->SetWidgetDisabledState(WID_GO_VIDEO_VSYNC_BUTTON, !_video_hw_accel);
+#endif
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);

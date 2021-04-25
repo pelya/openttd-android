@@ -173,12 +173,22 @@ public:
 	virtual void Draw(const Window *w) = 0;
 	virtual void SetDirty(const Window *w) const;
 
-	WidgetType type;            ///< Type of the widget / nested widget.
+	Rect GetCurrentRect() const
+	{
+		Rect r;
+		r.left = this->pos_x;
+		r.top = this->pos_y;
+		r.right = this->pos_x + this->current_x;
+		r.bottom = this->pos_y + this->current_y;
+		return r;
+	}
+
+	WidgetType type;      ///< Type of the widget / nested widget.
 	NWidSizingType sizing_type; ///< Type for deciding minimal sizes of the widget.
-	uint fill_x;                ///< Horizontal fill stepsize (from initial size, \c 0 means not resizable).
-	uint fill_y;                ///< Vertical fill stepsize (from initial size, \c 0 means not resizable).
-	uint resize_x;              ///< Horizontal resize step (\c 0 means not resizable).
-	uint resize_y;              ///< Vertical resize step (\c 0 means not resizable).
+	uint fill_x;          ///< Horizontal fill stepsize (from initial size, \c 0 means not resizable).
+	uint fill_y;          ///< Vertical fill stepsize (from initial size, \c 0 means not resizable).
+	uint resize_x;        ///< Horizontal resize step (\c 0 means not resizable).
+	uint resize_y;        ///< Vertical resize step (\c 0 means not resizable).
 	/* Size of the widget in the smallest window possible.
 	 * Computed by #SetupSmallestSize() followed by #AssignSizePosition().
 	 */

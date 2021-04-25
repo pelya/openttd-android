@@ -7,7 +7,7 @@ endif()
 project(${BINARY_NAME})
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-    message(FATAL_ERROR "In-source builds not allowed. Please run \"cmake ..\" from the bin directory")
+    message(FATAL_ERROR "In-source builds not allowed. Please run \"cmake ..\" from the build directory. You may need to delete \"${CMAKE_SOURCE_DIR}/CMakeCache.txt\" first.")
 endif()
 
 # Debug mode by default.
@@ -233,6 +233,7 @@ if(MSVC)
     target_sources(openttd PRIVATE "${CMAKE_SOURCE_DIR}/os/windows/openttd.manifest")
 endif()
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/bin)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/media)
 
@@ -253,7 +254,7 @@ if(IPO_FOUND)
     set_target_properties(openttd PROPERTIES INTERPROCEDURAL_OPTIMIZATION_MINSIZEREL True)
     set_target_properties(openttd PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO True)
 endif()
-set_target_properties(openttd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
+set_target_properties(openttd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 process_compile_flags()
 
 include(LinkPackage)
