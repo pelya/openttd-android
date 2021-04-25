@@ -700,9 +700,11 @@ struct GameOptionsWindow : Window {
 		this->SetWidgetLoweredState(WID_GO_16BPP_BUTTON, _ini_blitter == "16bpp-simple");
 		this->SetWidgetLoweredState(WID_GO_32BPP_BUTTON, _ini_blitter == "32bpp-anim" || _ini_blitter == "");
 
+#if 0
 #ifndef __APPLE__
 		this->SetWidgetLoweredState(WID_GO_VIDEO_VSYNC_BUTTON, _video_vsync);
 		this->SetWidgetDisabledState(WID_GO_VIDEO_VSYNC_BUTTON, !_video_hw_accel);
+#endif
 #endif
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
