@@ -815,7 +815,7 @@ void QueryString::HandleEditBox(Window *w, int wid)
 		if (w->window_class == WC_OSK) w->InvalidateData();
 	}
 #ifdef __ANDROID__
-	if (SDL_IsScreenKeyboardShown(NULL)) {
+	if (SDL_IsScreenKeyboardShown(NULL) && w->IsWidgetFocused(wid)) {
 		if (SDL_ANDROID_GetScreenKeyboardTextInputAsync(_android_text_input, sizeof(_android_text_input)) == SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED) {
 			this->text.Assign(_android_text_input);
 			w->OnEditboxChanged(wid);
