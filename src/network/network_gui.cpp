@@ -505,7 +505,8 @@ public:
 				break;
 
 			case WID_NG_LASTJOINED:
-				size->height = SETTING_BUTTON_HEIGHT;
+				size->height = WD_MATRIX_TOP + std::max(GetSpriteSize(SPR_BLOT).height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
+				size->height = GetMinSizing(NWST_STEP, size->height);
 				break;
 
 			case WID_NG_LASTJOINED_SPACER:
@@ -1362,7 +1363,8 @@ struct NetworkLobbyWindow : public Window {
 				break;
 
 			case WID_NL_MATRIX:
-				resize->height = GetMinSizing(NWST_STEP, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
+				resize->height = WD_MATRIX_TOP + std::max<uint>(std::max(GetSpriteSize(SPR_LOCK).height, GetSpriteSize(SPR_PROFIT_LOT).height), FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
+				resize->height = GetMinSizing(NWST_STEP, resize->height);
 				size->height = 6 * resize->height;
 				break;
 
@@ -1431,7 +1433,7 @@ struct NetworkLobbyWindow : public Window {
 		uint profit_left = rtl ? left : right - profit_width;
 		uint lock_left   = rtl ? left + profit_width + 2 : right - profit_width - lock_width - 2;
 
-		int y = r.top + this->resize.step_height / 4;
+		int y = r.top;
 		/* Draw company list */
 		int pos = this->vscroll->GetPosition();
 		while (pos < this->server->info.companies_on) {
@@ -1573,7 +1575,7 @@ static const NWidgetPart _nested_network_lobby_window_widgets[] = {
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 0, 10),
 			/* Company list. */
 			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PANEL, COLOUR_WHITE, WID_NL_HEADER), SetMinimalSize(146, 0), SetResize(1, 0), SetFill(1, 0), EndContainer(),
+				//NWidget(WWT_PANEL, COLOUR_WHITE, WID_NL_HEADER), SetMinimalSize(146, 0), SetResize(1, 0), SetFill(1, 0), EndContainer(),
 				NWidget(WWT_MATRIX, COLOUR_LIGHT_BLUE, WID_NL_MATRIX), SetMinimalSize(146, 0), SetResize(1, 1), SetFill(1, 1), SetMatrixDataTip(1, 0, STR_NETWORK_GAME_LOBBY_COMPANY_LIST_TOOLTIP), SetScrollbar(WID_NL_SCROLLBAR),
 			EndContainer(),
 			NWidget(NWID_VSCROLLBAR, COLOUR_LIGHT_BLUE, WID_NL_SCROLLBAR),
