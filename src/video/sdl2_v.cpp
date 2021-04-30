@@ -209,7 +209,7 @@ bool VideoDriver_SDL_Base::CreateMainSurface(uint w, uint h, bool resize)
 bool VideoDriver_SDL_Base::ClaimMousePointer()
 {
 	SDL_ShowCursor(0);
-#ifdef __EMSCRIPTEN__
+#ifdef EMSCRIPTEN_RELATIVE_MOUSE
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
 	return true;
@@ -382,7 +382,7 @@ bool VideoDriver_SDL_Base::PollEvent()
 
 	switch (ev.type) {
 		case SDL_MOUSEMOTION:
-#ifdef __EMSCRIPTEN__
+#ifdef EMSCRIPTEN_RELATIVE_MOUSE
 			if (_cursor_new_in_window) {
 				/* The cursor just moved into the window; this means we don't
 				 * know the absolutely position yet to move relative from.
