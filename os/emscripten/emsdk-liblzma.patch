@@ -14,7 +14,7 @@ diff --git a/embuilder.py b/embuilder.py
 index 818262190ed..ab7d5adb7b2 100755
 --- a/embuilder.py
 +++ b/embuilder.py
-@@ -60,6 +60,7 @@
+@@ -66,6 +66,7 @@
      'harfbuzz',
      'icu',
      'libjpeg',
@@ -22,14 +22,14 @@ index 818262190ed..ab7d5adb7b2 100755
      'libpng',
      'ogg',
      'regal',
-@@ -197,6 +198,8 @@ def main():
-       build_port('ogg', libname('libogg'))
+@@ -196,6 +197,8 @@
+       build_port('giflib', 'libgif.a')
      elif what == 'libjpeg':
-       build_port('libjpeg', libname('libjpeg'))
+       build_port('libjpeg', 'libjpeg.a')
 +    elif what == 'liblzma':
-+      build_port('liblzma', libname('liblzma'))
++      build_port('liblzma', 'liblzma.a')
      elif what == 'libpng':
-       build_port('libpng', libname('libpng'))
+       build_port('libpng', 'libpng.a')
      elif what == 'sdl2':
 diff --git a/src/settings.js b/src/settings.js
 index 61cd98939ba..be6fcb678c6 100644
@@ -50,7 +50,7 @@ new file mode 100644
 index 00000000000..e9567ef36ff
 --- /dev/null
 +++ b/tools/ports/liblzma.py
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,159 @@
 +# Copyright 2020 The Emscripten Authors.  All rights reserved.
 +# Emscripten is available under two separate licenses, the MIT license and the
 +# University of Illinois/NCSA Open Source License.  Both these licenses can be
@@ -68,10 +68,10 @@ index 00000000000..e9567ef36ff
 +
 +
 +def get(ports, settings, shared):
-+  libname = ports.get_lib_name('liblzma')
++  libname = 'liblzma.a'
 +  ports.fetch_project('liblzma', 'https://tukaani.org/xz/xz-' + VERSION + '.tar.gz', 'xz-' + VERSION, sha512hash=HASH)
 +
-+  def create():
++  def create(final):
 +    ports.clear_project_build('liblzma')
 +
 +    source_path = os.path.join(ports.get_dir(), 'liblzma', 'xz-' + VERSION)
@@ -90,7 +90,6 @@ index 00000000000..e9567ef36ff
 +
 +    open(os.path.join(dest_path, 'src', 'config.h'), 'w').write(config_h)
 +
-+    final = os.path.join(dest_path, libname)
 +    include_dirs = [os.path.join(dest_path, 'src', 'liblzma', p) for p in include_dirs_rel]
 +    ports.build_port(os.path.join(dest_path, 'src'), final, flags=build_flags, exclude_dirs=exclude_dirs, exclude_files=exclude_files, includes=include_dirs)
 +
@@ -99,11 +98,11 @@ index 00000000000..e9567ef36ff
 +
 +    return final
 +
-+  return [shared.Cache.get(libname, create, what='port')]
++  return [shared.Cache.get_lib(libname, create, what='port')]
 +
 +
 +def clear(ports, settings, shared):
-+  shared.Cache.erase_file(ports.get_lib_name('liblzma'))
++  shared.Cache.erase_file('liblzma.a')
 +
 +
 +def process_args(ports):
