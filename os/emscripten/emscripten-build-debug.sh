@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ../..
+
 [ -z "`which emsdk`" ] && export PATH=`pwd`/../emsdk:$PATH
 
 [ -z "`which emsdk`" ] && { echo "Put emsdk into your PATH"; exit 1 ; }
