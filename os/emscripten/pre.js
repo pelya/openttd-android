@@ -31,7 +31,7 @@ Module.preRun.push(function() {
         }
 
         /* Check if the OpenGFX baseset is already downloaded. */
-        if (!FS.analyzePath(content_download_dir + '/baseset/opengfx-0.6.0.tar').exists) {
+        if (false && !FS.analyzePath(content_download_dir + '/baseset/opengfx-0.6.0.tar').exists) {
             window.openttd_downloaded_opengfx = true;
             FS.createPreloadedFile(content_download_dir + '/baseset', 'opengfx-0.6.0.tar', 'https://installer.cdn.openttd.org/emscripten/opengfx-0.6.0.tar', true, true);
         } else {
