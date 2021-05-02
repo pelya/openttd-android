@@ -17,6 +17,27 @@ source "$PATH_EMSDK/emsdk_env.sh"
 mkdir -p build-wasm-$BUILD_TYPE
 cd build-wasm-$BUILD_TYPE
 
+embuilder build liblzma ogg vorbis zlib sdl2
+embuilder build --lto liblzma ogg vorbis zlib sdl2
+
+[ -e libtimidity-0.2.7/build-wasm/lib/libtimidity.a ] || {
+	wget https://sourceforge.net/projects/libtimidity/files/libtimidity/0.2.7/libtimidity-0.2.7.tar.gz || exit 1
+	tar xvf libtimidity-0.2.7.tar.gz || exit 1
+	cd libtimidity-0.2.7 || exit 1
+	autoreconf -fi
+	OPT="-O3 -flto=thin"
+	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
+	emconfigure ./configure --prefix=`pwd`/build-wasm \
+		--disable-shared --enable-static \
+		--disable-ao --disable-aotest \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		--with-timidity-cfg="/timidity/timidity.cfg" || exit 1
+	make -j8 || exit 1
+	make install || exit 1
+	cd ..
+}
+
 [ -e build-host ] || {
 	rm -rf build-host
 	mkdir -p build-host
@@ -25,9 +46,6 @@ cd build-wasm-$BUILD_TYPE
 	make -j8 tools || exit 1
 	cd ..
 }
-
-embuilder build liblzma
-embuilder build --lto liblzma
 
 mkdir -p baseset
 
@@ -52,11 +70,20 @@ mkdir -p baseset
 	mv openmsx-0.4.0.tar baseset/ || exit 1
 }
 
-[ -e TimGM6mb.sf2 ] || {
-	wget 'https://sourceforge.net/p/mscore/code/HEAD/tree/trunk/mscore/share/sound/TimGM6mb.sf2?format=raw' -O TimGM6mb.sf2 || exit 1
+#[ -e TimGM6mb.sf2 ] || {
+#	wget 'https://sourceforge.net/p/mscore/code/HEAD/tree/trunk/mscore/share/sound/TimGM6mb.sf2?format=raw' -O TimGM6mb.sf2 || exit 1
+#}
+
+[ -e timidity/timidity.cfg ] || {
+	wget https://sourceforge.net/projects/libsdl-android/files/timidity.zip || exit 1
+	unzip timidity.zip
 }
 
-[ -e Makefile ] || emcmake cmake .. -DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF || exit 1
+[ -e Makefile ] || emcmake cmake .. -DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF \
+									-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
+									-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
+									 || exit 1
+
 rm -f openttd.html
 emmake make -j8 VERBOSE=1 || exit 1
 
