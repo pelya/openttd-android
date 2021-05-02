@@ -59,4 +59,4 @@ mkdir -p baseset
 [ -e Makefile ] || emcmake cmake .. -DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF || exit 1
 emmake make -j8 VERBOSE=1 || exit 1
 
-cp -f *.html *.js *.mem *.data *.wasm ../media/openttd.256.png ../os/emscripten/openttd.webapp /var/www/html/
+cp -f *.html *.js *.data *.wasm ../media/openttd.256.png ../os/emscripten/openttd.webapp /var/www/html/
