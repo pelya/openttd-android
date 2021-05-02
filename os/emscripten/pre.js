@@ -13,10 +13,12 @@ Module['websocket'] = { url: function(host, port, proto) {
 } };
 
 Module.preRun.push(function() {
-    personal_dir = '/home/web_user/.openttd';
+    personal_dir = '/home/web_user/.local/share/openttd';
     content_download_dir = personal_dir + '/content_download'
 
     /* Because of the "-c" above, all user-data is stored in /user_data. */
+    FS.mkdir('/home/web_user/.local');
+    FS.mkdir('/home/web_user/.local/share');
     FS.mkdir(personal_dir);
     FS.mount(IDBFS, {}, personal_dir);
 
