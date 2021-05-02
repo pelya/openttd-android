@@ -1,13 +1,16 @@
 {
-    "name":         "OpenTTD",
-    "short_name":   "OpenTTD",
-    "description":  "Open-source transport business simulation game",
-    "display":      "fullscreen",
-    "orientation":  "landscape",
+    "name":             "OpenTTD",
+    "short_name":       "OpenTTD",
+    "description":      "Open-source transport business simulation game",
+    "display":          "fullscreen",
+    "orientation":      "landscape",
     "icons": [
         {
-            "src": "openttd.256.png",
-            "sizes": "256x256"
+            "src":      "openttd.256.png",
+            "sizes":    "256x256",
+            "type":     "image/png"
         }
-    ]
+    ],
+    "start_url":        "/openttd.html",
+    "background_color": "green"
 }
