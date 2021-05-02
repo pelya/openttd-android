@@ -33,6 +33,7 @@
 #ifdef __EMSCRIPTEN__
 /** Whether we just had a window-enter event. */
 static bool _cursor_new_in_window = false;
+static bool _request_fullscreen = true;
 #endif
 
 void VideoDriver_SDL_Base::MakeDirty(int left, int top, int width, int height)
@@ -432,6 +433,12 @@ bool VideoDriver_SDL_Base::PollEvent()
 				default: break;
 			}
 			HandleMouseEvents();
+#ifdef __EMSCRIPTEN__
+			if (_request_fullscreen) {
+				_request_fullscreen = false;
+				EM_ASM( document.documentElement.requestFullscreen(); );
+			}
+#endif
 			break;
 
 		case SDL_MOUSEBUTTONUP:
@@ -499,6 +506,9 @@ bool VideoDriver_SDL_Base::PollEvent()
 			if (ev.window.event == SDL_WINDOWEVENT_EXPOSED) {
 				// Force a redraw of the entire screen.
 				this->MakeDirty(0, 0, _screen.width, _screen.height);
+#ifdef __EMSCRIPTEN__
+				_request_fullscreen = true;
+#endif
 			} else if (ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 				int w = std::max(ev.window.data1, 64);
 				int h = std::max(ev.window.data2, 64);
@@ -511,6 +521,7 @@ bool VideoDriver_SDL_Base::PollEvent()
 				 * so we can pick up the absolutely position again. */
 				_cursor_new_in_window = true;
 				SDL_SetRelativeMouseMode(SDL_FALSE);
+				_request_fullscreen = true;
 #endif
 			} else if (ev.window.event == SDL_WINDOWEVENT_LEAVE) {
 				// mouse left the window, undraw cursor
