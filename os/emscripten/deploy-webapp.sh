@@ -6,4 +6,4 @@ INSTALL_PATH=`pwd`/../../../openttd-touch-webapp
 
 cd $INSTALL_PATH || exit 1
 
-git commit -a * && git push
+git commit -a && git push
