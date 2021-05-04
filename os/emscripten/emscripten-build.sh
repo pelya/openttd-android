@@ -20,8 +20,8 @@ source "$PATH_EMSDK/emsdk_env.sh"
 mkdir -p build-wasm-$BUILD_TYPE
 cd build-wasm-$BUILD_TYPE
 
-embuilder build liblzma ogg vorbis zlib sdl2
-embuilder build --lto liblzma ogg vorbis zlib sdl2
+embuilder build liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
+embuilder build --lto liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
 
 [ -e libtimidity-0.2.7/build-wasm/lib/libtimidity.a ] || {
 	wget https://sourceforge.net/projects/libtimidity/files/libtimidity/0.2.7/libtimidity-0.2.7.tar.gz || exit 1
@@ -36,6 +36,65 @@ embuilder build --lto liblzma ogg vorbis zlib sdl2
 		CFLAGS="$OPT" \
 		LDFLAGS="$OPT" \
 		--with-timidity-cfg="/timidity/timidity.cfg" || exit 1
+	make -j8 || exit 1
+	make install || exit 1
+	cd ..
+}
+
+[ -e expat-2.3.0/build-wasm/lib/libexpat.a ] || {
+	wget https://github.com/libexpat/libexpat/releases/download/R_2_3_0/expat-2.3.0.tar.gz || exit 1
+	tar xvf expat-2.3.0.tar.gz || exit 1
+	cd expat-2.3.0
+	autoreconf -fi
+	OPT="-O3 -flto=thin"
+	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
+	emconfigure ./configure --prefix=`pwd`/build-wasm \
+		--disable-shared --enable-static \
+		--without-xmlwf --without-docbook --without-examples --without-tests \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		|| exit 1
+	make -j8 || exit 1
+	make install || exit 1
+	cd ..
+}
+
+[ -e libuuid-1.0.3/build-wasm/lib/libuuid.a ] || {
+	wget https://sourceforge.net/projects/libuuid/files/libuuid-1.0.3.tar.gz || exit 1
+	tar xvf libuuid-1.0.3.tar.gz || exit 1
+	cd libuuid-1.0.3
+	autoreconf -fi
+	OPT="-O3 -flto=thin"
+	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
+	emconfigure ./configure --prefix=`pwd`/build-wasm \
+		--disable-shared --enable-static \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		|| exit 1
+	make -j8 || exit 1
+	make install || exit 1
+	cd ..
+}
+
+[ -e fontconfig-2.13.1/build-wasm/lib/libfontconfig.a ] || {
+	wget https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.1.tar.gz || exit 1
+	tar xvf fontconfig-2.13.1.tar.gz || exit 1
+	cd fontconfig-2.13.1
+	autoreconf -fi
+	OPT="-O3 -flto=thin"
+	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
+	emconfigure ./configure --prefix=`pwd`/build-wasm \
+		--disable-shared --enable-static \
+		FREETYPE_CFLAGS="-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2 \
+			-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2/freetype" \
+		FREETYPE_LIBS="-lfreetype" \
+		EXPAT_CFLAGS="-I`pwd`/../expat-2.3.0/build-wasm/include" \
+		EXPAT_LIBS="`pwd`/../expat-2.3.0/build-wasm/lib/libexpat.a" \
+		UUID_CFLAGS="-I`pwd`/../libuuid-1.0.3/build-wasm/include" \
+		UUID_LIBS="`pwd`/../libuuid-1.0.3/build-wasm/lib/libuuid.a" \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		|| exit 1
 	make -j8 || exit 1
 	make install || exit 1
 	cd ..
@@ -70,10 +129,20 @@ mkdir -p baseset
 	wget https://cdn.openttd.org/openmsx-releases/0.4.0/openmsx-0.4.0-all.zip || exit 1
 	unzip openmsx-0.4.0-all.zip || exit 1
 	rm openmsx-0.4.0-all.zip
-	cd baseset
-	tar xvf ../openmsx-0.4.0.tar
+	cd baseset || exit 1
+	tar xvf ../openmsx-0.4.0.tar || exit 1
 	cd ..
 	rm openmsx-0.4.0.tar
+}
+
+[ -e icudt68l.dat ] || {
+	cp -f "`em-config EMSCRIPTEN_ROOT`/cache/ports-builds/icu/source/data/in/icudt68l.dat" ./ || exit 1
+}
+
+[ -e fonts ] || {
+	wget https://sourceforge.net/projects/libsdl-android/files/openttd-fonts.zip || exit 1
+	unzip openttd-fonts.zip || exit 1
+	rm openttd-fonts.zip
 }
 
 #[ -e TimGM6mb.sf2 ] || {
