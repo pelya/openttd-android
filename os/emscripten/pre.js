@@ -13,18 +13,20 @@ Module['websocket'] = { url: function(host, port, proto) {
 } };
 
 Module.preRun.push(function() {
-    personal_dir = '/home/web_user/.local/share/openttd';
-    content_download_dir = personal_dir + '/content_download'
+    const personal_dir = '/home/web_user/.local/share/openttd';
+    const content_download_dir = personal_dir + '/content_download'
 
     /* Because of the "-c" above, all user-data is stored in /user_data. */
-    FS.mkdir('/home/web_user/.local');
-    FS.mkdir('/home/web_user/.local/share');
-    FS.mkdir(personal_dir);
-    FS.mount(IDBFS, {}, personal_dir);
+    FS.mount(IDBFS, {}, '/home/web_user');
 
     Module.addRunDependency('syncfs');
     FS.syncfs(true, function (err) {
         /* FS.mkdir() tends to fail if parent folders do not exist. */
+        if (!FS.analyzePath(personal_dir).exists) {
+            FS.mkdir('/home/web_user/.local');
+            FS.mkdir('/home/web_user/.local/share');
+            FS.mkdir(personal_dir);
+        }
         if (!FS.analyzePath(content_download_dir).exists) {
             FS.mkdir(content_download_dir);
         }
