@@ -90,7 +90,7 @@ mkdir -p baseset
 									-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
 									 || exit 1
 
-rm -f openttd.html
+[ -z "$NO_CLEAN" ] && rm -f openttd.html
 emmake make -j8 VERBOSE=1 || exit 1
 
 cp -f *.html *.js *.data *.wasm ../media/openttd.256.png ../os/emscripten/openttd.webapp "$INSTALL_PATH"
