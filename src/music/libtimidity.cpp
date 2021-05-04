@@ -44,7 +44,7 @@ static void MidiMixMusic(int16 *stream, size_t len)
 	std::unique_lock<std::mutex> lock{ _midi.synth_mutex, std::try_to_lock };
 
 	if (_midi.status == MIDI_PLAYING) {
-		mid_song_read_wave(_midi.song, (sint8 *)stream, len*2);
+		mid_song_read_wave(_midi.song, (sint8 *)stream, len * 4);
 	}
 }
 
