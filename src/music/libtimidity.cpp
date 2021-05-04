@@ -16,16 +16,9 @@
 #include "../core/math_func.hpp"
 #include "libtimidity.h"
 #include "midifile.hpp"
-#include "../base_media_base.h"
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/stat.h>
-#include <errno.h>
+#include "../mixer.h"
 #include <timidity.h>
-#include <SDL.h>
+#include <mutex>
 
 #include "../safeguards.h"
 
@@ -43,26 +36,17 @@ static struct {
 	MidiState status;
 	uint32 song_length;
 	uint32 song_position;
+	std::mutex synth_mutex;        ///< Guard mutex for synth access
 } _midi; ///< Metadata about the midi we're playing.
 
-#ifdef __ANDROID__
-/* Android does not have Midi chip, we have to route the libtimidity output through SDL audio output */
-void Android_MidiMixMusic(Sint16 *stream, int len)
+static void MidiMixMusic(int16 *stream, size_t len)
 {
+	std::unique_lock<std::mutex> lock{ _midi.synth_mutex, std::try_to_lock };
+
 	if (_midi.status == MIDI_PLAYING) {
-		Sint16 buf[16384];
-		while( len > 0 )
-		{
-			int minlen = std::min<int>(sizeof(buf), len);
-			mid_song_read_wave(_midi.song, buf, std::min<int>(sizeof(buf), len*2));
-			for( Uint16 i = 0; i < minlen; i++ )
-				stream[i] += buf[i];
-			stream += minlen;
-			len -= minlen;
-		}
+		mid_song_read_wave(_midi.song, (sint8 *)stream, len*2);
 	}
 }
-#endif /* __ANDROID__ */
 
 /** Factory for the libtimidity driver. */
 static FMusicDriver_LibTimidity iFMusicDriver_LibTimidity;
@@ -70,21 +54,25 @@ static FMusicDriver_LibTimidity iFMusicDriver_LibTimidity;
 enum { TIMIDITY_MAX_VOLUME = 50 };
 const char *MusicDriver_LibTimidity::Start(const StringList &param)
 {
+	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
+
 	_midi.status = MIDI_STOPPED;
 	_midi.song = NULL;
 	volume = TIMIDITY_MAX_VOLUME; // Avoid clipping
+	uint32 samplerate = MxSetMusicSource(MidiMixMusic);
 
 	if (mid_init(NULL) < 0) {
 		/* If init fails, it can be because no configuration was found.
 		 *  If it was not forced via param, try to load it without a
 		 *  configuration. Who knows that works. */
 		if (mid_init_no_config() < 0) {
+			MxSetMusicSource(nullptr);
 			return "error initializing timidity";
 		}
 	}
 	DEBUG(driver, 1, "successfully initialised timidity");
 
-	_midi.options.rate = 44100;
+	_midi.options.rate = samplerate;
 	_midi.options.format = MID_AUDIO_S16LSB;
 	_midi.options.channels = 2;
 	_midi.options.buffer_size = _midi.options.rate;
@@ -94,6 +82,10 @@ const char *MusicDriver_LibTimidity::Start(const StringList &param)
 
 void MusicDriver_LibTimidity::Stop()
 {
+	MxSetMusicSource(nullptr);
+
+	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
+
 	if (_midi.status == MIDI_PLAYING) this->StopSong();
 	mid_exit();
 }
@@ -104,6 +96,8 @@ void MusicDriver_LibTimidity::PlaySong(const MusicSongInfo &song)
 
 	this->StopSong();
 	if (filename.empty()) return;
+
+	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
 
 	_midi.stream = mid_istream_open_file(filename.c_str());
 	if (_midi.stream == NULL) {
@@ -127,6 +121,8 @@ void MusicDriver_LibTimidity::PlaySong(const MusicSongInfo &song)
 
 void MusicDriver_LibTimidity::StopSong()
 {
+	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
+
 	_midi.status = MIDI_STOPPED;
 	/* mid_song_free cannot handle NULL! */
 	if (_midi.song != NULL) mid_song_free(_midi.song);
@@ -135,6 +131,8 @@ void MusicDriver_LibTimidity::StopSong()
 
 bool MusicDriver_LibTimidity::IsSongPlaying()
 {
+	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
+
 	if (_midi.status == MIDI_PLAYING) {
 		_midi.song_position = mid_song_get_time(_midi.song);
 		if (_midi.song_position >= _midi.song_length) {
@@ -148,6 +146,8 @@ bool MusicDriver_LibTimidity::IsSongPlaying()
 
 void MusicDriver_LibTimidity::SetVolume(byte vol)
 {
+	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
+
 	volume = vol * TIMIDITY_MAX_VOLUME / 127; // I'm not sure about that value
 	if (_midi.song != NULL) mid_song_set_volume(_midi.song, vol);
 }
