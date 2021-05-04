@@ -49,6 +49,12 @@ const char *SoundDriver_SDL::Start(const StringList &parm)
 	spec.format = AUDIO_S16SYS;
 	spec.channels = 2;
 	spec.samples = GetDriverParamInt(parm, "samples", 1024);
+#ifdef __EMSCRIPTEN__
+	// Yes, allocate 1/3 of a second for an audiobuffer.
+	// Web browsers process sounds in the main thread together with video,
+	// and FPS of the webapp is terrible.
+	spec.samples = GetDriverParamInt(parm, "samples", 16384);
+#endif
 	spec.callback = fill_sound_buffer;
 	SDL_AudioDeviceID dev = SDL_OpenAudioDevice(nullptr, 0, &spec, &spec_actual, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
 	MxInitialize(spec_actual.freq);
