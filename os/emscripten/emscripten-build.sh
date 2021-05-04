@@ -4,6 +4,9 @@ BUILD_TYPE=Release
 [ "$1" = "debug" ] && BUILD_TYPE=Debug
 [ "$1" = "release" ] && BUILD_TYPE=Release
 
+INSTALL_PATH=/var/www/html/
+[ -n "$2" ] && INSTALL_PATH="$2"
+
 cd ../..
 
 [ -z "`which emsdk`" ] && export PATH=`pwd`/../emsdk:$PATH
@@ -63,11 +66,14 @@ mkdir -p baseset
 	mv opensfx-1.0.1.tar baseset/ || exit 1
 }
 
-[ -e baseset/openmsx-0.4.0.tar ] || {
+[ -e baseset/openmsx-0.4.0 ] || {
 	wget https://cdn.openttd.org/openmsx-releases/0.4.0/openmsx-0.4.0-all.zip || exit 1
 	unzip openmsx-0.4.0-all.zip || exit 1
 	rm openmsx-0.4.0-all.zip
-	mv openmsx-0.4.0.tar baseset/ || exit 1
+	cd baseset
+	tar xvf ../openmsx-0.4.0.tar
+	cd ..
+	rm openmsx-0.4.0.tar
 }
 
 #[ -e TimGM6mb.sf2 ] || {
@@ -87,4 +93,4 @@ mkdir -p baseset
 rm -f openttd.html
 emmake make -j8 VERBOSE=1 || exit 1
 
-cp -f *.html *.js *.data *.wasm ../media/openttd.256.png ../os/emscripten/openttd.webapp /var/www/html/
+cp -f *.html *.js *.data *.wasm ../media/openttd.256.png ../os/emscripten/openttd.webapp "$INSTALL_PATH"
