@@ -53,7 +53,7 @@ const char *SoundDriver_SDL::Start(const StringList &parm)
 	// Yes, allocate 1/3 of a second for an audiobuffer.
 	// Web browsers process sounds in the main thread together with video,
 	// and FPS of the webapp is terrible.
-	spec.samples = GetDriverParamInt(parm, "samples", 16384);
+	spec.samples = GetDriverParamInt(parm, "samples", 4096);
 #endif
 	spec.callback = fill_sound_buffer;
 	SDL_AudioDeviceID dev = SDL_OpenAudioDevice(nullptr, 0, &spec, &spec_actual, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
