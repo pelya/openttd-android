@@ -11,6 +11,6 @@
             "type":     "image/png"
         }
     ],
-    "start_url":        "/openttd.html",
+    "start_url":        "openttd.html",
     "background_color": "green"
 }
