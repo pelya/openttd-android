@@ -1,0 +1,13 @@
+Only in fontconfig-2.13.1-new: Makefile
+diff -u -r fontconfig-2.13.1/Makefile.am fontconfig-2.13.1-new/Makefile.am
+--- fontconfig-2.13.1/Makefile.am	2018-06-05 13:36:38.000000000 +0300
++++ fontconfig-2.13.1-new/Makefile.am	2021-05-05 22:32:49.230804234 +0300
+@@ -24,7 +24,7 @@
+ SUBDIRS=fontconfig fc-case fc-lang src \
+ 	fc-cache fc-cat fc-conflist fc-list fc-match \
+ 	fc-pattern fc-query fc-scan fc-validate conf.d \
+-	its po po-conf test
++	its po po-conf
+ if ENABLE_DOCS
+ SUBDIRS += doc
+ endif
