@@ -184,12 +184,19 @@ mkdir -p baseset
 
 [ -e Makefile ] || emcmake cmake .. \
 	-DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF \
+	-DFREETYPE_INCLUDE_DIRS=`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2 \
+	-DFREETYPE_LIBRARY="-lfreetype" \
 	-DFontconfig_INCLUDE_DIR=`pwd`/fontconfig-2.13.1/build-wasm/include \
 	-DFontconfig_LIBRARY=`pwd`/fontconfig-2.13.1/build-wasm/lib/libfontconfig.a \
 	-DLZO_INCLUDE_DIR=`pwd`/lzo-2.10/build-wasm/include \
 	-DLZO_LIBRARY=`pwd`/lzo-2.10/build-wasm/lib/liblzo2.a \
+	-DCMAKE_CXX_FLAGS="-sUSE_FREETYPE=1" \
+	-DCMAKE_EXE_LINKER_FLAGS="-sUSE_FREETYPE=1 \
+		-L`pwd`/expat-2.3.0/build-wasm/lib -lexpat \
+		-L`pwd`/libuuid-1.0.3/build-wasm/lib -luuid" \
 	|| exit 1
 
+#  -I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2/freetype
 #	-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
 #	-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
 
