@@ -106,6 +106,7 @@ autoreconf -V || exit 1 # No autotools installed
 	cd ..
 }
 
+# -s EXPORTED_FUNCTIONS=['_main','_memchr']
 [ -e lzo-2.10/build-wasm/lib/liblzo2.a ] || {
 	wget -nc https://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz || exit 1
 	tar xvf lzo-2.10.tar.gz || exit 1
@@ -115,7 +116,7 @@ autoreconf -V || exit 1 # No autotools installed
 		--disable-shared --enable-static \
 		--disable-asm \
 		CFLAGS="$OPT" \
-		LDFLAGS="$OPT" \
+		LDFLAGS="$OPT -s EXPORTED_FUNCTIONS=['_main','_memchr']" \
 		|| exit 1
 	make -j8 || exit 1
 	make install || exit 1
