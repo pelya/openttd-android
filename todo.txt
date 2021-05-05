@@ -14,3 +14,26 @@
 - Default tramway button not appearing in vertical toolbar when compact toolbar is disabled. https://github.com/pelya/commandergenius/issues/119
 
 - Fast Forward sometimes deactivates after auto-save, however Fast Forward button is still pressed.
+
+===== Emscripten TODO =====
+
+- Fix window resizing to keep videomode height at 480 pixels.
+
+- Audio worklet to play MIDI music, with separate data file.
+
+- Download all data files into IDBFS on first run, to free up some RAM.
+
+- Build libicuuc libicuio libicuio libiculx and libicu-le-hb for Hebrew and Arabic support.
+
+- Fix multiplayer using WebSocket Proxy Server, this depends on pthreads support,
+  so I'll probably need to hack together some custom proxy that does not use pthreads.
+
+- Pinch-zoom support using SDL touch events.
+
+- Fix tutorial.
+
+- Fix text input boxes using HTML text input overlay.
+
+- Implement cloud saves by downloading the savegame from the web browser.
+
+- Find some developer with a MacBook and $100 to publish the 'OpenTTD Webapp Launcher' to the Apple Store.
