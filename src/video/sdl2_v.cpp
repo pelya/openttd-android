@@ -436,7 +436,8 @@ bool VideoDriver_SDL_Base::PollEvent()
 #ifdef __EMSCRIPTEN__
 			if (_request_fullscreen) {
 				_request_fullscreen = false;
-				EM_ASM( document.documentElement.requestFullscreen(); );
+				// This apparently crashes the webapp on iPhone XS with iOS 14.4.2
+				// EM_ASM( document.documentElement.requestFullscreen(); );
 			}
 #endif
 			break;
