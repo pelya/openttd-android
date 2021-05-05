@@ -107,15 +107,6 @@ autoreconf -V || exit 1
 	cd ..
 }
 
-[ -e build-host ] || {
-	rm -rf build-host
-	mkdir -p build-host
-	cd build-host
-	cmake ../.. -DOPTION_TOOLS_ONLY=ON || exit 1
-	make -j8 tools || exit 1
-	cd ..
-}
-
 mkdir -p baseset
 
 [ -e baseset/opengfx-0.6.1.tar ] || {
@@ -156,15 +147,26 @@ mkdir -p baseset
 #	wget -nc 'https://sourceforge.net/p/mscore/code/HEAD/tree/trunk/mscore/share/sound/TimGM6mb.sf2?format=raw' -O TimGM6mb.sf2 || exit 1
 #}
 
-[ -e timidity/timidity.cfg ] || {
-	wget -nc https://sourceforge.net/projects/libsdl-android/files/timidity.zip || exit 1
-	unzip timidity.zip
+#[ -e timidity/timidity.cfg ] || {
+#	wget -nc https://sourceforge.net/projects/libsdl-android/files/timidity.zip || exit 1
+#	unzip timidity.zip
+#}
+
+[ -e build-host ] || {
+	rm -rf build-host
+	mkdir -p build-host
+	cd build-host
+	cmake ../.. -DOPTION_TOOLS_ONLY=ON || exit 1
+	make -j8 tools || exit 1
+	cd ..
 }
 
 [ -e Makefile ] || emcmake cmake .. -DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF \
-									-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
-									-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
 									 || exit 1
+
+#									-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
+#									-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
+
 
 [ -z "$NO_CLEAN" ] && rm -f openttd.html
 emmake make -j8 VERBOSE=1 || exit 1
