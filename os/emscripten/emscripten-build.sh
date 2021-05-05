@@ -150,9 +150,9 @@ mkdir -p baseset
 	rm openmsx-0.4.0.tar
 }
 
-[ -e icudt68l.dat ] || {
-	cp -f "`em-config EMSCRIPTEN_ROOT`/cache/ports-builds/icu/source/data/in/icudt68l.dat" ./ || exit 1
-}
+#[ -e icudt68l.dat ] || {
+#	cp -f "`em-config EMSCRIPTEN_ROOT`/cache/ports-builds/icu/source/data/in/icudt68l.dat" ./ || exit 1
+#}
 
 [ -e fonts ] || {
 	wget -nc https://sourceforge.net/projects/libsdl-android/files/openttd-fonts.zip || exit 1
