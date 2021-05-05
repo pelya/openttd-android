@@ -4,6 +4,9 @@ BUILD_TYPE=Release
 [ "$1" = "debug" ] && BUILD_TYPE=Debug
 [ "$1" = "release" ] && BUILD_TYPE=Release
 
+OPT="-O3 -flto=thin"
+[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
+
 INSTALL_PATH=/var/www/html/
 [ -n "$2" ] && INSTALL_PATH="$2"
 
@@ -20,18 +23,18 @@ source "$PATH_EMSDK/emsdk_env.sh"
 mkdir -p build-wasm-$BUILD_TYPE
 cd build-wasm-$BUILD_TYPE
 
+# ===== Build dependency libraries =====
+
 embuilder build liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
 embuilder build --lto liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
 
-autoreconf -V || exit 1
+autoreconf -V || exit 1 # No autotools installed
 
 [ -e libtimidity-0.2.7/build-wasm/lib/libtimidity.a ] || {
 	wget -nc https://sourceforge.net/projects/libtimidity/files/libtimidity/0.2.7/libtimidity-0.2.7.tar.gz || exit 1
 	tar xvf libtimidity-0.2.7.tar.gz || exit 1
 	cd libtimidity-0.2.7 || exit 1
 	autoreconf -fi
-	OPT="-O3 -flto=thin"
-	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
 	emconfigure ./configure --prefix=`pwd`/build-wasm \
 		--disable-shared --enable-static \
 		--disable-ao --disable-aotest \
@@ -48,8 +51,6 @@ autoreconf -V || exit 1
 	tar xvf expat-2.3.0.tar.gz || exit 1
 	cd expat-2.3.0
 	autoreconf -fi
-	OPT="-O3 -flto=thin"
-	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
 	emconfigure ./configure --prefix=`pwd`/build-wasm \
 		--disable-shared --enable-static \
 		--without-xmlwf --without-docbook --without-examples --without-tests \
@@ -66,8 +67,6 @@ autoreconf -V || exit 1
 	tar xvf libuuid-1.0.3.tar.gz || exit 1
 	cd libuuid-1.0.3
 	autoreconf -fi
-	OPT="-O3 -flto=thin"
-	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
 	emconfigure ./configure --prefix=`pwd`/build-wasm \
 		--disable-shared --enable-static \
 		CFLAGS="$OPT" \
@@ -78,6 +77,8 @@ autoreconf -V || exit 1
 	cd ..
 }
 
+# ===== Fontconfig is convoluted shit =====
+
 [ -e fontconfig-2.13.1/build-wasm/lib/libfontconfig.a ] || {
 	wget -nc https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.1.tar.gz || exit 1
 	tar xvf fontconfig-2.13.1.tar.gz || exit 1
@@ -86,8 +87,6 @@ autoreconf -V || exit 1
 	#sed -i 's/po-conf test/po-conf/' Makefile.am
 	patch -p1 < ../../os/emscripten/fontconfig-2.13.1.patch || exit 1
 	autoreconf -fi
-	OPT="-O3 -flto=thin"
-	[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
 	emconfigure ./configure --prefix=`pwd`/build-wasm \
 		--disable-shared --enable-static \
 		--disable-docs cross_compiling=yes \
@@ -106,6 +105,24 @@ autoreconf -V || exit 1
 	make install || exit 1
 	cd ..
 }
+
+[ -e lzo-2.10/build-wasm/lib/liblzo2.a ] || {
+	wget -nc https://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz || exit 1
+	tar xvf lzo-2.10.tar.gz || exit 1
+	cd lzo-2.10
+	autoreconf -fi
+	emconfigure ./configure --prefix=`pwd`/build-wasm \
+		--disable-shared --enable-static \
+		--disable-asm \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		|| exit 1
+	make -j8 || exit 1
+	make install || exit 1
+	cd ..
+}
+
+# ===== Download data files =====
 
 mkdir -p baseset
 
@@ -152,6 +169,8 @@ mkdir -p baseset
 #	unzip timidity.zip
 #}
 
+# ===== Build OpenTTD code generation tools =====
+
 [ -e build-host ] || {
 	rm -rf build-host
 	mkdir -p build-host
@@ -161,11 +180,20 @@ mkdir -p baseset
 	cd ..
 }
 
-[ -e Makefile ] || emcmake cmake .. -DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF \
-									 || exit 1
+# ===== Build OpenTTD itself =====
 
-#									-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
-#									-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
+[ -e Makefile ] || emcmake cmake .. \
+	-DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF \
+	-DFontconfig_INCLUDE_DIR=`pwd`/fontconfig-2.13.1/build-wasm/include \
+	-DFontconfig_LIBRARY=`pwd`/fontconfig-2.13.1/build-wasm/lib/libfontconfig.a \
+	-DLZO_INCLUDE_DIR=`pwd`/lzo-2.10/build-wasm/include \
+	-DLZO_LIBRARY=`pwd`/lzo-2.10/build-wasm/lib/liblzo2.a \
+	-DCMAKE_EXE_LINKER_FLAGS="-L`pwd`/expat-2.3.0/build-wasm/lib -lexpat \
+		-L`pwd`/libuuid-1.0.3/build-wasm/lib -luuid" \
+	|| exit 1
+
+#	-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
+#	-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
 
 
 [ -z "$NO_CLEAN" ] && rm -f openttd.html
