@@ -83,16 +83,15 @@ struct BuildInfoWindow : public Window
 
 		/* Increase slightly to have some space around the box. */
 		size->width  += 2 + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-		size->height += 2 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+		size->height += 6 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
 	{
 		/* There is only one widget. */
-		GfxFillRect(r.left, r.top, r.right, r.bottom, PC_BLACK);
-		GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_LIGHT_YELLOW);
+		DrawFrameRect(r.left, r.top, r.right, r.bottom, COLOUR_GREY, FR_NONE);
 
-		int top = r.top + WD_FRAMERECT_TOP;
+		int top = r.top + WD_FRAMERECT_TOP + 4;
 		Money cost = BuildInfoWindow::cost;
 		StringID msg = STR_MESSAGE_ESTIMATED_COST;
 		SetDParam(0, cost);
