@@ -188,8 +188,6 @@ mkdir -p baseset
 	-DFontconfig_LIBRARY=`pwd`/fontconfig-2.13.1/build-wasm/lib/libfontconfig.a \
 	-DLZO_INCLUDE_DIR=`pwd`/lzo-2.10/build-wasm/include \
 	-DLZO_LIBRARY=`pwd`/lzo-2.10/build-wasm/lib/liblzo2.a \
-	-DCMAKE_EXE_LINKER_FLAGS="-L`pwd`/expat-2.3.0/build-wasm/lib -lexpat \
-		-L`pwd`/libuuid-1.0.3/build-wasm/lib -luuid" \
 	|| exit 1
 
 #	-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
