@@ -33,8 +33,10 @@
 #define EXTERNAL_PLAYER "timidity"
 #endif
 
+#ifndef __EMSCRIPTEN__
 /** Factory for the midi player that uses external players. */
 static FMusicDriver_ExtMidi iFMusicDriver_ExtMidi;
+#endif
 
 const char *MusicDriver_ExtMidi::Start(const StringList &parm)
 {
