@@ -15,6 +15,8 @@
 
 - Fast Forward sometimes deactivates after auto-save, however Fast Forward button is still pressed.
 
+- De-press 'Go To' button in vehicle orders after clicking on a station.
+
 ===== Emscripten TODO =====
 
 - Fix window resizing to keep videomode height at 480 pixels.
