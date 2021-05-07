@@ -82,11 +82,12 @@ const char *MusicDriver_LibTimidity::Start(const StringList &param)
 
 void MusicDriver_LibTimidity::Stop()
 {
+	this->StopSong();
+
 	MxSetMusicSource(nullptr);
 
 	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
 
-	if (_midi.status == MIDI_PLAYING) this->StopSong();
 	mid_exit();
 }
 
