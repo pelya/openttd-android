@@ -903,7 +903,6 @@ void NWidgetResizeBase::SetMinimalSizeAbsolute(uint min_x, uint min_y)
 	uint min_size = 0;
 	switch (this->sizing_type) {
 		case NWST_NONE:
-		case NWST_OVERRIDE:
 			min_size = 0;
 			break;
 		case NWST_BUTTON:
@@ -2596,7 +2595,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 				this->SetMinimalSize(8, 8);
 				break;
 			default:
-				this->sizing_type = NWST_OVERRIDE;
+				this->sizing_type = NWST_NONE;
 		}
 	}
 
@@ -2701,7 +2700,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 		this->type == WWT_DEFSIZEBOX || this->type == WWT_CLOSEBOX || this->type == WWT_DEBUGBOX)) {
 		static const Dimension extra = {0, 0};
 		padding = &extra;
-		this->sizing_type = NWST_OVERRIDE;
+		this->sizing_type = NWST_NONE;
 		size = extra;
 		fill = extra;
 		resize = extra;
@@ -3452,16 +3451,9 @@ uint GetMinSizing(NWidSizingType type, uint min_1)
 	uint min_sizing;
 	switch (type) {
 		case NWST_NONE:
-		case NWST_OVERRIDE:
 			return min_1;
 		case NWST_BUTTON:
 			min_sizing = _settings_client.gui.min_button;
-			break;
-		case NWST_KEYBOARD:
-			min_sizing = 2 * _settings_client.gui.min_button;
-			break;
-		case NWST_WINDOW_LENGTH:
-			min_sizing = 8 * _settings_client.gui.min_button;
 			break;
 		default: NOT_REACHED();
 	}

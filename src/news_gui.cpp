@@ -362,7 +362,7 @@ struct NewsWindow : Window {
 				break;
 
 			case WID_N_MESSAGE:
-				size->width = GetMinSizing(NWST_WINDOW_LENGTH, size->width);
+				size->width = std::max(GetMinSizing(NWST_BUTTON) * 8, size->width);
 				CopyInDParam(0, this->ni->params, lengthof(this->ni->params));
 				str = this->ni->string_id;
 				break;

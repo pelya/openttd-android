@@ -1234,7 +1234,7 @@ struct QueryWindow : public Window {
 	{
 		if (widget != WID_Q_TEXT) return;
 
-		size->width = GetMinSizing(NWST_WINDOW_LENGTH, size->width);
+		size->width = std::max(GetMinSizing(NWST_BUTTON) * 8, size->width);
 		Dimension d = GetStringMultiLineBoundingBox(this->message, *size);
 		d.width += WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
