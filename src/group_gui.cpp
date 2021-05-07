@@ -230,7 +230,7 @@ private:
 		this->tiny_step_height = std::max(this->tiny_step_height, this->column_size[VGC_NUMBER].height);
 
 		this->tiny_step_height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
-		this->tiny_step_height = GetMinSizing(NWST_BUTTON, this->tiny_step_height);
+		this->tiny_step_height = GetMinButtonSize(this->tiny_step_height);
 
 		return WD_FRAMERECT_LEFT + 8 +
 			this->column_size[VGC_FOLD].width + 2 +

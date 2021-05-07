@@ -1248,7 +1248,7 @@ public:
 				}
 				size->width = std::max(size->width, d.width + padding.width);
 				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				this->line_height = GetMinSizing(NWST_BUTTON, this->line_height);
+				this->line_height = GetMinButtonSize(this->line_height);
 				size->height = 3 * this->line_height;
 				resize->height = this->line_height;
 				break;
@@ -1295,7 +1295,7 @@ public:
 			case WID_BRAS_NEWST_SPACER:
 				size->height = 0;
 				if (_railstation.newstations) {
-					size->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
+					size->height = GetMinButtonSize(FONT_HEIGHT_NORMAL);
 				}
 				break;
 		}

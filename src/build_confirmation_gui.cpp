@@ -188,8 +188,8 @@ struct BuildConfirmationWindow : Window {
 	{
 		switch (widget) {
 			case WID_BC_OK:
-				size->width = GetMinSizing(NWST_BUTTON) * 2;
-				size->height = GetMinSizing(NWST_BUTTON) * 3;
+				size->width = GetMinButtonSize() * 2;
+				size->height = GetMinButtonSize() * 3;
 				break;
 		}
 	}

@@ -627,8 +627,8 @@ static inline void DrawButtonDropdown(const Rect &r, Colours colour, bool clicke
 {
 	int text_offset = std::max(0, ((int)(r.bottom - r.top + 1) - FONT_HEIGHT_NORMAL) / 2); // Offset for rendering the text vertically centered
 
-	int dd_width  = GetMinSizing(NWST_BUTTON, NWidgetLeaf::dropdown_dimension.width);
-	int dd_height = GetMinSizing(NWST_BUTTON, NWidgetLeaf::dropdown_dimension.height);
+	int dd_width  = GetMinButtonSize(NWidgetLeaf::dropdown_dimension.width);
+	int dd_height = GetMinButtonSize(NWidgetLeaf::dropdown_dimension.height);
 	int image_offset = std::max(0, ((int)(r.bottom - r.top + 1) - dd_height) / 2);
 
 	if (_current_text_dir == TD_LTR) {
@@ -2506,9 +2506,9 @@ void NWidgetScrollbar::Draw(const Window *w)
 	if (vertical_dimension.width == 0) {
 		vertical_dimension = maxdim(GetSpriteSize(SPR_ARROW_UP), GetSpriteSize(SPR_ARROW_DOWN));
 		vertical_dimension.width += extra.width;
-		vertical_dimension.width = GetMinSizing(NWST_BUTTON, vertical_dimension.width);
+		vertical_dimension.width = GetMinButtonSize(vertical_dimension.width);
 		vertical_dimension.height += extra.height;
-		vertical_dimension.height = GetMinSizing(NWST_BUTTON, vertical_dimension.height);
+		vertical_dimension.height = GetMinButtonSize(vertical_dimension.height);
 	}
 	return vertical_dimension;
 }
@@ -2519,9 +2519,9 @@ void NWidgetScrollbar::Draw(const Window *w)
 	if (horizontal_dimension.width == 0) {
 		horizontal_dimension = maxdim(GetSpriteSize(SPR_ARROW_LEFT), GetSpriteSize(SPR_ARROW_RIGHT));
 		horizontal_dimension.width += extra.width;
-		horizontal_dimension.width = GetMinSizing(NWST_BUTTON, horizontal_dimension.width);
+		horizontal_dimension.width = GetMinButtonSize(horizontal_dimension.width);
 		horizontal_dimension.height += extra.height;
-		horizontal_dimension.height = GetMinSizing(NWST_BUTTON, horizontal_dimension.height);
+		horizontal_dimension.height = GetMinButtonSize(horizontal_dimension.height);
 	}
 	return horizontal_dimension;
 }
@@ -2787,7 +2787,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			Dimension sprite_size = GetSpriteSize(_current_text_dir == TD_RTL ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
 			size.width = std::max(size.width, 30 + sprite_size.width);
 			size.height = std::max(sprite_size.height, GetStringBoundingBox("_").height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM);
-			size.height = GetMinSizing(NWST_BUTTON, size.height);
+			size.height = GetMinButtonSize(size.height);
 		}
 		FALLTHROUGH;
 		case WWT_PUSHBTN: {
@@ -2854,7 +2854,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			padding = &extra;
 			if (this->index >= 0) w->SetStringParameters(this->index);
 			Dimension d2 = GetStringBoundingBox(this->widget_data);
-			d2.width += extra.width + GetMinSizing(NWST_BUTTON, 11U);
+			d2.width += extra.width + GetMinButtonSize(11U);
 			d2.height += extra.height;
 			size = maxdim(size, d2);
 			break;
@@ -3037,7 +3037,7 @@ void NWidgetLeaf::Draw(const Window *w)
  */
 bool NWidgetLeaf::ButtonHit(const Point &pt)
 {
-	uint button_size = GetMinSizing(NWST_BUTTON, 12);
+	uint button_size = GetMinButtonSize(12);
 	if (_current_text_dir == TD_LTR) {
 		int button_width = this->pos_x + this->current_x - button_size;
 		return pt.x < button_width;
@@ -3442,21 +3442,12 @@ NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int wid
 
 /**
  * Return the minimal automatic size for a widget.
- * @param type The automatic sizing type to use.
  * @param min_1 Minimal passed value.
- * @return At least the passed value, or the minimal size for the associated sizing type.
+ * @return At least the passed value.
  */
-uint GetMinSizing(NWidSizingType type, uint min_1)
+uint GetMinButtonSize(uint min_1)
 {
-	uint min_sizing;
-	switch (type) {
-		case NWST_NONE:
-			return min_1;
-		case NWST_BUTTON:
-			min_sizing = _settings_client.gui.min_button;
-			break;
-		default: NOT_REACHED();
-	}
+	uint min_sizing = _settings_client.gui.min_button;
 	min_sizing = RescaleFrom854x480(min_sizing);
 
 	return std::max(min_sizing, min_1);

@@ -1032,7 +1032,7 @@ static inline NWidgetPart SetSizingType(NWidSizingType type)
 	return part;
 }
 
-uint GetMinSizing(NWidSizingType type, uint min_1 = 0);
+uint GetMinButtonSize(uint min_1 = 0);
 
 /**
  * Widget part function for setting the minimal size.

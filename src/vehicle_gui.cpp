@@ -743,17 +743,17 @@ struct RefitWindow : public Window {
 	{
 		switch (widget) {
 			case WID_VR_MATRIX:
-				resize->height = GetMinSizing(NWST_BUTTON, WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
+				resize->height = GetMinButtonSize(WD_MATRIX_TOP + FONT_HEIGHT_NORMAL + WD_MATRIX_BOTTOM);
 				size->height = resize->height * 4;
 				break;
 
 			case WID_VR_VEHICLE_PANEL_DISPLAY:
-				size->height = std::max<uint>(GetMinSizing(NWST_BUTTON), ScaleGUITrad(GetVehicleHeight(Vehicle::Get(this->window_number)->type)));
+				size->height = std::max<uint>(GetMinButtonSize(), ScaleGUITrad(GetVehicleHeight(Vehicle::Get(this->window_number)->type)));
 				break;
 
 			case WID_VR_INFO:
 				size->width = WD_FRAMERECT_LEFT + this->information_width + WD_FRAMERECT_RIGHT;
-				size->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
+				size->height = GetMinButtonSize(FONT_HEIGHT_NORMAL);
 				break;
 		}
 	}

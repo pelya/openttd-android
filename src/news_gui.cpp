@@ -362,7 +362,7 @@ struct NewsWindow : Window {
 				break;
 
 			case WID_N_MESSAGE:
-				size->width = std::max(GetMinSizing(NWST_BUTTON) * 8, size->width);
+				size->width = std::max(GetMinButtonSize() * 8, size->width);
 				CopyInDParam(0, this->ni->params, lengthof(this->ni->params));
 				str = this->ni->string_id;
 				break;
@@ -388,7 +388,7 @@ struct NewsWindow : Window {
 					Dimension d2 = GetStringBoundingBox(this->GetWidget<NWidgetCore>(WID_N_SHOW_GROUP)->widget_data);
 					d2.height += WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM;
 					d2.width += WD_CAPTIONTEXT_LEFT + WD_CAPTIONTEXT_RIGHT;
-					d2.width = std::max(d2.width, GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL));
+					d2.width = std::max(d2.width, GetMinButtonSize(FONT_HEIGHT_NORMAL));
 					*size = d2;
 				} else {
 					/* Hide 'Show group window' button if this news is not about a vehicle. */
@@ -1141,7 +1141,7 @@ struct MessageHistoryWindow : Window {
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget == WID_MH_BACKGROUND) {
-			this->line_height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + 2);
+			this->line_height = GetMinButtonSize(FONT_HEIGHT_NORMAL + 2);
 			resize->height = this->line_height;
 
 			/* Months are off-by-one, so it's actually 8. Not using

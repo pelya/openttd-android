@@ -111,7 +111,7 @@ struct AIListWindow : public Window {
 	{
 		if (widget == WID_AIL_LIST) {
 			this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-			this->line_height = GetMinSizing(NWST_BUTTON, this->line_height);
+			this->line_height = GetMinButtonSize(this->line_height);
 
 			resize->width = 1;
 			resize->height = this->line_height;
@@ -352,7 +352,7 @@ struct AISettingsWindow : public Window {
 	{
 		if (widget == WID_AIS_BACKGROUND) {
 			this->line_height = std::max(SETTING_BUTTON_HEIGHT, FONT_HEIGHT_NORMAL) + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-			this->line_height = GetMinSizing(NWST_BUTTON, this->line_height);
+			this->line_height = GetMinButtonSize(this->line_height);
 
 			resize->width = 1;
 			resize->height = this->line_height;
@@ -692,11 +692,7 @@ static const NWidgetPart _nested_ai_config_widgets[] = {
 			EndContainer(),
 			NWidget(NWID_VERTICAL), SetPIP(4, 4, 4),
 				NWidget(WWT_FRAME, COLOUR_MAUVE), SetDataTip(STR_AI_CONFIG_GAMESCRIPT, STR_NULL), SetPadding(0, 5, 4, 5),
-<<<<<<< HEAD
 					NWidget(WWT_MATRIX, COLOUR_MAUVE, WID_AIC_GAMELIST), SetMinimalSize(288, 14), SetFill(1, 0), SetMatrixDataTip(1, 1, STR_AI_CONFIG_GAMELIST_TOOLTIP),
-=======
-					NWidget(WWT_MATRIX, COLOUR_MAUVE, WID_AIC_GAMELIST), SetSizingType(NWST_BUTTON), SetMinimalSize(288, 14), SetFill(1, 0), SetMatrixDataTip(1, 1, STR_AI_CONFIG_GAMELIST_TOOLTIP),
->>>>>>> e80df6ae8... Removed NWST_STEP and min_step, we don't need two variables doing the same thing
 				EndContainer(),
 				NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(7, 0, 7),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_AIC_CHANGE), SetFill(1, 0), SetMinimalSize(93, 0), SetDataTip(STR_AI_CONFIG_CHANGE, STR_AI_CONFIG_CHANGE_TOOLTIP),
@@ -775,13 +771,13 @@ struct AIConfigWindow : public Window {
 	{
 		switch (widget) {
 			case WID_AIC_GAMELIST:
-				this->line_height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				this->line_height = GetMinButtonSize(FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 				size->height = this->line_height;
 				break;
 
 			case WID_AIC_LIST:
 				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				this->line_height = GetMinSizing(NWST_BUTTON, this->line_height);
+				this->line_height = GetMinButtonSize(NWST_BUTTON, this->line_height);
 				resize->height = this->line_height;
 				size->height = 8 * this->line_height;
 				break;
@@ -1104,7 +1100,7 @@ struct AIDebugWindow : public Window {
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget == WID_AID_LOG_PANEL) {
-			resize->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL);
+			resize->height = GetMinButtonSize(FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL);
 			size->height = 14 * resize->height + this->top_offset + this->bottom_offset;
 		}
 	}
@@ -1121,7 +1117,7 @@ struct AIDebugWindow : public Window {
 		bool dirty = false;
 
 		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
-		uint offset_y = Center(0, GetMinSizing(NWST_BUTTON, d.height + WD_MATRIX_TOP + WD_MATRIX_BOTTOM + 1), d.height);
+		uint offset_y = Center(0, GetMinButtonSize(d.height + WD_MATRIX_TOP + WD_MATRIX_BOTTOM + 1), d.height);
 		/* Paint the company icons */
 		for (CompanyID i = COMPANY_FIRST; i < MAX_COMPANIES; i++) {
 			NWidgetCore *button = this->GetWidget<NWidgetCore>(i + WID_AID_COMPANY_BUTTON_START);

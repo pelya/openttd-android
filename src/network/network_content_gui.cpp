@@ -565,7 +565,7 @@ public:
 				break;
 
 			case WID_NCL_CHECKBOX:
-				size->width = GetMinSizing(NWST_BUTTON, this->checkbox_size.width) + WD_MATRIX_RIGHT + WD_MATRIX_LEFT;
+				size->width = GetMinButtonSize(this->checkbox_size.width) + WD_MATRIX_RIGHT + WD_MATRIX_LEFT;
 				break;
 
 			case WID_NCL_TYPE: {
