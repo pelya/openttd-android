@@ -484,11 +484,9 @@ struct GameOptionsWindow : Window {
 				this->SetDirty();
 				if (_settings_client.gui.min_button == 48 && _settings_client.gui.windows_titlebars) {
 					_settings_client.gui.min_button = 40;
-					_settings_client.gui.min_step = 40;
 				}
 				if (_settings_client.gui.min_button == 40 && !_settings_client.gui.windows_titlebars) {
 					_settings_client.gui.min_button = 48;
-					_settings_client.gui.min_step = 48;
 				}
 				ReconstructUserInterface();
 				break;
@@ -621,7 +619,6 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_BUTTON_SIZE_DROPDOWN: // Setup screenshot format dropdown
 				_settings_client.gui.min_button = index;
-				_settings_client.gui.min_step = index;
 				ReconstructUserInterface();
 				break;
 
@@ -2003,7 +2000,7 @@ struct GameSettingsWindow : Window {
 	{
 		switch (widget) {
 			case WID_GS_OPTIONSPANEL:
-				resize->height = SETTING_HEIGHT = GetMinSizing(NWST_STEP, std::max({(int)_circle_size.height, SETTING_BUTTON_HEIGHT, FONT_HEIGHT_NORMAL}) + 1);
+				resize->height = SETTING_HEIGHT = GetMinSizing(NWST_BUTTON, std::max({(int)_circle_size.height, SETTING_BUTTON_HEIGHT, FONT_HEIGHT_NORMAL}) + 1);
 				resize->width  = 1;
 
 				size->height = 5 * resize->height + SETTINGTREE_TOP_OFFSET + SETTINGTREE_BOTTOM_OFFSET;

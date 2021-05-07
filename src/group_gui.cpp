@@ -71,12 +71,12 @@ static const NWidgetPart _nested_group_widgets[] = {
 		/* right part */
 		NWidget(NWID_VERTICAL),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GL_GROUP_BY_ORDER), SetSizingType(NWST_STEP), SetMinimalSize(81, 12), SetDataTip(STR_STATION_VIEW_GROUP, STR_TOOLTIP_GROUP_ORDER),
-				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GL_GROUP_BY_DROPDOWN), SetSizingType(NWST_STEP), SetMinimalSize(167, 12), SetDataTip(0x0, STR_TOOLTIP_GROUP_ORDER),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GL_GROUP_BY_ORDER), SetSizingType(NWST_BUTTON), SetMinimalSize(81, 12), SetDataTip(STR_STATION_VIEW_GROUP, STR_TOOLTIP_GROUP_ORDER),
+				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GL_GROUP_BY_DROPDOWN), SetSizingType(NWST_BUTTON), SetMinimalSize(167, 12), SetDataTip(0x0, STR_TOOLTIP_GROUP_ORDER),
 				NWidget(WWT_PANEL, COLOUR_GREY), SetMinimalSize(12, 12), SetResize(1, 0), EndContainer(),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GL_SORT_BY_ORDER), SetSizingType(NWST_STEP), SetMinimalSize(81, 12), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_GL_SORT_BY_ORDER), SetSizingType(NWST_BUTTON), SetMinimalSize(81, 12), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GL_SORT_BY_DROPDOWN), SetMinimalSize(167, 12), SetDataTip(0x0, STR_TOOLTIP_SORT_CRITERIA),
 				NWidget(WWT_PANEL, COLOUR_GREY), SetMinimalSize(12, 12), SetResize(1, 0), EndContainer(),
 			EndContainer(),
@@ -230,7 +230,7 @@ private:
 		this->tiny_step_height = std::max(this->tiny_step_height, this->column_size[VGC_NUMBER].height);
 
 		this->tiny_step_height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
-		this->tiny_step_height = GetMinSizing(NWST_STEP, this->tiny_step_height);
+		this->tiny_step_height = GetMinSizing(NWST_BUTTON, this->tiny_step_height);
 
 		return WD_FRAMERECT_LEFT + 8 +
 			this->column_size[VGC_FOLD].width + 2 +

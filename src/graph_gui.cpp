@@ -114,7 +114,7 @@ static NWidgetBase *MakeNWidgetCompanyLines(int *biggest_index)
 
 	for (int widnum = WID_GL_FIRST_COMPANY; widnum <= WID_GL_LAST_COMPANY; widnum++) {
 		NWidgetBackground *panel = new NWidgetBackground(WWT_PANEL, COLOUR_BROWN, widnum);
-		panel->sizing_type = NWST_STEP;
+		panel->sizing_type = NWST_BUTTON;
 		panel->SetMinimalSize(246, line_height);
 		panel->SetFill(1, 0);
 		panel->SetDataTip(0x0, STR_GRAPH_KEY_COMPANY_SELECTION_TOOLTIP);
@@ -647,7 +647,7 @@ static const NWidgetPart _nested_operating_profit_widgets[] = {
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
-					SetSizingType(NWST_STEP),
+					SetSizingType(NWST_BUTTON),
 				NWidget(WWT_RESIZEBOX, COLOUR_BROWN, WID_CV_RESIZE),
 			EndContainer(),
 		EndContainer(),
@@ -699,7 +699,7 @@ static const NWidgetPart _nested_income_graph_widgets[] = {
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
-					SetSizingType(NWST_STEP),
+					SetSizingType(NWST_BUTTON),
 				NWidget(WWT_RESIZEBOX, COLOUR_BROWN, WID_CV_RESIZE),
 			EndContainer(),
 		EndContainer(),
@@ -749,7 +749,7 @@ static const NWidgetPart _nested_delivered_cargo_graph_widgets[] = {
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
-					SetSizingType(NWST_STEP),
+					SetSizingType(NWST_BUTTON),
 				NWidget(WWT_RESIZEBOX, COLOUR_BROWN, WID_CV_RESIZE),
 			EndContainer(),
 		EndContainer(),
@@ -805,9 +805,9 @@ static const NWidgetPart _nested_performance_history_widgets[] = {
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_PHG_DETAILED_PERFORMANCE), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_PERFORMANCE_DETAIL_KEY, STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP),
-					SetSizingType(NWST_STEP),
+					SetSizingType(NWST_BUTTON),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_PHG_KEY), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
-					SetSizingType(NWST_STEP),
+					SetSizingType(NWST_BUTTON),
 				NWidget(WWT_RESIZEBOX, COLOUR_BROWN, WID_PHG_RESIZE),
 			EndContainer(),
 		EndContainer(),
@@ -857,7 +857,7 @@ static const NWidgetPart _nested_company_value_graph_widgets[] = {
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_SPACER), SetFill(0, 1), SetResize(0, 1),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_CV_KEY_BUTTON), SetMinimalSize(50, 0), SetMinimalTextLines(1, WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM + 2), SetDataTip(STR_GRAPH_KEY_BUTTON, STR_GRAPH_KEY_TOOLTIP),
-					SetSizingType(NWST_STEP),
+					SetSizingType(NWST_BUTTON),
 				NWidget(WWT_RESIZEBOX, COLOUR_BROWN, WID_CV_RESIZE),
 			EndContainer(),
 		EndContainer(),

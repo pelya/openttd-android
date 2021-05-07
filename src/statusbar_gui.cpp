@@ -107,7 +107,7 @@ struct StatusBarWindow : Window {
 
 	void FindWindowPlacementAndResize(int def_width, int def_height) override
 	{
-		Window::FindWindowPlacementAndResize(std::min(_toolbar_width, _screen.width * 2 / 3 - GetMinSizing(NWST_STEP) * 2), def_height);
+		Window::FindWindowPlacementAndResize(std::min(_toolbar_width, _screen.width * 2 / 3 - GetMinSizing(NWST_BUTTON) * 2), def_height);
 	}
 
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override

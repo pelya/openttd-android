@@ -501,14 +501,14 @@ public:
 		switch (widget) {
 			case WID_NG_MATRIX:
 				resize->height = WD_MATRIX_TOP + std::max(GetSpriteSize(SPR_BLOT).height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				fill->height = resize->height;
 				size->height = 5 * resize->height;
 				break;
 
 			case WID_NG_LASTJOINED:
 				size->height = WD_MATRIX_TOP + std::max(GetSpriteSize(SPR_BLOT).height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
-				size->height = GetMinSizing(NWST_STEP, size->height);
+				size->height = GetMinSizing(NWST_BUTTON, size->height);
 				break;
 
 			case WID_NG_LASTJOINED_SPACER:
@@ -1366,7 +1366,7 @@ struct NetworkLobbyWindow : public Window {
 
 			case WID_NL_MATRIX:
 				resize->height = WD_MATRIX_TOP + std::max<uint>(std::max(GetSpriteSize(SPR_LOCK).height, GetSpriteSize(SPR_PROFIT_LOT).height), FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				size->height = 6 * resize->height;
 				break;
 
@@ -1713,8 +1713,8 @@ struct NetworkClientListPopupWindow : Window {
 			Window(desc),
 			sel_index(-1), client_id(client_id)
 	{
-		this->desired_location.x = x - GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
-		this->desired_location.y = y + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) / 2;
+		this->desired_location.x = x - GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
+		this->desired_location.y = y + GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL) / 2;
 
 		const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(client_id);
 
@@ -1749,7 +1749,7 @@ struct NetworkClientListPopupWindow : Window {
 			d = maxdim(GetStringBoundingBox(action.name), d);
 		}
 
-		d.height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+		d.height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 		d.height *= (uint)this->actions.size();
 		d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
@@ -1764,14 +1764,14 @@ struct NetworkClientListPopupWindow : Window {
 		for (const ClientListAction &action : this->actions) {
 			TextColour colour;
 			if (sel-- == 0) { // Selected item, highlight it
-				GfxFillRect(r.left + 1, y, r.right - 1, y + GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) - 1, PC_BLACK);
+				GfxFillRect(r.left + 1, y, r.right - 1, y + GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL) - 1, PC_BLACK);
 				colour = TC_WHITE;
 			} else {
 				colour = TC_BLACK;
 			}
 
-			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL)), action.name, colour);
-			y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+			DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, Center(y, GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL)), action.name, colour);
+			y += GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 		}
 	}
 
@@ -1795,7 +1795,7 @@ struct NetworkClientListPopupWindow : Window {
 
 	void OnClick(Point pt, int widget, int click_count) override
 	{
-		int index = (pt.y - WD_FRAMERECT_TOP) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+		int index = (pt.y - WD_FRAMERECT_TOP) / GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 
 		if (index >= 0 && index < (int)this->actions.size()) {
 			const NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(this->client_id);
@@ -1888,7 +1888,7 @@ struct NetworkClientListWindow : Window {
 		this->server_client_width = std::max(GetStringBoundingBox(STR_NETWORK_SERVER).width, GetStringBoundingBox(STR_NETWORK_CLIENT).width) + WD_FRAMERECT_RIGHT;
 		this->icon_size = GetSpriteSize(SPR_COMPANY_ICON);
 		this->line_height = std::max(this->icon_size.height + 2U, (uint)FONT_HEIGHT_NORMAL);
-		this->line_height = GetMinSizing(NWST_STEP, this->line_height);
+		this->line_height = GetMinSizing(NWST_BUTTON, this->line_height);
 
 		uint width = 100; // Default width
 		for (const NetworkClientInfo *ci : NetworkClientInfo::Iterate()) {

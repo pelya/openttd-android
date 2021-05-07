@@ -735,15 +735,15 @@ struct TooltipsWindow : public Window
 		/* Correctly position the tooltip position, watch out for window and cursor size
 		 * Clamp value to below main toolbar and above statusbar. If tooltip would
 		 * go below window, flip it so it is shown above the cursor */
-		pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height - GetMinSizing(NWST_STEP);
-		if (pt.y < scr_top) pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot) + GetMinSizing(NWST_STEP);
+		pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height - GetMinSizing(NWST_BUTTON);
+		if (pt.y < scr_top) pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot) + GetMinSizing(NWST_BUTTON);
 		pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
 
 		if (_settings_client.gui.windows_titlebars) {
 			// Move it to the top of the screen, away from mouse cursor, so it won't steal screen taps on Android
 			pt.y = GetMainViewTop();
-			if (_cursor.pos.y < pt.y + (int)GetMinSizing(NWST_STEP)) {
-				pt.x = _cursor.pos.x > _screen.width / 2 ? GetMinSizing(NWST_STEP) : _screen.width - sm_width - GetMinSizing(NWST_STEP);
+			if (_cursor.pos.y < pt.y + (int)GetMinSizing(NWST_BUTTON)) {
+				pt.x = _cursor.pos.x > _screen.width / 2 ? GetMinSizing(NWST_BUTTON) : _screen.width - sm_width - GetMinSizing(NWST_BUTTON);
 			}
 		}
 

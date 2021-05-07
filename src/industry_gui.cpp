@@ -421,7 +421,7 @@ public:
 					if (this->index[i] == INVALID_INDUSTRYTYPE) continue;
 					d = maxdim(d, GetStringBoundingBox(GetIndustrySpec(this->index[i])->name));
 				}
-				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				resize->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 				d.width += FONT_HEIGHT_NORMAL * 5 / 4 + padding.width;
 				d.height = 5 * resize->height;
 				*size = maxdim(*size, d);
@@ -927,7 +927,7 @@ public:
 			if (first) {
 				if (has_accept) y += WD_PAR_VSEP_WIDE;
 				DrawString(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE);
-				y += this->editable == EA_RATE ? GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) : FONT_HEIGHT_NORMAL;
+				y += this->editable == EA_RATE ? GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL) : FONT_HEIGHT_NORMAL;
 				if (this->editable == EA_RATE) this->production_offset_y = y;
 				first = false;
 			}
@@ -942,7 +942,7 @@ public:
 			if (this->editable == EA_RATE) {
 				DrawArrowButtons(left + WD_FRAMETEXT_LEFT, y, COLOUR_YELLOW, (this->clicked_line == IL_RATE1 + j) ? this->clicked_button : 0,
 						i->production_rate[j] > 0, i->production_rate[j] < 255);
-				y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				y += GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 			} else {
 				y += FONT_HEIGHT_NORMAL;
 			}
@@ -957,7 +957,7 @@ public:
 			DrawString(x, right - WD_FRAMERECT_RIGHT, y, STR_INDUSTRY_VIEW_PRODUCTION_LEVEL);
 			DrawArrowButtons(left + WD_FRAMETEXT_LEFT, y, COLOUR_YELLOW, (this->clicked_line == IL_MULTIPLIER) ? this->clicked_button : 0,
 					i->prod_level > PRODLEVEL_MINIMUM, i->prod_level < PRODLEVEL_MAXIMUM);
-			y += GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+			y += GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 		}
 
 		/* Get the extra message for the GUI */
@@ -1017,9 +1017,9 @@ public:
 
 					case EA_RATE:
 						if (pt.y >= this->production_offset_y) {
-							if ((pt.y - this->production_offset_y) % GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL) > (uint)SETTING_BUTTON_HEIGHT) break;;
+							if ((pt.y - this->production_offset_y) % GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL) > (uint)SETTING_BUTTON_HEIGHT) break;;
 
-							int row = (pt.y - this->production_offset_y) / GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+							int row = (pt.y - this->production_offset_y) / GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 							for (uint j = 0; j < lengthof(i->produced_cargo); j++) {
 								if (i->produced_cargo[j] == CT_INVALID) continue;
 								row--;
@@ -1235,7 +1235,7 @@ static const NWidgetPart _nested_industry_directory_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_VERTICAL),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetSizingType(NWST_STEP), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
+				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_ID_DROPDOWN_ORDER), SetSizingType(NWST_BUTTON), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_DROPDOWN_CRITERIA), SetDataTip(STR_JUST_STRING, STR_TOOLTIP_SORT_CRITERIA),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_FILTER_BY_ACC_CARGO), SetMinimalSize(225, 12), SetFill(0, 1), SetDataTip(STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER, STR_TOOLTIP_FILTER_CRITERIA),
 				NWidget(WWT_DROPDOWN, COLOUR_BROWN, WID_ID_FILTER_BY_PROD_CARGO), SetMinimalSize(225, 12), SetFill(0, 1), SetDataTip(STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER, STR_TOOLTIP_FILTER_CRITERIA),
@@ -1669,7 +1669,7 @@ public:
 				for (uint i = 0; i < this->industries.size(); i++) {
 					d = maxdim(d, GetStringBoundingBox(this->GetIndustryString(this->industries[i])));
 				}
-				resize->height = d.height = GetMinSizing(NWST_STEP, d.height);
+				resize->height = d.height = GetMinSizing(NWST_BUTTON, d.height);
 				d.height *= 5;
 				d.width += padding.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 				d.height += padding.height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
