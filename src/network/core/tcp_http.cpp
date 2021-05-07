@@ -13,6 +13,7 @@
 #include "../../debug.h"
 #include "../../rev.h"
 #include "../network_func.h"
+#include "game_info.h"
 
 #include "tcp_http.h"
 
@@ -230,10 +231,10 @@ int NetworkHTTPSocketHandler::Receive()
 	for (;;) {
 		ssize_t res = recv(this->sock, (char *)this->recv_buffer + this->recv_pos, lengthof(this->recv_buffer) - this->recv_pos, 0);
 		if (res == -1) {
-			int err = GET_LAST_ERROR();
-			if (err != EWOULDBLOCK) {
-				/* Something went wrong... (104 is connection reset by peer) */
-				if (err != 104) DEBUG(net, 0, "recv failed with error %d", err);
+			NetworkError err = NetworkError::GetLast();
+			if (!err.WouldBlock()) {
+				/* Something went wrong... */
+				if (!err.IsConnectionReset()) DEBUG(net, 0, "recv failed with error %s", err.AsString());
 				return -1;
 			}
 			/* Connection would block, so stop for now */

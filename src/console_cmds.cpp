@@ -13,6 +13,7 @@
 #include "engine_func.h"
 #include "landscape.h"
 #include "saveload/saveload.h"
+#include "network/core/game_info.h"
 #include "network/network.h"
 #include "network/network_func.h"
 #include "network/network_base.h"
@@ -907,7 +908,7 @@ DEF_CONSOLE_CMD(ConNetworkReconnect)
 	/* Don't resolve the address first, just print it directly as it comes from the config file. */
 	IConsolePrintF(CC_DEFAULT, "Reconnecting to %s:%d...", _settings_client.network.last_host, _settings_client.network.last_port);
 
-	NetworkClientConnectGame(NetworkAddress(_settings_client.network.last_host, _settings_client.network.last_port), playas);
+	NetworkClientConnectGame(_settings_client.network.last_host, _settings_client.network.last_port, playas);
 	return true;
 }
 
@@ -921,7 +922,6 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 	}
 
 	if (argc < 2) return false;
-	if (_networking) NetworkDisconnect(); // we are in network-mode, first close it!
 
 	const char *port = nullptr;
 	const char *company = nullptr;
@@ -949,7 +949,7 @@ DEF_CONSOLE_CMD(ConNetworkConnect)
 		IConsolePrintF(CC_DEFAULT, "    port: %s", port);
 	}
 
-	NetworkClientConnectGame(NetworkAddress(ip, rport), join_as);
+	NetworkClientConnectGame(ip, rport, join_as);
 
 	return true;
 }
@@ -1453,7 +1453,7 @@ DEF_CONSOLE_CMD(ConScreenShot)
 	ScreenshotType type = SC_VIEWPORT;
 	uint32 width = 0;
 	uint32 height = 0;
-	const char *name = nullptr;
+	std::string name{};
 	uint32 arg_index = 1;
 
 	if (argc > arg_index) {

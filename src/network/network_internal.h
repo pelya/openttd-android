@@ -135,8 +135,6 @@ void NetworkAddServer(const char *b);
 void NetworkRebuildHostList();
 void UpdateNetworkGameWindow();
 
-bool IsNetworkCompatibleVersion(const char *version);
-
 /* From network_command.cpp */
 /**
  * Everything we need to know about a command to be able to execute it.
@@ -155,7 +153,7 @@ void NetworkExecuteLocalCommandQueue();
 void NetworkFreeLocalCommandQueue();
 void NetworkSyncCommandQueue(NetworkClientSocket *cs);
 
-void NetworkError(StringID error_string);
+void ShowNetworkError(StringID error_string);
 void NetworkTextMessage(NetworkAction action, TextColour colour, bool self_send, const char *name, const char *str = "", int64 data = 0);
 uint NetworkCalculateLag(const NetworkClientSocket *cs);
 StringID GetNetworkErrorMsg(NetworkErrorCode err);

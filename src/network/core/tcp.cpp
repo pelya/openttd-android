@@ -105,11 +105,11 @@ SendPacketsState NetworkTCPSocketHandler::SendPackets(bool closing_down)
 	while (p != nullptr) {
 		res = send(this->sock, (const char*)p->buffer + p->pos, p->size - p->pos, 0);
 		if (res == -1) {
-			int err = GET_LAST_ERROR();
-			if (err != EWOULDBLOCK) {
+			NetworkError err = NetworkError::GetLast();
+			if (!err.WouldBlock()) {
 				/* Something went wrong.. close client! */
 				if (!closing_down) {
-					DEBUG(net, 0, "send failed with error %d", err);
+					DEBUG(net, 0, "send failed with error %s", err.AsString());
 					this->CloseConnection();
 				}
 				return SPS_CLOSED;
@@ -160,10 +160,10 @@ Packet *NetworkTCPSocketHandler::ReceivePacket()
 		/* Read the size of the packet */
 			res = recv(this->sock, (char*)p->buffer + p->pos, sizeof(PacketSize) - p->pos, 0);
 			if (res == -1) {
-				int err = GET_LAST_ERROR();
-				if (err != EWOULDBLOCK) {
-					/* Something went wrong... (104 is connection reset by peer) */
-					if (err != 104) DEBUG(net, 0, "recv failed with error %d", err);
+				NetworkError err = NetworkError::GetLast();
+				if (!err.WouldBlock()) {
+					/* Something went wrong... */
+					if (!err.IsConnectionReset()) DEBUG(net, 0, "recv failed with error %s", err.AsString());
 					this->CloseConnection();
 					return nullptr;
 				}
@@ -191,10 +191,10 @@ Packet *NetworkTCPSocketHandler::ReceivePacket()
 	while (p->pos < p->size) {
 		res = recv(this->sock, (char*)p->buffer + p->pos, p->size - p->pos, 0);
 		if (res == -1) {
-			int err = GET_LAST_ERROR();
-			if (err != EWOULDBLOCK) {
-				/* Something went wrong... (104 is connection reset by peer) */
-				if (err != 104) DEBUG(net, 0, "recv failed with error %d", err);
+			NetworkError err = NetworkError::GetLast();
+			if (!err.WouldBlock()) {
+				/* Something went wrong... */
+				if (!err.IsConnectionReset()) DEBUG(net, 0, "recv failed with error %s", err.AsString());
 				this->CloseConnection();
 				return nullptr;
 			}

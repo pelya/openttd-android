@@ -10,6 +10,7 @@
 #include "../stdafx.h"
 #include "../strings_func.h"
 #include "../date_func.h"
+#include "core/game_info.h"
 #include "network_admin.h"
 #include "network_server.h"
 #include "network_udp.h"
@@ -363,6 +364,20 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendClientInfo(NetworkClientIn
 	return NETWORK_RECV_STATUS_OKAY;
 }
 
+/** Send the client information about the server. */
+NetworkRecvStatus ServerNetworkGameSocketHandler::SendGameInfo()
+{
+	NetworkGameInfo ngi;
+	FillNetworkGameInfo(ngi);
+
+	Packet *p = new Packet(PACKET_SERVER_GAME_INFO);
+	SerializeNetworkGameInfo(p, &ngi);
+
+	this->SendPacket(p);
+
+	return NETWORK_RECV_STATUS_OKAY;
+}
+
 /** Send the client information about the companies. */
 NetworkRecvStatus ServerNetworkGameSocketHandler::SendCompanyInfo()
 {
@@ -488,7 +503,7 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendNewGRFCheck()
 
 	p->Send_uint8 (grf_count);
 	for (c = _grfconfig; c != nullptr; c = c->next) {
-		if (!HasBit(c->flags, GCF_STATIC)) this->SendGRFIdentifier(p, &c->ident);
+		if (!HasBit(c->flags, GCF_STATIC)) SerializeGRFIdentifier(p, &c->ident);
 	}
 
 	this->SendPacket(p);
@@ -605,7 +620,7 @@ void ServerNetworkGameSocketHandler::CheckNextClientToSendMap(NetworkClientSocke
 /** This sends the map to the client */
 NetworkRecvStatus ServerNetworkGameSocketHandler::SendMap()
 {
-	static uint sent_packets; // How many packets we did send successfully last time
+	static uint16 sent_packets; // How many packets we did send successfully last time
 
 	if (this->status < STATUS_AUTHORIZED) {
 		/* Illegal call, return error and ignore the packet */
@@ -665,8 +680,10 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendMap()
 				return NETWORK_RECV_STATUS_CONN_LOST;
 
 			case SPS_ALL_SENT:
-				/* All are sent, increase the sent_packets */
-				if (has_packets) sent_packets *= 2;
+				/* All are sent, increase the sent_packets but do not overflow! */
+				if (has_packets && sent_packets < std::numeric_limits<decltype(sent_packets)>::max() / 2) {
+					sent_packets *= 2;
+				}
 				break;
 
 			case SPS_PARTLY_SENT:
@@ -874,6 +891,11 @@ NetworkRecvStatus ServerNetworkGameSocketHandler::SendConfigUpdate()
  * Receiving functions
  *   DEF_SERVER_RECEIVE_COMMAND has parameter: NetworkClientSocket *cs, Packet *p
  ************/
+
+NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_GAME_INFO(Packet *p)
+{
+	return this->SendGameInfo();
+}
 
 NetworkRecvStatus ServerNetworkGameSocketHandler::Receive_CLIENT_COMPANY_INFO(Packet *p)
 {

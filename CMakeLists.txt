@@ -4,7 +4,9 @@ if(NOT BINARY_NAME)
     set(BINARY_NAME openttd)
 endif()
 
-project(${BINARY_NAME})
+project(${BINARY_NAME}
+    VERSION 1.11.2
+)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "In-source builds not allowed. Please run \"cmake ..\" from the build directory. You may need to delete \"${CMAKE_SOURCE_DIR}/CMakeCache.txt\" first.")
@@ -72,6 +74,9 @@ add_custom_target(find_version
         ${CMAKE_COMMAND}
                 -DFIND_VERSION_BINARY_DIR=${CMAKE_BINARY_DIR}/generated
                 -DCPACK_BINARY_DIR=${CMAKE_BINARY_DIR}
+                -DREV_MAJOR=${PROJECT_VERSION_MAJOR}
+                -DREV_MINOR=${PROJECT_VERSION_MINOR}
+                -DREV_BUILD=${PROJECT_VERSION_PATCH}
                 $<$<BOOL:ANDROID>:-DANDROID=TRUE>
                 -P "${CMAKE_SOURCE_DIR}/cmake/scripts/FindVersion.cmake"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

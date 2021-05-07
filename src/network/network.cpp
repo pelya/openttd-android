@@ -54,7 +54,6 @@ bool _network_server;     ///< network-server is active
 bool _network_available;  ///< is network mode available?
 bool _network_dedicated;  ///< are we a dedicated server?
 bool _is_network_server;  ///< Does this client wants to be a network-server?
-NetworkServerGameInfo _network_game_info; ///< Information about our game.
 NetworkCompanyState *_network_company_states = nullptr; ///< Statistics about some companies.
 ClientID _network_own_client_id;      ///< Our client identifier.
 ClientID _redirect_console_to_client; ///< If not invalid, redirect the console output to a client.
@@ -177,12 +176,15 @@ const char *GenerateCompanyPasswordHash(const char *password, const char *passwo
 	if (StrEmpty(password)) return password;
 
 	char salted_password[NETWORK_SERVER_ID_LENGTH];
+	size_t password_length = strlen(password);
+	size_t password_server_id_length = strlen(password_server_id);
 
-	memset(salted_password, 0, sizeof(salted_password));
-	seprintf(salted_password, lastof(salted_password), "%s", password);
 	/* Add the game seed and the server's ID as the salt. */
 	for (uint i = 0; i < NETWORK_SERVER_ID_LENGTH - 1; i++) {
-		salted_password[i] ^= password_server_id[i] ^ (password_game_seed >> (i % 32));
+		char password_char = (i < password_length ? password[i] : 0);
+		char server_id_char = (i < password_server_id_length ? password_server_id[i] : 0);
+		char seed_char = password_game_seed >> (i % 32);
+		salted_password[i] = password_char ^ server_id_char ^ seed_char;
 	}
 
 	Md5 checksum;
@@ -278,7 +280,7 @@ uint NetworkCalculateLag(const NetworkClientSocket *cs)
 
 /* There was a non-recoverable error, drop back to the main menu with a nice
  *  error */
-void NetworkError(StringID error_string)
+void ShowNetworkError(StringID error_string)
 {
 	_switch_mode = SM_MENU;
 	ShowErrorMessage(error_string, INVALID_STRING_ID, WL_CRITICAL);
@@ -572,9 +574,10 @@ public:
 	}
 };
 
-/* Query a server to fetch his game-info
- *  If game_info is true, only the gameinfo is fetched,
- *   else only the client_info is fetched */
+/**
+ * Query a server to fetch his game-info.
+ * @param address the address to query.
+ */
 void NetworkTCPQueryServer(NetworkAddress address)
 {
 	if (!_network_available) return;
@@ -644,7 +647,7 @@ public:
 
 	void OnFailure() override
 	{
-		NetworkError(STR_NETWORK_ERROR_NOCONNECTION);
+		ShowNetworkError(STR_NETWORK_ERROR_NOCONNECTION);
 	}
 
 	void OnConnect(SOCKET s) override
@@ -658,25 +661,45 @@ public:
 
 
 /* Used by clients, to connect to a server */
-void NetworkClientConnectGame(NetworkAddress address, CompanyID join_as, const char *join_server_password, const char *join_company_password)
+void NetworkClientConnectGame(const char *hostname, uint16 port, CompanyID join_as, const char *join_server_password, const char *join_company_password)
 {
 	if (!_network_available) return;
 
-	if (address.GetPort() == 0) return;
+	if (port == 0) return;
 
-	strecpy(_settings_client.network.last_host, address.GetHostname(), lastof(_settings_client.network.last_host));
-	_settings_client.network.last_port = address.GetPort();
+	strecpy(_settings_client.network.last_host, hostname, lastof(_settings_client.network.last_host));
+	_settings_client.network.last_port = port;
 	_network_join_as = join_as;
 	_network_join_server_password = join_server_password;
 	_network_join_company_password = join_company_password;
 
+	if (_game_mode == GM_MENU) {
+		/* From the menu we can immediately continue with the actual join. */
+		NetworkClientJoinGame();
+	} else {
+		/* When already playing a game, first go back to the main menu. This
+		 * disconnects the user from the current game, meaning we can safely
+		 * load in the new. After all, there is little point in continueing to
+		 * play on a server if we are connecting to another one.
+		 */
+		_switch_mode = SM_JOIN_GAME;
+	}
+}
+
+/**
+ * Actually perform the joining to the server. Use #NetworkClientConnectGame
+ * when you want to connect to a specific server/company. This function
+ * assumes _network_join is already fully set up.
+ */
+void NetworkClientJoinGame()
+{
 	NetworkDisconnect();
 	NetworkInitialize();
 
 	_network_join_status = NETWORK_JOIN_STATUS_CONNECTING;
 	ShowJoinStatusWindow();
 
-	new TCPClientConnecter(address);
+	new TCPClientConnecter(NetworkAddress(_settings_client.network.last_host, _settings_client.network.last_port));
 }
 
 static void NetworkInitGameInfo()
@@ -1027,12 +1050,13 @@ static void NetworkGenerateServerId()
 	seprintf(_settings_client.network.network_id, lastof(_settings_client.network.network_id), "%s", hex_output);
 }
 
-void NetworkStartDebugLog(NetworkAddress address)
+void NetworkStartDebugLog(const char *hostname, uint16 port)
 {
 	extern SOCKET _debug_socket;  // Comes from debug.c
 
-	DEBUG(net, 0, "Redirecting DEBUG() to %s:%d", address.GetHostname(), address.GetPort());
+	DEBUG(net, 0, "Redirecting DEBUG() to %s:%d", hostname, port);
 
+	NetworkAddress address(hostname, port);
 	SOCKET s = address.Connect();
 	if (s == INVALID_SOCKET) {
 		DEBUG(net, 0, "Failed to open socket for redirection DEBUG()");
@@ -1075,79 +1099,6 @@ void NetworkShutDown()
 	_network_available = false;
 
 	NetworkCoreShutdown();
-}
-
-/**
- * How many hex digits of the git hash to include in network revision string.
- * Determined as 10 hex digits + 2 characters for -g/-u/-m prefix.
- */
-static const uint GITHASH_SUFFIX_LEN = 12;
-
-/**
- * Get the network version string used by this build.
- * The returned string is guaranteed to be at most NETWORK_REVISON_LENGTH bytes.
- */
-const char * GetNetworkRevisionString()
-{
-	/* This will be allocated on heap and never free'd, but only once so not a "real" leak. */
-	static char *network_revision = nullptr;
-
-	if (!network_revision) {
-		/* Start by taking a chance on the full revision string. */
-		network_revision = stredup(_openttd_revision);
-		/* Ensure it's not longer than the packet buffer length. */
-		if (strlen(network_revision) >= NETWORK_REVISION_LENGTH) network_revision[NETWORK_REVISION_LENGTH - 1] = '\0';
-
-		/* Tag names are not mangled further. */
-		if (_openttd_revision_tagged) {
-			DEBUG(net, 1, "Network revision name is '%s'", network_revision);
-			return network_revision;
-		}
-
-		/* Prepare a prefix of the git hash.
-		* Size is length + 1 for terminator, +2 for -g prefix. */
-		assert(_openttd_revision_modified < 3);
-		char githash_suffix[GITHASH_SUFFIX_LEN + 1] = "-";
-		githash_suffix[1] = "gum"[_openttd_revision_modified];
-		for (uint i = 2; i < GITHASH_SUFFIX_LEN; i++) {
-			githash_suffix[i] = _openttd_revision_hash[i-2];
-		}
-
-		/* Where did the hash start in the original string?
-		 * Overwrite from that position, unless that would go past end of packet buffer length. */
-		ptrdiff_t hashofs = strrchr(_openttd_revision, '-') - _openttd_revision;
-		if (hashofs + strlen(githash_suffix) + 1 > NETWORK_REVISION_LENGTH) hashofs = strlen(network_revision) - strlen(githash_suffix);
-		/* Replace the git hash in revision string. */
-		strecpy(network_revision + hashofs, githash_suffix, network_revision + NETWORK_REVISION_LENGTH);
-		assert(strlen(network_revision) < NETWORK_REVISION_LENGTH); // strlen does not include terminator, constant does, hence strictly less than
-		DEBUG(net, 1, "Network revision name is '%s'", network_revision);
-	}
-
-	return network_revision;
-}
-
-static const char *ExtractNetworkRevisionHash(const char *revstr)
-{
-	return strrchr(revstr, '-');
-}
-
-/**
- * Checks whether the given version string is compatible with our version.
- * First tries to match the full string, if that fails, attempts to compare just git hashes.
- * @param other the version string to compare to
- */
-bool IsNetworkCompatibleVersion(const char *other)
-{
-	if (strncmp(GetNetworkRevisionString(), other, NETWORK_REVISION_LENGTH - 1) == 0) return true;
-
-	/* If this version is tagged, then the revision string must be a complete match,
-	 * since there is no git hash suffix in it.
-	 * This is needed to avoid situations like "1.9.0-beta1" comparing equal to "2.0.0-beta1".  */
-	if (_openttd_revision_tagged) return false;
-
-	const char *hash1 = ExtractNetworkRevisionHash(GetNetworkRevisionString());
-	const char *hash2 = ExtractNetworkRevisionHash(other);
-	return hash1 && hash2 && (strncmp(hash1, hash2, GITHASH_SUFFIX_LEN) == 0);
 }
 
 #ifdef __EMSCRIPTEN__
