@@ -29,7 +29,7 @@ public:
 	virtual ~DropDownListItem() {}
 
 	virtual bool Selectable() const { return false; }
-	virtual uint Height(uint width) const { return GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL); }
+	virtual uint Height(uint width) const { return GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL); }
 	virtual uint Width() const { return 0; }
 	virtual void Draw(int left, int right, int top, int bottom, bool sel, Colours bg_colour) const;
 };

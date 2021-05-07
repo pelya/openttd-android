@@ -194,7 +194,7 @@ static const NWidgetPart _nested_small_news_widgets[] = {
 		NWidget(WWT_INSET, COLOUR_LIGHT_BLUE, WID_N_INSET), SetPadding(2, 2, 2, 2),
 			NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_N_VIEWPORT), SetSizingType(NWST_VIEWPORT), SetPadding(1, 1, 1, 1), SetMinimalSize(274, 47), SetFill(1, 0),
 		EndContainer(),
-		NWidget(WWT_EMPTY, COLOUR_WHITE, WID_N_MESSAGE), SetMinimalSize(275, 20), SetFill(1, 0), SetPadding(0, 5, 0, 5), SetSizingType(NWST_STEP),
+		NWidget(WWT_EMPTY, COLOUR_WHITE, WID_N_MESSAGE), SetMinimalSize(275, 20), SetFill(1, 0), SetPadding(0, 5, 0, 5), SetSizingType(NWST_BUTTON),
 	EndContainer(),
 };
 
@@ -1141,7 +1141,7 @@ struct MessageHistoryWindow : Window {
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override
 	{
 		if (widget == WID_MH_BACKGROUND) {
-			this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + 2);
+			this->line_height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + 2);
 			resize->height = this->line_height;
 
 			/* Months are off-by-one, so it's actually 8. Not using

@@ -199,7 +199,7 @@ struct TimetableWindow : Window {
 
 			case WID_VT_ARRIVAL_DEPARTURE_SELECTION:
 			case WID_VT_TIMETABLE_PANEL:
-				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				resize->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 				size->height = WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM;
 				break;
 

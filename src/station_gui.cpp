@@ -392,7 +392,7 @@ public:
 
 			case WID_STL_LIST:
 				resize->height = std::max(FONT_HEIGHT_NORMAL, FONT_HEIGHT_SMALL + ScaleFontTrad(3));
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				size->height = WD_FRAMERECT_TOP + 5 * resize->height + WD_FRAMERECT_BOTTOM;
 
 				/* Determine appropriate width for mini station rating graph */
@@ -447,7 +447,7 @@ public:
 				int max = std::min<size_t>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), this->stations.size());
 				int y = r.top + WD_FRAMERECT_TOP;
 				uint line_height = this->GetWidget<NWidgetBase>(widget)->resize_y;
-				line_height = GetMinSizing(NWST_STEP, line_height);
+				line_height = GetMinSizing(NWST_BUTTON, line_height);
 				/* Spacing between station name and first rating graph. */
 				int text_spacing = ScaleFontTrad(5);
 				/* Spacing between additional rating graphs. */
@@ -761,7 +761,7 @@ static const NWidgetPart _nested_company_stations_widgets[] = {
 		NWidget(WWT_PANEL, COLOUR_GREY), SetDataTip(0x0, STR_NULL), SetResize(1, 0), SetFill(1, 1), EndContainer(),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_STL_SORTBY), SetSizingType(NWST_STEP), SetMinimalSize(81, 12), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_STL_SORTBY), SetSizingType(NWST_BUTTON), SetMinimalSize(81, 12), SetDataTip(STR_BUTTON_SORT_BY, STR_TOOLTIP_SORT_ORDER),
 		NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_STL_SORTDROPBTN), SetMinimalSize(163, 12), SetDataTip(STR_SORT_BY_NAME, STR_TOOLTIP_SORT_CRITERIA), // widget_data gets overwritten.
 		NWidget(WWT_PANEL, COLOUR_GREY), SetDataTip(0x0, STR_NULL), SetResize(1, 0), SetFill(1, 1), EndContainer(),
 	EndContainer(),
@@ -2313,7 +2313,7 @@ struct SelectStationWindow : Window {
 			d = maxdim(d, GetStringBoundingBox(T::EXPECTED_FACIL == FACIL_WAYPOINT ? STR_STATION_LIST_WAYPOINT : STR_STATION_LIST_STATION));
 		}
 
-		resize->height = GetMinSizing(NWST_STEP, d.height);
+		resize->height = GetMinSizing(NWST_BUTTON, d.height);
 		d.height = 5 * resize->height;
 		d.width += WD_FRAMERECT_RIGHT + WD_FRAMERECT_LEFT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;

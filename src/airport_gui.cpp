@@ -335,7 +335,7 @@ public:
 				d.width += padding.width;
 				d.height += padding.height;
 				*size = maxdim(*size, d);
-				size->height = GetMinSizing(NWST_STEP, size->height);
+				size->height = GetMinSizing(NWST_BUTTON, size->height);
 				break;
 			}
 
@@ -347,7 +347,7 @@ public:
 					size->width = std::max(size->width, GetStringBoundingBox(as->name).width);
 				}
 
-				this->line_height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				this->line_height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 				size->height = 5 * this->line_height;
 				break;
 			}
@@ -591,7 +591,7 @@ static const NWidgetPart _nested_build_airport_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		/* Airport dropdown selector and picture. */
 		NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetFill(1, 0), SetPIP(2, 0, 2),
-			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetSizingType(NWST_STEP), SetDataTip(STR_STATION_BUILD_AIRPORT_CLASS_LABEL, STR_NULL), SetFill(1, 0),
+			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetSizingType(NWST_BUTTON), SetDataTip(STR_STATION_BUILD_AIRPORT_CLASS_LABEL, STR_NULL), SetFill(1, 0),
 			NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_AP_CLASS_DROPDOWN), SetFill(1, 0), SetDataTip(STR_BLACK_STRING, STR_STATION_BUILD_AIRPORT_TOOLTIP),
 			NWidget(WWT_EMPTY, COLOUR_DARK_GREEN, WID_AP_AIRPORT_SPRITE), SetFill(1, 0),
 		EndContainer(),
@@ -602,9 +602,9 @@ static const NWidgetPart _nested_build_airport_widgets[] = {
 				NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_AP_SCROLLBAR),
 			EndContainer(),
 			NWidget(NWID_HORIZONTAL),
-				NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_AP_LAYOUT_DECREASE), SetSizingType(NWST_STEP), SetMinimalSize(12, 0), SetDataTip(AWV_DECREASE, STR_NULL),
+				NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_AP_LAYOUT_DECREASE), SetSizingType(NWST_BUTTON), SetMinimalSize(12, 0), SetDataTip(AWV_DECREASE, STR_NULL),
 				NWidget(WWT_LABEL, COLOUR_GREY, WID_AP_LAYOUT_NUM), SetResize(1, 0), SetFill(1, 0), SetDataTip(STR_BLACK_STRING, STR_NULL),
-				NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_AP_LAYOUT_INCREASE), SetSizingType(NWST_STEP), SetMinimalSize(12, 0), SetDataTip(AWV_INCREASE, STR_NULL),
+				NWidget(WWT_PUSHARROWBTN, COLOUR_GREY, WID_AP_LAYOUT_INCREASE), SetSizingType(NWST_BUTTON), SetMinimalSize(12, 0), SetDataTip(AWV_INCREASE, STR_NULL),
 			EndContainer(),
 			NWidget(WWT_EMPTY, COLOUR_DARK_GREEN, WID_AP_EXTRA_TEXT), SetFill(1, 0), SetMinimalSize(150, 0),
 		EndContainer(),

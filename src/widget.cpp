@@ -627,8 +627,8 @@ static inline void DrawButtonDropdown(const Rect &r, Colours colour, bool clicke
 {
 	int text_offset = std::max(0, ((int)(r.bottom - r.top + 1) - FONT_HEIGHT_NORMAL) / 2); // Offset for rendering the text vertically centered
 
-	int dd_width  = GetMinSizing(NWST_STEP, NWidgetLeaf::dropdown_dimension.width);
-	int dd_height = GetMinSizing(NWST_STEP, NWidgetLeaf::dropdown_dimension.height);
+	int dd_width  = GetMinSizing(NWST_BUTTON, NWidgetLeaf::dropdown_dimension.width);
+	int dd_height = GetMinSizing(NWST_BUTTON, NWidgetLeaf::dropdown_dimension.height);
 	int image_offset = std::max(0, ((int)(r.bottom - r.top + 1) - dd_height) / 2);
 
 	if (_current_text_dir == TD_LTR) {
@@ -908,9 +908,6 @@ void NWidgetResizeBase::SetMinimalSizeAbsolute(uint min_x, uint min_y)
 			break;
 		case NWST_BUTTON:
 			min_size = _settings_client.gui.min_button;
-			break;
-		case NWST_STEP:
-			min_size = _settings_client.gui.min_step;
 			break;
 		case NWST_VIEWPORT:
 			min_size = 3 * _settings_client.gui.min_button;
@@ -2425,7 +2422,7 @@ void Scrollbar::SetCapacityFromWidget(Window *w, int widget, int padding)
 NWidgetScrollbar::NWidgetScrollbar(WidgetType tp, Colours colour, int index) : NWidgetCore(tp, colour, 1, 1, 0x0, STR_NULL), Scrollbar(tp != NWID_HSCROLLBAR)
 {
 	assert(tp == NWID_HSCROLLBAR || tp == NWID_VSCROLLBAR);
-	this->sizing_type = NWST_STEP;
+	this->sizing_type = NWST_BUTTON;
 	this->SetIndex(index);
 
 	switch (this->type) {
@@ -2510,9 +2507,9 @@ void NWidgetScrollbar::Draw(const Window *w)
 	if (vertical_dimension.width == 0) {
 		vertical_dimension = maxdim(GetSpriteSize(SPR_ARROW_UP), GetSpriteSize(SPR_ARROW_DOWN));
 		vertical_dimension.width += extra.width;
-		vertical_dimension.width = GetMinSizing(NWST_STEP, vertical_dimension.width);
+		vertical_dimension.width = GetMinSizing(NWST_BUTTON, vertical_dimension.width);
 		vertical_dimension.height += extra.height;
-		vertical_dimension.height = GetMinSizing(NWST_STEP, vertical_dimension.height);
+		vertical_dimension.height = GetMinSizing(NWST_BUTTON, vertical_dimension.height);
 	}
 	return vertical_dimension;
 }
@@ -2523,9 +2520,9 @@ void NWidgetScrollbar::Draw(const Window *w)
 	if (horizontal_dimension.width == 0) {
 		horizontal_dimension = maxdim(GetSpriteSize(SPR_ARROW_LEFT), GetSpriteSize(SPR_ARROW_RIGHT));
 		horizontal_dimension.width += extra.width;
-		horizontal_dimension.width = GetMinSizing(NWST_STEP, horizontal_dimension.width);
+		horizontal_dimension.width = GetMinSizing(NWST_BUTTON, horizontal_dimension.width);
 		horizontal_dimension.height += extra.height;
-		horizontal_dimension.height = GetMinSizing(NWST_STEP, horizontal_dimension.height);
+		horizontal_dimension.height = GetMinSizing(NWST_BUTTON, horizontal_dimension.height);
 	}
 	return horizontal_dimension;
 }
@@ -2595,7 +2592,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, int index, uint32 data, 
 			case NWID_BUTTON_DROPDOWN:
 			case WWT_DROPDOWN:
 			case WWT_ARROWBTN:
-				this->sizing_type = NWST_STEP;
+				this->sizing_type = NWST_BUTTON;
 				this->SetMinimalSize(8, 8);
 				break;
 			default:
@@ -2858,7 +2855,7 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 			padding = &extra;
 			if (this->index >= 0) w->SetStringParameters(this->index);
 			Dimension d2 = GetStringBoundingBox(this->widget_data);
-			d2.width += extra.width + GetMinSizing(NWST_STEP, 11U);
+			d2.width += extra.width + GetMinSizing(NWST_BUTTON, 11U);
 			d2.height += extra.height;
 			size = maxdim(size, d2);
 			break;
@@ -3041,7 +3038,7 @@ void NWidgetLeaf::Draw(const Window *w)
  */
 bool NWidgetLeaf::ButtonHit(const Point &pt)
 {
-	uint button_size = GetMinSizing(NWST_STEP, 12);
+	uint button_size = GetMinSizing(NWST_BUTTON, 12);
 	if (_current_text_dir == TD_LTR) {
 		int button_width = this->pos_x + this->current_x - button_size;
 		return pt.x < button_width;
@@ -3422,7 +3419,7 @@ NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int wid
 		}
 
 		NWidgetBackground *panel = new NWidgetBackground(WWT_PANEL, button_colour, widnum);
-		panel->sizing_type = NWST_STEP;
+		panel->sizing_type = NWST_BUTTON;
 		panel->SetMinimalSize(sprite_size.width, sprite_size.height);
 		panel->SetFill(1, 1);
 		panel->SetResize(1, 0);
@@ -3459,9 +3456,6 @@ uint GetMinSizing(NWidSizingType type, uint min_1)
 			return min_1;
 		case NWST_BUTTON:
 			min_sizing = _settings_client.gui.min_button;
-			break;
-		case NWST_STEP:
-			min_sizing = _settings_client.gui.min_step;
 			break;
 		case NWST_KEYBOARD:
 			min_sizing = 2 * _settings_client.gui.min_button;

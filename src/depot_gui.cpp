@@ -678,7 +678,7 @@ struct DepotWindow : Window {
 				int base_width = this->count_width + this->header_width;
 
 				resize->height = std::max<uint>(GetVehicleImageCellSize(this->type, EIT_IN_DEPOT).height, min_height);
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				if (this->type == VEH_TRAIN) {
 					resize->width = 1;
 					size->width = base_width + 2 * ScaleGUITrad(29); // about 2 parts

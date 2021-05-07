@@ -100,7 +100,6 @@ struct GUISettings {
 	bool   windows_titlebars;                ///< show or hide titlebars for all windows to increase scrren space
 	bool   windows_decorations;              ///< draw ornament on all window edges
 	uint   min_button;                       ///< min size of most button widgets
-	uint   min_step;                         ///< min size of scrollbar/dropdown elements
 	bool   show_finances;                    ///< show finances at end of year
 	bool   sg_new_nonstop;                   ///< ttdpatch compatible nonstop handling read from pre v93 savegames
 	bool   new_nonstop;                      ///< ttdpatch compatible nonstop handling

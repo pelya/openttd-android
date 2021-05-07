@@ -1988,7 +1988,7 @@ int SETTING_BUTTON_HEIGHT = 10;
  */
 void CheckWindowMinSizings()
 {
-	SETTING_BUTTON_HEIGHT = GetMinSizing(NWST_STEP);
+	SETTING_BUTTON_HEIGHT = GetMinSizing(NWST_BUTTON);
 	SETTING_BUTTON_WIDTH  = 2 * SETTING_BUTTON_HEIGHT;
 }
 
@@ -2112,7 +2112,7 @@ static void HandleMouseDragNoTitlebars()
 		!_left_button_down || _focused_window == NULL ||
 		_dragging_widget || _focused_window->mouse_capture_widget != -1) return;
 	unsigned distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
-	if (distance * 2 > GetMinSizing(NWST_STEP) &&
+	if (distance * 2 > GetMinSizing(NWST_BUTTON) &&
 		_focused_window->window_class != WC_SELECT_GAME &&
 		_focused_window->window_class != WC_STATUS_BAR &&
 		_focused_window->window_class != WC_MAIN_TOOLBAR &&
@@ -2691,7 +2691,7 @@ static EventState HandleViewportScroll()
 		if (_left_button_down) {
 			oldDx += _cursor.delta.x;
 			oldDy += _cursor.delta.y;
-			if (!_left_button_dragged && (abs(oldDx) + abs(oldDy)) * 2 > (int)GetMinSizing(NWST_STEP, 10)) {
+			if (!_left_button_dragged && (abs(oldDx) + abs(oldDy)) * 2 > (int)GetMinSizing(NWST_BUTTON, 10)) {
 				_left_button_dragged = true;
 			}
 		} else {

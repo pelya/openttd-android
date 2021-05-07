@@ -726,14 +726,14 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 			{
 				Dimension d = maxdim(GetSpriteSize(SPR_SQUARE), GetSpriteSize(SPR_WARNING_SIGN));
 				resize->height = std::max(d.height + 2U, FONT_HEIGHT_NORMAL + 2U);
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				size->height = std::max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
 				break;
 			}
 
 			case WID_NS_AVAIL_LIST:
 				resize->height = std::max(12, FONT_HEIGHT_NORMAL + 2);
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				size->height = std::max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
 				break;
 

@@ -496,14 +496,14 @@ public:
 		switch (widget) {
 			case WID_NG_MATRIX:
 				resize->height = WD_MATRIX_TOP + std::max(GetSpriteSize(SPR_BLOT).height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				fill->height = resize->height;
 				size->height = 5 * resize->height;
 				break;
 
 			case WID_NG_LASTJOINED:
 				size->height = WD_MATRIX_TOP + std::max(GetSpriteSize(SPR_BLOT).height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
-				size->height = GetMinSizing(NWST_STEP, size->height);
+				size->height = GetMinSizing(NWST_BUTTON, size->height);
 				break;
 
 			case WID_NG_LASTJOINED_SPACER:
@@ -1303,7 +1303,7 @@ struct NetworkLobbyWindow : public Window {
 
 			case WID_NL_MATRIX:
 				resize->height = WD_MATRIX_TOP + std::max<uint>(std::max(GetSpriteSize(SPR_LOCK).height, GetSpriteSize(SPR_PROFIT_LOT).height), FONT_HEIGHT_NORMAL) + WD_MATRIX_BOTTOM;
-				resize->height = GetMinSizing(NWST_STEP, resize->height);
+				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
 				size->height = 6 * resize->height;
 				break;
 

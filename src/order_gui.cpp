@@ -793,7 +793,7 @@ public:
 	{
 		switch (widget) {
 			case WID_O_ORDER_LIST:
-				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				resize->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 				size->height = 4 * resize->height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				break;
 

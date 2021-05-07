@@ -569,7 +569,7 @@ public:
 				break;
 
 			case WID_SL_DRIVES_DIRECTORIES_LIST:
-				resize->height = GetMinSizing(NWST_STEP, FONT_HEIGHT_NORMAL);
+				resize->height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL);
 				size->height = resize->height * 5 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				break;
 			case WID_SL_SORT_BYNAME:
