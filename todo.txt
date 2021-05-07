@@ -13,8 +13,6 @@
 
 - Default tramway button not appearing in vertical toolbar when compact toolbar is disabled. https://github.com/pelya/commandergenius/issues/119
 
-- Fast Forward sometimes deactivates after auto-save, however Fast Forward button is still pressed.
-
 - De-press 'Go To' button in vehicle orders after clicking on a station.
 
 ===== Emscripten TODO =====
