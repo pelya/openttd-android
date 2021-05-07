@@ -335,7 +335,7 @@ public:
 				d.width += padding.width;
 				d.height += padding.height;
 				*size = maxdim(*size, d);
-				size->height = GetMinSizing(NWST_BUTTON, size->height);
+				size->height = GetMinButtonSize(size->height);
 				break;
 			}
 
@@ -347,7 +347,7 @@ public:
 					size->width = std::max(size->width, GetStringBoundingBox(as->name).width);
 				}
 
-				this->line_height = GetMinSizing(NWST_BUTTON, FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
+				this->line_height = GetMinButtonSize(FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM);
 				size->height = 5 * this->line_height;
 				break;
 			}

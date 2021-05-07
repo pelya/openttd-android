@@ -735,15 +735,15 @@ struct TooltipsWindow : public Window
 		/* Correctly position the tooltip position, watch out for window and cursor size
 		 * Clamp value to below main toolbar and above statusbar. If tooltip would
 		 * go below window, flip it so it is shown above the cursor */
-		pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height - GetMinSizing(NWST_BUTTON);
-		if (pt.y < scr_top) pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot) + GetMinSizing(NWST_BUTTON);
+		pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height - GetMinButtonSize();
+		if (pt.y < scr_top) pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot) + GetMinButtonSize();
 		pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
 
 		if (_settings_client.gui.windows_titlebars) {
 			// Move it to the top of the screen, away from mouse cursor, so it won't steal screen taps on Android
 			pt.y = GetMainViewTop();
-			if (_cursor.pos.y < pt.y + (int)GetMinSizing(NWST_BUTTON)) {
-				pt.x = _cursor.pos.x > _screen.width / 2 ? GetMinSizing(NWST_BUTTON) : _screen.width - sm_width - GetMinSizing(NWST_BUTTON);
+			if (_cursor.pos.y < pt.y + (int)GetMinButtonSize()) {
+				pt.x = _cursor.pos.x > _screen.width / 2 ? GetMinButtonSize() : _screen.width - sm_width - GetMinButtonSize();
 			}
 		}
 
@@ -842,7 +842,7 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 
 	bool rtl = _current_text_dir == TD_RTL;
 	Dimension sprite_size = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
-	int clearbtn_width = GetMinSizing(NWST_BUTTON, sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT);
+	int clearbtn_width = GetMinButtonSize(sprite_size.width + WD_IMGBTN_LEFT + WD_IMGBTN_RIGHT);
 	clearbtn_width = 0; // Touch interface has it's own keyboard input, and it won't leave space for edit field
 
 	int clearbtn_left  = wi->pos_x + (rtl ? 0 : wi->current_x - clearbtn_width);
@@ -1235,7 +1235,7 @@ struct QueryWindow : public Window {
 	{
 		if (widget != WID_Q_TEXT) return;
 
-		size->width = std::max(GetMinSizing(NWST_BUTTON) * 8, size->width);
+		size->width = std::max(GetMinButtonSize() * 8, size->width);
 		Dimension d = GetStringMultiLineBoundingBox(this->message, *size);
 		d.width += WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;

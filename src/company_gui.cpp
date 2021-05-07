@@ -527,7 +527,7 @@ public:
 
 	uint Height(uint width) const override
 	{
-		return GetMinSizing(NWST_BUTTON, std::max(FONT_HEIGHT_NORMAL, ScaleGUITrad(12) + 2));
+		return GetMinButtonSize(std::max(FONT_HEIGHT_NORMAL, ScaleGUITrad(12) + 2));
 	}
 
 	bool Selectable() const override
@@ -1382,8 +1382,8 @@ public:
 		yesno_dim.width  += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 		yesno_dim.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 
-		yesno_dim.width  = GetMinSizing(NWST_BUTTON, yesno_dim.width);
-		yesno_dim.height = GetMinSizing(NWST_BUTTON, yesno_dim.height);
+		yesno_dim.width  = GetMinButtonSize(yesno_dim.width);
+		yesno_dim.height = GetMinButtonSize(yesno_dim.height);
 
 		/* Size of the number button + arrows. */
 		Dimension number_dim = {0, 0};

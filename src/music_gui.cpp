@@ -528,7 +528,7 @@ struct MusicTrackSelectionWindow : public Window {
 					SetDParamStr(2, song->songname);
 					d = maxdim(d, GetStringBoundingBox(STR_PLAYLIST_TRACK_NAME));
 				}
-				resize->height = GetMinSizing(NWST_BUTTON, d.height);
+				resize->height = GetMinButtonSize(d.height);
 				d.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
 				d.height = 7 * resize->height + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
 				*size = maxdim(*size, d);

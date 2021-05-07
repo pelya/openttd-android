@@ -530,7 +530,7 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_MAPSIZE_Y_PULLDOWN:
 				SetDParamMaxValue(0, MAX_MAP_SIZE);
 				*size = maxdim(*size, GetStringBoundingBox(STR_JUST_INT));
-				size->width = size->width + GetMinSizing(NWST_BUTTON);
+				size->width = size->width + GetMinButtonSize();
 				break;
 
 			case WID_GL_SNOW_COVERAGE_TEXT:
@@ -1079,9 +1079,9 @@ struct CreateScenarioWindow : public Window
 		}
 		*size = maxdim(*size, GetStringBoundingBox(str));
 		size->width += padding.width;
-		size->width = GetMinSizing(NWST_BUTTON, size->width);
+		size->width = GetMinButtonSize(size->width);
 		size->height += padding.height;
-		size->height = GetMinSizing(NWST_BUTTON, size->height);
+		size->height = GetMinButtonSize(size->height);
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override

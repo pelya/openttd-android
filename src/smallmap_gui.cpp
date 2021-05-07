@@ -1077,7 +1077,7 @@ void SmallMapWindow::SetupWidgetData()
 
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) :
 		Window(desc),
-		row_height(std::max(GetMinSizing(NWST_BUTTON, FONT_HEIGHT_SMALL) * 2 / 3, uint(FONT_HEIGHT_SMALL))), // Default spacing makes legend too tall - shrink it by 1/3
+		row_height(std::max(GetMinButtonSize(FONT_HEIGHT_SMALL) * 2 / 3, uint(FONT_HEIGHT_SMALL))), // Default spacing makes legend too tall - shrink it by 1/3
 		show_legend(false),
 		refresh(GUITimer(FORCE_REFRESH_PERIOD))
 {

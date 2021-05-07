@@ -392,7 +392,7 @@ public:
 
 			case WID_STL_LIST:
 				resize->height = std::max(FONT_HEIGHT_NORMAL, FONT_HEIGHT_SMALL + ScaleFontTrad(3));
-				resize->height = GetMinSizing(NWST_BUTTON, resize->height);
+				resize->height = GetMinButtonSize(resize->height);
 				size->height = WD_FRAMERECT_TOP + 5 * resize->height + WD_FRAMERECT_BOTTOM;
 
 				/* Determine appropriate width for mini station rating graph */
@@ -447,7 +447,7 @@ public:
 				int max = std::min<size_t>(this->vscroll->GetPosition() + this->vscroll->GetCapacity(), this->stations.size());
 				int y = r.top + WD_FRAMERECT_TOP;
 				uint line_height = this->GetWidget<NWidgetBase>(widget)->resize_y;
-				line_height = GetMinSizing(NWST_BUTTON, line_height);
+				line_height = GetMinButtonSize(line_height);
 				y = CenterBounds(y, y + line_height, FONT_HEIGHT_NORMAL);
 				/* Spacing between station name and first rating graph. */
 				int text_spacing = ScaleFontTrad(5);
@@ -2314,7 +2314,7 @@ struct SelectStationWindow : Window {
 			d = maxdim(d, GetStringBoundingBox(T::EXPECTED_FACIL == FACIL_WAYPOINT ? STR_STATION_LIST_WAYPOINT : STR_STATION_LIST_STATION));
 		}
 
-		resize->height = GetMinSizing(NWST_BUTTON, d.height);
+		resize->height = GetMinButtonSize(d.height);
 		d.height = 5 * resize->height;
 		d.width += WD_FRAMERECT_RIGHT + WD_FRAMERECT_LEFT;
 		d.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;

@@ -45,7 +45,7 @@
 uint GetEngineListHeight(VehicleType type)
 {
 	uint size = std::max<uint>(FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM, GetVehicleImageCellSize(type, EIT_PURCHASE).height);
-	return GetMinSizing(NWST_BUTTON, size);
+	return GetMinButtonSize(size);
 }
 
 static const NWidgetPart _nested_build_vehicle_widgets[] = {
@@ -1566,7 +1566,7 @@ struct BuildVehicleWindow : Window {
 				Dimension d = GetStringBoundingBox(this->GetWidget<NWidgetCore>(widget)->widget_data);
 				d.width += padding.width + Window::SortButtonWidth() * 2; // Doubled since the string is centred and it also looks better.
 				d.height += padding.height;
-				d.height = GetMinSizing(NWST_BUTTON, d.height);
+				d.height = GetMinButtonSize(d.height);
 				*size = maxdim(*size, d);
 				break;
 			}

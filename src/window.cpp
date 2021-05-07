@@ -2004,7 +2004,7 @@ int SETTING_BUTTON_HEIGHT = 10;
  */
 void CheckWindowMinSizings()
 {
-	SETTING_BUTTON_HEIGHT = GetMinSizing(NWST_BUTTON);
+	SETTING_BUTTON_HEIGHT = GetMinButtonSize();
 	SETTING_BUTTON_WIDTH  = 2 * SETTING_BUTTON_HEIGHT;
 }
 
@@ -2130,7 +2130,7 @@ static void HandleMouseDragNoTitlebars()
 		!_left_button_down || _focused_window == NULL ||
 		_dragging_widget || _focused_window->mouse_capture_widget != -1) return;
 	unsigned distance = abs(_cursor.pos.x - _left_button_down_pos.x) + abs(_cursor.pos.y - _left_button_down_pos.y);
-	if (distance * 2 > GetMinSizing(NWST_BUTTON) &&
+	if (distance * 2 > GetMinButtonSize() &&
 		_focused_window->window_class != WC_SELECT_GAME &&
 		_focused_window->window_class != WC_STATUS_BAR &&
 		_focused_window->window_class != WC_MAIN_TOOLBAR &&
@@ -2386,19 +2386,19 @@ bool GetWindowDraggedOffScreen(const Window *w)
 	if (_settings_client.gui.windows_titlebars) return false;
 	Rect edge = { 0, GetMainViewTop(), _screen.width, _screen.height };
 	if (_settings_client.gui.vertical_toolbar && _game_mode != GM_EDITOR && _game_mode != GM_MENU) {
-		edge.left += GetMinSizing(NWST_BUTTON);
-		edge.right -= GetMinSizing(NWST_BUTTON);
+		edge.left += GetMinButtonSize();
+		edge.right -= GetMinButtonSize();
 	}
-	Rect visible = { edge.left + (int)GetMinSizing(NWST_BUTTON) * 4, edge.top + (int)GetMinSizing(NWST_BUTTON) * 2,
-						edge.right - (int)GetMinSizing(NWST_BUTTON) * 4, edge.bottom - (int)GetMinSizing(NWST_BUTTON) * 2 };
+	Rect visible = { edge.left + (int)GetMinButtonSize() * 4, edge.top + (int)GetMinButtonSize() * 2,
+						edge.right - (int)GetMinButtonSize() * 4, edge.bottom - (int)GetMinButtonSize() * 2 };
 	// 1/4 of the window must be hidden to close it when flicking it off to the left/right
-	if (w->width >= (int)GetMinSizing(NWST_BUTTON) * 4) {
-		edge.left -= GetMinSizing(NWST_BUTTON) * 2;
-		edge.right += GetMinSizing(NWST_BUTTON) * 2;
+	if (w->width >= (int)GetMinButtonSize() * 4) {
+		edge.left -= GetMinButtonSize() * 2;
+		edge.right += GetMinButtonSize() * 2;
 	}
-	if (w->height >= (int)GetMinSizing(NWST_BUTTON) * 4) {
-		edge.top -= GetMinSizing(NWST_BUTTON);
-		edge.bottom += GetMinSizing(NWST_BUTTON);
+	if (w->height >= (int)GetMinButtonSize() * 4) {
+		edge.top -= GetMinButtonSize();
+		edge.bottom += GetMinButtonSize();
 	}
 	if (w->left < edge.left && w->left + w->width < visible.right) return true;
 	if (w->left + w->width > edge.right && w->left > visible.left) return true;
@@ -2713,7 +2713,7 @@ static EventState HandleViewportScroll()
 		if (_left_button_down) {
 			oldDx += _cursor.delta.x;
 			oldDy += _cursor.delta.y;
-			if (!_left_button_dragged && (abs(oldDx) + abs(oldDy)) * 2 > (int)GetMinSizing(NWST_BUTTON, 10)) {
+			if (!_left_button_dragged && (abs(oldDx) + abs(oldDy)) * 2 > (int)GetMinButtonSize(10)) {
 				_left_button_dragged = true;
 			}
 		} else {
