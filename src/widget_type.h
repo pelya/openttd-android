@@ -40,12 +40,9 @@ enum ArrowWidgetValues {
 
 /** Values for different minimal sizing of widgets. */
 enum NWidSizingType {
-	NWST_NONE,			///< No sizing type is yet defined.
+	NWST_NONE,			///< No automatic minimal sizing.
 	NWST_BUTTON,		///< Size will be set at least _settings_client.gui.min_button.
-	NWST_KEYBOARD,		///< Size for keyboard keys.
-	NWST_WINDOW_LENGTH,	///< Width for command errors, message windows and statusbar middle part.
 	NWST_VIEWPORT,		///< Sizing type for viewports.
-	NWST_OVERRIDE,		///< Avoid widgets to use automatic minimal sizing.
 	NWST_END
 };
 
