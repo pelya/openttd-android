@@ -565,7 +565,8 @@ public:
 				break;
 
 			case WID_NCL_CHECKBOX:
-				size->width = GetMinButtonSize(this->checkbox_size.width) + WD_MATRIX_RIGHT + WD_MATRIX_LEFT;
+				size->width = this->checkbox_size.width + WD_MATRIX_RIGHT + WD_MATRIX_LEFT;
+				size->width = GetMinButtonSize(size->width);
 				break;
 
 			case WID_NCL_TYPE: {
@@ -579,7 +580,8 @@ public:
 
 			case WID_NCL_MATRIX:
 				resize->height = std::max(this->checkbox_size.height, (uint)FONT_HEIGHT_NORMAL) + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				size->height = 10 * resize->height;
+				resize->height = GetMinButtonSize(resize->height);
+				size->height = 5 * resize->height;
 				break;
 		}
 	}
