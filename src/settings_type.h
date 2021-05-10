@@ -98,6 +98,7 @@ struct GUISettings {
 	bool   compact_vertical_toolbar;         ///< compact mode for vertical toolbars, with more sub-menus
 	bool   build_confirmation;               ///< show confirmation dialog when building roads and stations
 	bool   windows_titlebars;                ///< show or hide titlebars for all windows to increase scrren space
+	bool   draw_mouse_cursor;                ///< draw mouse cursor, touchscreen does not generally need a mouse cursor, but mouse cursor shows currently selected build tool
 	bool   windows_decorations;              ///< draw ornament on all window edges
 	uint   min_button;                       ///< min size of most button widgets
 	bool   show_finances;                    ///< show finances at end of year
