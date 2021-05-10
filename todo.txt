@@ -13,6 +13,10 @@
 
 - De-press 'Go To' button in vehicle orders after clicking on a station.
 
+- Resize button does not work when the mouse is outsize of the window borders.
+
+- Option to disable mouse cursor.
+
 ===== Emscripten TODO =====
 
 - Fix window resizing to keep videomode height at 480 pixels.
