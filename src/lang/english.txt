@@ -1279,6 +1279,8 @@ STR_CONFIG_SETTING_VIDEO_16BPP                                  :{BLACK}16 bit
 STR_CONFIG_SETTING_VIDEO_16BPP_HELPTEXT                         :{BLACK}Set video color depth to 16 bits per pixel, this requires restart, this video mode does not support water animation
 STR_CONFIG_SETTING_VIDEO_24BPP                                  :{BLACK}24 bit
 STR_CONFIG_SETTING_VIDEO_24BPP_HELPTEXT                         :{BLACK}Set video color depth to 24 bits per pixel, this video mode supports water animation
+STR_CONFIG_SETTING_MOUSE_CURSOR                                 :{BLACK}Mouse cursor
+STR_CONFIG_SETTING_MOUSE_CURSOR_HELPTEXT                        :{BLACK}Show mouse cursor
 STR_CONFIG_SETTING_SHOWFINANCES                                 :Show finances window at the end of the year: {STRING2}
 STR_CONFIG_SETTING_SHOWFINANCES_HELPTEXT                        :If enabled, the finances window pops up at the end of each year to allow easy inspection of the financial status of the company
 STR_CONFIG_SETTING_NONSTOP_BY_DEFAULT                           :New orders are 'non-stop' by default: {STRING2}

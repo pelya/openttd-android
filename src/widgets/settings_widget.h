@@ -27,6 +27,7 @@ enum GameOptionsWidgets {
 	WID_GO_VERTICAL_TOOLBAR,       ///< Enable vertical toolbar.
 	WID_GO_BUILD_CONFIRMATION,     ///< Enable build confirmation dialog.
 	WID_GO_WINDOWS_TITLEBARS,      ///< Titlebars for all windows.
+	WID_GO_MOUSE_CURSOR,           ///< Show mouse cursor.
 	WID_GO_GUI_ZOOM_DROPDOWN,      ///< Dropdown for the GUI zoom level.
 	WID_GO_BASE_GRF_DROPDOWN,      ///< Use to select a base GRF.
 	WID_GO_BASE_GRF_STATUS,        ///< Info about missing files etc.
