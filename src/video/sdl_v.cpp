@@ -678,9 +678,6 @@ const char *VideoDriver_SDL::Start(const StringList &param)
 	SetupKeyboard();
 
 	this->is_game_threaded = !GetDriverParamBool(param, "no_threads") && !GetDriverParamBool(param, "no_thread");
-#ifdef __ANDROID__
-	this->is_game_threaded = false;
-#endif
 
 	return nullptr;
 }
