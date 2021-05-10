@@ -297,6 +297,11 @@ if(ANDROID)
     # A bug in Android NDK r22: https://github.com/android/ndk/issues/1418
     if(ANDROID_ABI STREQUAL "armeabi-v7a" OR ANDROID_ABI STREQUAL "x86")
         set_source_files_properties(${CMAKE_SOURCE_DIR}/src/settings.cpp PROPERTIES COMPILE_FLAGS "-O0")
+    else()
+        if(NOT CMAKE_BUILD_TYPE STREQUAL Debug)
+            target_compile_options(openttd PRIVATE -flto=thin)
+            target_link_libraries(openttd -flto=thin)
+        endif()
     endif()
 endif(ANDROID)
 
