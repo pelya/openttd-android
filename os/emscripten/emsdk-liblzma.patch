@@ -14,7 +14,7 @@ diff --git a/embuilder.py b/embuilder.py
 index 818262190ed..ab7d5adb7b2 100755
 --- a/embuilder.py
 +++ b/embuilder.py
-@@ -66,6 +66,7 @@
+@@ -69,6 +69,7 @@
      'harfbuzz',
      'icu',
      'libjpeg',
@@ -22,14 +22,14 @@ index 818262190ed..ab7d5adb7b2 100755
      'libpng',
      'ogg',
      'regal',
-@@ -196,6 +197,8 @@
-       build_port('giflib', 'libgif.a')
+@@ -203,6 +204,8 @@
+       build_port('giflib')
      elif what == 'libjpeg':
-       build_port('libjpeg', 'libjpeg.a')
+       build_port('libjpeg')
 +    elif what == 'liblzma':
-+      build_port('liblzma', 'liblzma.a')
++      build_port('liblzma')
      elif what == 'libpng':
-       build_port('libpng', 'libpng.a')
+       build_port('libpng')
      elif what == 'sdl2':
 diff --git a/src/settings.js b/src/settings.js
 index 61cd98939ba..be6fcb678c6 100644
