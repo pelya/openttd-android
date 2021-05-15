@@ -343,6 +343,8 @@ struct FileToSaveLoad {
 	AbstractFileType abstract_ftype; ///< Abstract type of file (scenario, heightmap, etc).
 	std::string name;                ///< Name of the file.
 	char title[255];                 ///< Internal name of the game.
+	bool cloud_save;                 ///< Save the file to the cloud from the video thread.
+	bool cloud_load;                 ///< Load the file from the cloud from the video thread.
 
 	void SetMode(FiosType ft);
 	void SetMode(SaveLoadOperation fop, AbstractFileType aft, DetailedFileType dft);

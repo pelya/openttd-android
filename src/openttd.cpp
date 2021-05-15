@@ -95,10 +95,6 @@ bool HandleBootstrap();
 
 extern Company *DoStartupNewCompany(bool is_ai, CompanyID company = INVALID_COMPANY);
 extern void ShowOSErrorBox(const char *buf, bool system);
-
-static const char *NETWORK_SAVE_SCREENSHOT_FILE = "OpenTTD-network-save";
-static const char *NETWORK_SAVE_SCREENSHOT_FILE_PNG = "OpenTTD-network-save.png";
-
 extern std::string _config_file;
 
 bool _save_config = false;
@@ -1163,23 +1159,9 @@ void SwitchToMode(SwitchMode new_mode)
 				ShowErrorMessage(STR_JUST_RAW_STRING, INVALID_STRING_ID, WL_ERROR);
 			} else {
 				DeleteWindowById(WC_SAVELOAD, 0);
-#ifdef __ANDROID__
 				if (_settings_client.gui.save_to_network) {
-					const char* lastPart = strrchr(_file_to_saveload.name.c_str(), PATHSEPCHAR);
-					if (!lastPart) {
-						lastPart = _file_to_saveload.name.c_str();
-					} else {
-						lastPart++;
-					}
-					MakeScreenshot(SC_VIEWPORT, NETWORK_SAVE_SCREENSHOT_FILE);
-					std::string screenshotFile = FioFindFullPath(SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
-					uint64_t playedTime = abs(_date - DAYS_TILL(_settings_newgame.game_creation.starting_year)) * 1000;
-					int ret = SDL_ANDROID_CloudSave(_file_to_saveload.name.c_str(), lastPart, "OpenTTD", lastPart, screenshotFile.c_str(), playedTime);
-					if (_settings_client.gui.save_to_network == 2) {
-						_settings_client.gui.save_to_network = ret ? 1 : 0;
-					}
+					_file_to_saveload.cloud_save = true;
 				}
-#endif
 			}
 			break;
 
@@ -1199,6 +1181,50 @@ void SwitchToMode(SwitchMode new_mode)
 	}
 }
 
+/**
+ * Perform saving or loading to the cloud.
+ * This function must be called from the SDL video thread.
+ */
+void ProcessCloudSaveFromVideoThread()
+{
+	static const char *NETWORK_SAVE_FILENAME = "network-save.sav";
+	static const char *NETWORK_SAVE_SCREENSHOT_FILE = "OpenTTD-network-save";
+	static const char *NETWORK_SAVE_SCREENSHOT_FILE_PNG = "OpenTTD-network-save.png";
+
+	if (_file_to_saveload.cloud_save) {
+		_file_to_saveload.cloud_save = false;
+		const char* lastPart = strrchr(_file_to_saveload.name.c_str(), PATHSEPCHAR);
+		if (!lastPart) {
+			lastPart = _file_to_saveload.name.c_str();
+		} else {
+			lastPart++;
+		}
+		MakeScreenshot(SC_VIEWPORT, NETWORK_SAVE_SCREENSHOT_FILE);
+		std::string screenshotFile = FioFindFullPath(SCREENSHOT_DIR, NETWORK_SAVE_SCREENSHOT_FILE_PNG);
+		uint64_t playedTime = abs(_date - DAYS_TILL(_settings_newgame.game_creation.starting_year)) * 1000;
+		int status = 0;
+#ifdef __ANDROID__
+		status = SDL_ANDROID_CloudSave(_file_to_saveload.name.c_str(), lastPart, "OpenTTD", lastPart, screenshotFile.c_str(), playedTime);
+#endif
+		if (_settings_client.gui.save_to_network == 2) {
+			_settings_client.gui.save_to_network = status ? 1 : 0;
+		}
+	}
+	if (_file_to_saveload.cloud_load) {
+		_file_to_saveload.cloud_load = false;
+		std::string savePath = FiosMakeSavegameName(NETWORK_SAVE_FILENAME);
+		int status = 0;
+#ifdef __ANDROID__
+		status = SDL_ANDROID_CloudLoad(savePath.c_str(), NULL, "OpenTTD");
+#endif
+		if (status) {
+			_file_to_saveload.SetMode(FIOS_TYPE_FILE);
+			_file_to_saveload.SetName(savePath.c_str());
+			_file_to_saveload.SetTitle("Network Save");
+			_switch_mode = SM_LOAD_GAME;
+		}
+	}
+}
 
 /**
  * Check the validity of some of the caches.
