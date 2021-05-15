@@ -101,6 +101,13 @@ void VideoDriver::Tick()
 {
 	if (!this->is_game_threaded && std::chrono::steady_clock::now() >= this->next_game_tick) {
 		this->GameLoop();
+		if (_game_speed > 100) {
+			// Fast forward by frame skipping, won't be as fast as a separate game thread, but better than nothing
+			this->GameLoop();
+			this->GameLoop();
+			this->GameLoop();
+			this->GameLoop();
+		}
 
 		/* For things like dedicated server, don't run a separate draw-tick. */
 		if (!this->HasGUI()) {
