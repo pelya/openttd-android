@@ -3480,6 +3480,7 @@ void UpdateWindows()
 	NetworkDrawChatMessage();
 	/* Redraw mouse cursor in case it was hidden */
 	DrawMouseCursor();
+	ProcessCloudSaveFromVideoThread();
 }
 
 /**

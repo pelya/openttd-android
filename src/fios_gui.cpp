@@ -42,7 +42,6 @@ LoadCheckData _load_check_data;    ///< Data loaded from save during SL_LOAD_CHE
 
 static bool _fios_path_changed;
 static bool _savegame_sort_dirty;
-static const char *NETWORK_SAVE_FILENAME = "network-save.sav";
 
 
 /**
@@ -731,19 +730,10 @@ public:
 				this->SetDirty();
 				break;
 
-			case WID_SL_LOAD_NETWORK_BUTTON: {
-					std::string savePath = FiosMakeSavegameName(NETWORK_SAVE_FILENAME);
-#ifdef __ANDROID__
-					if (!SDL_ANDROID_CloudLoad(savePath.c_str(), NULL, "OpenTTD")) {
-						break;
-					}
-#endif
-					_file_to_saveload.SetMode(FIOS_TYPE_FILE);
-					_file_to_saveload.SetName(savePath.c_str());
-					_file_to_saveload.SetTitle("Network Save");
-					_switch_mode = SM_LOAD_GAME;
-					break;
-				}
+			case WID_SL_LOAD_NETWORK_BUTTON:
+				_file_to_saveload.cloud_load = true;
+				delete this;
+				break;
 		}
 	}
 
