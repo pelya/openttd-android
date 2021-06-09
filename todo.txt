@@ -39,3 +39,5 @@
 - Find some developer with a MacBook and $100 to publish the 'OpenTTD Webapp Launcher' to the Apple Store.
 
 - Fast forward button requires separate rendering thread, implement frameskip instead.
+
+- Ctrl screen button is getting stuck in the pressed state.
