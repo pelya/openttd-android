@@ -5,7 +5,7 @@ BUILD_TYPE=Release
 [ "$1" = "release" ] && BUILD_TYPE=Release
 
 OPT="-O3 -flto=thin"
-[ "$BUILD_TYPE" = "Debug" ] && OPT="-g"
+[ "$BUILD_TYPE" = "Debug" ] && OPT="-g -O1"
 
 INSTALL_PATH=/var/www/html/
 [ -n "$2" ] && INSTALL_PATH="$2"
@@ -29,6 +29,70 @@ embuilder build liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
 embuilder build --lto liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
 
 autoreconf -V || exit 1 # No autotools installed
+
+[ -e icu-le-hb-1.0.3/build-wasm/lib/libicu-le-hb.a ] || {
+	wget -nc https://github.com/harfbuzz/icu-le-hb/archive/refs/tags/1.0.3.tar.gz || exit 1
+	tar xvf 1.0.3.tar.gz || exit 1
+	cd icu-le-hb-1.0.3
+	autoreconf -fi
+	emconfigure ./configure --prefix=`pwd`/build-wasm \
+		--disable-shared --enable-static \
+		HARFBUZZ_CFLAGS="-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/harfbuzz" \
+		HARFBUZZ_LIBS="-lharfbuzz" \
+		ICU_CFLAGS="-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include -DU_DEFINE_FALSE_AND_TRUE=1" \
+		ICU_LIBS="-licuuc" \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		|| exit 1
+	make -j8 V=1 || exit 1
+	make install || exit 1
+	cd ..
+}
+
+# ===== Compile libicu twice, because libiculx requires icu-le-hb, which requires libicuuc  =====
+# Same libicu version as in emscripten ports and with the same compilation flags taken from $PATH_EMSDK/upstream/emscripten/tools/ports/icu.py
+# We cannot use zip archive from emscripten ports, because it has Windows line endings in configure script and it won't run
+#		CFLAGS="-DU_USING_ICU_NAMESPACE=0 \
+#				-DU_NO_DEFAULT_INCLUDE_UTF_HEADERS=1 \
+#				-DUNISTR_FROM_CHAR_EXPLICIT=explicit \
+#				-DUNISTR_FROM_STRING_EXPLICIT=explicit \
+#				-DU_STATIC_IMPLEMENTATION"
+[ -e icu/build-wasm/lib/libiculx.a ] || {
+	wget -nc https://github.com/unicode-org/icu/releases/download/release-68-2/icu4c-68_2-src.tgz || exit 1
+	tar xvf icu4c-68_2-src.tgz || exit 1
+	cd icu/source || exit 1
+
+	autoreconf -fi
+
+	# Cross-compile host tools
+	[ -d cross ] || {
+		mkdir -p cross
+		cd cross
+		../configure || exit 1
+		make -j8 || exit 1
+		cd ..
+	}
+
+	emconfigure ./configure --prefix=`pwd`/../build-wasm \
+		--disable-shared --enable-static \
+		--enable-layoutex --disable-extras \
+		--disable-tools --disable-tests --disable-samples \
+		--with-cross-build=`pwd`/cross \
+		--with-data-packaging=archive \
+		--datadir=/usr/share \
+		ICULEHB_CFLAGS="-I`pwd`/../../icu-le-hb-1.0.3/build-wasm/include/icu-le-hb" \
+		ICULEHB_LIBS="-L`pwd`/../../icu-le-hb-1.0.3/build-wasm/lib -licu-le-hb" \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		|| exit 1
+
+	make -j8 || exit 1
+
+	sed -i "s@^datadir *= *.*@datadir = `pwd`/../build-wasm/share@" icudefs.mk || exit 1
+
+	make install || exit 1
+	cd ../..
+}
 
 [ -e libtimidity-0.2.7/build-wasm/lib/libtimidity.a ] || {
 	wget -nc https://sourceforge.net/projects/libtimidity/files/libtimidity/0.2.7/libtimidity-0.2.7.tar.gz || exit 1
@@ -151,9 +215,9 @@ mkdir -p baseset
 	rm openmsx-0.4.0.tar
 }
 
-#[ -e icudt68l.dat ] || {
-#	cp -f "`em-config EMSCRIPTEN_ROOT`/cache/ports-builds/icu/source/data/in/icudt68l.dat" ./ || exit 1
-#}
+[ -e icudt68l.dat ] || {
+	cp -f "icu/source/data/in/icudt68l.dat" ./ || exit 1
+}
 
 [ -e fonts ] || {
 	wget -nc https://sourceforge.net/projects/libsdl-android/files/openttd-fonts.zip || exit 1
@@ -186,13 +250,22 @@ mkdir -p baseset
 [ -e Makefile ] || emcmake cmake .. \
 	-DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF \
 	-DFREETYPE_INCLUDE_DIRS=`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2 \
-	-DFREETYPE_LIBRARY="-lfreetype" \
+	-DFREETYPE_LIBRARY=-lfreetype \
 	-DFontconfig_INCLUDE_DIR=`pwd`/fontconfig-2.13.1/build-wasm/include \
 	-DFontconfig_LIBRARY=`pwd`/fontconfig-2.13.1/build-wasm/lib/libfontconfig.a \
 	-DLZO_INCLUDE_DIR=`pwd`/lzo-2.10/build-wasm/include \
 	-DLZO_LIBRARY=`pwd`/lzo-2.10/build-wasm/lib/liblzo2.a \
+	-DPC_ICU_i18n_FOUND=YES \
+	-DPC_ICU_i18n_INCLUDE_DIRS=`pwd`/icu/build-wasm/include \
+	-DICU_i18n_LIBRARY=`pwd`/icu/build-wasm/lib/libicui18n.a \
+	-DPC_ICU_lx_FOUND=YES \
+	-DPC_ICU_lx_INCLUDE_DIRS=`pwd`/icu-le-hb-1.0.3/build-wasm/include/icu-le-hb \
+	-DICU_lx_LIBRARY=`pwd`/icu/build-wasm/lib/libiculx.a \
+	-DLZO_LIBRARY=`pwd`/lzo-2.10/build-wasm/lib/liblzo2.a \
 	-DCMAKE_CXX_FLAGS="-sUSE_FREETYPE=1" \
 	-DCMAKE_EXE_LINKER_FLAGS="-sUSE_FREETYPE=1 \
+		-L`pwd`/icu-le-hb-1.0.3/build-wasm/lib -licu-le-hb -lharfbuzz \
+		-L`pwd`/icu/build-wasm/lib -licudata -licuuc \
 		-L`pwd`/expat-2.3.0/build-wasm/lib -lexpat \
 		-L`pwd`/libuuid-1.0.3/build-wasm/lib -luuid" \
 	|| exit 1
@@ -200,7 +273,6 @@ mkdir -p baseset
 #  -I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2/freetype
 #	-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \
 #	-DTimidity_INCLUDE_DIR=`pwd`/libtimidity-0.2.7/build-wasm/include \
-
 
 [ -z "$NO_CLEAN" ] && rm -f openttd.html
 emmake make -j8 VERBOSE=1 || exit 1
