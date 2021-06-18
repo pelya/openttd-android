@@ -705,12 +705,13 @@ int openttd_main(int argc, char *argv[])
 
 	{
 #ifndef WIN32
-		// Configure local font path on Android
-		//char curdir[PATH_MAX];
-		//getcwd(curdir, sizeof(curdir));
-		//setenv("FONTCONFIG_FONTS", (std::string(curdir) + "/fonts").c_str(), 1);
+		// Configure local font path on Android, it uses older Fontconfig version that does not require config file
 		setenv("FONTCONFIG_FONTS", "fonts", 1);
 		DEBUG(misc, 1, "Set FONTCONFIG_FONTS to %s", getenv("FONTCONFIG_FONTS"));
+#endif
+#ifdef __EMSCRIPTEN__
+		// Fontconfig config file is required on Emscripten, and the path to fonts directory is named differently
+		setenv("FONTCONFIG_FILE", "/fonts/fonts.conf", 1);
 #endif
 	}
 	/* enumerate language files */

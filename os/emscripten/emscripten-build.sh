@@ -219,10 +219,11 @@ mkdir -p baseset
 	cp -f "icu/source/data/in/icudt68l.dat" ./ || exit 1
 }
 
-[ -e fonts ] || {
+[ -e fonts/fonts.conf ] || {
 	wget -nc https://sourceforge.net/projects/libsdl-android/files/openttd-fonts.zip || exit 1
 	unzip openttd-fonts.zip || exit 1
 	rm openttd-fonts.zip
+	sed 's@/usr/share/fonts@/fonts@g' fontconfig-2.13.1/build-wasm/etc/fonts/fonts.conf > fonts/fonts.conf || exit 1
 }
 
 #[ -e TimGM6mb.sf2 ] || {
