@@ -133,7 +133,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			if (res != FcResultMatch || file == nullptr) {
 				continue;
 			}
-			DEBUG(freetype, 1, "Got font %s", file);
+			DEBUG(freetype, 1, "Found font %s", file);
 			int missing = 0;
 
 			/* Get a font with the right spacing .*/
