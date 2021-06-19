@@ -598,13 +598,6 @@ public:
 		this->GetWidget<NWidgetStacked>(WID_NG_NEWGRF_SEL)->SetDisplayedPlane(sel == nullptr || !sel->online || sel->info.grfconfig == nullptr);
 		this->GetWidget<NWidgetStacked>(WID_NG_NEWGRF_MISSING_SEL)->SetDisplayedPlane(sel == nullptr || !sel->online || sel->info.grfconfig == nullptr || !sel->info.version_compatible || sel->info.compatible);
 
-#ifdef __EMSCRIPTEN__
-		this->SetWidgetDisabledState(WID_NG_SEARCH_INTERNET, true);
-		this->SetWidgetDisabledState(WID_NG_SEARCH_LAN, true);
-		this->SetWidgetDisabledState(WID_NG_ADD, true);
-		this->SetWidgetDisabledState(WID_NG_START, true);
-#endif
-
 		this->DrawWidgets();
 	}
 
