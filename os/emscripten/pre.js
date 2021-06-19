@@ -68,13 +68,6 @@ Module.preRun.push(function() {
         Module.onAbort();
     }
 
-    window.openttd_server_list = function() {
-        add_server = Module.cwrap("em_openttd_add_server", null, ["string", "number"]);
-
-        /* Add servers that support WebSocket here. Example:
-         *  add_server("localhost", 3979); */
-    }
-
     var leftButtonDown = false;
     document.addEventListener("mousedown", e => {
         if (e.button == 0) {
