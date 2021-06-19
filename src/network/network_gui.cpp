@@ -41,10 +41,6 @@
 
 #include "../safeguards.h"
 
-#ifdef __EMSCRIPTEN__
-#	include <emscripten.h>
-#endif
-
 static void ShowNetworkStartServerWindow();
 static void ShowNetworkLobbyWindow(NetworkGameList *ngl);
 
