@@ -23,8 +23,6 @@
 
 - Download all data files into IDBFS on first run, to free up some RAM.
 
-- Build libicuuc libicuio libicuio libiculx and libicu-le-hb for Hebrew and Arabic support.
-
 - Fix multiplayer using WebSocket Proxy Server, this depends on pthreads support,
   so I'll probably need to hack together some custom proxy that does not use pthreads.
 
@@ -37,7 +35,5 @@
 - Implement cloud saves by downloading the savegame from the web browser.
 
 - Find some developer with a MacBook and $100 to publish the 'OpenTTD Webapp Launcher' to the Apple Store.
-
-- Fast forward button requires separate rendering thread, implement frameskip instead.
 
 - Ctrl screen button is getting stuck in the pressed state.
