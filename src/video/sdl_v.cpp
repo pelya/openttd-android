@@ -49,6 +49,7 @@ static int _requested_hwpalette; /* Did we request a HWPALETTE for the current v
 
 static SDL_Joystick * _multitouch_device = NULL;
 static Point _multitouch_second_point;
+static bool old_ctrl_pressed;
 
 void VideoDriver_SDL::MakeDirty(int left, int top, int width, int height)
 {
@@ -600,25 +601,21 @@ bool VideoDriver_SDL::PollEvent()
 				WChar character;
 				uint keycode = ConvertSdlKeyIntoMy(&ev.key.keysym, &character);
 				HandleKeypress(keycode, character);
-#ifdef __ANDROID__
 				if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL) {
 					_ctrl_pressed = true;
 				}
 				if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT) {
 					_shift_pressed = true;
 				}
-#endif
 			}
 			break;
 		case SDL_KEYUP:
-#ifdef __ANDROID__
 			if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL) {
 				_ctrl_pressed = false;
 			}
 			if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT) {
 				_shift_pressed = false;
 			}
-#endif
 			break;
 #ifdef __ANDROID__
 		case SDL_JOYBALLMOTION:
@@ -698,16 +695,8 @@ void VideoDriver_SDL::Stop()
 
 void VideoDriver_SDL::InputLoop()
 {
-	uint32 mod = SDL_GetModState();
 	int numkeys;
 	Uint8 *keys = SDL_GetKeyState(&numkeys);
-
-	bool old_ctrl_pressed = _ctrl_pressed;
-
-#ifndef __ANDROID__
-	_ctrl_pressed  = !!(mod & KMOD_CTRL);
-	_shift_pressed = !!(mod & KMOD_SHIFT);
-#endif
 
 #if defined(_DEBUG)
 	this->fast_forward_key_pressed = _shift_pressed;
@@ -725,6 +714,7 @@ void VideoDriver_SDL::InputLoop()
 		(keys[SDLK_DOWN]  ? 8 : 0);
 
 	if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+	old_ctrl_pressed = _ctrl_pressed;
 }
 
 void VideoDriver_SDL::MainLoop()

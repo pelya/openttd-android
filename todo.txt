@@ -35,5 +35,3 @@
 - Implement cloud saves by downloading the savegame from the web browser.
 
 - Find some developer with a MacBook and $100 to publish the 'OpenTTD Webapp Launcher' to the Apple Store.
-
-- Ctrl screen button is getting stuck in the pressed state.
