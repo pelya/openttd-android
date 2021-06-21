@@ -36,6 +36,8 @@ static bool _cursor_new_in_window = false;
 static bool _request_fullscreen = true;
 #endif
 
+static bool old_ctrl_pressed;
+
 void VideoDriver_SDL_Base::MakeDirty(int left, int top, int width, int height)
 {
 	Rect r = {left, top, left + width, top + height};
@@ -486,6 +488,21 @@ bool VideoDriver_SDL_Base::PollEvent()
 					!IsValidChar(character, CS_ALPHANUMERAL)) {
 					HandleKeypress(keycode, character);
 				}
+				if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL) {
+					_ctrl_pressed = true;
+				}
+				if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT) {
+					_shift_pressed = true;
+				}
+			}
+			break;
+
+		case SDL_KEYUP:
+			if (ev.key.keysym.sym == SDLK_LCTRL || ev.key.keysym.sym == SDLK_RCTRL) {
+				_ctrl_pressed = false;
+			}
+			if (ev.key.keysym.sym == SDLK_LSHIFT || ev.key.keysym.sym == SDLK_RSHIFT) {
+				_shift_pressed = false;
 			}
 			break;
 
@@ -604,13 +621,7 @@ void VideoDriver_SDL_Base::Stop()
 
 void VideoDriver_SDL_Base::InputLoop()
 {
-	uint32 mod = SDL_GetModState();
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
-
-	bool old_ctrl_pressed = _ctrl_pressed;
-
-	_ctrl_pressed  = !!(mod & KMOD_CTRL);
-	_shift_pressed = !!(mod & KMOD_SHIFT);
 
 #if defined(_DEBUG)
 	this->fast_forward_key_pressed = _shift_pressed;
@@ -628,6 +639,7 @@ void VideoDriver_SDL_Base::InputLoop()
 		(keys[SDL_SCANCODE_DOWN]  ? 8 : 0);
 
 	if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
+	old_ctrl_pressed = _ctrl_pressed;
 }
 
 void VideoDriver_SDL_Base::LoopOnce()
