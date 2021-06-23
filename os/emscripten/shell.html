@@ -81,6 +81,13 @@
         padding: 4px 4px;
       }
 
+      div.textinput {
+        position: absolute;
+        width: 100%;
+        z-index: 4;
+        display: "none";
+      }
+
       canvas.emscripten {
         border: 0px none;
         height: 100%;
@@ -107,6 +114,10 @@
       <div id="filesystem">
         Warning: savegames are stored in the Indexed DB of your browser.<br/>Your browser can delete savegames without notice!
       </div>
+    </div>
+    <div class="textinput" id="textinput">
+      <input type="textinput" id="textinputbox" value=""></input>
+      <input type="submit" value="OK" onclick="Module.finishTextInput();" ></input>
     </div>
     <div>
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
@@ -200,7 +211,34 @@
               document.getElementById("filesystem").style.display = "none";
             }, 300);
           }, 10000);
-        }
+        },
+
+        textInputValue: null,
+
+        startTextInput: function(text) {
+          Module.print("Start text input!");
+          Module.textInputValue = null;
+          document.getElementById("textinput").style.display = "block";
+          document.getElementById("textinputbox").value = text;
+          document.getElementById("textinputbox").focus();
+        },
+
+        getTextInput: function() {
+          if (Module.textInputValue !== null) {
+            var value = Module.textInputValue;
+            Module.textInputValue = null;
+            return value;
+          }
+          return null;
+        },
+
+        finishTextInput: function() {
+          Module.print("Text input finished!");
+          Module.textInputValue = document.getElementById("textinputbox").value;
+          Module.print(Module.textInputValue);
+          document.getElementById("textinput").style.display = "none";
+        },
+
       };
 
       window.onerror = function() {
