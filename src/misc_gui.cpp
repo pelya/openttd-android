@@ -38,6 +38,9 @@
 #ifdef __ANDROID__
 #include <SDL_screenkeyboard.h>
 #endif
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 /** Method to open the OSK. */
 enum OskActivation {
@@ -47,8 +50,9 @@ enum OskActivation {
 	OSKA_IMMEDIATELY,        ///< Focusing click already opens OSK.
 };
 
+#ifdef __ANDROID__
 static char _android_text_input[512];
-
+#endif
 
 static const NWidgetPart _nested_land_info_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
@@ -831,6 +835,25 @@ void QueryString::HandleEditBox(Window *w, int wid)
 		}
 	}
 #endif
+#ifdef __EMSCRIPTEN__
+	// TODO: move this code to SDL2 Emscripten backend
+	if (w->IsWidgetFocused(wid)) {
+		char buf[512] = "";
+		int status = EM_ASM_INT({
+			var value = Module.getTextInput();
+			if (value == null) {
+				return 0;
+			}
+			var lengthBytes = Math.min(512, lengthBytesUTF8(value) + 1);
+			stringToUTF8(value, $0, lengthBytes);
+			return 1;
+		}, buf);
+		if (status) {
+			this->text.Assign(buf);
+			w->OnEditboxChanged(wid);
+		}
+	}
+#endif
 }
 
 void QueryString::DrawEditBox(const Window *w, int wid) const
@@ -1018,6 +1041,13 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 	strecpy(_android_text_input, this->text.buf, lastof(_android_text_input));
 	this->text.DeleteAll();
 	SDL_ANDROID_GetScreenKeyboardTextInputAsync(_android_text_input, sizeof(_android_text_input));
+#endif
+#ifdef __EMSCRIPTEN__
+	// TODO: move this code to SDL2 Emscripten backend
+	EM_ASM({
+		Module.startTextInput(UTF8ToString($0));
+	}, this->text.buf);
+	this->text.DeleteAll();
 #endif
 }
 
