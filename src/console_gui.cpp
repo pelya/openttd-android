@@ -187,7 +187,8 @@ struct IConsoleWindow : Window
 
 		this->InitNested(0);
 		this->truncate_timer.SetInterval(3000);
-		ResizeWindow(this, _screen.width, _screen.height / 3);
+		ResizeWindow(this, _screen.width - GetMinButtonSize() * 2, _screen.height / 3);
+		this->left = GetMinButtonSize();
 	}
 
 	~IConsoleWindow()
@@ -436,11 +437,11 @@ void IConsoleResize(Window *w)
 	switch (_iconsole_mode) {
 		case ICONSOLE_OPENED:
 			w->height = _screen.height / 3;
-			w->width = _screen.width;
+			w->width = _screen.width - GetMinButtonSize() * 2;
 			break;
 		case ICONSOLE_FULL:
 			w->height = _screen.height - ICON_BOTTOM_BORDERWIDTH;
-			w->width = _screen.width;
+			w->width = _screen.width - GetMinButtonSize() * 2;
 			break;
 		default: return;
 	}
