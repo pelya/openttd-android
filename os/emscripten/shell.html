@@ -88,6 +88,15 @@
         display: "none";
       }
 
+      #textinputbox {
+        width: 95%;
+        font-size: xx-large;
+      }
+
+      #textinputbutton {
+        width: 95%;
+      }
+
       canvas.emscripten {
         border: 0px none;
         height: 100%;
@@ -116,8 +125,9 @@
       </div>
     </div>
     <div class="textinput" id="textinput">
-      <input type="textinput" id="textinputbox" value=""></input>
-      <input type="submit" value="OK" onclick="Module.finishTextInput();" ></input>
+      <input type="textinput" id="textinputbox" value="" onfocusout="Module.finishTextInput();" tabindex=1></input>
+      <br/>
+      <input type="submit" id="textinputbutton" value="OK" onclick="Module.finishTextInput();" ></input>
     </div>
     <div>
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
@@ -216,11 +226,16 @@
         textInputValue: null,
 
         startTextInput: function(text) {
-          Module.print("Start text input!");
+          //Module.print("Start text input!");
           Module.textInputValue = null;
           document.getElementById("textinput").style.display = "block";
           document.getElementById("textinputbox").value = text;
           document.getElementById("textinputbox").focus();
+          document.getElementById("textinputbox").onkeyup = function(evt) {
+            if (evt.key === "Enter") {
+              Module.finishTextInput();
+            }
+          };
         },
 
         getTextInput: function() {
@@ -233,13 +248,21 @@
         },
 
         finishTextInput: function() {
-          Module.print("Text input finished!");
+          if (document.getElementById("textinput").style.display == "none") {
+            //Module.print("Text input not started");
+            return;
+          }
+          //Module.print("Text input finished!");
           Module.textInputValue = document.getElementById("textinputbox").value;
           Module.print(Module.textInputValue);
           document.getElementById("textinput").style.display = "none";
+          document.getElementById("canvas").focus();
         },
 
       };
+
+      document.getElementById("textinput").style.display = "none"; // It's not hiding with CSS
+      document.getElementById("canvas").focus();
 
       window.onerror = function() {
         Module.onAbort();
