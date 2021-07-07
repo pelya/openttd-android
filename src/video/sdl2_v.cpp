@@ -624,6 +624,7 @@ void VideoDriver_SDL_Base::InputLoop()
 {
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
+#ifndef __EMSCRIPTEN__
 #if defined(_DEBUG)
 	this->fast_forward_key_pressed = _shift_pressed;
 #else
@@ -631,6 +632,7 @@ void VideoDriver_SDL_Base::InputLoop()
 	 * to switch to another application. */
 	this->fast_forward_key_pressed = keys[SDL_SCANCODE_TAB] && (mod & KMOD_ALT) == 0;
 #endif /* defined(_DEBUG) */
+#endif // __EMSCRIPTEN__
 
 	/* Determine which directional keys are down. */
 	_dirkeys =
