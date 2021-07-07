@@ -89,12 +89,12 @@
       }
 
       #textinputbox {
-        width: 95%;
+        width: 100%;
         font-size: xx-large;
       }
 
       #textinputbutton {
-        width: 95%;
+        width: 100%;
       }
 
       canvas.emscripten {
@@ -226,6 +226,10 @@
         textInputValue: null,
 
         startTextInput: function(text) {
+          if (document.getElementById("textinput").style.display != "none") {
+            //Module.print("Text input already started");
+            return;
+          }
           //Module.print("Start text input!");
           Module.textInputValue = null;
           document.getElementById("textinput").style.display = "block";
