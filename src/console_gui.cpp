@@ -32,6 +32,9 @@
 #ifdef __ANDROID__
 #include <SDL_screenkeyboard.h>
 #endif
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 static const uint ICON_HISTORY_SIZE       = 20;
 static const uint ICON_LINE_SPACING       =  2;
@@ -189,6 +192,13 @@ struct IConsoleWindow : Window
 		this->truncate_timer.SetInterval(3000);
 		ResizeWindow(this, _screen.width - GetMinButtonSize() * 2, _screen.height / 3);
 		this->left = GetMinButtonSize();
+
+#ifdef __EMSCRIPTEN__
+		// TODO: move this code to SDL2 Emscripten backend
+		EM_ASM({
+			Module.startTextInput(UTF8ToString($0));
+		}, "");
+#endif // __EMSCRIPTEN__
 	}
 
 	~IConsoleWindow()
@@ -234,6 +244,23 @@ struct IConsoleWindow : Window
 		if (_focused_window == this && _iconsole_cmdline.caret) {
 			DrawString(this->line_offset + delta + _iconsole_cmdline.caretxoffs, right, this->height - this->line_height, "_", TC_WHITE, SA_LEFT | SA_FORCE);
 		}
+
+#ifdef __EMSCRIPTEN__
+		// TODO: move this code to SDL2 Emscripten backend
+		char buf[512] = "";
+		int status = EM_ASM_INT({
+			var value = Module.getTextInput();
+			if (value == null) {
+				return 0;
+			}
+			var lengthBytes = Math.min(512, lengthBytesUTF8(value) + 1);
+			stringToUTF8(value, $0, lengthBytes);
+			return 1;
+		}, buf);
+		if (status) {
+			this->OnQueryTextFinished(buf);
+		}
+#endif
 	}
 
 	void OnQueryTextFinished(char *str) override
@@ -260,6 +287,16 @@ struct IConsoleWindow : Window
 	void OnMouseLoop() override
 	{
 		if (_iconsole_cmdline.HandleCaret()) this->SetDirty();
+	}
+
+	void OnClick(Point pt, int widget, int click_count) override
+	{
+#ifdef __EMSCRIPTEN__
+		// TODO: move this code to SDL2 Emscripten backend
+		EM_ASM({
+			Module.startTextInput(UTF8ToString($0));
+		}, "");
+#endif // __EMSCRIPTEN__
 	}
 
 	EventState OnKeyPress(WChar key, uint16 keycode) override
