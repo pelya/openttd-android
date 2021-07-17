@@ -34,6 +34,9 @@ bool NetworkCoreInitialize()
 		}
 	}
 #endif /* _WIN32 */
+#if defined(__EMSCRIPTEN__)
+	em_proxy_initialize_network();
+#endif
 
 	return true;
 }

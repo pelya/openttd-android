@@ -350,6 +350,9 @@ if(EMSCRIPTEN)
     # We use IDBFS for persistent storage.
     target_link_libraries(WASM::WASM INTERFACE "-lidbfs.js")
 
+    # Socket proxy
+    target_link_libraries(WASM::WASM INTERFACE "-lwebsocket.js")
+
     # Use custom pre-js and shell.html.
     target_link_libraries(WASM::WASM INTERFACE "--pre-js ${CMAKE_SOURCE_DIR}/os/emscripten/pre.js")
     target_link_libraries(WASM::WASM INTERFACE "--shell-file ${CMAKE_SOURCE_DIR}/os/emscripten/shell.html")

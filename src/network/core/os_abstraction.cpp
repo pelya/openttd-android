@@ -150,13 +150,9 @@ bool SetNonBlocking(SOCKET d)
  */
 bool SetNoDelay(SOCKET d)
 {
-#ifdef __EMSCRIPTEN__
-	return true;
-#else
 	int flags = 1;
 	/* The (const char*) cast is needed for windows */
 	return setsockopt(d, IPPROTO_TCP, TCP_NODELAY, (const char *)&flags, sizeof(flags)) == 0;
-#endif
 }
 
 /**

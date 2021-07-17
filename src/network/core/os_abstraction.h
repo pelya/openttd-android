@@ -172,4 +172,8 @@ NetworkError GetSocketError(SOCKET d);
 static_assert(sizeof(in_addr)  ==  4); ///< IPv4 addresses should be 4 bytes.
 static_assert(sizeof(in6_addr) == 16); ///< IPv6 addresses should be 16 bytes.
 
+#if defined(__EMSCRIPTEN__)
+#	include "em_proxy.h"
+#endif /* __EMSCRIPTEN__ */
+
 #endif /* NETWORK_CORE_OS_ABSTRACTION_H */
