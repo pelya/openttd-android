@@ -695,6 +695,7 @@ void VideoDriver_SDL::Stop()
 
 void VideoDriver_SDL::InputLoop()
 {
+	uint32 mod = SDL_GetModState();
 	int numkeys;
 	Uint8 *keys = SDL_GetKeyState(&numkeys);
 
