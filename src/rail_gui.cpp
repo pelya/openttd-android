@@ -1064,8 +1064,6 @@ public:
 			matrix->SetClicked(_railstation.station_type);
 
 			EnsureSelectedStationClassIsVisible();
-
-			this->SetFocusedWidget(WID_BRAS_FILTER_EDITBOX);
 		}
 
 		this->InvalidateData();

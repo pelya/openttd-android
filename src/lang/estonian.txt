@@ -173,7 +173,7 @@ STR_QUANTITY_WHEAT                                              :{WEIGHT_LONG} n
 STR_QUANTITY_RUBBER                                             :{VOLUME_LONG} kummi
 STR_QUANTITY_SUGAR                                              :{WEIGHT_LONG} suhkrut
 STR_QUANTITY_TOYS                                               :{COMMA} mänguas{P i ja}
-STR_QUANTITY_SWEETS                                             :{COMMA} kontitäi{P s t} maiustusi
+STR_QUANTITY_SWEETS                                             :{COMMA}{NBSP}kotitäi{P s t} maiustusi
 STR_QUANTITY_COLA                                               :{VOLUME_LONG} koolat
 STR_QUANTITY_CANDYFLOSS                                         :{WEIGHT_LONG} suhkruvatti
 STR_QUANTITY_BUBBLES                                            :{COMMA} mull{P "" i}
@@ -871,7 +871,7 @@ STR_NEWS_DISASTER_COAL_MINE_SUBSIDENCE                          :{BIG_FONT}{BLAC
 STR_NEWS_DISASTER_FLOOD_VEHICLE                                 :{BIG_FONT}{BLACK}Üleujutused!{}Vähemalt {COMMA} kadunut arvatakse surnuks peale olulist üleujutust!
 
 STR_NEWS_COMPANY_IN_TROUBLE_TITLE                               :{BIG_FONT}{BLACK}Ettevõttel on probleeme!
-STR_NEWS_COMPANY_IN_TROUBLE_DESCRIPTION                         :{BIG_FONT}{BLACK}Ettevõte {STRING} müüakse maha ja kuulutatakse pankrot, kui tulemused peatselt ei parane!
+STR_NEWS_COMPANY_IN_TROUBLE_DESCRIPTION                         :{BIG_FONT}{BLACK}Ettevõte {STRING} müüakse maha või kuulutatakse pankrotistunuks, kui tulemused peatselt ei parane!
 STR_NEWS_COMPANY_MERGER_TITLE                                   :{BIG_FONT}{BLACK}Ettevõtete ühinemine!
 STR_NEWS_COMPANY_MERGER_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING} müüdi ettevõttele {STRING} {CURRENCY_LONG} eest!
 STR_NEWS_COMPANY_BANKRUPT_TITLE                                 :{BIG_FONT}{BLACK}Pankrot!
@@ -1014,10 +1014,10 @@ STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Asulate 
 STR_GAME_OPTIONS_TOWN_NAMES_DROPDOWN_TOOLTIP                    :{BLACK}Vali asulanimede stiil
 
 ############ start of townname region
-STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH                     :Inglise (originaalne)
+STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH                     :Inglise (algne)
 STR_GAME_OPTIONS_TOWN_NAME_FRENCH                               :Prantsusmaa
 STR_GAME_OPTIONS_TOWN_NAME_GERMAN                               :Saksamaa
-STR_GAME_OPTIONS_TOWN_NAME_ADDITIONAL_ENGLISH                   :Inglise (Lisa)
+STR_GAME_OPTIONS_TOWN_NAME_ADDITIONAL_ENGLISH                   :Inglise (täiendatud)
 STR_GAME_OPTIONS_TOWN_NAME_LATIN_AMERICAN                       :Ladina-Ameerika
 STR_GAME_OPTIONS_TOWN_NAME_SILLY                                :Tobedad
 STR_GAME_OPTIONS_TOWN_NAME_SWEDISH                              :Rootsi
@@ -1060,7 +1060,7 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :muu
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
 STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Riistvarakiirendus
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Märgides selle ruudu, lubad OpenTTD-l üritada kasutada riistvarakiirendust. Muudetud seade omab mõju pärast mängu taaskäivitust
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Märkides selle ruudu, lubad OpenTTD-l üritada kasutada riistvarakiirendust. Muudetud seade omab mõju pärast mängu taaskäivitust
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Seade omab mõju alles pärast mängu taaskäivitust
 
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Liidese suurus
@@ -1181,6 +1181,8 @@ STR_TERRAIN_TYPE_FLAT                                           :Tasane
 STR_TERRAIN_TYPE_HILLY                                          :Künklik
 STR_TERRAIN_TYPE_MOUNTAINOUS                                    :Mägine
 STR_TERRAIN_TYPE_ALPINIST                                       :Alpinist
+STR_TERRAIN_TYPE_CUSTOM                                         :Määratud kõrgus
+STR_TERRAIN_TYPE_CUSTOM_VALUE                                   :Määratud kõrgus ({NUM})
 
 STR_CITY_APPROVAL_PERMISSIVE                                    :Soodustav
 STR_CITY_APPROVAL_TOLERANT                                      :Salliv
@@ -1195,14 +1197,14 @@ STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Ava kõi
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Sulge kõik
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(seletus puudub)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Vaikeväärtus: {ORANGE}{STRING}
-STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Seade rühm: {ORANGE}{STRING}
+STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Seade liik: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE_CLIENT                                  :Kliendiseade (ei salvestu koos mänguga; mõjutab kõiki mänge)
 STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Mängu seade (salvestub koos mänguga; mõjutab ainult uusi mänge)
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Mängu seaded (hoitakse salvestuses; mõjutab ainult praegust mängu)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Ettevõtte seaded (hoitakse salvestuses; mõjutab ainult uusi mänge)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Ettevõtte seaded (hoitakse salvestuses; mõjutab ainult praegust ettevõtet)
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Rühm:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Jagu:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Liik:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Piirab varem tehtud filtridega alljärgnevat loendit
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Põhilised (kuva vaid tähtsad seaded)
@@ -1262,9 +1264,11 @@ STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Lülita sisse/v
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Astuse omavalitsuse suhtumine pinnase restruktureerimisse: {STRING}
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :Vali kui suurt mõju tekitavad müra ning keskkonna muudatused ettevõtte mainele ja edasistele ehitustoimingutele antud piirkonnas
 
-STR_CONFIG_SETTING_MAX_HEIGHTLEVEL                              :Kaardi ülemkõrgus: {STRING}
-STR_CONFIG_SETTING_MAX_HEIGHTLEVEL_HELPTEXT                     :Sea kaardil paiknevatele mägedele ülemine kõrguspiir
-STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN                            :{WHITE}Kaardi maksimaalset kõrgust pole sellisele kõrgusele võimalik sätestada. Vähemalt üks mägi on antud kõrgusest suurem.
+STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT                             :Kaardi kõrguspiir: {STRING}
+STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT_HELPTEXT                    :Määra ülempiir kaardil oleva maastiku kõrgusele. "(Auto)" leiab sobiva väärtuse pärast, kui maastik on tekitatud
+STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT_VALUE                       :{NUM}
+STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT_AUTO                        :(auto)
+STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN                            :{WHITE}Sellist väärtust ei saa kaardi kõrguspiirile anda. Vähemalt üks mägi kaardil on kõrgem
 STR_CONFIG_SETTING_AUTOSLOPE                                    :Maastikukujundus majade, rööbaste jms. all (autoslope): {STRING}
 STR_CONFIG_SETTING_AUTOSLOPE_HELPTEXT                           :Lase maja- ja rööpaalust maad kujundada ilma neid eemaldamata
 STR_CONFIG_SETTING_CATCHMENT                                    :Reaalsemad veekogud: {STRING}
@@ -1409,6 +1413,12 @@ STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE                        :Maksimaalne kau
 STR_CONFIG_SETTING_OIL_REF_EDGE_DISTANCE_HELPTEXT               :Naftatöötlemistehased ehitatakse ainult kaardi piirile, see on rannikul saartega mängitaval kaardil.
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT                              :Lumepiiri kõrgus: {STRING}
 STR_CONFIG_SETTING_SNOWLINE_HEIGHT_HELPTEXT                     :Määra, millisel kõrgusel algab sub-arktiline maastik. Lumi mõjutab ka tööstuste loomist ja asulate kasvamise nõudeid
+STR_CONFIG_SETTING_SNOW_COVERAGE                                :Lumekatvus: {STRING}
+STR_CONFIG_SETTING_SNOW_COVERAGE_HELPTEXT                       :Mõjutab umbkaudset lume osakaalu lähisartikilisel maastikul. Lumi mõjutab ka tööstuste tekitamist ja asulate kasvuvajadusi. Kasutatakse vaid kaardi tekitamisel. Vahetult merepiiri kohal on maa alati lumevaba
+STR_CONFIG_SETTING_SNOW_COVERAGE_VALUE                          :{NUM}%
+STR_CONFIG_SETTING_DESERT_COVERAGE                              :Kõrbekatvus: {STRING}
+STR_CONFIG_SETTING_DESERT_COVERAGE_HELPTEXT                     :Mõjuta umbkaudset kõrbe osakaalu troopilisel maastikul. Kõrb mõjutab ka tööstuste tekitamist. Kasutatakse vaid kaardi tekitamisel
+STR_CONFIG_SETTING_DESERT_COVERAGE_VALUE                        :{NUM}%
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :Maastiku järskus (ainult TerraGenesis) : {STRING}
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :(TerraGenesis only) Vali mägede tihedus: Laugetel maastikel on vähem, laiema ulatusega mägesid. Mägistel maastikel on palju mägesid, mis võivad näha välja samasugused
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Väga lauge
@@ -1426,9 +1436,9 @@ STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :Algupärane
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :Täiustatud
 STR_CONFIG_SETTING_ROAD_SIDE                                    :Sõidukid: {STRING}
 STR_CONFIG_SETTING_ROAD_SIDE_HELPTEXT                           :Vali liikluse suund
-STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Kõrgustekaardi pööramine: {STRING}
-STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Vastu-päevapidi
-STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :Päevapidi
+STR_CONFIG_SETTING_HEIGHTMAP_ROTATION                           :Kõrguskaardi pööre: {STRING}
+STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_COUNTER_CLOCKWISE         :Vastupäeva
+STR_CONFIG_SETTING_HEIGHTMAP_ROTATION_CLOCKWISE                 :Päripäeva
 STR_CONFIG_SETTING_SE_FLAT_WORLD_HEIGHT                         :Kõrguse level kui kõrgele lapik kaart läheb: {STRING}
 STR_CONFIG_SETTING_EDGES_NOT_EMPTY                              :{WHITE}Üks või enam ruutu põhjaäärel pole tühjad
 STR_CONFIG_SETTING_EDGES_NOT_WATER                              :{WHITE}Üks või enam ääreruutu pole vesi
@@ -1892,7 +1902,7 @@ STR_INTRO_TOOLTIP_SCENARIO_EDITOR                               :{BLACK}Loo oma 
 STR_INTRO_TOOLTIP_MULTIPLAYER                                   :{BLACK}Alusta mitmikmängu
 
 STR_INTRO_TOOLTIP_TEMPERATE                                     :{BLACK}Vali 'parasvöötme' maastik
-STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE                          :{BLACK}Vali 'lähispolaarne' maastik
+STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE                          :{BLACK}Vali 'lähisarktiline' maastik
 STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE                        :{BLACK}Vali 'lähistroopiline' maastik
 STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Vali 'mänguasjamaa' maastik
 
@@ -1930,7 +1940,7 @@ STR_CHEAT_NO_JETCRASH                                           :{LTBLUE}Reaktii
 STR_CHEAT_EDIT_MAX_HL                                           :{LTBLUE}Muuda kaardi ülemkõrgust {ORANGE}{NUM}
 STR_CHEAT_EDIT_MAX_HL_QUERY_CAPT                                :{WHITE}Muuda kaardil olevate mägede ülemkõrgust
 STR_CHEAT_SWITCH_CLIMATE_TEMPERATE_LANDSCAPE                    :Parasvöötme maastik
-STR_CHEAT_SWITCH_CLIMATE_SUB_ARCTIC_LANDSCAPE                   :Arktiline maastik
+STR_CHEAT_SWITCH_CLIMATE_SUB_ARCTIC_LANDSCAPE                   :Lähisarktiline maastik
 STR_CHEAT_SWITCH_CLIMATE_SUB_TROPICAL_LANDSCAPE                 :Troopiline maastik
 STR_CHEAT_SWITCH_CLIMATE_TOYLAND_LANDSCAPE                      :Mänguasjamaa
 STR_CHEAT_CHANGE_DATE                                           :{LTBLUE}Muuda kuupäeva: {ORANGE} {DATE_SHORT}
@@ -2397,6 +2407,9 @@ STR_MISSING_GRAPHICS_SET_MESSAGE                                :{BLACK}OpenTTD 
 STR_MISSING_GRAPHICS_YES_DOWNLOAD                               :{BLACK}Jah, laadi graafika alla
 STR_MISSING_GRAPHICS_NO_QUIT                                    :{BLACK}Ei, välju OpenTTD-st
 
+STR_MISSING_GRAPHICS_ERROR_TITLE                                :{WHITE}Allalaadimine ebaõnnestus
+STR_MISSING_GRAPHICS_ERROR                                      :{BLACK}Graafika allalaadimine ebaõnnestus.{}Palun laadida graafika alla käsitsi.
+STR_MISSING_GRAPHICS_ERROR_QUIT                                 :{BLACK}Välju OpenTTD-st
 
 # Transparency settings window
 STR_TRANSPARENCY_CAPTION                                        :{WHITE}Läbipaistvuse seadistus
@@ -2474,7 +2487,7 @@ STR_WAYPOINT_GRAPHICS_TOOLTIP                                   :{BLACK}Vali mel
 
 # Rail station construction window
 STR_STATION_BUILD_RAIL_CAPTION                                  :{WHITE}Raudteejaama valik
-STR_STATION_BUILD_ORIENTATION                                   :{BLACK}Orientatsioon
+STR_STATION_BUILD_ORIENTATION                                   :{BLACK}Suund
 STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP                  :{BLACK}Raudteejaamale suuna valimine
 STR_STATION_BUILD_NUMBER_OF_TRACKS                              :{BLACK}Radade arv
 STR_STATION_BUILD_NUMBER_OF_TRACKS_TOOLTIP                      :{BLACK}Vali raudteejaama perroonide arv
@@ -2483,8 +2496,8 @@ STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Vali rau
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Lohistamine
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Ehita jaam kasutades hiirega lohistamist
 
-STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Vali jaama klass mida tahad näidata
-STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Vali ehitatava jaama tüüp
+STR_STATION_BUILD_STATION_CLASS_TOOLTIP                         :{BLACK}Vali näidatav jaamarühm
+STR_STATION_BUILD_STATION_TYPE_TOOLTIP                          :{BLACK}Vali näidatav jaamaliik
 
 STR_STATION_CLASS_DFLT                                          :Esialgne jaam
 STR_STATION_CLASS_WAYP                                          :Meldepunktid
@@ -2561,7 +2574,7 @@ STR_STATION_BUILD_BUS_ORIENTATION                               :{WHITE}Bussijaa
 STR_STATION_BUILD_BUS_ORIENTATION_TOOLTIP                       :{BLACK}Vali bussijaamale suund
 STR_STATION_BUILD_TRUCK_ORIENTATION                             :{WHITE}Laadimisplatsi suund
 STR_STATION_BUILD_TRUCK_ORIENTATION_TOOLTIP                     :{BLACK}Vali laadimisplatsile suund
-STR_STATION_BUILD_PASSENGER_TRAM_ORIENTATION                    :{WHITE}Reisitrammi Jaama Suund
+STR_STATION_BUILD_PASSENGER_TRAM_ORIENTATION                    :{WHITE}Reisitrammijaama suund
 STR_STATION_BUILD_PASSENGER_TRAM_ORIENTATION_TOOLTIP            :{BLACK}Vali reisitrammijaama suund
 STR_STATION_BUILD_CARGO_TRAM_ORIENTATION                        :{WHITE}Kaubatrammi Jaama Suund
 STR_STATION_BUILD_CARGO_TRAM_ORIENTATION_TOOLTIP                :{BLACK}Vali kaubatrammijaama suund
@@ -2592,7 +2605,7 @@ STR_TOOLBAR_AIRCRAFT_BUILD_AIRPORT_TOOLTIP                      :{BLACK}Ehita le
 # Airport construction window
 STR_STATION_BUILD_AIRPORT_CAPTION                               :{WHITE}Lennuvälja valik
 STR_STATION_BUILD_AIRPORT_TOOLTIP                               :{BLACK}Vali lennuvälja suurus ja tüüp
-STR_STATION_BUILD_AIRPORT_CLASS_LABEL                           :{BLACK}Lennujaama liik
+STR_STATION_BUILD_AIRPORT_CLASS_LABEL                           :{BLACK}Lennuvälja järk
 STR_STATION_BUILD_AIRPORT_LAYOUT_NAME                           :{BLACK}Paigutus {NUM}
 
 STR_AIRPORT_SMALL                                               :Väike
@@ -2622,7 +2635,7 @@ STR_LANDSCAPING_TOOLTIP_PURCHASE_LAND                           :{BLACK}Maa ostm
 # Object construction window
 STR_OBJECT_BUILD_CAPTION                                        :{WHITE}Objekti valik
 STR_OBJECT_BUILD_TOOLTIP                                        :{BLACK}Vali ehitatav objekt. Shift valib ehitamise/hinna kuvamise režiimi
-STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}Vali ehitatava objekti klass
+STR_OBJECT_BUILD_CLASS_TOOLTIP                                  :{BLACK}Vali ehitatava objekti järk
 STR_OBJECT_BUILD_PREVIEW_TOOLTIP                                :{BLACK}Objekti eelvaade
 STR_OBJECT_BUILD_SIZE                                           :{BLACK}Suurus: {GOLD}{NUM} x {NUM} ruutu
 
@@ -2737,7 +2750,7 @@ STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY                       :{BLACK}Kohalik 
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE                  :puudub
 STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}Koordinaadid: {LTBLUE}{NUM} x {NUM} x {NUM} ({STRING})
 STR_LAND_AREA_INFORMATION_BUILD_DATE                            :{BLACK}Ehitatud: {LTBLUE}{DATE_LONG}
-STR_LAND_AREA_INFORMATION_STATION_CLASS                         :{BLACK}Jaama liik: {LTBLUE}{STRING}
+STR_LAND_AREA_INFORMATION_STATION_CLASS                         :{BLACK}Jaama järk: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_STATION_TYPE                          :{BLACK}Jaama liik: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_AIRPORT_CLASS                         :{BLACK}Lennuvälja liik: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_AIRPORT_NAME                          :{BLACK}Lennujaama nimi: {LTBLUE}{STRING}
@@ -2942,17 +2955,22 @@ STR_SAVELOAD_OSKTITLE                                           :{BLACK}Sisesta 
 # World generation
 STR_MAPGEN_WORLD_GENERATION_CAPTION                             :{WHITE}Maailma tekitamine
 STR_MAPGEN_MAPSIZE                                              :{BLACK}Kaardi mõõtmed:
-STR_MAPGEN_MAPSIZE_TOOLTIP                                      :{BLACK}Määrab maakaardi mõõtmed ruutudes. Ruute, mida saab kasutada, on pisut vähem
+STR_MAPGEN_MAPSIZE_TOOLTIP                                      :{BLACK}Määrab kaardi mõõtmed ruutudes. Ruute, mida saab kasutada, on pisut vähem
 STR_MAPGEN_BY                                                   :{BLACK}*
-STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}Asustusi:
+STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}Asustuste arv:
 STR_MAPGEN_DATE                                                 :{BLACK}Algus:
 STR_MAPGEN_NUMBER_OF_INDUSTRIES                                 :{BLACK}Tööstustihedus:
-STR_MAPGEN_MAX_HEIGHTLEVEL                                      :{BLACK}Kaardi ülemkõrgus:
-STR_MAPGEN_MAX_HEIGHTLEVEL_UP                                   :{BLACK}Tõsta maksimaalset kaardi mägede kõrgust ühe võrra
-STR_MAPGEN_MAX_HEIGHTLEVEL_DOWN                                 :{BLACK}Langeta maksimaalset kaardi mägede kõrgust ühe võrra
-STR_MAPGEN_SNOW_LINE_HEIGHT                                     :{BLACK}Lumepiiri kõrgus:
-STR_MAPGEN_SNOW_LINE_UP                                         :{BLACK}Lumepiiri liigutamine ühe võrra üles
-STR_MAPGEN_SNOW_LINE_DOWN                                       :{BLACK}Lumepiiri liigutamine ühe võrra alla
+STR_MAPGEN_HEIGHTMAP_HEIGHT                                     :{BLACK}Kõrgpunkt:
+STR_MAPGEN_HEIGHTMAP_HEIGHT_UP                                  :{BLACK}Suurenda kaardi kõrgpunkti ühe võrra
+STR_MAPGEN_HEIGHTMAP_HEIGHT_DOWN                                :{BLACK}Vähenda kaardi kõrgpunkti ühe võrra
+STR_MAPGEN_SNOW_COVERAGE                                        :{BLACK}Lumekatvus:
+STR_MAPGEN_SNOW_COVERAGE_UP                                     :{BLACK}Suurenda lumekatvust kümne protsendi võrra
+STR_MAPGEN_SNOW_COVERAGE_DOWN                                   :{BLACK}Vähenda lumekatvust kümne protsendi võrra
+STR_MAPGEN_SNOW_COVERAGE_TEXT                                   :{BLACK}{NUM}%
+STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}Kõrbekatvus:
+STR_MAPGEN_DESERT_COVERAGE_UP                                   :{BLACK}Suurenda kõrbekatvust kümne protsendi võrra
+STR_MAPGEN_DESERT_COVERAGE_DOWN                                 :{BLACK}Vähenda kõrbekatvust kümne protsendi võrra
+STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
 STR_MAPGEN_LAND_GENERATOR                                       :{BLACK}Maatekituse meetod:
 STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Maapinna tüüp:
 STR_MAPGEN_QUANTITY_OF_SEA_LAKES                                :{BLACK}Merepinna tase:
@@ -2973,13 +2991,15 @@ STR_MAPGEN_BORDER_RANDOM                                        :{BLACK}Suvaline
 STR_MAPGEN_BORDER_RANDOMIZE                                     :{BLACK}Suvaline
 STR_MAPGEN_BORDER_MANUAL                                        :{BLACK}Määratud
 
-STR_MAPGEN_HEIGHTMAP_ROTATION                                   :{BLACK}Kõrgustekaardi pööre:
-STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Kõrgusekaardi nimi:
+STR_MAPGEN_HEIGHTMAP_ROTATION                                   :{BLACK}Kõrguskaardi pööre:
+STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Kõrguskaardi nimi:
 STR_MAPGEN_HEIGHTMAP_SIZE_LABEL                                 :{BLACK}Suurus:
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
-STR_MAPGEN_MAX_HEIGHTLEVEL_QUERY_CAPT                           :{WHITE}Muuda maksimaalset kaardi kõrgust
-STR_MAPGEN_SNOW_LINE_QUERY_CAPT                                 :{WHITE}Muuda lumepiiri kõrgust
+STR_MAPGEN_TERRAIN_TYPE_QUERY_CAPT                              :{WHITE}Soovitud kõrgpunkt
+STR_MAPGEN_HEIGHTMAP_HEIGHT_QUERY_CAPT                          :{WHITE}Kõrgpunkt
+STR_MAPGEN_SNOW_COVERAGE_QUERY_CAPT                             :{WHITE}Lumekatvus (%)
+STR_MAPGEN_DESERT_COVERAGE_QUERY_CAPT                           :{WHITE}Kõrbekatvus (%)
 STR_MAPGEN_START_DATE_QUERY_CAPT                                :{WHITE}Muuda algusaastat
 
 # SE Map generation
@@ -3360,7 +3380,7 @@ STR_STATION_VIEW_CARGO_SUPPLY_RATING                            :{WHITE}{STRING}
 
 STR_STATION_VIEW_GROUP                                          :{BLACK}Jaotusalus
 STR_STATION_VIEW_WAITING_STATION                                :Jaam: ootel
-STR_STATION_VIEW_WAITING_AMOUNT                                 :Summa: ootel
+STR_STATION_VIEW_WAITING_AMOUNT                                 :Kogus: ootel
 STR_STATION_VIEW_PLANNED_STATION                                :Jaam: eeldatav
 STR_STATION_VIEW_PLANNED_AMOUNT                                 :Summa: eeldatav
 STR_STATION_VIEW_FROM                                           :{YELLOW}{CARGO_SHORT} jaamast {STATION}
@@ -3598,7 +3618,7 @@ STR_GROUP_RENAME_TOOLTIP                                        :{BLACK}Ümberni
 STR_GROUP_LIVERY_TOOLTIP                                        :{BLACK}Muuda valitud jao värvistikku
 STR_GROUP_REPLACE_PROTECTION_TOOLTIP                            :{BLACK}Klõpsa, et kaitsta seda jagu globaalse automaatasenduse eest
 
-STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Kustuta Grupp
+STR_QUERY_GROUP_DELETE_CAPTION                                  :{WHITE}Kõrvalda jagu
 STR_GROUP_DELETE_QUERY_TEXT                                     :{WHITE}Kas oled kindel, et tahad kustutada selle grupi ja kõik järglased?
 
 STR_GROUP_ADD_SHARED_VEHICLE                                    :Kõik jagatud sõidukid
@@ -4022,8 +4042,8 @@ STR_ORDERS_LIST_TOOLTIP                                         :{BLACK}Korraldu
 STR_ORDER_INDEX                                                 :{COMMA}:{NBSP}
 STR_ORDER_TEXT                                                  :{STRING} {STRING} {STRING}
 
-STR_ORDERS_END_OF_ORDERS                                        :- - Korraldused läbi - -
-STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - Jagatud korraldused läbi - -
+STR_ORDERS_END_OF_ORDERS                                        :- - Korralduste lõpp - -
+STR_ORDERS_END_OF_SHARED_ORDERS                                 :- - Jagatud korralduste lõpp - -
 
 # Order bottom buttons
 STR_ORDER_NON_STOP                                              :{BLACK}Vahepeatusteta
@@ -4397,6 +4417,7 @@ STR_WARNING_FALLBACK_SOUNDSET                                   :{WHITE}Mäng ei
 STR_WARNING_SCREENSHOT_SIZE_CAPTION                             :{WHITE}Hiiglaslik kuvapaugutus
 STR_WARNING_SCREENSHOT_SIZE_MESSAGE                             :{YELLOW}Kuvapaugutuse mõõtmed saavad olema {COMMA} x {COMMA} pikslit. Kuvapaugutuse tegemine võib võtta tükk aega. Kas sa oled kindel, et sa soovid jätkata?
 
+STR_MESSAGE_HEIGHTMAP_SUCCESSFULLY                              :{WHITE}Kõrguskaart edukalt salvestatud, kui '{STRING}'. Kõrgpunkt on {NUM}
 STR_MESSAGE_SCREENSHOT_SUCCESSFULLY                             :{WHITE}Ekraanipilt on edukalt salvestatud nimega '{STRING}'
 STR_ERROR_SCREENSHOT_FAILED                                     :{WHITE}Ekraanipildi tegemine nurjus!
 

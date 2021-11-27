@@ -215,6 +215,13 @@ static const amplitude_t _water_percent[4] = {70, 170, 270, 420};
  */
 static height_t TGPGetMaxHeight()
 {
+	if (_settings_game.difficulty.terrain_type == CUSTOM_TERRAIN_TYPE_NUMBER_DIFFICULTY) {
+		/* TGP never reaches this height; this means that if a user inputs "2",
+		 * it would create a flat map without the "+ 1". But that would
+		 * overflow on "255". So we reduce it by 1 to get back in range. */
+		return I2H(_settings_game.game_creation.custom_terrain_type + 1) - 1;
+	}
+
 	/**
 	 * Desired maximum height - indexed by:
 	 *  - _settings_game.difficulty.terrain_type
@@ -237,25 +244,20 @@ static height_t TGPGetMaxHeight()
 	int map_size_bucket = std::min(MapLogX(), MapLogY()) - MIN_MAP_SIZE_BITS;
 	int max_height_from_table = max_height[_settings_game.difficulty.terrain_type][map_size_bucket];
 
-	/* Arctic needs snow to have all industries, so make sure we allow TGP to generate this high. */
-	if (_settings_game.game_creation.landscape == LT_ARCTIC) {
-		max_height_from_table += _settings_newgame.game_creation.snow_line_height;
-		/* Make flat a bit more flat by removing "very flat" from it, to somewhat compensate for the increase we just did. */
-		if (_settings_game.difficulty.terrain_type > 0) {
-			max_height_from_table -= max_height[_settings_game.difficulty.terrain_type - 1][map_size_bucket];
-		}
-	}
-	/* Tropic needs tropical forest to have all industries, so make sure we allow TGP to generate this high.
-	 * Tropic forest always starts at 1/4th of the max height. */
-	if (_settings_game.game_creation.landscape == LT_TROPIC) {
-		max_height_from_table += CeilDiv(_settings_game.construction.max_heightlevel, 4);
-		/* Make flat a bit more flat by removing "very flat" from it, to somewhat compensate for the increase we just did. */
-		if (_settings_game.difficulty.terrain_type > 0) {
-			max_height_from_table -= max_height[_settings_game.difficulty.terrain_type - 1][map_size_bucket];
-		}
+	/* If there is a manual map height limit, clamp to it. */
+	if (_settings_game.construction.map_height_limit != 0) {
+		max_height_from_table = std::min<uint>(max_height_from_table, _settings_game.construction.map_height_limit);
 	}
 
-	return I2H(std::min<uint>(max_height_from_table, _settings_game.construction.max_heightlevel));
+	return I2H(max_height_from_table);
+}
+
+/**
+ * Get an overestimation of the highest peak TGP wants to generate.
+ */
+uint GetEstimationTGPMapHeight()
+{
+	return H2I(TGPGetMaxHeight());
 }
 
 /**
@@ -656,7 +658,9 @@ static void HeightMapCurves(uint level)
 			for (uint t = 0; t < lengthof(curve_maps); t++) {
 				if (!HasBit(corner_bits, t)) continue;
 
+#ifndef NDEBUG
 				bool found = false;
+#endif
 				const control_point_t *cm = curve_maps[t].list;
 				for (uint i = 0; i < curve_maps[t].length - 1; i++) {
 					const control_point_t &p1 = cm[i];
@@ -664,7 +668,9 @@ static void HeightMapCurves(uint level)
 
 					if (*h >= p1.x && *h < p2.x) {
 						ht[t] = p1.y + (*h - p1.x) * (p2.y - p1.y) / (p2.x - p1.x);
+#ifndef NDEBUG
 						found = true;
+#endif
 						break;
 					}
 				}
