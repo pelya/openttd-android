@@ -989,6 +989,7 @@ STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Seleccio
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :outra
 
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Tamaño da interface
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Seleciona o tamaño de elementos da interface a usar
 
@@ -1916,6 +1917,7 @@ STR_FACE_TIE                                                    :Garavata:
 STR_FACE_EARRING                                                :Pendentes:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Cambia-la garavata ou os pendentes
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multixogador
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nome do xogador:
@@ -1974,10 +1976,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}O nome d
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Establecer contrasinal
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Protexe a túa partida cun contrasinal se non queres ser accesible públicamente
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Anunciado
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Escolle entre unha partida con anuncios (internet) ou sen eles (LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Non
-STR_NETWORK_START_SERVER_ADVERTISED                             :Si
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} cliente{P "" s}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Máximo de clientes:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Escolle o máximo número de clientes. Non tódolos ocos teñen que estar cubertos
@@ -1991,46 +1989,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Idioma f
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Outros xogadores saberán cal é o idioma que se fala no servidor
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Escribe un nome para a partida en rede
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Calquera
-STR_NETWORK_LANG_ENGLISH                                        :Inglés
-STR_NETWORK_LANG_GERMAN                                         :Alemán
-STR_NETWORK_LANG_FRENCH                                         :Francés
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasileiro
-STR_NETWORK_LANG_BULGARIAN                                      :Búlgaro
-STR_NETWORK_LANG_CHINESE                                        :Chinés
-STR_NETWORK_LANG_CZECH                                          :Checo
-STR_NETWORK_LANG_DANISH                                         :Danés
-STR_NETWORK_LANG_DUTCH                                          :Holandés
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finés
-STR_NETWORK_LANG_HUNGARIAN                                      :Húngaro
-STR_NETWORK_LANG_ICELANDIC                                      :Islandés
-STR_NETWORK_LANG_ITALIAN                                        :Italiano
-STR_NETWORK_LANG_JAPANESE                                       :Xaponés
-STR_NETWORK_LANG_KOREAN                                         :Coreano
-STR_NETWORK_LANG_LITHUANIAN                                     :Lituano
-STR_NETWORK_LANG_NORWEGIAN                                      :Noruegués
-STR_NETWORK_LANG_POLISH                                         :Polaco
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugués
-STR_NETWORK_LANG_ROMANIAN                                       :Rumano
-STR_NETWORK_LANG_RUSSIAN                                        :Ruso
-STR_NETWORK_LANG_SLOVAK                                         :Eslovaco
-STR_NETWORK_LANG_SLOVENIAN                                      :Esloveno
-STR_NETWORK_LANG_SPANISH                                        :Español
-STR_NETWORK_LANG_SWEDISH                                        :Sueco
-STR_NETWORK_LANG_TURKISH                                        :Turco
-STR_NETWORK_LANG_UKRAINIAN                                      :Ucraniano
-STR_NETWORK_LANG_AFRIKAANS                                      :Africano
-STR_NETWORK_LANG_CROATIAN                                       :Croata
-STR_NETWORK_LANG_CATALAN                                        :Catalán
-STR_NETWORK_LANG_ESTONIAN                                       :Estonio
-STR_NETWORK_LANG_GALICIAN                                       :Galego
-STR_NETWORK_LANG_GREEK                                          :Grego
-STR_NETWORK_LANG_LATVIAN                                        :Letón
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Sala de espera de partida multixogador
@@ -2079,19 +2037,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Desconec
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}O servidor está protexido. Introduce o contrasinal
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}A compañía está protexida. Introduce o contrasinal
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Lista de clientes
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Lista de clientes
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Observar
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nova compañía
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Chimpar
-STR_NETWORK_CLIENTLIST_BAN                                      :Bloquear
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Falar a todos
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Falar con compañía
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Mensaxe privada
+
+
 
 STR_NETWORK_SERVER                                              :Servidor
 STR_NETWORK_CLIENT                                              :Cliente

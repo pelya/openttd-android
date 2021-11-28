@@ -134,7 +134,7 @@ static bool _allowSoftware;
 	CGLSetCurrentContext(ctx);
 
 	OpenGLBackend::Get()->Paint();
-	if (_cursor.in_window) OpenGLBackend::Get()->DrawMouseCursor();
+	OpenGLBackend::Get()->DrawMouseCursor();
 
 	[ super drawInCGLContext:ctx pixelFormat:pf forLayerTime:t displayTime:ts ];
 }
@@ -254,7 +254,7 @@ const char *VideoDriver_CocoaOpenGL::AllocateContext(bool allow_software)
 
 	CGLSetCurrentContext(this->gl_context);
 
-	return OpenGLBackend::Create(&GetOGLProcAddressCallback);
+	return OpenGLBackend::Create(&GetOGLProcAddressCallback, this->GetScreenSize());
 }
 
 NSView *VideoDriver_CocoaOpenGL::AllocateDrawView()

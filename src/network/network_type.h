@@ -10,7 +10,7 @@
 #ifndef NETWORK_TYPE_H
 #define NETWORK_TYPE_H
 
-#include "core/game.h"
+#include "core/config.h"
 
 /** How many clients can we have */
 static const uint MAX_CLIENTS = 255;
@@ -132,6 +132,7 @@ enum NetworkErrorCode {
 	NETWORK_ERROR_TIMEOUT_COMPUTER,
 	NETWORK_ERROR_TIMEOUT_MAP,
 	NETWORK_ERROR_TIMEOUT_JOIN,
+	NETWORK_ERROR_INVALID_CLIENT_NAME,
 
 	NETWORK_ERROR_END,
 };

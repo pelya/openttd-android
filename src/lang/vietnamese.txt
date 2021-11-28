@@ -1006,6 +1006,7 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Tăng t�
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Đánh dấu vào ô này để cho phép OpenTTD thử sử dụng tăng tốc phần cứng. Sẽ có tác dụng sau khi khởi động lại trò chơi
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Thiết lập chỉ có tác dụng sau khi khởi động lại trò chơi
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Kích thước giao diện
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Chọn kích thước của các đối tượng trên giao diện
 
@@ -1138,6 +1139,7 @@ STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Thiết 
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Lọc chuỗi:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Mở xuống tất cả
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Đóng lại tất cả
+STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Thiết lập lại tất cả
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(hiện không có giải thích nào)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Giá trị mặc định: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Kiểu thiết lập: {ORANGE}{STRING}
@@ -1146,6 +1148,8 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Thiết lập t
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Thiết lập trò chơi (chứa trong save; chỉ tác động tới ván chơi hiện tại)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Thiết lập công ty (chứa trong save; chỉ tác động tới các ván chơi mới)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Thiết lập công ty (chứa trong save; chỉ tác động tới công ty hiện tại)
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Chú Ý!
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Hành động này sẽ thiết lập lại tất cả các thông số về ban đầu.{}Bạn có muốn tiến hành?
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Phân loại:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Kiểu:
@@ -1984,6 +1988,7 @@ STR_FACE_TIE                                                    :Cà vạt:
 STR_FACE_EARRING                                                :Bông tai:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Thay đổi cà vạt hoặc bông tai
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Ván Chơi Mạng
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Tên người chơi:
@@ -2046,10 +2051,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Tên c�
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Đặt mật khẩu
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Bảo vệ game của bạn bằng mật khẩu nếu bạn không muốn người khác vào tùy tiện
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Đã quảng bá
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Lựa chọn ván chơi quảng bá (ra ngoài internet) và không quảng bá (Local Area Network, LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Không
-STR_NETWORK_START_SERVER_ADVERTISED                             :Có
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} máy trạm
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Số máy trạm tối đa:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Chọn số lượng máy trạm tối đa. Không nhất thiết phải chọn đầy các dòng
@@ -2063,46 +2064,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Ngôn ng
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Những người chơi sẽ biết ngôn ngữ dùng để trao đổi trong server
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Nhập tên của ván chơi mạng
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :bất kỳ
-STR_NETWORK_LANG_ENGLISH                                        :Tiếng Anh
-STR_NETWORK_LANG_GERMAN                                         :Tiếng Đức
-STR_NETWORK_LANG_FRENCH                                         :Tiếng Pháp
-STR_NETWORK_LANG_BRAZILIAN                                      :Tiếng Brazil
-STR_NETWORK_LANG_BULGARIAN                                      :Tiếng Bun-ga-ri
-STR_NETWORK_LANG_CHINESE                                        :Tiếng Trung Quốc
-STR_NETWORK_LANG_CZECH                                          :Tiếng Séc
-STR_NETWORK_LANG_DANISH                                         :Tiếng Đan Mạch
-STR_NETWORK_LANG_DUTCH                                          :Tiếng Hà Lan
-STR_NETWORK_LANG_ESPERANTO                                      :Tiếng Quốc tế ngữ Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Tiếng Phần Lan
-STR_NETWORK_LANG_HUNGARIAN                                      :Tiếng Hung-ga-ri
-STR_NETWORK_LANG_ICELANDIC                                      :Tiếng Ai-len
-STR_NETWORK_LANG_ITALIAN                                        :Tiếng Ý
-STR_NETWORK_LANG_JAPANESE                                       :Tiếng Nhật Bản
-STR_NETWORK_LANG_KOREAN                                         :Tiếng Hàn Quốc
-STR_NETWORK_LANG_LITHUANIAN                                     :Tiếng Lát-vi
-STR_NETWORK_LANG_NORWEGIAN                                      :Tiếng Na-uy
-STR_NETWORK_LANG_POLISH                                         :Tiếng Ba Lan
-STR_NETWORK_LANG_PORTUGUESE                                     :Tiếng Bồ Đào Nha
-STR_NETWORK_LANG_ROMANIAN                                       :Tiếng Ru-ma-ni
-STR_NETWORK_LANG_RUSSIAN                                        :Tiếng Nga
-STR_NETWORK_LANG_SLOVAK                                         :Tiếng Slo-va-kia
-STR_NETWORK_LANG_SLOVENIAN                                      :Tiếng Slo-ven-nhi-a
-STR_NETWORK_LANG_SPANISH                                        :Tiếng Tây Ban Nha
-STR_NETWORK_LANG_SWEDISH                                        :Tiếng Thuỵ Điển
-STR_NETWORK_LANG_TURKISH                                        :Tiếng Thổ Nhĩ Kỳ
-STR_NETWORK_LANG_UKRAINIAN                                      :Tiếng U-crai-na
-STR_NETWORK_LANG_AFRIKAANS                                      :Tiếng Nam Phi
-STR_NETWORK_LANG_CROATIAN                                       :Tiếng Croa-ti-a
-STR_NETWORK_LANG_CATALAN                                        :Tiếng Catalan
-STR_NETWORK_LANG_ESTONIAN                                       :Tiếng Esto-nhi-a
-STR_NETWORK_LANG_GALICIAN                                       :Tiếng Galician
-STR_NETWORK_LANG_GREEK                                          :Tiếng Hy Lạp
-STR_NETWORK_LANG_LATVIAN                                        :Tiếng Lat-via
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Sảnh chơi game nhiều người
@@ -2151,19 +2112,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Ngắt k
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Server yêu cầu xác thực. Nhập mật khẩu
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Công ty yêu cầu xác thực. Nhập mật khẩu
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Danh sách máy trạm
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Danh sách máy trạm
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Xem
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Công ty mới
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Đá
-STR_NETWORK_CLIENTLIST_BAN                                      :Cấm
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Nói với tất cả
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Nói cho công ty
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Thông điệp riêng
+
+
 
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Máy trạm
@@ -2531,7 +2486,7 @@ STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Xây c�
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Đặt một phao hàng hải như là điểm mốc trên đường đi. Shift+Click để xem chi phí dự tính
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Xây cống. Shift+Click để xem chi phí dự tính
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Đặt tên vùng biển.{}Tạo một kênh đào, nếu ấn Ctrl thì giữ xuống tới mực nước biển, không thì sẽ bị ngập nước
-STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Đặt sông.
+STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Đặt sông. Giữ Ctrl để chọn đường chéo
 
 # Ship depot construction window
 STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Hướng Xưởng Tàu

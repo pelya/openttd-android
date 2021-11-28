@@ -972,6 +972,7 @@ STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Dewiswch
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :arall
 
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Maint rhyngwyneb
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Dewis maint yr elfennau rhyngwyneb i'w defnyddio
 
@@ -1876,6 +1877,7 @@ STR_FACE_TIE                                                    :Tei:
 STR_FACE_EARRING                                                :Clustlws:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Newid tei neu glustlws
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Amlchwaraewr
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Enw chwaraewr:
@@ -1934,10 +1936,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Bydd y g
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Gosod cyfrinair
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Diogelwch eich gêm â chyfrinair os nad ydych am i fynediad ato fod yn gyhoeddus
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Hysbys
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Dewis rhwyd gêm a hysbysebir (rhyngrwyd) neu un anhysbys (rhwydwaith leol)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Na
-STR_NETWORK_START_SERVER_ADVERTISED                             :Ia
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} gwestai
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Uchafswm nifer gwesteion:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Dewiswch uchafswm y gwesteion. Does dim rhaid llanw pob slot
@@ -1951,46 +1949,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Iaith i'
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Rhoi gwybod i'r chwaraewyr pa iaith y dylid ei siarad ar y gweinydd
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Rhowch enw ar gyfer y gêm rhwydwaith
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Unrhyw
-STR_NETWORK_LANG_ENGLISH                                        :Saesneg
-STR_NETWORK_LANG_GERMAN                                         :Almaeneg
-STR_NETWORK_LANG_FRENCH                                         :Ffrangeg
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasilaidd
-STR_NETWORK_LANG_BULGARIAN                                      :Bwlgaraidd
-STR_NETWORK_LANG_CHINESE                                        :Tseineeg
-STR_NETWORK_LANG_CZECH                                          :Tsiecaidd
-STR_NETWORK_LANG_DANISH                                         :Daneg
-STR_NETWORK_LANG_DUTCH                                          :Iseldireg
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Ffineg
-STR_NETWORK_LANG_HUNGARIAN                                      :Hwngareg
-STR_NETWORK_LANG_ICELANDIC                                      :Islandaidd
-STR_NETWORK_LANG_ITALIAN                                        :Eidaleg
-STR_NETWORK_LANG_JAPANESE                                       :Siapaneaidd
-STR_NETWORK_LANG_KOREAN                                         :Coreeg
-STR_NETWORK_LANG_LITHUANIAN                                     :Lithiwaneg
-STR_NETWORK_LANG_NORWEGIAN                                      :Norwyeg
-STR_NETWORK_LANG_POLISH                                         :Pwyleg
-STR_NETWORK_LANG_PORTUGUESE                                     :Portiwgaleg
-STR_NETWORK_LANG_ROMANIAN                                       :Rwmaneg
-STR_NETWORK_LANG_RUSSIAN                                        :Rwsieg
-STR_NETWORK_LANG_SLOVAK                                         :Slofaceg
-STR_NETWORK_LANG_SLOVENIAN                                      :Slofeneg
-STR_NETWORK_LANG_SPANISH                                        :Sbaeneg
-STR_NETWORK_LANG_SWEDISH                                        :Swedeg
-STR_NETWORK_LANG_TURKISH                                        :Twrceg
-STR_NETWORK_LANG_UKRAINIAN                                      :Wcraneg
-STR_NETWORK_LANG_AFRIKAANS                                      :Affricâns
-STR_NETWORK_LANG_CROATIAN                                       :Croatieg
-STR_NETWORK_LANG_CATALAN                                        :Catalaneg
-STR_NETWORK_LANG_ESTONIAN                                       :Estoneg
-STR_NETWORK_LANG_GALICIAN                                       :Galiseg
-STR_NETWORK_LANG_GREEK                                          :Groeg
-STR_NETWORK_LANG_LATVIAN                                        :Latfieg
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Cyntedd Gemau Amlchwaraewr
@@ -2042,15 +2000,10 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Mae'r cw
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Rhestr Cleientiaid
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Gwylio
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Cwmni newydd
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Cicio
-STR_NETWORK_CLIENTLIST_BAN                                      :Gwahardd
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Siarad â phawb
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Siarad a'r cwmni
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Neges breifat
+
+
 
 STR_NETWORK_SERVER                                              :Gweinydd
 STR_NETWORK_CLIENT                                              :Gwestai

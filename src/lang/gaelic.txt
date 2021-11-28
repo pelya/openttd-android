@@ -1174,6 +1174,7 @@ STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Tagh dù
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Gnàthaichte
 
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Meud na h-eadar-aghaidh
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Tagh am meud airson rud san eadar-aghaidh
 
@@ -2080,6 +2081,7 @@ STR_FACE_TIE                                                    :Tàidh:
 STR_FACE_EARRING                                                :Fàinne-chluaise:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Atharraich an tàidh no an fhàinne-chluaise
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Ioma-chluicheadair
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Ainm cluicheadair:
@@ -2138,10 +2140,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Thèid a
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Suidhich facal-faire
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Dìon an geama agad le facal-faire ach nach eil e ri fhaighinn gu poblach
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Sanasaichte
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Dèan taghadh eadar geama sanasaichte (eadar-lìon) no gun sanasachadh (lìonra ionadail, LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Chan eil
-STR_NETWORK_START_SERVER_ADVERTISED                             :Tha
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} {P chliant chliant cliantan cliant}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Cliantan air a char as motha:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Tagh an àireamh as motha dhe chliantan. Cha leig thu leas a h-uile slot a lìonadh
@@ -2155,46 +2153,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Cànan a
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Bidh fios aig cluicheadairean eile dè an cànan a tha ga bruidhinn air an fhrithealaiche
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Cuir a-steach ainm airson a' gheama lìonraidh
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Cànan sam bith
-STR_NETWORK_LANG_ENGLISH                                        :Beurla
-STR_NETWORK_LANG_GERMAN                                         :Gearmailtis
-STR_NETWORK_LANG_FRENCH                                         :Fraingis
-STR_NETWORK_LANG_BRAZILIAN                                      :Portagailis Bhraisileach
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgarais
-STR_NETWORK_LANG_CHINESE                                        :Sìnis
-STR_NETWORK_LANG_CZECH                                          :Seacais
-STR_NETWORK_LANG_DANISH                                         :Danmhairgis
-STR_NETWORK_LANG_DUTCH                                          :Duitsis
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Fionnlannais
-STR_NETWORK_LANG_HUNGARIAN                                      :Ungairis
-STR_NETWORK_LANG_ICELANDIC                                      :Tìlis
-STR_NETWORK_LANG_ITALIAN                                        :Eadailtis
-STR_NETWORK_LANG_JAPANESE                                       :Seapanais
-STR_NETWORK_LANG_KOREAN                                         :Coirèanais
-STR_NETWORK_LANG_LITHUANIAN                                     :Liotuainis
-STR_NETWORK_LANG_NORWEGIAN                                      :Nirribhis
-STR_NETWORK_LANG_POLISH                                         :Pòlainnis
-STR_NETWORK_LANG_PORTUGUESE                                     :Portagailis
-STR_NETWORK_LANG_ROMANIAN                                       :Romàinis
-STR_NETWORK_LANG_RUSSIAN                                        :Ruisis
-STR_NETWORK_LANG_SLOVAK                                         :Slòbhacais
-STR_NETWORK_LANG_SLOVENIAN                                      :Slòbhainis
-STR_NETWORK_LANG_SPANISH                                        :Spàinntis
-STR_NETWORK_LANG_SWEDISH                                        :Suainis
-STR_NETWORK_LANG_TURKISH                                        :Turcais
-STR_NETWORK_LANG_UKRAINIAN                                      :Ucràinis
-STR_NETWORK_LANG_AFRIKAANS                                      :Afraganais
-STR_NETWORK_LANG_CROATIAN                                       :Cròthaisis
-STR_NETWORK_LANG_CATALAN                                        :Catalanais
-STR_NETWORK_LANG_ESTONIAN                                       :Eastoinis
-STR_NETWORK_LANG_GALICIAN                                       :Gailìsis
-STR_NETWORK_LANG_GREEK                                          :Greugais
-STR_NETWORK_LANG_LATVIAN                                        :Laitbheis
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Lobaidh nan geamannan ioma-chluicheadair
@@ -2246,15 +2204,10 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Tha a' c
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Liosta nan cliant
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Coimhead air
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Companaidh ùr
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Thoir a bhròg dha
-STR_NETWORK_CLIENTLIST_BAN                                      :Toirmisg
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Bruidhinn ris a h-uile duine
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Bruidhinn ris a' chompanaidh
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Teachdaireachd phrìobhaideach
+
+
 
 STR_NETWORK_SERVER                                              :Frithealaiche
 STR_NETWORK_CLIENT                                              :Cliant

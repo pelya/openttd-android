@@ -954,7 +954,7 @@ STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malaysian Ringg
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Conduite à gauche
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Conduite à droite
 
-STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Noms des villes
+STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Nom des villes{NBSP}:
 STR_GAME_OPTIONS_TOWN_NAMES_DROPDOWN_TOOLTIP                    :{BLACK}Sélectionner la nationalité des noms des villes
 
 ############ start of townname region
@@ -994,6 +994,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Tous les 12 moi
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Langue
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Sélectionner la langue à utiliser pour l'interface
+STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}{NBSP}% terminé{P "" s})
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Plein écran
 STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Cocher cette case pour jouer à OpenTTD en plein écran
@@ -1006,6 +1007,9 @@ STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK} Accélération matérielle
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Cochez cette case permet à OpenTTD d'utiliser l'accélération matérielle, si possible. Un paramètre modifié ne sera pris en compte qu'au redémarrage du jeu
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Les paramètres ne prendront effet qu'après le redémarrage du jeu
+
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Cochez cette case pour activer la synchronisation verticale de l'écran. La modification de ce paramètres ne sera effective qu'après le redémarrage du jeu. Fonctionne uniquement si l’accélération matérielle est active
 
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Taille d'interface
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Choisir la taille d'élément d'interface à utiliser
@@ -1023,7 +1027,7 @@ STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_NORMAL                      :Normal
 STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_2X_ZOOM                     :Taille double
 STR_GAME_OPTIONS_FONT_ZOOM_DROPDOWN_4X_ZOOM                     :Taille quadruple
 
-STR_GAME_OPTIONS_GRAPHICS                                       :Graphiques {BLACK}
+STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK} Graphiques
 
 STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK} Taux de rafraîchissement de l'affichage
 STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK} Sélectionnez la fréquence de rafraîchissement à utiliser
@@ -1139,6 +1143,7 @@ STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Paramèt
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtre{NBSP}:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Tout développer
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Tout réduire
+STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Réinitialiser tous les réglages
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(pas d'explication disponible)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Valeur par défaut{NBSP}: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Type de paramètre{NBSP}: {ORANGE}{STRING}
@@ -1147,6 +1152,8 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Paramètre de j
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Paramètre de jeu (enregistré dans la sauvegarde{NBSP}; affecte uniquement la partie actuelle)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Paramètre de compagnie (enregistré dans les sauvegardes{NBSP}; affecte uniquement les nouvelles parties)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Paramètre de compagnie (enregistré dans la sauvegarde{NBSP}; affecte uniquement la compagnie actuelle)
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Attention{NBSP}!
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Par cette action, toues les réglages seront réinitialisés aux valeurs par défaut.{}Êtes-vous sûr de vouloir continuer{NBSP}?
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Catégorie{NBSP}:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Type{NBSP}:
@@ -1985,6 +1992,9 @@ STR_FACE_TIE                                                    :Cravate{NBSP}:
 STR_FACE_EARRING                                                :Boucle d'oreille{NBSP}:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Modifier la cravate ou la boucle d'oreille
 
+STR_NETWORK_SERVER_VISIBILITY_PRIVATE                           :Privé
+STR_NETWORK_SERVER_VISIBILITY_PUBLIC                            :Public
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multijoueurs
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nom du joueur{NBSP}:
@@ -2047,10 +2057,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Les autr
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Choisir le mot de passe
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Protégez votre partie avec un mot de passe si vous ne souhaitez pas que d'autres l'utilisent
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Publiée
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Choisir entre une partie publiée (internet) et une partie non publiée (Réseau local, LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Non
-STR_NETWORK_START_SERVER_ADVERTISED                             :Oui
+STR_NETWORK_START_SERVER_VISIBILITY_LABEL                       :{BLACK}Visibilité
+STR_NETWORK_START_SERVER_VISIBILITY_TOOLTIP                     :{BLACK}Possibilité pour les autres personnes de vous voir dans la liste publique
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} client{P "" s}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Nombre de clients maximum{NBSP}:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Choisir un nombre maximum de clients. Tous les emplacements n'auront pas besoin d'être remplis
@@ -2064,46 +2072,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Langue u
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Les autres joueurs sauront quelle langue est parlée sur ce serveur
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Entrer un nom pour la partie en réseau
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Aucune
-STR_NETWORK_LANG_ENGLISH                                        :Anglais
-STR_NETWORK_LANG_GERMAN                                         :Allemand
-STR_NETWORK_LANG_FRENCH                                         :Français
-STR_NETWORK_LANG_BRAZILIAN                                      :Brésilien
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgare
-STR_NETWORK_LANG_CHINESE                                        :Chinois
-STR_NETWORK_LANG_CZECH                                          :Tchèque
-STR_NETWORK_LANG_DANISH                                         :Danois
-STR_NETWORK_LANG_DUTCH                                          :Néerlandais
-STR_NETWORK_LANG_ESPERANTO                                      :Espéranto
-STR_NETWORK_LANG_FINNISH                                        :Finlandais
-STR_NETWORK_LANG_HUNGARIAN                                      :Hongrois
-STR_NETWORK_LANG_ICELANDIC                                      :Islandais
-STR_NETWORK_LANG_ITALIAN                                        :Italien
-STR_NETWORK_LANG_JAPANESE                                       :Japonais
-STR_NETWORK_LANG_KOREAN                                         :Coréen
-STR_NETWORK_LANG_LITHUANIAN                                     :Lituanien
-STR_NETWORK_LANG_NORWEGIAN                                      :Norvégien
-STR_NETWORK_LANG_POLISH                                         :Polonais
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugais
-STR_NETWORK_LANG_ROMANIAN                                       :Roumain
-STR_NETWORK_LANG_RUSSIAN                                        :Russe
-STR_NETWORK_LANG_SLOVAK                                         :Slovaque
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovène
-STR_NETWORK_LANG_SPANISH                                        :Espagnol
-STR_NETWORK_LANG_SWEDISH                                        :Suédois
-STR_NETWORK_LANG_TURKISH                                        :Turc
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukrainien
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikaans
-STR_NETWORK_LANG_CROATIAN                                       :Croate
-STR_NETWORK_LANG_CATALAN                                        :Catalan
-STR_NETWORK_LANG_ESTONIAN                                       :Estonien
-STR_NETWORK_LANG_GALICIAN                                       :Galicien
-STR_NETWORK_LANG_GREEK                                          :Grec
-STR_NETWORK_LANG_LATVIAN                                        :Letton
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Préparation de la partie
@@ -2152,19 +2120,46 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Déconne
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Le serveur est protégé. Entrez le mot de passe
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}La compagnie est protégée. Entrez le mot de passe
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Liste des clients
 
 # Network company list added strings
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Liste des clients
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Spectateur
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nouvelle compagnie
+STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Joueurs en ligne
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Exclure
-STR_NETWORK_CLIENTLIST_BAN                                      :Bannir
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Parler à tous
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Parler à la compagnie
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Message privé
+STR_NETWORK_CLIENT_LIST_CAPTION                                 :{WHITE}Multijoueur
+STR_NETWORK_CLIENT_LIST_SERVER                                  :{BLACK}Serveur
+STR_NETWORK_CLIENT_LIST_SERVER_NAME                             :{BLACK}Nom
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_TOOLTIP                     :{BLACK}Nom du serveur sur lequel vous jouez
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_EDIT_TOOLTIP                :{BLACK}Éditer le nom de votre serveur
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_QUERY_CAPTION               :Nom du serveur
+STR_NETWORK_CLIENT_LIST_SERVER_VISIBILITY                       :{BLACK}Visibilité
+STR_NETWORK_CLIENT_LIST_SERVER_VISIBILITY_TOOLTIP               :{BLACK}Possibilité pour les autres personnes de voir votre serveur dans la liste publique
+STR_NETWORK_CLIENT_LIST_PLAYER                                  :{BLACK}Joueur
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME                             :{BLACK}Nom
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_TOOLTIP                     :{BLACK}Votre nom de jeu
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_EDIT_TOOLTIP                :{BLACK}Éditer votre nom
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_QUERY_CAPTION               :Votre nom de jeu
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_TOOLTIP                    :{BLACK}Actions administratives à accomplir pour ce client
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_TOOLTIP                   :{BLACK}Actions administratives à accomplir pour cette compagnie
+STR_NETWORK_CLIENT_LIST_JOIN_TOOLTIP                            :{BLACK}Rejoindre cette compagnie
+STR_NETWORK_CLIENT_LIST_CHAT_CLIENT_TOOLTIP                     :{BLACK}Envoyer un message à cette personne
+STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP                    :{BLACK}Envoyer un message à tous les joueurs de cette compagnie
+STR_NETWORK_CLIENT_LIST_CHAT_SPECTATOR_TOOLTIP                  :{BLACK}Envoyer un message à tous les spectateurs
+STR_NETWORK_CLIENT_LIST_SPECTATORS                              :Spectateurs
+STR_NETWORK_CLIENT_LIST_NEW_COMPANY                             :(Nouvelle compagnie)
+STR_NETWORK_CLIENT_LIST_NEW_COMPANY_TOOLTIP                     :{BLACK}Créer une nouvelle compagnie et la rejoindre
+STR_NETWORK_CLIENT_LIST_PLAYER_ICON_SELF_TOOLTIP                :{BLACK}C'est vous
+STR_NETWORK_CLIENT_LIST_PLAYER_ICON_HOST_TOOLTIP                :{BLACK}C'est l'hôte du jeu
+
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_KICK                       :Exclure
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_BAN                        :Bannir
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_RESET                     :Supprimer
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_UNLOCK                    :Débloquer le mot de passe
+
+STR_NETWORK_CLIENT_LIST_ASK_CAPTION                             :{WHITE}Action administrative
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_KICK                         :{YELLOW}Êtes-vous sûr de vouloir exclure '{STRING}'{NBSP}?
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_BAN                          :{YELLOW}Êtes-vous sûr de vouloir bannir '{STRING}'{NBSP}?
+STR_NETWORK_CLIENT_LIST_ASK_COMPANY_RESET                       :{YELLOW}Êtes-vous sûr de vouloir supprimer la compagnie '{COMPANY}'{NBSP}?
+STR_NETWORK_CLIENT_LIST_ASK_COMPANY_UNLOCK                      :{YELLOW}Êtes-vous sûr de vouloir réinitialiser le mot de passe de la compagnie '{COMPANY}'?
 
 STR_NETWORK_SERVER                                              :Serveur
 STR_NETWORK_CLIENT                                              :Client
@@ -2209,6 +2204,7 @@ STR_NETWORK_ERROR_SERVER_START                                  :{WHITE}Le serve
 STR_NETWORK_ERROR_CLIENT_START                                  :{WHITE}Échec de la connexion
 STR_NETWORK_ERROR_TIMEOUT                                       :{WHITE}La connexion n°{NBSP}{NUM} a dépassé le temps d'attente
 STR_NETWORK_ERROR_SERVER_ERROR                                  :{WHITE}Une erreur de protocole a été détectée et la connexion a été fermée
+STR_NETWORK_ERROR_BAD_PLAYER_NAME                               :{WHITE}Vous n'avez pas de nom. Il doit être entré en haut de la fenêtre Multijoueur
 STR_NETWORK_ERROR_WRONG_REVISION                                :{WHITE}Le numéro de version/révision de ce client ne correspond pas à celui du serveur
 STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Mot de passe incorrect
 STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}Le serveur est complet
@@ -2221,6 +2217,7 @@ STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}Vous ave
 STR_NETWORK_ERROR_TIMEOUT_COMPUTER                              :{WHITE}Votre ordinateur est trop lent pour suivre le serveur
 STR_NETWORK_ERROR_TIMEOUT_MAP                                   :{WHITE}Votre ordinateur a mis trop de temps pour télécharger la carte
 STR_NETWORK_ERROR_TIMEOUT_JOIN                                  :{WHITE}Votre ordinateur a mis trop de temps pour rejoindre le serveur
+STR_NETWORK_ERROR_INVALID_CLIENT_NAME                           :{WHITE}Votre nom n'est pas valide
 
 ############ Leave those lines in this order!!
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :erreur générale
@@ -2243,6 +2240,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_PASSWORD                       :aucun mot de pa
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_COMPUTER                       :délai dépassé
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP                            :télécharger la carte a pris trop de temps
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :le traitement de la carte a pris trop de temps
+STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :nom client invalide
 ############ End of leave-in-this-order
 
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION            :{WHITE}Possible perte de connexion
@@ -2532,7 +2530,7 @@ STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Construi
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Placer une bouée pouvant servir de guide aux navires.{}Shift pour afficher seulement le coût estimé.
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Construire un aqueduc.{}Shift pour afficher seulement le coût estimé.
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Définir une zone d'eau.{}Construire un canal, sauf si Ctrl est enfoncé au niveau de la mer{NBSP}: dans ce cas, le voisinage sera inondé.
-STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Placer des rivières
+STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Placer des rivières. Presser Ctrl pour sélectionner en diagonale
 
 # Ship depot construction window
 STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Orientation du dépôt
@@ -3082,6 +3080,7 @@ STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Attention{
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Erreur{NBSP}: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Erreur fatale{NBSP}: {SILVER}{STRING}
 STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}Une erreur NewGRF fatale est survenue{NBSP}:{}{STRING}
+STR_NEWGRF_ERROR_POPUP                                          :{WHITE}Une erreur NewGRF est survenue{NBSP}:{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} ne fonctionnera pas avec la version de TTDPatch rapportée par OpenTTD
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} est conçu pour la version {STRING} de TTD
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} est conçu pour être utilisé avec {STRING}
@@ -3437,7 +3436,7 @@ STR_COMPANY_VIEW_RELOCATE_HQ                                    :{BLACK}Déména
 STR_COMPANY_VIEW_RELOCATE_COMPANY_HEADQUARTERS                  :{BLACK}Reconstruire ailleurs le siège de la compagnie pour le prix de 1{NBSP}% de sa valeur.{}Shift-clic pour afficher seulement le coût estimé.
 STR_COMPANY_VIEW_INFRASTRUCTURE_BUTTON                          :{BLACK}Détails
 STR_COMPANY_VIEW_INFRASTRUCTURE_TOOLTIP                         :{BLACK}Afficher le détail des calculs d'infrastructure
-STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :Donner de l’argent
+STR_COMPANY_VIEW_GIVE_MONEY_BUTTON                              :{BLACK}Donner de l’argent
 STR_COMPANY_VIEW_GIVE_MONEY_TOOLTIP                             :{BLACK}Donner de l’argent à cette compagnie
 
 STR_COMPANY_VIEW_NEW_FACE_BUTTON                                :{BLACK}Nouveau visage

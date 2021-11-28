@@ -955,7 +955,7 @@ STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malaysisk Ringg
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Venstrekjøring
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Høyrekjøring
 
-STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Bynavn
+STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Bynavn:
 STR_GAME_OPTIONS_TOWN_NAMES_DROPDOWN_TOOLTIP                    :{BLACK}Velg nasjonalitet på bynavn
 
 ############ start of townname region
@@ -995,6 +995,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Hver 12. måned
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Språk
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Velg språk som skal brukes
+STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% fullført)
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Fullskjerm
 STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Kryss av denne knappen for å spille OpenTTD i fullskjermmodus
@@ -1007,6 +1008,9 @@ STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Maskinvareakselerasjon
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Merk av i denne boksen for å la OpenTTD prøve å bruke maskinvareakselerasjon. En endret innstilling blir bare brukt ved omstart av spillet
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Innstillingen vil ikke tre i kraft før spillet er restartet
+
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Merk av i denne boksen for å v-synkronisere skjermen. Endring av innstillinger krever omstart av spillet. Fungerer bare med maskinvareakselerasjon aktivert
 
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Grensesnitt-størrelse
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Velg grensesnitt-størrelsen som skal benyttes
@@ -1140,6 +1144,7 @@ STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Innstill
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtrer streng:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Vis alle
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Skjul alle
+STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Tilbakestill alle verdier
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(ingen forklaring tilgjengelig)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Standard verdi: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Instillings type: {ORANGE}{STRING}
@@ -1148,6 +1153,8 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Selskapet innst
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Selskapet innstilling (lagret i lagringsfilen, påvirker bare gjeldende spill)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Selskapet innstilling (lagret i lagringsfilen, påvirker bare nye spill)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Selskapet innstilling (lagret i lagringsfilen, påvirker bare gjeldende selskap)
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Advarsel!
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Denne handlingen vil tilbakestille alle spillinnstillingene til standard verdier.{}Er du sikker på at du vil fortsette?
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategori:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Type:
@@ -1987,6 +1994,9 @@ STR_FACE_TIE                                                    :Slips:
 STR_FACE_EARRING                                                :Ørering:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Endre slips eller ørering
 
+STR_NETWORK_SERVER_VISIBILITY_PRIVATE                           :Privat
+STR_NETWORK_SERVER_VISIBILITY_PUBLIC                            :Offentlig
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Flerspiller
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Spillernavn:
@@ -2049,10 +2059,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Spillnav
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Sett passord
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Beskytt ditt spill med et passord hvis du ikke vil at hvem som helst skal bli med på det
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Annonsert
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Velg mellom et utlyst (internett) og et ikke utlyst (Lokalnettverk, LAN) spill
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Nei
-STR_NETWORK_START_SERVER_ADVERTISED                             :Ja
+STR_NETWORK_START_SERVER_VISIBILITY_LABEL                       :{BLACK}Synlighet
+STR_NETWORK_START_SERVER_VISIBILITY_TOOLTIP                     :{BLACK}Om andre mennesker kan se serveren din i den offentlige oppføringen
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} klient{P "" er}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Maks antall klienter:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS.small                :dra og slipp
@@ -2067,46 +2075,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Språk d
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Andre spillere skal kunne vite hvilket språk man snakker på denne tjeneren
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Skriv inn et navn for nettverksspillet
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Hvilket som helst
-STR_NETWORK_LANG_ENGLISH                                        :Engelsk
-STR_NETWORK_LANG_GERMAN                                         :Tysk
-STR_NETWORK_LANG_FRENCH                                         :Fransk
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasiliansk
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgarsk
-STR_NETWORK_LANG_CHINESE                                        :Kinesisk
-STR_NETWORK_LANG_CZECH                                          :Tsjekkisk
-STR_NETWORK_LANG_DANISH                                         :Dansk
-STR_NETWORK_LANG_DUTCH                                          :Nederlandsk
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finsk
-STR_NETWORK_LANG_HUNGARIAN                                      :Ungarsk
-STR_NETWORK_LANG_ICELANDIC                                      :Islandsk
-STR_NETWORK_LANG_ITALIAN                                        :Italiensk
-STR_NETWORK_LANG_JAPANESE                                       :Japansk
-STR_NETWORK_LANG_KOREAN                                         :Koreansk
-STR_NETWORK_LANG_LITHUANIAN                                     :Litauisk
-STR_NETWORK_LANG_NORWEGIAN                                      :Norsk
-STR_NETWORK_LANG_POLISH                                         :Polsk
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugisisk
-STR_NETWORK_LANG_ROMANIAN                                       :Rumensk
-STR_NETWORK_LANG_RUSSIAN                                        :Russisk
-STR_NETWORK_LANG_SLOVAK                                         :Slovakisk
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovensk
-STR_NETWORK_LANG_SPANISH                                        :Spansk
-STR_NETWORK_LANG_SWEDISH                                        :Svensk
-STR_NETWORK_LANG_TURKISH                                        :Tyrkisk
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukrainsk
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikaans
-STR_NETWORK_LANG_CROATIAN                                       :Kroatisk
-STR_NETWORK_LANG_CATALAN                                        :Katalansk
-STR_NETWORK_LANG_ESTONIAN                                       :Estisk
-STR_NETWORK_LANG_GALICIAN                                       :Galicisk
-STR_NETWORK_LANG_GREEK                                          :Gresk
-STR_NETWORK_LANG_LATVIAN                                        :Latvisk
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Flerspillerlobby
@@ -2155,19 +2123,46 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Koble fr
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Tjeneren er beskyttet. Skriv inn passord
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Firmaet er beskyttet. Skriv inn passord
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Klientliste
 
 # Network company list added strings
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Liste over klienter
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Vær tilskuer
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nytt firma
+STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Påloggede spillere
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Kast ut
-STR_NETWORK_CLIENTLIST_BAN                                      :Bannlys
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Snakk til alle
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Snakk til firma
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privat melding
+STR_NETWORK_CLIENT_LIST_CAPTION                                 :{WHITE}Flerspiller
+STR_NETWORK_CLIENT_LIST_SERVER                                  :{BLACK}Server
+STR_NETWORK_CLIENT_LIST_SERVER_NAME                             :{BLACK}Navn
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_TOOLTIP                     :{BLACK}Navnet på serveren du spiller på
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_EDIT_TOOLTIP                :{BLACK}Rediger navnet på serveren
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_QUERY_CAPTION               :Servernavn
+STR_NETWORK_CLIENT_LIST_SERVER_VISIBILITY                       :{BLACK}Synlighet
+STR_NETWORK_CLIENT_LIST_SERVER_VISIBILITY_TOOLTIP               :{BLACK}Om andre mennesker kan se serveren din i den offentlige oppføringen
+STR_NETWORK_CLIENT_LIST_PLAYER                                  :{BLACK}Spiller
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME                             :{BLACK}Navn
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_TOOLTIP                     :{BLACK}Ditt spillernavn
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_EDIT_TOOLTIP                :{BLACK}Rediger ditt spillernavn
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_QUERY_CAPTION               :Ditt spillernavn
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_TOOLTIP                    :{BLACK}Administrative handlinger å utføre for denne klienten
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_TOOLTIP                   :{BLACK}Administrative tiltak å utføre for dette firmaet
+STR_NETWORK_CLIENT_LIST_JOIN_TOOLTIP                            :{BLACK}Bli med i dette firmaet
+STR_NETWORK_CLIENT_LIST_CHAT_CLIENT_TOOLTIP                     :{BLACK}Send en melding til denne spilleren
+STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP                    :{BLACK}Send en melding til alle spillerne i dette firmaet
+STR_NETWORK_CLIENT_LIST_CHAT_SPECTATOR_TOOLTIP                  :{BLACK}Send en melding til alle tilskuerne
+STR_NETWORK_CLIENT_LIST_SPECTATORS                              :Tilskuere
+STR_NETWORK_CLIENT_LIST_NEW_COMPANY                             :(Nytt firma)
+STR_NETWORK_CLIENT_LIST_NEW_COMPANY_TOOLTIP                     :{BLACK}Opprett et nytt firma og bli med i det
+STR_NETWORK_CLIENT_LIST_PLAYER_ICON_SELF_TOOLTIP                :{BLACK}Dette er deg
+STR_NETWORK_CLIENT_LIST_PLAYER_ICON_HOST_TOOLTIP                :{BLACK}Dette er verten for spillet
+
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_KICK                       :Spark
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_BAN                        :Utesteng
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_RESET                     :Slett
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_UNLOCK                    :Låse opp passord
+
+STR_NETWORK_CLIENT_LIST_ASK_CAPTION                             :{WHITE}Administratorhandling
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_KICK                         :{YELLOW}Er du sikker på at du vil utestenge spiller '{STRING}'?
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_BAN                          :{YELLOW}Er du sikker på at du vil utestenge spiller '{STRING}'?
+STR_NETWORK_CLIENT_LIST_ASK_COMPANY_RESET                       :{YELLOW}Er du sikker på at du vil slette firmaet '{COMPANY}'?
+STR_NETWORK_CLIENT_LIST_ASK_COMPANY_UNLOCK                      :{YELLOW}Er du sikker på at du vil tilbakestille passordet til firma '{COMPANY}'?
 
 STR_NETWORK_SERVER                                              :Tjener
 STR_NETWORK_CLIENT                                              :Klient
@@ -2212,6 +2207,7 @@ STR_NETWORK_ERROR_SERVER_START                                  :{WHITE}Kunne ik
 STR_NETWORK_ERROR_CLIENT_START                                  :{WHITE}Kunne ikke opprette forbindelse
 STR_NETWORK_ERROR_TIMEOUT                                       :{WHITE}Tilkobling #{NUM} ble tidsavbrutt
 STR_NETWORK_ERROR_SERVER_ERROR                                  :{WHITE}Forbindelsen ble brutt pga. en protokollfeil
+STR_NETWORK_ERROR_BAD_PLAYER_NAME                               :{WHITE}Spillernavnet ditt er ikke angitt. Navnet kan angis øverst i flerspillervinduet
 STR_NETWORK_ERROR_WRONG_REVISION                                :{WHITE}Klientversjonen er ikke den samme som tjenerversjonen
 STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Feil passord
 STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}Tjeneren er full
@@ -2224,6 +2220,7 @@ STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}Du brukt
 STR_NETWORK_ERROR_TIMEOUT_COMPUTER                              :{WHITE}Din datamaskin er ikke rask nok til å holde følge med tjeneren
 STR_NETWORK_ERROR_TIMEOUT_MAP                                   :{WHITE}Din datamaskin brukte for lang tid på å laste ned kartet
 STR_NETWORK_ERROR_TIMEOUT_JOIN                                  :{WHITE}Din datamaskin brukte for lang tid på å koble til tjeneren
+STR_NETWORK_ERROR_INVALID_CLIENT_NAME                           :{WHITE}Spillernavnet ditt er ugyldig
 
 ############ Leave those lines in this order!!
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :generell feil
@@ -2246,6 +2243,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_PASSWORD                       :mottok ikke pas
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_COMPUTER                       :generelt tidsavbrudd
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP                            :nedlasting av kart tok for lang tid
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :behandling av kartet tok for lang tid
+STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :ugyldig klientnavn
 ############ End of leave-in-this-order
 
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION            :{WHITE}Mulig tap av tilkobling
@@ -2535,7 +2533,7 @@ STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Bygg hav
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Plasser en bøye, som kan brukes til å danne kontrollpunkter. Shift slår av/på kostnadsestimat
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Bygg akvedukt. Shift slår av/på kostnadsestimat
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Definer vannområde.{}Lag en kanal, unntatt hvis Ctrl holdes nede på havnivå, hvorpå området rundt vil fylles istedenfor
-STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Plasser elver
+STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Plasser elver. Ctrl velger området diagonalt
 
 # Ship depot construction window
 STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Skipsdokkens retning
@@ -3085,6 +3083,7 @@ STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Advarsel: 
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Feil: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Fatal: {SILVER}{STRING}
 STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}En fatal NewGRF-feil har oppstått:{}{STRING}
+STR_NEWGRF_ERROR_POPUP                                          :{WHITE}En NewGRF feil har oppstått:{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} virker ikke med TTDPatch-versjonen som er rapportert av OpenTTD
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} er for versjon {STRING} av TTD
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} er laget for bruk med {STRING}

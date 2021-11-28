@@ -452,7 +452,6 @@ static const char * const _credits[] = {
 	u8"  Ingo von Borstel (planetmaker) - General, Support (since 1.1)",
 	u8"  Remko Bijker (Rubidium) - Lead coder and way more (since 0.4.5)",
 	u8"  Jos\u00e9 Soler (Terkhen) - General coding (since 1.0)",
-	u8"  Leif Linse (Zuu) - AI/Game Script (since 1.2)",
 	u8"",
 	u8"Inactive Developers:",
 	u8"  Jean-Fran\u00e7ois Claeys (Belugas) - GUI, NewGRF and more (0.4.5 - 1.0)",
@@ -465,6 +464,7 @@ static const char * const _credits[] = {
 	u8"  Christoph Mallon (Tron) - Programmer, code correctness police (0.3 - 0.5)",
 	u8"  Patric Stout (TrueBrain) - NoAI, NoGo, Network (0.3 - 1.2), sys op (active)",
 	u8"  Thijs Marinussen (Yexo) - AI Framework, General (0.6 - 1.3)",
+	u8"  Leif Linse (Zuu) - AI/Game Script (1.2 - 1.6)",
 	u8"",
 	u8"Retired Developers:",
 	u8"  Tam\u00e1s Farag\u00f3 (Darkvater) - Ex-Lead coder (0.3 - 0.5)",
@@ -504,7 +504,7 @@ struct AboutWindow : public Window {
 	int line_height;                         ///< The height of a single line
 	static const int num_visible_lines = 19; ///< The number of lines visible simultaneously
 
-	static const uint TIMER_INTERVAL = 150;  ///< Scrolling interval in ms
+	static const uint TIMER_INTERVAL = 2100; ///< Scrolling interval, scaled by line text line height. This value chosen to maintain parity: 2100 / FONT_HEIGHT_NORMAL = 150ms
 	GUITimer timer;
 
 	AboutWindow() : Window(&_about_desc)
@@ -512,7 +512,6 @@ struct AboutWindow : public Window {
 		this->InitNested(WN_GAME_OPTIONS_ABOUT);
 
 		this->text_position = this->GetWidget<NWidgetBase>(WID_A_SCROLLING_TEXT)->pos_y + this->GetWidget<NWidgetBase>(WID_A_SCROLLING_TEXT)->current_y;
-		this->timer.SetInterval(TIMER_INTERVAL);
 	}
 
 	void SetStringParameters(int widget) const override
@@ -535,6 +534,10 @@ struct AboutWindow : public Window {
 			d.width = std::max(d.width, GetStringBoundingBox(_credits[i]).width);
 		}
 		*size = maxdim(*size, d);
+
+		/* Set scroll interval based on required speed. To keep scrolling smooth,
+		 * the interval is adjusted rather than the distance moved. */
+		this->timer.SetInterval(TIMER_INTERVAL / FONT_HEIGHT_NORMAL);
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
@@ -785,6 +788,12 @@ struct TooltipsWindow : public Window
 			case TCC_RIGHT_CLICK: if (!_right_button_down) delete this; break;
 			case TCC_HOVER: if (!_mouse_hovering) delete this; break;
 			case TCC_NONE: break;
+
+			case TCC_EXIT_VIEWPORT: {
+				Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
+				if (w == nullptr || IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y) == nullptr) delete this;
+				break;
+			}
 		}
 	}
 };
@@ -801,7 +810,7 @@ void GuiShowTooltips(Window *parent, StringID str, uint paramcount, const uint64
 {
 	DeleteWindowById(WC_TOOLTIPS, 0);
 
-	if (str == STR_NULL) return;
+	if (str == STR_NULL || !_cursor.in_window) return;
 
 	new TooltipsWindow(parent, str, paramcount, params, close_tooltip);
 }
@@ -1189,17 +1198,22 @@ struct QueryWindow : public Window {
 		this->caption = caption;
 		this->message = message;
 		this->proc    = callback;
+		this->parent  = parent;
 
 		this->InitNested(WN_CONFIRM_POPUP_QUERY);
-
-		this->parent = parent;
-		this->left = parent->left + (parent->width / 2) - (this->width / 2);
-		this->top = parent->top + (parent->height / 2) - (this->height / 2);
 	}
 
 	~QueryWindow()
 	{
 		if (this->proc != nullptr) this->proc(this->parent, false);
+	}
+
+	void FindWindowPlacementAndResize(int def_width, int def_height) override
+	{
+		/* Position query window over the calling window, ensuring it's within screen bounds. */
+		this->left = Clamp(parent->left + (parent->width / 2) - (this->width / 2), 0, _screen.width - this->width);
+		this->top = Clamp(parent->top + (parent->height / 2) - (this->height / 2), 0, _screen.height - this->height);
+		this->SetDirty();
 	}
 
 	void SetStringParameters(int widget) const override
@@ -1312,8 +1326,7 @@ void ShowQuery(StringID caption, StringID message, Window *parent, QueryCallback
 {
 	if (parent == nullptr) parent = FindWindowById(WC_MAIN_WINDOW, 0);
 
-	const Window *w;
-	FOR_ALL_WINDOWS_FROM_BACK(w) {
+	for (const Window *w : Window::IterateFromBack()) {
 		if (w->window_class != WC_CONFIRM_POPUP_QUERY) continue;
 
 		const QueryWindow *qw = (const QueryWindow *)w;

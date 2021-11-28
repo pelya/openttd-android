@@ -29,7 +29,15 @@ static FMusicDriver_FluidSynth iFMusicDriver_FluidSynth;
 
 /** List of sound fonts to try by default. */
 static const char *default_sf[] = {
-	/* Debian/Ubuntu/OpenSUSE preferred */
+	/* FluidSynth preferred */
+	/* See: https://www.fluidsynth.org/api/settings_synth.html#settings_synth_default-soundfont */
+	"/usr/share/soundfonts/default.sf2",
+
+	/* Debian/Ubuntu preferred */
+	/* See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=929185 */
+	"/usr/share/sounds/sf3/default-GM.sf3",
+
+	/* OpenSUSE preferred */
 	"/usr/share/sounds/sf2/FluidR3_GM.sf2",
 
 	/* RedHat/Fedora/Arch preferred */
@@ -77,12 +85,22 @@ const char *MusicDriver_FluidSynth::Start(const StringList &param)
 	/* Load a SoundFont and reset presets (so that new instruments
 	 * get used from the SoundFont) */
 	if (!sfont_name) {
-		int i;
 		sfont_id = FLUID_FAILED;
-		for (i = 0; default_sf[i]; i++) {
-			if (!fluid_is_soundfont(default_sf[i])) continue;
-			sfont_id = fluid_synth_sfload(_midi.synth, default_sf[i], 1);
-			if (sfont_id != FLUID_FAILED) break;
+
+		/* Try loading the default soundfont registered with FluidSynth. */
+		char *default_soundfont;
+		fluid_settings_dupstr(_midi.settings, "synth.default-soundfont", &default_soundfont);
+		if (fluid_is_soundfont(default_soundfont)) {
+			sfont_id = fluid_synth_sfload(_midi.synth, default_soundfont, 1);
+		}
+
+		/* If no default soundfont found, try our own list. */
+		if (sfont_id == FLUID_FAILED) {
+			for (int i = 0; default_sf[i]; i++) {
+				if (!fluid_is_soundfont(default_sf[i])) continue;
+				sfont_id = fluid_synth_sfload(_midi.synth, default_sf[i], 1);
+				if (sfont_id != FLUID_FAILED) break;
+			}
 		}
 		if (sfont_id == FLUID_FAILED) return "Could not open any sound font";
 	} else {
@@ -145,14 +163,21 @@ void MusicDriver_FluidSynth::PlaySong(const MusicSongInfo &song)
 
 void MusicDriver_FluidSynth::StopSong()
 {
-	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
+	{
+		std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
 
-	if (!_midi.player) return;
+		if (!_midi.player) return;
 
-	fluid_player_stop(_midi.player);
+		fluid_player_stop(_midi.player);
+	}
+
+	/* The join must be run without lock as the Music rendering needs to be
+	 * running so FluidSynth's internals can actually stop the playing. */
 	if (fluid_player_join(_midi.player) != FLUID_OK) {
 		DEBUG(driver, 0, "Could not join player");
 	}
+
+	std::lock_guard<std::mutex> lock{ _midi.synth_mutex };
 	delete_fluid_player(_midi.player);
 	fluid_synth_system_reset(_midi.synth);
 	fluid_synth_all_sounds_off(_midi.synth, -1);

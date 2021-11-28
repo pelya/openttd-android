@@ -97,30 +97,12 @@ void DrawSpriteCentered(SpriteID img, PaletteID pal, int x, int y, const SubSpri
 void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, int left, int top, int right, int bottom, const SubSprite *sub = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
 void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &r, const SubSprite *sub = nullptr, ZoomLevel zoom = ZOOM_LVL_GUI);
 
-/** How to align the to-be drawn text. */
-enum StringAlignment {
-	SA_LEFT        = 0 << 0, ///< Left align the text.
-	SA_HOR_CENTER  = 1 << 0, ///< Horizontally center the text.
-	SA_RIGHT       = 2 << 0, ///< Right align the text (must be a single bit).
-	SA_HOR_MASK    = 3 << 0, ///< Mask for horizontal alignment.
-
-	SA_TOP         = 0 << 2, ///< Top align the text.
-	SA_VERT_CENTER = 1 << 2, ///< Vertically center the text.
-	SA_BOTTOM      = 2 << 2, ///< Bottom align the text.
-	SA_VERT_MASK   = 3 << 2, ///< Mask for vertical alignment.
-
-	SA_CENTER      = SA_HOR_CENTER | SA_VERT_CENTER, ///< Center both horizontally and vertically.
-
-	SA_FORCE       = 1 << 4, ///< Force the alignment, i.e. don't swap for RTL languages.
-};
-DECLARE_ENUM_AS_BIT_SET(StringAlignment)
-
 int DrawString(int left, int right, int top, const char *str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false, FontSize fontsize = FS_NORMAL);
 int DrawString(int left, int right, int top, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = SA_LEFT, bool underline = false, FontSize fontsize = FS_NORMAL);
 int DrawStringMultiLine(int left, int right, int top, int bottom, const char *str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL);
 int DrawStringMultiLine(int left, int right, int top, int bottom, StringID str, TextColour colour = TC_FROMSTRING, StringAlignment align = (SA_TOP | SA_LEFT), bool underline = false, FontSize fontsize = FS_NORMAL);
 
-void DrawCharCentered(WChar c, int x, int y, TextColour colour);
+void DrawCharCentered(WChar c, const Rect &r, TextColour colour);
 
 void GfxFillRect(int left, int top, int right, int bottom, int colour, FillRectMode mode = FILLRECT_OPAQUE);
 void GfxFillPolygon(const std::vector<Point> &shape, int colour, FillRectMode mode = FILLRECT_OPAQUE);

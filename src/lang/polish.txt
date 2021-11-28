@@ -1373,6 +1373,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Co 12 miesięcy
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Język
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Wybierz język interfejsu
+STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} (ukończono {NUM}%)
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Pełny ekran
 STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Zaznacz, jeśli chcesz grać w OpenTTD w trybie pełnoekranowym
@@ -1385,6 +1386,9 @@ STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Przyspieszenie sprzętowe
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Zaznacz to pole, aby zezwolić OpenTTD na użycie przyspieszenia sprzętowego. Ustawienia zostaną zastosowane dopiero po ponownym uruchomieniu gry.
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Ustawienie to zacznie obowiązywać dopiero po ponownym uruchomieniu gry.
+
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}Synchronizacja pionowa
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Zaznacz to pole aby włączyć synchronizację pionową. Zmiany zostaną zastosowane po restarcie gry. Działa tylko z włączoną akceleracją sprzętową.
 
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Rozmiar interfejsu
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Wybierz rozmiar elementów interfejsu
@@ -1518,6 +1522,7 @@ STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Ustawien
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtrowanie po frazie:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Otwórz wszystko
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Zamknij wszystko
+STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Zresetuj wszystkie ustawienia
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(wyjaśnienie niedostępne)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Domyślna wartość: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Typ ustawienia: {ORANGE}{STRING}
@@ -1526,6 +1531,8 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Ustawienie gry 
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Ustawienie gry (przechowywane w pliku zapisu; ma wpływ tylko na aktualną grę)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Ustawienie firmy (przechowywane w plikach zapisu; ma wpływ tylko na nowe gry)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Ustawienie firmy (przechowywane w pliku zapisu; ma wpływ tylko na aktualną firmę)
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Uwaga!
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Wszystkie ustawienia zostaną przywrócone do wartości domyślnych.{}Jesteś pewien czy chcesz kontynuować?
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategoria:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Typ:
@@ -2364,6 +2371,7 @@ STR_FACE_TIE                                                    :Krawat:
 STR_FACE_EARRING                                                :Kolczyk:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Zmień krawat lub kolczyk
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Gra wieloosobowa
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nazwa gracza:
@@ -2406,10 +2414,10 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME                               :{BLACK}Przyłą
 STR_NETWORK_SERVER_LIST_REFRESH                                 :{BLACK}Odśwież serwer
 STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Odśwież informacje o serwerze
 
-STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET                  :Przeszukaj internet
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET                  :{BLACK}Przeszukaj internet
 STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET_TOOLTIP          :{BLACK}Znajdź w internecie serwery publiczne
-STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN                       :Przeszukaj LAN
-STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN_TOOLTIP               :Znajdź serwery w sieci lokalnej
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN                       :{BLACK}Przeszukaj LAN
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN_TOOLTIP               :{BLACK}Znajdź serwery w sieci lokalnej
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Zapisz serwer
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Zapisz serwer na liście serwerów, które będą zawsze sprawdzane w poszukiwaniu uruchomionych gier
 STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Uruchom serwer
@@ -2426,10 +2434,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Nazwa gr
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Ustaw hasło
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Zabezpiecz grę hasłem jeśli nie chcesz, by była publicznie dostępna
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Publiczny
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Wybierz między rozgrywkami reklamowanymi (internetowymi) a niereklamowanymi (w sieci lokalnej LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Nie
-STR_NETWORK_START_SERVER_ADVERTISED                             :Tak
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} klient{P "" ów ów}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Dopuszczalna liczba klientów:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Ustaw maksymalną liczbę klientów. Nie wszystkie pola muszą być wypełnione.
@@ -2443,46 +2447,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Używany
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Inni gracze będą poinformowani jaki język jest używany na serwerze
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Wpisz nazwę dla gry sieciowej
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Dowolny
-STR_NETWORK_LANG_ENGLISH                                        :Angielski
-STR_NETWORK_LANG_GERMAN                                         :Niemiecki
-STR_NETWORK_LANG_FRENCH                                         :Francuski
-STR_NETWORK_LANG_BRAZILIAN                                      :Brazylijski
-STR_NETWORK_LANG_BULGARIAN                                      :Bułgarski
-STR_NETWORK_LANG_CHINESE                                        :Chiński
-STR_NETWORK_LANG_CZECH                                          :Czeski
-STR_NETWORK_LANG_DANISH                                         :Duński
-STR_NETWORK_LANG_DUTCH                                          :Holenderski
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Fiński
-STR_NETWORK_LANG_HUNGARIAN                                      :Węgierski
-STR_NETWORK_LANG_ICELANDIC                                      :Islandzki
-STR_NETWORK_LANG_ITALIAN                                        :Włoski
-STR_NETWORK_LANG_JAPANESE                                       :Japoński
-STR_NETWORK_LANG_KOREAN                                         :Koreański
-STR_NETWORK_LANG_LITHUANIAN                                     :Litewski
-STR_NETWORK_LANG_NORWEGIAN                                      :Norweski
-STR_NETWORK_LANG_POLISH                                         :Polski
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugalski
-STR_NETWORK_LANG_ROMANIAN                                       :Rumuński
-STR_NETWORK_LANG_RUSSIAN                                        :Rosyjski
-STR_NETWORK_LANG_SLOVAK                                         :Słowacki
-STR_NETWORK_LANG_SLOVENIAN                                      :Słoweński
-STR_NETWORK_LANG_SPANISH                                        :Hiszpański
-STR_NETWORK_LANG_SWEDISH                                        :Szwedzki
-STR_NETWORK_LANG_TURKISH                                        :Turecki
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukraiński
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrykanerski
-STR_NETWORK_LANG_CROATIAN                                       :Chorwacki
-STR_NETWORK_LANG_CATALAN                                        :Kataloński
-STR_NETWORK_LANG_ESTONIAN                                       :Estoński
-STR_NETWORK_LANG_GALICIAN                                       :Galicyjski
-STR_NETWORK_LANG_GREEK                                          :Grecki
-STR_NETWORK_LANG_LATVIAN                                        :Łotewski
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Rozpoczęcie gry wieloosobowej
@@ -2531,19 +2495,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Rozłąc
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Serwer jest chroniony. Wprowadź hasło
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Firma jest chroniona. Wprowadź hasło
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Lista klientów
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Lista klientów
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Obserwuj
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nowa firma
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Wyrzuć
-STR_NETWORK_CLIENTLIST_BAN                                      :Banuj
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Mów do wszystkich
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Mów do firmy
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Prywatna wiadomość
+
+
 
 STR_NETWORK_SERVER                                              :Serwer
 STR_NETWORK_CLIENT                                              :Klient
@@ -2911,7 +2869,7 @@ STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Zbuduj p
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Ustaw boję, która może być użyta jako pkt. orientacyjny. Shift przełącza pomiędzy trybem budowania a szacowaniem jego kosztów
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Zbuduj akwedukt. Shift przełącza pomiędzy trybem budowania a szacowaniem jego kosztów
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Stwórz akwen wodny.{}Tworzy kanał, chyba że przyrzymany jest CTRL na poziomie morza, wtedy pobliski teren zostanie zatopiony
-STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Umieszczanie rzek
+STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Umieszczanie rzek. Ctrl zaznacza obszar po przekątnej.
 
 # Ship depot construction window
 STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Ukierunkowanie stoczni

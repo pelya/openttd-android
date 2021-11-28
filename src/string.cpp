@@ -192,19 +192,35 @@ static void str_validate(T &dst, const char *str, const char *last, StringValida
 
 	while (str <= last && *str != '\0') {
 		size_t len = Utf8EncodedCharLen(*str);
-		/* If the character is unknown, i.e. encoded length is 0
-		 * we assume worst case for the length check.
-		 * The length check is needed to prevent Utf8Decode to read
-		 * over the terminating '\0' if that happens to be placed
-		 * within the encoding of an UTF8 character. */
-		if ((len == 0 && str + 4 > last) || str + len > last) break;
-
 		WChar c;
-		len = Utf8Decode(&c, str);
-		/* It's possible to encode the string termination character
-		 * into a multiple bytes. This prevents those termination
-		 * characters to be skipped */
-		if (c == '\0') break;
+		/* If the first byte does not look like the first byte of an encoded
+		 * character, i.e. encoded length is 0, then this byte is definitely bad
+		 * and it should be skipped.
+		 * When the first byte looks like the first byte of an encoded character,
+		 * then the remaining bytes in the string are checked whether the whole
+		 * encoded character can be there. If that is not the case, this byte is
+		 * skipped.
+		 * Finally we attempt to decode the encoded character, which does certain
+		 * extra validations to see whether the correct number of bytes were used
+		 * to encode the character. If that is not the case, the byte is probably
+		 * invalid and it is skipped. We could emit a question mark, but then the
+		 * logic below cannot just copy bytes, it would need to re-encode the
+		 * decoded characters as the length in bytes may have changed.
+		 *
+		 * The goals here is to get as much valid Utf8 encoded characters from the
+		 * source string to the destination string.
+		 *
+		 * Note: a multi-byte encoded termination ('\0') will trigger the encoded
+		 * char length and the decoded length to differ, so it will be ignored as
+		 * invalid character data. If it were to reach the termination, then we
+		 * would also reach the "last" byte of the string and a normal '\0'
+		 * termination will be placed after it.
+		 */
+		if (len == 0 || str + len > last || len != Utf8Decode(&c, str)) {
+			/* Maybe the next byte is still a valid character? */
+			str++;
+			continue;
+		}
 
 		if ((IsPrintable(c) && (c < SCC_SPRITE_START || c > SCC_SPRITE_END)) || ((settings & SVS_ALLOW_CONTROL_CODE) != 0 && c == SCC_ENCODED)) {
 			/* Copy the character back. Even if dst is current the same as str
@@ -225,6 +241,8 @@ static void str_validate(T &dst, const char *str, const char *last, StringValida
 			if ((settings & SVS_REPLACE_WITH_QUESTION_MARK) != 0) *dst++ = '?';
 		}
 	}
+
+	/* String termination, if needed, is left to the caller of this function. */
 }
 
 /**
@@ -300,6 +318,66 @@ bool StrValid(const char *str, const char *last)
 	}
 
 	return *str == '\0';
+}
+
+/**
+ * Trim the spaces from the begin of given string in place, i.e. the string buffer
+ * that is passed will be modified whenever spaces exist in the given string.
+ * When there are spaces at the begin, the whole string is moved forward.
+ * @param str The string to perform the in place left trimming on.
+ */
+static void StrLeftTrimInPlace(char *str)
+{
+	if (StrEmpty(str)) return;
+
+	char *first_non_space = str;
+	while (*first_non_space == ' ') first_non_space++;
+
+	if (first_non_space == str) return;
+
+	/* The source will reach '\0' first, but set the '\0' on the destination afterwards. */
+	char *dst = str;
+	for (char *src = first_non_space; *src != '\0'; dst++, src++) *dst = *src;
+	*dst = '\0';
+}
+
+/**
+ * Trim the spaces from the end of given string in place, i.e. the string buffer
+ * that is passed will be modified whenever spaces exist in the given string.
+ * When there are spaces at the end, the '\0' will be moved forward.
+ * @param str The string to perform the in place left trimming on.
+ */
+static void StrRightTrimInPlace(char *str)
+{
+	if (StrEmpty(str)) return;
+
+	char *end = str;
+	while (*end != '\0') end++;
+
+	char *last_non_space = end - 1;
+	while (last_non_space >= str && *last_non_space == ' ') last_non_space--;
+
+	/* The last non space points to the last character of the string that is not
+	 * a space. For a string with only spaces or an empty string this would be
+	 * the position before the begin of the string. The previous search ensures
+	 * that this location before the string is not read.
+	 * In any case, the character after the last non space character will be
+	 * either a space or the existing termination, so it can be set to '\0'.
+	 */
+	last_non_space[1] = '\0';
+}
+
+/**
+ * Trim the spaces from given string in place, i.e. the string buffer that
+ * is passed will be modified whenever spaces exist in the given string.
+ * When there are spaces at the begin, the whole string is moved forward
+ * and when there are spaces at the back the '\0' termination is moved.
+ * @param str The string to perform the in place trimming on.
+ */
+void StrTrimInPlace(char *str)
+{
+	StrLeftTrimInPlace(str);
+	StrRightTrimInPlace(str);
 }
 
 /** Scans the string for colour codes and strips them */

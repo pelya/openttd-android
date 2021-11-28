@@ -54,7 +54,6 @@ bool _network_server;     ///< network-server is active
 bool _network_available;  ///< is network mode available?
 bool _network_dedicated;  ///< are we a dedicated server?
 bool _is_network_server;  ///< Does this client wants to be a network-server?
-NetworkServerGameInfo _network_game_info; ///< Information about our game.
 NetworkCompanyState *_network_company_states = nullptr; ///< Statistics about some companies.
 ClientID _network_own_client_id;      ///< Our client identifier.
 ClientID _redirect_console_to_client; ///< If not invalid, redirect the console output to a client.
@@ -74,18 +73,11 @@ uint32 _sync_seed_2;                  ///< Second part of the seed.
 #endif
 uint32 _sync_frame;                   ///< The frame to perform the sync check.
 bool _network_first_time;             ///< Whether we have finished joining or not.
-bool _network_udp_server;             ///< Is the UDP server started?
-uint16 _network_udp_broadcast;        ///< Timeout for the UDP broadcasts.
-uint8 _network_advertise_retries;     ///< The number of advertisement retries we did.
 CompanyMask _network_company_passworded; ///< Bitmask of the password status of all companies.
 
 /* Check whether NETWORK_NUM_LANDSCAPES is still in sync with NUM_LANDSCAPE */
 static_assert((int)NETWORK_NUM_LANDSCAPES == (int)NUM_LANDSCAPE);
 static_assert((int)NETWORK_COMPANY_NAME_LENGTH == MAX_LENGTH_COMPANY_NAME_CHARS * MAX_CHAR_LENGTH);
-
-extern NetworkUDPSocketHandler *_udp_client_socket; ///< udp client socket
-extern NetworkUDPSocketHandler *_udp_server_socket; ///< udp server socket
-extern NetworkUDPSocketHandler *_udp_master_socket; ///< udp master socket
 
 /** The amount of clients connected */
 byte _network_clients_connected = 0;
@@ -184,12 +176,15 @@ const char *GenerateCompanyPasswordHash(const char *password, const char *passwo
 	if (StrEmpty(password)) return password;
 
 	char salted_password[NETWORK_SERVER_ID_LENGTH];
+	size_t password_length = strlen(password);
+	size_t password_server_id_length = strlen(password_server_id);
 
-	memset(salted_password, 0, sizeof(salted_password));
-	seprintf(salted_password, lastof(salted_password), "%s", password);
 	/* Add the game seed and the server's ID as the salt. */
 	for (uint i = 0; i < NETWORK_SERVER_ID_LENGTH - 1; i++) {
-		salted_password[i] ^= password_server_id[i] ^ (password_game_seed >> (i % 32));
+		char password_char = (i < password_length ? password[i] : 0);
+		char server_id_char = (i < password_server_id_length ? password_server_id[i] : 0);
+		char seed_char = password_game_seed >> (i % 32);
+		salted_password[i] = password_char ^ server_id_char ^ seed_char;
 	}
 
 	Md5 checksum;
@@ -285,7 +280,7 @@ uint NetworkCalculateLag(const NetworkClientSocket *cs)
 
 /* There was a non-recoverable error, drop back to the main menu with a nice
  *  error */
-void NetworkError(StringID error_string)
+void ShowNetworkError(StringID error_string)
 {
 	_switch_mode = SM_MENU;
 	ShowErrorMessage(error_string, INVALID_STRING_ID, WL_CRITICAL);
@@ -321,6 +316,7 @@ StringID GetNetworkErrorMsg(NetworkErrorCode err)
 		STR_NETWORK_ERROR_CLIENT_TIMEOUT_COMPUTER,
 		STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP,
 		STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN,
+		STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME,
 	};
 	static_assert(lengthof(network_error_strings) == NETWORK_ERROR_END);
 
@@ -457,15 +453,14 @@ static void CheckPauseOnJoin()
  * Converts a string to ip/port/company
  *  Format: IP:port#company
  *
- * connection_string will be re-terminated to separate out the hostname, and company and port will
- * be set to the company and port strings given by the user, inside the memory area originally
- * occupied by connection_string.
+ * connection_string will be re-terminated to separate out the hostname, port will
+ * be set to the port strings given by the user, inside the memory area originally
+ * occupied by connection_string. Similar for company, if set.
  */
-void ParseConnectionString(const char **company, const char **port, char *connection_string)
+void ParseFullConnectionString(const char **company, const char **port, char *connection_string)
 {
 	bool ipv6 = (strchr(connection_string, ':') != strrchr(connection_string, ':'));
-	char *p;
-	for (p = connection_string; *p != '\0'; p++) {
+	for (char *p = connection_string; *p != '\0'; p++) {
 		switch (*p) {
 			case '[':
 				ipv6 = true;
@@ -476,6 +471,7 @@ void ParseConnectionString(const char **company, const char **port, char *connec
 				break;
 
 			case '#':
+				if (company == nullptr) continue;
 				*company = p + 1;
 				*p = '\0';
 				break;
@@ -490,6 +486,51 @@ void ParseConnectionString(const char **company, const char **port, char *connec
 }
 
 /**
+ * Convert a string containing either "hostname" or "hostname:ip" to a
+ * NetworkAddress.
+ *
+ * @param connection_string The string to parse.
+ * @param default_port The default port to set port to if not in connection_string.
+ * @return A valid NetworkAddress of the parsed information.
+ */
+NetworkAddress ParseConnectionString(const std::string &connection_string, int default_port)
+{
+	char internal_connection_string[NETWORK_HOSTNAME_PORT_LENGTH];
+	strecpy(internal_connection_string, connection_string.c_str(), lastof(internal_connection_string));
+
+	const char *port = nullptr;
+	ParseFullConnectionString(nullptr, &port, internal_connection_string);
+
+	int rport = port != nullptr ? atoi(port) : default_port;
+	return NetworkAddress(internal_connection_string, rport);
+}
+
+/**
+ * Convert a string containing either "hostname" or "hostname:ip" to a
+ * NetworkAddress, where the string can be postfixed with "#company" to
+ * indicate the requested company.
+ *
+ * @param company Pointer to the company variable to set iff indicted.
+ * @param connection_string The string to parse.
+ * @param default_port The default port to set port to if not in connection_string.
+ * @return A valid NetworkAddress of the parsed information.
+ */
+NetworkAddress ParseGameConnectionString(CompanyID *company, const std::string &connection_string, int default_port)
+{
+	char internal_connection_string[NETWORK_HOSTNAME_PORT_LENGTH + 4]; // 4 extra for the "#" and company
+	strecpy(internal_connection_string, connection_string.c_str(), lastof(internal_connection_string));
+
+	const char *port_s = nullptr;
+	const char *company_s = nullptr;
+	ParseFullConnectionString(&company_s, &port_s, internal_connection_string);
+
+	if (company_s != nullptr) *company = (CompanyID)atoi(company_s);
+
+	int port = port_s != nullptr ? atoi(port_s) : default_port;
+	return NetworkAddress(internal_connection_string, port);
+}
+
+/**
  * Handle the accepting of a connection to the server.
  * @param s The socket of the new connection.
  * @param address The address of the peer.
@@ -499,9 +540,10 @@ void ParseConnectionString(const char **company, const char **port, char *connec
 	/* Register the login */
 	_network_clients_connected++;
 
-	SetWindowDirty(WC_CLIENT_LIST, 0);
 	ServerNetworkGameSocketHandler *cs = new ServerNetworkGameSocketHandler(s);
 	cs->client_address = address; // Save the IP of the client
+
+	InvalidateWindowData(WC_CLIENT_LIST, 0);
 }
 
 /**
@@ -563,8 +605,11 @@ static void NetworkInitialize(bool close_admins = true)
 
 /** Non blocking connection create to query servers */
 class TCPQueryConnecter : TCPConnecter {
+private:
+	bool request_company_info;
+
 public:
-	TCPQueryConnecter(const NetworkAddress &address) : TCPConnecter(address) {}
+	TCPQueryConnecter(const NetworkAddress &address, bool request_company_info) : TCPConnecter(address), request_company_info(request_company_info) {}
 
 	void OnFailure() override
 	{
@@ -574,45 +619,53 @@ public:
 	void OnConnect(SOCKET s) override
 	{
 		_networking = true;
-		new ClientNetworkGameSocketHandler(s);
-		MyClient::SendCompanyInformationQuery();
+		new ClientNetworkGameSocketHandler(s, address);
+		MyClient::SendInformationQuery(request_company_info);
 	}
 };
 
-/* Query a server to fetch his game-info
- *  If game_info is true, only the gameinfo is fetched,
- *   else only the client_info is fetched */
-void NetworkTCPQueryServer(NetworkAddress address)
+/**
+ * Query a server to fetch his game-info.
+ * @param address the address to query.
+ * @param request_company_info Whether to request company info too.
+ */
+void NetworkTCPQueryServer(NetworkAddress address, bool request_company_info)
 {
 	if (!_network_available) return;
 
 	NetworkDisconnect();
 	NetworkInitialize();
 
-	new TCPQueryConnecter(address);
+	new TCPQueryConnecter(address, request_company_info);
 }
 
-/* Validates an address entered as a string and adds the server to
+/**
+ * Validates an address entered as a string and adds the server to
  * the list. If you use this function, the games will be marked
- * as manually added. */
-void NetworkAddServer(const char *b)
+ * as manually added.
+ * @param connection_string The IP:port of the server to add.
+ * @return The entry on the game list.
+ */
+NetworkGameList *NetworkAddServer(const std::string &connection_string)
 {
-	if (*b != '\0') {
-		const char *port = nullptr;
-		const char *company = nullptr;
-		char host[NETWORK_HOSTNAME_LENGTH];
-		uint16 rport;
+	if (connection_string.empty()) return nullptr;
 
-		strecpy(host, b, lastof(host));
+	NetworkAddress address = ParseConnectionString(connection_string, NETWORK_DEFAULT_PORT);
 
-		strecpy(_settings_client.network.connect_to_ip, b, lastof(_settings_client.network.connect_to_ip));
-		rport = NETWORK_DEFAULT_PORT;
+	/* Ensure the item already exists in the list */
+	NetworkGameList *item = NetworkGameListAddItem(address);
+	if (StrEmpty(item->info.server_name)) {
+		ClearGRFConfigList(&item->info.grfconfig);
+		address.GetAddressAsString(item->info.server_name, lastof(item->info.server_name));
+		item->manually = true;
 
-		ParseConnectionString(&company, &port, host);
-		if (port != nullptr) rport = atoi(port);
-
-		NetworkUDPQueryServer(NetworkAddress(host, rport), true);
+		NetworkRebuildHostList();
+		UpdateNetworkGameWindow();
 	}
+
+	NetworkTCPQueryServer(address);
+
+	return item;
 }
 
 /**
@@ -651,45 +704,105 @@ public:
 
 	void OnFailure() override
 	{
-		NetworkError(STR_NETWORK_ERROR_NOCONNECTION);
+		ShowNetworkError(STR_NETWORK_ERROR_NOCONNECTION);
 	}
 
 	void OnConnect(SOCKET s) override
 	{
 		_networking = true;
-		new ClientNetworkGameSocketHandler(s);
+		new ClientNetworkGameSocketHandler(s, this->address);
 		IConsoleCmdExec("exec scripts/on_client.scr 0");
 		NetworkClient_Connected();
 	}
 };
 
-
-/* Used by clients, to connect to a server */
-void NetworkClientConnectGame(NetworkAddress address, CompanyID join_as, const char *join_server_password, const char *join_company_password)
+/**
+ * Join a client to the server at with the given connection string.
+ * The default for the passwords is \c nullptr. When the server or company needs a
+ * password and none is given, the user is asked to enter the password in the GUI.
+ * This function will return false whenever some information required to join is not
+ * correct such as the company number or the client's name, or when there is not
+ * networking avalabile at all. If the function returns false the connection with
+ * the existing server is not disconnected.
+ * It will return true when it starts the actual join process, i.e. when it
+ * actually shows the join status window.
+ *
+ * @param connection_string     The IP address, port and company number to join as.
+ * @param default_company       The company number to join as when none is given.
+ * @param join_server_password  The password for the server.
+ * @param join_company_password The password for the company.
+ * @return Whether the join has started.
+ */
+bool NetworkClientConnectGame(const std::string &connection_string, CompanyID default_company, const char *join_server_password, const char *join_company_password)
 {
-	if (!_network_available) return;
+	CompanyID join_as = default_company;
+	NetworkAddress address = ParseGameConnectionString(&join_as, connection_string, NETWORK_DEFAULT_PORT);
 
-	if (address.GetPort() == 0) return;
+	if (join_as != COMPANY_NEW_COMPANY && join_as != COMPANY_SPECTATOR) {
+		join_as--;
+		if (join_as >= MAX_COMPANIES) {
+			return false;
+		}
+	}
 
-	strecpy(_settings_client.network.last_host, address.GetHostname(), lastof(_settings_client.network.last_host));
-	_settings_client.network.last_port = address.GetPort();
-	_network_join_as = join_as;
-	_network_join_server_password = join_server_password;
-	_network_join_company_password = join_company_password;
+	return NetworkClientConnectGame(address, join_as, join_server_password, join_company_password);
+}
 
+/**
+ * Join a client to the server at the given address.
+ * See the overloaded NetworkClientConnectGame for more details.
+ *
+ * @param address               The network address of the server to join to.
+ * @param join_as               The company number to join as.
+ * @param join_server_password  The password for the server.
+ * @param join_company_password The password for the company.
+ * @return Whether the join has started.
+ */
+bool NetworkClientConnectGame(NetworkAddress &address, CompanyID join_as, const char *join_server_password, const char *join_company_password)
+{
+	if (!_network_available) return false;
+	if (!NetworkValidateClientName()) return false;
+
+	_network_join.address = address;
+	_network_join.company = join_as;
+	_network_join.server_password = join_server_password;
+	_network_join.company_password = join_company_password;
+
+	if (_game_mode == GM_MENU) {
+		/* From the menu we can immediately continue with the actual join. */
+		NetworkClientJoinGame();
+	} else {
+		/* When already playing a game, first go back to the main menu. This
+		 * disconnects the user from the current game, meaning we can safely
+		 * load in the new. After all, there is little point in continueing to
+		 * play on a server if we are connecting to another one.
+		 */
+		_switch_mode = SM_JOIN_GAME;
+	}
+	return true;
+}
+
+/**
+ * Actually perform the joining to the server. Use #NetworkClientConnectGame
+ * when you want to connect to a specific server/company. This function
+ * assumes _network_join is already fully set up.
+ */
+void NetworkClientJoinGame()
+{
 	NetworkDisconnect();
 	NetworkInitialize();
 
+	strecpy(_settings_client.network.last_joined, _network_join.address.GetAddressAsString(false).c_str(), lastof(_settings_client.network.last_joined));
 	_network_join_status = NETWORK_JOIN_STATUS_CONNECTING;
 	ShowJoinStatusWindow();
 
-	new TCPClientConnecter(address);
+	new TCPClientConnecter(_network_join.address);
 }
 
 static void NetworkInitGameInfo()
 {
 	if (StrEmpty(_settings_client.network.server_name)) {
-		seprintf(_settings_client.network.server_name, lastof(_settings_client.network.server_name), "Unnamed Server");
+		strecpy(_settings_client.network.server_name, "Unnamed Server", lastof(_settings_client.network.server_name));
 	}
 
 	/* The server is a client too */
@@ -724,7 +837,7 @@ bool NetworkServerStart()
 
 	/* Try to start UDP-server */
 	DEBUG(net, 1, "starting listeners for incoming server queries");
-	_network_udp_server = _udp_server_socket->Listen();
+	NetworkUDPServerListen();
 
 	_network_company_states = CallocT<NetworkCompanyState>(MAX_COMPANIES);
 	_network_server = true;
@@ -1034,11 +1147,13 @@ static void NetworkGenerateServerId()
 	seprintf(_settings_client.network.network_id, lastof(_settings_client.network.network_id), "%s", hex_output);
 }
 
-void NetworkStartDebugLog(NetworkAddress address)
+void NetworkStartDebugLog(const std::string &connection_string)
 {
 	extern SOCKET _debug_socket;  // Comes from debug.c
 
-	DEBUG(net, 0, "Redirecting DEBUG() to %s:%d", address.GetHostname(), address.GetPort());
+	NetworkAddress address = ParseConnectionString(connection_string, NETWORK_DEFAULT_DEBUGLOG_PORT);
+
+	DEBUG(net, 0, "Redirecting DEBUG() to %s", address.GetAddressAsString().c_str());
 
 	SOCKET s = address.Connect();
 	if (s == INVALID_SOCKET) {
@@ -1060,7 +1175,6 @@ void NetworkStartUp()
 	_network_available = NetworkCoreInitialize();
 	_network_dedicated = false;
 	_network_need_advertise = true;
-	_network_advertise_retries = 0;
 
 	/* Generate an server id when there is none yet */
 	if (StrEmpty(_settings_client.network.network_id)) NetworkGenerateServerId();
@@ -1085,85 +1199,12 @@ void NetworkShutDown()
 	NetworkCoreShutdown();
 }
 
-/**
- * How many hex digits of the git hash to include in network revision string.
- * Determined as 10 hex digits + 2 characters for -g/-u/-m prefix.
- */
-static const uint GITHASH_SUFFIX_LEN = 12;
-
-/**
- * Get the network version string used by this build.
- * The returned string is guaranteed to be at most NETWORK_REVISON_LENGTH bytes.
- */
-const char * GetNetworkRevisionString()
-{
-	/* This will be allocated on heap and never free'd, but only once so not a "real" leak. */
-	static char *network_revision = nullptr;
-
-	if (!network_revision) {
-		/* Start by taking a chance on the full revision string. */
-		network_revision = stredup(_openttd_revision);
-		/* Ensure it's not longer than the packet buffer length. */
-		if (strlen(network_revision) >= NETWORK_REVISION_LENGTH) network_revision[NETWORK_REVISION_LENGTH - 1] = '\0';
-
-		/* Tag names are not mangled further. */
-		if (_openttd_revision_tagged) {
-			DEBUG(net, 1, "Network revision name is '%s'", network_revision);
-			return network_revision;
-		}
-
-		/* Prepare a prefix of the git hash.
-		* Size is length + 1 for terminator, +2 for -g prefix. */
-		assert(_openttd_revision_modified < 3);
-		char githash_suffix[GITHASH_SUFFIX_LEN + 1] = "-";
-		githash_suffix[1] = "gum"[_openttd_revision_modified];
-		for (uint i = 2; i < GITHASH_SUFFIX_LEN; i++) {
-			githash_suffix[i] = _openttd_revision_hash[i-2];
-		}
-
-		/* Where did the hash start in the original string?
-		 * Overwrite from that position, unless that would go past end of packet buffer length. */
-		ptrdiff_t hashofs = strrchr(_openttd_revision, '-') - _openttd_revision;
-		if (hashofs + strlen(githash_suffix) + 1 > NETWORK_REVISION_LENGTH) hashofs = strlen(network_revision) - strlen(githash_suffix);
-		/* Replace the git hash in revision string. */
-		strecpy(network_revision + hashofs, githash_suffix, network_revision + NETWORK_REVISION_LENGTH);
-		assert(strlen(network_revision) < NETWORK_REVISION_LENGTH); // strlen does not include terminator, constant does, hence strictly less than
-		DEBUG(net, 1, "Network revision name is '%s'", network_revision);
-	}
-
-	return network_revision;
-}
-
-static const char *ExtractNetworkRevisionHash(const char *revstr)
-{
-	return strrchr(revstr, '-');
-}
-
-/**
- * Checks whether the given version string is compatible with our version.
- * First tries to match the full string, if that fails, attempts to compare just git hashes.
- * @param other the version string to compare to
- */
-bool IsNetworkCompatibleVersion(const char *other)
-{
-	if (strncmp(GetNetworkRevisionString(), other, NETWORK_REVISION_LENGTH - 1) == 0) return true;
-
-	/* If this version is tagged, then the revision string must be a complete match,
-	 * since there is no git hash suffix in it.
-	 * This is needed to avoid situations like "1.9.0-beta1" comparing equal to "2.0.0-beta1".  */
-	if (_openttd_revision_tagged) return false;
-
-	const char *hash1 = ExtractNetworkRevisionHash(GetNetworkRevisionString());
-	const char *hash2 = ExtractNetworkRevisionHash(other);
-	return hash1 && hash2 && (strncmp(hash1, hash2, GITHASH_SUFFIX_LEN) == 0);
-}
-
 #ifdef __EMSCRIPTEN__
 extern "C" {
 
-void CDECL em_openttd_add_server(const char *host, int port)
+void CDECL em_openttd_add_server(const char *connection_string)
 {
-	NetworkUDPQueryServer(NetworkAddress(host, port), true);
+	NetworkAddServer(connection_string);
 }
 
 }

@@ -960,6 +960,7 @@ STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}เล�
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :อื่นๆ
 
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}ขนาดของแผงควบคุม
 
 
@@ -1819,6 +1820,7 @@ STR_FACE_TIE                                                    :เนคไท
 STR_FACE_EARRING                                                :ต่างหู:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}เปลี่ยนเนคไทหรือต่างหู
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}เล่นหลายคน
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}ชื่อผู้เล่น:
@@ -1877,10 +1879,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}ชื�
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}กำหนดรหัสผ่าน
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}ป้องกันเกมด้วยรหัสผ่านหากไม่ต้องการให้มีการเข้าร่วมจากบุคคลทั่วไป
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}การประกาศ
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}เลือกระหว่างการโฆษณา (internet) หรือไม่โฆษณา (Local Area Network, LAN) เกม
-STR_NETWORK_START_SERVER_UNADVERTISED                           :ไม่ใช่
-STR_NETWORK_START_SERVER_ADVERTISED                             :ใช่
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} ลูกข่าย
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}ลูกข่ายสูงสุด:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}เลือกจำนวนมากสุดของลูกข่าย (ไม่จำเป็นต้องครบตามจำนวนนี้)
@@ -1894,46 +1892,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}ภา�
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}ผู้เล่นทุกคนจะสามารถทราบถึงภาษาที่ใช้พูดคุยในเซิร์ฟเวอร์นี้
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}พิมพ์ชื่อสำหรับเล่นในเครือข่าย
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :อะไรก็ได้
-STR_NETWORK_LANG_ENGLISH                                        :ภาษาอังกฤษ
-STR_NETWORK_LANG_GERMAN                                         :ภาษาเยอรมัน
-STR_NETWORK_LANG_FRENCH                                         :ภาษาฝรั่งเศส
-STR_NETWORK_LANG_BRAZILIAN                                      :ภาษาบราซิล
-STR_NETWORK_LANG_BULGARIAN                                      :ภาษาบัลกาเรีย
-STR_NETWORK_LANG_CHINESE                                        :จีน
-STR_NETWORK_LANG_CZECH                                          :เช็ก
-STR_NETWORK_LANG_DANISH                                         :เดนมาร์ก
-STR_NETWORK_LANG_DUTCH                                          :เนเธอร์แลนด์
-STR_NETWORK_LANG_ESPERANTO                                      :ภาษาโลก(Esperanto)
-STR_NETWORK_LANG_FINNISH                                        :ฟินแลนด์
-STR_NETWORK_LANG_HUNGARIAN                                      :ฮังการี
-STR_NETWORK_LANG_ICELANDIC                                      :ไอร์แลนด์
-STR_NETWORK_LANG_ITALIAN                                        :อิตาลี
-STR_NETWORK_LANG_JAPANESE                                       :ญี่ปุ่น
-STR_NETWORK_LANG_KOREAN                                         :เกาหลี
-STR_NETWORK_LANG_LITHUANIAN                                     :ลิทัวเนีย
-STR_NETWORK_LANG_NORWEGIAN                                      :นอร์เวย์
-STR_NETWORK_LANG_POLISH                                         :โปแลนด์
-STR_NETWORK_LANG_PORTUGUESE                                     :โปรตุเกส
-STR_NETWORK_LANG_ROMANIAN                                       :โรมาเนีย
-STR_NETWORK_LANG_RUSSIAN                                        :รัสเซีย
-STR_NETWORK_LANG_SLOVAK                                         :สโลวัก
-STR_NETWORK_LANG_SLOVENIAN                                      :สโลวาเนีย
-STR_NETWORK_LANG_SPANISH                                        :สเปน
-STR_NETWORK_LANG_SWEDISH                                        :สวีเดน
-STR_NETWORK_LANG_TURKISH                                        :ตุรกี
-STR_NETWORK_LANG_UKRAINIAN                                      :ยูเครน
-STR_NETWORK_LANG_AFRIKAANS                                      :อัฟกานิสถาน
-STR_NETWORK_LANG_CROATIAN                                       :โครเอเชีย
-STR_NETWORK_LANG_CATALAN                                        :คาตาลัน
-STR_NETWORK_LANG_ESTONIAN                                       :เอสโตเนีย
-STR_NETWORK_LANG_GALICIAN                                       :กาลีเซีย
-STR_NETWORK_LANG_GREEK                                          :กรีก
-STR_NETWORK_LANG_LATVIAN                                        :ลัทเวีย
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}ห้องรับรองโหมดผู้เล่นหลายคน
@@ -1985,15 +1943,10 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}บร�
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :รายการลูกข่าย
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :ผู้ชม
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :บริษัทใหม่
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :เตะ
-STR_NETWORK_CLIENTLIST_BAN                                      :แบน
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :พูดกับผู้เล่นทั้งหมด
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :พูดกับผู้เล่นในบริษัทเดียวกัน
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :ข้อความส่วนตัว
+
+
 
 STR_NETWORK_SERVER                                              :เซิฟเวอร์
 STR_NETWORK_CLIENT                                              :ลูกข่าย

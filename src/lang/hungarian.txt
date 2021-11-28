@@ -1070,6 +1070,9 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Hardvere
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Bekapcsolásával az OpenTTD hardveres gyorsítást próbál alkalmazni. A beállítás csak a játék újraindítása után lép érvénybe.
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Ez a beállítás csak a játék újraindítása után lép érvénybe
 
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync (Vertikális Szinkronizáció)
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Jelöld be ezt a négyzetet hogy engedélyezd a v-sync-et. A változtatás csak a játék újraindítása után fog érvényesülni. Kizárólag hardware gyorsítással működik!
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Felület mérete
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Használni kívánt felületméret kiválasztása
 
@@ -1202,6 +1205,7 @@ STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Beállí
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Szűrő kifejezés:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Összes szétnyitása
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Összes összecsukása
+STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Visszaállítja az összes értéket
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(leírás nem elérhető)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Alapértelmezett érték: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Beállítás típusa: {ORANGE}{STRING}
@@ -1210,6 +1214,8 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Játék beáll�
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Játék beállítás (mentésben tárolva; csak a jelenlegi játékot befolyásolja)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Vállalat beállítás (mentésben tárolva; csak az új játékokat befolyásolja)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Vállalat beállítás (mentésben tárolva; csak a jelenlegi vállalatot befolyásolja)
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Figyelem!
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Ez a művelet minden játékbeállítást visszaállít.{}Biztos, hogy folytatni akarja a műveletet?
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategória:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Típus:
@@ -2048,6 +2054,7 @@ STR_FACE_TIE                                                    :Nyakkendő:
 STR_FACE_EARRING                                                :Fülbevaló:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Nyakkendő vagy fülbevaló cseréje
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Hálózati játék
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Játékos neve:
@@ -2110,10 +2117,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}A játé
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Jelszó beállítása
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Védd le a játékodat jelszóval, ha nem akarod hogy illetéktelenek csatlakozzanak
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Hírdetett
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Válassz hírdetett (internet) és nem hírdetett (helyi hálózat, LAN) játék közül.
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Nem
-STR_NETWORK_START_SERVER_ADVERTISED                             :Igen
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} kliens
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Játékosok max. száma:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}A maximálisan felcsatlakozható kliensek számának kiválasztása. Nem szükséges pont ennyi embernek éppen kapcsolódva lennie
@@ -2127,46 +2130,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Beszélt
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}A többi játékos megtudhatja milyen nyelven beszélnek a szerveren
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Add meg a hálózati játékhoz a neved
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Bármilyen
-STR_NETWORK_LANG_ENGLISH                                        :Angol
-STR_NETWORK_LANG_GERMAN                                         :Német
-STR_NETWORK_LANG_FRENCH                                         :Francia
-STR_NETWORK_LANG_BRAZILIAN                                      :Brazil
-STR_NETWORK_LANG_BULGARIAN                                      :Bolgár
-STR_NETWORK_LANG_CHINESE                                        :Kínai
-STR_NETWORK_LANG_CZECH                                          :Cseh
-STR_NETWORK_LANG_DANISH                                         :Dán
-STR_NETWORK_LANG_DUTCH                                          :Holland
-STR_NETWORK_LANG_ESPERANTO                                      :Eszperantó
-STR_NETWORK_LANG_FINNISH                                        :Finn
-STR_NETWORK_LANG_HUNGARIAN                                      :Magyar
-STR_NETWORK_LANG_ICELANDIC                                      :Izlandi
-STR_NETWORK_LANG_ITALIAN                                        :Olasz
-STR_NETWORK_LANG_JAPANESE                                       :Japán
-STR_NETWORK_LANG_KOREAN                                         :Koreai
-STR_NETWORK_LANG_LITHUANIAN                                     :Litván
-STR_NETWORK_LANG_NORWEGIAN                                      :Norvég
-STR_NETWORK_LANG_POLISH                                         :Lengyel
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugál
-STR_NETWORK_LANG_ROMANIAN                                       :Román
-STR_NETWORK_LANG_RUSSIAN                                        :Orosz
-STR_NETWORK_LANG_SLOVAK                                         :Szlovák
-STR_NETWORK_LANG_SLOVENIAN                                      :Szlovén
-STR_NETWORK_LANG_SPANISH                                        :Spanyol
-STR_NETWORK_LANG_SWEDISH                                        :Svéd
-STR_NETWORK_LANG_TURKISH                                        :Török
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukrán
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikai
-STR_NETWORK_LANG_CROATIAN                                       :Horvát
-STR_NETWORK_LANG_CATALAN                                        :Katalán
-STR_NETWORK_LANG_ESTONIAN                                       :Észt
-STR_NETWORK_LANG_GALICIAN                                       :Gall
-STR_NETWORK_LANG_GREEK                                          :Görög
-STR_NETWORK_LANG_LATVIAN                                        :Lett
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Hálózati játék előszoba
@@ -2215,19 +2178,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Megszak�
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}A szerver jelszóval van védve. Írd be
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}A vállalat jelszóval van védve. Írd be
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Kliens lista
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Kliens lista
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Megfigyelés
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Új vállalat
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Kirúgás
-STR_NETWORK_CLIENTLIST_BAN                                      :Kitiltás
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Üzenet mindenkinek
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Üzenet a vállalatnak
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privát üzenet
+
+
 
 STR_NETWORK_SERVER                                              :Szerver
 STR_NETWORK_CLIENT                                              :Kliens

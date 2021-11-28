@@ -969,6 +969,7 @@ STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Избо
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :друго
 
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Интерфейс размер
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Изберете размера на интерфейс елемент за използване
 
@@ -1835,6 +1836,7 @@ STR_FACE_TIE                                                    :Вратовр�
 STR_FACE_EARRING                                                :Oбица:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Cмени вратовръзкатa или oбицатa
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Онлайн играчи
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Име на играч:
@@ -1893,10 +1895,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Имет
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Поставяне на парола
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Защитаване на вашата игра с парола за да не е публично достъпна
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Рекламирана
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Избери игра измежду рекламирана през интернет или нерекламирана през Локален интернет хост или ЛАН
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Не
-STR_NETWORK_START_SERVER_ADVERTISED                             :Да
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} клиент{P "" s}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Макс. брой играчи:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Избор на максималния брой клиенти. Не всички слотове трябва да се попълнят
@@ -1910,46 +1908,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Гово
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Другите играчи ще знаят езика на който се говори на сървъра
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Въведете име за мрежовата игра
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Всеки
-STR_NETWORK_LANG_ENGLISH                                        :Английски
-STR_NETWORK_LANG_GERMAN                                         :Немски
-STR_NETWORK_LANG_FRENCH                                         :Френски
-STR_NETWORK_LANG_BRAZILIAN                                      :Бразилски
-STR_NETWORK_LANG_BULGARIAN                                      :Български
-STR_NETWORK_LANG_CHINESE                                        :Китайски
-STR_NETWORK_LANG_CZECH                                          :Чешки
-STR_NETWORK_LANG_DANISH                                         :Датски
-STR_NETWORK_LANG_DUTCH                                          :Холандски
-STR_NETWORK_LANG_ESPERANTO                                      :Eсперанто
-STR_NETWORK_LANG_FINNISH                                        :Финландски
-STR_NETWORK_LANG_HUNGARIAN                                      :Унгарски
-STR_NETWORK_LANG_ICELANDIC                                      :Исландски
-STR_NETWORK_LANG_ITALIAN                                        :Италиански
-STR_NETWORK_LANG_JAPANESE                                       :Японски
-STR_NETWORK_LANG_KOREAN                                         :Корейски
-STR_NETWORK_LANG_LITHUANIAN                                     :Литовски
-STR_NETWORK_LANG_NORWEGIAN                                      :Норвежки
-STR_NETWORK_LANG_POLISH                                         :Полски
-STR_NETWORK_LANG_PORTUGUESE                                     :Португалски
-STR_NETWORK_LANG_ROMANIAN                                       :Румънски
-STR_NETWORK_LANG_RUSSIAN                                        :Руски
-STR_NETWORK_LANG_SLOVAK                                         :Словашки
-STR_NETWORK_LANG_SLOVENIAN                                      :Словенски
-STR_NETWORK_LANG_SPANISH                                        :Испански
-STR_NETWORK_LANG_SWEDISH                                        :Шведски
-STR_NETWORK_LANG_TURKISH                                        :Турски
-STR_NETWORK_LANG_UKRAINIAN                                      :Украински
-STR_NETWORK_LANG_AFRIKAANS                                      :Африкаанс
-STR_NETWORK_LANG_CROATIAN                                       :Хърватски
-STR_NETWORK_LANG_CATALAN                                        :Каталонски
-STR_NETWORK_LANG_ESTONIAN                                       :Естонски
-STR_NETWORK_LANG_GALICIAN                                       :Галиматия
-STR_NETWORK_LANG_GREEK                                          :Гръцки
-STR_NETWORK_LANG_LATVIAN                                        :Латвийски
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Преддверие на мрежовите игри
@@ -2001,15 +1959,10 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Комп
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Списък с играчите
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Наблюдавай
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Нова фирма
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Изгони
-STR_NETWORK_CLIENTLIST_BAN                                      :Бан
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Кажи на всички
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Кажи на компания
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Лично съобщение
+
+
 
 STR_NETWORK_SERVER                                              :Сървър
 STR_NETWORK_CLIENT                                              :Клиент

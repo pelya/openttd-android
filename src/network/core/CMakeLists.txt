@@ -4,9 +4,11 @@ add_files(
     config.h
     core.cpp
     core.h
-    game.h
+    game_info.cpp
+    game_info.h
     host.cpp
     host.h
+    os_abstraction.cpp
     os_abstraction.h
     packet.cpp
     packet.h
@@ -17,6 +19,7 @@ add_files(
     tcp_connect.cpp
     tcp_content.cpp
     tcp_content.h
+    tcp_content_type.h
     tcp_game.cpp
     tcp_game.h
     tcp_http.cpp

@@ -969,6 +969,7 @@ STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Selektea
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :oars
 
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Interfacegrutte
 
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_NORMAL                       :Normaal
@@ -1794,6 +1795,7 @@ STR_FACE_TIE                                                    :Strik:
 STR_FACE_EARRING                                                :Earbel:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Feroarje strik of earbel
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multiplayer
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Namme fan spieler:
@@ -1840,10 +1842,6 @@ STR_NETWORK_START_SERVER_CAPTION                                :{WHITE}Start in
 STR_NETWORK_START_SERVER_NEW_GAME_NAME                          :{BLACK}Spulnamme:
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Wachtwurd ynstelle
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Advertearre
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Kies tusken in advertearre (ynternet) of in net-advertearre (LAN) spul
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Nee
-STR_NETWORK_START_SERVER_ADVERTISED                             :Ja
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} kliïnt{P "" en}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Maksimaal oantal kliïnten:
 STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} bedriuw{P "" en}
@@ -1853,46 +1851,6 @@ STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Maksimaa
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Sprutsen taal:
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Fier in namme yn foar it networkspul
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Alle
-STR_NETWORK_LANG_ENGLISH                                        :Ingelsk
-STR_NETWORK_LANG_GERMAN                                         :Dútsk
-STR_NETWORK_LANG_FRENCH                                         :Frânsk
-STR_NETWORK_LANG_BRAZILIAN                                      :Braziliaansk
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgaarsk
-STR_NETWORK_LANG_CHINESE                                        :Sinees
-STR_NETWORK_LANG_CZECH                                          :Tsjechysk
-STR_NETWORK_LANG_DANISH                                         :Deensk
-STR_NETWORK_LANG_DUTCH                                          :Nederlânsk
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finsk
-STR_NETWORK_LANG_HUNGARIAN                                      :Hongaarsk
-STR_NETWORK_LANG_ICELANDIC                                      :Yslânsk
-STR_NETWORK_LANG_ITALIAN                                        :Italjaansk
-STR_NETWORK_LANG_JAPANESE                                       :Japansk
-STR_NETWORK_LANG_KOREAN                                         :Koreaansk
-STR_NETWORK_LANG_LITHUANIAN                                     :Litousk
-STR_NETWORK_LANG_NORWEGIAN                                      :Noarsk
-STR_NETWORK_LANG_POLISH                                         :Poalsk
-STR_NETWORK_LANG_PORTUGUESE                                     :Portegeesk
-STR_NETWORK_LANG_ROMANIAN                                       :Roemeensk
-STR_NETWORK_LANG_RUSSIAN                                        :Russysk
-STR_NETWORK_LANG_SLOVAK                                         :Slowaaksk
-STR_NETWORK_LANG_SLOVENIAN                                      :Sloveensk
-STR_NETWORK_LANG_SPANISH                                        :Spaansk
-STR_NETWORK_LANG_SWEDISH                                        :Sweedsk
-STR_NETWORK_LANG_TURKISH                                        :Turksk
-STR_NETWORK_LANG_UKRAINIAN                                      :Oekraynsk
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikaansk
-STR_NETWORK_LANG_CROATIAN                                       :Kroätysk
-STR_NETWORK_LANG_CATALAN                                        :Katalaansk
-STR_NETWORK_LANG_ESTONIAN                                       :Estlânsk
-STR_NETWORK_LANG_GALICIAN                                       :Galisysk
-STR_NETWORK_LANG_GREEK                                          :Gryksk
-STR_NETWORK_LANG_LATVIAN                                        :Letsk
-############ End of leave-in-this-order
 
 # Network game lobby
 
@@ -1937,14 +1895,10 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Bedriuw 
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :{WHITE}Client lyst
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :{WHITE}Taskôgje
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :{WHITE}Nei Bedriuw
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Skoppe
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Tsjin elkenien prate
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Praat mei bedriuw
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Priveeberjocht
+
+
 
 STR_NETWORK_SERVER                                              :Tsjinner
 STR_NETWORK_CLIENT                                              :Kliïnt

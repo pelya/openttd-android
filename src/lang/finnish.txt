@@ -953,7 +953,7 @@ STR_GAME_OPTIONS_CURRENCY_MYR                                   :Malesian ringgi
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_LEFT                    :Vasemmanpuolinen liikenne
 STR_GAME_OPTIONS_ROAD_VEHICLES_DROPDOWN_RIGHT                   :Oikeanpuolinen liikenne
 
-STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Kuntien nimet
+STR_GAME_OPTIONS_TOWN_NAMES_FRAME                               :{BLACK}Kuntien nimet:
 STR_GAME_OPTIONS_TOWN_NAMES_DROPDOWN_TOOLTIP                    :{BLACK}Valitse kuntien nimien tyyli
 
 ############ start of townname region
@@ -993,6 +993,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_12_MONTHS              :Kerran vuodessa
 
 STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Kieli
 STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Valitse käyttöliittymän kieli
+STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}{NBSP}% valmiina)
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Koko näyttö
 STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Valitse tämä pelataksesi kokoruututilassa
@@ -1005,6 +1006,9 @@ STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}×{NUM}
 STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Laitteistokiihdytys
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Valitse tämä, jos haluat, että OpenTTD yrittää käyttää laitteistokiihdytystä. Muutettu asetus tulee voimaan vasta pelin uudelleenkäynnistyksen jälkeen.
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Asetus tulee voimaan vasta pelin uudelleenkäynnistyksen jälkeen
+
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}Pystytahdistus
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Valitse tämä ottaaksesi käyttöön näytön pystytahdistuksen. Muutettu asetus tulee voimaan vasta pelin uudelleenkäynnistyksen jälkeen. Edellyttää, että laitteistokiihdytys on käytössä.
 
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Käyttöliittymän koko
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Valitse käyttöliittymäelementtien koko
@@ -1138,6 +1142,7 @@ STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Asetukse
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Suodatinteksti:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Avaa kaikki
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Sulje kaikki
+STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Palauta oletukset
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(selitystä ei saatavilla)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Oletusarvo: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Asetuksen tyyppi: {ORANGE}{STRING}
@@ -1146,6 +1151,8 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Pelin asetus (t
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Pelin asetus (tallennetaan tallenteeseen; vaikuttaa vain nykyiseen peliin)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Yhtiön asetus (tallennetaan tallenteisiin; vaikuttaa vain uusiin peleihin)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Yhtiön asetus (tallennetaan tallennukseen; vaikuttaa vain nykyiseen yhtiöön)
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Varoitus!
+STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Tämä toiminto palauttaa pelin kaikki asetukset oletusarvoihinsa.{}Haluatko varmasti jatkaa?
 
 STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategoria:
 STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tyyppi:
@@ -1984,6 +1991,9 @@ STR_FACE_TIE                                                    :Solmio:
 STR_FACE_EARRING                                                :Korvakoru:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Vaihda solmio tai korvakoru
 
+STR_NETWORK_SERVER_VISIBILITY_PRIVATE                           :Yksityinen
+STR_NETWORK_SERVER_VISIBILITY_PUBLIC                            :Julkinen
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Moninpeli
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Pelaajan nimi
@@ -2046,10 +2056,8 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Nimi nä
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Aseta salasana
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Jos peliin ei halua ulkopuolisia, voi sen suojata salasanalla
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Mainostettu
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Valitse mainostettu (internet) tai ei-mainostettu (paikallisverkko, LAN) peli
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Ei
-STR_NETWORK_START_SERVER_ADVERTISED                             :Kyllä
+STR_NETWORK_START_SERVER_VISIBILITY_LABEL                       :{BLACK}Näkyvyys
+STR_NETWORK_START_SERVER_VISIBILITY_TOOLTIP                     :{BLACK}Näkyykö palvelimesi muille julkisessa listauksessa
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} asiakas{P "" ta}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Pelaajien enimmäismäärä:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Pelaajien enimmäismäärä. Pelissä voi olla myös vähemmän pelaajia
@@ -2063,46 +2071,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Puhuttu 
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Toiset pelaajat tietävät tästä, mitä kieltä palvelimella puhutaan
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Syötä nimi verkkopelille
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :mikä tahansa
-STR_NETWORK_LANG_ENGLISH                                        :englanti
-STR_NETWORK_LANG_GERMAN                                         :saksa
-STR_NETWORK_LANG_FRENCH                                         :ranska
-STR_NETWORK_LANG_BRAZILIAN                                      :brasilianportugali
-STR_NETWORK_LANG_BULGARIAN                                      :bulgaria
-STR_NETWORK_LANG_CHINESE                                        :kiina
-STR_NETWORK_LANG_CZECH                                          :tšekki
-STR_NETWORK_LANG_DANISH                                         :tanska
-STR_NETWORK_LANG_DUTCH                                          :hollanti
-STR_NETWORK_LANG_ESPERANTO                                      :esperanto
-STR_NETWORK_LANG_FINNISH                                        :suomi
-STR_NETWORK_LANG_HUNGARIAN                                      :unkari
-STR_NETWORK_LANG_ICELANDIC                                      :islanti
-STR_NETWORK_LANG_ITALIAN                                        :italia
-STR_NETWORK_LANG_JAPANESE                                       :japani
-STR_NETWORK_LANG_KOREAN                                         :korea
-STR_NETWORK_LANG_LITHUANIAN                                     :liettua
-STR_NETWORK_LANG_NORWEGIAN                                      :norja
-STR_NETWORK_LANG_POLISH                                         :puola
-STR_NETWORK_LANG_PORTUGUESE                                     :portugali
-STR_NETWORK_LANG_ROMANIAN                                       :romania
-STR_NETWORK_LANG_RUSSIAN                                        :venäjä
-STR_NETWORK_LANG_SLOVAK                                         :slovakia
-STR_NETWORK_LANG_SLOVENIAN                                      :sloveeni
-STR_NETWORK_LANG_SPANISH                                        :espanja
-STR_NETWORK_LANG_SWEDISH                                        :ruotsi
-STR_NETWORK_LANG_TURKISH                                        :turkki
-STR_NETWORK_LANG_UKRAINIAN                                      :ukraina
-STR_NETWORK_LANG_AFRIKAANS                                      :afrikaans
-STR_NETWORK_LANG_CROATIAN                                       :kroatia
-STR_NETWORK_LANG_CATALAN                                        :katalaani
-STR_NETWORK_LANG_ESTONIAN                                       :viro
-STR_NETWORK_LANG_GALICIAN                                       :galego
-STR_NETWORK_LANG_GREEK                                          :kreikka
-STR_NETWORK_LANG_LATVIAN                                        :latvia
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Moninpeliaula
@@ -2151,19 +2119,46 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Pura yht
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Palvelin on suojattu. Anna salasana
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Yhtiö on suojattu. Anna salasana
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Asiakaslista
 
 # Network company list added strings
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Asiakaslista
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Katsele
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Uusi yhtiö
+STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Kytkeytyneet pelaajat
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Potkaise
-STR_NETWORK_CLIENTLIST_BAN                                      :Kiellä
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Puhu kaikille
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Puhu yhtiölle
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Yksityinen viesti
+STR_NETWORK_CLIENT_LIST_CAPTION                                 :{WHITE}Moninpeli
+STR_NETWORK_CLIENT_LIST_SERVER                                  :{BLACK}Palvelin
+STR_NETWORK_CLIENT_LIST_SERVER_NAME                             :{BLACK}Nimi
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_TOOLTIP                     :{BLACK}Sen palvelimen nimi, jolla pelaat
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_EDIT_TOOLTIP                :{BLACK}Muokkaa palvelimesi nimeä
+STR_NETWORK_CLIENT_LIST_SERVER_NAME_QUERY_CAPTION               :Palvelimen nimi
+STR_NETWORK_CLIENT_LIST_SERVER_VISIBILITY                       :{BLACK}Näkyvyys
+STR_NETWORK_CLIENT_LIST_SERVER_VISIBILITY_TOOLTIP               :{BLACK}Näkyykö palvelimesi muille julkisessa listauksessa
+STR_NETWORK_CLIENT_LIST_PLAYER                                  :{BLACK}Pelaaja
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME                             :{BLACK}Nimi
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_TOOLTIP                     :{BLACK}Pelaajanimesi
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_EDIT_TOOLTIP                :{BLACK}Muokkaa pelaajanimeäsi
+STR_NETWORK_CLIENT_LIST_PLAYER_NAME_QUERY_CAPTION               :Pelaajanimesi
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_TOOLTIP                    :{BLACK}Tähän asiakkaaseen kohdistettavat ylläpitotoiminnot
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_TOOLTIP                   :{BLACK}Tähän yhtiöön kohdistettavat ylläpitotoiminnot
+STR_NETWORK_CLIENT_LIST_JOIN_TOOLTIP                            :{BLACK}Liity tähän yhtiöön
+STR_NETWORK_CLIENT_LIST_CHAT_CLIENT_TOOLTIP                     :{BLACK}Lähetä tälle pelaajalle viesti
+STR_NETWORK_CLIENT_LIST_CHAT_COMPANY_TOOLTIP                    :{BLACK}Lähetä viesti kaikille tämän yhtiön pelaajille
+STR_NETWORK_CLIENT_LIST_CHAT_SPECTATOR_TOOLTIP                  :{BLACK}Lähetä viesti kaikille katsojille
+STR_NETWORK_CLIENT_LIST_SPECTATORS                              :Katsojat
+STR_NETWORK_CLIENT_LIST_NEW_COMPANY                             :(Uusi yhtiö)
+STR_NETWORK_CLIENT_LIST_NEW_COMPANY_TOOLTIP                     :{BLACK}Perusta uusi yhtiö ja liity siihen
+STR_NETWORK_CLIENT_LIST_PLAYER_ICON_SELF_TOOLTIP                :{BLACK}Tämä olet sinä
+STR_NETWORK_CLIENT_LIST_PLAYER_ICON_HOST_TOOLTIP                :{BLACK}Tämä on pelin ylläpitäjä
+
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_KICK                       :Potki
+STR_NETWORK_CLIENT_LIST_ADMIN_CLIENT_BAN                        :Estä
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_RESET                     :Poista
+STR_NETWORK_CLIENT_LIST_ADMIN_COMPANY_UNLOCK                    :Poista salasanalukitus
+
+STR_NETWORK_CLIENT_LIST_ASK_CAPTION                             :{WHITE}Ylläpitäjän toiminta
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_KICK                         :{YELLOW}Haluatko varmasti potkia pelaajan ”{STRING}” pelistä?
+STR_NETWORK_CLIENT_LIST_ASK_CLIENT_BAN                          :{YELLOW}Haluatko varmasti estää pelaajan ”{STRING}”?
+STR_NETWORK_CLIENT_LIST_ASK_COMPANY_RESET                       :{YELLOW}Haluatko varmasti poistaa yhtiön ”{COMPANY}”?
+STR_NETWORK_CLIENT_LIST_ASK_COMPANY_UNLOCK                      :{YELLOW}Haluatko varmasti nollata yhtiön ”{COMPANY}” salasanan?
 
 STR_NETWORK_SERVER                                              :Palvelin
 STR_NETWORK_CLIENT                                              :Pelaaja
@@ -2208,6 +2203,7 @@ STR_NETWORK_ERROR_SERVER_START                                  :{WHITE}Palvelin
 STR_NETWORK_ERROR_CLIENT_START                                  :{WHITE}Yhdistäminen ei onnistunut
 STR_NETWORK_ERROR_TIMEOUT                                       :{WHITE}Yhteys nro {NUM} aikakatkaistiin
 STR_NETWORK_ERROR_SERVER_ERROR                                  :{WHITE}Protokollavirhe tapahtui ja yhteys suljettiin
+STR_NETWORK_ERROR_BAD_PLAYER_NAME                               :{WHITE}Et ole asettanut pelaajanimeäsi. Nimen voi asettaa moninpeli-ikkunan ylälaidassa.
 STR_NETWORK_ERROR_WRONG_REVISION                                :{WHITE}Tämän asiakkaan versio ei vastaa palvelimen versiota
 STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Väärä salasana
 STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}Palvelin on täynnä
@@ -2220,6 +2216,7 @@ STR_NETWORK_ERROR_TIMEOUT_PASSWORD                              :{WHITE}Käytit 
 STR_NETWORK_ERROR_TIMEOUT_COMPUTER                              :{WHITE}Tietokoneesi on liian hidas pysyäkseen palvelimen tahdissa
 STR_NETWORK_ERROR_TIMEOUT_MAP                                   :{WHITE}Kartan lataus kesti liian kauan
 STR_NETWORK_ERROR_TIMEOUT_JOIN                                  :{WHITE}Palvelimelle liittyminen kesti liian kauan
+STR_NETWORK_ERROR_INVALID_CLIENT_NAME                           :{WHITE}Pelaajanimesi ei kelpaa
 
 ############ Leave those lines in this order!!
 STR_NETWORK_ERROR_CLIENT_GENERAL                                :yleinen virhe
@@ -2242,6 +2239,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_PASSWORD                       :salasanaa ei va
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_COMPUTER                       :yleinen aikakatkaisu
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP                            :kartan lataaminen kesti liian kauan
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :kartan käsittely kesti liian kauan
+STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :Epäkelpo asiakasnimi
 ############ End of leave-in-this-order
 
 STR_NETWORK_ERROR_CLIENT_GUI_LOST_CONNECTION_CAPTION            :{WHITE}Mahdollinen yhteyden menetys
@@ -2531,7 +2529,7 @@ STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Rakenna 
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Sijoita poiju, jota voi käyttää reittipisteenä. Shift vaihtaa rakennustilan ja kustannusarvion välillä
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Rakenna akvedukti. Shift vaihtaa rakennustilan ja kustannusarvion välillä
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Määrittele vesialue.{}Tee kanava, paitsi jos Ctrl on painettuna merenpinnalla. Tällöin meri laajenee ympäristöön
-STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Sijoita jokia
+STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Sijoita jokia. Ctrl valitsee alueen vinottain.
 
 # Ship depot construction window
 STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Telakan suunta
@@ -3081,6 +3079,7 @@ STR_NEWGRF_ERROR_MSG_WARNING                                    :{RED}Varoitus: 
 STR_NEWGRF_ERROR_MSG_ERROR                                      :{RED}Virhe: {SILVER}{STRING}
 STR_NEWGRF_ERROR_MSG_FATAL                                      :{RED}Virhe: {SILVER}{STRING}
 STR_NEWGRF_ERROR_FATAL_POPUP                                    :{WHITE}Vakava NewGRF-virhe on tapahtunut:{}{STRING}
+STR_NEWGRF_ERROR_POPUP                                          :{WHITE}NewGRF-virhe on tapahtunut:{}{STRING}
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} ei toimi OpenTTD:n ilmoittaman TTDPatch-version kanssa
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} on TTD:n {STRING}-versiota varten
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} ja {STRING} on suunniteltu toimimaan yhdessä
@@ -4464,7 +4463,7 @@ STR_ERROR_CAN_T_BUILD_CARGO_TRAM_STATION                        :{WHITE}Ei voi r
 STR_ERROR_CAN_T_BUILD_DOCK_HERE                                 :{WHITE}Satamaa ei voi rakentaa tähän...
 STR_ERROR_CAN_T_BUILD_AIRPORT_HERE                              :{WHITE}Lentokenttää ei voi rakentaa...
 
-STR_ERROR_ADJOINS_MORE_THAN_ONE_EXISTING                        :{WHITE}Liitä yhteen useampi asema/lastausalue.
+STR_ERROR_ADJOINS_MORE_THAN_ONE_EXISTING                        :{WHITE}Vieressä on useampi kuin yksi olemassaoleva asema tai kuormausalue.
 STR_ERROR_STATION_TOO_SPREAD_OUT                                :{WHITE}... asema liian levittäytynyt
 STR_ERROR_TOO_MANY_STATIONS_LOADING                             :{WHITE}Liian monta asemaa ja lastausaluetta.
 STR_ERROR_TOO_MANY_STATION_SPECS                                :{WHITE}Rautatieasema on jakautunut liian moneen osaan
@@ -4497,7 +4496,7 @@ STR_ERROR_MUST_DEMOLISH_DOCK_FIRST                              :{WHITE}Satama p
 STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Lentokenttä pitää tuhota ensin.
 
 # Waypoint related errors
-STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Liittää useamman kuin yhden reittipisteen
+STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Vieressä on useampi kuin yksi olemassaoleva reittipiste.
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Liian lähellä toista reittipistettä
 
 STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Junien reittipistettä ei voi rakentaa tähän...

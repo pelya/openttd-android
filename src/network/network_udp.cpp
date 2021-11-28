@@ -16,6 +16,7 @@
 #include "../date_func.h"
 #include "../map_func.h"
 #include "../debug.h"
+#include "core/game_info.h"
 #include "network_gamelist.h"
 #include "network_internal.h"
 #include "network_udp.h"
@@ -33,9 +34,6 @@
 
 #include "../safeguards.h"
 
-/** Mutex for all out threaded udp resolution and such. */
-static std::mutex _network_udp_mutex;
-
 /** Session key to register ourselves to the master server */
 static uint64 _session_key = 0;
 
@@ -43,9 +41,45 @@ static const std::chrono::minutes ADVERTISE_NORMAL_INTERVAL(15); ///< interval b
 static const std::chrono::seconds ADVERTISE_RETRY_INTERVAL(10); ///< re-advertise when no response after this amount of time.
 static const uint32 ADVERTISE_RETRY_TIMES     =              3; ///< give up re-advertising after this much failed retries
 
-NetworkUDPSocketHandler *_udp_client_socket = nullptr; ///< udp client socket
-NetworkUDPSocketHandler *_udp_server_socket = nullptr; ///< udp server socket
-NetworkUDPSocketHandler *_udp_master_socket = nullptr; ///< udp master socket
+static bool _network_udp_server;         ///< Is the UDP server started?
+static uint16 _network_udp_broadcast;    ///< Timeout for the UDP broadcasts.
+static uint8 _network_advertise_retries; ///< The number of advertisement retries we did.
+
+/** Some information about a socket, which exists before the actual socket has been created to provide locking and the likes. */
+struct UDPSocket {
+	const std::string name;                     ///< The name of the socket.
+	std::mutex mutex;                           ///< Mutex for everything that (indirectly) touches the sockets within the handler.
+	NetworkUDPSocketHandler *socket;            ///< The actual socket, which may be nullptr when not initialized yet.
+	std::atomic<int> receive_iterations_locked; ///< The number of receive iterations the mutex was locked.
+
+	UDPSocket(const std::string &name_) : name(name_), socket(nullptr) {}
+
+	void Close()
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		socket->Close();
+		delete socket;
+		socket = nullptr;
+	}
+
+	void ReceivePackets()
+	{
+		std::unique_lock<std::mutex> lock(mutex, std::defer_lock);
+		if (!lock.try_lock()) {
+			if (++receive_iterations_locked % 32 == 0) {
+				DEBUG(net, 0, "[udp] %s background UDP loop processing appears to be blocked. Your OS may be low on UDP send buffers.", name.c_str());
+			}
+			return;
+		}
+
+		receive_iterations_locked.store(0);
+		socket->ReceivePackets();
+	}
+};
+
+static UDPSocket _udp_client("Client"); ///< udp client socket
+static UDPSocket _udp_server("Server"); ///< udp server socket
+static UDPSocket _udp_master("Master"); ///< udp master socket
 
 /**
  * Helper function doing the actual work for querying the server.
@@ -58,16 +92,15 @@ static void DoNetworkUDPQueryServer(NetworkAddress &address, bool needs_mutex, b
 	/* Clear item in gamelist */
 	NetworkGameList *item = CallocT<NetworkGameList>(1);
 	address.GetAddressAsString(item->info.server_name, lastof(item->info.server_name));
-	strecpy(item->info.hostname, address.GetHostname(), lastof(item->info.hostname));
 	item->address = address;
 	item->manually = manually;
 	NetworkGameListAddItemDelayed(item);
 
-	std::unique_lock<std::mutex> lock(_network_udp_mutex, std::defer_lock);
+	std::unique_lock<std::mutex> lock(_udp_client.mutex, std::defer_lock);
 	if (needs_mutex) lock.lock();
 	/* Init the packet */
 	Packet p(PACKET_UDP_CLIENT_FIND_SERVER);
-	if (_udp_client_socket != nullptr) _udp_client_socket->SendPacket(&p, &address);
+	if (_udp_client.socket != nullptr) _udp_client.socket->SendPacket(&p, &address);
 }
 
 /**
@@ -138,31 +171,10 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_FIND_SERVER(Packet *p, Networ
 	}
 
 	NetworkGameInfo ngi;
-
-	/* Update some game_info */
-	ngi.clients_on     = _network_game_info.clients_on;
-	ngi.start_date     = ConvertYMDToDate(_settings_game.game_creation.starting_year, 0, 1);
-
-	ngi.server_lang    = _settings_client.network.server_lang;
-	ngi.use_password   = !StrEmpty(_settings_client.network.server_password);
-	ngi.clients_max    = _settings_client.network.max_clients;
-	ngi.companies_on   = (byte)Company::GetNumItems();
-	ngi.companies_max  = _settings_client.network.max_companies;
-	ngi.spectators_on  = NetworkSpectatorCount();
-	ngi.spectators_max = _settings_client.network.max_spectators;
-	ngi.game_date      = _date;
-	ngi.map_width      = MapSizeX();
-	ngi.map_height     = MapSizeY();
-	ngi.map_set        = _settings_game.game_creation.landscape;
-	ngi.dedicated      = _network_dedicated;
-	ngi.grfconfig      = _grfconfig;
-
-	strecpy(ngi.map_name, _network_game_info.map_name, lastof(ngi.map_name));
-	strecpy(ngi.server_name, _settings_client.network.server_name, lastof(ngi.server_name));
-	strecpy(ngi.server_revision, GetNetworkRevisionString(), lastof(ngi.server_revision));
+	FillNetworkGameInfo(ngi);
 
 	Packet packet(PACKET_UDP_SERVER_RESPONSE);
-	this->SendNetworkGameInfo(&packet, &ngi);
+	SerializeNetworkGameInfo(&packet, &ngi);
 
 	/* Let the client know that we are here */
 	this->SendPacket(&packet, client_addr);
@@ -189,23 +201,23 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_DETAIL_INFO(Packet *p, Networ
 	static const uint MIN_CI_SIZE = 54;
 	uint max_cname_length = NETWORK_COMPANY_NAME_LENGTH;
 
-	if (Company::GetNumItems() * (MIN_CI_SIZE + NETWORK_COMPANY_NAME_LENGTH) >= (uint)SEND_MTU - packet.size) {
+	if (!packet.CanWriteToPacket(Company::GetNumItems() * (MIN_CI_SIZE + NETWORK_COMPANY_NAME_LENGTH))) {
 		/* Assume we can at least put the company information in the packets. */
-		assert(Company::GetNumItems() * MIN_CI_SIZE < (uint)SEND_MTU - packet.size);
+		assert(packet.CanWriteToPacket(Company::GetNumItems() * MIN_CI_SIZE));
 
 		/* At this moment the company names might not fit in the
 		 * packet. Check whether that is really the case. */
 
 		for (;;) {
-			int free = SEND_MTU - packet.size;
+			size_t required = 0;
 			for (const Company *company : Company::Iterate()) {
 				char company_name[NETWORK_COMPANY_NAME_LENGTH];
 				SetDParam(0, company->index);
 				GetString(company_name, STR_COMPANY_NAME, company_name + max_cname_length - 1);
-				free -= MIN_CI_SIZE;
-				free -= (int)strlen(company_name);
+				required += MIN_CI_SIZE;
+				required += strlen(company_name);
 			}
-			if (free >= 0) break;
+			if (packet.CanWriteToPacket(required)) break;
 
 			/* Try again, with slightly shorter strings. */
 			assert(max_cname_length > 0);
@@ -225,10 +237,10 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_DETAIL_INFO(Packet *p, Networ
 /**
  * A client has requested the names of some NewGRFs.
  *
- * Replying this can be tricky as we have a limit of SEND_MTU bytes
+ * Replying this can be tricky as we have a limit of UDP_MTU bytes
  * in the reply packet and we can send up to 100 bytes per NewGRF
  * (GRF ID, MD5sum and NETWORK_GRF_NAME_LENGTH bytes for the name).
- * As SEND_MTU is _much_ less than 100 * NETWORK_MAX_GRF_COUNT, it
+ * As UDP_MTU is _much_ less than 100 * NETWORK_MAX_GRF_COUNT, it
  * could be that a packet overflows. To stop this we only reply
  * with the first N NewGRFs so that if the first N + 1 NewGRFs
  * would be sent, the packet overflows.
@@ -253,7 +265,7 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_GET_NEWGRFS(Packet *p, Networ
 		GRFIdentifier c;
 		const GRFConfig *f;
 
-		this->ReceiveGRFIdentifier(p, &c);
+		DeserializeGRFIdentifier(p, &c);
 
 		/* Find the matching GRF file */
 		f = FindGRFConfig(c.grfid, FGCM_EXACT, c.md5sum);
@@ -264,7 +276,7 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_GET_NEWGRFS(Packet *p, Networ
 		 * The name could be an empty string, if so take the filename. */
 		packet_len += sizeof(c.grfid) + sizeof(c.md5sum) +
 				std::min(strlen(f->GetName()) + 1, (size_t)NETWORK_GRF_NAME_LENGTH);
-		if (packet_len > SEND_MTU - 4) { // 4 is 3 byte header + grf count in reply
+		if (packet_len > UDP_MTU - 4) { // 4 is 3 byte header + grf count in reply
 			break;
 		}
 		in_reply[in_reply_count] = f;
@@ -280,7 +292,7 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_GET_NEWGRFS(Packet *p, Networ
 
 		/* The name could be an empty string, if so take the filename */
 		strecpy(name, in_reply[i]->GetName(), lastof(name));
-		this->SendGRFIdentifier(&packet, &in_reply[i]->ident);
+		SerializeGRFIdentifier(&packet, &in_reply[i]->ident);
 		packet.Send_string(name);
 	}
 
@@ -295,7 +307,6 @@ protected:
 	void Receive_SERVER_RESPONSE(Packet *p, NetworkAddress *client_addr) override;
 	void Receive_MASTER_RESPONSE_LIST(Packet *p, NetworkAddress *client_addr) override;
 	void Receive_SERVER_NEWGRFS(Packet *p, NetworkAddress *client_addr) override;
-	void HandleIncomingNetworkGameInfoGRFConfig(GRFConfig *config) override;
 public:
 	virtual ~ClientNetworkUDPSocketHandler() {}
 };
@@ -312,10 +323,15 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_RESPONSE(Packet *p, NetworkAd
 	/* Find next item */
 	item = NetworkGameListAddItem(*client_addr);
 
+	/* Clear any existing GRFConfig chain. */
 	ClearGRFConfigList(&item->info.grfconfig);
-	this->ReceiveNetworkGameInfo(p, &item->info);
+	/* Retrieve the NetworkGameInfo from the packet. */
+	DeserializeNetworkGameInfo(p, &item->info);
+	/* Check for compatability with the client. */
+	CheckGameCompatibility(item->info);
+	/* Ensure we consider the server online. */
+	item->online = true;
 
-	item->info.compatible = true;
 	{
 		/* Checks whether there needs to be a request for names of GRFs and makes
 		 * the request if necessary. GRFs that need to be requested are the GRFs
@@ -329,7 +345,6 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_RESPONSE(Packet *p, NetworkAd
 		uint in_request_count = 0;
 
 		for (c = item->info.grfconfig; c != nullptr; c = c->next) {
-			if (c->status == GCS_NOT_FOUND) item->info.compatible = false;
 			if (c->status != GCS_NOT_FOUND || strcmp(c->GetName(), UNKNOWN_GRF_NAME_PLACEHOLDER) != 0) continue;
 			in_request[in_request_count] = c;
 			in_request_count++;
@@ -342,26 +357,16 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_RESPONSE(Packet *p, NetworkAd
 
 			packet.Send_uint8(in_request_count);
 			for (i = 0; i < in_request_count; i++) {
-				this->SendGRFIdentifier(&packet, &in_request[i]->ident);
+				SerializeGRFIdentifier(&packet, &in_request[i]->ident);
 			}
 
 			this->SendPacket(&packet, &item->address);
 		}
 	}
 
-	if (item->info.hostname[0] == '\0') {
-		seprintf(item->info.hostname, lastof(item->info.hostname), "%s", client_addr->GetHostname());
-	}
-
 	if (client_addr->GetAddress()->ss_family == AF_INET6) {
 		strecat(item->info.server_name, " (IPv6)", lastof(item->info.server_name));
 	}
-
-	/* Check if we are allowed on this server based on the revision-match */
-	item->info.version_compatible = IsNetworkCompatibleVersion(item->info.server_revision);
-	item->info.compatible &= item->info.version_compatible; // Already contains match for GRFs
-
-	item->online = true;
 
 	UpdateNetworkGameWindow();
 }
@@ -416,7 +421,7 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_NEWGRFS(Packet *p, NetworkAdd
 		char name[NETWORK_GRF_NAME_LENGTH];
 		GRFIdentifier c;
 
-		this->ReceiveGRFIdentifier(p, &c);
+		DeserializeGRFIdentifier(p, &c);
 		p->Recv_string(name, sizeof(name));
 
 		/* An empty name is not possible under normal circumstances
@@ -431,25 +436,6 @@ void ClientNetworkUDPSocketHandler::Receive_SERVER_NEWGRFS(Packet *p, NetworkAdd
 			AddGRFTextToList(unknown_name, name);
 		}
 	}
-}
-
-void ClientNetworkUDPSocketHandler::HandleIncomingNetworkGameInfoGRFConfig(GRFConfig *config)
-{
-	/* Find the matching GRF file */
-	const GRFConfig *f = FindGRFConfig(config->ident.grfid, FGCM_EXACT, config->ident.md5sum);
-	if (f == nullptr) {
-		/* Don't know the GRF, so mark game incompatible and the (possibly)
-		 * already resolved name for this GRF (another server has sent the
-		 * name of the GRF already */
-		config->name = FindUnknownGRFName(config->ident.grfid, config->ident.md5sum, true);
-		config->status = GCS_NOT_FOUND;
-	} else {
-		config->filename = f->filename;
-		config->name = f->name;
-		config->info = f->info;
-		config->url = f->url;
-	}
-	SetBit(config->flags, GCF_COPY);
 }
 
 /** Broadcast to all ips */
@@ -475,7 +461,8 @@ void NetworkUDPQueryMasterServer()
 	p.Send_uint8(NETWORK_MASTER_SERVER_VERSION);
 	p.Send_uint8(SLT_AUTODETECT);
 
-	_udp_client_socket->SendPacket(&p, &out_addr, true);
+	std::lock_guard<std::mutex> lock(_udp_client.mutex);
+	_udp_client.socket->SendPacket(&p, &out_addr, true);
 
 	DEBUG(net, 2, "[udp] master server queried at %s", out_addr.GetAddressAsString().c_str());
 }
@@ -488,7 +475,7 @@ void NetworkUDPSearchGame()
 
 	DEBUG(net, 0, "[udp] searching server");
 
-	NetworkUDPBroadCast(_udp_client_socket);
+	NetworkUDPBroadCast(_udp_client.socket);
 	_network_udp_broadcast = 300; // Stay searching for 300 ticks
 }
 
@@ -508,8 +495,8 @@ static void NetworkUDPRemoveAdvertiseThread()
 	p.Send_uint8 (NETWORK_MASTER_SERVER_VERSION);
 	p.Send_uint16(_settings_client.network.server_port);
 
-	std::lock_guard<std::mutex> lock(_network_udp_mutex);
-	if (_udp_master_socket != nullptr) _udp_master_socket->SendPacket(&p, &out_addr, true);
+	std::lock_guard<std::mutex> lock(_udp_master.mutex);
+	if (_udp_master.socket != nullptr) _udp_master.socket->SendPacket(&p, &out_addr, true);
 }
 
 /**
@@ -560,8 +547,8 @@ static void NetworkUDPAdvertiseThread()
 	p.Send_uint16(_settings_client.network.server_port);
 	p.Send_uint64(_session_key);
 
-	std::lock_guard<std::mutex> lock(_network_udp_mutex);
-	if (_udp_master_socket != nullptr) _udp_master_socket->SendPacket(&p, &out_addr, true);
+	std::lock_guard<std::mutex> lock(_udp_master.mutex);
+	if (_udp_master.socket != nullptr) _udp_master.socket->SendPacket(&p, &out_addr, true);
 }
 
 /**
@@ -603,40 +590,41 @@ void NetworkUDPAdvertise()
 void NetworkUDPInitialize()
 {
 	/* If not closed, then do it. */
-	if (_udp_server_socket != nullptr) NetworkUDPClose();
+	if (_udp_server.socket != nullptr) NetworkUDPClose();
 
 	DEBUG(net, 1, "[udp] initializing listeners");
-	assert(_udp_client_socket == nullptr && _udp_server_socket == nullptr && _udp_master_socket == nullptr);
+	assert(_udp_client.socket == nullptr && _udp_server.socket == nullptr && _udp_master.socket == nullptr);
 
-	std::lock_guard<std::mutex> lock(_network_udp_mutex);
+	std::scoped_lock lock(_udp_client.mutex, _udp_server.mutex, _udp_master.mutex);
 
-	_udp_client_socket = new ClientNetworkUDPSocketHandler();
+	_udp_client.socket = new ClientNetworkUDPSocketHandler();
 
 	NetworkAddressList server;
 	GetBindAddresses(&server, _settings_client.network.server_port);
-	_udp_server_socket = new ServerNetworkUDPSocketHandler(&server);
+	_udp_server.socket = new ServerNetworkUDPSocketHandler(&server);
 
 	server.clear();
 	GetBindAddresses(&server, 0);
-	_udp_master_socket = new MasterNetworkUDPSocketHandler(&server);
+	_udp_master.socket = new MasterNetworkUDPSocketHandler(&server);
 
 	_network_udp_server = false;
 	_network_udp_broadcast = 0;
+	_network_advertise_retries = 0;
+}
+
+/** Start the listening of the UDP server component. */
+void NetworkUDPServerListen()
+{
+	std::lock_guard<std::mutex> lock(_udp_server.mutex);
+	_network_udp_server = _udp_server.socket->Listen();
 }
 
 /** Close all UDP related stuff. */
 void NetworkUDPClose()
 {
-	std::lock_guard<std::mutex> lock(_network_udp_mutex);
-	_udp_server_socket->Close();
-	_udp_master_socket->Close();
-	_udp_client_socket->Close();
-	delete _udp_client_socket;
-	delete _udp_server_socket;
-	delete _udp_master_socket;
-	_udp_client_socket = nullptr;
-	_udp_server_socket = nullptr;
-	_udp_master_socket = nullptr;
+	_udp_client.Close();
+	_udp_server.Close();
+	_udp_master.Close();
 
 	_network_udp_server = false;
 	_network_udp_broadcast = 0;
@@ -646,13 +634,11 @@ void NetworkUDPClose()
 /** Receive the UDP packets. */
 void NetworkBackgroundUDPLoop()
 {
-	std::lock_guard<std::mutex> lock(_network_udp_mutex);
-
 	if (_network_udp_server) {
-		_udp_server_socket->ReceivePackets();
-		_udp_master_socket->ReceivePackets();
+		_udp_server.ReceivePackets();
+		_udp_master.ReceivePackets();
 	} else {
-		_udp_client_socket->ReceivePackets();
+		_udp_client.ReceivePackets();
 		if (_network_udp_broadcast > 0) _network_udp_broadcast--;
 	}
 }

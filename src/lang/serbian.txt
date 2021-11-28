@@ -1201,6 +1201,7 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Hardvers
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Označavanje ove opcije čini da OpenTTD pokuša da koristi hardversko ubrzanje. Promena ovog podešavanja će imati efekta tek nakon ponvnog pokretanja igre
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Podešavanje će imati efekta tek nakon ponovnog pokretanja igre
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Veličina interfejsa
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Izaberite većinu elementa koja će se koristiti
 
@@ -2179,6 +2180,7 @@ STR_FACE_TIE                                                    :Kravata:
 STR_FACE_EARRING                                                :Minđuše:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Promena kravate ili minđuša
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Mrežna partija
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Ime igrača:
@@ -2241,10 +2243,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Naziv pa
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Postavi lozinku
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Ukoliko ne želite da bude javno dostupna zaštitite Vašu partiju lozinkom
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK} Sa reklamama
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Odaberite između igre s oglasima (internet) i bez oglasa (Local Area Network, LAN)
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Ne
-STR_NETWORK_START_SERVER_ADVERTISED                             :Da
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} igrač{P "" a a}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Najviše igrača:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Odaberite koliko najviše može da ima igrača. Nemoraju sva mesta da budu popunjena
@@ -2258,46 +2256,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Govorni 
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Drugi igrači će znati sa kojim jezikom se razgovara na serveru
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Unos naziva mrežne partije
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Bilo koji
-STR_NETWORK_LANG_ENGLISH                                        :Engleski
-STR_NETWORK_LANG_GERMAN                                         :Nemački
-STR_NETWORK_LANG_FRENCH                                         :Francuski
-STR_NETWORK_LANG_BRAZILIAN                                      :Brazilski
-STR_NETWORK_LANG_BULGARIAN                                      :Bugarski
-STR_NETWORK_LANG_CHINESE                                        :Kineski
-STR_NETWORK_LANG_CZECH                                          :Češki
-STR_NETWORK_LANG_DANISH                                         :Danski
-STR_NETWORK_LANG_DUTCH                                          :Holandski
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finski
-STR_NETWORK_LANG_HUNGARIAN                                      :Mađarski
-STR_NETWORK_LANG_ICELANDIC                                      :Islandski
-STR_NETWORK_LANG_ITALIAN                                        :Italijanski
-STR_NETWORK_LANG_JAPANESE                                       :Japanski
-STR_NETWORK_LANG_KOREAN                                         :Koreanski
-STR_NETWORK_LANG_LITHUANIAN                                     :Litvanski
-STR_NETWORK_LANG_NORWEGIAN                                      :Norveški
-STR_NETWORK_LANG_POLISH                                         :Poljski
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugalski
-STR_NETWORK_LANG_ROMANIAN                                       :Rumunski
-STR_NETWORK_LANG_RUSSIAN                                        :Ruski
-STR_NETWORK_LANG_SLOVAK                                         :Slovački
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovenački
-STR_NETWORK_LANG_SPANISH                                        :Španski
-STR_NETWORK_LANG_SWEDISH                                        :Švedski
-STR_NETWORK_LANG_TURKISH                                        :Turski
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukrajinski
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikans
-STR_NETWORK_LANG_CROATIAN                                       :Hrvatski
-STR_NETWORK_LANG_CATALAN                                        :Katalonski
-STR_NETWORK_LANG_ESTONIAN                                       :Estonski
-STR_NETWORK_LANG_GALICIAN                                       :Galicijski
-STR_NETWORK_LANG_GREEK                                          :Grčki
-STR_NETWORK_LANG_LATVIAN                                        :Letonski
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Predvorje partije sa više igrača
@@ -2346,19 +2304,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Isključ
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Server je zaštićen. Unesite lozinku
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Preduzeće je zaštićeno. Unesite lozinku
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Spisak klijenata
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Spisak klijenata
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Praćenje
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Novo preduzeće
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Izbaci
-STR_NETWORK_CLIENTLIST_BAN                                      :Zabrani pristup
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Razgovaraj sa svima
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Razgovaraj sa ekipom
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privatna poruka
+
+
 
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Igrač

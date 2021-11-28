@@ -993,6 +993,7 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :diğer
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Arayüz boyutu
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Kullanmak üzere arayüz bileşen boyutunu seçin
 
@@ -1927,6 +1928,7 @@ STR_FACE_TIE                                                    :Kravat:
 STR_FACE_EARRING                                                :Küpe:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Kravatı veya küpeyi değiştir
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Çok Oyunculu
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Oyuncu adı:
@@ -1985,10 +1987,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Bu oyun 
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Parola koy
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Erişimi kısıtlamak için oyuna parola koy
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Duyurulan
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Duyurulan (internet) ve duyurulmayan (yerel ağ, LAN) oyun türlerinden birini seçin
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Hayır
-STR_NETWORK_START_SERVER_ADVERTISED                             :Evet
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} istemci
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Azami istemci sayısı:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}İzin verilen en fazla oyuncu sayısını seç. Her yerin dolması gerekmez
@@ -2002,46 +2000,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Konuşul
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Diğer oyuncular sunucuda hangi dilin konuşulacağını bilecek
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Ağ oyunu için bir isim girin
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Farketmez
-STR_NETWORK_LANG_ENGLISH                                        :İngilizce
-STR_NETWORK_LANG_GERMAN                                         :Almanca
-STR_NETWORK_LANG_FRENCH                                         :Fransızca
-STR_NETWORK_LANG_BRAZILIAN                                      :Brezilyaca
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgarca
-STR_NETWORK_LANG_CHINESE                                        :Çince
-STR_NETWORK_LANG_CZECH                                          :Çekce
-STR_NETWORK_LANG_DANISH                                         :Danimarkaca
-STR_NETWORK_LANG_DUTCH                                          :Hollandaca
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Fince
-STR_NETWORK_LANG_HUNGARIAN                                      :Bulgarca
-STR_NETWORK_LANG_ICELANDIC                                      :İzlandaca
-STR_NETWORK_LANG_ITALIAN                                        :İtalyanca
-STR_NETWORK_LANG_JAPANESE                                       :Japonca
-STR_NETWORK_LANG_KOREAN                                         :Korece
-STR_NETWORK_LANG_LITHUANIAN                                     :Litvanyaca
-STR_NETWORK_LANG_NORWEGIAN                                      :Norveççe
-STR_NETWORK_LANG_POLISH                                         :Lehçe
-STR_NETWORK_LANG_PORTUGUESE                                     :Portekizce
-STR_NETWORK_LANG_ROMANIAN                                       :Romanca
-STR_NETWORK_LANG_RUSSIAN                                        :Rusça
-STR_NETWORK_LANG_SLOVAK                                         :Slovakça
-STR_NETWORK_LANG_SLOVENIAN                                      :Slovence
-STR_NETWORK_LANG_SPANISH                                        :İspanyolca
-STR_NETWORK_LANG_SWEDISH                                        :İsveççe
-STR_NETWORK_LANG_TURKISH                                        :Türkçe
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukraynaca
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikaanca
-STR_NETWORK_LANG_CROATIAN                                       :Hırvatça
-STR_NETWORK_LANG_CATALAN                                        :Katalanca
-STR_NETWORK_LANG_ESTONIAN                                       :Estonyaca
-STR_NETWORK_LANG_GALICIAN                                       :Galiçyaca
-STR_NETWORK_LANG_GREEK                                          :Yunanca
-STR_NETWORK_LANG_LATVIAN                                        :Letonca
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Çok oyunculu oyun lobisi
@@ -2090,19 +2048,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Bağlant
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Sunucu korumalı. Parola girin
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Şirket korumalı. Parola girin
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}İstemci listesi
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Oyuncu listesi
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Gözlemle
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Yeni şirket
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :At
-STR_NETWORK_CLIENTLIST_BAN                                      :Yasakla
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Herkesle konuş
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Şirketle konuş
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Özel mesaj
+
+
 
 STR_NETWORK_SERVER                                              :Sunucu
 STR_NETWORK_CLIENT                                              :İstemci

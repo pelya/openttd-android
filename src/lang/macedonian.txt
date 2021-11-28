@@ -804,6 +804,7 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH                :Секој ме
 
 
 
+
 # Custom currency window
 
 
@@ -959,6 +960,7 @@ STR_ABANDON_GAME_QUERY                                          :{YELLOW}Дал�
 # Face selection window
 
 
+
 # Network server list
 
 STR_NETWORK_SERVER_LIST_GENERAL_ONLINE                          :{BLACK}{COMMA}/{COMMA} - {COMMA}/{COMMA}
@@ -973,10 +975,6 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 
 
 
-
-# Network game languages
-############ Leave those lines in this order!!
-############ End of leave-in-this-order
 
 # Network game lobby
 
@@ -995,6 +993,8 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 # Network company list added strings
 
 # Network client list
+
+
 
 
 # Network set password

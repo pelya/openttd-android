@@ -1063,6 +1063,7 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Riistvar
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Märkides selle ruudu, lubad OpenTTD-l üritada kasutada riistvarakiirendust. Muudetud seade omab mõju pärast mängu taaskäivitust
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Seade omab mõju alles pärast mängu taaskäivitust
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Liidese suurus
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Vali kasutatav liideseelementide suurus
 
@@ -2041,6 +2042,7 @@ STR_FACE_TIE                                                    :Lips:
 STR_FACE_EARRING                                                :Kõrvarõngas:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Vaheta kraed või kõrvarõngast
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Mitmikmäng
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Mängija nimi:
@@ -2103,10 +2105,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Serveril
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Määra salasõna
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Et server ei oleks avalik, kaitse oma mäng salasõnaga
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Reklaami
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Valib reklaamitava (internet) või mittereklaamitava (kohtvõrk, LAN) mängu
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Ei
-STR_NETWORK_START_SERVER_ADVERTISED                             :Jah
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} klient{P "" i}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Kliente kuni:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS.in                   :sees
@@ -2121,46 +2119,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Suhtlusk
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Teavitab teisi mängijaid, mis keeles serveris rääkida
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Sisesta mitmikmängu nimi
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Suvaline
-STR_NETWORK_LANG_ENGLISH                                        :Inglise keel
-STR_NETWORK_LANG_GERMAN                                         :Saksa keel
-STR_NETWORK_LANG_FRENCH                                         :Prantsuse keel
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasiilia
-STR_NETWORK_LANG_BULGARIAN                                      :Bulgaaria
-STR_NETWORK_LANG_CHINESE                                        :Hiina
-STR_NETWORK_LANG_CZECH                                          :Tšehhi
-STR_NETWORK_LANG_DANISH                                         :Taani
-STR_NETWORK_LANG_DUTCH                                          :Hollandi
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Soome
-STR_NETWORK_LANG_HUNGARIAN                                      :Ungari
-STR_NETWORK_LANG_ICELANDIC                                      :Islandi
-STR_NETWORK_LANG_ITALIAN                                        :Itaalia
-STR_NETWORK_LANG_JAPANESE                                       :Jaapani
-STR_NETWORK_LANG_KOREAN                                         :Korea
-STR_NETWORK_LANG_LITHUANIAN                                     :Leedu
-STR_NETWORK_LANG_NORWEGIAN                                      :Norra
-STR_NETWORK_LANG_POLISH                                         :Poola
-STR_NETWORK_LANG_PORTUGUESE                                     :Portugali
-STR_NETWORK_LANG_ROMANIAN                                       :Rumeenia
-STR_NETWORK_LANG_RUSSIAN                                        :Vene
-STR_NETWORK_LANG_SLOVAK                                         :Slovakkia
-STR_NETWORK_LANG_SLOVENIAN                                      :Sloveenia
-STR_NETWORK_LANG_SPANISH                                        :Hispaania
-STR_NETWORK_LANG_SWEDISH                                        :Rootsi
-STR_NETWORK_LANG_TURKISH                                        :Türgi
-STR_NETWORK_LANG_UKRAINIAN                                      :Ukraina
-STR_NETWORK_LANG_AFRIKAANS                                      :Afrikaani
-STR_NETWORK_LANG_CROATIAN                                       :Horvaadi
-STR_NETWORK_LANG_CATALAN                                        :Katalaani
-STR_NETWORK_LANG_ESTONIAN                                       :Eesti
-STR_NETWORK_LANG_GALICIAN                                       :Galeegi
-STR_NETWORK_LANG_GREEK                                          :Kreeka
-STR_NETWORK_LANG_LATVIAN                                        :Läti
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Mitmikmängu jututuba
@@ -2209,19 +2167,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Katkesta
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Server on kaitstud. Sisesta salasõna
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Ettevõte on kaitstud. Sisesta salasõna
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Klientide nimekiri
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Klientide nimekiri
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Jälgi
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Uus ettevõte
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Viska välja
-STR_NETWORK_CLIENTLIST_BAN                                      :Bänn
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Räägi kõigiga
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Räägi ettevõttega
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privaatne sõnum
+
+
 
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Klient
@@ -2589,7 +2541,7 @@ STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Ehita la
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Paigalda poi, mis on kasutatav teemärgisena. Shift valib ehitamise/hinna kuvamise režiimi
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Ehita veesild. Shift valib ehitamise/hinna kuvamise režiimi
 STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Määratle veealad.{}Ehita kanal. Veekõrgusel Ctrl-klahvi all hoidmine ujutab ümbruskonna üle
-STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Jõgede paigutamine
+STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Jõgede paigutamine. Ctrl valib ala põiki
 
 # Ship depot construction window
 STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Laevaremonditehase suund

@@ -946,6 +946,7 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :annað
 
 
 
+
 STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Grunngrafík
 STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Nota grunngrafíkina
 STR_GAME_OPTIONS_BASE_GRF_STATUS                                :{RED}{NUM} týnd{P "" ar} eða ónýt{P "" ar} skrá{P "" r}
@@ -1733,6 +1734,7 @@ STR_FACE_TIE                                                    :Bindi:
 STR_FACE_EARRING                                                :Eyrnalokkur:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Breyta bindi eða eyrnalokk
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Fjölspilun
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nafn leikmanns:
@@ -1805,46 +1807,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Aðrir n
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Sláðu inn nafn netleiksins
 
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Hvað sem er
-STR_NETWORK_LANG_ENGLISH                                        :Enska
-STR_NETWORK_LANG_GERMAN                                         :Þýska
-STR_NETWORK_LANG_FRENCH                                         :Franska
-STR_NETWORK_LANG_BRAZILIAN                                      :Brasilíska
-STR_NETWORK_LANG_BULGARIAN                                      :Búlgarska
-STR_NETWORK_LANG_CHINESE                                        :Kínverska
-STR_NETWORK_LANG_CZECH                                          :Tékkneska
-STR_NETWORK_LANG_DANISH                                         :Danska
-STR_NETWORK_LANG_DUTCH                                          :Hollenska
-STR_NETWORK_LANG_ESPERANTO                                      :Esperanto
-STR_NETWORK_LANG_FINNISH                                        :Finnska
-STR_NETWORK_LANG_HUNGARIAN                                      :Ungverska
-STR_NETWORK_LANG_ICELANDIC                                      :Íslenska
-STR_NETWORK_LANG_ITALIAN                                        :Ítalska
-STR_NETWORK_LANG_JAPANESE                                       :Japanska
-STR_NETWORK_LANG_KOREAN                                         :Kóreiska
-STR_NETWORK_LANG_LITHUANIAN                                     :Litháenska
-STR_NETWORK_LANG_NORWEGIAN                                      :Norska
-STR_NETWORK_LANG_POLISH                                         :Pólska
-STR_NETWORK_LANG_PORTUGUESE                                     :Portúgalska
-STR_NETWORK_LANG_ROMANIAN                                       :Rómanska
-STR_NETWORK_LANG_RUSSIAN                                        :Rússneska
-STR_NETWORK_LANG_SLOVAK                                         :Slóvakíska
-STR_NETWORK_LANG_SLOVENIAN                                      :Slóveska
-STR_NETWORK_LANG_SPANISH                                        :Spænska
-STR_NETWORK_LANG_SWEDISH                                        :Sænska
-STR_NETWORK_LANG_TURKISH                                        :Tyrkneska
-STR_NETWORK_LANG_UKRAINIAN                                      :Úkraínska
-STR_NETWORK_LANG_AFRIKAANS                                      :Afríkanska
-STR_NETWORK_LANG_CROATIAN                                       :Króatíska
-STR_NETWORK_LANG_CATALAN                                        :Katalónska
-STR_NETWORK_LANG_ESTONIAN                                       :Eistneska
-STR_NETWORK_LANG_GALICIAN                                       :Gelíska
-STR_NETWORK_LANG_GREEK                                          :Gríska
-STR_NETWORK_LANG_LATVIAN                                        :Lettneska
-############ End of leave-in-this-order
-
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Anddyri fjölspilunarleiks
 
@@ -1895,15 +1857,10 @@ STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Fyrirtæ
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Listi yfir leikmenn
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Fylgjast með
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Nýtt fyrirtæki
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Sparka
-STR_NETWORK_CLIENTLIST_BAN                                      :Banna
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Tala við alla
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Tala við fyrirtæki
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Einkaskilaboð
+
+
 
 STR_NETWORK_SERVER                                              :Þjónn
 STR_NETWORK_CLIENT                                              :Notandi

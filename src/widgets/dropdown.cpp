@@ -72,13 +72,7 @@ StringID DropDownListCharStringItem::String() const
 DropDownListIconItem::DropDownListIconItem(SpriteID sprite, PaletteID pal, StringID string, int result, bool masked) : DropDownListParamStringItem(string, result, masked), sprite(sprite), pal(pal)
 {
 	this->dim = GetSpriteSize(sprite);
-	if (this->dim.height < (uint)FONT_HEIGHT_NORMAL) {
-		this->sprite_y = (FONT_HEIGHT_NORMAL - dim.height) / 2;
-		this->text_y = 0;
-	} else {
-		this->sprite_y = 0;
-		this->text_y = (dim.height - FONT_HEIGHT_NORMAL) / 2;
-	}
+	this->sprite_y = dim.height;
 }
 
 uint DropDownListIconItem::Height(uint width) const
@@ -94,8 +88,8 @@ uint DropDownListIconItem::Width() const
 void DropDownListIconItem::Draw(int left, int right, int top, int bottom, bool sel, Colours bg_colour) const
 {
 	bool rtl = _current_text_dir == TD_RTL;
-	DrawSprite(this->sprite, this->pal, rtl ? right - this->dim.width - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT, Center(top, bottom - top, this->dim.height));
-	DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : (this->dim.width + WD_FRAMERECT_LEFT)), right - WD_FRAMERECT_RIGHT - (rtl ? (this->dim.width + WD_FRAMERECT_RIGHT) : 0), Center(top, bottom - top), this->String(), sel ? TC_WHITE : TC_BLACK);
+	DrawSprite(this->sprite, this->pal, rtl ? right - this->dim.width - WD_FRAMERECT_RIGHT : left + WD_FRAMERECT_LEFT, CenterBounds(top, bottom, this->sprite_y));
+	DrawString(left + WD_FRAMERECT_LEFT + (rtl ? 0 : (this->dim.width + WD_FRAMERECT_LEFT)), right - WD_FRAMERECT_RIGHT - (rtl ? (this->dim.width + WD_FRAMERECT_RIGHT) : 0), CenterBounds(top, bottom, FONT_HEIGHT_NORMAL), this->String(), sel ? TC_WHITE : TC_BLACK);
 }
 
 void DropDownListIconItem::SetDimension(Dimension d)
@@ -162,7 +156,7 @@ struct DropdownWindow : Window {
 
 		uint items_width = size.width - (scroll ? NWidgetScrollbar::GetVerticalDimension().width : 0);
 		NWidgetCore *nwi = this->GetWidget<NWidgetCore>(WID_DM_ITEMS);
-		nwi->SetMinimalSize(items_width, size.height + 4);
+		nwi->SetMinimalSizeAbsolute(items_width, size.height + 4);
 		nwi->colour = wi_colour;
 
 		nwi = this->GetWidget<NWidgetCore>(WID_DM_SCROLL);
@@ -564,8 +558,7 @@ void ShowDropDownMenu(Window *w, const StringID *strings, int selected, int butt
  */
 int HideDropDownMenu(Window *pw)
 {
-	Window *w;
-	FOR_ALL_WINDOWS_FROM_BACK(w) {
+	for (Window *w : Window::IterateFromBack()) {
 		if (w->window_class != WC_DROPDOWN_MENU) continue;
 
 		DropdownWindow *dw = dynamic_cast<DropdownWindow*>(w);

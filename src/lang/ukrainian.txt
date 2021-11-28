@@ -1134,6 +1134,7 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Прис
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Увімкнутий прапорець дозволить використання грою прискорення апаратного забезпечення. Налаштування запрацює тільки після перезапуску гри
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Налаштування запрацює тільки після перезапуску гри
 
+
 STR_GAME_OPTIONS_GUI_ZOOM_FRAME                                 :{BLACK}Розмір інтерфейсу
 STR_GAME_OPTIONS_GUI_ZOOM_DROPDOWN_TOOLTIP                      :{BLACK}Оберіть розмір елементів інтерфейсу
 
@@ -2112,6 +2113,7 @@ STR_FACE_TIE                                                    :Краватк�
 STR_FACE_EARRING                                                :Сережки:
 STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Змінити комір або сережки
 
+
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Мережева гра
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Ім'я гравця:
@@ -2174,10 +2176,6 @@ STR_NETWORK_START_SERVER_NEW_GAME_NAME_TOOLTIP                  :{BLACK}Назв
 STR_NETWORK_START_SERVER_SET_PASSWORD                           :{BLACK}Встановити пароль
 STR_NETWORK_START_SERVER_PASSWORD_TOOLTIP                       :{BLACK}Захистіть вашу гру паролем, якщо не бажаєте загального доступу
 
-STR_NETWORK_START_SERVER_ADVERTISED_LABEL                       :{BLACK}Інтернет
-STR_NETWORK_START_SERVER_ADVERTISED_TOOLTIP                     :{BLACK}Вибір між рекламованою (інтернет) і не рекламованою (локальна мережа, LAN) грою
-STR_NETWORK_START_SERVER_UNADVERTISED                           :Ні
-STR_NETWORK_START_SERVER_ADVERTISED                             :Так
 STR_NETWORK_START_SERVER_CLIENTS_SELECT                         :{BLACK}{NUM} клієнт{P "" а ів}
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS                      :{BLACK}Макс. клієнтів:
 STR_NETWORK_START_SERVER_NUMBER_OF_CLIENTS_TOOLTIP              :{BLACK}Виберіть максимальну кількість клієнтів. Не всі слоти мають бути зайняті
@@ -2191,46 +2189,6 @@ STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Мова
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Інші гравці будуть знати якою мовою спілкуються на сервері
 
 STR_NETWORK_START_SERVER_NEW_GAME_NAME_OSKTITLE                 :{BLACK}Введіть назву мережевої гри
-
-# Network game languages
-############ Leave those lines in this order!!
-STR_NETWORK_LANG_ANY                                            :Будь-яка
-STR_NETWORK_LANG_ENGLISH                                        :Англійська
-STR_NETWORK_LANG_GERMAN                                         :Німецька
-STR_NETWORK_LANG_FRENCH                                         :Французька
-STR_NETWORK_LANG_BRAZILIAN                                      :Бразильська
-STR_NETWORK_LANG_BULGARIAN                                      :Болгарська
-STR_NETWORK_LANG_CHINESE                                        :Китайська
-STR_NETWORK_LANG_CZECH                                          :Чеська
-STR_NETWORK_LANG_DANISH                                         :Данська
-STR_NETWORK_LANG_DUTCH                                          :Нідерландська
-STR_NETWORK_LANG_ESPERANTO                                      :Есперанто
-STR_NETWORK_LANG_FINNISH                                        :Фінська
-STR_NETWORK_LANG_HUNGARIAN                                      :Угорська
-STR_NETWORK_LANG_ICELANDIC                                      :Ісландська
-STR_NETWORK_LANG_ITALIAN                                        :Італійська
-STR_NETWORK_LANG_JAPANESE                                       :Японська
-STR_NETWORK_LANG_KOREAN                                         :Корейська
-STR_NETWORK_LANG_LITHUANIAN                                     :Литовська
-STR_NETWORK_LANG_NORWEGIAN                                      :Норвезька
-STR_NETWORK_LANG_POLISH                                         :Польська
-STR_NETWORK_LANG_PORTUGUESE                                     :Португальська
-STR_NETWORK_LANG_ROMANIAN                                       :Румунська
-STR_NETWORK_LANG_RUSSIAN                                        :Російська
-STR_NETWORK_LANG_SLOVAK                                         :Словацька
-STR_NETWORK_LANG_SLOVENIAN                                      :Словенська
-STR_NETWORK_LANG_SPANISH                                        :Іспанська
-STR_NETWORK_LANG_SWEDISH                                        :Шведська
-STR_NETWORK_LANG_TURKISH                                        :Турецька
-STR_NETWORK_LANG_UKRAINIAN                                      :Українська
-STR_NETWORK_LANG_AFRIKAANS                                      :Афрікаанс
-STR_NETWORK_LANG_CROATIAN                                       :Хорватська
-STR_NETWORK_LANG_CATALAN                                        :Каталонська
-STR_NETWORK_LANG_ESTONIAN                                       :Естонська
-STR_NETWORK_LANG_GALICIAN                                       :Галісійська
-STR_NETWORK_LANG_GREEK                                          :Грецька
-STR_NETWORK_LANG_LATVIAN                                        :Латвійська
-############ End of leave-in-this-order
 
 # Network game lobby
 STR_NETWORK_GAME_LOBBY_CAPTION                                  :{WHITE}Мережева гра - кімната
@@ -2279,19 +2237,13 @@ STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Роз'�
 
 STR_NETWORK_NEED_GAME_PASSWORD_CAPTION                          :{WHITE}Сервер захищено паролем. Введіть пароль
 STR_NETWORK_NEED_COMPANY_PASSWORD_CAPTION                       :{WHITE}Компанія захищена паролем. Введіть пароль
-STR_NETWORK_COMPANY_LIST_CLIENT_LIST_CAPTION                    :{WHITE}Список клієнтів
 
 # Network company list added strings
 STR_NETWORK_COMPANY_LIST_CLIENT_LIST                            :Список клієнтів
-STR_NETWORK_COMPANY_LIST_SPECTATE                               :Спостерігати
-STR_NETWORK_COMPANY_LIST_NEW_COMPANY                            :Нова компанія
 
 # Network client list
-STR_NETWORK_CLIENTLIST_KICK                                     :Відключити гравця
-STR_NETWORK_CLIENTLIST_BAN                                      :Бан
-STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL                             :Повідомлення всім
-STR_NETWORK_CLIENTLIST_SPEAK_TO_COMPANY                         :Повідомлення компанії
-STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Приватне повідомлення
+
+
 
 STR_NETWORK_SERVER                                              :Сервер
 STR_NETWORK_CLIENT                                              :Клієнт
