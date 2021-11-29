@@ -291,11 +291,12 @@ struct DepotWindow : Window {
 		OrderBackup::Reset();
 	}
 
-	~DepotWindow()
+	void Close() override
 	{
-		DeleteWindowById(WC_BUILD_VEHICLE, this->window_number);
-		DeleteWindowById(GetWindowClassForVehicleType(this->type), VehicleListIdentifier(VL_DEPOT_LIST, this->type, this->owner, this->GetDepotIndex()).Pack(), false);
+		CloseWindowById(WC_BUILD_VEHICLE, this->window_number);
+		CloseWindowById(GetWindowClassForVehicleType(this->type), VehicleListIdentifier(VL_DEPOT_LIST, this->type, this->owner, this->GetDepotIndex()).Pack(), false);
 		OrderBackup::Reset(this->window_number);
+		this->Window::Close();
 	}
 
 	/**
@@ -397,11 +398,11 @@ struct DepotWindow : Window {
 
 		uint16 rows_in_display = wid->current_y / wid->resize_y;
 
-		uint16 num = this->vscroll->GetPosition() * this->num_columns;
+		uint num = this->vscroll->GetPosition() * this->num_columns;
 		uint maxval = static_cast<uint>(std::min<size_t>(this->vehicle_list.size(), num + (rows_in_display * this->num_columns)));
 		int y;
-		for (y = r.top; num < maxval; y += this->resize.step_height) { // Draw the rows
-			for (byte i = 0; i < this->num_columns && num < maxval; i++, num++) {
+		for (y = r.top + 1; num < maxval; y += this->resize.step_height) { // Draw the rows
+			for (uint i = 0; i < this->num_columns && num < maxval; i++, num++) {
 				/* Draw all vehicles in the current row */
 				const Vehicle *v = this->vehicle_list[num];
 				if (this->num_columns == 1) {
@@ -1048,7 +1049,7 @@ struct DepotWindow : Window {
 			this->RaiseWidget(WID_D_SELL);
 			this->SetWidgetDirty(WID_D_SELL);
 		}
-		if (this->nested_array[WID_D_SELL] != nullptr && !this->IsWidgetDisabled(WID_D_SELL_CHAIN)) {
+		if (this->GetWidget<NWidgetBase>(WID_D_SELL) != nullptr && !this->IsWidgetDisabled(WID_D_SELL_CHAIN)) {
 			this->RaiseWidget(WID_D_SELL_CHAIN);
 			this->SetWidgetDirty(WID_D_SELL_CHAIN);
 		}

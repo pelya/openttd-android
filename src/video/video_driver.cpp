@@ -87,7 +87,7 @@ void VideoDriver::StartGameThread()
 		this->is_game_threaded = StartNewThread(&this->game_thread, "ottd:game", &VideoDriver::GameThreadThunk, this);
 	}
 
-	DEBUG(driver, 1, "using %sthread for game-loop", this->is_game_threaded ? "" : "no ");
+	Debug(driver, 1, "using {}thread for game-loop", this->is_game_threaded ? "" : "no ");
 }
 
 void VideoDriver::StopGameThread()
@@ -123,21 +123,6 @@ void VideoDriver::Tick()
 		/* Avoid next_draw_tick getting behind more and more if it cannot keep up. */
 		if (this->next_draw_tick < now - ALLOWED_DRIFT * this->GetDrawInterval()) this->next_draw_tick = now;
 
-		/* Keep the interactive randomizer a bit more random by requesting
-		 * new values when-ever we can. */
-		InteractiveRandom();
-
-		this->InputLoop();
-
-		/* Check if the fast-forward button is still pressed. */
-		if (fast_forward_key_pressed && !_networking && _game_mode != GM_MENU) {
-			ChangeGameSpeed(true);
-			this->fast_forward_via_key = true;
-		} else if (this->fast_forward_via_key) {
-			ChangeGameSpeed(false);
-			this->fast_forward_via_key = false;
-		}
-
 		/* Locking video buffer can block (especially with vsync enabled), do it before taking game state lock. */
 		this->LockVideoBuffer();
 
@@ -146,9 +131,24 @@ void VideoDriver::Tick()
 			std::lock_guard<std::mutex> lock_wait(this->game_thread_wait_mutex);
 			std::lock_guard<std::mutex> lock_state(this->game_state_mutex);
 
+			/* Keep the interactive randomizer a bit more random by requesting
+			 * new values when-ever we can. */
+			InteractiveRandom();
+
 			this->DrainCommandQueue();
 
 			while (this->PollEvent()) {}
+			this->InputLoop();
+
+			/* Check if the fast-forward button is still pressed. */
+			if (fast_forward_key_pressed && !_networking && _game_mode != GM_MENU) {
+				ChangeGameSpeed(true);
+				this->fast_forward_via_key = true;
+			} else if (this->fast_forward_via_key) {
+				ChangeGameSpeed(false);
+				this->fast_forward_via_key = false;
+			}
+
 			::InputLoop();
 
 			/* Prevent drawing when switching mode, as windows can be removed when they should still appear. */

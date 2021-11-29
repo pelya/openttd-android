@@ -211,14 +211,14 @@ struct TimetableWindow : Window {
 
 	int GetOrderFromTimetableWndPt(int y, const Vehicle *v)
 	{
-		int line_height = this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->resize_y;
-		int sel = (y - this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->pos_y - WD_FRAMERECT_TOP) / line_height;
+		uint line_height = this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->resize_y;
+		uint sel = (y - this->GetWidget<NWidgetBase>(WID_VT_TIMETABLE_PANEL)->pos_y - WD_FRAMERECT_TOP) / line_height;
 
-		if ((uint)sel >= this->vscroll->GetCapacity()) return INVALID_ORDER;
+		if (sel >= this->vscroll->GetCapacity()) return INVALID_ORDER;
 
 		sel += this->vscroll->GetPosition();
 
-		return (sel < v->GetNumOrders() * 2 && sel >= 0) ? sel : INVALID_ORDER;
+		return (sel < v->GetNumOrders() * 2u) ? sel : INVALID_ORDER;
 	}
 
 	/**
@@ -238,7 +238,7 @@ struct TimetableWindow : Window {
 				/* Removed / replaced all orders (after deleting / sharing) */
 				if (this->sel_index == -1) break;
 
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				this->sel_index = -1;
 				break;
 
@@ -277,7 +277,7 @@ struct TimetableWindow : Window {
 					/* Now we are modifying the selected order */
 					if (to == INVALID_VEH_ORDER_ID) {
 						/* Deleting selected order */
-						this->DeleteChildWindows();
+						this->CloseChildWindows();
 						this->sel_index = -1;
 						break;
 					} else {
@@ -526,7 +526,7 @@ struct TimetableWindow : Window {
 			case WID_VT_TIMETABLE_PANEL: { // Main panel.
 				int selected = GetOrderFromTimetableWndPt(pt.y, v);
 
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				this->sel_index = (selected == INVALID_ORDER || selected == this->sel_index) ? -1 : selected;
 				break;
 			}
@@ -710,7 +710,7 @@ static WindowDesc _timetable_desc(
  */
 void ShowTimetableWindow(const Vehicle *v)
 {
-	DeleteWindowById(WC_VEHICLE_DETAILS, v->index, false);
-	DeleteWindowById(WC_VEHICLE_ORDERS, v->index, false);
+	CloseWindowById(WC_VEHICLE_DETAILS, v->index, false);
+	CloseWindowById(WC_VEHICLE_ORDERS, v->index, false);
 	AllocateWindowDescFront<TimetableWindow>(&_timetable_desc, v->index);
 }

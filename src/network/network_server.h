@@ -25,7 +25,6 @@ class ServerNetworkGameSocketHandler : public NetworkClientSocketPool::PoolItem<
 protected:
 	NetworkRecvStatus Receive_CLIENT_JOIN(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_GAME_INFO(Packet *p) override;
-	NetworkRecvStatus Receive_CLIENT_COMPANY_INFO(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_GAME_PASSWORD(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_COMPANY_PASSWORD(Packet *p) override;
 	NetworkRecvStatus Receive_CLIENT_GETMAP(Packet *p) override;
@@ -42,7 +41,6 @@ protected:
 	NetworkRecvStatus Receive_CLIENT_MOVE(Packet *p) override;
 
 	NetworkRecvStatus SendGameInfo();
-	NetworkRecvStatus SendCompanyInfo();
 	NetworkRecvStatus SendNewGRFCheck();
 	NetworkRecvStatus SendWelcome();
 	NetworkRecvStatus SendNeedGamePassword();
@@ -72,14 +70,14 @@ public:
 	size_t receive_limit;        ///< Amount of bytes that we can receive at this moment
 
 	struct PacketWriter *savegame; ///< Writer used to write the savegame.
-	NetworkAddress client_address; ///< IP-address of the client (so he can be banned)
+	NetworkAddress client_address; ///< IP-address of the client (so they can be banned)
 
 	ServerNetworkGameSocketHandler(SOCKET s);
 	~ServerNetworkGameSocketHandler();
 
 	virtual Packet *ReceivePacket() override;
 	NetworkRecvStatus CloseConnection(NetworkRecvStatus status) override;
-	void GetClientName(char *client_name, const char *last) const;
+	std::string GetClientName() const;
 
 	void CheckNextClientToSendMap(NetworkClientSocket *ignore_cs = nullptr);
 
@@ -89,12 +87,13 @@ public:
 	NetworkRecvStatus SendQuit(ClientID client_id);
 	NetworkRecvStatus SendShutdown();
 	NetworkRecvStatus SendNewGame();
-	NetworkRecvStatus SendRConResult(uint16 colour, const char *command);
+	NetworkRecvStatus SendRConResult(uint16 colour, const std::string &command);
 	NetworkRecvStatus SendMove(ClientID client_id, CompanyID company_id);
 
 	NetworkRecvStatus SendClientInfo(NetworkClientInfo *ci);
-	NetworkRecvStatus SendError(NetworkErrorCode error, const char *reason = nullptr);
-	NetworkRecvStatus SendChat(NetworkAction action, ClientID client_id, bool self_send, const char *msg, int64 data);
+	NetworkRecvStatus SendError(NetworkErrorCode error, const std::string &reason = {});
+	NetworkRecvStatus SendChat(NetworkAction action, ClientID client_id, bool self_send, const std::string &msg, int64 data);
+	NetworkRecvStatus SendExternalChat(const std::string &source, TextColour colour, const std::string &user, const std::string &msg);
 	NetworkRecvStatus SendJoin(ClientID client_id);
 	NetworkRecvStatus SendFrame();
 	NetworkRecvStatus SendSync();
@@ -115,13 +114,13 @@ public:
 		return "server";
 	}
 
-	const char *GetClientIP();
+	const std::string &GetClientIP();
 
 	static ServerNetworkGameSocketHandler *GetByClientID(ClientID client_id);
 };
 
 void NetworkServer_Tick(bool send_frame);
-void NetworkServerSetCompanyPassword(CompanyID company_id, const char *password, bool already_hashed = true);
+void NetworkServerSetCompanyPassword(CompanyID company_id, const std::string &password, bool already_hashed = true);
 void NetworkServerUpdateCompanyPassworded(CompanyID company_id, bool passworded);
 
 #endif /* NETWORK_SERVER_H */

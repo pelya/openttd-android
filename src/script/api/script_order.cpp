@@ -256,11 +256,11 @@ static int ScriptOrderPositionToRealOrderPosition(VehicleID vehicle_id, ScriptOr
 		case OT_GOTO_STATION: {
 			const Station *st = ::Station::Get(order->GetDestination());
 			if (st->train_station.tile != INVALID_TILE) {
-				TILE_AREA_LOOP(t, st->train_station) {
+				for (TileIndex t : st->train_station) {
 					if (st->TileBelongsToRailStation(t)) return t;
 				}
 			} else if (st->ship_station.tile != INVALID_TILE) {
-				TILE_AREA_LOOP(t, st->ship_station) {
+				for (TileIndex t : st->ship_station) {
 					if (IsTileType(t, MP_STATION) && (IsDock(t) || IsOilRig(t)) && GetStationIndex(t) == st->index) return t;
 				}
 			} else if (st->bus_stops != nullptr) {
@@ -268,7 +268,7 @@ static int ScriptOrderPositionToRealOrderPosition(VehicleID vehicle_id, ScriptOr
 			} else if (st->truck_stops != nullptr) {
 				return st->truck_stops->xy;
 			} else if (st->airport.tile != INVALID_TILE) {
-				TILE_AREA_LOOP(tile, st->airport) {
+				for (TileIndex tile : st->airport) {
 					if (st->TileBelongsToAirport(tile) && !::IsHangar(tile)) return tile;
 				}
 			}
@@ -278,7 +278,7 @@ static int ScriptOrderPositionToRealOrderPosition(VehicleID vehicle_id, ScriptOr
 		case OT_GOTO_WAYPOINT: {
 			const Waypoint *wp = ::Waypoint::Get(order->GetDestination());
 			if (wp->train_station.tile != INVALID_TILE) {
-				TILE_AREA_LOOP(t, wp->train_station) {
+				for (TileIndex t : wp->train_station) {
 					if (wp->TileBelongsToRailStation(t)) return t;
 				}
 			}
@@ -564,7 +564,7 @@ static void _DoCommandReturnSetOrderFlags(class ScriptInstance *instance)
 	/* Make sure we don't go into an infinite loop */
 	int retry = ScriptObject::GetCallbackVariable(3) - 1;
 	if (retry < 0) {
-		DEBUG(script, 0, "Possible infinite loop in SetOrderFlags() detected");
+		Debug(script, 0, "Possible infinite loop in SetOrderFlags() detected");
 		return false;
 	}
 	ScriptObject::SetCallbackVariable(3, retry);

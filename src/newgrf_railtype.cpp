@@ -52,17 +52,10 @@
 		}
 	}
 
-	DEBUG(grf, 1, "Unhandled rail type tile variable 0x%X", variable);
+	Debug(grf, 1, "Unhandled rail type tile variable 0x{:X}", variable);
 
 	*available = false;
 	return UINT_MAX;
-}
-
-/* virtual */ const SpriteGroup *RailTypeResolverObject::ResolveReal(const RealSpriteGroup *group) const
-{
-	if (!group->loading.empty()) return group->loading[0];
-	if (!group->loaded.empty())  return group->loaded[0];
-	return nullptr;
 }
 
 GrfSpecFeature RailTypeResolverObject::GetFeature() const

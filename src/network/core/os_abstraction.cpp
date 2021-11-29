@@ -76,7 +76,7 @@ bool NetworkError::IsConnectInProgress() const
  * Get the string representation of the error message.
  * @return The string representation that will get overwritten by next calls.
  */
-const char *NetworkError::AsString() const
+const std::string &NetworkError::AsString() const
 {
 	if (this->message.empty()) {
 #if defined(_WIN32)
@@ -97,7 +97,7 @@ const char *NetworkError::AsString() const
 		this->message.assign(strerror(this->error));
 #endif
 	}
-	return this->message.c_str();
+	return this->message;
 }
 
 /**
@@ -153,6 +153,23 @@ bool SetNoDelay(SOCKET d)
 	int flags = 1;
 	/* The (const char*) cast is needed for windows */
 	return setsockopt(d, IPPROTO_TCP, TCP_NODELAY, (const char *)&flags, sizeof(flags)) == 0;
+}
+
+/**
+ * Try to set the socket to reuse ports.
+ * @param d The socket to reuse ports on.
+ * @return True if disabling the delaying succeeded, otherwise false.
+ */
+bool SetReusePort(SOCKET d)
+{
+#ifdef _WIN32
+	/* Windows has no SO_REUSEPORT, but for our usecases SO_REUSEADDR does the same job. */
+	int reuse_port = 1;
+	return setsockopt(d, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuse_port, sizeof(reuse_port)) == 0;
+#else
+	int reuse_port = 1;
+	return setsockopt(d, SOL_SOCKET, SO_REUSEPORT, &reuse_port, sizeof(reuse_port)) == 0;
+#endif
 }
 
 /**

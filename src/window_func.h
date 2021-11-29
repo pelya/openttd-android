@@ -37,11 +37,11 @@ void InputLoop();
 void InvalidateWindowData(WindowClass cls, WindowNumber number, int data = 0, bool gui_scope = false);
 void InvalidateWindowClassesData(WindowClass cls, int data = 0, bool gui_scope = false);
 
-void DeleteNonVitalWindows();
-void DeleteAllNonVitalWindows();
+void CloseNonVitalWindows();
+void CloseAllNonVitalWindows();
 void DeleteAllMessages();
-void DeleteConstructionWindows();
-void DeleteToolbarLinkedWindows();
+void CloseToolbarLinkedWindows();
+void CloseConstructionWindows();
 void HideVitalWindows();
 void ShowVitalWindows();
 
@@ -55,8 +55,8 @@ void SetWindowWidgetDirty(WindowClass cls, WindowNumber number, byte widget_inde
 void SetWindowDirty(WindowClass cls, WindowNumber number);
 void SetWindowClassesDirty(WindowClass cls);
 
-void DeleteWindowById(WindowClass cls, WindowNumber number, bool force = true);
-void DeleteWindowByClass(WindowClass cls);
+void CloseWindowById(WindowClass cls, WindowNumber number, bool force = true);
+void CloseWindowByClass(WindowClass cls);
 
 bool EditBoxInGlobalFocus();
 bool FocusedWindowIsConsole();

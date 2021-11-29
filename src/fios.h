@@ -83,22 +83,6 @@ struct LoadCheckData {
 
 extern LoadCheckData _load_check_data;
 
-
-enum FileSlots {
-	/**
-	 * Slot used for the GRF scanning and such.
-	 * This slot is used for all temporary accesses to files when scanning/testing files,
-	 * and thus cannot be used for files, which are continuously accessed during a game.
-	 */
-	CONFIG_SLOT    =  0,
-	/** Slot for the sound. */
-	SOUND_SLOT     =  1,
-	/** First slot usable for (New)GRFs used during the game. */
-	FIRST_GRF_SLOT =  2,
-	/** Maximum number of slots. */
-	MAX_FILE_SLOTS = 128,
-};
-
 /** Deals with finding savegames */
 struct FiosItem {
 	FiosType type;
@@ -140,5 +124,17 @@ std::string FiosMakeHeightmapName(const char *name);
 std::string FiosMakeSavegameName(const char *name);
 
 FiosType FiosGetSavegameListCallback(SaveLoadOperation fop, const std::string &file, const char *ext, char *title, const char *last);
+
+/**
+ * A savegame name automatically numbered.
+ */
+struct FiosNumberedSaveName {
+	FiosNumberedSaveName(const std::string &prefix);
+	std::string Filename();
+	std::string Extension();
+private:
+	std::string prefix;
+	int number;
+};
 
 #endif /* FIOS_H */

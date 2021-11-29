@@ -98,7 +98,7 @@ void Packet::PrepareToSend()
  */
 bool Packet::CanWriteToPacket(size_t bytes_to_write)
 {
-	return this->Size() + bytes_to_write < this->limit;
+	return this->Size() + bytes_to_write <= this->limit;
 }
 
 /*
@@ -178,12 +178,11 @@ void Packet::Send_uint64(uint64 data)
  * the string + '\0'. No size-byte or something.
  * @param data The string to send
  */
-void Packet::Send_string(const char *data)
+void Packet::Send_string(const std::string_view data)
 {
-	assert(data != nullptr);
-	/* Length of the string + 1 for the '\0' termination. */
-	assert(this->CanWriteToPacket(strlen(data) + 1));
-	while (this->buffer.emplace_back(*data++) != '\0') {}
+	assert(this->CanWriteToPacket(data.size() + 1));
+	this->buffer.insert(this->buffer.end(), data.begin(), data.end());
+	this->buffer.emplace_back('\0');
 }
 
 /**
@@ -223,7 +222,7 @@ bool Packet::CanReadFromPacket(size_t bytes_to_read, bool close_connection)
 
 	/* Check if variable is within packet-size */
 	if (this->pos + bytes_to_read > this->Size()) {
-		if (close_connection) this->cs->NetworkSocketHandler::CloseConnection();
+		if (close_connection) this->cs->NetworkSocketHandler::MarkClosed();
 		return false;
 	}
 
@@ -368,33 +367,32 @@ uint64 Packet::Recv_uint64()
 }
 
 /**
- * Reads a string till it finds a '\0' in the stream.
- * @param buffer The buffer to put the data into.
- * @param size   The size of the buffer.
+ * Reads characters (bytes) from the packet until it finds a '\0', or reaches a
+ * maximum of \c length characters.
+ * When the '\0' has not been reached in the first \c length read characters,
+ * more characters are read from the packet until '\0' has been reached. However,
+ * these characters will not end up in the returned string.
+ * The length of the returned string will be at most \c length - 1 characters.
+ * @param length   The maximum length of the string including '\0'.
  * @param settings The string validation settings.
+ * @return The validated string.
  */
-void Packet::Recv_string(char *buffer, size_t size, StringValidationSettings settings)
+std::string Packet::Recv_string(size_t length, StringValidationSettings settings)
 {
-	PacketSize pos;
-	char *bufp = buffer;
-	const char *last = buffer + size - 1;
+	assert(length > 1);
 
-	/* Don't allow reading from a closed socket */
-	if (cs->HasClientQuit()) return;
+	/* Both loops with Recv_uint8 terminate when reading past the end of the
+	 * packet as Recv_uint8 then closes the connection and returns 0. */
+	std::string str;
+	char character;
+	while (--length > 0 && (character = this->Recv_uint8()) != '\0') str.push_back(character);
 
-	pos = this->pos;
-	while (--size > 0 && pos < this->Size() && (*buffer++ = this->buffer[pos++]) != '\0') {}
-
-	if (size == 0 || pos == this->Size()) {
-		*buffer = '\0';
-		/* If size was sooner to zero then the string in the stream
-		 *  skip till the \0, so than packet can be read out correctly for the rest */
-		while (pos < this->Size() && this->buffer[pos] != '\0') pos++;
-		pos++;
+	if (length == 0) {
+		/* The string in the packet was longer. Read until the termination. */
+		while (this->Recv_uint8() != '\0') {}
 	}
-	this->pos = pos;
 
-	str_validate(bufp, last, settings);
+	return StrMakeValid(str, settings);
 }
 
 /**

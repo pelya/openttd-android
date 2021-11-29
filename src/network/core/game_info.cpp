@@ -16,6 +16,8 @@
 #include "../../date_func.h"
 #include "../../debug.h"
 #include "../../map_func.h"
+#include "../../game/game.hpp"
+#include "../../game/game_info.hpp"
 #include "../../settings_type.h"
 #include "../../string_func.h"
 #include "../../rev.h"
@@ -36,42 +38,33 @@ NetworkServerGameInfo _network_game_info; ///< Information about our game.
 
 /**
  * Get the network version string used by this build.
- * The returned string is guaranteed to be at most NETWORK_REVISON_LENGTH bytes.
+ * The returned string is guaranteed to be at most NETWORK_REVISON_LENGTH bytes including '\0' terminator.
  */
-const char *GetNetworkRevisionString()
+std::string_view GetNetworkRevisionString()
 {
-	/* This will be allocated on heap and never free'd, but only once so not a "real" leak. */
-	static char *network_revision = nullptr;
+	static std::string network_revision;
 
-	if (!network_revision) {
-		/* Start by taking a chance on the full revision string. */
-		network_revision = stredup(_openttd_revision);
-		/* Ensure it's not longer than the packet buffer length. */
-		if (strlen(network_revision) >= NETWORK_REVISION_LENGTH) network_revision[NETWORK_REVISION_LENGTH - 1] = '\0';
-
-		/* Tag names are not mangled further. */
+	if (network_revision.empty()) {
+		network_revision = _openttd_revision;
 		if (_openttd_revision_tagged) {
-			DEBUG(net, 1, "Network revision name is '%s'", network_revision);
-			return network_revision;
-		}
+			/* Tagged; do not mangle further, though ensure it's not too long. */
+			if (network_revision.size() >= NETWORK_REVISION_LENGTH) network_revision.resize(NETWORK_REVISION_LENGTH - 1);
+		} else {
+			/* Not tagged; add the githash suffix while ensuring the string does not become too long. */
+			assert(_openttd_revision_modified < 3);
+			std::string githash_suffix = fmt::format("-{}{}", "gum"[_openttd_revision_modified], _openttd_revision_hash);
+			if (githash_suffix.size() > GITHASH_SUFFIX_LEN) githash_suffix.resize(GITHASH_SUFFIX_LEN);
 
-		/* Prepare a prefix of the git hash.
-		 * Size is length + 1 for terminator, +2 for -g prefix. */
-		assert(_openttd_revision_modified < 3);
-		char githash_suffix[GITHASH_SUFFIX_LEN + 1] = "-";
-		githash_suffix[1] = "gum"[_openttd_revision_modified];
-		for (uint i = 2; i < GITHASH_SUFFIX_LEN; i++) {
-			githash_suffix[i] = _openttd_revision_hash[i-2];
-		}
+			/* Where did the hash start in the original string? Overwrite from that position, unless that would create a too long string. */
+			size_t hash_end = network_revision.find_last_of('-');
+			if (hash_end == std::string::npos) hash_end = network_revision.size();
+			if (hash_end + githash_suffix.size() >= NETWORK_REVISION_LENGTH) hash_end = NETWORK_REVISION_LENGTH - githash_suffix.size() - 1;
 
-		/* Where did the hash start in the original string?
-		 * Overwrite from that position, unless that would go past end of packet buffer length. */
-		ptrdiff_t hashofs = strrchr(_openttd_revision, '-') - _openttd_revision;
-		if (hashofs + strlen(githash_suffix) + 1 > NETWORK_REVISION_LENGTH) hashofs = strlen(network_revision) - strlen(githash_suffix);
-		/* Replace the git hash in revision string. */
-		strecpy(network_revision + hashofs, githash_suffix, network_revision + NETWORK_REVISION_LENGTH);
-		assert(strlen(network_revision) < NETWORK_REVISION_LENGTH); // strlen does not include terminator, constant does, hence strictly less than
-		DEBUG(net, 1, "Network revision name is '%s'", network_revision);
+			/* Replace the git hash in revision string. */
+			network_revision.replace(hash_end, std::string::npos, githash_suffix);
+		}
+		assert(network_revision.size() < NETWORK_REVISION_LENGTH); // size does not include terminator, constant does, hence strictly less than
+		Debug(net, 3, "Network revision name: {}", network_revision);
 	}
 
 	return network_revision;
@@ -79,12 +72,14 @@ const char *GetNetworkRevisionString()
 
 /**
  * Extract the git hash from the revision string.
- * @param revstr The revision string (formatted as DATE-BRANCH-GITHASH).
+ * @param revision_string The revision string (formatted as DATE-BRANCH-GITHASH).
  * @return The git has part of the revision.
  */
-static const char *ExtractNetworkRevisionHash(const char *revstr)
+static std::string_view ExtractNetworkRevisionHash(std::string_view revision_string)
 {
-	return strrchr(revstr, '-');
+	size_t index = revision_string.find_last_of('-');
+	if (index == std::string::npos) return {};
+	return revision_string.substr(index);
 }
 
 /**
@@ -92,18 +87,18 @@ static const char *ExtractNetworkRevisionHash(const char *revstr)
  * First tries to match the full string, if that fails, attempts to compare just git hashes.
  * @param other the version string to compare to
  */
-bool IsNetworkCompatibleVersion(const char *other)
+bool IsNetworkCompatibleVersion(std::string_view other)
 {
-	if (strncmp(GetNetworkRevisionString(), other, NETWORK_REVISION_LENGTH - 1) == 0) return true;
+	if (GetNetworkRevisionString() == other) return true;
 
 	/* If this version is tagged, then the revision string must be a complete match,
 	 * since there is no git hash suffix in it.
 	 * This is needed to avoid situations like "1.9.0-beta1" comparing equal to "2.0.0-beta1".  */
 	if (_openttd_revision_tagged) return false;
 
-	const char *hash1 = ExtractNetworkRevisionHash(GetNetworkRevisionString());
-	const char *hash2 = ExtractNetworkRevisionHash(other);
-	return hash1 != nullptr && hash2 != nullptr && strncmp(hash1, hash2, GITHASH_SUFFIX_LEN) == 0;
+	std::string_view hash1 = ExtractNetworkRevisionHash(GetNetworkRevisionString());
+	std::string_view hash2 = ExtractNetworkRevisionHash(other);
+	return hash1 == hash2;
 }
 
 /**
@@ -122,30 +117,40 @@ void CheckGameCompatibility(NetworkGameInfo &ngi)
 }
 
 /**
- * Fill a NetworkGameInfo structure with the latest information of the server.
- * @param ngi the NetworkGameInfo struct to fill with data.
+ * Fill a NetworkServerGameInfo structure with the static content, or things
+ * that are so static they can be updated on request from a settings change.
  */
-void FillNetworkGameInfo(NetworkGameInfo &ngi)
+void FillStaticNetworkServerGameInfo()
 {
-	/* Update some game_info */
-	ngi.clients_on     = _network_game_info.clients_on;
-	ngi.start_date     = ConvertYMDToDate(_settings_game.game_creation.starting_year, 0, 1);
+	_network_game_info.use_password   = !_settings_client.network.server_password.empty();
+	_network_game_info.start_date     = ConvertYMDToDate(_settings_game.game_creation.starting_year, 0, 1);
+	_network_game_info.clients_max    = _settings_client.network.max_clients;
+	_network_game_info.companies_max  = _settings_client.network.max_companies;
+	_network_game_info.map_width      = MapSizeX();
+	_network_game_info.map_height     = MapSizeY();
+	_network_game_info.landscape      = _settings_game.game_creation.landscape;
+	_network_game_info.dedicated      = _network_dedicated;
+	_network_game_info.grfconfig      = _grfconfig;
 
-	ngi.use_password   = !StrEmpty(_settings_client.network.server_password);
-	ngi.clients_max    = _settings_client.network.max_clients;
-	ngi.companies_on   = (byte)Company::GetNumItems();
-	ngi.companies_max  = _settings_client.network.max_companies;
-	ngi.spectators_on  = NetworkSpectatorCount();
-	ngi.spectators_max = _settings_client.network.max_spectators;
-	ngi.game_date      = _date;
-	ngi.map_width      = MapSizeX();
-	ngi.map_height     = MapSizeY();
-	ngi.map_set        = _settings_game.game_creation.landscape;
-	ngi.dedicated      = _network_dedicated;
-	ngi.grfconfig      = _grfconfig;
+	_network_game_info.server_name = _settings_client.network.server_name;
+	_network_game_info.server_revision = GetNetworkRevisionString();
+}
 
-	strecpy(ngi.server_name, _settings_client.network.server_name, lastof(ngi.server_name));
-	strecpy(ngi.server_revision, GetNetworkRevisionString(), lastof(ngi.server_revision));
+/**
+ * Get the NetworkServerGameInfo structure with the latest information of the server.
+ * @return The current NetworkServerGameInfo.
+ */
+const NetworkServerGameInfo *GetCurrentNetworkServerGameInfo()
+{
+	/* These variables are updated inside _network_game_info as if they are global variables:
+	 *  - clients_on
+	 *  - invite_code
+	 * These don't need to be updated manually here.
+	 */
+	_network_game_info.companies_on  = (byte)Company::GetNumItems();
+	_network_game_info.spectators_on = NetworkSpectatorCount();
+	_network_game_info.game_date     = _date;
+	return &_network_game_info;
 }
 
 /**
@@ -153,17 +158,15 @@ void FillNetworkGameInfo(NetworkGameInfo &ngi)
  * a NetworkGameInfo. Only grfid and md5sum are set, the rest is zero. This
  * function must set all appropriate fields. This GRF is later appended to
  * the grfconfig list of the NetworkGameInfo.
- * @param config the GRF to handle.
+ * @param config The GRF to handle.
+ * @param name The name of the NewGRF, empty when unknown.
  */
-static void HandleIncomingNetworkGameInfoGRFConfig(GRFConfig *config)
+static void HandleIncomingNetworkGameInfoGRFConfig(GRFConfig *config, std::string name)
 {
 	/* Find the matching GRF file */
 	const GRFConfig *f = FindGRFConfig(config->ident.grfid, FGCM_EXACT, config->ident.md5sum);
 	if (f == nullptr) {
-		/* Don't know the GRF, so mark game incompatible and the (possibly)
-		 * already resolved name for this GRF (another server has sent the
-		 * name of the GRF already */
-		config->name = FindUnknownGRFName(config->ident.grfid, config->ident.md5sum, true);
+		AddGRFTextToList(config->name, name.empty() ? GetString(STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN) : name);
 		config->status = GCS_NOT_FOUND;
 	} else {
 		config->filename = f->filename;
@@ -179,7 +182,7 @@ static void HandleIncomingNetworkGameInfoGRFConfig(GRFConfig *config)
  * @param p    the packet to write the data to.
  * @param info the NetworkGameInfo struct to serialize from.
  */
-void SerializeNetworkGameInfo(Packet *p, const NetworkGameInfo *info)
+void SerializeNetworkGameInfo(Packet *p, const NetworkServerGameInfo *info, bool send_newgrf_names)
 {
 	p->Send_uint8 (NETWORK_GAME_INFO_VERSION);
 
@@ -190,6 +193,14 @@ void SerializeNetworkGameInfo(Packet *p, const NetworkGameInfo *info)
 
 	/* Update the documentation in game_info.h on changes
 	 * to the NetworkGameInfo wire-protocol! */
+
+	/* NETWORK_GAME_INFO_VERSION = 6 */
+	p->Send_uint8(send_newgrf_names ? NST_GRFID_MD5_NAME : NST_GRFID_MD5);
+
+	/* NETWORK_GAME_INFO_VERSION = 5 */
+	GameInfo *game_info = Game::GetInfo();
+	p->Send_uint32(game_info == nullptr ? -1 : (uint32)game_info->GetVersion());
+	p->Send_string(game_info == nullptr ? "" : game_info->GetName());
 
 	/* NETWORK_GAME_INFO_VERSION = 4 */
 	{
@@ -208,7 +219,10 @@ void SerializeNetworkGameInfo(Packet *p, const NetworkGameInfo *info)
 
 		/* Send actual GRF Identifications */
 		for (c = info->grfconfig; c != nullptr; c = c->next) {
-			if (!HasBit(c->flags, GCF_STATIC)) SerializeGRFIdentifier(p, &c->ident);
+			if (HasBit(c->flags, GCF_STATIC)) continue;
+
+			SerializeGRFIdentifier(p, &c->ident);
+			if (send_newgrf_names) p->Send_string(c->GetName());
 		}
 	}
 
@@ -219,20 +233,18 @@ void SerializeNetworkGameInfo(Packet *p, const NetworkGameInfo *info)
 	/* NETWORK_GAME_INFO_VERSION = 2 */
 	p->Send_uint8 (info->companies_max);
 	p->Send_uint8 (info->companies_on);
-	p->Send_uint8 (info->spectators_max);
+	p->Send_uint8 (info->clients_max); // Used to be max-spectators
 
 	/* NETWORK_GAME_INFO_VERSION = 1 */
 	p->Send_string(info->server_name);
 	p->Send_string(info->server_revision);
-	p->Send_uint8 (0); // Used to be server-lang.
 	p->Send_bool  (info->use_password);
 	p->Send_uint8 (info->clients_max);
 	p->Send_uint8 (info->clients_on);
 	p->Send_uint8 (info->spectators_on);
-	p->Send_string(""); // Used to be map-name.
 	p->Send_uint16(info->map_width);
 	p->Send_uint16(info->map_height);
-	p->Send_uint8 (info->map_set);
+	p->Send_uint8 (info->landscape);
 	p->Send_bool  (info->dedicated);
 }
 
@@ -241,11 +253,12 @@ void SerializeNetworkGameInfo(Packet *p, const NetworkGameInfo *info)
  * @param p    the packet to read the data from.
  * @param info the NetworkGameInfo to deserialize into.
  */
-void DeserializeNetworkGameInfo(Packet *p, NetworkGameInfo *info)
+void DeserializeNetworkGameInfo(Packet *p, NetworkGameInfo *info, const GameInfoNewGRFLookupTable *newgrf_lookup_table)
 {
 	static const Date MAX_DATE = ConvertYMDToDate(MAX_YEAR, 11, 31); // December is month 11
 
-	info->game_info_version = p->Recv_uint8();
+	byte game_info_version = p->Recv_uint8();
+	NewGRFSerializationType newgrf_serialisation = NST_GRFID_MD5;
 
 	/*
 	 *              Please observe the order.
@@ -255,7 +268,18 @@ void DeserializeNetworkGameInfo(Packet *p, NetworkGameInfo *info)
 	/* Update the documentation in game_info.h on changes
 	 * to the NetworkGameInfo wire-protocol! */
 
-	switch (info->game_info_version) {
+	switch (game_info_version) {
+		case 6:
+			newgrf_serialisation = (NewGRFSerializationType)p->Recv_uint8();
+			if (newgrf_serialisation >= NST_END) return;
+			FALLTHROUGH;
+
+		case 5: {
+			info->gamescript_version = (int)p->Recv_uint32();
+			info->gamescript_name = p->Recv_string(NETWORK_NAME_LENGTH);
+			FALLTHROUGH;
+		}
+
 		case 4: {
 			GRFConfig **dst = &info->grfconfig;
 			uint i;
@@ -265,9 +289,31 @@ void DeserializeNetworkGameInfo(Packet *p, NetworkGameInfo *info)
 			if (num_grfs > NETWORK_MAX_GRF_COUNT) return;
 
 			for (i = 0; i < num_grfs; i++) {
+				NamedGRFIdentifier grf;
+				switch (newgrf_serialisation) {
+					case NST_GRFID_MD5:
+						DeserializeGRFIdentifier(p, &grf.ident);
+						break;
+
+					case NST_GRFID_MD5_NAME:
+						DeserializeGRFIdentifierWithName(p, &grf);
+						break;
+
+					case NST_LOOKUP_ID: {
+						if (newgrf_lookup_table == nullptr) return;
+						auto it = newgrf_lookup_table->find(p->Recv_uint32());
+						if (it == newgrf_lookup_table->end()) return;
+						grf = it->second;
+						break;
+					}
+
+					default:
+						NOT_REACHED();
+				}
+
 				GRFConfig *c = new GRFConfig();
-				DeserializeGRFIdentifier(p, &c->ident);
-				HandleIncomingNetworkGameInfoGRFConfig(c);
+				c->ident = grf.ident;
+				HandleIncomingNetworkGameInfoGRFConfig(c, grf.name);
 
 				/* Append GRFConfig to the list */
 				*dst = c;
@@ -284,28 +330,28 @@ void DeserializeNetworkGameInfo(Packet *p, NetworkGameInfo *info)
 		case 2:
 			info->companies_max  = p->Recv_uint8 ();
 			info->companies_on   = p->Recv_uint8 ();
-			info->spectators_max = p->Recv_uint8 ();
+			p->Recv_uint8(); // Used to contain max-spectators.
 			FALLTHROUGH;
 
 		case 1:
-			p->Recv_string(info->server_name,     sizeof(info->server_name));
-			p->Recv_string(info->server_revision, sizeof(info->server_revision));
-			p->Recv_uint8 (); // Used to contain server-lang.
+			info->server_name = p->Recv_string(NETWORK_NAME_LENGTH);
+			info->server_revision = p->Recv_string(NETWORK_REVISION_LENGTH);
+			if (game_info_version < 6) p->Recv_uint8 (); // Used to contain server-lang.
 			info->use_password   = p->Recv_bool  ();
 			info->clients_max    = p->Recv_uint8 ();
 			info->clients_on     = p->Recv_uint8 ();
 			info->spectators_on  = p->Recv_uint8 ();
-			if (info->game_info_version < 3) { // 16 bits dates got scrapped and are read earlier
+			if (game_info_version < 3) { // 16 bits dates got scrapped and are read earlier
 				info->game_date    = p->Recv_uint16() + DAYS_TILL_ORIGINAL_BASE_YEAR;
 				info->start_date   = p->Recv_uint16() + DAYS_TILL_ORIGINAL_BASE_YEAR;
 			}
-			while (p->Recv_uint8() != 0) {} // Used to contain the map-name.
+			if (game_info_version < 6) while (p->Recv_uint8() != 0) {} // Used to contain the map-name.
 			info->map_width      = p->Recv_uint16();
 			info->map_height     = p->Recv_uint16();
-			info->map_set        = p->Recv_uint8 ();
+			info->landscape      = p->Recv_uint8 ();
 			info->dedicated      = p->Recv_bool  ();
 
-			if (info->map_set     >= NETWORK_NUM_LANDSCAPES) info->map_set = 0;
+			if (info->landscape >= NUM_LANDSCAPE) info->landscape = 0;
 	}
 }
 
@@ -335,4 +381,15 @@ void DeserializeGRFIdentifier(Packet *p, GRFIdentifier *grf)
 	for (j = 0; j < sizeof(grf->md5sum); j++) {
 		grf->md5sum[j] = p->Recv_uint8();
 	}
+}
+
+/**
+ * Deserializes the NamedGRFIdentifier (GRF ID, MD5 checksum and name) from the packet
+ * @param p    the packet to read the data from.
+ * @param grf  the NamedGRFIdentifier to deserialize.
+ */
+void DeserializeGRFIdentifierWithName(Packet *p, NamedGRFIdentifier *grf)
+{
+	DeserializeGRFIdentifier(p, &grf->ident);
+	grf->name = p->Recv_string(NETWORK_GRF_NAME_LENGTH);
 }

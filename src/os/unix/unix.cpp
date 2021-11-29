@@ -168,7 +168,7 @@ static const char *convert_tofrom_fs(iconv_t convd, const char *name, char *outb
 
 	iconv(convd, nullptr, nullptr, nullptr, nullptr);
 	if (iconv(convd, &inbuf, &inlen, &outbuf, &outlen) == (size_t)(-1)) {
-		DEBUG(misc, 0, "[iconv] error converting '%s'. Errno %d", name, errno);
+		Debug(misc, 0, "[iconv] error converting '{}'. Errno {}", name, errno);
 	}
 
 	*outbuf = '\0';
@@ -190,7 +190,7 @@ std::string OTTD2FS(const std::string &name)
 		const char *env = GetLocalCode();
 		convd = iconv_open(env, INTERNALCODE);
 		if (convd == (iconv_t)(-1)) {
-			DEBUG(misc, 0, "[iconv] conversion from codeset '%s' to '%s' unsupported", INTERNALCODE, env);
+			Debug(misc, 0, "[iconv] conversion from codeset '{}' to '{}' unsupported", INTERNALCODE, env);
 			return name;
 		}
 	}
@@ -212,7 +212,7 @@ std::string FS2OTTD(const std::string &name)
 		const char *env = GetLocalCode();
 		convd = iconv_open(INTERNALCODE, env);
 		if (convd == (iconv_t)(-1)) {
-			DEBUG(misc, 0, "[iconv] conversion from codeset '%s' to '%s' unsupported", env, INTERNALCODE);
+			Debug(misc, 0, "[iconv] conversion from codeset '{}' to '{}' unsupported", env, INTERNALCODE);
 			return name;
 		}
 	}
@@ -255,7 +255,7 @@ extern "C" int CDECL main(int, char *[]);
 int CDECL main(int argc, char *argv[])
 {
 	/* Make sure our arguments contain only valid UTF-8 characters. */
-	for (int i = 0; i < argc; i++) ValidateString(argv[i]);
+	for (int i = 0; i < argc; i++) StrMakeValidInPlace(argv[i]);
 
 #ifdef WITH_COCOA
 	CocoaSetupAutoreleasePool();
@@ -289,7 +289,7 @@ bool GetClipboardContents(char *buffer, const char *last)
 	}
 
 	char *clip = SDL_GetClipboardText();
-	if (clip != NULL) {
+	if (clip != nullptr) {
 		strecpy(buffer, clip, last);
 		SDL_free(clip);
 		return true;
@@ -331,7 +331,7 @@ void OSOpenBrowser(const char *url)
 	args[2] = nullptr;
 #endif
 	execvp(args[0], const_cast<char * const *>(args));
-	DEBUG(misc, 0, "Failed to open url: %s", url);
+	Debug(misc, 0, "Failed to open url: {}", url);
 	exit(0);
 }
 #endif /* __APPLE__ */

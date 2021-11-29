@@ -481,7 +481,7 @@ struct MusicTrackSelectionWindow : public Window {
 				SetDParam(0, STR_MUSIC_PLAYLIST_ALL + _settings_client.music.playlist);
 				break;
 			case WID_MTS_CAPTION:
-				SetDParamStr(0, BaseMusic::GetUsedSet()->name.c_str());
+				SetDParamStr(0, BaseMusic::GetUsedSet()->name);
 				break;
 		}
 	}
@@ -829,7 +829,7 @@ struct MusicWindow : public Window {
 				byte &vol = (widget == WID_M_MUSIC_VOL) ? _settings_client.music.music_vol : _settings_client.music.effect_vol;
 				if (ClickVolumeSliderWidget(this->GetWidget<NWidgetBase>(widget)->GetCurrentRect(), pt, vol)) {
 					if (widget == WID_M_MUSIC_VOL) MusicDriver::GetInstance()->SetVolume(vol);
-					this->SetDirty();
+					this->SetWidgetDirty(widget);
 					SetWindowClassesDirty(WC_GAME_OPTIONS);
 				}
 

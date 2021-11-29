@@ -29,23 +29,45 @@ NetworkTCPSocketHandler::NetworkTCPSocketHandler(SOCKET s) :
 
 NetworkTCPSocketHandler::~NetworkTCPSocketHandler()
 {
-	this->CloseConnection();
-
-	if (this->sock != INVALID_SOCKET) closesocket(this->sock);
-	this->sock = INVALID_SOCKET;
+	this->EmptyPacketQueue();
+	this->CloseSocket();
 }
 
-NetworkRecvStatus NetworkTCPSocketHandler::CloseConnection(bool error)
+/**
+ * Free all pending and partially received packets.
+ */
+void NetworkTCPSocketHandler::EmptyPacketQueue()
 {
-	this->writable = false;
-	NetworkSocketHandler::CloseConnection(error);
-
-	/* Free all pending and partially received packets */
 	while (this->packet_queue != nullptr) {
 		delete Packet::PopFromQueue(&this->packet_queue);
 	}
 	delete this->packet_recv;
 	this->packet_recv = nullptr;
+}
+
+/**
+ * Close the actual socket of the connection.
+ * Please make sure CloseConnection is called before CloseSocket, as
+ * otherwise not all resources might be released.
+ */
+void NetworkTCPSocketHandler::CloseSocket()
+{
+	if (this->sock != INVALID_SOCKET) closesocket(this->sock);
+	this->sock = INVALID_SOCKET;
+}
+
+/**
+ * This will put this socket handler in a close state. It will not
+ * actually close the OS socket; use CloseSocket for this.
+ * @param error Whether we quit under an error condition or not.
+ * @return new status of the connection.
+ */
+NetworkRecvStatus NetworkTCPSocketHandler::CloseConnection(bool error)
+{
+	this->MarkClosed();
+	this->writable = false;
+
+	this->EmptyPacketQueue();
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -90,7 +112,7 @@ SendPacketsState NetworkTCPSocketHandler::SendPackets(bool closing_down)
 			if (!err.WouldBlock()) {
 				/* Something went wrong.. close client! */
 				if (!closing_down) {
-					DEBUG(net, 0, "send failed with error %s", err.AsString());
+					Debug(net, 0, "Send failed: {}", err.AsString());
 					this->CloseConnection();
 				}
 				return SPS_CLOSED;
@@ -139,7 +161,7 @@ Packet *NetworkTCPSocketHandler::ReceivePacket()
 				NetworkError err = NetworkError::GetLast();
 				if (!err.WouldBlock()) {
 					/* Something went wrong... */
-					if (!err.IsConnectionReset()) DEBUG(net, 0, "recv failed with error %s", err.AsString());
+					if (!err.IsConnectionReset()) Debug(net, 0, "Recv failed: {}", err.AsString());
 					this->CloseConnection();
 					return nullptr;
 				}
@@ -167,7 +189,7 @@ Packet *NetworkTCPSocketHandler::ReceivePacket()
 			NetworkError err = NetworkError::GetLast();
 			if (!err.WouldBlock()) {
 				/* Something went wrong... */
-				if (!err.IsConnectionReset()) DEBUG(net, 0, "recv failed with error %s", err.AsString());
+				if (!err.IsConnectionReset()) Debug(net, 0, "Recv failed: {}", err.AsString());
 				this->CloseConnection();
 				return nullptr;
 			}

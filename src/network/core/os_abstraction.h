@@ -29,7 +29,7 @@ public:
 	bool WouldBlock() const;
 	bool IsConnectionReset() const;
 	bool IsConnectInProgress() const;
-	const char *AsString() const;
+	const std::string &AsString() const;
 
 	static NetworkError GetLast();
 };
@@ -108,6 +108,13 @@ typedef unsigned long in_addr_t;
 #		undef FD_SETSIZE
 #		define FD_SETSIZE 64
 #   endif
+
+/* Haiku says it supports FD_SETSIZE fds, but it really only supports 512. */
+#   if defined(__HAIKU__)
+#		undef FD_SETSIZE
+#		define FD_SETSIZE 512
+#   endif
+
 #endif /* UNIX */
 
 /* OS/2 stuff */
@@ -166,6 +173,7 @@ typedef unsigned long in_addr_t;
 
 bool SetNonBlocking(SOCKET d);
 bool SetNoDelay(SOCKET d);
+bool SetReusePort(SOCKET d);
 NetworkError GetSocketError(SOCKET d);
 
 /* Make sure these structures have the size we expect them to be */

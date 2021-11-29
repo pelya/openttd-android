@@ -22,6 +22,7 @@
 #include "group_type.h"
 #include "base_consist.h"
 #include "network/network.h"
+#include "saveload/saveload.h"
 #include <list>
 #include <map>
 
@@ -198,9 +199,7 @@ typedef Pool<Vehicle, VehicleID, 512, 0xFF000> VehiclePool;
 extern VehiclePool _vehicle_pool;
 
 /* Some declarations of functions, so we can make them friendly */
-struct SaveLoad;
 struct GroundVehicleCache;
-extern const SaveLoad *GetVehicleDescription(VehicleType vt);
 struct LoadgameState;
 extern bool LoadOldVehicle(LoadgameState *ls, int num);
 extern void FixOldVehicles();
@@ -232,10 +231,13 @@ private:
 	Vehicle *previous_shared;           ///< NOSAVE: pointer to the previous vehicle in the shared order chain
 
 public:
-	friend const SaveLoad *GetVehicleDescription(VehicleType vt); ///< So we can use private/protected variables in the saveload code
 	friend void FixOldVehicles();
 	friend void AfterLoadVehicles(bool part_of_load);             ///< So we can set the #previous and #first pointers while loading
 	friend bool LoadOldVehicle(LoadgameState *ls, int num);       ///< So we can set the proper next pointer while loading
+	/* So we can use private/protected variables in the saveload code */
+	friend class SlVehicleCommon;
+	friend class SlVehicleDisaster;
+	friend void Ptrs_VEHS();
 
 	TileIndex tile;                     ///< Current tile index
 

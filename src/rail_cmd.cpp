@@ -434,7 +434,7 @@ static inline bool ValParamTrackOrientation(Track track)
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	RailType railtype = Extract<RailType, 0, 6>(p1);
 	Track track = Extract<Track, 0, 3>(p2);
@@ -622,7 +622,7 @@ CommandCost CmdBuildSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, u
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdRemoveSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRemoveSingleRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Track track = Extract<Track, 0, 3>(p2);
 	CommandCost cost(EXPENSES_CONSTRUCTION);
@@ -884,7 +884,7 @@ static CommandCost ValidateAutoDrag(Trackdir *trackdir, TileIndex start, TileInd
  * @param text unused
  * @return the cost of this operation or an error
  */
-static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	CommandCost total_cost(EXPENSES_CONSTRUCTION);
 	Track track = Extract<Track, 6, 3>(p2);
@@ -945,7 +945,7 @@ static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint3
  * @return the cost of this operation or an error
  * @see CmdRailTrackHelper
  */
-CommandCost CmdBuildRailroadTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuildRailroadTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	return CmdRailTrackHelper(tile, flags, p1, ClrBit(p2, 9), text);
 }
@@ -964,7 +964,7 @@ CommandCost CmdBuildRailroadTrack(TileIndex tile, DoCommandFlag flags, uint32 p1
  * @return the cost of this operation or an error
  * @see CmdRailTrackHelper
  */
-CommandCost CmdRemoveRailroadTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRemoveRailroadTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	return CmdRailTrackHelper(tile, flags, p1, SetBit(p2, 9), text);
 }
@@ -981,7 +981,7 @@ CommandCost CmdRemoveRailroadTrack(TileIndex tile, DoCommandFlag flags, uint32 p
  * @todo When checking for the tile slope,
  * distinguish between "Flat land required" and "land sloped in wrong direction"
  */
-CommandCost CmdBuildTrainDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuildTrainDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	/* check railtype and valid direction for depot (0 through 3), 4 in total */
 	RailType railtype = Extract<RailType, 0, 6>(p1);
@@ -1055,7 +1055,7 @@ CommandCost CmdBuildTrainDepot(TileIndex tile, DoCommandFlag flags, uint32 p1, u
  * @return the cost of this operation or an error
  * @todo p2 should be replaced by two bits for "along" and "against" the track.
  */
-CommandCost CmdBuildSingleSignal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuildSingleSignal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Track track = Extract<Track, 0, 3>(p1);
 	bool ctrl_pressed = HasBit(p1, 3); // was the CTRL button pressed
@@ -1281,7 +1281,7 @@ static bool CheckSignalAutoFill(TileIndex &tile, Trackdir &trackdir, int &signal
  * @param text unused
  * @return the cost of this operation or an error
  */
-static CommandCost CmdSignalTrackHelper(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+static CommandCost CmdSignalTrackHelper(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	CommandCost total_cost(EXPENSES_CONSTRUCTION);
 	TileIndex start_tile = tile;
@@ -1359,11 +1359,11 @@ static CommandCost CmdSignalTrackHelper(TileIndex tile, DoCommandFlag flags, uin
 	for (;;) {
 		/* only build/remove signals with the specified density */
 		if (remove || minimise_gaps || signal_ctr % signal_density == 0) {
-			uint32 p1 = GB(TrackdirToTrack(trackdir), 0, 3);
-			SB(p1, 3, 1, mode);
-			SB(p1, 4, 1, semaphores);
-			SB(p1, 5, 3, sigtype);
-			if (!remove && signal_ctr == 0) SetBit(p1, 17);
+			uint32 param1 = GB(TrackdirToTrack(trackdir), 0, 3);
+			SB(param1, 3, 1, mode);
+			SB(param1, 4, 1, semaphores);
+			SB(param1, 5, 3, sigtype);
+			if (!remove && signal_ctr == 0) SetBit(param1, 17);
 
 			/* Pick the correct orientation for the track direction */
 			signals = 0;
@@ -1372,7 +1372,7 @@ static CommandCost CmdSignalTrackHelper(TileIndex tile, DoCommandFlag flags, uin
 
 			/* Test tiles in between for suitability as well if minimising gaps. */
 			bool test_only = !remove && minimise_gaps && signal_ctr < (last_used_ctr + signal_density);
-			CommandCost ret = DoCommand(tile, p1, signals, test_only ? flags & ~DC_EXEC : flags, remove ? CMD_REMOVE_SIGNALS : CMD_BUILD_SIGNALS);
+			CommandCost ret = DoCommand(tile, param1, signals, test_only ? flags & ~DC_EXEC : flags, remove ? CMD_REMOVE_SIGNALS : CMD_BUILD_SIGNALS);
 
 			if (ret.Succeeded()) {
 				/* Remember last track piece where we can place a signal. */
@@ -1381,15 +1381,15 @@ static CommandCost CmdSignalTrackHelper(TileIndex tile, DoCommandFlag flags, uin
 				last_suitable_trackdir = trackdir;
 			} else if (!test_only && last_suitable_tile != INVALID_TILE) {
 				/* If a signal can't be placed, place it at the last possible position. */
-				SB(p1, 0, 3, TrackdirToTrack(last_suitable_trackdir));
-				ClrBit(p1, 17);
+				SB(param1, 0, 3, TrackdirToTrack(last_suitable_trackdir));
+				ClrBit(param1, 17);
 
 				/* Pick the correct orientation for the track direction. */
 				signals = 0;
 				if (HasBit(signal_dir, 0)) signals |= SignalAlongTrackdir(last_suitable_trackdir);
 				if (HasBit(signal_dir, 1)) signals |= SignalAgainstTrackdir(last_suitable_trackdir);
 
-				ret = DoCommand(last_suitable_tile, p1, signals, flags, remove ? CMD_REMOVE_SIGNALS : CMD_BUILD_SIGNALS);
+				ret = DoCommand(last_suitable_tile, param1, signals, flags, remove ? CMD_REMOVE_SIGNALS : CMD_BUILD_SIGNALS);
 			}
 
 			/* Collect cost. */
@@ -1451,7 +1451,7 @@ static CommandCost CmdSignalTrackHelper(TileIndex tile, DoCommandFlag flags, uin
  * @return the cost of this operation or an error
  * @see CmdSignalTrackHelper
  */
-CommandCost CmdBuildSignalTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuildSignalTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	return CmdSignalTrackHelper(tile, flags, p1, p2, text);
 }
@@ -1468,7 +1468,7 @@ CommandCost CmdBuildSignalTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, 
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdRemoveSingleSignal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRemoveSingleSignal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Track track = Extract<Track, 0, 3>(p1);
 
@@ -1543,7 +1543,7 @@ CommandCost CmdRemoveSingleSignal(TileIndex tile, DoCommandFlag flags, uint32 p1
  * @return the cost of this operation or an error
  * @see CmdSignalTrackHelper
  */
-CommandCost CmdRemoveSignalTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdRemoveSignalTrack(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	return CmdSignalTrackHelper(tile, flags, p1, SetBit(p2, 5), text); // bit 5 is remove bit
 }
@@ -1571,7 +1571,7 @@ static Vehicle *UpdateTrainPowerProc(Vehicle *v, void *data)
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdConvertRail(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	RailType totype = Extract<RailType, 0, 6>(p2);
 	TileIndex area_start = p1;

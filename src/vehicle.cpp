@@ -315,11 +315,11 @@ void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRF
 
 	SetDParamStr(0, grfconfig->GetName());
 	GetString(buffer, part1, lastof(buffer));
-	DEBUG(grf, 0, "%s", buffer + 3);
+	Debug(grf, 0, "{}", buffer + 3);
 
 	SetDParam(1, engine);
 	GetString(buffer, part2, lastof(buffer));
-	DEBUG(grf, 0, "%s", buffer + 3);
+	Debug(grf, 0, "{}", buffer + 3);
 }
 
 /**
@@ -778,6 +778,8 @@ void Vehicle::HandlePathfindingResult(bool path_found)
 
 		/* Clear the flag as the PF's problem was solved. */
 		ClrBit(this->vehicle_flags, VF_PATHFINDER_LOST);
+		SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
+		InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type));
 		/* Delete the news item. */
 		DeleteVehicleNews(this->index, STR_NEWS_VEHICLE_IS_LOST);
 		return;
@@ -788,6 +790,8 @@ void Vehicle::HandlePathfindingResult(bool path_found)
 
 	/* It is first time the problem occurred, set the "lost" flag. */
 	SetBit(this->vehicle_flags, VF_PATHFINDER_LOST);
+	SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
+	InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type));
 	/* Notify user about the event. */
 	AI::NewEvent(this->owner, new ScriptEventVehicleLost(this->index));
 	if (_settings_client.gui.lost_vehicle_warn && this->owner == _local_company) {
@@ -843,11 +847,11 @@ void Vehicle::PreDestructor()
 	}
 
 	if (this->IsPrimaryVehicle()) {
-		DeleteWindowById(WC_VEHICLE_VIEW, this->index);
-		DeleteWindowById(WC_VEHICLE_ORDERS, this->index);
-		DeleteWindowById(WC_VEHICLE_REFIT, this->index);
-		DeleteWindowById(WC_VEHICLE_DETAILS, this->index);
-		DeleteWindowById(WC_VEHICLE_TIMETABLE, this->index);
+		CloseWindowById(WC_VEHICLE_VIEW, this->index);
+		CloseWindowById(WC_VEHICLE_ORDERS, this->index);
+		CloseWindowById(WC_VEHICLE_REFIT, this->index);
+		CloseWindowById(WC_VEHICLE_DETAILS, this->index);
+		CloseWindowById(WC_VEHICLE_TIMETABLE, this->index);
 		SetWindowDirty(WC_COMPANY, this->owner);
 		OrderBackup::ClearVehicle(this);
 	}
@@ -953,9 +957,7 @@ void CallVehicleTicks()
 	PerformanceAccumulator::Reset(PFE_GL_AIRCRAFT);
 
 	for (Vehicle *v : Vehicle::Iterate()) {
-#ifdef WITH_ASSERT
-		size_t vehicle_index = v->index;
-#endif
+		[[maybe_unused]] size_t vehicle_index = v->index;
 
 		/* Vehicle could be deleted in this tick */
 		if (!v->Tick()) {
@@ -2102,6 +2104,7 @@ void Vehicle::BeginLoading()
 {
 	assert(IsTileType(this->tile, MP_STATION) || this->type == VEH_SHIP);
 
+	uint32 travel_time = this->current_order_time;
 	if (this->current_order.IsType(OT_GOTO_STATION) &&
 			this->current_order.GetDestination() == this->last_station_visited) {
 		this->DeleteUnreachedImplicitOrders();
@@ -2208,7 +2211,7 @@ void Vehicle::BeginLoading()
 			this->last_loading_station != this->last_station_visited &&
 			((this->current_order.GetLoadType() & OLFB_NO_LOAD) == 0 ||
 			(this->current_order.GetUnloadType() & OUFB_NO_UNLOAD) == 0)) {
-		IncreaseStats(Station::Get(this->last_loading_station), this, this->last_station_visited);
+		IncreaseStats(Station::Get(this->last_loading_station), this, this->last_station_visited, travel_time);
 	}
 
 	PrepareUnload(this);
@@ -2233,7 +2236,7 @@ void Vehicle::CancelReservation(StationID next, Station *st)
 	for (Vehicle *v = this; v != nullptr; v = v->next) {
 		VehicleCargoList &cargo = v->cargo;
 		if (cargo.ActionCount(VehicleCargoList::MTA_LOAD) > 0) {
-			DEBUG(misc, 1, "cancelling cargo reservation");
+			Debug(misc, 1, "cancelling cargo reservation");
 			cargo.Return(UINT_MAX, &st->goods[v->cargo_type].cargo, next);
 			cargo.SetTransferLoadPlace(st->xy);
 		}
@@ -2795,7 +2798,7 @@ void Vehicle::RemoveFromShared()
 
 	if (this->orders.list->GetNumVehicles() == 1) {
 		/* When there is only one vehicle, remove the shared order list window. */
-		DeleteWindowById(GetWindowClassForVehicleType(this->type), vli.Pack());
+		CloseWindowById(GetWindowClassForVehicleType(this->type), vli.Pack());
 		InvalidateVehicleOrder(this->FirstShared(), VIWD_MODIFY_ORDERS);
 	} else if (were_first) {
 		/* If we were the first one, update to the new first one.

@@ -184,7 +184,7 @@ struct AIListWindow : public Window {
 		}
 		InvalidateWindowData(WC_GAME_OPTIONS, WN_GAME_OPTIONS_AI);
 		InvalidateWindowClassesData(WC_AI_SETTINGS);
-		DeleteWindowByClass(WC_QUERY_STRING);
+		CloseWindowByClass(WC_QUERY_STRING);
 		InvalidateWindowClassesData(WC_TEXTFILE);
 	}
 
@@ -198,7 +198,7 @@ struct AIListWindow : public Window {
 					this->SetDirty();
 					if (click_count > 1) {
 						this->ChangeAI();
-						delete this;
+						this->Close();
 					}
 				}
 				break;
@@ -206,12 +206,12 @@ struct AIListWindow : public Window {
 
 			case WID_AIL_ACCEPT: {
 				this->ChangeAI();
-				delete this;
+				this->Close();
 				break;
 			}
 
 			case WID_AIL_CANCEL:
-				delete this;
+				this->Close();
 				break;
 		}
 	}
@@ -229,7 +229,7 @@ struct AIListWindow : public Window {
 	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		if (_game_mode == GM_NORMAL && Company::IsValidID(this->slot)) {
-			delete this;
+			this->Close();
 			return;
 		}
 
@@ -278,7 +278,7 @@ static WindowDesc _ai_list_desc(
  */
 static void ShowAIListWindow(CompanyID slot)
 {
-	DeleteWindowByClass(WC_AI_LIST);
+	CloseWindowByClass(WC_AI_LIST);
 	new AIListWindow(&_ai_list_desc, slot);
 }
 
@@ -446,7 +446,7 @@ struct AISettingsWindow : public Window {
 				if (!this->IsEditableItem(config_item)) return;
 
 				if (this->clicked_row != num) {
-					DeleteChildWindows(WC_QUERY_STRING);
+					this->CloseChildWindows(WC_QUERY_STRING);
 					HideDropDownMenu(this);
 					this->clicked_row = num;
 					this->clicked_dropdown = false;
@@ -520,7 +520,7 @@ struct AISettingsWindow : public Window {
 			}
 
 			case WID_AIS_ACCEPT:
-				delete this;
+				this->Close();
 				break;
 
 			case WID_AIS_RESET:
@@ -586,7 +586,7 @@ struct AISettingsWindow : public Window {
 	{
 		this->RebuildVisibleSettings();
 		HideDropDownMenu(this);
-		DeleteChildWindows(WC_QUERY_STRING);
+		this->CloseChildWindows(WC_QUERY_STRING);
 	}
 
 private:
@@ -630,8 +630,8 @@ static WindowDesc _ai_settings_desc(
  */
 static void ShowAISettingsWindow(CompanyID slot)
 {
-	DeleteWindowByClass(WC_AI_LIST);
-	DeleteWindowByClass(WC_AI_SETTINGS);
+	CloseWindowByClass(WC_AI_LIST);
+	CloseWindowByClass(WC_AI_SETTINGS);
 	new AISettingsWindow(&_ai_settings_desc, slot);
 }
 
@@ -657,7 +657,7 @@ struct ScriptTextfileWindow : public TextfileWindow {
 	{
 		const char *textfile = GetConfig(slot)->GetTextfile(file_type, slot);
 		if (textfile == nullptr) {
-			delete this;
+			this->Close();
 		} else {
 			this->LoadTextfile(textfile, (slot == OWNER_DEITY) ? GAME_DIR : AI_DIR);
 		}
@@ -671,7 +671,7 @@ struct ScriptTextfileWindow : public TextfileWindow {
  */
 void ShowScriptTextfileWindow(TextfileType file_type, CompanyID slot)
 {
-	DeleteWindowById(WC_TEXTFILE, file_type);
+	CloseWindowById(WC_TEXTFILE, file_type);
 	new ScriptTextfileWindow(file_type, slot);
 }
 
@@ -737,10 +737,11 @@ struct AIConfigWindow : public Window {
 		this->OnInvalidateData(0);
 	}
 
-	~AIConfigWindow()
+	void Close() override
 	{
-		DeleteWindowByClass(WC_AI_LIST);
-		DeleteWindowByClass(WC_AI_SETTINGS);
+		CloseWindowByClass(WC_AI_LIST);
+		CloseWindowByClass(WC_AI_SETTINGS);
+		this->Window::Close();
 	}
 
 	void SetStringParameters(int widget) const override
@@ -923,7 +924,7 @@ struct AIConfigWindow : public Window {
 				break;
 
 			case WID_AIC_CLOSE:
-				delete this;
+				this->Close();
 				break;
 
 			case WID_AIC_CONTENT_DOWNLOAD:
@@ -965,7 +966,7 @@ struct AIConfigWindow : public Window {
 /** Open the AI config window. */
 void ShowAIConfigWindow()
 {
-	DeleteWindowByClass(WC_GAME_OPTIONS);
+	CloseWindowByClass(WC_GAME_OPTIONS);
 	new AIConfigWindow();
 }
 
@@ -1259,7 +1260,7 @@ struct AIDebugWindow : public Window {
 		this->highlight_row = -1; // The highlight of one AI make little sense for another AI.
 
 		/* Close AI settings window to prevent confusion */
-		DeleteWindowByClass(WC_AI_SETTINGS);
+		CloseWindowByClass(WC_AI_SETTINGS);
 
 		this->InvalidateData(-1);
 

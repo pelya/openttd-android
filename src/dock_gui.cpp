@@ -102,11 +102,12 @@ struct BuildDocksToolbarWindow : Window {
 		if (_settings_client.gui.link_terraform_toolbar || _settings_client.gui.compact_vertical_toolbar) ShowTerraformToolbar();
 	}
 
-	~BuildDocksToolbarWindow()
+	void Close() override
 	{
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (_game_mode == GM_NORMAL && this->IsWidgetLowered(WID_DT_STATION)) SetViewportCatchmentStation(nullptr, true);
-		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
+		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
+		this->Window::Close();
 	}
 
 	/**
@@ -125,8 +126,8 @@ struct BuildDocksToolbarWindow : Window {
 			WID_DT_BUOY,
 			WIDGET_LIST_END);
 		if (!can_build) {
-			DeleteWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
-			DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
+			CloseWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
+			CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
 		}
 
 		if (_game_mode != GM_EDITOR) {
@@ -301,9 +302,10 @@ struct BuildDocksToolbarWindow : Window {
 		this->RaiseButtons();
 
 		if (ConfirmationWindowShown() && _ctrl_pressed) return;
-		DeleteWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
-		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
-		DeleteWindowById(WC_SELECT_STATION, 0);
+		CloseWindowById(WC_BUILD_STATION, TRANSPORT_WATER);
+		CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_WATER);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		CloseWindowByClass(WC_BUILD_BRIDGE);
 	}
 
 	void SelectLastTool() override
@@ -408,7 +410,7 @@ Window *ShowBuildDocksToolbar()
 {
 	if (!Company::IsValidID(_local_company)) return nullptr;
 
-	DeleteToolbarLinkedWindows();
+	CloseToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildDocksToolbarWindow>(&_build_docks_toolbar_desc, TRANSPORT_WATER);
 }
 
@@ -447,7 +449,7 @@ static WindowDesc _build_docks_scen_toolbar_desc(
  */
 Window *ShowBuildDocksScenToolbar()
 {
-	DeleteToolbarLinkedWindows();
+	CloseToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildDocksToolbarWindow>(&_build_docks_scen_toolbar_desc, TRANSPORT_WATER);
 }
 
@@ -467,9 +469,10 @@ public:
 		this->LowerWidget(_settings_client.gui.station_show_coverage + BDSW_LT_OFF);
 	}
 
-	virtual ~BuildDocksStationWindow()
+	void Close() override
 	{
-		DeleteWindowById(WC_SELECT_STATION, 0);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		this->PickerWindowBase::Close();
 	}
 
 	void OnPaint() override

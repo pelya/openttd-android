@@ -24,7 +24,7 @@
 
 #include "safeguards.h"
 
-char _keyboard_opt[2][OSK_KEYBOARD_ENTRIES * 4 + 1];
+std::string _keyboard_opt[2];
 static WChar _keyboard[2][OSK_KEYBOARD_ENTRIES];
 
 enum KeyStateBits {
@@ -170,7 +170,7 @@ struct OskWindow : public Window {
 						return;
 					}
 				}
-				delete this;
+				this->Close();
 				break;
 
 			case WID_OSK_CANCEL:
@@ -182,7 +182,7 @@ struct OskWindow : public Window {
 					qs->text.Assign(this->orig_str_buf);
 					qs->text.MovePos(WKC_END);
 					this->OnEditboxChanged(WID_OSK_TEXT);
-					delete this;
+					this->Close();
 				}
 				break;
 		}
@@ -205,7 +205,7 @@ struct OskWindow : public Window {
 	void OnFocusLost() override
 	{
 		VideoDriver::GetInstance()->EditBoxLostFocus();
-		delete this;
+		this->Close();
 	}
 };
 
@@ -357,16 +357,16 @@ void GetKeyboardLayout()
 	char errormark[2][OSK_KEYBOARD_ENTRIES + 1]; // used for marking invalid chars
 	bool has_error = false; // true when an invalid char is detected
 
-	if (StrEmpty(_keyboard_opt[0])) {
+	if (_keyboard_opt[0].empty()) {
 		GetString(keyboard[0], STR_OSK_KEYBOARD_LAYOUT, lastof(keyboard[0]));
 	} else {
-		strecpy(keyboard[0], _keyboard_opt[0], lastof(keyboard[0]));
+		strecpy(keyboard[0], _keyboard_opt[0].c_str(), lastof(keyboard[0]));
 	}
 
-	if (StrEmpty(_keyboard_opt[1])) {
+	if (_keyboard_opt[1].empty()) {
 		GetString(keyboard[1], STR_OSK_KEYBOARD_LAYOUT_CAPS, lastof(keyboard[1]));
 	} else {
-		strecpy(keyboard[1], _keyboard_opt[1], lastof(keyboard[1]));
+		strecpy(keyboard[1], _keyboard_opt[1].c_str(), lastof(keyboard[1]));
 	}
 
 	for (uint j = 0; j < 2; j++) {
@@ -408,7 +408,7 @@ void GetKeyboardLayout()
  */
 void ShowOnScreenKeyboard(Window *parent, int button)
 {
-	DeleteWindowById(WC_OSK, 0);
+	CloseWindowById(WC_OSK, 0);
 
 	GetKeyboardLayout();
 	new OskWindow(&_osk_desc, parent, button);

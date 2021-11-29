@@ -548,13 +548,13 @@ private:
 	VehicleOrderID GetOrderFromPt(int y)
 	{
 		NWidgetBase *nwid = this->GetWidget<NWidgetBase>(WID_O_ORDER_LIST);
-		int sel = (y - nwid->pos_y - WD_FRAMERECT_TOP) / nwid->resize_y; // Selected line in the WID_O_ORDER_LIST panel.
+		uint sel = (y - nwid->pos_y - WD_FRAMERECT_TOP) / nwid->resize_y; // Selected line in the WID_O_ORDER_LIST panel.
 
-		if ((uint)sel >= this->vscroll->GetCapacity()) return INVALID_VEH_ORDER_ID;
+		if (sel >= this->vscroll->GetCapacity()) return INVALID_VEH_ORDER_ID;
 
 		sel += this->vscroll->GetPosition();
 
-		return (sel <= vehicle->GetNumOrders() && sel >= 0) ? sel : INVALID_VEH_ORDER_ID;
+		return (sel <= vehicle->GetNumOrders()) ? sel : INVALID_VEH_ORDER_ID;
 	}
 
 	/**
@@ -646,8 +646,8 @@ private:
 
 		DoCommandP(this->vehicle->tile, this->vehicle->index + (sel_ord << 20), MOF_UNLOAD | (unload_type << 4), CMD_MODIFY_ORDER | CMD_MSG(STR_ERROR_CAN_T_MODIFY_THIS_ORDER));
 
-		/* Transfer orders with leave empty as default */
-		if (unload_type == OUFB_TRANSFER) {
+		/* Transfer and unload orders with leave empty as default */
+		if (unload_type == OUFB_TRANSFER || unload_type == OUFB_UNLOAD) {
 			DoCommandP(this->vehicle->tile, this->vehicle->index + (sel_ord << 20), MOF_LOAD | (OLFB_NO_LOAD << 4), CMD_MODIFY_ORDER);
 			this->SetWidgetDirty(WID_O_FULL_LOAD);
 		}
@@ -846,7 +846,7 @@ public:
 				/* Removed / replaced all orders (after deleting / sharing) */
 				if (this->selected_order == -1) break;
 
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				HideDropDownMenu(this);
 				this->selected_order = -1;
 				break;
@@ -878,7 +878,7 @@ public:
 				/* Now we are modifying the selected order */
 				if (to == INVALID_VEH_ORDER_ID) {
 					/* Deleting selected order */
-					this->DeleteChildWindows();
+					this->CloseChildWindows();
 					HideDropDownMenu(this);
 					this->selected_order = -1;
 					break;
@@ -1177,7 +1177,7 @@ public:
 				}
 
 				/* This order won't be selected any more, close all child windows and dropdowns */
-				this->DeleteChildWindows();
+				this->CloseChildWindows();
 				HideDropDownMenu(this);
 
 				if (sel == INVALID_VEH_ORDER_ID || this->vehicle->owner != _local_company) {
@@ -1705,12 +1705,12 @@ static WindowDesc _other_orders_desc(
 
 void ShowOrdersWindow(const Vehicle *v)
 {
-	DeleteWindowById(WC_VEHICLE_DETAILS, v->index, false);
-	DeleteWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
+	CloseWindowById(WC_VEHICLE_DETAILS, v->index, false);
+	CloseWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
 	if (BringWindowToFrontById(WC_VEHICLE_ORDERS, v->index) != nullptr) return;
 
 	/* Using a different WindowDescs for _local_company causes problems.
-	 * Due to this we have to close order windows in ChangeWindowOwner/DeleteCompanyWindows,
+	 * Due to this we have to close order windows in ChangeWindowOwner/CloseCompanyWindows,
 	 * because we cannot change switch the WindowDescs and keeping the old WindowDesc results
 	 * in crashed due to missing widges.
 	 * TODO Rewrite the order GUI to not use different WindowDescs.

@@ -1103,9 +1103,6 @@ struct BuildVehicleWindow : Window {
 		 * So we just hide it, and enlarge the Rename button by the now vacant place. */
 		if (this->listview_mode) this->GetWidget<NWidgetStacked>(WID_BV_BUILD_SEL)->SetDisplayedPlane(SZSP_NONE);
 
-		/* disable renaming engines in network games if you are not the server */
-		this->SetWidgetDisabledState(WID_BV_RENAME, _networking && !_network_server);
-
 		NWidgetCore *widget = this->GetWidget<NWidgetCore>(WID_BV_LIST);
 		widget->tool_tip = STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP + type;
 
@@ -1192,8 +1189,7 @@ struct BuildVehicleWindow : Window {
 		}
 
 		/* Collect available cargo types for filtering. */
-		const CargoSpec *cs;
-		FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
+		for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 			this->cargo_filter[filter_items] = cs->Index();
 			this->cargo_filter_texts[filter_items] = cs->name;
 			filter_items++;
@@ -1236,7 +1232,7 @@ struct BuildVehicleWindow : Window {
 
 		if (!this->listview_mode) {
 			/* Query for cost and refitted capacity */
-			CommandCost ret = DoCommand(this->window_number, this->sel_engine | (cargo << 24), 0, DC_QUERY_COST, GetCmdBuildVeh(this->vehicle_type), nullptr);
+			CommandCost ret = DoCommand(this->window_number, this->sel_engine | (cargo << 24), 0, DC_QUERY_COST, GetCmdBuildVeh(this->vehicle_type));
 			if (ret.Succeeded()) {
 				this->te.cost          = ret.GetCost() - e->GetCost();
 				this->te.capacity      = _returned_refit_capacity;
@@ -1616,7 +1612,10 @@ struct BuildVehicleWindow : Window {
 		this->GenerateBuildList();
 		this->vscroll->SetCount((uint)this->eng_list.size());
 
-		this->SetWidgetsDisabledState(this->sel_engine == INVALID_ENGINE, WID_BV_SHOW_HIDE, WID_BV_BUILD, WID_BV_RENAME, WIDGET_LIST_END);
+		this->SetWidgetsDisabledState(this->sel_engine == INVALID_ENGINE, WID_BV_SHOW_HIDE, WID_BV_BUILD, WIDGET_LIST_END);
+
+		/* Disable renaming engines in network games if you are not the server. */
+		this->SetWidgetDisabledState(WID_BV_RENAME, this->sel_engine == INVALID_ENGINE || (_networking && !_network_server));
 
 		this->DrawWidgets();
 
@@ -1693,7 +1692,7 @@ void ShowBuildVehicleWindow(TileIndex tile, VehicleType type)
 
 	assert(IsCompanyBuildableVehicleType(type));
 
-	DeleteWindowById(WC_BUILD_VEHICLE, num);
+	CloseWindowById(WC_BUILD_VEHICLE, num);
 
 	new BuildVehicleWindow(&_build_vehicle_desc, tile, type);
 }

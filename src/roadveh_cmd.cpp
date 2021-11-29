@@ -366,7 +366,7 @@ bool RoadVehicle::FindClosestDepot(TileIndex *location, DestinationID *destinati
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdTurnRoadVeh(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdTurnRoadVeh(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	RoadVehicle *v = RoadVehicle::GetIfValid(p1);
 	if (v == nullptr) return CMD_ERROR;
@@ -1257,7 +1257,7 @@ again:
 					tile = v->tile;
 					start_frame = RVC_TURN_AROUND_START_FRAME_SHORT_TRAM;
 				} else {
-					/* The company can build on the next tile, so wait till (s)he does. */
+					/* The company can build on the next tile, so wait till they do. */
 					v->cur_speed = 0;
 					return false;
 				}

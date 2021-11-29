@@ -105,7 +105,7 @@ static inline uint32 GetVariable(const ResolverObject &object, ScopeResolver *sc
  */
 /* virtual */ uint32 ScopeResolver::GetVariable(byte variable, uint32 parameter, bool *available) const
 {
-	DEBUG(grf, 1, "Unhandled scope variable 0x%X", variable);
+	Debug(grf, 1, "Unhandled scope variable 0x{:X}", variable);
 	*available = false;
 	return UINT_MAX;
 }
@@ -124,6 +124,9 @@ static inline uint32 GetVariable(const ResolverObject &object, ScopeResolver *sc
  */
 /* virtual */ const SpriteGroup *ResolverObject::ResolveReal(const RealSpriteGroup *group) const
 {
+	if (!group->loaded.empty())  return group->loaded[0];
+	if (!group->loading.empty()) return group->loading[0];
+
 	return nullptr;
 }
 

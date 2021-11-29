@@ -620,7 +620,7 @@ void OrderList::DebugCheckSanity() const
 	Ticks check_timetable_duration = 0;
 	Ticks check_total_duration = 0;
 
-	DEBUG(misc, 6, "Checking OrderList %hu for sanity...", this->index);
+	Debug(misc, 6, "Checking OrderList {} for sanity...", this->index);
 
 	for (const Order *o = this->first; o != nullptr; o = o->next) {
 		++check_num_orders;
@@ -638,7 +638,7 @@ void OrderList::DebugCheckSanity() const
 		assert(v->orders.list == this);
 	}
 	assert(this->num_vehicles == check_num_vehicles);
-	DEBUG(misc, 6, "... detected %u orders (%u manual), %u vehicles, %i timetabled, %i total",
+	Debug(misc, 6, "... detected {} orders ({} manual), {} vehicles, {} timetabled, {} total",
 			(uint)this->num_orders, (uint)this->num_manual_orders,
 			this->num_vehicles, this->timetable_duration, this->total_duration);
 }
@@ -660,7 +660,7 @@ static inline bool OrderGoesToStation(const Vehicle *v, const Order *o)
  * Delete all news items regarding defective orders about a vehicle
  * This could kill still valid warnings (for example about void order when just
  * another order gets added), but assume the company will notice the problems,
- * when (s)he's changing the orders.
+ * when they're changing the orders.
  */
 static void DeleteOrderWarnings(const Vehicle *v)
 {
@@ -735,7 +735,7 @@ uint GetOrderDistance(const Order *prev, const Order *cur, const Vehicle *v, int
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdInsertOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdInsertOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh          = GB(p1,  0, 20);
 	VehicleOrderID sel_ord = GB(p1, 20, 8);
@@ -1010,7 +1010,7 @@ static CommandCost DecloneOrder(Vehicle *dst, DoCommandFlag flags)
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdDeleteOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdDeleteOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh_id = GB(p1, 0, 20);
 	VehicleOrderID sel_ord = GB(p2, 0, 8);
@@ -1039,7 +1039,7 @@ static void CancelLoadingDueToDeletedOrder(Vehicle *v)
 {
 	assert(v->current_order.IsType(OT_LOADING));
 	/* NON-stop flag is misused to see if a train is in a station that is
-	 * on his order list or not */
+	 * on its order list or not */
 	v->current_order.SetNonStopType(ONSF_STOP_EVERYWHERE);
 	/* When full loading, "cancel" that order so the vehicle doesn't
 	 * stay indefinitely at this station anymore. */
@@ -1115,7 +1115,7 @@ void DeleteOrder(Vehicle *v, VehicleOrderID sel_ord)
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdSkipToOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSkipToOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh_id = GB(p1, 0, 20);
 	VehicleOrderID sel_ord = GB(p2, 0, 8);
@@ -1156,7 +1156,7 @@ CommandCost CmdSkipToOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
  * @note The target order will move one place down in the orderlist
  *  if you move the order upwards else it'll move it one place down
  */
-CommandCost CmdMoveOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdMoveOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh = GB(p1, 0, 20);
 	VehicleOrderID moving_order = GB(p2,  0, 16);
@@ -1259,7 +1259,7 @@ CommandCost CmdMoveOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdModifyOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdModifyOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleOrderID sel_ord = GB(p1, 20,  8);
 	VehicleID veh          = GB(p1,  0, 20);
@@ -1528,7 +1528,7 @@ static bool CheckAircraftOrderDistance(const Aircraft *v_new, const Vehicle *v_o
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdCloneOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdCloneOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh_src = GB(p2, 0, 20);
 	VehicleID veh_dst = GB(p1, 0, 20);
@@ -1675,7 +1675,7 @@ CommandCost CmdCloneOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdOrderRefit(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdOrderRefit(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	VehicleID veh = GB(p1, 0, 20);
 	VehicleOrderID order_number  = GB(p2, 16, 8);

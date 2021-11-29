@@ -149,7 +149,7 @@ void CcRoadStop(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2,
 	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 	TileArea roadstop_area(tile, GB(p1, 0, 8), GB(p1, 8, 8));
-	TILE_AREA_LOOP(cur_tile, roadstop_area) {
+	for (TileIndex cur_tile : roadstop_area) {
 		ConnectRoadToStructure(cur_tile, dir);
 		/* For a drive-through road stop build connecting road for other entrance. */
 		if (HasBit(p2, 1)) ConnectRoadToStructure(cur_tile, ReverseDiagDir(dir));
@@ -282,11 +282,12 @@ struct BuildRoadToolbarWindow : Window {
 		if (_settings_client.gui.link_terraform_toolbar || _settings_client.gui.compact_vertical_toolbar) ShowTerraformToolbar();
 	}
 
-	~BuildRoadToolbarWindow()
+	void Close() override
 	{
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (_game_mode == GM_NORMAL && (this->IsWidgetLowered(WID_ROT_BUS_STATION) || this->IsWidgetLowered(WID_ROT_TRUCK_STATION))) SetViewportCatchmentStation(nullptr, true);
-		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
+		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
+		this->Window::Close();
 	}
 
 	/**
@@ -306,9 +307,9 @@ struct BuildRoadToolbarWindow : Window {
 			WID_ROT_TRUCK_STATION,
 			WIDGET_LIST_END);
 		if (!can_build) {
-			DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
-			DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
-			DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
+			CloseWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
+			CloseWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
+			CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
 		}
 
 		if (_game_mode != GM_EDITOR) {
@@ -492,7 +493,7 @@ struct BuildRoadToolbarWindow : Window {
 			case WID_ROT_REMOVE:
 				if (this->IsWidgetDisabled(WID_ROT_REMOVE)) return;
 
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				ToggleRoadButton_Remove(this);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				break;
@@ -586,11 +587,11 @@ struct BuildRoadToolbarWindow : Window {
 		}
 
 		if (ConfirmationWindowShown() && (this->last_started_action == WID_ROT_BUILD_BRIDGE || _ctrl_pressed)) return;
-		DeleteWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
-		DeleteWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
-		DeleteWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
-		DeleteWindowById(WC_SELECT_STATION, 0);
-		DeleteWindowByClass(WC_BUILD_BRIDGE);
+		CloseWindowById(WC_BUS_STATION, TRANSPORT_ROAD);
+		CloseWindowById(WC_TRUCK_STATION, TRANSPORT_ROAD);
+		CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_ROAD);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		CloseWindowByClass(WC_BUILD_BRIDGE);
 	}
 
 	void SelectLastTool() override
@@ -926,8 +927,8 @@ Window *ShowBuildRoadToolbar(RoadType roadtype)
 	if (!Company::IsValidID(_local_company)) return nullptr;
 	if (!ValParamRoadType(roadtype)) return nullptr;
 
+	CloseToolbarLinkedWindows();
 	_cur_roadtype = roadtype;
-	DeleteToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(RoadTypeIsRoad(_cur_roadtype) ? &_build_road_desc : &_build_tramway_desc, TRANSPORT_ROAD);
 }
 
@@ -1009,8 +1010,8 @@ static WindowDesc _build_tramway_scen_desc(
  */
 Window *ShowBuildRoadScenToolbar(RoadType roadtype)
 {
-	DeleteToolbarLinkedWindows();
-	DeleteWindowById(WC_SCEN_BUILD_TOOLBAR, TRANSPORT_ROAD);
+	CloseToolbarLinkedWindows();
+	CloseWindowById(WC_SCEN_BUILD_TOOLBAR, TRANSPORT_ROAD);
 	_cur_roadtype = roadtype;
 
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(RoadTypeIsRoad(_cur_roadtype) ? &_build_road_scen_desc : &_build_tramway_scen_desc, TRANSPORT_ROAD);
@@ -1131,9 +1132,10 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		this->window_class = (rs == ROADSTOP_BUS) ? WC_BUS_STATION : WC_TRUCK_STATION;
 	}
 
-	virtual ~BuildRoadStationWindow()
+	void Close() override
 	{
-		DeleteWindowById(WC_SELECT_STATION, 0);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		this->PickerWindowBase::Close();
 	}
 
 	void OnPaint() override
@@ -1193,7 +1195,7 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 				this->LowerWidget(_road_station_picker_orientation + WID_BROS_STATION_NE);
 				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				this->SetDirty();
-				DeleteWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WC_SELECT_STATION, 0);
 				break;
 
 			case WID_BROS_LT_OFF:

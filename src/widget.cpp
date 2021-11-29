@@ -117,6 +117,7 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 	int pos;
 	int button_size;
 	bool rtl = false;
+	bool changed = false;
 
 	if (sb->type == NWID_HSCROLLBAR) {
 		pos = x;
@@ -142,7 +143,7 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		SetBit(sb->disp_flags, NDB_SCROLLBAR_UP);
 		if (_scroller_click_timeout <= 1) {
 			_scroller_click_timeout = SCROLLER_CLICK_DELAY;
-			sb->UpdatePosition(rtl ? 1 : -1);
+			changed = sb->UpdatePosition(rtl ? 1 : -1);
 		}
 		w->mouse_capture_widget = sb->index;
 	} else if (pos >= ma - button_size) {
@@ -151,16 +152,16 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 
 		if (_scroller_click_timeout <= 1) {
 			_scroller_click_timeout = SCROLLER_CLICK_DELAY;
-			sb->UpdatePosition(rtl ? -1 : 1);
+			changed = sb->UpdatePosition(rtl ? -1 : 1);
 		}
 		w->mouse_capture_widget = sb->index;
 	} else {
 		Point pt = HandleScrollbarHittest(sb, mi, ma, sb->type == NWID_HSCROLLBAR);
 
 		if (pos < pt.x) {
-			sb->UpdatePosition(rtl ? 1 : -1, Scrollbar::SS_BIG);
+			changed = sb->UpdatePosition(rtl ? 1 : -1, Scrollbar::SS_BIG);
 		} else if (pos > pt.y) {
-			sb->UpdatePosition(rtl ? -1 : 1, Scrollbar::SS_BIG);
+			changed = sb->UpdatePosition(rtl ? -1 : 1, Scrollbar::SS_BIG);
 		} else {
 			_scrollbar_start_pos = pt.x - mi - button_size;
 			_scrollbar_size = ma - mi - button_size * 2;
@@ -171,7 +172,13 @@ static void ScrollbarClickPositioning(Window *w, NWidgetScrollbar *sb, int x, in
 		}
 	}
 
-	w->SetDirty();
+	if (changed) {
+		/* Position changed so refresh the window */
+		w->SetDirty();
+	} else {
+		/* No change so only refresh this scrollbar */
+		sb->SetDirty(w);
+	}
 }
 
 /**
@@ -1495,9 +1502,7 @@ void NWidgetHorizontal::SetupSmallestSize(Window *w, bool init_array)
 		this->smallest_y = std::max(this->smallest_y, child_wid->smallest_y + child_wid->padding_top + child_wid->padding_bottom);
 	}
 	/* 1b. Make the container higher if needed to accommodate all children nicely. */
-#ifdef WITH_ASSERT
-	uint max_smallest = this->smallest_y + 3 * max_vert_fill; // Upper limit to computing smallest height.
-#endif
+	[[maybe_unused]] uint max_smallest = this->smallest_y + 3 * max_vert_fill; // Upper limit to computing smallest height.
 	uint cur_height = this->smallest_y;
 	for (;;) {
 		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
@@ -1662,9 +1667,7 @@ void NWidgetVertical::SetupSmallestSize(Window *w, bool init_array)
 		this->smallest_x = std::max(this->smallest_x, child_wid->smallest_x + child_wid->padding_left + child_wid->padding_right);
 	}
 	/* 1b. Make the container wider if needed to accommodate all children nicely. */
-#ifdef WITH_ASSERT
-	uint max_smallest = this->smallest_x + 3 * max_hor_fill; // Upper limit to computing smallest height.
-#endif
+	[[maybe_unused]] uint max_smallest = this->smallest_x + 3 * max_hor_fill; // Upper limit to computing smallest height.
 	uint cur_width = this->smallest_x;
 	for (;;) {
 		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
@@ -2138,8 +2141,11 @@ void NWidgetBackground::SetupSmallestSize(Window *w, bool init_array)
 		this->resize_x = this->child->resize_x;
 		this->resize_y = this->child->resize_y;
 
-		/* Account for the size of the frame's text if that exists */
-		if (w != nullptr && this->type == WWT_FRAME) {
+		/* Don't apply automatic padding if there is no child widget. */
+		if (w == nullptr) return;
+
+		if (this->type == WWT_FRAME) {
+			/* Account for the size of the frame's text if that exists */
 			this->child->padding_left   = WD_FRAMETEXT_LEFT;
 			this->child->padding_right  = WD_FRAMETEXT_RIGHT;
 			this->child->padding_top    = std::max((int)WD_FRAMETEXT_TOP, this->widget_data != STR_NULL ? FONT_HEIGHT_NORMAL + WD_FRAMETEXT_TOP / 2 : 0);
@@ -2150,6 +2156,15 @@ void NWidgetBackground::SetupSmallestSize(Window *w, bool init_array)
 
 			if (this->index >= 0) w->SetStringParameters(this->index);
 			this->smallest_x = std::max(this->smallest_x, GetStringBoundingBox(this->widget_data).width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT);
+		} else if (this->type == WWT_INSET) {
+			/* Apply automatic padding for bevel thickness. */
+			this->child->padding_left   = WD_BEVEL_LEFT;
+			this->child->padding_right  = WD_BEVEL_RIGHT;
+			this->child->padding_top    = WD_BEVEL_TOP;
+			this->child->padding_bottom = WD_BEVEL_BOTTOM;
+
+			this->smallest_x += this->child->padding_left + this->child->padding_right;
+			this->smallest_y += this->child->padding_top + this->child->padding_bottom;
 		}
 	} else {
 		Dimension d = {this->min_x, this->min_y};
@@ -2198,11 +2213,7 @@ void NWidgetBackground::Draw(const Window *w)
 {
 	if (this->current_x == 0 || this->current_y == 0) return;
 
-	Rect r;
-	r.left = this->pos_x;
-	r.right = this->pos_x + this->current_x - 1;
-	r.top = this->pos_y;
-	r.bottom = this->pos_y + this->current_y - 1;
+	Rect r = this->GetCurrentRect();
 
 	const DrawPixelInfo *dpi = _cur_dpi;
 	if (dpi->left > r.right || dpi->left + dpi->width <= r.left || dpi->top > r.bottom || dpi->top + dpi->height <= r.top) return;
@@ -2470,11 +2481,7 @@ void NWidgetScrollbar::Draw(const Window *w)
 {
 	if (this->current_x == 0 || this->current_y == 0) return;
 
-	Rect r;
-	r.left = this->pos_x;
-	r.right = this->pos_x + this->current_x - 1;
-	r.top = this->pos_y;
-	r.bottom = this->pos_y + this->current_y - 1;
+	Rect r = this->GetCurrentRect();
 
 	const DrawPixelInfo *dpi = _cur_dpi;
 	if (dpi->left > r.right || dpi->left + dpi->width <= r.left || dpi->top > r.bottom || dpi->top + dpi->height <= r.top) return;
@@ -2906,11 +2913,7 @@ void NWidgetLeaf::Draw(const Window *w)
 	DrawPixelInfo *old_dpi = _cur_dpi;
 	_cur_dpi = &new_dpi;
 
-	Rect r;
-	r.left = this->pos_x;
-	r.right = this->pos_x + this->current_x - 1;
-	r.top = this->pos_y;
-	r.bottom = this->pos_y + this->current_y - 1;
+	Rect r = this->GetCurrentRect();
 
 	bool clicked = this->IsLowered();
 	switch (this->type) {

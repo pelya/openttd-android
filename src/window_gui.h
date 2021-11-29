@@ -10,6 +10,8 @@
 #ifndef WINDOW_GUI_H
 #define WINDOW_GUI_H
 
+#include <list>
+
 #include "vehicle_type.h"
 #include "viewport_type.h"
 #include "company_type.h"
@@ -143,8 +145,8 @@ void DrawFrameRect(int left, int top, int right, int bottom, Colours colour, Fra
 void DrawCaption(const Rect &r, Colours colour, Owner owner, TextColour text_colour, StringID str, StringAlignment align, const NWidgetCore *widget, const Window *window);
 
 /* window.cpp */
-extern Window *_z_front_window;
-extern Window *_z_back_window;
+using WindowList = std::list<Window *>;
+extern WindowList _z_windows;
 extern Window *_focused_window;
 
 
@@ -275,6 +277,9 @@ enum TooltipCloseCondition {
  * Data structure for an opened window
  */
 struct Window : ZeroedMemoryAllocator {
+private:
+	static std::vector<Window *> closed_windows;
+
 protected:
 	void InitializeData(WindowNumber window_number);
 	void InitializePositionSize(int x, int y, int min_width, int min_height);
@@ -282,10 +287,11 @@ protected:
 
 	std::vector<int> scheduled_invalidation_data;  ///< Data of scheduled OnInvalidateData() calls.
 
+	/* Protected to prevent deletion anywhere outside Window::DeleteClosedWindows(). */
+	virtual ~Window();
+
 public:
 	Window(WindowDesc *desc);
-
-	virtual ~Window();
 
 	/**
 	 * Helper allocation function to disallow something.
@@ -293,19 +299,7 @@ public:
 	 * to destruct them all at the same time too, which is kinda hard.
 	 * @param size the amount of space not to allocate
 	 */
-	inline void *operator new[](size_t size)
-	{
-		NOT_REACHED();
-	}
-
-	/**
-	 * Helper allocation function to disallow something.
-	 * Don't free the window directly; it corrupts the linked list when iterating
-	 * @param ptr the pointer not to free
-	 */
-	inline void operator delete(void *ptr)
-	{
-	}
+	inline void *operator new[](size_t size) = delete;
 
 	WindowDesc *window_desc;    ///< Window description
 	WindowFlags flags;          ///< Window flags
@@ -336,8 +330,7 @@ public:
 	int mouse_capture_widget;        ///< Widgetindex of current mouse capture widget (e.g. dragged scrollbar). -1 if no widget has mouse capture.
 
 	Window *parent;                  ///< Parent window.
-	Window *z_front;                 ///< The window in front of us in z-order.
-	Window *z_back;                  ///< The window behind us in z-order.
+	WindowList::iterator z_position;
 
 	template <class NWID>
 	inline const NWID *GetWidget(uint widnum) const;
@@ -516,7 +509,9 @@ public:
 	void DrawSortButtonState(int widget, SortButtonState state) const;
 	static int SortButtonWidth();
 
-	void DeleteChildWindows(WindowClass wc = WC_INVALID) const;
+	void CloseChildWindows(WindowClass wc = WC_INVALID) const;
+	virtual void Close();
+	static void DeleteClosedWindows();
 
 	void SetDirty() const;
 	void ReInit(int rx = 0, int ry = 0);
@@ -817,65 +812,71 @@ public:
 
 	/**
 	 * Iterator to iterate all valid Windows
-	 * @tparam T Type of the class/struct that is going to be iterated
-	 * @tparam Tfront Wether we iterate from front
+	 * @tparam TtoBack whether we iterate towards the back.
 	 */
-	template <class T, bool Tfront>
+	template <bool TtoBack>
 	struct WindowIterator {
-		typedef T value_type;
-		typedef T *pointer;
-		typedef T &reference;
+		typedef Window *value_type;
+		typedef value_type *pointer;
+		typedef value_type &reference;
 		typedef size_t difference_type;
 		typedef std::forward_iterator_tag iterator_category;
 
-		explicit WindowIterator(T *start) : w(start)
+		explicit WindowIterator(WindowList::iterator start) : it(start)
 		{
 			this->Validate();
 		}
+		explicit WindowIterator(const Window *w) : it(w->z_position) {}
 
-		bool operator==(const WindowIterator &other) const { return this->w == other.w; }
+		bool operator==(const WindowIterator &other) const { return this->it == other.it; }
 		bool operator!=(const WindowIterator &other) const { return !(*this == other); }
-		T * operator*() const { return this->w; }
+		Window * operator*() const { return *this->it; }
 		WindowIterator & operator++() { this->Next(); this->Validate(); return *this; }
 
+		bool IsEnd() const { return this->it == _z_windows.end(); }
+
 	private:
-		T *w;
-		void Validate() { while (this->w != nullptr && this->w->window_class == WC_INVALID) this->Next(); }
-		void Next() { if (this->w != nullptr) this->w = Tfront ? this->w->z_back : this->w->z_front; }
+		WindowList::iterator it;
+		void Validate()
+		{
+			while (!this->IsEnd() && *this->it == nullptr) this->Next();
+		}
+		void Next()
+		{
+			if constexpr (!TtoBack) {
+				++this->it;
+			} else if (this->it == _z_windows.begin()) {
+				this->it = _z_windows.end();
+			} else {
+				--this->it;
+			}
+		}
 	};
+	using IteratorToFront = WindowIterator<false>; //!< Iterate in Z order towards front.
+	using IteratorToBack = WindowIterator<true>; //!< Iterate in Z order towards back.
 
 	/**
 	 * Iterable ensemble of all valid Windows
-	 * @tparam T Type of the class/struct that is going to be iterated
 	 * @tparam Tfront Wether we iterate from front
 	 */
-	template <class T, bool Tfront>
-	struct Iterate {
-		Iterate(T *from) : from(from) {}
-		WindowIterator<T, Tfront> begin() { return WindowIterator<T, Tfront>(this->from); }
-		WindowIterator<T, Tfront> end() { return WindowIterator<T, Tfront>(nullptr); }
-		bool empty() { return this->begin() == this->end(); }
-	private:
-		T *from;
+	template <bool Tfront>
+	struct AllWindows {
+		AllWindows() {}
+		WindowIterator<Tfront> begin()
+		{
+			if constexpr (Tfront) {
+				auto back = _z_windows.end();
+				if (back != _z_windows.begin()) --back;
+				return WindowIterator<Tfront>(back);
+			} else {
+				return WindowIterator<Tfront>(_z_windows.begin());
+			}
+		}
+		WindowIterator<Tfront> end() { return WindowIterator<Tfront>(_z_windows.end()); }
 	};
-
-	/**
-	 * Returns an iterable ensemble of all valid Window from back to front
-	 * @tparam T Type of the class/struct that is going to be iterated
-	 * @param from index of the first Window to consider
-	 * @return an iterable ensemble of all valid Window
-	 */
-	template <class T = Window>
-	static Iterate<T, false> IterateFromBack(T *from = _z_back_window) { return Iterate<T, false>(from); }
-
-	/**
-	 * Returns an iterable ensemble of all valid Window from front to back
-	 * @tparam T Type of the class/struct that is going to be iterated
-	 * @param from index of the first Window to consider
-	 * @return an iterable ensemble of all valid Window
-	 */
-	template <class T = Window>
-	static Iterate<T, true> IterateFromFront(T *from = _z_front_window) { return Iterate<T, true>(from); }
+	using Iterate = AllWindows<false>; //!< Iterate all windows in whatever order is easiest.
+	using IterateFromBack = AllWindows<false>; //!< Iterate all windows in Z order from back to front.
+	using IterateFromFront = AllWindows<true>; //!< Iterate all windows in Z order from front to back.
 };
 
 /**
@@ -925,7 +926,7 @@ public:
 		this->parent = parent;
 	}
 
-	virtual ~PickerWindowBase();
+	void Close() override;
 };
 
 Window *BringWindowToFrontById(WindowClass cls, WindowNumber number);

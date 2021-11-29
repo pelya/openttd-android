@@ -35,7 +35,7 @@
 static const char * const SCREENSHOT_NAME = "screenshot"; ///< Default filename of a saved screenshot.
 static const char * const HEIGHTMAP_NAME  = "heightmap";  ///< Default filename of a saved heightmap.
 
-char _screenshot_format_name[8];      ///< Extension of the current screenshot format (corresponds with #_cur_screenshot_format).
+std::string _screenshot_format_name;  ///< Extension of the current screenshot format (corresponds with #_cur_screenshot_format).
 uint _num_screenshot_formats;         ///< Number of available screenshot formats.
 uint _cur_screenshot_format;          ///< Index of the currently selected screenshot format in #_screenshot_formats.
 static char _screenshot_name[256];    ///< Filename of the screenshot file.
@@ -238,13 +238,13 @@ static bool MakeBMPImage(const char *name, ScreenshotCallback *callb, void *user
 
 static void PNGAPI png_my_error(png_structp png_ptr, png_const_charp message)
 {
-	DEBUG(misc, 0, "[libpng] error: %s - %s", message, (const char *)png_get_error_ptr(png_ptr));
+	Debug(misc, 0, "[libpng] error: {} - {}", message, (const char *)png_get_error_ptr(png_ptr));
 	longjmp(png_jmpbuf(png_ptr), 1);
 }
 
 static void PNGAPI png_my_warning(png_structp png_ptr, png_const_charp message)
 {
-	DEBUG(misc, 1, "[libpng] warning: %s - %s", message, (const char *)png_get_error_ptr(png_ptr));
+	Debug(misc, 1, "[libpng] warning: {} - {}", message, (const char *)png_get_error_ptr(png_ptr));
 }
 
 /**
@@ -457,7 +457,7 @@ static bool MakePCXImage(const char *name, ScreenshotCallback *callb, void *user
 	bool success;
 
 	if (pixelformat == 32) {
-		DEBUG(misc, 0, "Can't convert a 32bpp screenshot to PCX format. Please pick another format.");
+		Debug(misc, 0, "Can't convert a 32bpp screenshot to PCX format. Please pick another format.");
 		return false;
 	}
 	if (pixelformat != 8 || w == 0) return false;
@@ -597,7 +597,7 @@ void InitializeScreenshotFormats()
 {
 	uint j = 0;
 	for (uint i = 0; i < lengthof(_screenshot_formats); i++) {
-		if (!strcmp(_screenshot_format_name, _screenshot_formats[i].extension)) {
+		if (_screenshot_format_name.compare(_screenshot_formats[i].extension) != 0) {
 			j = i;
 			break;
 		}

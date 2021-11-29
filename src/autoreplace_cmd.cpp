@@ -207,6 +207,7 @@ static int GetIncompatibleRefitOrderIdForAutoreplace(const Vehicle *v, EngineID 
 	const Vehicle *u = (v->type == VEH_TRAIN) ? v->First() : v;
 
 	const OrderList *orders = u->orders.list;
+	if (orders == nullptr) return -1;
 	for (VehicleOrderID i = 0; i < orders->GetNumOrders(); i++) {
 		o = orders->GetOrderAt(i);
 		if (!o->IsRefit()) continue;
@@ -596,8 +597,7 @@ static CommandCost ReplaceChain(Vehicle **chain, DoCommandFlag flags, bool wagon
 					assert(RailVehInfo(wagon->engine_type)->railveh_type == RAILVEH_WAGON);
 
 					/* Sell wagon */
-					CommandCost ret = DoCommand(0, wagon->index, 0, DC_EXEC, GetCmdSellVeh(wagon));
-					(void)ret; // assert only
+					[[maybe_unused]] CommandCost ret = DoCommand(0, wagon->index, 0, DC_EXEC, GetCmdSellVeh(wagon));
 					assert(ret.Succeeded());
 					new_vehs[i] = nullptr;
 
@@ -614,6 +614,7 @@ static CommandCost ReplaceChain(Vehicle **chain, DoCommandFlag flags, bool wagon
 				/* Success ! */
 				if ((flags & DC_EXEC) != 0 && new_head != old_head) {
 					*chain = new_head;
+					AI::NewEvent(old_head->owner, new ScriptEventVehicleAutoReplaced(old_head->index, new_head->index));
 				}
 
 				/* Transfer cargo of old vehicles and sell them */
@@ -631,10 +632,7 @@ static CommandCost ReplaceChain(Vehicle **chain, DoCommandFlag flags, bool wagon
 					cost.AddCost(DoCommand(0, w->index, 0, flags | DC_AUTOREPLACE, GetCmdSellVeh(w)));
 					if ((flags & DC_EXEC) != 0) {
 						old_vehs[i] = nullptr;
-						if (i == 0) {
-							AI::NewEvent(old_head->owner, new ScriptEventVehicleAutoReplaced(old_head->index, new_head->index));
-							old_head = nullptr;
-						}
+						if (i == 0) old_head = nullptr;
 					}
 				}
 
@@ -652,8 +650,7 @@ static CommandCost ReplaceChain(Vehicle **chain, DoCommandFlag flags, bool wagon
 				assert(Train::From(old_head)->GetNextUnit() == nullptr);
 
 				for (int i = num_units - 1; i > 0; i--) {
-					CommandCost ret = CmdMoveVehicle(old_vehs[i], old_head, DC_EXEC | DC_AUTOREPLACE, false);
-					(void)ret; // assert only
+					[[maybe_unused]] CommandCost ret = CmdMoveVehicle(old_vehs[i], old_head, DC_EXEC | DC_AUTOREPLACE, false);
 					assert(ret.Succeeded());
 				}
 			}
@@ -717,7 +714,7 @@ static CommandCost ReplaceChain(Vehicle **chain, DoCommandFlag flags, bool wagon
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdAutoreplaceVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdAutoreplaceVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Vehicle *v = Vehicle::GetIfValid(p1);
 	if (v == nullptr) return CMD_ERROR;
@@ -810,7 +807,7 @@ CommandCost CmdAutoreplaceVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdSetAutoReplace(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSetAutoReplace(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	Company *c = Company::GetIfValid(_current_company);
 	if (c == nullptr) return CMD_ERROR;

@@ -44,8 +44,7 @@ Point _right_button_down_pos; ///< Pos of right mouse button click, for drag and
 
 DrawPixelInfo _screen;
 bool _screen_disable_anim = false;   ///< Disable palette animation (important for 32bpp-anim blitter during giant screenshot)
-bool _exit_game;
-bool _restart_game;
+std::atomic<bool> _exit_game;
 GameMode _game_mode;
 SwitchMode _switch_mode;  ///< The next mainloop command.
 PauseMode _pause_mode;
@@ -54,6 +53,8 @@ Palette _cur_palette;
 static byte _stringwidth_table[FS_END][224]; ///< Cache containing width of often used characters. @see GetCharacterWidth()
 DrawPixelInfo *_cur_dpi;
 byte _colour_gradient[COLOUR_END][8];
+
+static std::recursive_mutex _palette_mutex; ///< To coordinate access to _cur_palette.
 
 static void GfxMainBlitterViewport(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub = nullptr, SpriteID sprite_id = SPR_CURSOR_MOUSE);
 static void GfxMainBlitter(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub = nullptr, SpriteID sprite_id = SPR_CURSOR_MOUSE, ZoomLevel zoom = ZOOM_LVL_NORMAL);
@@ -677,6 +678,28 @@ int DrawString(int left, int right, int top, const char *str, TextColour colour,
  * @return In case of left or center alignment the right most pixel we have drawn to.
  *         In case of right alignment the left most pixel we have drawn to.
  */
+int DrawString(int left, int right, int top, const std::string &str, TextColour colour, StringAlignment align, bool underline, FontSize fontsize)
+{
+	return DrawString(left, right, top, str.c_str(), colour, align, underline, fontsize);
+}
+
+/**
+ * Draw string, possibly truncated to make it fit in its allocated space
+ *
+ * @param left   The left most position to draw on.
+ * @param right  The right most position to draw on.
+ * @param top    The top most position to draw on.
+ * @param str    String to draw.
+ * @param colour Colour used for drawing the string, for details see _string_colourmap in
+ *               table/palettes.h or docs/ottd-colourtext-palette.png or the enum TextColour in gfx_type.h
+ * @param align  The alignment of the string when drawing left-to-right. In the
+ *               case a right-to-left language is chosen this is inverted so it
+ *               will be drawn in the right direction.
+ * @param underline Whether to underline what has been drawn or not.
+ * @param fontsize The size of the initial characters.
+ * @return In case of left or center alignment the right most pixel we have drawn to.
+ *         In case of right alignment the left most pixel we have drawn to.
+ */
 int DrawString(int left, int right, int top, StringID str, TextColour colour, StringAlignment align, bool underline, FontSize fontsize)
 {
 	char buffer[DRAW_STRING_BUFFER];
@@ -810,6 +833,28 @@ int DrawStringMultiLine(int left, int right, int top, int bottom, const char *st
 	return ((align & SA_VERT_MASK) == SA_BOTTOM) ? first_line : last_line;
 }
 
+
+/**
+ * Draw string, possibly over multiple lines.
+ *
+ * @param left   The left most position to draw on.
+ * @param right  The right most position to draw on.
+ * @param top    The top most position to draw on.
+ * @param bottom The bottom most position to draw on.
+ * @param str    String to draw.
+ * @param colour Colour used for drawing the string, for details see _string_colourmap in
+ *               table/palettes.h or docs/ottd-colourtext-palette.png or the enum TextColour in gfx_type.h
+ * @param align  The horizontal and vertical alignment of the string.
+ * @param underline Whether to underline all strings
+ * @param fontsize The size of the initial characters.
+ *
+ * @return If \a align is #SA_BOTTOM, the top to where we have written, else the bottom to where we have written.
+ */
+int DrawStringMultiLine(int left, int right, int top, int bottom, const std::string &str, TextColour colour, StringAlignment align, bool underline, FontSize fontsize)
+{
+	return DrawStringMultiLine(left, right, top, bottom, str.c_str(), colour, align, underline, fontsize);
+}
+
 /**
  * Draw string, possibly over multiple lines.
  *
@@ -847,6 +892,21 @@ Dimension GetStringBoundingBox(const char *str, FontSize start_fontsize)
 {
 	Layouter layout(str, INT32_MAX, TC_FROMSTRING, start_fontsize);
 	return layout.GetBounds();
+}
+
+/**
+ * Return the string dimension in pixels. The height and width are returned
+ * in a single Dimension value. TINYFONT, BIGFONT modifiers are only
+ * supported as the first character of the string. The returned dimensions
+ * are therefore a rough estimation correct for all the current strings
+ * but not every possible combination
+ * @param str string to calculate pixel-width
+ * @param start_fontsize Fontsize to start the text with
+ * @return string width and height in pixels
+ */
+Dimension GetStringBoundingBox(const std::string &str, FontSize start_fontsize)
+{
+	return GetStringBoundingBox(str.c_str(), start_fontsize);
 }
 
 /**
@@ -1046,18 +1106,19 @@ void DrawSpriteCenteredRect(SpriteID img, PaletteID pal, const Rect &rect, const
 /**
  * The code for setting up the blitter mode and sprite information before finally drawing the sprite.
  * @param sprite The sprite to draw.
- * @param x      The X location to draw.
- * @param y      The Y location to draw.
- * @param mode   The settings for the blitter to pass.
- * @param sub    Whether to only draw a sub set of the sprite.
- * @param zoom   The zoom level at which to draw the sprites.
+ * @param x The X location to draw.
+ * @param y The Y location to draw.
+ * @param mode The settings for the blitter to pass.
+ * @param sub Whether to only draw a sub set of the sprite.
+ * @param zoom The zoom level at which to draw the sprites.
+ * @param dst Optional parameter for a different blitting destination.
  * @tparam ZOOM_BASE The factor required to get the sub sprite information into the right size.
  * @tparam SCALED_XY Whether the X and Y are scaled or unscaled.
  */
 template <int ZOOM_BASE, bool SCALED_XY>
-static void GfxBlitter(const Sprite * const sprite, int x, int y, BlitterMode mode, const SubSprite * const sub, SpriteID sprite_id, ZoomLevel zoom)
+static void GfxBlitter(const Sprite * const sprite, int x, int y, BlitterMode mode, const SubSprite * const sub, SpriteID sprite_id, ZoomLevel zoom, const DrawPixelInfo *dst = nullptr)
 {
-	const DrawPixelInfo *dpi = _cur_dpi;
+	const DrawPixelInfo *dpi = (dst != nullptr) ? dst : _cur_dpi;
 	Blitter::BlitterParams bp;
 
 	if (SCALED_XY) {
@@ -1172,6 +1233,47 @@ static void GfxBlitter(const Sprite * const sprite, int x, int y, BlitterMode mo
 	BlitterFactory::GetCurrentBlitter()->Draw(&bp, mode, zoom);
 }
 
+/**
+ * Draws a sprite to a new RGBA buffer (see Colour union) instead of drawing to the screen.
+ *
+ * @param spriteId The sprite to draw.
+ * @return Pixel buffer, or nullptr if an 8bpp blitter is being used.
+ */
+std::unique_ptr<uint32[]> DrawSpriteToRgbaBuffer(SpriteID spriteId)
+{
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
+	if (!blitter->Is32BppSupported()) return nullptr;
+
+	/* Gather information about the sprite to write, reserve memory */
+	const SpriteID real_sprite = GB(spriteId, 0, SPRITE_WIDTH);
+	const Sprite *sprite = GetSprite(real_sprite, ST_NORMAL);
+	std::unique_ptr<uint32[]> result(new uint32[sprite->width * sprite->height]);
+
+	/* Prepare new DrawPixelInfo - Normally this would be the screen but we want to draw to another buffer here.
+	 * Normally, pitch would be scaled screen width, but in our case our "screen" is only the sprite width wide. */
+	DrawPixelInfo dpi;
+	dpi.dst_ptr = result.get();
+	dpi.pitch = sprite->width;
+	dpi.left = 0;
+	dpi.top = 0;
+	dpi.width = sprite->width;
+	dpi.height = sprite->height;
+	dpi.zoom = ZOOM_LVL_NORMAL;
+
+	/* Zero out the allocated memory, there may be garbage present. */
+	uint32 *writeHead = (uint32*)result.get();
+	for (int i = 0; i < sprite->width * sprite->height; i++) {
+		writeHead[i] = 0;
+	}
+
+	/* Temporarily disable screen animations while blitting - This prevents 40bpp_anim from writing to the animation buffer. */
+	_screen_disable_anim = true;
+	GfxBlitter<1, false>(sprite, 0, 0, BM_NORMAL, nullptr, real_sprite, ZOOM_LVL_NORMAL, &dpi);
+	_screen_disable_anim = false;
+
+	return result;
+}
+
 static void GfxMainBlitterViewport(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub, SpriteID sprite_id)
 {
 	GfxBlitter<ZOOM_LVL_BASE, false>(sprite, x, y, mode, sub, sprite_id, _cur_dpi->zoom);
@@ -1186,8 +1288,35 @@ void DoPaletteAnimations();
 
 void GfxInitPalettes()
 {
+	std::lock_guard<std::recursive_mutex> lock(_palette_mutex);
 	memcpy(&_cur_palette, &_palette, sizeof(_cur_palette));
 	DoPaletteAnimations();
+}
+
+/**
+ * Copy the current palette if the palette was updated.
+ * Used by video-driver to get a current up-to-date version of the palette,
+ * to avoid two threads accessing the same piece of memory (with a good chance
+ * one is already updating the palette while the other is drawing based on it).
+ * @param local_palette The location to copy the palette to.
+ * @param force_copy Whether to ignore if there is an update for the palette.
+ * @return True iff a copy was done.
+ */
+bool CopyPalette(Palette &local_palette, bool force_copy)
+{
+	std::lock_guard<std::recursive_mutex> lock(_palette_mutex);
+
+	if (!force_copy && _cur_palette.count_dirty == 0) return false;
+
+	local_palette = _cur_palette;
+	_cur_palette.count_dirty = 0;
+
+	if (force_copy) {
+		local_palette.first_dirty = 0;
+		local_palette.count_dirty = 256;
+	}
+
+	return true;
 }
 
 #define EXTR(p, q) (((uint16)(palette_animation_counter * (p)) * (q)) >> 16)
@@ -1195,6 +1324,8 @@ void GfxInitPalettes()
 
 void DoPaletteAnimations()
 {
+	std::lock_guard<std::recursive_mutex> lock(_palette_mutex);
+
 	/* Animation counter for the palette animation. */
 	static int palette_animation_counter = 0;
 	palette_animation_counter += 8;
@@ -1906,7 +2037,7 @@ bool ToggleFullScreen(bool fs)
 {
 	bool result = VideoDriver::GetInstance()->ToggleFullscreen(fs);
 	if (_fullscreen != fs && _resolutions.empty()) {
-		DEBUG(driver, 0, "Could not find a suitable fullscreen resolution");
+		Debug(driver, 0, "Could not find a suitable fullscreen resolution");
 	}
 	return result;
 }

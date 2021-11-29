@@ -1025,7 +1025,7 @@ static bool AircraftController(Aircraft *v)
 	if (count == 0) return false;
 
 	/* If the plane will be a few subpixels away from the destination after
-	 * this movement loop, start nudging him towards the exact position for
+	 * this movement loop, start nudging it towards the exact position for
 	 * the whole loop. Otherwise, heavily depending on the speed of the plane,
 	 * it is possible we totally overshoot the target, causing the plane to
 	 * make a loop, and trying again, and again, and again .. */
@@ -1786,7 +1786,7 @@ static bool AirportMove(Aircraft *v, const AirportFTAClass *apc)
 {
 	/* error handling */
 	if (v->pos >= apc->nofelements) {
-		DEBUG(misc, 0, "[Ap] position %d is not valid for current airport. Max position is %d", v->pos, apc->nofelements-1);
+		Debug(misc, 0, "[Ap] position {} is not valid for current airport. Max position is {}", v->pos, apc->nofelements-1);
 		assert(v->pos < apc->nofelements);
 	}
 
@@ -1825,7 +1825,7 @@ static bool AirportMove(Aircraft *v, const AirportFTAClass *apc)
 		current = current->next;
 	} while (current != nullptr);
 
-	DEBUG(misc, 0, "[Ap] cannot move further on Airport! (pos %d state %d) for vehicle %d", v->pos, v->state, v->index);
+	Debug(misc, 0, "[Ap] cannot move further on Airport! (pos {} state {}) for vehicle {}", v->pos, v->state, v->index);
 	NOT_REACHED();
 }
 

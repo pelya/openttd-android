@@ -5,7 +5,7 @@ if(NOT BINARY_NAME)
 endif()
 
 project(${BINARY_NAME}
-    VERSION 1.12.0
+    VERSION 12.0
 )
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -22,7 +22,7 @@ if (EMSCRIPTEN)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.14)
 
 # Use GNUInstallDirs to allow customisation
 # but set our own default data and bin dir
@@ -76,7 +76,7 @@ add_custom_target(find_version
                 -DCPACK_BINARY_DIR=${CMAKE_BINARY_DIR}
                 -DREV_MAJOR=${PROJECT_VERSION_MAJOR}
                 -DREV_MINOR=${PROJECT_VERSION_MINOR}
-                -DREV_BUILD=${PROJECT_VERSION_PATCH}
+                -DWINDOWS=${WIN32}
                 $<$<BOOL:ANDROID>:-DANDROID=TRUE>
                 -P "${CMAKE_SOURCE_DIR}/cmake/scripts/FindVersion.cmake"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -254,6 +254,10 @@ target_link_libraries(openttd
     Threads::Threads
 )
 
+if(HAIKU)
+    target_link_libraries(openttd "be" "network" "midi")
+endif()
+
 if(IPO_FOUND)
     set_target_properties(openttd PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE True)
     set_target_properties(openttd PROPERTIES INTERPROCEDURAL_OPTIMIZATION_MINSIZEREL True)
@@ -391,17 +395,20 @@ if(WIN32)
         -DUNICODE
         -D_UNICODE
         -DWITH_UNISCRIBE
+        -DPSAPI_VERSION=1
     )
 
     target_link_libraries(openttd
         ws2_32
         winmm
         imm32
+        usp10
+        psapi
     )
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    add_definitions(-D_SQ64)
+    add_definitions(-DPOINTER_IS_64BIT)
 endif()
 
 include(CreateRegression)

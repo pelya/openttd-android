@@ -78,11 +78,12 @@ struct BuildAirToolbarWindow : Window {
 		this->last_user_action = WIDGET_LIST_END;
 	}
 
-	~BuildAirToolbarWindow()
+	void Close() override
 	{
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (this->IsWidgetLowered(WID_AT_AIRPORT)) SetViewportCatchmentStation(nullptr, true);
-		if (_settings_client.gui.link_terraform_toolbar) DeleteWindowById(WC_SCEN_LAND_GEN, 0, false);
+		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
+		this->Window::Close();
 	}
 
 	/**
@@ -99,7 +100,7 @@ struct BuildAirToolbarWindow : Window {
 			WID_AT_AIRPORT,
 			WIDGET_LIST_END);
 		if (!can_build) {
-			DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
+			CloseWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
 
 			/* Show in the tooltip why this button is disabled. */
 			this->GetWidget<NWidgetCore>(WID_AT_AIRPORT)->SetToolTip(STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE);
@@ -173,8 +174,8 @@ struct BuildAirToolbarWindow : Window {
 		MoveAllHiddenWindowsBackToScreen();
 		this->RaiseButtons();
 		if (!ConfirmationWindowShown()) {
-			DeleteWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
-			DeleteWindowById(WC_SELECT_STATION, 0);
+			CloseWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
+			CloseWindowById(WC_SELECT_STATION, 0);
 		}
 		ResetObjectToPlace();
 	}
@@ -234,7 +235,7 @@ Window *ShowBuildAirToolbar()
 {
 	if (!Company::IsValidID(_local_company)) return nullptr;
 
-	DeleteToolbarLinkedWindows();
+	CloseToolbarLinkedWindows();
 	return AllocateWindowDescFront<BuildAirToolbarWindow>(&_air_toolbar_desc, TRANSPORT_AIR);
 }
 
@@ -293,9 +294,10 @@ public:
 		if (selectFirstAirport) this->SelectFirstAvailableAirport(true);
 	}
 
-	virtual ~BuildAirportWindow()
+	void Close() override
 	{
-		DeleteWindowById(WC_SELECT_STATION, 0);
+		CloseWindowById(WC_SELECT_STATION, 0);
+		this->PickerWindowBase::Close();
 	}
 
 	void SetStringParameters(int widget) const override
@@ -503,7 +505,7 @@ public:
 				break;
 
 			case WID_AP_AIRPORT_LIST: {
-				int num_clicked = this->vscroll->GetPosition() + (pt.y - this->nested_array[widget]->pos_y) / this->line_height;
+				int num_clicked = this->vscroll->GetPosition() + (pt.y - this->GetWidget<NWidgetBase>(widget)->pos_y) / this->line_height;
 				if (num_clicked >= this->vscroll->GetCount()) break;
 				const AirportSpec *as = AirportClass::Get(_selected_airport_class)->GetSpec(num_clicked);
 				if (as->IsAvailable()) this->SelectOtherAirport(num_clicked);

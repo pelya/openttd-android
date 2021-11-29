@@ -311,7 +311,7 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 		for (const Company *c : Company::Iterate()) {
 			for (i = 0; i < 4; i++) {
 				if (c->share_owners[i] == old_owner) {
-					/* Sell his shares */
+					/* Sell its shares */
 					CommandCost res = DoCommand(0, c->index, 0, DC_EXEC | DC_BANKRUPT, CMD_SELL_SHARE_IN_COMPANY);
 					/* Because we are in a DoCommand, we can't just execute another one and
 					 *  expect the money to be removed. We need to do it ourself! */
@@ -324,8 +324,13 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 		Backup<CompanyID> cur_company2(_current_company, FILE_LINE);
 		const Company *c = Company::Get(old_owner);
 		for (i = 0; i < 4; i++) {
-			cur_company2.Change(c->share_owners[i]);
-			if (_current_company != INVALID_OWNER) {
+			if (c->share_owners[i] == INVALID_OWNER) continue;
+
+			if (c->bankrupt_value == 0 && c->share_owners[i] == new_owner) {
+				/* You are the one buying the company; so don't sell the shares back to you. */
+				Company::Get(new_owner)->share_owners[i] = INVALID_OWNER;
+			} else {
+				cur_company2.Change(c->share_owners[i]);
 				/* Sell the shares */
 				CommandCost res = DoCommand(0, old_owner, 0, DC_EXEC | DC_BANKRUPT, CMD_SELL_SHARE_IN_COMPANY);
 				/* Because we are in a DoCommand, we can't just execute another one and
@@ -337,7 +342,7 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 	}
 
 	/* Temporarily increase the company's money, to be sure that
-	 * removing his/her property doesn't fail because of lack of money.
+	 * removing their property doesn't fail because of lack of money.
 	 * Not too drastically though, because it could overflow */
 	if (new_owner == INVALID_OWNER) {
 		Company::Get(old_owner)->money = UINT64_MAX >> 2; // jackpot ;p
@@ -575,8 +580,7 @@ static void CompanyCheckBankrupt(Company *c)
 
 		/* Warn about bankruptcy after 3 months */
 		case 4: {
-			CompanyNewsInformation *cni = MallocT<CompanyNewsInformation>(1);
-			cni->FillData(c);
+			CompanyNewsInformation *cni = new CompanyNewsInformation(c);
 			SetDParam(0, STR_NEWS_COMPANY_IN_TROUBLE_TITLE);
 			SetDParam(1, STR_NEWS_COMPANY_IN_TROUBLE_DESCRIPTION);
 			SetDParamStr(2, cni->company_name);
@@ -607,7 +611,7 @@ static void CompanyCheckBankrupt(Company *c)
 			if (!_networking && _local_company == c->index) {
 				/* If we are in singleplayer mode, leave the company playing. Eg. there
 				 * is no THE-END, otherwise mark the client as spectator to make sure
-				 * he/she is no long in control of this company. However... when you
+				 * they are no longer in control of this company. However... when you
 				 * join another company (cheat) the "unowned" company can bankrupt. */
 				c->bankrupt_asked = MAX_UVALUE(CompanyMask);
 				break;
@@ -799,7 +803,7 @@ void RecomputePrices()
 
 	/* Setup cargo payment */
 	for (CargoSpec *cs : CargoSpec::Iterate()) {
-		cs->current_payment = ((int64)cs->initial_payment * _economy.inflation_payment) >> 16;
+		cs->current_payment = (cs->initial_payment * (int64)_economy.inflation_payment) >> 16;
 	}
 
 	SetWindowClassesDirty(WC_BUILD_VEHICLE);
@@ -1476,9 +1480,8 @@ static void HandleStationRefit(Vehicle *v, CargoArray &consist_capleft, Station 
 	bool is_auto_refit = new_cid == CT_AUTO_REFIT;
 	if (is_auto_refit) {
 		/* Get a refittable cargo type with waiting cargo for next_station or INVALID_STATION. */
-		CargoID cid;
 		new_cid = v_start->cargo_type;
-		FOR_EACH_SET_CARGO_ID(cid, refit_mask) {
+		for (CargoID cid : SetCargoBitIterator(refit_mask)) {
 			if (st->goods[cid].cargo.HasCargoFor(next_station)) {
 				/* Try to find out if auto-refitting would succeed. In case the refit is allowed,
 				 * the returned refit capacity will be greater than zero. */
@@ -1970,8 +1973,7 @@ static void DoAcquireCompany(Company *c)
 {
 	CompanyID ci = c->index;
 
-	CompanyNewsInformation *cni = MallocT<CompanyNewsInformation>(1);
-	cni->FillData(c, Company::Get(_current_company));
+	CompanyNewsInformation *cni = new CompanyNewsInformation(c, Company::Get(_current_company));
 
 	SetDParam(0, STR_NEWS_COMPANY_MERGER_TITLE);
 	SetDParam(1, c->bankrupt_value == 0 ? STR_NEWS_MERGER_TAKEOVER_TITLE : STR_NEWS_COMPANY_MERGER_DESCRIPTION);
@@ -1986,12 +1988,15 @@ static void DoAcquireCompany(Company *c)
 
 	if (c->bankrupt_value == 0) {
 		Company *owner = Company::Get(_current_company);
+
+		/* Get both the balance and the loan of the company you just bought. */
+		SubtractMoneyFromCompany(CommandCost(EXPENSES_OTHER, -c->money));
 		owner->current_loan += c->current_loan;
 	}
 
 	if (c->is_ai) AI::Stop(c->index);
 
-	DeleteCompanyWindows(ci);
+	CloseCompanyWindows(ci);
 	InvalidateWindowClassesData(WC_TRAINS_LIST, 0);
 	InvalidateWindowClassesData(WC_SHIPS_LIST, 0);
 	InvalidateWindowClassesData(WC_ROADVEH_LIST, 0);
@@ -2011,7 +2016,7 @@ extern int GetAmountOwnedBy(const Company *c, Owner owner);
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuyShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuyShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	CommandCost cost(EXPENSES_OTHER);
 	CompanyID target_company = (CompanyID)p1;
@@ -2063,7 +2068,7 @@ CommandCost CmdBuyShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1,
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdSellShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdSellShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	CompanyID target_company = (CompanyID)p1;
 	Company *c = Company::GetIfValid(target_company);
@@ -2104,7 +2109,7 @@ CommandCost CmdSellShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuyCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuyCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	CompanyID target_company = (CompanyID)p1;
 	Company *c = Company::GetIfValid(target_company);

@@ -56,7 +56,7 @@ void LoadCheckData::Clear()
 
 	this->map_size_x = this->map_size_y = 256; // Default for old savegames which do not store mapsize.
 	this->current_date = 0;
-	memset(&this->settings, 0, sizeof(this->settings));
+	this->settings = {};
 
 	for (auto &pair : this->companies) {
 		delete pair.second;
@@ -405,12 +405,13 @@ public:
 		}
 	}
 
-	virtual ~SaveLoadWindow()
+	void Close() override
 	{
 		/* pause is only used in single-player, non-editor mode, non menu mode */
 		if (!_networking && _game_mode != GM_EDITOR && _game_mode != GM_MENU) {
 			DoCommandP(0, PM_PAUSED_SAVELOAD, 0, CMD_PAUSE);
 		}
+		this->Window::Close();
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
@@ -544,7 +545,7 @@ public:
 							const CompanyProperties &c = *pair.second;
 							if (!c.name.empty()) {
 								SetDParam(1, STR_JUST_RAW_STRING);
-								SetDParamStr(2, c.name.c_str());
+								SetDParamStr(2, c.name);
 							} else {
 								SetDParam(1, c.name_1);
 								SetDParam(2, c.name_2);
@@ -624,12 +625,12 @@ public:
 				_file_to_saveload.SetTitle(this->selected->title);
 
 				if (this->abstract_filetype == FT_HEIGHTMAP) {
-					delete this;
+					this->Close();
 					ShowHeightmapLoad();
 				} else if (!_load_check_data.HasNewGrfs() || _load_check_data.grf_compatibility != GLC_NOT_FOUND || _settings_client.gui.UserIsAllowedToChangeNewGRFs()) {
 					_switch_mode = (_game_mode == GM_EDITOR) ? SM_LOAD_SCENARIO : SM_LOAD_GAME;
 					ClearErrorMessages();
-					delete this;
+					this->Close();
 				}
 				break;
 			}
@@ -695,7 +696,7 @@ public:
 							_file_to_saveload.SetName(name);
 							_file_to_saveload.SetTitle(file->title);
 
-							delete this;
+							this->Close();
 							ShowHeightmapLoad();
 						}
 					}
@@ -767,7 +768,7 @@ public:
 	EventState OnKeyPress(WChar key, uint16 keycode) override
 	{
 		if (keycode == WKC_ESC) {
-			delete this;
+			this->Close();
 			return ES_HANDLED;
 		}
 
@@ -885,7 +886,7 @@ public:
 						this->fios_items_shown[i] = this->string_filter.GetState();
 						if (this->fios_items_shown[i]) items_shown_count++;
 
-						if (&(this->fios_items[i]) == this->selected && this->fios_items_shown[i] == false) {
+						if (&(this->fios_items[i]) == this->selected && !this->fios_items_shown[i]) {
 							/* The selected element has been filtered out */
 							this->selected = nullptr;
 							this->OnInvalidateData(SLIWD_SELECTION_CHANGES);
@@ -937,7 +938,7 @@ static WindowDesc _save_dialog_desc(
  */
 void ShowSaveLoadDialog(AbstractFileType abstract_filetype, SaveLoadOperation fop)
 {
-	DeleteWindowById(WC_SAVELOAD, 0);
+	CloseWindowById(WC_SAVELOAD, 0);
 
 	WindowDesc *sld;
 	if (fop == SLO_SAVE) {

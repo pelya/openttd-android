@@ -185,6 +185,7 @@ public:
 
 	void ShowLegend(bool show);
 
+	void Close() override;
 	void SetStringParameters(int widget) const override;
 	void OnInit() override;
 	void OnPaint() override;

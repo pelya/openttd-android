@@ -51,10 +51,10 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 		/* Resolve the name and populate the information structure */
 		pat = FcNameParse((FcChar8 *)font_family);
 		if (font_style != nullptr) FcPatternAddString(pat, FC_STYLE, (FcChar8 *)font_style);
-		FcConfigSubstitute(0, pat, FcMatchPattern);
+		FcConfigSubstitute(nullptr, pat, FcMatchPattern);
 		FcDefaultSubstitute(pat);
 		fs = FcFontSetCreate();
-		match = FcFontMatch(0, pat, &result);
+		match = FcFontMatch(nullptr, pat, &result);
 
 		if (fs != nullptr && match != nullptr) {
 			int i;
@@ -133,7 +133,6 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			if (res != FcResultMatch || file == nullptr) {
 				continue;
 			}
-			DEBUG(freetype, 1, "Found font %s", file);
 			int missing = 0;
 
 			/* Get a font with the right spacing .*/
@@ -152,7 +151,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			callback->SetFontNames(settings, (const char *)file);
 
 			missing += callback->FindMissingGlyphs();
-			DEBUG(freetype, 1, "Font \"%s\" misses %d glyphs for lang %s", file, missing, lang);
+			Debug(freetype, 1, "Font \"{}\" misses{} glyphs for lang {}", file, missing, lang);
 
 			if (missing < best_missing_glypths) {
 				best_weight = value;
@@ -166,7 +165,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			ret = true;
 			callback->SetFontNames(settings, best_font);
 			InitFreeType(callback->Monospace());
-			DEBUG(freetype, 1, "Selected font %s for lang %s", best_font, lang);
+			Debug(freetype, 1, "Selected font {} for lang {}", best_font, lang);
 		}
 
 		/* Clean up the list of filenames. */

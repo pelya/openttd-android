@@ -22,6 +22,7 @@
 
 #define GL_GLEXT_PROTOTYPES
 #if defined(__APPLE__)
+#	define GL_SILENCE_DEPRECATION
 #	include <OpenGL/gl3.h>
 #else
 #	include <GL/gl.h>
@@ -146,7 +147,7 @@ GetOGLProcAddressProc GetOGLProcAddress;
  */
 const char *FindStringInExtensionList(const char *string, const char *substring)
 {
-	while (1) {
+	while (true) {
 		/* Is the extension string present at all? */
 		const char *pos = strstr(string, substring);
 		if (pos == nullptr) break;
@@ -428,7 +429,7 @@ void APIENTRY DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum 
 		case GL_DEBUG_TYPE_PORTABILITY:         type_str = "Portability"; break;
 	}
 
-	DEBUG(driver, 6, "OpenGL: %s (%s) - %s", type_str, severity_str, message);
+	Debug(driver, 6, "OpenGL: {} ({}) - {}", type_str, severity_str, message);
 }
 
 /** Enable OpenGL debug messages if supported. */
@@ -536,7 +537,7 @@ const char *OpenGLBackend::Init(const Dimension &screen_res)
 
 	if (ver == nullptr || vend == nullptr || renderer == nullptr) return "OpenGL not supported";
 
-	DEBUG(driver, 1, "OpenGL driver: %s - %s (%s)", vend, renderer, ver);
+	Debug(driver, 1, "OpenGL driver: {} - {} ({})", vend, renderer, ver);
 
 #ifndef GL_ALLOW_SOFTWARE_RENDERER
 	/* Don't use MESA software rendering backends as they are slower than
@@ -584,10 +585,10 @@ const char *OpenGLBackend::Init(const Dimension &screen_res)
 #endif
 
 	if (this->persistent_mapping_supported && !BindPersistentBufferExtensions()) {
-		DEBUG(driver, 1, "OpenGL claims to support persistent buffer mapping but doesn't export all functions, not using persistent mapping.");
+		Debug(driver, 1, "OpenGL claims to support persistent buffer mapping but doesn't export all functions, not using persistent mapping.");
 		this->persistent_mapping_supported = false;
 	}
-	if (this->persistent_mapping_supported) DEBUG(driver, 3, "OpenGL: Using persistent buffer mapping");
+	if (this->persistent_mapping_supported) Debug(driver, 3, "OpenGL: Using persistent buffer mapping");
 
 	/* Check maximum texture size against screen resolution. */
 	GLint max_tex_size = 0;
@@ -599,7 +600,7 @@ const char *OpenGLBackend::Init(const Dimension &screen_res)
 	_glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tex_units);
 	if (max_tex_units < 4) return "Not enough simultaneous textures supported";
 
-	DEBUG(driver, 2, "OpenGL shading language version: %s, texture units = %d", (const char *)_glGetString(GL_SHADING_LANGUAGE_VERSION), (int)max_tex_units);
+	Debug(driver, 2, "OpenGL shading language version: {}, texture units = {}", (const char *)_glGetString(GL_SHADING_LANGUAGE_VERSION), (int)max_tex_units);
 
 	if (!this->InitShaders()) return "Failed to initialize shaders";
 
@@ -761,7 +762,7 @@ static bool VerifyShader(GLuint shader)
 	_glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_len);
 	if (log_len > 0) {
 		_glGetShaderInfoLog(shader, log_len, nullptr, log_buf.Allocate(log_len));
-		DEBUG(driver, result != GL_TRUE ? 0 : 2, "%s", log_buf.GetBuffer()); // Always print on failure.
+		Debug(driver, result != GL_TRUE ? 0 : 2, "{}", log_buf.GetBuffer()); // Always print on failure.
 	}
 
 	return result == GL_TRUE;
@@ -784,7 +785,7 @@ static bool VerifyProgram(GLuint program)
 	_glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_len);
 	if (log_len > 0) {
 		_glGetProgramInfoLog(program, log_len, nullptr, log_buf.Allocate(log_len));
-		DEBUG(driver, result != GL_TRUE ? 0 : 2, "%s", log_buf.GetBuffer()); // Always print on failure.
+		Debug(driver, result != GL_TRUE ? 0 : 2, "{}", log_buf.GetBuffer()); // Always print on failure.
 	}
 
 	return result == GL_TRUE;
@@ -1150,7 +1151,7 @@ void OpenGLBackend::ClearCursorCache()
 void *OpenGLBackend::GetVideoBuffer()
 {
 #ifndef NO_GL_BUFFER_SYNC
-	if (this->sync_vid_mapping != nullptr) _glClientWaitSync(this->sync_vid_mapping, GL_SYNC_FLUSH_COMMANDS_BIT, 10000000);
+	if (this->sync_vid_mapping != nullptr) _glClientWaitSync(this->sync_vid_mapping, GL_SYNC_FLUSH_COMMANDS_BIT, 100000000); // 100ms timeout.
 #endif
 
 	if (!this->persistent_mapping_supported) {
@@ -1174,7 +1175,7 @@ uint8 *OpenGLBackend::GetAnimBuffer()
 	if (this->anim_pbo == 0) return nullptr;
 
 #ifndef NO_GL_BUFFER_SYNC
-	if (this->sync_anim_mapping != nullptr) _glClientWaitSync(this->sync_anim_mapping, GL_SYNC_FLUSH_COMMANDS_BIT, 10000000);
+	if (this->sync_anim_mapping != nullptr) _glClientWaitSync(this->sync_anim_mapping, GL_SYNC_FLUSH_COMMANDS_BIT, 100000000); // 100ms timeout.
 #endif
 
 	if (!this->persistent_mapping_supported) {
@@ -1309,7 +1310,7 @@ void OpenGLBackend::RenderOglSprite(OpenGLSprite *gl_sprite, PaletteID pal, int 
 			_glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 			_glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, 256, GetNonSprite(GB(pal, 0, PALETTE_WIDTH), ST_RECOLOUR) + 1);
-			_glTexSubImage1D(GL_TEXTURE_1D, 0, 0, 256, GL_RED, GL_UNSIGNED_BYTE, 0);
+			_glTexSubImage1D(GL_TEXTURE_1D, 0, 0, 256, GL_RED, GL_UNSIGNED_BYTE, nullptr);
 
 			_glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 

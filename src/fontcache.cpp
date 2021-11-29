@@ -216,7 +216,8 @@ TrueTypeFontCache::TrueTypeFontCache(FontSize fs, int pixels) : FontCache(fs), r
  */
 TrueTypeFontCache::~TrueTypeFontCache()
 {
-	this->ClearFontCache();
+	/* Virtual functions get called statically in destructors, so make it explicit to remove any confusion. */
+	this->TrueTypeFontCache::ClearFontCache();
 
 	for (auto &iter : this->font_tables) {
 		free(iter.second.second);
@@ -258,16 +259,16 @@ TrueTypeFontCache::GlyphEntry *TrueTypeFontCache::GetGlyphPtr(GlyphID key)
 void TrueTypeFontCache::SetGlyphPtr(GlyphID key, const GlyphEntry *glyph, bool duplicate)
 {
 	if (this->glyph_to_sprite == nullptr) {
-		DEBUG(freetype, 3, "Allocating root glyph cache for size %u", this->fs);
+		Debug(freetype, 3, "Allocating root glyph cache for size {}", this->fs);
 		this->glyph_to_sprite = CallocT<GlyphEntry*>(256);
 	}
 
 	if (this->glyph_to_sprite[GB(key, 8, 8)] == nullptr) {
-		DEBUG(freetype, 3, "Allocating glyph cache for range 0x%02X00, size %u", GB(key, 8, 8), this->fs);
+		Debug(freetype, 3, "Allocating glyph cache for range 0x{:02X}00, size {}", GB(key, 8, 8), this->fs);
 		this->glyph_to_sprite[GB(key, 8, 8)] = CallocT<GlyphEntry>(256);
 	}
 
-	DEBUG(freetype, 4, "Set glyph for unicode character 0x%04X, size %u", key, this->fs);
+	Debug(freetype, 4, "Set glyph for unicode character 0x{:04X}, size {}", key, this->fs);
 	this->glyph_to_sprite[GB(key, 8, 8)][GB(key, 0, 8)].sprite = glyph->sprite;
 	this->glyph_to_sprite[GB(key, 8, 8)][GB(key, 0, 8)].width = glyph->width;
 	this->glyph_to_sprite[GB(key, 8, 8)][GB(key, 0, 8)].duplicate = duplicate;
@@ -467,7 +468,7 @@ void FreeTypeFontCache::SetFontSize(FontSize fs, FT_Face face, int pixels)
 		this->height       = this->ascender - this->descender;
 	} else {
 		/* Both FT_Set_Pixel_Sizes and FT_Select_Size failed. */
-		DEBUG(freetype, 0, "Font size selection failed. Using FontCache defaults.");
+		Debug(freetype, 0, "Font size selection failed. Using FontCache defaults.");
 	}
 }
 
@@ -489,7 +490,7 @@ static void LoadFreeTypeFont(FontSize fs)
 		case FS_MONO:   settings = &_freetype.mono;   break;
 	}
 
-	if (StrEmpty(settings->font)) return;
+	if (settings->font.empty()) return;
 
 	if (_library == nullptr) {
 		if (FT_Init_FreeType(&_library) != FT_Err_Ok) {
@@ -497,22 +498,23 @@ static void LoadFreeTypeFont(FontSize fs)
 			return;
 		}
 
-		DEBUG(freetype, 2, "Initialized");
+		Debug(freetype, 2, "Initialized");
 	}
 
+	const char *font_name = settings->font.c_str();
 	FT_Face face = nullptr;
 
 	/* If font is an absolute path to a ttf, try loading that first. */
-	FT_Error error = FT_New_Face(_library, settings->font, 0, &face);
+	FT_Error error = FT_New_Face(_library, font_name, 0, &face);
 
 #if defined(WITH_COCOA)
 	extern void MacOSRegisterExternalFont(const char *file_path);
-	if (error == FT_Err_Ok) MacOSRegisterExternalFont(settings->font);
+	if (error == FT_Err_Ok) MacOSRegisterExternalFont(font_name);
 #endif
 
 	if (error != FT_Err_Ok) {
 		/* Check if font is a relative filename in one of our search-paths. */
-		std::string full_font = FioFindFullPath(BASE_DIR, settings->font);
+		std::string full_font = FioFindFullPath(BASE_DIR, font_name);
 		if (!full_font.empty()) {
 			error = FT_New_Face(_library, full_font.c_str(), 0, &face);
 #if defined(WITH_COCOA)
@@ -522,10 +524,10 @@ static void LoadFreeTypeFont(FontSize fs)
 	}
 
 	/* Try loading based on font face name (OS-wide fonts). */
-	if (error != FT_Err_Ok) error = GetFontByFaceName(settings->font, &face);
+	if (error != FT_Err_Ok) error = GetFontByFaceName(font_name, &face);
 
 	if (error == FT_Err_Ok) {
-		DEBUG(freetype, 2, "Requested '%s', using '%s %s'", settings->font, face->family_name, face->style_name);
+		Debug(freetype, 2, "Requested '{}', using '{} {}'", font_name, face->family_name, face->style_name);
 
 		/* Attempt to select the unicode character map */
 		error = FT_Select_Charmap(face, ft_encoding_unicode);
@@ -555,7 +557,7 @@ static void LoadFreeTypeFont(FontSize fs)
 	FT_Done_Face(face);
 
 	static const char *SIZE_TO_NAME[] = { "medium", "small", "large", "mono" };
-	ShowInfoF("Unable to use '%s' for %s font, FreeType reported error 0x%X, using sprite font instead", settings->font, SIZE_TO_NAME[fs], error);
+	ShowInfoF("Unable to use '%s' for %s font, FreeType reported error 0x%X, using sprite font instead", font_name, SIZE_TO_NAME[fs], error);
 	return;
 
 found_face:
@@ -616,9 +618,9 @@ const Sprite *FreeTypeFontCache::InternalGetGlyph(GlyphID key, bool aa)
 	if (this->fs == FS_NORMAL && !aa) {
 		for (uint y = 0; y < (uint)slot->bitmap.rows; y++) {
 			for (uint x = 0; x < (uint)slot->bitmap.width; x++) {
-				if (aa ? (slot->bitmap.buffer[x + y * slot->bitmap.pitch] > 0) : HasBit(slot->bitmap.buffer[(x / 8) + y * slot->bitmap.pitch], 7 - (x % 8))) {
+				if (HasBit(slot->bitmap.buffer[(x / 8) + y * slot->bitmap.pitch], 7 - (x % 8))) {
 					sprite.data[1 + x + (1 + y) * sprite.width].m = SHADOW_COLOUR;
-					sprite.data[1 + x + (1 + y) * sprite.width].a = aa ? slot->bitmap.buffer[x + y * slot->bitmap.pitch] : 0xFF;
+					sprite.data[1 + x + (1 + y) * sprite.width].a = 0xFF;
 				}
 			}
 		}

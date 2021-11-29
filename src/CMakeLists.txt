@@ -311,6 +311,8 @@ add_files(
     rail_gui.h
     rail_map.h
     rail_type.h
+    random_access_file.cpp
+    random_access_file_type.h
     rev.h
     road.cpp
     road.h
@@ -338,6 +340,8 @@ add_files(
     settings_gui.cpp
     settings_gui.h
     settings_internal.h
+    settings_table.h
+    settings_table.cpp
     settings_type.h
     ship.h
     ship_cmd.cpp
@@ -469,6 +473,7 @@ add_files(
     viewport_type.h
     void_cmd.cpp
     void_map.h
+    walltime_func.h
     water.h
     water_cmd.cpp
     water_map.h

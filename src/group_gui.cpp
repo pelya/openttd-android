@@ -24,6 +24,7 @@
 #include "core/geometry_func.hpp"
 #include "company_base.h"
 #include "company_gui.h"
+#include "gui.h"
 
 #include "widgets/group_widget.h"
 
@@ -451,7 +452,7 @@ public:
 
 		/* Process ID-invalidation in command-scope as well */
 		if (this->group_rename != INVALID_GROUP && !Group::IsValidID(this->group_rename)) {
-			DeleteWindowByClass(WC_QUERY_STRING);
+			CloseWindowByClass(WC_QUERY_STRING);
 			this->group_rename = INVALID_GROUP;
 		}
 
@@ -747,17 +748,19 @@ public:
 						NOT_REACHED();
 				}
 				if (v) {
-					this->vehicle_sel = v->index;
-
 					if (_ctrl_pressed) {
-						this->SelectGroup(v->group_id);
+						if (this->grouping == GB_NONE) {
+							this->SelectGroup(v->group_id);
+						} else {
+							ShowOrdersWindow(v);
+						}
+					} else {
+						this->vehicle_sel = v->index;
+						SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
+						SetMouseCursorVehicle(v, EIT_IN_LIST);
+						_cursor.vehchain = true;
+						this->SetDirty();
 					}
-
-					SetObjectToPlaceWnd(SPR_CURSOR_MOUSE, PAL_NONE, HT_DRAG, this);
-					SetMouseCursorVehicle(v, EIT_IN_LIST);
-					_cursor.vehchain = true;
-
-					this->SetDirty();
 				}
 
 				break;

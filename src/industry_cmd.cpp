@@ -149,7 +149,7 @@ Industry::~Industry()
 
 	const bool has_neutral_station = this->neutral_station != nullptr;
 
-	TILE_AREA_LOOP(tile_cur, this->location) {
+	for (TileIndex tile_cur : this->location) {
 		if (IsTileType(tile_cur, MP_INDUSTRY)) {
 			if (GetIndustryIndex(tile_cur) == this->index) {
 				DeleteNewGRFInspectWindow(GSF_INDUSTRYTILES, tile_cur);
@@ -164,7 +164,7 @@ Industry::~Industry()
 
 	if (has_neutral_station) {
 		/* Remove possible docking tiles */
-		TILE_AREA_LOOP(tile_cur, this->location) {
+		for (TileIndex tile_cur : this->location) {
 			ClearDockingTilesCheckingNeighbours(tile_cur);
 		}
 	}
@@ -173,7 +173,7 @@ Industry::~Industry()
 		TileArea ta = TileArea(this->location.tile, 0, 0).Expand(21);
 
 		/* Remove the farmland and convert it to regular tiles over time. */
-		TILE_AREA_LOOP(tile_cur, ta) {
+		for (TileIndex tile_cur : ta) {
 			if (IsTileType(tile_cur, MP_CLEAR) && IsClearGround(tile_cur, CLEAR_FIELDS) &&
 					GetIndustryIndexOfField(tile_cur) == this->index) {
 				SetIndustryIndexOfField(tile_cur, INVALID_INDUSTRY);
@@ -190,7 +190,7 @@ Industry::~Industry()
 	DecIndustryTypeCount(this->type);
 
 	DeleteIndustryNews(this->index);
-	DeleteWindowById(WC_INDUSTRY_VIEW, this->index);
+	CloseWindowById(WC_INDUSTRY_VIEW, this->index);
 	DeleteNewGRFInspectWindow(GSF_INDUSTRIES, this->index);
 
 	DeleteSubsidyWith(ST_INDUSTRY, this->index);
@@ -1041,7 +1041,7 @@ static void PlantFarmField(TileIndex tile, IndustryID industry)
 
 	/* check the amount of bad tiles */
 	int count = 0;
-	TILE_AREA_LOOP(cur_tile, ta) {
+	for (TileIndex cur_tile : ta) {
 		assert(cur_tile < MapSize());
 		count += IsSuitableForFarmField(cur_tile, false);
 	}
@@ -1053,7 +1053,7 @@ static void PlantFarmField(TileIndex tile, IndustryID industry)
 	uint field_type = GB(r, 8, 8) * 9 >> 8;
 
 	/* make field */
-	TILE_AREA_LOOP(cur_tile, ta) {
+	for (TileIndex cur_tile : ta) {
 		assert(cur_tile < MapSize());
 		if (IsSuitableForFarmField(cur_tile, true)) {
 			MakeField(cur_tile, field_type, industry);
@@ -1115,7 +1115,7 @@ static bool SearchLumberMillTrees(TileIndex tile, void *user_data)
 static void ChopLumberMillTrees(Industry *i)
 {
 	/* We only want to cut trees if all tiles are completed. */
-	TILE_AREA_LOOP(tile_cur, i->location) {
+	for (TileIndex tile_cur : i->location) {
 		if (i->TileBelongsToIndustry(tile_cur)) {
 			if (!IsIndustryCompleted(tile_cur)) return;
 		}
@@ -1532,7 +1532,7 @@ static bool CheckCanTerraformSurroundingTiles(TileIndex tile, uint height, int i
 	if (TileX(tile) == 0 || TileY(tile) == 0 || GetTileType(tile) == MP_VOID) return false;
 
 	TileArea ta(tile - TileDiffXY(1, 1), 2, 2);
-	TILE_AREA_LOOP(tile_walk, ta) {
+	for (TileIndex tile_walk : ta) {
 		uint curh = TileHeight(tile_walk);
 		/* Is the tile clear? */
 		if ((GetTileType(tile_walk) != MP_CLEAR) && (GetTileType(tile_walk) != MP_TREES)) return false;
@@ -1587,7 +1587,7 @@ static bool CheckIfCanLevelIndustryPlatform(TileIndex tile, DoCommandFlag flags,
 	 * Perform terraforming as OWNER_TOWN to disable autoslope and town ratings. */
 	Backup<CompanyID> cur_company(_current_company, OWNER_TOWN, FILE_LINE);
 
-	TILE_AREA_LOOP(tile_walk, ta) {
+	for (TileIndex tile_walk : ta) {
 		uint curh = TileHeight(tile_walk);
 		if (curh != h) {
 			/* This tile needs terraforming. Check if we can do that without
@@ -1607,7 +1607,7 @@ static bool CheckIfCanLevelIndustryPlatform(TileIndex tile, DoCommandFlag flags,
 
 	if (flags & DC_EXEC) {
 		/* Terraform the land under the industry */
-		TILE_AREA_LOOP(tile_walk, ta) {
+		for (TileIndex tile_walk : ta) {
 			uint curh = TileHeight(tile_walk);
 			while (curh != h) {
 				/* We give the terraforming for free here, because we can't calculate
@@ -1639,7 +1639,7 @@ static CommandCost CheckIfFarEnoughFromConflictingIndustry(TileIndex tile, int t
 	if (Industry::GetNumItems() > (size_t) (dmax * dmax * 2)) {
 		const Industry* i = nullptr;
 		TileArea tile_area = TileArea(tile, 1, 1).Expand(dmax);
-		TILE_AREA_LOOP(atile, tile_area) {
+		for (TileIndex atile : tile_area) {
 			if (GetTileType(atile) == MP_INDUSTRY) {
 				const Industry *i2 = Industry::GetByTile(atile);
 				if (i == i2) continue;
@@ -1982,7 +1982,7 @@ static CommandCost CreateNewIndustryHelper(TileIndex tile, IndustryType type, Do
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildIndustry(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdBuildIndustry(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	IndustryType it = GB(p1, 0, 8);
 	if (it >= NUM_INDUSTRYTYPES) return CMD_ERROR;
@@ -2074,7 +2074,7 @@ CommandCost CmdBuildIndustry(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
  * @param text - Additional industry text (only used with set text action)
  * @return Empty cost or an error.
  */
-CommandCost CmdIndustryCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdIndustryCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 
@@ -2112,7 +2112,7 @@ CommandCost CmdIndustryCtrl(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 
 		case IndustryAction::SetText: {
 			ind->text.clear();
-			if (!StrEmpty(text)) ind->text = text;
+			if (!text.empty()) ind->text = text;
 			InvalidateWindowData(WC_INDUSTRY_VIEW, ind->index);
 			break;
 		}
@@ -2139,8 +2139,7 @@ static Industry *CreateNewIndustry(TileIndex tile, IndustryType type, IndustryAv
 	uint32 seed2 = Random();
 	Industry *i = nullptr;
 	size_t layout_index = RandomRange((uint32)indspec->layouts.size());
-	CommandCost ret = CreateNewIndustryHelper(tile, type, DC_EXEC, indspec, layout_index, seed, GB(seed2, 0, 16), OWNER_NONE, creation_type, &i);
-	(void)ret; // assert only
+	[[maybe_unused]] CommandCost ret = CreateNewIndustryHelper(tile, type, DC_EXEC, indspec, layout_index, seed, GB(seed2, 0, 16), OWNER_NONE, creation_type, &i);
 	assert(i != nullptr || ret.Failed());
 	return i;
 }
@@ -2579,7 +2578,7 @@ static void CanCargoServiceIndustry(CargoID cargo, Industry *ind, bool *c_accept
 /**
  * Compute who can service the industry.
  *
- * Here, 'can service' means that he/she has trains and stations close enough
+ * Here, 'can service' means that they have trains and stations close enough
  * to the industry with the right cargo type and the right orders (ie has the
  * technical means).
  *

@@ -176,8 +176,8 @@ public:
 		Rect r;
 		r.left = this->pos_x;
 		r.top = this->pos_y;
-		r.right = this->pos_x + this->current_x;
-		r.bottom = this->pos_y + this->current_y;
+		r.right = this->pos_x + this->current_x - 1;
+		r.bottom = this->pos_y + this->current_y - 1;
 		return r;
 	}
 
@@ -756,12 +756,15 @@ public:
 	/**
 	 * Sets the position of the first visible element
 	 * @param position the position of the element
+	 * @return true iff the position has changed
 	 */
-	void SetPosition(int position)
+	bool SetPosition(int position)
 	{
 		assert(position >= 0);
 		assert(this->count <= this->cap ? (position == 0) : (position + this->cap <= this->count));
+		uint16 old_pos = this->pos;
 		this->pos = position;
+		return this->pos != old_pos;
 	}
 
 	/**
@@ -769,16 +772,17 @@ public:
 	 * If the position would be too low or high it will be clamped appropriately
 	 * @param difference the amount of change requested
 	 * @param unit The stepping unit of \a difference
+	 * @return true iff the position has changed
 	 */
-	void UpdatePosition(int difference, ScrollbarStepping unit = SS_SMALL)
+	bool UpdatePosition(int difference, ScrollbarStepping unit = SS_SMALL)
 	{
-		if (difference == 0) return;
+		if (difference == 0) return false;
 		switch (unit) {
 			case SS_SMALL: difference *= this->stepsize; break;
 			case SS_BIG:   difference *= this->cap; break;
 			default: break;
 		}
-		this->SetPosition(Clamp(this->pos + difference, 0, std::max(this->count - this->cap, 0)));
+		return this->SetPosition(Clamp(this->pos + difference, 0, std::max(this->count - this->cap, 0)));
 	}
 
 	/**

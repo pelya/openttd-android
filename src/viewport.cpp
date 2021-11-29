@@ -246,8 +246,8 @@ void InitializeWindowViewport(Window *w, int x, int y,
 		veh = Vehicle::Get(vp->follow_vehicle);
 		pt = MapXYZToViewport(vp, veh->x_pos, veh->y_pos, veh->z_pos);
 	} else {
-		uint x = TileX(follow_flags) * TILE_SIZE;
-		uint y = TileY(follow_flags) * TILE_SIZE;
+		x = TileX(follow_flags) * TILE_SIZE;
+		y = TileY(follow_flags) * TILE_SIZE;
 
 		vp->follow_vehicle = INVALID_VEHICLE;
 		pt = MapXYZToViewport(vp, x, y, GetSlopePixelZ(x, y));
@@ -267,35 +267,36 @@ void InitializeWindowViewport(Window *w, int x, int y,
 
 static Point _vp_move_offs;
 
-static void DoSetViewportPosition(const Window *w, int left, int top, int width, int height)
+static void DoSetViewportPosition(Window::IteratorToFront it, int left, int top, int width, int height)
 {
-	for (const Window *w : Window::IterateFromBack(w)) {
+	for (; !it.IsEnd(); ++it) {
+		const Window *w = *it;
 		if (left + width > w->left &&
 				w->left + w->width > left &&
 				top + height > w->top &&
 				w->top + w->height > top) {
 
 			if (left < w->left) {
-				DoSetViewportPosition(w, left, top, w->left - left, height);
-				DoSetViewportPosition(w, left + (w->left - left), top, width - (w->left - left), height);
+				DoSetViewportPosition(it, left, top, w->left - left, height);
+				DoSetViewportPosition(it, left + (w->left - left), top, width - (w->left - left), height);
 				return;
 			}
 
 			if (left + width > w->left + w->width) {
-				DoSetViewportPosition(w, left, top, (w->left + w->width - left), height);
-				DoSetViewportPosition(w, left + (w->left + w->width - left), top, width - (w->left + w->width - left), height);
+				DoSetViewportPosition(it, left, top, (w->left + w->width - left), height);
+				DoSetViewportPosition(it, left + (w->left + w->width - left), top, width - (w->left + w->width - left), height);
 				return;
 			}
 
 			if (top < w->top) {
-				DoSetViewportPosition(w, left, top, width, (w->top - top));
-				DoSetViewportPosition(w, left, top + (w->top - top), width, height - (w->top - top));
+				DoSetViewportPosition(it, left, top, width, (w->top - top));
+				DoSetViewportPosition(it, left, top + (w->top - top), width, height - (w->top - top));
 				return;
 			}
 
 			if (top + height > w->top + w->height) {
-				DoSetViewportPosition(w, left, top, width, (w->top + w->height - top));
-				DoSetViewportPosition(w, left, top + (w->top + w->height - top), width, height - (w->top + w->height - top));
+				DoSetViewportPosition(it, left, top, width, (w->top + w->height - top));
+				DoSetViewportPosition(it, left, top + (w->top + w->height - top), width, height - (w->top + w->height - top));
 				return;
 			}
 
@@ -381,7 +382,11 @@ static void SetViewportPosition(Window *w, int x, int y)
 		i = top + height - _screen.height;
 		if (i >= 0) height -= i;
 
-		if (height > 0) DoSetViewportPosition(w->z_front, left, top, width, height);
+		if (height > 0) {
+			Window::IteratorToFront it(w);
+			++it;
+			DoSetViewportPosition(it, left, top, width, height);
+		}
 	}
 }
 
@@ -1418,12 +1423,12 @@ static void ViewportAddKdtreeSigns(DrawPixelInfo *dpi)
 		if (Station::IsExpected(st)) {
 			/* Station */
 			ViewportAddString(dpi, ZOOM_LVL_OUT_16X, &st->sign,
-				STR_VIEWPORT_STATION, STR_VIEWPORT_STATION + 1, STR_NULL,
+				STR_VIEWPORT_STATION, STR_VIEWPORT_STATION_TINY, STR_NULL,
 				st->index, st->facilities, (st->owner == OWNER_NONE || !st->IsInUse()) ? COLOUR_GREY : _company_colours[st->owner]);
 		} else {
 			/* Waypoint */
 			ViewportAddString(dpi, ZOOM_LVL_OUT_16X, &st->sign,
-				STR_VIEWPORT_WAYPOINT, STR_VIEWPORT_WAYPOINT + 1, STR_NULL,
+				STR_VIEWPORT_WAYPOINT, STR_VIEWPORT_WAYPOINT_TINY, STR_NULL,
 				st->index, st->facilities, (st->owner == OWNER_NONE || !st->IsInUse()) ? COLOUR_GREY : _company_colours[st->owner]);
 		}
 	}
@@ -1476,7 +1481,7 @@ void ViewportSign::MarkDirty(ZoomLevel maxzoom) const
 		zoomlevels[zoom].bottom = this->top    + ScaleByZoom(VPSM_TOP + FONT_HEIGHT_NORMAL + VPSM_BOTTOM + 1, zoom);
 	}
 
-	for (const Window *w : Window::IterateFromBack()) {
+	for (const Window *w : Window::Iterate()) {
 		Viewport *vp = w->viewport;
 		if (vp != nullptr && vp->zoom <= maxzoom) {
 			assert(vp->width != 0);
@@ -1949,7 +1954,7 @@ bool MarkAllViewportsDirty(int left, int top, int right, int bottom)
 {
 	bool dirty = false;
 
-	for (const Window *w : Window::IterateFromBack()) {
+	for (const Window *w : Window::Iterate()) {
 		Viewport *vp = w->viewport;
 		if (vp != nullptr) {
 			assert(vp->width != 0);
@@ -1962,7 +1967,7 @@ bool MarkAllViewportsDirty(int left, int top, int right, int bottom)
 
 void ConstrainAllViewportsZoom()
 {
-	for (Window *w : Window::IterateFromFront()) {
+	for (Window *w : Window::Iterate()) {
 		if (w->viewport == nullptr) continue;
 
 		ZoomLevel zoom = static_cast<ZoomLevel>(Clamp(w->viewport->zoom, _settings_client.gui.zoom_min, _settings_client.gui.zoom_max));
@@ -2377,7 +2382,7 @@ bool HandleViewportMouseUp(const Viewport *vp, int x, int y)
 	bool result = CheckClickOnLandscape(vp, x, y);
 
 	if (v != nullptr) {
-		DEBUG(misc, 2, "Vehicle %d (index %d) at %p", v->unitnumber, v->index, v);
+		Debug(misc, 2, "Vehicle {} (index {}) at {}", v->unitnumber, v->index, fmt::ptr(v));
 		if (IsCompanyBuildableVehicleType(v)) {
 			v = v->First();
 			if (_ctrl_pressed && v->owner == _local_company) {
@@ -2665,7 +2670,7 @@ static inline void ShowMeasurementTooltips(StringID str, uint paramcount, const 
 
 static void HideMeasurementTooltips()
 {
-	DeleteWindowById(WC_TOOLTIPS, 0);
+	CloseWindowById(WC_TOOLTIPS, 0);
 }
 
 /** highlighting tiles while only going over them with the mouse */
@@ -3531,7 +3536,7 @@ void InitializeSpriteSorter()
  * @param text unused
  * @return the cost of this operation or an error
  */
-CommandCost CmdScrollViewport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
+CommandCost CmdScrollViewport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 	ViewportScrollTarget target = (ViewportScrollTarget)p1;

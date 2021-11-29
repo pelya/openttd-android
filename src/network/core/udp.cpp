@@ -28,11 +28,11 @@ NetworkUDPSocketHandler::NetworkUDPSocketHandler(NetworkAddressList *bind)
 			this->bind.push_back(addr);
 		}
 	} else {
-		/* As hostname nullptr and port 0/nullptr don't go well when
+		/* As an empty hostname and port 0 don't go well when
 		 * resolving it we need to add an address for each of
 		 * the address families we support. */
-		this->bind.emplace_back(nullptr, 0, AF_INET);
-		this->bind.emplace_back(nullptr, 0, AF_INET6);
+		this->bind.emplace_back("", 0, AF_INET);
+		this->bind.emplace_back("", 0, AF_INET6);
 	}
 }
 
@@ -44,7 +44,7 @@ NetworkUDPSocketHandler::NetworkUDPSocketHandler(NetworkAddressList *bind)
 bool NetworkUDPSocketHandler::Listen()
 {
 	/* Make sure socket is closed */
-	this->Close();
+	this->CloseSocket();
 
 	for (NetworkAddress &addr : this->bind) {
 		addr.Listen(SOCK_DGRAM, &this->sockets);
@@ -54,20 +54,14 @@ bool NetworkUDPSocketHandler::Listen()
 }
 
 /**
- * Close the given UDP socket
+ * Close the actual UDP socket.
  */
-void NetworkUDPSocketHandler::Close()
+void NetworkUDPSocketHandler::CloseSocket()
 {
 	for (auto &s : this->sockets) {
 		closesocket(s.second);
 	}
 	this->sockets.clear();
-}
-
-NetworkRecvStatus NetworkUDPSocketHandler::CloseConnection(bool error)
-{
-	NetworkSocketHandler::CloseConnection(error);
-	return NETWORK_RECV_STATUS_OKAY;
 }
 
 /**
@@ -95,16 +89,16 @@ void NetworkUDPSocketHandler::SendPacket(Packet *p, NetworkAddress *recv, bool a
 			/* Enable broadcast */
 			unsigned long val = 1;
 			if (setsockopt(s.second, SOL_SOCKET, SO_BROADCAST, (char *) &val, sizeof(val)) < 0) {
-				DEBUG(net, 1, "[udp] setting broadcast failed with: %s", NetworkError::GetLast().AsString());
+				Debug(net, 1, "Setting broadcast mode failed: {}", NetworkError::GetLast().AsString());
 			}
 		}
 
 		/* Send the buffer */
 		ssize_t res = p->TransferOut<int>(sendto, s.second, 0, (const struct sockaddr *)send.GetAddress(), send.GetAddressLength());
-		DEBUG(net, 7, "[udp] sendto(%s)", send.GetAddressAsString().c_str());
+		Debug(net, 7, "sendto({})", send.GetAddressAsString());
 
 		/* Check for any errors, but ignore it otherwise */
-		if (res == -1) DEBUG(net, 1, "[udp] sendto(%s) failed with: %s", send.GetAddressAsString().c_str(), NetworkError::GetLast().AsString());
+		if (res == -1) Debug(net, 1, "sendto({}) failed: {}", send.GetAddressAsString(), NetworkError::GetLast().AsString());
 
 		if (!all) break;
 	}
@@ -137,7 +131,7 @@ void NetworkUDPSocketHandler::ReceivePackets()
 			/* If the size does not match the packet must be corrupted.
 			 * Otherwise it will be marked as corrupted later on. */
 			if (!p.ParsePacketSize() || (size_t)nbytes != p.Size()) {
-				DEBUG(net, 1, "received a packet with mismatching size from %s", address.GetAddressAsString().c_str());
+				Debug(net, 1, "Received a packet with mismatching size from {}", address.GetAddressAsString());
 				continue;
 			}
 			p.PrepareToRead();
@@ -165,22 +159,12 @@ void NetworkUDPSocketHandler::HandleUDPPacket(Packet *p, NetworkAddress *client_
 	switch (this->HasClientQuit() ? PACKET_UDP_END : type) {
 		case PACKET_UDP_CLIENT_FIND_SERVER:   this->Receive_CLIENT_FIND_SERVER(p, client_addr);   break;
 		case PACKET_UDP_SERVER_RESPONSE:      this->Receive_SERVER_RESPONSE(p, client_addr);      break;
-		case PACKET_UDP_CLIENT_DETAIL_INFO:   this->Receive_CLIENT_DETAIL_INFO(p, client_addr);   break;
-		case PACKET_UDP_SERVER_DETAIL_INFO:   this->Receive_SERVER_DETAIL_INFO(p, client_addr);   break;
-		case PACKET_UDP_SERVER_REGISTER:      this->Receive_SERVER_REGISTER(p, client_addr);      break;
-		case PACKET_UDP_MASTER_ACK_REGISTER:  this->Receive_MASTER_ACK_REGISTER(p, client_addr);  break;
-		case PACKET_UDP_CLIENT_GET_LIST:      this->Receive_CLIENT_GET_LIST(p, client_addr);      break;
-		case PACKET_UDP_MASTER_RESPONSE_LIST: this->Receive_MASTER_RESPONSE_LIST(p, client_addr); break;
-		case PACKET_UDP_SERVER_UNREGISTER:    this->Receive_SERVER_UNREGISTER(p, client_addr);    break;
-		case PACKET_UDP_CLIENT_GET_NEWGRFS:   this->Receive_CLIENT_GET_NEWGRFS(p, client_addr);   break;
-		case PACKET_UDP_SERVER_NEWGRFS:       this->Receive_SERVER_NEWGRFS(p, client_addr);       break;
-		case PACKET_UDP_MASTER_SESSION_KEY:   this->Receive_MASTER_SESSION_KEY(p, client_addr);   break;
 
 		default:
 			if (this->HasClientQuit()) {
-				DEBUG(net, 0, "[udp] received invalid packet type %d from %s", type, client_addr->GetAddressAsString().c_str());
+				Debug(net, 0, "[udp] Received invalid packet type {} from {}", type, client_addr->GetAddressAsString());
 			} else {
-				DEBUG(net, 0, "[udp] received illegal packet from %s", client_addr->GetAddressAsString().c_str());
+				Debug(net, 0, "[udp] Received illegal packet from {}", client_addr->GetAddressAsString());
 			}
 			break;
 	}
@@ -193,18 +177,8 @@ void NetworkUDPSocketHandler::HandleUDPPacket(Packet *p, NetworkAddress *client_
  */
 void NetworkUDPSocketHandler::ReceiveInvalidPacket(PacketUDPType type, NetworkAddress *client_addr)
 {
-	DEBUG(net, 0, "[udp] received packet type %d on wrong port from %s", type, client_addr->GetAddressAsString().c_str());
+	Debug(net, 0, "[udp] Received packet type {} on wrong port from {}", type, client_addr->GetAddressAsString());
 }
 
 void NetworkUDPSocketHandler::Receive_CLIENT_FIND_SERVER(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_CLIENT_FIND_SERVER, client_addr); }
 void NetworkUDPSocketHandler::Receive_SERVER_RESPONSE(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_SERVER_RESPONSE, client_addr); }
-void NetworkUDPSocketHandler::Receive_CLIENT_DETAIL_INFO(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_CLIENT_DETAIL_INFO, client_addr); }
-void NetworkUDPSocketHandler::Receive_SERVER_DETAIL_INFO(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_SERVER_DETAIL_INFO, client_addr); }
-void NetworkUDPSocketHandler::Receive_SERVER_REGISTER(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_SERVER_REGISTER, client_addr); }
-void NetworkUDPSocketHandler::Receive_MASTER_ACK_REGISTER(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_MASTER_ACK_REGISTER, client_addr); }
-void NetworkUDPSocketHandler::Receive_CLIENT_GET_LIST(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_CLIENT_GET_LIST, client_addr); }
-void NetworkUDPSocketHandler::Receive_MASTER_RESPONSE_LIST(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_MASTER_RESPONSE_LIST, client_addr); }
-void NetworkUDPSocketHandler::Receive_SERVER_UNREGISTER(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_SERVER_UNREGISTER, client_addr); }
-void NetworkUDPSocketHandler::Receive_CLIENT_GET_NEWGRFS(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_CLIENT_GET_NEWGRFS, client_addr); }
-void NetworkUDPSocketHandler::Receive_SERVER_NEWGRFS(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_SERVER_NEWGRFS, client_addr); }
-void NetworkUDPSocketHandler::Receive_MASTER_SESSION_KEY(Packet *p, NetworkAddress *client_addr) { this->ReceiveInvalidPacket(PACKET_UDP_MASTER_SESSION_KEY, client_addr); }

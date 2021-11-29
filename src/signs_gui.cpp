@@ -58,7 +58,7 @@ struct SignList {
 	{
 		if (!this->signs.NeedRebuild()) return;
 
-		DEBUG(misc, 3, "Building sign list");
+		Debug(misc, 3, "Building sign list");
 
 		this->signs.clear();
 
@@ -530,7 +530,7 @@ struct SignWindow : Window, SignList {
 				FALLTHROUGH;
 
 			case WID_QES_CANCEL:
-				delete this;
+				this->Close();
 				break;
 		}
 	}
@@ -569,7 +569,7 @@ static WindowDesc _query_sign_edit_desc(
 void HandleClickOnSign(const Sign *si)
 {
 	if (_ctrl_pressed && (si->owner == _local_company || (si->owner == OWNER_DEITY && _game_mode == GM_EDITOR))) {
-		RenameSign(si->index, nullptr);
+		RenameSign(si->index, "");
 		return;
 	}
 	ShowRenameSignWindow(si);
@@ -582,7 +582,7 @@ void HandleClickOnSign(const Sign *si)
 void ShowRenameSignWindow(const Sign *si)
 {
 	/* Delete all other edit windows */
-	DeleteWindowByClass(WC_QUERY_STRING);
+	CloseWindowByClass(WC_QUERY_STRING);
 
 	new SignWindow(&_query_sign_edit_desc, si);
 }
@@ -595,5 +595,5 @@ void DeleteRenameSignWindow(SignID sign)
 {
 	SignWindow *w = dynamic_cast<SignWindow *>(FindWindowById(WC_QUERY_STRING, WN_QUERY_STRING_SIGN));
 
-	if (w != nullptr && w->cur_sign == sign) delete w;
+	if (w != nullptr && w->cur_sign == sign) w->Close();
 }

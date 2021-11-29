@@ -59,7 +59,7 @@ static void IConsoleWriteToLogFile(const char *string)
 				fwrite("\n", 1, 1, _iconsole_output_file) != 1) {
 			fclose(_iconsole_output_file);
 			_iconsole_output_file = nullptr;
-			IConsolePrintF(CC_DEFAULT, "cannot write to log file");
+			IConsolePrint(CC_ERROR, "Cannot write to console log file; closing the log file.");
 		}
 	}
 }
@@ -67,7 +67,7 @@ static void IConsoleWriteToLogFile(const char *string)
 bool CloseConsoleLogIfActive()
 {
 	if (_iconsole_output_file != nullptr) {
-		IConsolePrintF(CC_DEFAULT, "file output complete");
+		IConsolePrint(CC_INFO, "Console log file closed.");
 		fclose(_iconsole_output_file);
 		_iconsole_output_file = nullptr;
 		return true;
@@ -88,14 +88,13 @@ void IConsoleFree()
  * as well as to a logfile. If the network server is a dedicated server, all activities
  * are also logged. All lines to print are added to a temporary buffer which can be
  * used as a history to print them onscreen
- * @param colour_code the colour of the command. Red in case of errors, etc.
- * @param string the message entered or output on the console (notice, error, etc.)
+ * @param colour_code The colour of the command.
+ * @param string The message to output on the console (notice, error, etc.)
  */
-void IConsolePrint(TextColour colour_code, const char *string)
+void IConsolePrint(TextColour colour_code, const std::string &string)
 {
 	assert(IsValidConsoleColour(colour_code));
 
-	char *str;
 	if (_redirect_console_to_client != INVALID_CLIENT_ID) {
 		/* Redirect the string to the client */
 		NetworkServerSendRcon(_redirect_console_to_client, colour_code, string);
@@ -109,9 +108,9 @@ void IConsolePrint(TextColour colour_code, const char *string)
 
 	/* Create a copy of the string, strip if of colours and invalid
 	 * characters and (when applicable) assign it to the console buffer */
-	str = stredup(string);
+	char *str = stredup(string.c_str());
 	str_strip_colours(str);
-	str_validate(str, str + strlen(str));
+	StrMakeValidInPlace(str);
 
 	if (_network_dedicated) {
 		NetworkAdminConsole("console", str);
@@ -124,59 +123,6 @@ void IConsolePrint(TextColour colour_code, const char *string)
 
 	IConsoleWriteToLogFile(str);
 	IConsoleGUIPrint(colour_code, str);
-}
-
-/**
- * Handle the printing of text entered into the console or redirected there
- * by any other means. Uses printf() style format, for more information look
- * at IConsolePrint()
- */
-void CDECL IConsolePrintF(TextColour colour_code, const char *format, ...)
-{
-	assert(IsValidConsoleColour(colour_code));
-
-	va_list va;
-	char buf[ICON_MAX_STREAMSIZE];
-
-	va_start(va, format);
-	vseprintf(buf, lastof(buf), format, va);
-	va_end(va);
-
-	IConsolePrint(colour_code, buf);
-}
-
-/**
- * It is possible to print debugging information to the console,
- * which is achieved by using this function. Can only be used by
- * debug() in debug.cpp. You need at least a level 2 (developer) for debugging
- * messages to show up
- * @param dbg debugging category
- * @param string debugging message
- */
-void IConsoleDebug(const char *dbg, const char *string)
-{
-	if (_settings_client.gui.developer <= 1) return;
-	IConsolePrintF(CC_DEBUG, "dbg: [%s] %s", dbg, string);
-}
-
-/**
- * It is possible to print warnings to the console. These are mostly
- * errors or mishaps, but non-fatal. You need at least a level 1 (developer) for
- * debugging messages to show up
- */
-void IConsoleWarning(const char *string)
-{
-	if (_settings_client.gui.developer == 0) return;
-	IConsolePrintF(CC_WARNING, "WARNING: %s", string);
-}
-
-/**
- * It is possible to print error information to the console. This can include
- * game errors, or errors in general you would want the user to notice
- */
-void IConsoleError(const char *string)
-{
-	IConsolePrintF(CC_ERROR, "ERROR: %s", string);
 }
 
 /**
@@ -244,7 +190,7 @@ static std::string RemoveUnderscores(std::string name)
 /* static */ void IConsole::AliasRegister(const std::string &name, const std::string &cmd)
 {
 	auto result = IConsole::Aliases().try_emplace(RemoveUnderscores(name), name, cmd);
-	if (!result.second) IConsoleError("an alias with this name already exists; insertion aborted");
+	if (!result.second) IConsolePrint(CC_ERROR, "An alias with the name '{}' already exists.", name);
 }
 
 /**
@@ -271,10 +217,10 @@ static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char 
 	char  alias_buffer[ICON_MAX_STREAMSIZE] = { '\0' };
 	char *alias_stream = alias_buffer;
 
-	DEBUG(console, 6, "Requested command is an alias; parsing...");
+	Debug(console, 6, "Requested command is an alias; parsing...");
 
 	if (recurse_count > ICON_MAX_RECURSE) {
-		IConsoleError("Too many alias expansions, recursion limit reached. Aborting");
+		IConsolePrint(CC_ERROR, "Too many alias expansions, recursion limit reached.");
 		return;
 	}
 
@@ -320,8 +266,8 @@ static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char 
 						int param = *cmdptr - 'A';
 
 						if (param < 0 || param >= tokencount) {
-							IConsoleError("too many or wrong amount of parameters passed to alias, aborting");
-							IConsolePrintF(CC_WARNING, "Usage of alias '%s': %s", alias->name.c_str(), alias->cmdline.c_str());
+							IConsolePrint(CC_ERROR, "Too many or wrong amount of parameters passed to alias.");
+							IConsolePrint(CC_HELP, "Usage of alias '{}': '{}'.", alias->name, alias->cmdline);
 							return;
 						}
 
@@ -340,7 +286,7 @@ static void IConsoleAliasExec(const IConsoleAlias *alias, byte tokencount, char 
 		}
 
 		if (alias_stream >= lastof(alias_buffer) - 1) {
-			IConsoleError("Requested alias execution would overflow execution buffer");
+			IConsolePrint(CC_ERROR, "Requested alias execution would overflow execution buffer.");
 			return;
 		}
 	}
@@ -366,13 +312,12 @@ void IConsoleCmdExec(const char *cmdstr, const uint recurse_count)
 
 	for (cmdptr = cmdstr; *cmdptr != '\0'; cmdptr++) {
 		if (!IsValidChar(*cmdptr, CS_ALPHANUMERAL)) {
-			IConsoleError("command contains malformed characters, aborting");
-			IConsolePrintF(CC_ERROR, "ERROR: command was: '%s'", cmdstr);
+			IConsolePrint(CC_ERROR, "Command '{}' contains malformed characters.", cmdstr);
 			return;
 		}
 	}
 
-	DEBUG(console, 4, "Executing cmdline: '%s'", cmdstr);
+	Debug(console, 4, "Executing cmdline: '{}'", cmdstr);
 
 	memset(&tokens, 0, sizeof(tokens));
 	memset(&tokenstream, 0, sizeof(tokenstream));
@@ -382,7 +327,7 @@ void IConsoleCmdExec(const char *cmdstr, const uint recurse_count)
 	 * of characters in our stream or the max amount of tokens we can handle */
 	for (cmdptr = cmdstr, t_index = 0, tstream_i = 0; *cmdptr != '\0'; cmdptr++) {
 		if (tstream_i >= lengthof(tokenstream)) {
-			IConsoleError("command line too long");
+			IConsolePrint(CC_ERROR, "Command line too long.");
 			return;
 		}
 
@@ -403,7 +348,7 @@ void IConsoleCmdExec(const char *cmdstr, const uint recurse_count)
 			longtoken = !longtoken;
 			if (!foundtoken) {
 				if (t_index >= lengthof(tokens)) {
-					IConsoleError("command line too long");
+					IConsolePrint(CC_ERROR, "Command line too long.");
 					return;
 				}
 				tokens[t_index++] = &tokenstream[tstream_i];
@@ -421,7 +366,7 @@ void IConsoleCmdExec(const char *cmdstr, const uint recurse_count)
 
 			if (!foundtoken) {
 				if (t_index >= lengthof(tokens)) {
-					IConsoleError("command line too long");
+					IConsolePrint(CC_ERROR, "Command line too long.");
 					return;
 				}
 				tokens[t_index++] = &tokenstream[tstream_i - 1];
@@ -432,7 +377,7 @@ void IConsoleCmdExec(const char *cmdstr, const uint recurse_count)
 	}
 
 	for (uint i = 0; i < lengthof(tokens) && tokens[i] != nullptr; i++) {
-		DEBUG(console, 8, "Token %d is: '%s'", i, tokens[i]);
+		Debug(console, 8, "Token {} is: '{}'", i, tokens[i]);
 	}
 
 	if (StrEmpty(tokens[0])) return; // don't execute empty commands
@@ -462,5 +407,5 @@ void IConsoleCmdExec(const char *cmdstr, const uint recurse_count)
 		return;
 	}
 
-	IConsoleError("command not found");
+	IConsolePrint(CC_ERROR, "Command '{}' not found.", tokens[0]);
 }

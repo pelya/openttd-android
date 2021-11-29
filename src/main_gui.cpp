@@ -154,12 +154,24 @@ void ZoomInOrOutToCursorWindow(bool in, Window *w)
 	}
 }
 
-void FixTitleGameZoom()
+void FixTitleGameZoom(int zoom_adjust)
 {
 	if (_game_mode != GM_MENU) return;
 
 	Viewport *vp = FindWindowByClass(WC_MAIN_WINDOW)->viewport;
+
+	/* Adjust the zoom in/out.
+	 * Can't simply add, since operator+ is not defined on the ZoomLevel type. */
 	vp->zoom = _gui_zoom;
+	while (zoom_adjust < 0 && vp->zoom != ZOOM_LVL_MIN) {
+		vp->zoom--;
+		zoom_adjust++;
+	}
+	while (zoom_adjust > 0 && vp->zoom != ZOOM_LVL_MAX) {
+		vp->zoom++;
+		zoom_adjust--;
+	}
+
 	vp->virtual_width = ScaleByZoom(vp->width, vp->zoom);
 	vp->virtual_height = ScaleByZoom(vp->height, vp->zoom);
 }
@@ -305,13 +317,13 @@ struct MainWindow : Window
 			}
 
 			case GHK_RESET_OBJECT_TO_PLACE: ResetObjectToPlace(); ToolbarSelectLastTool(); break;
-			case GHK_DELETE_WINDOWS: DeleteNonVitalWindows(); break;
-			case GHK_DELETE_NONVITAL_WINDOWS: DeleteAllNonVitalWindows(); break;
+			case GHK_DELETE_WINDOWS: CloseNonVitalWindows(); break;
+			case GHK_DELETE_NONVITAL_WINDOWS: CloseAllNonVitalWindows(); break;
 			case GHK_DELETE_ALL_MESSAGES: DeleteAllMessages(); break;
 			case GHK_REFRESH_SCREEN: MarkWholeScreenDirty(); break;
 
 			case GHK_CRASH: // Crash the game
-				*(volatile byte *)0 = 0;
+				*(volatile byte *)nullptr = 0;
 				break;
 
 			case GHK_MONEY: // Gimme money

@@ -34,7 +34,7 @@ Both 'stable' and 'nightly' versions are available for download:
 - most people should choose the 'stable' version, as this has been more extensively tested
 - the 'nightly' version includes the latest changes and features, but may sometimes be less reliable
 
-On some platforms OpenTTD will also be available via your OS package manager or a similar service.
+OpenTTD is also available for free on [Steam](https://store.steampowered.com/app/1536610/OpenTTD/), [GOG.com](https://www.gog.com/game/openttd), and the [Microsoft Store](https://www.microsoft.com/p/openttd-official/9ncjg5rvrr1c). On some platforms OpenTTD will be available via your OS package manager or a similar service.
 
 
 ## 1.2) OpenTTD gameplay manual
@@ -204,6 +204,9 @@ See the comments in the source files in `src/3rdparty/md5` for the complete lice
 
 The implementations of Posix `getaddrinfo` and `getnameinfo` for OS/2 in `src/3rdparty/os2` are distributed partly under the GNU Lesser General Public License 2.1, and partly under the (3-clause) BSD license.
 The exact licensing terms can be found in `src/3rdparty/os2/getaddrinfo.c` resp. `src/3rdparty/os2/getnameinfo.c`.
+
+The fmt implementation in `src/3rdparty/fmt` is licensed under the MIT license.
+See `src/3rdparty/fmt/LICENSE.rst` for the complete license text.
 
 
 ## 4.0 Credits

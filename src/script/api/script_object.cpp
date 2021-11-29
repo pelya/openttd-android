@@ -85,7 +85,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 /* static */ void ScriptObject::SetLastCommand(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	ScriptStorage *s = GetStorage();
-	DEBUG(script, 6, "SetLastCommand company=%02d tile=%06x p1=%08x p2=%08x cmd=%d", s->root_company, tile, p1, p2, cmd);
+	Debug(script, 6, "SetLastCommand company={:02d} tile={:06x} p1={:08x} p2={:08x} cmd={}", s->root_company, tile, p1, p2, cmd);
 	s->last_tile = tile;
 	s->last_p1 = p1;
 	s->last_p2 = p2;
@@ -95,7 +95,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 /* static */ bool ScriptObject::CheckLastCommand(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
 {
 	ScriptStorage *s = GetStorage();
-	DEBUG(script, 6, "CheckLastCommand company=%02d tile=%06x p1=%08x p2=%08x cmd=%d", s->root_company, tile, p1, p2, cmd);
+	Debug(script, 6, "CheckLastCommand company={:02d} tile={:06x} p1={:08x} p2={:08x} cmd={}", s->root_company, tile, p1, p2, cmd);
 	if (s->last_tile != tile) return false;
 	if (s->last_p1 != p1) return false;
 	if (s->last_p2 != p2) return false;
@@ -283,7 +283,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 {
 	char buffer[64];
 	::GetString(buffer, string, lastof(buffer));
-	::str_validate(buffer, lastof(buffer), SVS_NONE);
+	::StrMakeValidInPlace(buffer, lastof(buffer), SVS_NONE);
 	return ::stredup(buffer);
 }
 
@@ -309,10 +309,11 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 		return false;
 	}
 
-	if (!StrEmpty(text) && (GetCommandFlags(cmd) & CMD_STR_CTRL) == 0) {
+	std::string command_text = text == nullptr ? std::string{} : text;
+	if (!command_text.empty() && (GetCommandFlags(cmd) & CMD_STR_CTRL) == 0) {
 		/* The string must be valid, i.e. not contain special codes. Since some
 		 * can be made with GSText, make sure the control codes are removed. */
-		::str_validate(const_cast<char *>(text), text + strlen(text), SVS_NONE);
+		command_text = ::StrMakeValid(command_text, SVS_NONE);
 	}
 
 	/* Set the default callback to return a true/false result of the DoCommand */
@@ -328,7 +329,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 	if (!estimate_only && _networking && !_generating_world) SetLastCommand(tile, p1, p2, cmd);
 
 	/* Try to perform the command. */
-	CommandCost res = ::DoCommandPInternal(tile, p1, p2, cmd, (_networking && !_generating_world) ? ScriptObject::GetActiveInstance()->GetDoCommandCallback() : nullptr, text, false, estimate_only);
+	CommandCost res = ::DoCommandPInternal(tile, p1, p2, cmd, (_networking && !_generating_world) ? ScriptObject::GetActiveInstance()->GetDoCommandCallback() : nullptr, command_text, false, estimate_only);
 
 	/* We failed; set the error and bail out */
 	if (res.Failed()) {
@@ -365,7 +366,7 @@ ScriptObject::ActiveInstance::~ActiveInstance()
 		IncreaseDoCommandCosts(res.GetCost());
 
 		/* Suspend the script player for 1+ ticks, so it simulates multiplayer. This
-		 *  both avoids confusion when a developer launched his script in a
+		 *  both avoids confusion when a developer launched the script in a
 		 *  multiplayer game, but also gives time for the GUI and human player
 		 *  to interact with the game. */
 		throw Script_Suspend(GetDoCommandDelay(), callback);
