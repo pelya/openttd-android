@@ -672,9 +672,11 @@ struct GameOptionsWindow : Window {
 #endif
 		this->SetWidgetLoweredState(WID_GO_MOUSE_CURSOR, _settings_client.gui.draw_mouse_cursor);
 
+#if 0
 #ifndef __APPLE__
 		this->SetWidgetLoweredState(WID_GO_VIDEO_VSYNC_BUTTON, _video_vsync);
 		this->SetWidgetDisabledState(WID_GO_VIDEO_VSYNC_BUTTON, !_video_hw_accel);
+#endif
 #endif
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;

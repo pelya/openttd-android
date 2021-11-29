@@ -356,7 +356,7 @@ struct DropdownWindow : Window {
 		if (_left_button_down && !this->left_button_state && (
 			_cursor.pos.x < this->left || _cursor.pos.x > this->left + this->width ||
 			_cursor.pos.y < this->top || _cursor.pos.y > this->top + this->height)) {
-			delete this;
+			this->Close();
 			return;
 		} else {
 			if (_left_button_down && !this->left_button_state) {
