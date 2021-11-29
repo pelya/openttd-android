@@ -2851,11 +2851,11 @@ void ReconstructUserInterface()
 	InitFreeType(true);
 	CheckForMissingGlyphs();
 
-	DeleteAllNonVitalWindows();
+	CloseAllNonVitalWindows();
 
 	switch (_game_mode) {
 		case GM_MENU:
-			DeleteWindowById(WC_SELECT_GAME, 0);
+			CloseWindowById(WC_SELECT_GAME, 0);
 			extern void ShowSelectGameWindow();
 			ShowSelectGameWindow();
 			break;
@@ -2870,7 +2870,7 @@ void ReconstructUserInterface()
 			break;
 	}
 
-	ReInitAllWindows();
+	ReInitAllWindows(false);
 	if (_settings_client.gui.windows_titlebars) {
 		// Hack to prevent second click on the same button via button-up event
 		ShowGameOptions();

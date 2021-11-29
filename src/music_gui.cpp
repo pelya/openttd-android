@@ -582,13 +582,13 @@ struct MusicTrackSelectionWindow : public Window {
 	{
 		switch (widget) {
 			case WID_MTS_LIST_LEFT: { // add to playlist
-				int y = this->left_sb->GetScrolledRowFromWidget(pt.y, this, WID_MTS_LIST_LEFT, WD_FRAMERECT_TOP, this->resize.step_height);
+				int y = this->left_sb->GetScrolledRowFromWidget(pt.y, this, WID_MTS_LIST_LEFT);
 				_music.PlaylistAdd(y);
 				break;
 			}
 
 			case WID_MTS_LIST_RIGHT: { // remove from playlist
-				int y = this->right_sb->GetScrolledRowFromWidget(pt.y, this, WID_MTS_LIST_RIGHT, WD_FRAMERECT_TOP, this->resize.step_height);
+				int y = this->right_sb->GetScrolledRowFromWidget(pt.y, this, WID_MTS_LIST_RIGHT);
 				_music.PlaylistRemove(y);
 				break;
 			}

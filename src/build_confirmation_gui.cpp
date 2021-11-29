@@ -174,10 +174,10 @@ struct BuildConfirmationWindow : Window {
 					ToolbarSelectLastTool();
 				} else {
 					ResetObjectToPlace();
-					DeleteWindowByClass(WC_BUILD_BRIDGE);
+					CloseWindowByClass(WC_BUILD_BRIDGE);
 					//ClearErrorMessages();
 					Window *w = FindWindowById(WC_ERRMSG, 0);
-					if (w != NULL) delete w;
+					if (w != NULL) w->Close();
 				}
 				break;
 		}
@@ -268,8 +268,8 @@ void HideBuildConfirmationWindow()
 
 	if (!BuildConfirmationWindow::shown) return;
 
-	DeleteWindowById(WC_BUILD_CONFIRMATION, 0);
-	DeleteWindowById(WC_TOOLTIPS, 0);
+	CloseWindowById(WC_BUILD_CONFIRMATION, 0);
+	CloseWindowById(WC_TOOLTIPS, 0);
 }
 
 bool ConfirmationWindowShown()

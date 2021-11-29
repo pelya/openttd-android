@@ -2343,7 +2343,7 @@ static EventState HandleWindowDragging()
 			if (!_left_button_down) {
 				w->flags &= ~WF_DRAGGING;
 				if (GetWindowDraggedOffScreen(w)) {
-					delete w;
+					w->Close();
 				}
 				break;
 			}
@@ -3853,7 +3853,7 @@ static void MoveAllWindowsOffScreen(bool moveOffScreen)
 	Window *w;
 	bool updateScreen = false;
 
-	FOR_ALL_WINDOWS_FROM_BACK(w) {
+	for (Window *w : Window::Iterate()) {
 		switch (w->window_class) {
 			case WC_MAIN_WINDOW:
 			case WC_BUILD_CONFIRMATION:

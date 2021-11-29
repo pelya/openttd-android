@@ -2980,23 +2980,23 @@ void NWidgetLeaf::Draw(const Window *w)
 
 		case WWT_SHADEBOX:
 			assert(this->widget_data == 0);
-			DrawImageButtons(r, WWT_SHADEBOX, this->colour, w->IsShaded(), w->IsShaded() ? SPR_WINDOW_SHADE : SPR_WINDOW_UNSHADE);
+			DrawImageButtons(r, WWT_SHADEBOX, this->colour, w->IsShaded(), w->IsShaded() ? SPR_WINDOW_SHADE : SPR_WINDOW_UNSHADE, SA_CENTER);
 			break;
 
 		case WWT_DEBUGBOX:
-			DrawImageButtons(r, WWT_DEBUGBOX, this->colour, clicked, SPR_WINDOW_DEBUG);
+			DrawImageButtons(r, WWT_DEBUGBOX, this->colour, clicked, SPR_WINDOW_DEBUG, SA_CENTER);
 			break;
 
 		case WWT_STICKYBOX: {
 			assert(this->widget_data == 0);
 			bool clicked = !!(w->flags & WF_STICKY);
-			DrawImageButtons(r, WWT_STICKYBOX, this->colour, clicked, clicked ? SPR_PIN_DOWN : SPR_PIN_UP);
+			DrawImageButtons(r, WWT_STICKYBOX, this->colour, clicked, clicked ? SPR_PIN_DOWN : SPR_PIN_UP, SA_CENTER);
 			break;
 		}
 
 		case WWT_DEFSIZEBOX:
 			assert(this->widget_data == 0);
-			DrawImageButtons(r, WWT_DEFSIZEBOX, this->colour, clicked, SPR_WINDOW_DEFSIZE);
+			DrawImageButtons(r, WWT_DEFSIZEBOX, this->colour, clicked, SPR_WINDOW_DEFSIZE, SA_CENTER);
 			break;
 
 		case WWT_RESIZEBOX:

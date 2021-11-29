@@ -242,7 +242,7 @@ static void PopupMainCompanyToolbMenu(Window *w, int widget, int grey = 0)
 				list.emplace_back(new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_SPECTATE, CTMN_SPECTATE, false));
 			}
 
-			list.emplace_back(new DropDownListStringItem(STR_NETWORK_CLIENTLIST_SPEAK_TO_ALL, CTMN_SPEAK_ALL, false));
+			list.emplace_back(new DropDownListStringItem(STR_NETWORK_CHAT_ALL_CAPTION, CTMN_SPEAK_ALL, false));
 			break;
 
 		case WID_TN_STORY:
@@ -1234,7 +1234,7 @@ static CallBackFunction ToolbarShiftClick(Window *w)
 
 static CallBackFunction ToolbarDeleteClick(Window *w)
 {
-	DeleteNonVitalWindows();
+	CloseNonVitalWindows();
 	_ctrl_pressed = false;
 	w->SetWidgetLoweredState(WID_TN_CTRL, _ctrl_pressed);
 	w->SetWidgetDirty(WID_TN_CTRL);

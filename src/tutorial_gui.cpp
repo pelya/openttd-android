@@ -179,7 +179,7 @@ struct TutorialWindow : public Window {
 
 void ShowTutorialWindow()
 {
-	DeleteWindowByClass(WC_GAME_OPTIONS);
+	CloseWindowByClass(WC_GAME_OPTIONS);
 	new TutorialWindow();
 }
 

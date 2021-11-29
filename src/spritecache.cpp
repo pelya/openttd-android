@@ -473,10 +473,6 @@ static void *ReadSprite(const SpriteCache *sc, SpriteID id, SpriteType sprite_ty
 		/* Try for 32bpp sprites first. */
 		sprite_avail = sprite_loader.LoadSprite(sprite, file, file_pos, sprite_type, true);
 	}
-	if (sprite_type != ST_MAPGEN && BlitterFactory::GetCurrentBlitter()->GetScreenDepth() == 16) {
-		/* 32bpp sprites for 16bpp videomode. */
-		sprite_avail = sprite_loader.LoadSprite(sprite, file, file_pos, sprite_type, true);
-	}
 	if (sprite_avail == 0) {
 		sprite_avail = sprite_loader.LoadSprite(sprite, file, file_pos, sprite_type, false);
 	}

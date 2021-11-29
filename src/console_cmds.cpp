@@ -418,7 +418,7 @@ DEF_CONSOLE_CMD(ConListFiles)
 DEF_CONSOLE_CMD(ConOpenCheats)
 {
 	if (argc == 0) {
-		IConsoleHelp("Open the cheat window. Usage: 'open_cheats'");
+		IConsolePrint(CC_HELP, "Open the cheat window. Usage: 'cheats'.");
 		return true;
 	}
 

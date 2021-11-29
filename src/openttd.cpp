@@ -703,7 +703,6 @@ int openttd_main(int argc, char *argv[])
 #ifndef WIN32
 		// Configure local font path on Android, it uses older Fontconfig version that does not require config file
 		setenv("FONTCONFIG_FONTS", "fonts", 1);
-		DEBUG(misc, 1, "Set FONTCONFIG_FONTS to %s", getenv("FONTCONFIG_FONTS"));
 #endif
 #ifdef __EMSCRIPTEN__
 		// Fontconfig config file is required on Emscripten, and the path to fonts directory is named differently
@@ -816,15 +815,7 @@ int openttd_main(int argc, char *argv[])
 	/* ScanNewGRFFiles now has control over the scanner. */
 	RequestNewGRFScan(scanner.release());
 
-	try {
-		VideoDriver::GetInstance()->MainLoop();
-	} catch (const std::exception & e) {
-		DEBUG(misc, 0, "Main thread got exception: %s", e.what());
-		throw;
-	} catch (...) {
-		DEBUG(misc, 0, "Main thread got unknown exception");
-		throw;
-	}
+	VideoDriver::GetInstance()->MainLoop();
 
 	WaitTillSaved();
 

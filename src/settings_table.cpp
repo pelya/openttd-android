@@ -267,7 +267,7 @@ static void VerticalToolbarChanged(int32 p1)
 	if (FindWindowByClass(WC_MAIN_TOOLBAR)) {
 		HideVitalWindows();
 		ShowVitalWindows();
-		ReInitAllWindows();
+		ReInitAllWindows(false);
 	}
 }
 

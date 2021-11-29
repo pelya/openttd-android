@@ -778,7 +778,7 @@ struct AIConfigWindow : public Window {
 
 			case WID_AIC_LIST:
 				this->line_height = FONT_HEIGHT_NORMAL + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
-				this->line_height = GetMinButtonSize(NWST_BUTTON, this->line_height);
+				this->line_height = GetMinButtonSize(this->line_height);
 				resize->height = this->line_height;
 				size->height = 8 * this->line_height;
 				break;
