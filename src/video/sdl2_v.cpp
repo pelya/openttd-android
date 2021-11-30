@@ -665,6 +665,11 @@ bool VideoDriver_SDL_Base::ToggleFullscreen(bool fullscreen)
 	if (fullscreen) {
 		SDL_GetWindowSize(this->sdl_window, &w, &h);
 
+#ifdef __EMSCRIPTEN__
+		// This apparently crashes the webapp on iPhone XS with iOS 14.4.2
+		EM_ASM( if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); } );
+#endif
+
 		/* Find fullscreen window size */
 		SDL_DisplayMode dm;
 		if (SDL_GetCurrentDisplayMode(0, &dm) < 0) {

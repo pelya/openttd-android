@@ -667,8 +667,9 @@ struct GameOptionsWindow : Window {
 	{
 		if (!gui_scope) return;
 		this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
-#ifdef WIN32
+#ifndef __ANDROID__
 		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
+		//this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
 #endif
 		this->SetWidgetLoweredState(WID_GO_MOUSE_CURSOR, _settings_client.gui.draw_mouse_cursor);
 
@@ -716,17 +717,18 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 				EndContainer(),
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_RESOLUTION, STR_NULL),
 					NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_RESOLUTION_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_BLACK_STRING, STR_GAME_OPTIONS_RESOLUTION_TOOLTIP), SetFill(1, 0), SetPadding(0, 0, 3, 0),
+				EndContainer(),
+#ifndef __ANDROID__
+				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_GAME_OPTIONS_FULLSCREEN, STR_NULL),
 					NWidget(NWID_HORIZONTAL),
-#ifdef WIN32
 						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_GAME_OPTIONS_FULLSCREEN, STR_NULL),
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_FULLSCREEN_BUTTON), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP),
-#endif
 					EndContainer(),
 				EndContainer(),
+#endif
 				NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_CONFIG_SETTING_MOUSE_CURSOR, STR_NULL),
 					NWidget(NWID_HORIZONTAL),
-						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetDataTip(STR_CONFIG_SETTING_MOUSE_CURSOR, STR_NULL),
-						NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
+						NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetFill(1, 0), SetDataTip(STR_CONFIG_SETTING_MOUSE_CURSOR, STR_NULL),
 						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_MOUSE_CURSOR), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_CONFIG_SETTING_MOUSE_CURSOR_HELPTEXT),
 					EndContainer(),
 				EndContainer(),
