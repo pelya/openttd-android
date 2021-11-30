@@ -3795,7 +3795,7 @@ void RelocateAllWindows(int neww, int newh)
 				break;
 
 			case WC_STATUS_BAR:
-				ResizeWindow(w, std::min<uint>(neww, std::min<int>(_toolbar_width, _screen.width * 2 / 3 - SETTING_BUTTON_HEIGHT * 2)) - w->width, 0, false);
+				ResizeWindow(w, std::min<uint>(neww, std::min<int>(_toolbar_width, _screen.width * 2 / 3 - GetMinButtonSize() * 2)) - w->width, 0, false);
 
 				top = newh - w->height;
 				left = PositionStatusbar(w);
