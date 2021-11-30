@@ -880,6 +880,7 @@ void NWidgetResizeBase::AdjustPaddingForZoom()
 	if (!this->absolute) {
 		this->min_x = ScaleGUITrad(this->uz_min_x);
 		this->min_y = std::max(ScaleGUITrad(this->uz_min_y), this->uz_text_lines * GetCharacterHeight(this->uz_text_size) + ScaleGUITrad(this->uz_text_spacing));
+		this->SetMinimalSizeForSizingType();
 	}
 	NWidgetBase::AdjustPaddingForZoom();
 }
@@ -895,6 +896,7 @@ void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
 	this->uz_min_y = std::max(this->uz_min_y, min_y);
 	this->min_x = ScaleGUITrad(this->uz_min_x);
 	this->min_y = std::max(ScaleGUITrad(this->uz_min_y), this->uz_text_lines * GetCharacterHeight(this->uz_text_size) + ScaleGUITrad(this->uz_text_spacing));
+	this->SetMinimalSizeForSizingType();
 }
 
 /**
@@ -907,6 +909,26 @@ void NWidgetResizeBase::SetMinimalSizeAbsolute(uint min_x, uint min_y)
 	this->absolute = true;
 	this->min_x = std::max(this->min_x, min_x);
 	this->min_y = std::max(this->min_y, min_y);
+	this->SetMinimalSizeForSizingType();
+}
+
+/**
+ * Set minimal text lines for the widget.
+ * @param min_lines Number of text lines of the widget.
+ * @param spacing   Extra spacing (eg WD_FRAMERECT_TOP + _BOTTOM) of the widget.
+ * @param size      Font size of text.
+ */
+void NWidgetResizeBase::SetMinimalTextLines(uint8 min_lines, uint8 spacing, FontSize size)
+{
+	this->uz_text_lines = min_lines;
+	this->uz_text_spacing = spacing;
+	this->uz_text_size = size;
+	this->min_y = std::max(ScaleGUITrad(this->uz_min_y), this->uz_text_lines * GetCharacterHeight(this->uz_text_size) + ScaleGUITrad(this->uz_text_spacing));
+	this->SetMinimalSizeForSizingType();
+}
+
+void NWidgetResizeBase::SetMinimalSizeForSizingType()
+{
 	uint min_size = 0;
 	switch (this->sizing_type) {
 		case NWST_NONE:
@@ -924,20 +946,6 @@ void NWidgetResizeBase::SetMinimalSizeAbsolute(uint min_x, uint min_y)
 
 	this->min_x = std::max(this->min_x, min_size);
 	this->min_y = std::max(this->min_y, min_size);
-}
-
-/**
- * Set minimal text lines for the widget.
- * @param min_lines Number of text lines of the widget.
- * @param spacing   Extra spacing (eg WD_FRAMERECT_TOP + _BOTTOM) of the widget.
- * @param size      Font size of text.
- */
-void NWidgetResizeBase::SetMinimalTextLines(uint8 min_lines, uint8 spacing, FontSize size)
-{
-	this->uz_text_lines = min_lines;
-	this->uz_text_spacing = spacing;
-	this->uz_text_size = size;
-	this->min_y = std::max(ScaleGUITrad(this->uz_min_y), this->uz_text_lines * GetCharacterHeight(this->uz_text_size) + ScaleGUITrad(this->uz_text_spacing));
 }
 
 /**

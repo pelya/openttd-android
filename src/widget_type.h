@@ -267,6 +267,7 @@ public:
 	void SetMinimalSize(uint min_x, uint min_y);
 	void SetMinimalSizeAbsolute(uint min_x, uint min_y);
 	void SetMinimalTextLines(uint8 min_lines, uint8 spacing, FontSize size);
+	void SetMinimalSizeForSizingType();
 	void SetFill(uint fill_x, uint fill_y);
 	void SetResize(uint resize_x, uint resize_y);
 
@@ -1036,6 +1037,10 @@ static inline NWidgetPart SetSizingType(NWidSizingType type)
 	return part;
 }
 
+/**
+ * Get the minimal size of every clickable widget for touchscreen interface.
+ * @param size of graphics or text in pixels that must fit into the widget.
+ */
 uint GetMinButtonSize(uint min_1 = 0);
 
 /**
