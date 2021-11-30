@@ -376,7 +376,7 @@ struct AISettingsWindow : public Window {
 
 		int y = r.top;
 		int button_y_offset = (this->line_height - SETTING_BUTTON_HEIGHT) / 2;
-		int text_y_offset = (this->line_height - FONT_HEIGHT_NORMAL) / 2;
+		int text_y_offset = (this->line_height - SETTING_BUTTON_HEIGHT) / 2;
 		for (; this->vscroll->IsVisible(i) && it != visible_settings.end(); i++, it++) {
 			const ScriptConfigItem &config_item = **it;
 			int current_value = config->GetSetting((config_item).name);
@@ -418,7 +418,7 @@ struct AISettingsWindow : public Window {
 				}
 			}
 
-			DrawString(text_left, text_right, Center(y, this->line_height), str, colour);
+			DrawString(text_left, text_right, y + text_y_offset, str, colour);
 			y += this->line_height;
 		}
 	}

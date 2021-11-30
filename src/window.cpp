@@ -1921,21 +1921,6 @@ Window *FindWindowFromPt(int x, int y)
 	return nullptr;
 }
 
-int SETTING_BUTTON_WIDTH  = 20;
-int SETTING_BUTTON_HEIGHT = 10;
-
-/**
- * Set button size of settings. If automatic sizing is also enabled, it also sets
- * the sizing of buttons, scrollbars and font size (recommend restart).
- * @todo Check if it can be moved to another file, so we do not need to include error, string and fontcache headers.
- * @todo Fix magic numbers 16/18/20/30/32
- */
-void CheckWindowMinSizings()
-{
-	SETTING_BUTTON_HEIGHT = GetMinButtonSize();
-	SETTING_BUTTON_WIDTH  = 2 * SETTING_BUTTON_HEIGHT;
-}
-
 /**
  * (re)initialize the windowing system
  */

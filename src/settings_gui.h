@@ -13,6 +13,12 @@
 #include "gfx_type.h"
 #include "widgets/dropdown_type.h"
 
+/** Width of setting buttons */
+#define SETTING_BUTTON_WIDTH  (GetMinButtonSize() * 2)
+/** Height of setting buttons */
+#define SETTING_BUTTON_HEIGHT (GetMinButtonSize())
+
+
 extern int SETTING_BUTTON_WIDTH; ///< Width of setting buttons
 extern int SETTING_BUTTON_HEIGHT; ///< Height of setting buttons
 
