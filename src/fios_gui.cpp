@@ -733,7 +733,7 @@ public:
 
 			case WID_SL_LOAD_NETWORK_BUTTON:
 				_file_to_saveload.cloud_load = true;
-				delete this;
+				this->Close();
 				break;
 		}
 	}
