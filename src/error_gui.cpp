@@ -335,7 +335,7 @@ public:
 	{
 		switch (widget) {
 			case WID_EM_CLOSE:
-				delete this;
+				this->Close();
 				break;
 
 			default:
