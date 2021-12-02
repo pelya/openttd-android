@@ -17,6 +17,8 @@
 
 - Fix manager face dialog and company color scheme dialog.
 
+- Fix multiplayer dialog
+
 
 ===== Emscripten TODO =====
 
