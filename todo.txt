@@ -17,7 +17,7 @@
 
 - Fix manager face dialog and company color scheme dialog.
 
-- Fix multiplayer dialog
+- Button to copy server invite code to clipboard
 
 
 ===== Emscripten TODO =====
