@@ -470,6 +470,7 @@ void ShowDropDownListAt(Window *w, DropDownList &&list, int selected, int button
 	}
 
 	if (auto_width) width = std::max(width, max_item_width);
+	width = GetMinButtonSize(width);
 
 	Point dw_pos = { w->left + (_current_text_dir == TD_RTL ? wi_rect.right + 1 - (int)width : wi_rect.left), top};
 	Dimension dw_size = {width, height};
