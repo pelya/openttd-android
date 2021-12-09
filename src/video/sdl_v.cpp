@@ -711,6 +711,13 @@ void VideoDriver_SDL::InputLoop()
 
 	if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
 	old_ctrl_pressed = _ctrl_pressed;
+
+#ifdef __ANDROID__
+	if (!this->set_clipboard_text.empty()) {
+		SDL_SetClipboardText(this->set_clipboard_text.c_str());
+		this->set_clipboard_text = "";
+	}
+#endif /* __ANDROID__ */
 }
 
 void VideoDriver_SDL::MainLoop()

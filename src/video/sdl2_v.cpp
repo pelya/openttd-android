@@ -604,6 +604,11 @@ void VideoDriver_SDL_Base::InputLoop()
 
 	if (old_ctrl_pressed != _ctrl_pressed) HandleCtrlChanged();
 	old_ctrl_pressed = _ctrl_pressed;
+
+	if (!this->set_clipboard_text.empty()) {
+		SDL_SetClipboardText(this->set_clipboard_text.c_str());
+		this->set_clipboard_text = "";
+	}
 }
 
 void VideoDriver_SDL_Base::LoopOnce()
