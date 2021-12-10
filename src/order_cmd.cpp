@@ -609,6 +609,7 @@ bool OrderList::IsCompleteTimetable() const
 	return true;
 }
 
+#ifdef WITH_ASSERT
 /**
  * Checks for internal consistency of order list. Triggers assertion if something is wrong.
  */
@@ -642,6 +643,7 @@ void OrderList::DebugCheckSanity() const
 			(uint)this->num_orders, (uint)this->num_manual_orders,
 			this->num_vehicles, this->timetable_duration, this->total_duration);
 }
+#endif
 
 /**
  * Checks whether the order goes to a station or not, i.e. whether the
@@ -1134,11 +1136,11 @@ CommandCost CmdSkipToOrder(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
 		v->UpdateRealOrderIndex();
 
 		InvalidateVehicleOrder(v, VIWD_MODIFY_ORDERS);
-	}
 
-	/* We have an aircraft/ship, they have a mini-schedule, so update them all */
-	if (v->type == VEH_AIRCRAFT) SetWindowClassesDirty(WC_AIRCRAFT_LIST);
-	if (v->type == VEH_SHIP) SetWindowClassesDirty(WC_SHIPS_LIST);
+		/* We have an aircraft/ship, they have a mini-schedule, so update them all */
+		if (v->type == VEH_AIRCRAFT) SetWindowClassesDirty(WC_AIRCRAFT_LIST);
+		if (v->type == VEH_SHIP) SetWindowClassesDirty(WC_SHIPS_LIST);
+	}
 
 	return CommandCost();
 }
@@ -1782,7 +1784,7 @@ void CheckOrders(const Vehicle *v)
 		/* Do we only have 1 station in our order list? */
 		if (n_st < 2 && message == INVALID_STRING_ID) message = STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS;
 
-#ifndef NDEBUG
+#ifdef WITH_ASSERT
 		if (v->orders.list != nullptr) v->orders.list->DebugCheckSanity();
 #endif
 

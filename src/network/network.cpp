@@ -635,6 +635,7 @@ public:
 	{
 		NetworkGameList *item = NetworkGameListAddItem(connection_string);
 		item->status = NGLS_OFFLINE;
+		item->refreshing = false;
 
 		UpdateNetworkGameWindow();
 	}
@@ -652,6 +653,10 @@ public:
 void NetworkQueryServer(const std::string &connection_string)
 {
 	if (!_network_available) return;
+
+	/* Mark the entry as refreshing, so the GUI can show the refresh is pending. */
+	NetworkGameList *item = NetworkGameListAddItem(connection_string);
+	item->refreshing = true;
 
 	new TCPQueryConnecter(connection_string);
 }
@@ -1068,7 +1073,7 @@ void NetworkGameLoop()
 					if (sync_state[0] == _random.state[0] && sync_state[1] == _random.state[1]) {
 						Debug(desync, 0, "Sync check: {:08x}; {:02x}; match", _date, _date_fract);
 					} else {
-						Debug(desync, 0, "Sync check: {:08x}; {:02x}; mismatch expected {{:08x}, {:08x}}, got {{:08x}, {:08x}}",
+						Debug(desync, 0, "Sync check: {:08x}; {:02x}; mismatch expected {{{:08x}, {:08x}}}, got {{{:08x}, {:08x}}}",
 									_date, _date_fract, sync_state[0], sync_state[1], _random.state[0], _random.state[1]);
 						NOT_REACHED();
 					}

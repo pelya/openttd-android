@@ -393,8 +393,8 @@ static void CDECL HandleSavegameLoadCrash(int signum)
 			"or older version.\n"
 			"It will load a NewGRF with the same GRF ID as the missing NewGRF.\n"
 			"This means that if the author makes incompatible NewGRFs with the\n"
-			"same GRF ID OpenTTD cannot magically do the right thing. In most\n"
-			"cases OpenTTD will load the savegame and not crash, but this is an\n"
+			"same GRF ID, OpenTTD cannot magically do the right thing. In most\n"
+			"cases, OpenTTD will load the savegame and not crash, but this is an\n"
 			"exception.\n"
 			"Please load the savegame with the appropriate NewGRFs installed.\n"
 			"The missing/compatible NewGRFs are:\n");
@@ -3106,14 +3106,14 @@ bool AfterLoadGame()
 		}
 	}
 
-	if (IsSavegameVersionBeforeOrAt(SLV_ENDING_YEAR)) {
-		/* Update station docking tiles. Was only needed for pre-SLV_MULTITLE_DOCKS
-		 * savegames, but a bug in docking tiles touched all savegames between
-		 * SLV_MULTITILE_DOCKS and SLV_ENDING_YEAR. */
+	if (IsSavegameVersionBefore(SLV_REPAIR_OBJECT_DOCKING_TILES)) {
+		/* Placing objects on docking tiles was not updating adjacent station's docking tiles. */
 		for (Station *st : Station::Iterate()) {
 			if (st->ship_station.tile != INVALID_TILE) UpdateStationDockingTiles(st);
 		}
+	}
 
+	if (IsSavegameVersionBeforeOrAt(SLV_ENDING_YEAR)) {
 		/* Reset roadtype/streetcartype info for non-road bridges. */
 		for (TileIndex t = 0; t < map_size; t++) {
 			if (IsTileType(t, MP_TUNNELBRIDGE) && GetTunnelBridgeTransportType(t) != TRANSPORT_ROAD) {

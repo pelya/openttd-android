@@ -515,6 +515,8 @@ struct GameOptionsWindow : Window {
 
 				this->SetWidgetLoweredState(WID_GO_VIDEO_VSYNC_BUTTON, _video_vsync);
 				this->SetWidgetDirty(WID_GO_VIDEO_VSYNC_BUTTON);
+				this->SetWidgetDisabledState(WID_GO_REFRESH_RATE_DROPDOWN, _video_vsync);
+				this->SetWidgetDirty(WID_GO_REFRESH_RATE_DROPDOWN);
 				break;
 
 			case WID_GO_BASE_SFX_VOLUME:
@@ -670,6 +672,7 @@ struct GameOptionsWindow : Window {
 #ifndef __ANDROID__
 		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
 		//this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
+		//this->SetWidgetDisabledState(WID_GO_REFRESH_RATE_DROPDOWN, _video_vsync);
 #endif
 		this->SetWidgetLoweredState(WID_GO_MOUSE_CURSOR, _settings_client.gui.draw_mouse_cursor);
 
