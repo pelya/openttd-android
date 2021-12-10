@@ -70,7 +70,7 @@ const char *MusicDriver_LibTimidity::Start(const StringList &param)
 			return "error initializing timidity";
 		}
 	}
-	DEBUG(driver, 1, "successfully initialised timidity");
+	Debug(driver, 1, "successfully initialised timidity");
 
 	_midi.options.rate = samplerate;
 	_midi.options.format = MID_AUDIO_S16LSB;
@@ -102,7 +102,7 @@ void MusicDriver_LibTimidity::PlaySong(const MusicSongInfo &song)
 
 	_midi.stream = mid_istream_open_file(filename.c_str());
 	if (_midi.stream == NULL) {
-		DEBUG(driver, 0, "Could not open music file");
+		Debug(driver, 0, "Could not open music file");
 		return;
 	}
 
@@ -111,7 +111,7 @@ void MusicDriver_LibTimidity::PlaySong(const MusicSongInfo &song)
 	_midi.song_length = mid_song_get_total_time(_midi.song);
 
 	if (_midi.song == NULL) {
-		DEBUG(driver, 1, "Invalid MIDI file");
+		Debug(driver, 1, "Invalid MIDI file");
 		return;
 	}
 
