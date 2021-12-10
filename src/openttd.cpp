@@ -734,6 +734,7 @@ int openttd_main(int argc, char *argv[])
 	GfxInitPalettes();
 
 	Debug(misc, 1, "Loading blitter...");
+	if (_ini_blitter == "16bpp-simple") _ini_blitter = "32bpp-anim"; // 16bpp blitter was removed in v12, because I'm too lazy to maintain it
 	if (blitter.empty() && !_ini_blitter.empty()) blitter = _ini_blitter;
 	_blitter_autodetected = blitter.empty();
 	/* Activate the initial blitter.
