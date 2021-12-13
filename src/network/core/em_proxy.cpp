@@ -258,7 +258,7 @@ int em_proxy_initialize_network(void)
 {
   const char * proxy = "ws://localhost:3999";
   int bridge = emscripten_init_websocket_to_posix_socket_bridge(proxy);
-  DEBUG(net, 0, "[em_proxy] Opened proxy socket to %s: socket %d", proxy, bridge);
+  Debug(net, 0, "[em_proxy] Opened proxy socket to {}: socket {}", proxy, bridge);
   return (bridge > 0);
 }
 
@@ -295,7 +295,7 @@ int em_proxy_socket(int domain, int type, int protocol)
     if (bridgeSocket > 0) {
       emscripten_websocket_get_ready_state(bridgeSocket, &bridgeState);
     }
-    DEBUG(net, 0, "[em_proxy] Proxy socket state %d: %s", bridgeState, bridgeState == BRIDGE_OPEN ? "connected" : "proxy disabled");
+    Debug(net, 0, "[em_proxy] Proxy socket state {}: {}", bridgeState, bridgeState == BRIDGE_OPEN ? "connected" : "proxy disabled");
     if (bridgeState == BRIDGE_CONNECTING) {
       bridgeState = BRIDGE_CLOSED;
     }

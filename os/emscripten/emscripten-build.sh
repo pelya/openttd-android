@@ -25,8 +25,8 @@ cd build-wasm-$BUILD_TYPE
 
 # ===== Build dependency libraries =====
 
-embuilder build liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
-embuilder build --lto liblzma ogg vorbis zlib sdl2 freetype icu harfbuzz
+embuilder build ogg vorbis zlib sdl2 freetype icu harfbuzz
+embuilder build --lto ogg vorbis zlib sdl2 freetype icu harfbuzz
 
 autoreconf -V || exit 1 # No autotools installed
 
@@ -37,15 +37,15 @@ autoreconf -V || exit 1 # No autotools installed
 	autoreconf -fi
 	emconfigure ./configure --prefix=`pwd`/build-wasm \
 		--disable-shared --enable-static \
-		HARFBUZZ_CFLAGS="-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/harfbuzz" \
-		HARFBUZZ_LIBS="-lharfbuzz" \
+		HARFBUZZ_CFLAGS="-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/harfbuzz -sUSE_HARFBUZZ=1" \
+		HARFBUZZ_LIBS="-lharfbuzz -sUSE_HARFBUZZ=1" \
 		ICU_CFLAGS="-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include -DU_DEFINE_FALSE_AND_TRUE=1" \
 		ICU_LIBS="-licuuc" \
 		CFLAGS="$OPT" \
 		LDFLAGS="$OPT" \
 		|| exit 1
-	make -j8 V=1 || exit 1
-	make install || exit 1
+	emmake make -j8 V=1 || exit 1
+	emmake make install || exit 1
 	cd ..
 }
 
@@ -86,11 +86,11 @@ autoreconf -V || exit 1 # No autotools installed
 		LDFLAGS="$OPT" \
 		|| exit 1
 
-	make -j8 || exit 1
+	emmake make -j8 || exit 1
 
 	sed -i "s@^datadir *= *.*@datadir = `pwd`/../build-wasm/share@" icudefs.mk || exit 1
 
-	make install || exit 1
+	emmake make install || exit 1
 	cd ../..
 }
 
@@ -105,8 +105,8 @@ autoreconf -V || exit 1 # No autotools installed
 		CFLAGS="$OPT" \
 		LDFLAGS="$OPT" \
 		--with-timidity-cfg="/timidity/timidity.cfg" || exit 1
-	make -j8 || exit 1
-	make install || exit 1
+	emmake make -j8 || exit 1
+	emmake make install || exit 1
 	cd ..
 }
 
@@ -121,8 +121,8 @@ autoreconf -V || exit 1 # No autotools installed
 		CFLAGS="$OPT" \
 		LDFLAGS="$OPT" \
 		|| exit 1
-	make -j8 || exit 1
-	make install || exit 1
+	emmake make -j8 || exit 1
+	emmake make install || exit 1
 	cd ..
 }
 
@@ -136,8 +136,8 @@ autoreconf -V || exit 1 # No autotools installed
 		CFLAGS="$OPT" \
 		LDFLAGS="$OPT" \
 		|| exit 1
-	make -j8 || exit 1
-	make install || exit 1
+	emmake make -j8 || exit 1
+	emmake make install || exit 1
 	cd ..
 }
 
@@ -156,8 +156,9 @@ autoreconf -V || exit 1 # No autotools installed
 		--disable-docs cross_compiling=yes \
 		ac_cv_func_fstatfs=no ac_cv_func_fstatvfs=no \
 		FREETYPE_CFLAGS="-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2 \
-			-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2/freetype" \
-		FREETYPE_LIBS="-lfreetype" \
+			-I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2/freetype \
+			-sUSE_FREETYPE=1" \
+		FREETYPE_LIBS="-lfreetype -sUSE_FREETYPE=1" \
 		EXPAT_CFLAGS="-I`pwd`/../expat-2.3.0/build-wasm/include" \
 		EXPAT_LIBS="-L`pwd`/../expat-2.3.0/build-wasm/lib -lexpat" \
 		UUID_CFLAGS="-I`pwd`/../libuuid-1.0.3/build-wasm/include" \
@@ -165,12 +166,11 @@ autoreconf -V || exit 1 # No autotools installed
 		CFLAGS="$OPT" \
 		LDFLAGS="$OPT" \
 		|| exit 1
-	make -j8 V=1 || exit 1
-	make install || exit 1
+	emmake make -j8 V=1 || exit 1
+	emmake make install || exit 1
 	cd ..
 }
 
-# -s EXPORTED_FUNCTIONS=['_main','_memchr']
 [ -e lzo-2.10/build-wasm/lib/liblzo2.a ] || {
 	wget -nc https://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz || exit 1
 	tar xvf lzo-2.10.tar.gz || exit 1
@@ -180,10 +180,26 @@ autoreconf -V || exit 1 # No autotools installed
 		--disable-shared --enable-static \
 		--disable-asm \
 		CFLAGS="$OPT" \
-		LDFLAGS="$OPT -s EXPORTED_FUNCTIONS=['_main','_memchr']" \
+		LDFLAGS="$OPT -s EXPORTED_FUNCTIONS=['_main','_memchr','_calloc']" \
 		|| exit 1
-	make -j8 || exit 1
-	make install || exit 1
+	emmake make -j8 || exit 1
+	emmake make install || exit 1
+	cd ..
+}
+
+[ -e xz-5.2.5/build-wasm/lib/liblzma.a ] || {
+	wget -nc https://tukaani.org/xz/xz-5.2.5.tar.gz || exit 1
+	tar xvf xz-5.2.5.tar.gz || exit 1
+	cd xz-5.2.5
+	autoreconf -fi
+	emconfigure ./configure --prefix=`pwd`/build-wasm \
+		--disable-shared --enable-static \
+		--disable-asm \
+		CFLAGS="$OPT" \
+		LDFLAGS="$OPT" \
+		|| exit 1
+	emmake make -j8 || exit 1
+	emmake make install || exit 1
 	cd ..
 }
 
@@ -191,28 +207,28 @@ autoreconf -V || exit 1 # No autotools installed
 
 mkdir -p baseset
 
-[ -e baseset/opengfx-0.6.1.tar ] || {
-	wget -nc https://cdn.openttd.org/opengfx-releases/0.6.1/opengfx-0.6.1-all.zip || exit 1
-	unzip opengfx-0.6.1-all.zip || exit 1
-	rm opengfx-0.6.1-all.zip
-	mv opengfx-0.6.1.tar baseset/ || exit 1
+[ -e baseset/opengfx-7.1.tar ] || {
+	wget -nc https://cdn.openttd.org/opengfx-releases/7.1/opengfx-7.1-all.zip || exit 1
+	unzip opengfx-7.1-all.zip || exit 1
+	rm opengfx-7.1-all.zip
+	mv opengfx-7.1.tar baseset/ || exit 1
 }
 
-[ -e baseset/opensfx-1.0.1.tar ] || {
-	wget -nc https://cdn.openttd.org/opensfx-releases/1.0.1/opensfx-1.0.1-all.zip || exit 1
-	unzip opensfx-1.0.1-all.zip || exit 1
-	rm opensfx-1.0.1-all.zip
-	mv opensfx-1.0.1.tar baseset/ || exit 1
+[ -e baseset/opensfx-1.0.3.tar ] || {
+	wget -nc https://cdn.openttd.org/opensfx-releases/1.0.3/opensfx-1.0.3-all.zip || exit 1
+	unzip opensfx-1.0.3-all.zip || exit 1
+	rm opensfx-1.0.3-all.zip
+	mv opensfx-1.0.3.tar baseset/ || exit 1
 }
 
-[ -e baseset/openmsx-0.4.0 ] || {
-	wget -nc https://cdn.openttd.org/openmsx-releases/0.4.0/openmsx-0.4.0-all.zip || exit 1
-	unzip openmsx-0.4.0-all.zip || exit 1
-	rm openmsx-0.4.0-all.zip
+[ -e baseset/openmsx-0.4.2 ] || {
+	wget -nc https://cdn.openttd.org/openmsx-releases/0.4.2/openmsx-0.4.2-all.zip || exit 1
+	unzip openmsx-0.4.2-all.zip || exit 1
+	rm openmsx-0.4.2-all.zip
 	cd baseset || exit 1
-	tar xvf ../openmsx-0.4.0.tar || exit 1
+	tar xvf ../openmsx-0.4.2.tar || exit 1
 	cd ..
-	rm openmsx-0.4.0.tar
+	rm openmsx-0.4.2.tar
 }
 
 [ -e icudt68l.dat ] || {
@@ -248,28 +264,37 @@ mkdir -p baseset
 
 # ===== Build OpenTTD itself =====
 
+export PKG_CONFIG_PATH=`pwd`/icu/build-wasm/lib/pkgconfig
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:`pwd`/icu-le-hb-1.0.3/build-wasm/lib/pkgconfig
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:`pwd`/../os/emscripten/cmake
+
 [ -e Makefile ] || emcmake cmake .. \
 	-DHOST_BINARY_DIR=$(pwd)/build-host -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_ASSERTS=OFF \
 	-DFREETYPE_INCLUDE_DIRS=`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2 \
 	-DFREETYPE_LIBRARY=-lfreetype \
 	-DFontconfig_INCLUDE_DIR=`pwd`/fontconfig-2.13.1/build-wasm/include \
 	-DFontconfig_LIBRARY=`pwd`/fontconfig-2.13.1/build-wasm/lib/libfontconfig.a \
-	-DLZO_INCLUDE_DIR=`pwd`/lzo-2.10/build-wasm/include \
-	-DLZO_LIBRARY=`pwd`/lzo-2.10/build-wasm/lib/liblzo2.a \
 	-DPC_ICU_i18n_FOUND=YES \
 	-DPC_ICU_i18n_INCLUDE_DIRS=`pwd`/icu/build-wasm/include \
-	-DICU_i18n_LIBRARY=`pwd`/icu/build-wasm/lib/libicui18n.a \
+	-DPC_ICU_i18n_LIBRARY=`pwd`/icu/build-wasm/lib/libicui18n.a \
 	-DPC_ICU_lx_FOUND=YES \
 	-DPC_ICU_lx_INCLUDE_DIRS=`pwd`/icu-le-hb-1.0.3/build-wasm/include/icu-le-hb \
-	-DICU_lx_LIBRARY=`pwd`/icu/build-wasm/lib/libiculx.a \
+	-DPC_ICU_lx_LIBRARY=`pwd`/icu/build-wasm/lib/libiculx.a \
+	-DLZO_INCLUDE_DIR=`pwd`/lzo-2.10/build-wasm/include \
 	-DLZO_LIBRARY=`pwd`/lzo-2.10/build-wasm/lib/liblzo2.a \
-	-DCMAKE_CXX_FLAGS="-sUSE_FREETYPE=1" \
-	-DCMAKE_EXE_LINKER_FLAGS="-sUSE_FREETYPE=1 \
+	-DLIBLZMA_INCLUDE_DIR=`pwd`/xz-5.2.5/build-wasm/include \
+	-DLIBLZMA_LIBRARY=`pwd`/xz-5.2.5/build-wasm/lib/liblzma.a \
+	-DCMAKE_CXX_FLAGS="-sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1" \
+	-DWASM_LINKER_FLAGS="-sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 \
 		-L`pwd`/icu-le-hb-1.0.3/build-wasm/lib -licu-le-hb -lharfbuzz \
 		-L`pwd`/icu/build-wasm/lib -licudata -licuuc \
 		-L`pwd`/expat-2.3.0/build-wasm/lib -lexpat \
-		-L`pwd`/libuuid-1.0.3/build-wasm/lib -luuid" \
+		`pwd`/libuuid-1.0.3/build-wasm/lib/libuuid.a \
+		" \
 	|| exit 1
+
+#		-L`pwd`/libuuid-1.0.3/build-wasm/lib -luuid" \
+
 
 #  -I`em-config EMSCRIPTEN_ROOT`/cache/sysroot/include/freetype2/freetype
 #	-DTimidity_LIBRARY=`pwd`/libtimidity-0.2.7/build-wasm/lib/libtimidity.a \

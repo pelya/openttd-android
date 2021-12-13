@@ -1,0 +1,4 @@
+Name: harfbuzz
+Description: HarfBuzz text shaping library
+Version: 2.8.1
+Libs: -lharfbuzz
