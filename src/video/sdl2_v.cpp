@@ -86,6 +86,9 @@ static void FindResolutions()
 	_resolutions.clear();
 	SDL_DisplayMode mode;
 	SDL_GetDesktopDisplayMode(0, &mode);
+	// Stupid mobile web browser reports 2x smaller window size
+	mode.w *= emscripten_get_device_pixel_ratio();
+	mode.h *= emscripten_get_device_pixel_ratio();
 	_resolutions.emplace_back(mode.w, mode.h); // 1920x1080
 	_resolutions.emplace_back(mode.w * 8 / 9, mode.h * 8 / 9); // 8 / 9 : 1920x1080 -> 1706x960
 	_resolutions.emplace_back(mode.w * 7 / 8, mode.h * 7 / 8); // 7 / 8 : 1920x1080 -> 1680x945
@@ -99,6 +102,7 @@ static void FindResolutions()
 	_resolutions.emplace_back(mode.w * 4 / 9, mode.h * 4 / 9); // 4 / 9 : 1920x1080 -> 853x480
 	_resolutions.emplace_back(mode.w * 3 / 8, mode.h * 3 / 8); // 3 / 8 : 1920x1080 -> 720x405
 	_resolutions.emplace_back(mode.w * 2 / 6, mode.h * 2 / 6); // 2 / 6 : 1920x1080 -> 640x360
+	_resolutions.emplace_back(mode.w * 5 / 18, mode.h * 5 / 18); // 5 / 18: 1920x1080 -> 533x300
 	_resolutions.emplace_back(mode.w * 2 / 8, mode.h * 2 / 8); // 2 / 8 : 1920x1080 -> 480x270
 	_resolutions.emplace_back(mode.w * 2 / 9, mode.h * 2 / 9); // 2 / 9 : 1920x1080 -> 426x240
 #endif
