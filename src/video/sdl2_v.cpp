@@ -30,7 +30,10 @@
 
 #include "../safeguards.h"
 
-static bool old_ctrl_pressed;
+static bool old_ctrl_pressed = false;
+#ifdef __EMSCRIPTEN__
+static bool fullscreen_first_click = false;
+#endif
 
 void VideoDriver_SDL_Base::MakeDirty(int left, int top, int width, int height)
 {
@@ -142,6 +145,9 @@ bool VideoDriver_SDL_Base::CreateMainWindow(uint w, uint h, uint flags)
 
 	if (_fullscreen) {
 		flags |= SDL_WINDOW_FULLSCREEN;
+#ifdef __EMSCRIPTEN__
+		fullscreen_first_click = true;
+#endif
 	}
 
 	int x = SDL_WINDOWPOS_UNDEFINED, y = SDL_WINDOWPOS_UNDEFINED;
@@ -421,6 +427,21 @@ bool VideoDriver_SDL_Base::PollEvent()
 				_right_button_down = false;
 			}
 			HandleMouseEvents();
+#ifdef __EMSCRIPTEN__
+			if (fullscreen_first_click) {
+				fullscreen_first_click = false;
+				EM_ASM(
+					if (document.documentElement.requestFullscreen) {
+						console.log("Attempting to set fullscreen mode");
+						document.documentElement.requestFullscreen().then(() => {
+							console.log("Seting fullscreen mode success");
+						}).catch(err => {
+							console.error("Error setting fullscreen mode: " + err);
+						});
+					}
+				);
+			}
+#endif
 			break;
 
 		case SDL_QUIT:
@@ -671,8 +692,7 @@ bool VideoDriver_SDL_Base::ToggleFullscreen(bool fullscreen)
 		SDL_GetWindowSize(this->sdl_window, &w, &h);
 
 #ifdef __EMSCRIPTEN__
-		// This apparently crashes the webapp on iPhone XS with iOS 14.4.2
-		EM_ASM( if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); } );
+		EM_ASM( if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().then(() => {}).catch(err => {}); } );
 #endif
 
 		/* Find fullscreen window size */
@@ -682,6 +702,10 @@ bool VideoDriver_SDL_Base::ToggleFullscreen(bool fullscreen)
 		} else {
 			SDL_SetWindowSize(this->sdl_window, dm.w, dm.h);
 		}
+	} else {
+#ifdef __EMSCRIPTEN__
+		EM_ASM( if (document.exitFullscreen) { document.exitFullscreen().then(() => {}).catch(err => {}); } );
+#endif
 	}
 
 	Debug(driver, 1, "SDL2: Setting {}", fullscreen ? "fullscreen" : "windowed");
