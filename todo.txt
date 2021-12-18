@@ -17,7 +17,7 @@
 
 - Fix manager face dialog and company color scheme dialog.
 
-- Button to copy server invite code to clipboard
+- Reampping Ctrl keycode on gamepad does not work.
 
 
 ===== Emscripten TODO =====
