@@ -80,6 +80,28 @@ static void FindResolutions()
 	}
 
 	SortResolutions();
+
+#ifdef __EMSCRIPTEN__
+	// Only the browser window size is available on Emscripten, clean all other modes
+	_resolutions.clear();
+	SDL_DisplayMode mode;
+	SDL_GetDesktopDisplayMode(0, &mode);
+	_resolutions.emplace_back(mode.w, mode.h); // 1920x1080
+	_resolutions.emplace_back(mode.w * 8 / 9, mode.h * 8 / 9); // 8 / 9 : 1920x1080 -> 1706x960
+	_resolutions.emplace_back(mode.w * 7 / 8, mode.h * 7 / 8); // 7 / 8 : 1920x1080 -> 1680x945
+	_resolutions.emplace_back(mode.w * 5 / 6, mode.h * 5 / 6); // 5 / 6 : 1920x1080 -> 1600x900
+	_resolutions.emplace_back(mode.w * 7 / 9, mode.h * 7 / 9); // 7 / 9 : 1920x1080 -> 1493x840
+	_resolutions.emplace_back(mode.w * 6 / 8, mode.h * 6 / 8); // 6 / 8 : 1920x1080 -> 1440x810
+	_resolutions.emplace_back(mode.w * 4 / 6, mode.h * 4 / 6); // 4 / 6 : 1920x1080 -> 1280x720
+	_resolutions.emplace_back(mode.w * 5 / 8, mode.h * 5 / 8); // 5 / 8 : 1920x1080 -> 1200x675
+	_resolutions.emplace_back(mode.w * 5 / 9, mode.h * 5 / 9); // 5 / 9 : 1920x1080 -> 1066x600
+	_resolutions.emplace_back(mode.w * 3 / 6, mode.h * 3 / 6); // 3 / 6 : 1920x1080 -> 960x540
+	_resolutions.emplace_back(mode.w * 4 / 9, mode.h * 4 / 9); // 4 / 9 : 1920x1080 -> 853x480
+	_resolutions.emplace_back(mode.w * 3 / 8, mode.h * 3 / 8); // 3 / 8 : 1920x1080 -> 720x405
+	_resolutions.emplace_back(mode.w * 2 / 6, mode.h * 2 / 6); // 2 / 6 : 1920x1080 -> 640x360
+	_resolutions.emplace_back(mode.w * 2 / 8, mode.h * 2 / 8); // 2 / 8 : 1920x1080 -> 480x270
+	_resolutions.emplace_back(mode.w * 2 / 9, mode.h * 2 / 9); // 2 / 9 : 1920x1080 -> 426x240
+#endif
 }
 
 static void GetAvailableVideoMode(uint *w, uint *h)
