@@ -22,8 +22,6 @@
 
 ===== Emscripten TODO =====
 
-- Fix window resizing to keep videomode height at 480 pixels.
-
 - Audio worklet to play MIDI music, with separate data file.
 
 - Fix multiplayer using WebSocket Proxy Server, this depends on pthreads support,
