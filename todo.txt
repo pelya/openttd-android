@@ -26,8 +26,6 @@
 
 - Audio worklet to play MIDI music, with separate data file.
 
-- Download all data files into IDBFS on first run, to free up some RAM.
-
 - Fix multiplayer using WebSocket Proxy Server, this depends on pthreads support,
   so I'll probably need to hack together some custom proxy that does not use pthreads.
 
