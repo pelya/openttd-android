@@ -1159,6 +1159,26 @@ void ProcessCloudSaveFromVideoThread()
 #ifdef __ANDROID__
 		status = SDL_ANDROID_CloudSave(_file_to_saveload.name.c_str(), lastPart, "OpenTTD", lastPart, screenshotFile.c_str(), playedTime);
 #endif
+#ifdef __EMSCRIPTEN__
+		FILE *ff = fopen(_file_to_saveload.name.c_str(), "rb");
+		if (ff) {
+			fseek(ff, 0, SEEK_END);
+			long size = ftell(ff);
+			std::unique_ptr<byte[]> data(new byte[size]);
+			fseek(ff, 0, SEEK_SET);
+			fread(data.get(), 1, size, ff);
+			fclose(ff);
+			EM_ASM( {
+				const blob = new Blob([new Uint8Array(Module.HEAPU8.buffer, $0, $1)], {type: "application/octet-stream"});
+				const elem = window.document.createElement("a");
+				elem.href = window.URL.createObjectURL(blob);
+				elem.download = UTF8ToString($2);
+				document.body.appendChild(elem);
+				elem.click();
+				document.body.removeChild(elem);
+			}, data.get(), size, lastPart );
+		}
+#endif
 		if (_settings_client.gui.save_to_network == 2) {
 			_settings_client.gui.save_to_network = status ? 1 : 0;
 		}
