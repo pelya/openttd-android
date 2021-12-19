@@ -132,6 +132,7 @@
       <br/>
       <input type="submit" id="textinputbutton" value="OK" onclick="Module.finishTextInput();" ></input>
     </div>
+    <input type="file" id="loadfile" style="display:none"></input>
     <div>
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
@@ -269,6 +270,7 @@
       };
 
       document.getElementById("textinput").style.display = "none"; // It's not hiding with CSS
+      //document.getElementById("loadfile").style.display = "none";
       document.getElementById("canvas").focus();
 
       window.onerror = function() {

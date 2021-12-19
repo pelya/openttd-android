@@ -1177,6 +1177,7 @@ void ProcessCloudSaveFromVideoThread()
 				elem.click();
 				document.body.removeChild(elem);
 			}, data.get(), size, lastPart );
+			status = 1;
 		}
 #endif
 		if (_settings_client.gui.save_to_network == 2) {
@@ -1196,8 +1197,46 @@ void ProcessCloudSaveFromVideoThread()
 			_file_to_saveload.SetTitle("Network Save");
 			_switch_mode = SM_LOAD_GAME;
 		}
+#ifdef __EMSCRIPTEN__
+		EM_ASM( {
+			document.getElementById("loadfile").accept = ".sav";
+			document.getElementById("loadfile").addEventListener("change", function () {
+				if (this.files.length <= 0) {
+					return;
+				}
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					const data = new Uint8Array(e.target.result);
+					const buf = Module._malloc(data.length);
+					Module.HEAPU8.set(data, buf);
+					Module.ccall("em_openttd_cloud_save_from_js", "number", ["number", "number"], [buf, data.length]);
+					Module._free(buf);
+				};
+				reader.readAsArrayBuffer(this.files[0]);
+			}, { capture: false, once: true });
+			document.getElementById("loadfile").click();
+		} );
+#endif
 	}
 }
+
+#ifdef __EMSCRIPTEN__
+extern "C" void CDECL em_openttd_cloud_save_from_js(byte *buf, int size)
+{
+	static const char *NETWORK_SAVE_FILENAME = "network-save.sav";
+	std::string savePath = FiosMakeSavegameName(NETWORK_SAVE_FILENAME);
+	FILE *ff = fopen(savePath.c_str(), "wb");
+	if (!ff) {
+		return;
+	}
+	fwrite(buf, 1, size, ff);
+	fclose(ff);
+	_file_to_saveload.SetMode(FIOS_TYPE_FILE);
+	_file_to_saveload.SetName(savePath.c_str());
+	_file_to_saveload.SetTitle("Network Save");
+	_switch_mode = SM_LOAD_GAME;
+}
+#endif
 
 /**
  * Check the validity of some of the caches.
