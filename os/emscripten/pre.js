@@ -59,13 +59,6 @@ Module.preRun.push(function() {
     window.openttd_syncfs = function() {
         /* Copy the virtual FS to the persistent storage. */
         FS.syncfs(false, function (err) { });
-
-        /* On first time, warn the user about the volatile behaviour of
-         * persistent storage. */
-        if (!window.openttd_syncfs_shown_warning) {
-            window.openttd_syncfs_shown_warning = true;
-            Module.onWarningFs();
-        }
     }
 
     window.openttd_exit = function() {

@@ -25,33 +25,8 @@
         z-index: 1;
       }
 
-      div.overlay {
-        height: 40px;
-        margin: 0 auto;
-        opacity: 0;
-        pointer-events: none;
-        position: absolute;
-        text-align: center;
-        transition: opacity 0.3s;
-        width: 100%;
-        z-index: 3;
-      }
-      div.overlay > div {
-        pointer-events: none;
-      }
-
       div.background > div, div.overlay > div {
         margin: auto;
-      }
-
-      #filesystem {
-        background-color: #e00000;
-        border: 1px solid #fc6458;
-        color: #fcf880;
-        display: none;
-        outline: #a00000;
-        padding: 0 4px;
-        width: 600px;
       }
 
       #title, #message {
@@ -120,11 +95,6 @@
         </div>
         <div id="message">
         </div>
-      </div>
-    </div>
-    <div class="overlay" id="overlay">
-      <div id="filesystem">
-        Warning: savegames are stored in the Indexed DB of your browser.<br/>Your browser can delete savegames without notice!
       </div>
     </div>
     <div class="textinput" id="textinput">
@@ -214,17 +184,6 @@
           document.getElementById("box").className = "error";
           document.getElementById("title").innerHTML = "Crash :(";
           document.getElementById("message").innerHTML = "The game crashed!<br/><br/>Please reload your browser to restart the game.";
-        },
-
-        onWarningFs: function() {
-          document.getElementById("filesystem").style.display = "inline-block";
-          document.getElementById("overlay").style.opacity = 1;
-          setTimeout(function() {
-            document.getElementById("overlay").style.opacity = 0;
-            setTimeout(function() {
-              document.getElementById("filesystem").style.display = "none";
-            }, 300);
-          }, 10000);
         },
 
         textInputValue: null,
