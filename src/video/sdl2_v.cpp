@@ -31,6 +31,9 @@
 #include "../safeguards.h"
 
 static bool old_ctrl_pressed = false;
+static Point _multitouch_second_point = {-1, -1};
+static int _multitouch_finger_distance = 0;
+enum { PINCH_ZOOM_SENSITIVITY = 20 };
 #ifdef __EMSCRIPTEN__
 static bool fullscreen_first_click = false;
 #endif
@@ -407,8 +410,26 @@ bool VideoDriver_SDL_Base::PollEvent()
 
 	switch (ev.type) {
 		case SDL_MOUSEMOTION:
-			if (_cursor.UpdateCursorPosition(ev.motion.x, ev.motion.y, true)) {
-				SDL_WarpMouseInWindow(this->sdl_window, _cursor.pos.x, _cursor.pos.y);
+			if (_multitouch_second_point.x >= 0) {
+				Point mouse;
+				SDL_GetMouseState(&mouse.x, &mouse.y);
+				_cursor.UpdateCursorPosition((mouse.x + _multitouch_second_point.x) / 2, (mouse.y + _multitouch_second_point.y) / 2, false);
+				int pinch_zoom_threshold = std::min(_cur_resolution.width, _cur_resolution.height) / PINCH_ZOOM_SENSITIVITY;
+				int new_distance = sqrtf(powf(mouse.x - _multitouch_second_point.x, 2) + powf(mouse.y - _multitouch_second_point.y, 2));
+				if (new_distance - _multitouch_finger_distance >= pinch_zoom_threshold) {
+					_multitouch_finger_distance += pinch_zoom_threshold;
+					_cursor.wheel--;
+					_right_button_down = false;
+				}
+				if (_multitouch_finger_distance - new_distance >= pinch_zoom_threshold) {
+					_multitouch_finger_distance -= pinch_zoom_threshold;
+					_cursor.wheel++;
+					_right_button_down = false;
+				}
+			} else {
+				if (_cursor.UpdateCursorPosition(ev.motion.x, ev.motion.y, true)) {
+					SDL_WarpMouseInWindow(this->sdl_window, _cursor.pos.x, _cursor.pos.y);
+				}
 			}
 			HandleMouseEvents();
 			break;
@@ -434,6 +455,8 @@ bool VideoDriver_SDL_Base::PollEvent()
 				case SDL_BUTTON_RIGHT:
 					_right_button_down = true;
 					_right_button_clicked = true;
+					_right_button_down_pos.x = _cursor.pos.x;
+					_right_button_down_pos.y = _cursor.pos.y;
 					break;
 
 				default: break;
@@ -468,6 +491,61 @@ bool VideoDriver_SDL_Base::PollEvent()
 				);
 			}
 #endif
+			break;
+
+		case SDL_FINGERDOWN:
+			//Debug(misc, 0, "Finger {} down at {}:{}", ev.tfinger.fingerId, ev.tfinger.x, ev.tfinger.y);
+			if (ev.tfinger.fingerId == 1) {
+				_left_button_down = false;
+				_left_button_clicked = false;
+				HandleMouseEvents(); // Release left mouse button
+				_multitouch_second_point.x = Clamp(ev.tfinger.x, 0.0f, 1.0f) * _cur_resolution.width;
+				_multitouch_second_point.y = Clamp(ev.tfinger.y, 0.0f, 1.0f) * _cur_resolution.height;
+				Point mouse;
+				SDL_GetMouseState(&mouse.x, &mouse.y);
+				_cursor.UpdateCursorPosition((mouse.x + _multitouch_second_point.x) / 2, (mouse.y + _multitouch_second_point.y) / 2, false);
+				_right_button_down_pos.x = _cursor.pos.x;
+				_right_button_down_pos.y = _cursor.pos.y;
+				_multitouch_finger_distance = sqrtf(powf(mouse.x - _multitouch_second_point.x, 2) + powf(mouse.y - _multitouch_second_point.y, 2));
+				HandleMouseEvents(); // Move mouse with no buttons pressed to the middle position between fingers
+				_right_button_down = true;
+				_right_button_clicked = true;
+				HandleMouseEvents(); // Simulate right button click with two finger touch
+			}
+			break;
+
+		case SDL_FINGERUP:
+			//Debug(misc, 0, "Finger {} up at {}:{}", ev.tfinger.fingerId, ev.tfinger.x, ev.tfinger.y);
+			if (ev.tfinger.fingerId == 1) {
+				_right_button_down = false;
+				_multitouch_second_point.x = -1;
+				_multitouch_second_point.y = -1;
+				HandleMouseEvents();
+			}
+			break;
+
+		case SDL_FINGERMOTION:
+			//Debug(misc, 0, "Finger {} move at {}:{}", ev.tfinger.fingerId, ev.tfinger.x, ev.tfinger.y);
+			if (ev.tfinger.fingerId == 1) {
+				_multitouch_second_point.x = Clamp(ev.tfinger.x, 0.0f, 1.0f) * _cur_resolution.width;
+				_multitouch_second_point.y = Clamp(ev.tfinger.y, 0.0f, 1.0f) * _cur_resolution.height;
+				Point mouse;
+				SDL_GetMouseState(&mouse.x, &mouse.y);
+				_cursor.UpdateCursorPosition((mouse.x + _multitouch_second_point.x) / 2, (mouse.y + _multitouch_second_point.y) / 2, false);
+				int pinch_zoom_threshold = std::min(_cur_resolution.width, _cur_resolution.height) / PINCH_ZOOM_SENSITIVITY;
+				int new_distance = sqrtf(powf(mouse.x - _multitouch_second_point.x, 2) + powf(mouse.y - _multitouch_second_point.y, 2));
+				if (new_distance - _multitouch_finger_distance >= pinch_zoom_threshold) {
+					_multitouch_finger_distance += pinch_zoom_threshold;
+					_cursor.wheel--;
+					_right_button_down = false;
+				}
+				if (_multitouch_finger_distance - new_distance >= pinch_zoom_threshold) {
+					_multitouch_finger_distance -= pinch_zoom_threshold;
+					_cursor.wheel++;
+					_right_button_down = false;
+				}
+				HandleMouseEvents();
+			}
 			break;
 
 		case SDL_QUIT:
