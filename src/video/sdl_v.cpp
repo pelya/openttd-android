@@ -534,8 +534,8 @@ bool VideoDriver_SDL::PollEvent()
 				case SDL_BUTTON_RIGHT:
 					_right_button_down = true;
 					_right_button_clicked = true;
-					_right_button_down_pos.x = ev.motion.x;
-					_right_button_down_pos.y = ev.motion.y;
+					_right_button_down_pos.x = ev.button.x;
+					_right_button_down_pos.y = ev.button.y;
 					break;
 
 #ifdef __ANDROID__
