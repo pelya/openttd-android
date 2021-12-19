@@ -27,8 +27,6 @@
 - Fix multiplayer using WebSocket Proxy Server, this depends on pthreads support,
   so I'll probably need to hack together some custom proxy that does not use pthreads.
 
-- Pinch-zoom support using SDL touch events.
-
 - Fix tutorial.
 
 - Implement cloud saves by downloading the savegame from the web browser.
