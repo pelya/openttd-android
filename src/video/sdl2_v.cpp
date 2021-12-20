@@ -228,9 +228,6 @@ bool VideoDriver_SDL_Base::CreateMainSurface(uint w, uint h, bool resize)
 {
 	GetAvailableVideoMode(&w, &h);
 	Debug(driver, 1, "SDL2: using mode {}x{}", w, h);
-#ifdef __EMSCRIPTEN__
-	resize = true;
-#endif
 
 	if (!this->CreateMainWindow(w, h)) return false;
 	if (resize) SDL_SetWindowSize(this->sdl_window, w, h);
@@ -625,13 +622,13 @@ bool VideoDriver_SDL_Base::PollEvent()
 				// Force a redraw of the entire screen.
 				this->MakeDirty(0, 0, _screen.width, _screen.height);
 			} else if (ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+#ifdef __EMSCRIPTEN__ // Just re-create the video surface
+				CreateMainSurface(_cur_resolution.width, _cur_resolution.height, false);
+#else
 				int w = std::max(ev.window.data1, 64);
 				int h = std::max(ev.window.data2, 64);
-#ifndef __EMSCRIPTEN__ // Just re-create the video surface
-				w = _cur_resolution.width;
-				h = _cur_resolution.height;
-#endif
 				CreateMainSurface(w, h, w != ev.window.data1 || h != ev.window.data2);
+#endif
 			} else if (ev.window.event == SDL_WINDOWEVENT_ENTER) {
 				// mouse entered the window, enable cursor
 				_cursor.in_window = true;
