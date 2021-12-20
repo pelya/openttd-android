@@ -113,17 +113,24 @@ static void FindResolutions()
 
 static void GetAvailableVideoMode(uint *w, uint *h)
 {
+#ifndef __EMSCRIPTEN__ // Ignore fullscreen flag in the mobile web browser, we want to match the resolution anyway
 	/* All modes available? */
 	if (!_fullscreen || _resolutions.empty()) return;
-
+#endif
 	/* Is the wanted mode among the available modes? */
 	if (std::find(_resolutions.begin(), _resolutions.end(), Dimension(*w, *h)) != _resolutions.end()) return;
 
 	/* Use the closest possible resolution */
 	uint best = 0;
 	uint delta = Delta(_resolutions[0].width, *w) * Delta(_resolutions[0].height, *h);
+	if (*w <= 1) {
+		delta = Delta(_resolutions[0].height, *h);
+	}
 	for (uint i = 1; i != _resolutions.size(); ++i) {
 		uint newdelta = Delta(_resolutions[i].width, *w) * Delta(_resolutions[i].height, *h);
+		if (*w <= 1) {
+			newdelta = Delta(_resolutions[i].height, *h);
+		}
 		if (newdelta < delta) {
 			best = i;
 			delta = newdelta;
@@ -221,6 +228,9 @@ bool VideoDriver_SDL_Base::CreateMainSurface(uint w, uint h, bool resize)
 {
 	GetAvailableVideoMode(&w, &h);
 	Debug(driver, 1, "SDL2: using mode {}x{}", w, h);
+#ifdef __EMSCRIPTEN__
+	resize = true;
+#endif
 
 	if (!this->CreateMainWindow(w, h)) return false;
 	if (resize) SDL_SetWindowSize(this->sdl_window, w, h);
@@ -414,7 +424,7 @@ bool VideoDriver_SDL_Base::PollEvent()
 				Point mouse;
 				SDL_GetMouseState(&mouse.x, &mouse.y);
 				_cursor.UpdateCursorPosition((mouse.x + _multitouch_second_point.x) / 2, (mouse.y + _multitouch_second_point.y) / 2, false);
-				int pinch_zoom_threshold = std::min(_cur_resolution.width, _cur_resolution.height) / PINCH_ZOOM_SENSITIVITY;
+				int pinch_zoom_threshold = std::min(_screen.width, _screen.height) / PINCH_ZOOM_SENSITIVITY;
 				int new_distance = sqrtf(powf(mouse.x - _multitouch_second_point.x, 2) + powf(mouse.y - _multitouch_second_point.y, 2));
 				if (new_distance - _multitouch_finger_distance >= pinch_zoom_threshold) {
 					_multitouch_finger_distance += pinch_zoom_threshold;
@@ -499,8 +509,8 @@ bool VideoDriver_SDL_Base::PollEvent()
 				_left_button_down = false;
 				_left_button_clicked = false;
 				HandleMouseEvents(); // Release left mouse button
-				_multitouch_second_point.x = Clamp(ev.tfinger.x, 0.0f, 1.0f) * _cur_resolution.width;
-				_multitouch_second_point.y = Clamp(ev.tfinger.y, 0.0f, 1.0f) * _cur_resolution.height;
+				_multitouch_second_point.x = Clamp(ev.tfinger.x, 0.0f, 1.0f) * _screen.width;
+				_multitouch_second_point.y = Clamp(ev.tfinger.y, 0.0f, 1.0f) * _screen.height;
 				Point mouse;
 				SDL_GetMouseState(&mouse.x, &mouse.y);
 				_cursor.UpdateCursorPosition((mouse.x + _multitouch_second_point.x) / 2, (mouse.y + _multitouch_second_point.y) / 2, false);
@@ -527,12 +537,12 @@ bool VideoDriver_SDL_Base::PollEvent()
 		case SDL_FINGERMOTION:
 			//Debug(misc, 0, "Finger {} move at {}:{}", ev.tfinger.fingerId, ev.tfinger.x, ev.tfinger.y);
 			if (ev.tfinger.fingerId == 1) {
-				_multitouch_second_point.x = Clamp(ev.tfinger.x, 0.0f, 1.0f) * _cur_resolution.width;
-				_multitouch_second_point.y = Clamp(ev.tfinger.y, 0.0f, 1.0f) * _cur_resolution.height;
+				_multitouch_second_point.x = Clamp(ev.tfinger.x, 0.0f, 1.0f) * _screen.width;
+				_multitouch_second_point.y = Clamp(ev.tfinger.y, 0.0f, 1.0f) * _screen.height;
 				Point mouse;
 				SDL_GetMouseState(&mouse.x, &mouse.y);
 				_cursor.UpdateCursorPosition((mouse.x + _multitouch_second_point.x) / 2, (mouse.y + _multitouch_second_point.y) / 2, false);
-				int pinch_zoom_threshold = std::min(_cur_resolution.width, _cur_resolution.height) / PINCH_ZOOM_SENSITIVITY;
+				int pinch_zoom_threshold = std::min(_screen.width, _screen.height) / PINCH_ZOOM_SENSITIVITY;
 				int new_distance = sqrtf(powf(mouse.x - _multitouch_second_point.x, 2) + powf(mouse.y - _multitouch_second_point.y, 2));
 				if (new_distance - _multitouch_finger_distance >= pinch_zoom_threshold) {
 					_multitouch_finger_distance += pinch_zoom_threshold;
@@ -617,6 +627,10 @@ bool VideoDriver_SDL_Base::PollEvent()
 			} else if (ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 				int w = std::max(ev.window.data1, 64);
 				int h = std::max(ev.window.data2, 64);
+#ifndef __EMSCRIPTEN__ // Just re-create the video surface
+				w = _cur_resolution.width;
+				h = _cur_resolution.height;
+#endif
 				CreateMainSurface(w, h, w != ev.window.data1 || h != ev.window.data2);
 			} else if (ev.window.event == SDL_WINDOWEVENT_ENTER) {
 				// mouse entered the window, enable cursor
@@ -836,6 +850,9 @@ bool VideoDriver_SDL_Base::AfterBlitterChange()
 
 Dimension VideoDriver_SDL_Base::GetScreenSize() const
 {
+#ifdef __EMSCRIPTEN__
+	return VideoDriver::GetScreenSize();
+#endif
 	SDL_DisplayMode mode;
 	if (SDL_GetCurrentDisplayMode(this->startup_display, &mode) != 0) return VideoDriver::GetScreenSize();
 
