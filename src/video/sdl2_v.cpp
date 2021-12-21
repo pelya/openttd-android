@@ -230,6 +230,11 @@ bool VideoDriver_SDL_Base::CreateMainSurface(uint w, uint h, bool resize)
 	Debug(driver, 1, "SDL2: using mode {}x{}", w, h);
 
 	if (!this->CreateMainWindow(w, h)) return false;
+#ifdef __EMSCRIPTEN__
+	int cur_w = w, cur_h = h;
+	SDL_GetWindowSize(this->sdl_window, &cur_w, &cur_h);
+	if (cur_w != (int)w || cur_h != (int)h) resize = true;
+#endif
 	if (resize) SDL_SetWindowSize(this->sdl_window, w, h);
 	this->ClientSizeChanged(w, h, true);
 
