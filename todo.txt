@@ -29,6 +29,4 @@
 
 - Fix tutorial.
 
-- Implement cloud saves by downloading the savegame from the web browser.
-
 - Find some developer with a MacBook and $100 to publish the 'OpenTTD Webapp Launcher' to the Apple Store.
