@@ -5,11 +5,39 @@ on:
   push:
     branches:
     - master
+    - 12
 
 env:
   CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
+  emscripten:
+    name: Emscripten
+
+    runs-on: ubuntu-20.04
+    container:
+      # If you change this version, change the number in the cache step too.
+      image: emscripten/emsdk:3.0.0
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup cache
+      uses: actions/cache@v2
+      with:
+        path: /emsdk/upstream/emscripten/cache
+        key: 3.0.0-${{ runner.os }}
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build
+      run: |
+        mkdir -p release-wasm
+        cd os/emscripten
+        ./emscripten-build.sh release `pwd`/../../release-wasm
+
   linux:
     name: Linux
 
