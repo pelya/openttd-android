@@ -23,6 +23,20 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Install dependencies
+      run: |
+        echo "::group::Update apt"
+        sudo apt-get update
+        echo "::endgroup::"
+
+        echo "::group::Install dependencies"
+        sudo apt-get install -y --no-install-recommends \
+          autoconf \
+          automake \
+          libtool \
+          # EOF
+        echo "::endgroup::"
+
     - name: Setup cache
       uses: actions/cache@v2
       with:
