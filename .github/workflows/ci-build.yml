@@ -54,6 +54,7 @@ jobs:
 
   linux:
     name: Linux
+    if: ${{ false }}
 
     strategy:
       fail-fast: false
@@ -140,6 +141,7 @@ jobs:
 
   macos:
     name: Mac OS
+    if: ${{ false }}
 
     strategy:
       fail-fast: false
