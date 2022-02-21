@@ -52,7 +52,7 @@ jobs:
       run: |
         mkdir -p release-wasm
         cd os/emscripten
-        ./emscripten-build.sh release `pwd`/../../release-wasm || true
+        ./emscripten-build.sh release `pwd`/../../release-wasm
 
   linux:
     name: Linux
