@@ -6,7 +6,7 @@ You will also need libharfbuzz-dev and libicu-dev installed on your host OS.
 
 
 ```
-  sudo apt-get install autoconf automake libtool gperf libharfbuzz-dev libicu-dev
+  sudo apt-get install autoconf automake libtool gperf libharfbuzz-dev libicu-dev libfreetype-dev
 
   ./emscripten-build.sh
 ```

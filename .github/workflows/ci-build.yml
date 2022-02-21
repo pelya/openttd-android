@@ -37,6 +37,7 @@ jobs:
           gperf \
           libharfbuzz-dev \
           libicu-dev \
+          libfreetype-dev \
           # EOF
         echo "::endgroup::"
 
