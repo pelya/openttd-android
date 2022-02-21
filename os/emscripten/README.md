@@ -2,11 +2,11 @@
 
 Building with Emscripten works with emsdk 3.0.0 and above.
 
-You will also need autoconf, libharfbuzz-dev, and libicu-dev installed on your host OS.
+You will also need libharfbuzz-dev and libicu-dev installed on your host OS.
 
 
 ```
-  sudo apt-get install autoconf automake libtool libharfbuzz-dev libicu-dev
+  sudo apt-get install autoconf automake libtool gperf libharfbuzz-dev libicu-dev
 
   ./emscripten-build.sh
 ```
