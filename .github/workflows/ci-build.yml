@@ -54,6 +54,13 @@ jobs:
         cd os/emscripten
         ./emscripten-build.sh release `pwd`/../../release-wasm
 
+    - name: Package
+      uses: actions/upload-artifact@v2
+      with:
+        name: openttd-wasm
+        path: release-wasm
+        retention-days: 5
+
   linux:
     name: Linux
     if: ${{ false }}
