@@ -43,7 +43,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /emsdk/upstream/emscripten/cache
-        key: 3.0.0-${{ runner.os }}
+        key: 3.0.0-${{ runner.os }}-v2
 
     - name: Install GCC problem matcher
       uses: ammaraskar/gcc-problem-matcher@master
@@ -52,7 +52,7 @@ jobs:
       run: |
         mkdir -p release-wasm
         cd os/emscripten
-        ./emscripten-build.sh release `pwd`/../../release-wasm
+        ./emscripten-build.sh release `pwd`/../../release-wasm || true
 
   linux:
     name: Linux
