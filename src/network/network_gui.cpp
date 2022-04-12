@@ -2233,7 +2233,6 @@ struct NetworkJoinStatusWindow : Window {
 	{
 		if (StrEmpty(str)) {
 			NetworkDisconnect();
-			ShowNetworkGameWindow();
 			return;
 		}
 

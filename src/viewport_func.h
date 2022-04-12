@@ -100,5 +100,6 @@ struct Town;
 void SetViewportCatchmentStation(const Station *st, bool sel);
 void SetViewportCatchmentTown(const Town *t, bool sel);
 void ToolbarSelectLastTool();
+void MarkCatchmentTilesDirty();
 
 #endif /* VIEWPORT_FUNC_H */

@@ -243,7 +243,7 @@ static void GenericPlaceSignals(TileIndex tile)
 		} else {
 			SB(p1, 3, 1, _ctrl_pressed);
 			SB(p1, 4, 1, (_cur_year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC));
-			SB(p1, 5, 3, SIGTYPE_PBS_ONEWAY);
+			SB(p1, 5, 3, _settings_client.gui.default_signal_type);
 			SB(p1, 8, 1, 0);
 			SB(p1, 9, 6, cycle_types);
 		}
@@ -387,7 +387,7 @@ static void HandleAutoSignalPlacement()
 		SB(p2,  3, 1, 0);
 		SB(p2,  4, 1, (_cur_year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC));
 		SB(p2,  6, 1, _ctrl_pressed);
-		SB(p2,  7, 3, SIGTYPE_PBS_ONEWAY);
+		SB(p2,  7, 3, _settings_client.gui.default_signal_type);
 		SB(p2, 24, 8, _settings_client.gui.drag_signals_density);
 		SB(p2, 10, 1, !_settings_client.gui.drag_signals_fixed_distance);
 	}
@@ -1867,6 +1867,9 @@ public:
 				_cur_signal_type = (SignalType)((uint)((widget - WID_BS_SEMAPHORE_NORM) % (SIGTYPE_LAST + 1)));
 				_cur_signal_variant = widget >= WID_BS_ELECTRIC_NORM ? SIG_ELECTRIC : SIG_SEMAPHORE;
 
+				/* Update default (last-used) signal type in config file. */
+				_settings_client.gui.default_signal_type = _cur_signal_type;
+
 				/* If 'remove' button of rail build toolbar is active, disable it. */
 				if (_remove_button_clicked) {
 					Window *w = FindWindowById(WC_BUILD_TOOLBAR, TRANSPORT_RAIL);
@@ -2084,6 +2087,7 @@ struct BuildRailWaypointWindow : PickerWindowBase {
 		this->FinishInitNested(TRANSPORT_RAIL);
 
 		matrix->SetCount(_waypoint_count);
+		if (_cur_waypoint_type >= _waypoint_count) _cur_waypoint_type = 0;
 		matrix->SetClicked(_cur_waypoint_type);
 	}
 
@@ -2272,7 +2276,7 @@ void InitializeRailGUI()
 	SetDefaultRailGui();
 
 	_convert_signal_button = false;
-	_cur_signal_type = SIGTYPE_PBS_ONEWAY;
+	_cur_signal_type = _settings_client.gui.default_signal_type;
 	ResetSignalVariant();
 }
 
