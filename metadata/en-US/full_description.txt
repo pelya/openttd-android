@@ -1,0 +1,17 @@
+Transport tycoon business simulation game.
+
+Online multiplayer games are available, as well as a single-player against computer.
+
+How to play: http://wiki.openttd.org/Tutorial
+
+How to add computer opponents: https://wiki.openttd.org/AI_settings
+
+Scroll the map with two fingers, when you are building roads or stations.
+
+Close dialogs by dragging them to the screen edge.
+
+Translate Android version to your language here: https://translator.openttdcoop.org/project/openttd-android-translate
+
+This game is open-source - you can download previous releases from http://sourceforge.net/projects/libsdl-android/files/apk/OpenTTD/, F-Droid is currenlty built from this fork https://github.com/n-ice-community/commandergenius.
+
+Visit our forum at https://www.tt-forums.net/
