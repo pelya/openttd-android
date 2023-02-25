@@ -1086,6 +1086,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :Hægri
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Hámarkslán: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Hámarks upphæð sem fyrirtæki getur fengið lánað (ekki er gert ráð fyrir verðbólgu)
+###setting-zero-is-special
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :Vextir: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Vextir á lánum, stjórnar einnig verðbólgu, ef hún er virk
@@ -2300,8 +2301,6 @@ STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}Auka þ�
 STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}Veldu tegund brúar
 STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}Veldu vegabrú
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}Brúarval - smelltu á brú að eigin vali til að reysa hana
-STR_SELECT_BRIDGE_INFO                                          :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
-STR_SELECT_BRIDGE_SCENEDIT_INFO                                 :{GOLD}{STRING},{} {VELOCITY}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :Hengibrú, stál
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :Burðarbitabrú, stál
 STR_BRIDGE_NAME_CANTILEVER_STEEL                                :Svifbitabrú, stál

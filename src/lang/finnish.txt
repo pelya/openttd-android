@@ -386,7 +386,7 @@ STR_SCENEDIT_TOOLBAR_TOWN_GENERATION                            :{BLACK}Kuntien 
 STR_SCENEDIT_TOOLBAR_INDUSTRY_GENERATION                        :{BLACK}Teollisuuden luonti
 STR_SCENEDIT_TOOLBAR_ROAD_CONSTRUCTION                          :{BLACK}Tienrakennus
 STR_SCENEDIT_TOOLBAR_TRAM_CONSTRUCTION                          :{BLACK}Raitiotien rakentaminen
-STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Istuta puita. Shift vaihtaa istutustilan ja kustannusarvion välillä
+STR_SCENEDIT_TOOLBAR_PLANT_TREES                                :{BLACK}Istuta puita. Ctrl valitsee alueen vinottain. Shift vaihtaa istutustilan ja kustannusarvion välillä
 STR_SCENEDIT_TOOLBAR_PLACE_SIGN                                 :{BLACK}Sijoita kyltti
 STR_SCENEDIT_TOOLBAR_PLACE_OBJECT                               :{BLACK}Sijoita objekti. Ctrl valitsee alueen vinottain. Shift vaihtaa rakennustilan ja kustannusarvion välillä
 
@@ -1206,6 +1206,9 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :oikealla
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Suurin mahdollinen laina alussa: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Suurin mahdollinen yhtiön ottama laina (ottamatta huomioon inflaatiota)
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_VALUE                   :{CURRENCY_LONG}
+###setting-zero-is-special
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_DISABLED                :Ei lainaa {RED}Vaatii peliskriptin, joka tarjoaa alkupääoman
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :Korko: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Lainan korko; ohjaa myös inflaatiota mikäli käytössä
@@ -1925,13 +1928,13 @@ STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Käytä {STRING
 STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :Jokaisen yhteyskuvaajan komponentin uudelleenlaskemiseen käytettävä aika. Uudelleenlaskun alkaessa käynnistetään uusi säie, jonka annetaan toimia näin monta päivää. Mitä lyhyemmäksi määrität tämän, sitä todennäköisempää on, että säie ei ole valmis ajoissa. Tällöin peli pysähtyy kunnes lasku on suoritettu loppuun (peli pätkii). Mitä pidemmäksi määrität asetuksen, sitä pitempään rahdin jakauman päivittämiseen kuluu aikaa reittien muuttuessa.
 
 STR_CONFIG_SETTING_DISTRIBUTION_PAX                             :Matkustajien jakautuminen: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :”Symmetrinen” tarkoittaa, että suunnilleen sama määrä matkustajia kulkee asemalta A asemalle B kuin asemalta B asemalle A. ”Epäsymmetrinen” tarkoittaa, että eri suuntiin voi kulkea eriävä määrä matkustajia. ”Manuaalinen” tarkoittaa, että automaattinen rahdin jakautuminen on pois käytöstä matkustajilla.
+STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :”Symmetrinen” tarkoittaa, että suunnilleen sama määrä matkustajia kulkee asemalta A asemalle B kuin asemalta B asemalle A. ”Epäsymmetrinen” tarkoittaa, että matkustajia voi kulkea mielivaltainen määrä kumpaankin suuntaan. ”Manuaalinen” tarkoittaa, että automaattista jakautumista ei sovelleta matkustajiin.
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL                            :Postin jakautuminen: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :”Symmetrinen” tarkoittaa, että suunnilleen sama määrä postia lähetetään asemalta A asemalle B kuin asemalta B asemalle A. ”Epäsymmetrinen” tarkoittaa, että eri suuntiin voidaan lähettää eriävä määrä postia. ”Manuaalinen” tarkoittaa, että automaattinen rahdin jakautuminen on pois käytöstä postilla.
+STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :”Symmetrinen” tarkoittaa, että suunnilleen sama määrä postia kulkee asemalta A asemalle B kuin asemalta B asemalle A. ”Epäsymmetrinen” tarkoittaa, että postia voi kulkea mielivaltainen määrä kumpaankin suuntaan. ”Manuaalinen” tarkoittaa, että automaattista jakautumista ei sovelleta postiin.
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :Arvokuljetusten jakautuminen: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :Arvokuljetuksiin kuuluvat arvotavarat lauhkeassa ilmastossa, timantit subtrooppisessa ilmastossa ja kulta pohjoisessa ilmastossa. NewGRF:t voivat kuitenkin muuttaa näitä rahteja. ”Symmetrinen” tarkoittaa, että suunnilleen sama määrä rahtia lähetetään asemalta A asemalle B kuin asemalta B asemalle A. ”Epäsymmetrinen” tarkoittaa, että eri suuntiin voidaan lähettää eriävä määrä rahtia. ”Manuaalinen” tarkoittaa, että automaattinen rahdin jakautuminen on poistettu käytöstä rahdilta. Suositeltavia asetuksia ovat ”epäsymmetrinen” tai ”manuaalinen” pelattaessa pohjoisessa ilmastossa, sillä pankit eivät lähetä kultaa takaisin kaivoksille. Lauhkeassa ja subtrooppisessa ilmastossa pelatessa voidaan myös valita ”symmetrinen”, sillä pankit lähettävät arvotavaroita takaisin alkuperäiselle pankille.
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :Arvokuljetuksiin kuuluvat arvotavarat lauhkeassa ilmastossa, timantit subtrooppisessa ilmastossa ja kulta pohjoisessa ilmastossa. NewGRF:t voivat kuitenkin muuttaa näitä rahteja. ”Symmetrinen” tarkoittaa, että suunnilleen sama määrä rahtia lähetetään asemalta A asemalle B kuin asemalta B asemalle A. ”Epäsymmetrinen” tarkoittaa, että tätä rahtia lähetetään mielivaltainen määrä kumpaankin suuntaan. ”Manuaalinen” tarkoittaa, että automaattista jakautumista ei sovelleta tähän rahtiin. Suositeltavia asetuksia ovat ”epäsymmetrinen” tai ”manuaalinen” pelattaessa pohjoisessa tai subtrooppisessa ilmastossa, sillä näissä pankit ottavat ainoastaan vastaan rahtia. Lauhkeassa ilmastossa pelatessa voidaan myös valita ”symmetrinen”, sillä pankit myös lähettävät arvotavaroita takaisin lähtöpankille.
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Muiden rahtityyppien jakautuminen: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :”Epäsymmetrinen” tarkoittaa, että eri suuntiin voidaan lähettää eriäviä määriä rahtia. ”Manuaalinen” tarkoittaa, että automaattinen jakautuminen ei ole käytössä rahdille.
+STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :”Epäsymmetrinen” tarkoittaa, että rahtia lähetetään mielivaltainen määrä kumpaankin suuntaan. ”Manuaalinen” tarkoittaa, että automaattista jakautumista ei sovelleta näihin rahteihin.
 ###length 3
 STR_CONFIG_SETTING_DISTRIBUTION_MANUAL                          :manuaalinen
 STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :epäsymmetrinen
@@ -2698,8 +2701,10 @@ STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}Suurenna
 STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}Valitse rautatiesilta
 STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}Valitse maantiesilta
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}Sillan valinta – napsauta valittua siltaa rakentaaksesi sen
-STR_SELECT_BRIDGE_INFO                                          :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
-STR_SELECT_BRIDGE_SCENEDIT_INFO                                 :{GOLD}{STRING},{} {VELOCITY}
+STR_SELECT_BRIDGE_INFO_NAME                                     :{GOLD}{STRING}
+STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED                           :{GOLD}{STRING},{} {VELOCITY}
+STR_SELECT_BRIDGE_INFO_NAME_COST                                :{GOLD}{0:STRING},{} {WHITE}{2:CURRENCY_LONG}
+STR_SELECT_BRIDGE_INFO_NAME_MAX_SPEED_COST                      :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :Riippusilta, terästä
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :Palkki, terästä
 STR_BRIDGE_NAME_CANTILEVER_STEEL                                :Ulokepalkki, terästä
@@ -2819,7 +2824,7 @@ STR_OBJECT_CLASS_TRNS                                           :Lähettimet
 STR_PLANT_TREE_CAPTION                                          :{WHITE}Puita
 STR_PLANT_TREE_TOOLTIP                                          :{BLACK}Valitse istutettava puutyyppi. Jos ruudussa on jo puu, tämä lisää uusia puita riippumatta valitun puun tyypistä
 STR_TREES_RANDOM_TYPE                                           :{BLACK}Sattumanvaraisia puita
-STR_TREES_RANDOM_TYPE_TOOLTIP                                   :{BLACK}Aseta sattumanvaraisia puita. Shift vaihtaa istutustilan ja kustannusarvion välillä
+STR_TREES_RANDOM_TYPE_TOOLTIP                                   :{BLACK}Istuta sattumanvaraisia puulajeja. Ctrl valitsee alueen vinottain. Shift vaihtaa istutustilan ja kustannusarvion välillä
 STR_TREES_RANDOM_TREES_BUTTON                                   :{BLACK}Satunnaisia puita.
 STR_TREES_RANDOM_TREES_TOOLTIP                                  :{BLACK}Istuta puita satunnaisesti maastoon
 STR_TREES_MODE_NORMAL_BUTTON                                    :{BLACK}Tavallinen

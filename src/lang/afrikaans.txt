@@ -1145,6 +1145,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :Regs
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Maksimum aanvanklike lening: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Maksimum bedrag wat 'n maatskappy kan leen (sonder die inagneming van inflasie)
+###setting-zero-is-special
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :Rentekoers: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Lening rentekoers: beheer ook inflasie indien aangeskakel
@@ -2482,8 +2483,6 @@ STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}Verhoog 
 STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}Kies Spoor Brug
 STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}Selekteer Pad Brug
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}Brugkeuring - klik op jou verkose brug om dit te bou
-STR_SELECT_BRIDGE_INFO                                          :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
-STR_SELECT_BRIDGE_SCENEDIT_INFO                                 :{GOLD}{STRING},{} {VELOCITY}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :Kabelstut, Staal
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :Balk, Staal
 STR_BRIDGE_NAME_CANTILEVER_STEEL                                :Vrydraer, Staal

@@ -1329,7 +1329,7 @@ static ChangeInfoResult RailVehicleChangeInfo(uint engine, int numinfo, int prop
 				break;
 
 			case 0x2F: // Engine variant
-				ei->variant_id = GetNewEngineID(_cur.grffile, VEH_TRAIN, buf->ReadWord());
+				ei->variant_id = buf->ReadWord();
 				break;
 
 			case 0x30: // Extra miscellaneous flags
@@ -1531,7 +1531,7 @@ static ChangeInfoResult RoadVehicleChangeInfo(uint engine, int numinfo, int prop
 			}
 
 			case 0x26: // Engine variant
-				ei->variant_id = GetNewEngineID(_cur.grffile, VEH_ROAD, buf->ReadWord());
+				ei->variant_id = buf->ReadWord();
 				break;
 
 			case 0x27: // Extra miscellaneous flags
@@ -1711,7 +1711,7 @@ static ChangeInfoResult ShipVehicleChangeInfo(uint engine, int numinfo, int prop
 			}
 
 			case 0x20: // Engine variant
-				ei->variant_id = GetNewEngineID(_cur.grffile, VEH_SHIP, buf->ReadWord());
+				ei->variant_id = buf->ReadWord();
 				break;
 
 			case 0x21: // Extra miscellaneous flags
@@ -1873,7 +1873,7 @@ static ChangeInfoResult AircraftVehicleChangeInfo(uint engine, int numinfo, int 
 				break;
 
 			case 0x20: // Engine variant
-				ei->variant_id = GetNewEngineID(_cur.grffile, VEH_AIRCRAFT, buf->ReadWord());
+				ei->variant_id = buf->ReadWord();
 				break;
 
 			case 0x21: // Extra miscellaneous flags
@@ -2190,7 +2190,7 @@ static ChangeInfoResult BridgeChangeInfo(uint brid, int numinfo, int prop, ByteR
 
 			case 0x0A: // Maximum length
 				bridge->max_length = buf->ReadByte();
-				if (bridge->max_length > 16) bridge->max_length = 0xFFFF;
+				if (bridge->max_length > 16) bridge->max_length = UINT16_MAX;
 				break;
 
 			case 0x0B: // Cost factor
@@ -2199,6 +2199,7 @@ static ChangeInfoResult BridgeChangeInfo(uint brid, int numinfo, int prop, ByteR
 
 			case 0x0C: // Maximum speed
 				bridge->speed = buf->ReadWord();
+				if (bridge->speed == 0) bridge->speed = UINT16_MAX;
 				break;
 
 			case 0x0D: { // Bridge sprite tables
@@ -9001,12 +9002,15 @@ static void FinaliseEngineArray()
 			}
 		}
 
-		if (!HasBit(e->info.climates, _settings_game.game_creation.landscape)) continue;
-
-		/* Set appropriate flags on variant engine */
+		/* Do final mapping on variant engine ID and set appropriate flags on variant engine */
 		if (e->info.variant_id != INVALID_ENGINE) {
-			Engine::Get(e->info.variant_id)->display_flags |= EngineDisplayFlags::HasVariants | EngineDisplayFlags::IsFolded;
+			e->info.variant_id = GetNewEngineID(e->grf_prop.grffile, e->type, e->info.variant_id);
+			if (e->info.variant_id != INVALID_ENGINE) {
+				Engine::Get(e->info.variant_id)->display_flags |= EngineDisplayFlags::HasVariants | EngineDisplayFlags::IsFolded;
+			}
 		}
+
+		if (!HasBit(e->info.climates, _settings_game.game_creation.landscape)) continue;
 
 		/* Skip wagons, there livery is defined via the engine */
 		if (e->type != VEH_TRAIN || e->u.rail.railveh_type != RAILVEH_WAGON) {
@@ -9804,6 +9808,7 @@ static void AfterLoadGRFs()
 			e->info.climates = 0;
 		} else {
 			e->u.rail.railtype = railtype;
+			e->u.rail.intended_railtype = railtype;
 		}
 	}
 

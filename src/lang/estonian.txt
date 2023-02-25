@@ -1231,6 +1231,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :Paremal
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Stardilaenu ülempiirang: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Suurim summa, mida ettevõte saab laenata (arvestamata inflatsiooni)
+###setting-zero-is-special
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :Intressimäär: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Laenu intressimäär; ühtlasi juhib inflatsiooni, kui inflatsioon on aktiveeritud
@@ -2663,8 +2664,6 @@ STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}Suurenda
 STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}Vali raudteesild
 STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}Vali sillatüüp
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}Silla valik - ehitamiseks klõpsi sobival sillal
-STR_SELECT_BRIDGE_INFO                                          :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
-STR_SELECT_BRIDGE_SCENEDIT_INFO                                 :{GOLD}{STRING},{} {VELOCITY}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :Rippsild, terasest
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :Raamistikuga, terasest
 STR_BRIDGE_NAME_CANTILEVER_STEEL                                :Konsool, terasest

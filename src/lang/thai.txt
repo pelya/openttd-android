@@ -1141,6 +1141,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :ขวา
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :เงินกู้เริ่มต้นสูงสุด: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :บริษัท สามารถกู้ยืมเงินจำนวนสูงสุด (โดยไม่คำนึงถึงอัตราเงินเฟ้อเข้าบัญชี)
+###setting-zero-is-special
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :ดอกเบี้ย: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :อัตราดอกเบี้ยเงินกู้; มีผลกับอัตราเงินเฟ้อถ้าเปิดใช้งาน
@@ -2501,8 +2502,6 @@ STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}เพ�
 STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}เลือกสะพานรถไฟ
 STR_SELECT_ROAD_BRIDGE_CAPTION                                  :{WHITE}เลือกสะพานสำหรับรถยนต์
 STR_SELECT_BRIDGE_SELECTION_TOOLTIP                             :{BLACK}เลือกสะพาน - คลิกสะพานที่ท่านชื่นชอบเพื่อก่อสร้าง
-STR_SELECT_BRIDGE_INFO                                          :{GOLD}{STRING},{} {VELOCITY} {WHITE}{CURRENCY_LONG}
-STR_SELECT_BRIDGE_SCENEDIT_INFO                                 :{GOLD}{STRING},{} {VELOCITY}
 STR_BRIDGE_NAME_SUSPENSION_STEEL                                :สะพานแขวนแบบคอนกรีต
 STR_BRIDGE_NAME_GIRDER_STEEL                                    :สะพานนั่งร้านแบบเหล็กกล้า
 STR_BRIDGE_NAME_CANTILEVER_STEEL                                :สะพานคานแบบเหล็กกล้า

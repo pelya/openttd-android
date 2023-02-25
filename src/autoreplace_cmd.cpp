@@ -346,7 +346,7 @@ static CommandCost BuildReplacementVehicle(Vehicle *old_veh, Vehicle **new_vehic
 
 	/* Build the new vehicle */
 	VehicleID new_veh_id;
-	std::tie(cost, new_veh_id, std::ignore, std::ignore) = Command<CMD_BUILD_VEHICLE>::Do(DC_EXEC | DC_AUTOREPLACE, old_veh->tile, e, true, CT_INVALID, INVALID_CLIENT_ID);
+	std::tie(cost, new_veh_id, std::ignore, std::ignore, std::ignore) = Command<CMD_BUILD_VEHICLE>::Do(DC_EXEC | DC_AUTOREPLACE, old_veh->tile, e, true, CT_INVALID, INVALID_CLIENT_ID);
 	if (cost.Failed()) return cost;
 
 	Vehicle *new_veh = Vehicle::Get(new_veh_id);
@@ -422,6 +422,7 @@ static CommandCost CopyHeadSpecificThings(Vehicle *old_head, Vehicle *new_head, 
 	if (cost.Succeeded() && old_head != new_head && (flags & DC_EXEC) != 0) {
 		/* Copy other things which cannot be copied by a command and which shall not stay resetted from the build vehicle command */
 		new_head->CopyVehicleConfigAndStatistics(old_head);
+		GroupStatistics::AddProfitLastYear(new_head);
 
 		/* Switch vehicle windows/news to the new vehicle, so they are not closed/deleted when the old vehicle is sold */
 		ChangeVehicleViewports(old_head->index, new_head->index);

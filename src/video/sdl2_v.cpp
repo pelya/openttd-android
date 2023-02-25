@@ -810,12 +810,11 @@ bool VideoDriver_SDL_Base::ChangeResolution(int w, int h)
 
 bool VideoDriver_SDL_Base::ToggleFullscreen(bool fullscreen)
 {
-	int w, h;
-
 	/* Remember current window size */
-	if (fullscreen) {
-		SDL_GetWindowSize(this->sdl_window, &w, &h);
+	int w, h;
+	SDL_GetWindowSize(this->sdl_window, &w, &h);
 
+	if (fullscreen) {
 #ifdef __EMSCRIPTEN__
 		EM_ASM( if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().then(() => {}).catch(err => {}); } );
 #endif

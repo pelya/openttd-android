@@ -2046,6 +2046,7 @@ CommandCost CmdBuildIndustry(DoCommandFlag flags, TileIndex tile, IndustryType i
 			bool prospect_success = deity_prospect || Random() <= indspec->prospecting_chance;
 			if (prospect_success) {
 				/* Prospected industries are build as OWNER_TOWN to not e.g. be build on owned land of the founder */
+				IndustryAvailabilityCallType calltype = _current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_PROSPECTCREATION;
 				Backup<CompanyID> cur_company(_current_company, OWNER_TOWN, FILE_LINE);
 				for (int i = 0; i < 5000; i++) {
 					/* We should not have more than one Random() in a function call
@@ -2057,14 +2058,14 @@ CommandCost CmdBuildIndustry(DoCommandFlag flags, TileIndex tile, IndustryType i
 					/* Check now each layout, starting with the random one */
 					for (size_t j = 0; j < num_layouts; j++) {
 						layout = (layout + 1) % num_layouts;
-						ret = CreateNewIndustryHelper(tile, it, flags, indspec, layout, random_var8f, random_initial_bits, cur_company.GetOriginalValue(), _current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_PROSPECTCREATION, &ind);
+						ret = CreateNewIndustryHelper(tile, it, flags, indspec, layout, random_var8f, random_initial_bits, cur_company.GetOriginalValue(), calltype, &ind);
 						if (ret.Succeeded()) break;
 					}
 					if (ret.Succeeded()) break;
 				}
 				cur_company.Restore();
 			}
-			if (ret.Failed()) {
+			if (ret.Failed() && IsLocalCompany()) {
 				if (prospect_success) {
 					ShowErrorMessage(STR_ERROR_CAN_T_PROSPECT_INDUSTRY, STR_ERROR_NO_SUITABLE_PLACES_FOR_PROSPECTING, WL_INFO);
 				} else {
@@ -2236,10 +2237,14 @@ static uint GetNumberOfIndustries()
 		25,   // low
 		55,   // normal
 		80,   // high
+		0,    // custom
 	};
 
 	assert(lengthof(numof_industry_table) == ID_END);
 	uint difficulty = (_game_mode != GM_EDITOR) ? _settings_game.difficulty.industry_density : (uint)ID_VERY_LOW;
+
+	if (difficulty == ID_CUSTOM) return std::min<uint>(IndustryPool::MAX_SIZE, _settings_game.game_creation.custom_industry_number);
+
 	return std::min<uint>(IndustryPool::MAX_SIZE, ScaleByMapSize(numof_industry_table[difficulty]));
 }
 
