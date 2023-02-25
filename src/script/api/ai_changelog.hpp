@@ -13,6 +13,16 @@
  * functions may still be available if you return an older API version
  * in GetAPIVersion() in info.nut.
  *
+ * \b 13.0
+ *
+ * API additions:
+ * \li AICargo::GetWeight
+ * \li AIIndustryType::ResolveNewGRFID
+ * \li AIObjectType::ResolveNewGRFID
+ *
+ * Other changes:
+ * \li AIRoad::HasRoadType now correctly checks RoadType against RoadType
+ *
  * \b 12.0
  *
  * API additions:

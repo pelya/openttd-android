@@ -66,8 +66,9 @@ void ShowNewGRFError()
 	}
 }
 
-static void ShowNewGRFInfo(const GRFConfig *c, uint x, uint y, uint right, uint bottom, bool show_params)
+static void ShowNewGRFInfo(const GRFConfig *c, const Rect &r, bool show_params)
 {
+	Rect tr = r.Shrink(WidgetDimensions::scaled.frametext);
 	if (c->error != nullptr) {
 		char message[512];
 		SetDParamStr(0, c->error->custom_message); // is skipped by built-in messages
@@ -79,34 +80,34 @@ static void ShowNewGRFInfo(const GRFConfig *c, uint x, uint y, uint right, uint 
 		GetString(message, c->error->message != STR_NULL ? c->error->message : STR_JUST_RAW_STRING, lastof(message));
 
 		SetDParamStr(0, message);
-		y = DrawStringMultiLine(x, right, y, bottom, c->error->severity);
+		tr.top = DrawStringMultiLine(tr, c->error->severity);
 	}
 
 	/* Draw filename or not if it is not known (GRF sent over internet) */
 	if (c->filename != nullptr) {
 		SetDParamStr(0, c->filename);
-		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_FILENAME);
+		tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_FILENAME);
 	}
 
 	/* Prepare and draw GRF ID */
 	char buff[256];
 	seprintf(buff, lastof(buff), "%08X", BSWAP32(c->ident.grfid));
 	SetDParamStr(0, buff);
-	y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_GRF_ID);
+	tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_GRF_ID);
 
 	if ((_settings_client.gui.newgrf_developer_tools || _settings_client.gui.newgrf_show_old_versions) && c->version != 0) {
 		SetDParam(0, c->version);
-		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_VERSION);
+		tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_VERSION);
 	}
 	if ((_settings_client.gui.newgrf_developer_tools || _settings_client.gui.newgrf_show_old_versions) && c->min_loadable_version != 0) {
 		SetDParam(0, c->min_loadable_version);
-		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_MIN_VERSION);
+		tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_MIN_VERSION);
 	}
 
 	/* Prepare and draw MD5 sum */
 	md5sumToString(buff, lastof(buff), c->ident.md5sum);
 	SetDParamStr(0, buff);
-	y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_MD5SUM);
+	tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_MD5SUM);
 
 	/* Show GRF parameter list */
 	if (show_params) {
@@ -117,7 +118,7 @@ static void ShowNewGRFInfo(const GRFConfig *c, uint x, uint y, uint right, uint 
 		} else {
 			SetDParam(0, STR_NEWGRF_SETTINGS_PARAMETER_NONE);
 		}
-		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_PARAMETER);
+		tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_PARAMETER);
 
 		/* Draw the palette of the NewGRF */
 		if (c->palette & GRFP_BLT_32BPP) {
@@ -125,21 +126,21 @@ static void ShowNewGRFInfo(const GRFConfig *c, uint x, uint y, uint right, uint 
 		} else {
 			SetDParam(0, (c->palette & GRFP_USE_WINDOWS) ? STR_NEWGRF_SETTINGS_PALETTE_LEGACY : STR_NEWGRF_SETTINGS_PALETTE_DEFAULT);
 		}
-		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_PALETTE);
+		tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_PALETTE);
 	}
 
 	/* Show flags */
-	if (c->status == GCS_NOT_FOUND)       y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_NOT_FOUND);
-	if (c->status == GCS_DISABLED)        y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_DISABLED);
-	if (HasBit(c->flags, GCF_INVALID))    y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_INCOMPATIBLE);
-	if (HasBit(c->flags, GCF_COMPATIBLE)) y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_COMPATIBLE_LOADED);
+	if (c->status == GCS_NOT_FOUND)       tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_NOT_FOUND);
+	if (c->status == GCS_DISABLED)        tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_DISABLED);
+	if (HasBit(c->flags, GCF_INVALID))    tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_INCOMPATIBLE);
+	if (HasBit(c->flags, GCF_COMPATIBLE)) tr.top = DrawStringMultiLine(tr, STR_NEWGRF_COMPATIBLE_LOADED);
 
 	/* Draw GRF info if it exists */
 	if (!StrEmpty(c->GetDescription())) {
 		SetDParamStr(0, c->GetDescription());
-		y = DrawStringMultiLine(x, right, y, bottom, STR_BLACK_RAW_STRING);
+		tr.top = DrawStringMultiLine(tr, STR_BLACK_RAW_STRING);
 	} else {
-		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_NO_INFO);
+		tr.top = DrawStringMultiLine(tr, STR_NEWGRF_SETTINGS_NO_INFO);
 	}
 }
 
@@ -212,7 +213,7 @@ struct NewGRFParametersWindow : public Window {
 			}
 
 			case WID_NP_BACKGROUND:
-				this->line_height = std::max(SETTING_BUTTON_HEIGHT, FONT_HEIGHT_NORMAL) + WD_MATRIX_TOP + WD_MATRIX_BOTTOM;
+				this->line_height = std::max(SETTING_BUTTON_HEIGHT, FONT_HEIGHT_NORMAL) + padding.height;
 
 				resize->width = 1;
 				resize->height = this->line_height;
@@ -221,14 +222,14 @@ struct NewGRFParametersWindow : public Window {
 
 			case WID_NP_DESCRIPTION:
 				/* Minimum size of 4 lines. The 500 is the default size of the window. */
-				Dimension suggestion = {500 - WD_FRAMERECT_LEFT - WD_FRAMERECT_RIGHT, (uint)FONT_HEIGHT_NORMAL * 4 + WD_TEXTPANEL_TOP + WD_TEXTPANEL_BOTTOM};
+				Dimension suggestion = {500U - WidgetDimensions::scaled.frametext.Horizontal(), (uint)FONT_HEIGHT_NORMAL * 4 + WidgetDimensions::scaled.frametext.Vertical()};
 				for (uint i = 0; i < this->grf_config->param_info.size(); i++) {
 					const GRFParameterInfo *par_info = this->grf_config->param_info[i];
 					if (par_info == nullptr) continue;
 					const char *desc = GetGRFStringFromGRFText(par_info->desc);
 					if (desc == nullptr) continue;
 					Dimension d = GetStringMultiLineBoundingBox(desc, suggestion);
-					d.height += WD_TEXTPANEL_TOP + WD_TEXTPANEL_BOTTOM;
+					d.height += WidgetDimensions::scaled.frametext.Vertical();
 					suggestion = maxdim(d, suggestion);
 				}
 				size->height = suggestion.height;
@@ -252,18 +253,17 @@ struct NewGRFParametersWindow : public Window {
 			if (par_info == nullptr) return;
 			const char *desc = GetGRFStringFromGRFText(par_info->desc);
 			if (desc == nullptr) return;
-			DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, r.top + WD_TEXTPANEL_TOP, r.bottom - WD_TEXTPANEL_BOTTOM, desc, TC_BLACK);
+			DrawStringMultiLine(r.Shrink(WidgetDimensions::scaled.framerect), desc, TC_BLACK);
 			return;
 		} else if (widget != WID_NP_BACKGROUND) {
 			return;
 		}
 
+		Rect ir = r.Shrink(WidgetDimensions::scaled.frametext, RectPadding::zero);
 		bool rtl = _current_text_dir == TD_RTL;
-		uint buttons_left = rtl ? r.right - SETTING_BUTTON_WIDTH - 3 : r.left + 4;
-		uint text_left    = r.left + (rtl ? WD_FRAMERECT_LEFT : SETTING_BUTTON_WIDTH + 8);
-		uint text_right   = r.right - (rtl ? SETTING_BUTTON_WIDTH + 8 : WD_FRAMERECT_RIGHT);
+		uint buttons_left = rtl ? ir.right - SETTING_BUTTON_WIDTH : ir.left;
+		Rect tr = ir.Indent(SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_wide, rtl);
 
-		int y = r.top;
 		int button_y_offset = (this->line_height - SETTING_BUTTON_HEIGHT) / 2;
 		int text_y_offset = (this->line_height - FONT_HEIGHT_NORMAL) / 2;
 		for (uint i = this->vscroll->GetPosition(); this->vscroll->IsVisible(i) && i < this->vscroll->GetCount(); i++) {
@@ -273,13 +273,13 @@ struct NewGRFParametersWindow : public Window {
 			bool selected = (i == this->clicked_row);
 
 			if (par_info->type == PTYPE_BOOL) {
-				DrawBoolButton(buttons_left, y + button_y_offset, current_value != 0, this->editable);
+				DrawBoolButton(buttons_left, ir.top + button_y_offset, current_value != 0, this->editable);
 				SetDParam(2, par_info->GetValue(this->grf_config) == 0 ? STR_CONFIG_SETTING_OFF : STR_CONFIG_SETTING_ON);
 			} else if (par_info->type == PTYPE_UINT_ENUM) {
 				if (par_info->complete_labels) {
-					DrawDropDownButton(buttons_left, y + button_y_offset, COLOUR_YELLOW, this->clicked_row == i && this->clicked_dropdown, this->editable);
+					DrawDropDownButton(buttons_left, ir.top + button_y_offset, COLOUR_YELLOW, this->clicked_row == i && this->clicked_dropdown, this->editable);
 				} else {
-					DrawArrowButtons(buttons_left, y + button_y_offset, COLOUR_YELLOW, (this->clicked_button == i) ? 1 + (this->clicked_increase != rtl) : 0, this->editable && current_value > par_info->min_value, this->editable && current_value < par_info->max_value);
+					DrawArrowButtons(buttons_left, ir.top + button_y_offset, COLOUR_YELLOW, (this->clicked_button == i) ? 1 + (this->clicked_increase != rtl) : 0, this->editable && current_value > par_info->min_value, this->editable && current_value < par_info->max_value);
 				}
 				SetDParam(2, STR_JUST_INT);
 				SetDParam(3, current_value);
@@ -301,8 +301,8 @@ struct NewGRFParametersWindow : public Window {
 				SetDParam(1, i + 1);
 			}
 
-			DrawString(text_left, text_right, y + text_y_offset, STR_NEWGRF_PARAMETERS_SETTING, selected ? TC_WHITE : TC_LIGHT_BLUE);
-			y += this->line_height;
+			DrawString(tr.left, tr.right, ir.top + text_y_offset, STR_NEWGRF_PARAMETERS_SETTING, selected ? TC_WHITE : TC_LIGHT_BLUE);
+			ir.top += this->line_height;
 		}
 	}
 
@@ -347,10 +347,9 @@ struct NewGRFParametersWindow : public Window {
 					this->clicked_dropdown = false;
 				}
 
-				const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_NP_BACKGROUND);
-				int x = pt.x - wid->pos_x;
-				if (_current_text_dir == TD_RTL) x = wid->current_x - 1 - x;
-				x -= 4;
+				Rect r = this->GetWidget<NWidgetBase>(widget)->GetCurrentRect().Shrink(WidgetDimensions::scaled.frametext, RectPadding::zero);
+				int x = pt.x - r.left;
+				if (_current_text_dir == TD_RTL) x = r.Width() - 1 - x;
 
 				GRFParameterInfo *par_info = (num < this->grf_config->param_info.size()) ? this->grf_config->param_info[num] : nullptr;
 				if (par_info == nullptr) par_info = GetDummyParameterInfo(num);
@@ -364,8 +363,7 @@ struct NewGRFParametersWindow : public Window {
 						this->clicked_dropdown = false;
 						this->closing_dropdown = false;
 					} else {
-						const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_NP_BACKGROUND);
-						int rel_y = (pt.y - (int)wid->pos_y) % this->line_height;
+						int rel_y = (pt.y - r.top) % this->line_height;
 
 						Rect wi_rect;
 						wi_rect.left = pt.x - (_current_text_dir == TD_RTL ? SETTING_BUTTON_WIDTH - 1 - x : x);;
@@ -642,6 +640,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 		this->vscroll2 = this->GetScrollbar(WID_NS_SCROLL2BAR);
 
 		this->GetWidget<NWidgetStacked>(WID_NS_SHOW_REMOVE)->SetDisplayedPlane(this->editable ? 0 : 1);
+		this->GetWidget<NWidgetStacked>(WID_NS_SHOW_APPLY)->SetDisplayedPlane(this->editable ? 0 : this->show_params ? 1 : SZSP_HORIZONTAL);
 		this->FinishInitNested(WN_GAME_OPTIONS_NEWGRF_STATE);
 
 		this->querystrings[WID_NS_FILTER] = &this->filter_editbox;
@@ -729,28 +728,29 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 		switch (widget) {
 			case WID_NS_FILE_LIST:
 			{
-				Dimension d = maxdim(GetSpriteSize(SPR_SQUARE), GetSpriteSize(SPR_WARNING_SIGN));
-				resize->height = std::max(d.height + 2U, FONT_HEIGHT_NORMAL + 2U);
-				resize->height = GetMinButtonSize(resize->height);
-				size->height = std::max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
+				Dimension d = maxdim(GetScaledSpriteSize(SPR_SQUARE), GetScaledSpriteSize(SPR_WARNING_SIGN));
+				resize->height = std::max<uint>(d.height + 2U, FONT_HEIGHT_NORMAL);
+				size->height = std::max(size->height, padding.height + 6 * resize->height);
 				break;
 			}
 
 			case WID_NS_AVAIL_LIST:
-				resize->height = std::max(12, FONT_HEIGHT_NORMAL + 2);
-				resize->height = GetMinButtonSize(resize->height);
-				size->height = std::max(size->height, WD_FRAMERECT_TOP + 4 * resize->height + WD_FRAMERECT_BOTTOM);
+			{
+				Dimension d = maxdim(GetScaledSpriteSize(SPR_SQUARE), GetScaledSpriteSize(SPR_WARNING_SIGN));
+				resize->height = std::max<uint>(d.height + 2U, FONT_HEIGHT_NORMAL);
+				size->height = std::max(size->height, padding.height + 8 * resize->height);
 				break;
+			}
 
 			case WID_NS_NEWGRF_INFO_TITLE: {
 				Dimension dim = GetStringBoundingBox(STR_NEWGRF_SETTINGS_INFO_TITLE);
-				size->height = std::max(size->height, dim.height + WD_FRAMETEXT_TOP + WD_FRAMETEXT_BOTTOM);
-				size->width  = std::max(size->width,  dim.width  + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT);
+				size->height = std::max(size->height, dim.height + WidgetDimensions::scaled.frametext.Vertical());
+				size->width  = std::max(size->width,  dim.width  + WidgetDimensions::scaled.frametext.Horizontal());
 				break;
 			}
 
 			case WID_NS_NEWGRF_INFO:
-				size->height = std::max(size->height, WD_FRAMERECT_TOP + 10 * FONT_HEIGHT_NORMAL + WD_FRAMERECT_BOTTOM + padding.height + 2);
+				size->height = std::max<uint>(size->height, WidgetDimensions::scaled.framerect.Vertical() + 10 * FONT_HEIGHT_NORMAL);
 				break;
 
 			case WID_NS_PRESET_LIST: {
@@ -760,7 +760,6 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 					d = maxdim(d, GetStringBoundingBox(STR_JUST_RAW_STRING));
 				}
 				d.width += padding.width;
-				d.height = GetMinButtonSize(d.height);
 				*size = maxdim(d, *size);
 				break;
 			}
@@ -771,7 +770,6 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 				*size = maxdim(d, GetStringBoundingBox(STR_INTRO_ONLINE_CONTENT));
 				size->width  += padding.width;
 				size->height += padding.height;
-				size->height = GetMinButtonSize(size->height);
 				break;
 			}
 		}
@@ -836,10 +834,11 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 	{
 		switch (widget) {
 			case WID_NS_FILE_LIST: {
-				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK);
+				const Rect br = r.Shrink(WidgetDimensions::scaled.bevel);
+				GfxFillRect(br, PC_BLACK);
 
+				Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
 				uint step_height = this->GetWidget<NWidgetBase>(WID_NS_FILE_LIST)->resize_y;
-				uint y = r.top + WD_FRAMERECT_TOP;
 				Dimension square = GetSpriteSize(SPR_SQUARE);
 				Dimension warning = GetSpriteSize(SPR_WARNING_SIGN);
 				int square_offset_y = (step_height - square.height) / 2;
@@ -847,10 +846,10 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 				int offset_y = (step_height - FONT_HEIGHT_NORMAL) / 2;
 
 				bool rtl = _current_text_dir == TD_RTL;
-				uint text_left    = rtl ? r.left + WD_FRAMERECT_LEFT : r.left + square.width + 15;
-				uint text_right   = rtl ? r.right - square.width - 15 : r.right - WD_FRAMERECT_RIGHT;
-				uint square_left  = rtl ? r.right - square.width - 5 : r.left + 5;
-				uint warning_left = rtl ? r.right - square.width - warning.width - 10 : r.left + square.width + 10;
+				uint text_left    = rtl ? tr.left : tr.left + square.width + 13;
+				uint text_right   = rtl ? tr.right - square.width - 13 : tr.right;
+				uint square_left  = rtl ? tr.right - square.width - 3 : tr.left + 3;
+				uint warning_left = rtl ? tr.right - square.width - warning.width - 8 : tr.left + square.width + 8;
 
 				int i = 0;
 				for (const GRFConfig *c = this->actives; c != nullptr; c = c->next, i++) {
@@ -860,35 +859,36 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 						PaletteID pal = this->GetPalette(c);
 
 						if (h) {
-							GfxFillRect(r.left + 1, y, r.right - 1, y + step_height - 1, PC_DARK_BLUE);
+							GfxFillRect(br.left, tr.top, br.right, tr.top + step_height - 1, PC_DARK_BLUE);
 						} else if (i == this->active_over) {
 							/* Get index of current selection. */
 							int active_sel_pos = 0;
 							for (GRFConfig *c = this->actives; c != nullptr && c != this->active_sel; c = c->next, active_sel_pos++) {}
 							if (active_sel_pos != this->active_over) {
-								uint top = this->active_over < active_sel_pos ? y + 1 : y + step_height - 2;
-								GfxFillRect(r.left + WD_FRAMERECT_LEFT, top - 1, r.right - WD_FRAMERECT_RIGHT, top + 1, PC_GREY);
+								uint top = this->active_over < active_sel_pos ? tr.top + 1 : tr.top + step_height - 2;
+								GfxFillRect(tr.left, top - 1, tr.right, top + 1, PC_GREY);
 							}
 						}
-						DrawSprite(SPR_SQUARE, pal, square_left, y + square_offset_y);
-						if (c->error != nullptr) DrawSprite(SPR_WARNING_SIGN, 0, warning_left, y + warning_offset_y);
+						DrawSprite(SPR_SQUARE, pal, square_left, tr.top + square_offset_y);
+						if (c->error != nullptr) DrawSprite(SPR_WARNING_SIGN, 0, warning_left, tr.top + warning_offset_y);
 						uint txtoffset = c->error == nullptr ? 0 : warning.width;
-						DrawString(text_left + (rtl ? 0 : txtoffset), text_right - (rtl ? txtoffset : 0), y + offset_y, text, h ? TC_WHITE : TC_ORANGE);
-						y += step_height;
+						DrawString(text_left + (rtl ? 0 : txtoffset), text_right - (rtl ? txtoffset : 0), tr.top + offset_y, text, h ? TC_WHITE : TC_ORANGE);
+						tr.top += step_height;
 					}
 				}
 				if (i == this->active_over && this->vscroll->IsVisible(i)) { // Highlight is after the last GRF entry.
-					GfxFillRect(r.left + WD_FRAMERECT_LEFT, y, r.right - WD_FRAMERECT_RIGHT, y + 2, PC_GREY);
+					GfxFillRect(tr.left, tr.top, tr.right, tr.top + 2, PC_GREY);
 				}
 				break;
 			}
 
 			case WID_NS_AVAIL_LIST: {
-				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, this->active_over == -2 ? PC_DARK_GREY : PC_BLACK);
+				const Rect br = r.Shrink(WidgetDimensions::scaled.bevel);
+				GfxFillRect(br, this->active_over == -2 ? PC_DARK_GREY : PC_BLACK);
 
+				Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
 				uint step_height = this->GetWidget<NWidgetBase>(WID_NS_AVAIL_LIST)->resize_y;
 				int offset_y = (step_height - FONT_HEIGHT_NORMAL) / 2;
-				uint y = r.top + WD_FRAMERECT_TOP;
 				uint min_index = this->vscroll2->GetPosition();
 				uint max_index = std::min(min_index + this->vscroll2->GetCapacity(), (uint)this->avails.size());
 
@@ -897,24 +897,25 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 					bool h = (c == this->avail_sel);
 					const char *text = c->GetName();
 
-					if (h) GfxFillRect(r.left + 1, y, r.right - 1, y + step_height - 1, PC_DARK_BLUE);
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, y + offset_y, text, h ? TC_WHITE : TC_SILVER);
-					y += step_height;
+					if (h) GfxFillRect(br.left, tr.top, br.right, tr.top + step_height - 1, PC_DARK_BLUE);
+					DrawString(tr.left, tr.right, tr.top + offset_y, text, h ? TC_WHITE : TC_SILVER);
+					tr.top += step_height;
 				}
 				break;
 			}
 
-			case WID_NS_NEWGRF_INFO_TITLE:
+			case WID_NS_NEWGRF_INFO_TITLE: {
 				/* Create the nice grayish rectangle at the details top. */
-				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_DARK_BLUE);
-				DrawString(r.left, r.right, (r.top + r.bottom - FONT_HEIGHT_NORMAL) / 2, STR_NEWGRF_SETTINGS_INFO_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
+				GfxFillRect(r.Shrink(WidgetDimensions::scaled.bevel), PC_DARK_BLUE);
+				DrawString(r.left, r.right, CenterBounds(r.top, r.bottom, FONT_HEIGHT_NORMAL), STR_NEWGRF_SETTINGS_INFO_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
+			}
 
 			case WID_NS_NEWGRF_INFO: {
 				const GRFConfig *selected = this->active_sel;
 				if (selected == nullptr) selected = this->avail_sel;
 				if (selected != nullptr) {
-					ShowNewGRFInfo(selected, r.left + WD_FRAMERECT_LEFT, r.top + WD_FRAMERECT_TOP, r.right - WD_FRAMERECT_RIGHT, r.bottom - WD_FRAMERECT_BOTTOM, this->show_params);
+					ShowNewGRFInfo(selected, r, this->show_params);
 				}
 				break;
 			}
@@ -1614,17 +1615,17 @@ public:
 		this->acs->SetupSmallestSize(w, init_array);
 		this->inf->SetupSmallestSize(w, init_array);
 
-		uint min_avs_width = this->avs->smallest_x + this->avs->padding_left + this->avs->padding_right;
-		uint min_acs_width = this->acs->smallest_x + this->acs->padding_left + this->acs->padding_right;
-		uint min_inf_width = this->inf->smallest_x + this->inf->padding_left + this->inf->padding_right;
+		uint min_avs_width = this->avs->smallest_x + this->avs->padding.Horizontal();
+		uint min_acs_width = this->acs->smallest_x + this->acs->padding.Horizontal();
+		uint min_inf_width = this->inf->smallest_x + this->inf->padding.Horizontal();
 
-		uint min_avs_height = this->avs->smallest_y + this->avs->padding_top + this->avs->padding_bottom;
-		uint min_acs_height = this->acs->smallest_y + this->acs->padding_top + this->acs->padding_bottom;
-		uint min_inf_height = this->inf->smallest_y + this->inf->padding_top + this->inf->padding_bottom;
+		uint min_avs_height = this->avs->smallest_y + this->avs->padding.Vertical();
+		uint min_acs_height = this->acs->smallest_y + this->acs->padding.Vertical();
+		uint min_inf_height = this->inf->smallest_y + this->inf->padding.Vertical();
 
 		/* Smallest window is in two column mode. */
-		this->smallest_x = min_avs_width + min_acs_width + min_inf_width + INTER_COLUMN_SPACING * 2;
-		this->smallest_y = std::max(std::max(min_inf_height, min_acs_height), min_avs_height);
+		this->smallest_x = std::max(min_avs_width, min_acs_width) + INTER_COLUMN_SPACING + min_inf_width;
+		this->smallest_y = std::max(min_inf_height, min_acs_height + INTER_LIST_SPACING + min_avs_height);
 
 		/* Filling. */
 		this->fill_x = LeastCommonMultiple(this->avs->fill_x, this->acs->fill_x);
@@ -1650,9 +1651,9 @@ public:
 	{
 		this->StoreSizePosition(sizing, x, y, given_width, given_height);
 
-		uint min_avs_width = this->avs->smallest_x + this->avs->padding_left + this->avs->padding_right;
-		uint min_acs_width = this->acs->smallest_x + this->acs->padding_left + this->acs->padding_right;
-		uint min_inf_width = this->inf->smallest_x + this->inf->padding_left + this->inf->padding_right;
+		uint min_avs_width = this->avs->smallest_x + this->avs->padding.Horizontal();
+		uint min_acs_width = this->acs->smallest_x + this->acs->padding.Horizontal();
+		uint min_inf_width = this->inf->smallest_x + this->inf->padding.Horizontal();
 
 		uint min_list_width = std::max(min_avs_width, min_acs_width); // Smallest width of the lists such that they have equal width (incl padding).
 		uint avs_extra_width = min_list_width - min_avs_width;   // Additional width needed for avs to reach min_list_width.
@@ -1661,7 +1662,7 @@ public:
 		/* Use 2 or 3 columns? */
 		uint min_three_columns = min_avs_width + min_acs_width + min_inf_width + 2 * INTER_COLUMN_SPACING;
 		uint min_two_columns   = min_list_width + min_inf_width + INTER_COLUMN_SPACING;
-		bool use_three_columns = true; // this->editable;
+		bool use_three_columns = this->editable && (min_three_columns + MIN_EXTRA_FOR_3_COLUMNS <= given_width);
 
 		/* Info panel is a separate column in both modes. Compute its width first. */
 		uint extra_width, inf_width;
@@ -1688,10 +1689,10 @@ public:
 			avs_width = ComputeMaxSize(this->avs->smallest_x, this->avs->smallest_x + avs_width, this->avs->GetHorizontalStepSize(sizing));
 
 			uint acs_width = given_width - // Remaining space, including horizontal padding.
-					inf_width - this->inf->padding_left - this->inf->padding_right -
-					avs_width - this->avs->padding_left - this->avs->padding_right - 2 * INTER_COLUMN_SPACING;
+					inf_width - this->inf->padding.Horizontal() -
+					avs_width - this->avs->padding.Horizontal() - 2 * INTER_COLUMN_SPACING;
 			acs_width = ComputeMaxSize(min_acs_width, acs_width, this->acs->GetHorizontalStepSize(sizing)) -
-					this->acs->padding_left - this->acs->padding_right;
+					this->acs->padding.Horizontal();
 
 			/* Never use fill_y on these; the minimal size is chosen, so that the 3 column view looks nice */
 			uint avs_height = ComputeMaxSize(this->avs->smallest_y, given_height, this->avs->resize_y);
@@ -1699,25 +1700,25 @@ public:
 
 			/* Assign size and position to the children. */
 			if (rtl) {
-				x += this->inf->padding_left;
-				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding_top, inf_width, inf_height, rtl);
-				x += inf_width + this->inf->padding_right + INTER_COLUMN_SPACING;
+				x += this->inf->padding.left;
+				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding.top, inf_width, inf_height, rtl);
+				x += inf_width + this->inf->padding.right + INTER_COLUMN_SPACING;
 			} else {
-				x += this->avs->padding_left;
-				this->avs->AssignSizePosition(sizing, x, y + this->avs->padding_top, avs_width, avs_height, rtl);
-				x += avs_width + this->avs->padding_right + INTER_COLUMN_SPACING;
+				x += this->avs->padding.left;
+				this->avs->AssignSizePosition(sizing, x, y + this->avs->padding.top, avs_width, avs_height, rtl);
+				x += avs_width + this->avs->padding.right + INTER_COLUMN_SPACING;
 			}
 
-			x += this->acs->padding_left;
-			this->acs->AssignSizePosition(sizing, x, y + this->acs->padding_top, acs_width, acs_height, rtl);
-			x += acs_width + this->acs->padding_right + INTER_COLUMN_SPACING;
+			x += this->acs->padding.left;
+			this->acs->AssignSizePosition(sizing, x, y + this->acs->padding.top, acs_width, acs_height, rtl);
+			x += acs_width + this->acs->padding.right + INTER_COLUMN_SPACING;
 
 			if (rtl) {
-				x += this->avs->padding_left;
-				this->avs->AssignSizePosition(sizing, x, y + this->avs->padding_top, avs_width, avs_height, rtl);
+				x += this->avs->padding.left;
+				this->avs->AssignSizePosition(sizing, x, y + this->avs->padding.top, avs_width, avs_height, rtl);
 			} else {
-				x += this->inf->padding_left;
-				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding_top, inf_width, inf_height, rtl);
+				x += this->inf->padding.left;
+				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding.top, inf_width, inf_height, rtl);
 			}
 		} else {
 			/* Two columns, all space in extra_width goes to both lists. Since the lists are underneath each other,
@@ -1727,8 +1728,8 @@ public:
 			uint acs_width = ComputeMaxSize(this->acs->smallest_x, this->acs->smallest_x + acs_extra_width + extra_width,
 					this->acs->GetHorizontalStepSize(sizing));
 
-			uint min_avs_height = (!this->editable) ? 0 : this->avs->smallest_y + this->avs->padding_top + this->avs->padding_bottom + INTER_LIST_SPACING;
-			uint min_acs_height = this->acs->smallest_y + this->acs->padding_top + this->acs->padding_bottom;
+			uint min_avs_height = (!this->editable) ? 0 : this->avs->smallest_y + this->avs->padding.Vertical() + INTER_LIST_SPACING;
+			uint min_acs_height = this->acs->smallest_y + this->acs->padding.Vertical();
 			uint extra_height = given_height - min_acs_height - min_avs_height;
 
 			/* Never use fill_y on these; instead use the INTER_LIST_SPACING as filler */
@@ -1738,29 +1739,29 @@ public:
 
 			/* Assign size and position to the children. */
 			if (rtl) {
-				x += this->inf->padding_left;
-				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding_top, inf_width, inf_height, rtl);
-				x += inf_width + this->inf->padding_right + INTER_COLUMN_SPACING;
+				x += this->inf->padding.left;
+				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding.top, inf_width, inf_height, rtl);
+				x += inf_width + this->inf->padding.right + INTER_COLUMN_SPACING;
 
-				this->acs->AssignSizePosition(sizing, x + this->acs->padding_left, y + this->acs->padding_top, acs_width, acs_height, rtl);
+				this->acs->AssignSizePosition(sizing, x + this->acs->padding.left, y + this->acs->padding.top, acs_width, acs_height, rtl);
 				if (this->editable) {
-					this->avs->AssignSizePosition(sizing, x + this->avs->padding_left, y + given_height - avs_height - this->avs->padding_bottom, avs_width, avs_height, rtl);
+					this->avs->AssignSizePosition(sizing, x + this->avs->padding.left, y + given_height - avs_height - this->avs->padding.bottom, avs_width, avs_height, rtl);
 				} else {
 					this->avs->AssignSizePosition(sizing, 0, 0, this->avs->smallest_x, this->avs->smallest_y, rtl);
 				}
 			} else {
-				this->acs->AssignSizePosition(sizing, x + this->acs->padding_left, y + this->acs->padding_top, acs_width, acs_height, rtl);
+				this->acs->AssignSizePosition(sizing, x + this->acs->padding.left, y + this->acs->padding.top, acs_width, acs_height, rtl);
 				if (this->editable) {
-					this->avs->AssignSizePosition(sizing, x + this->avs->padding_left, y + given_height - avs_height - this->avs->padding_bottom, avs_width, avs_height, rtl);
+					this->avs->AssignSizePosition(sizing, x + this->avs->padding.left, y + given_height - avs_height - this->avs->padding.bottom, avs_width, avs_height, rtl);
 				} else {
 					this->avs->AssignSizePosition(sizing, 0, 0, this->avs->smallest_x, this->avs->smallest_y, rtl);
 				}
-				uint dx = this->acs->current_x + this->acs->padding_left + this->acs->padding_right;
+				uint dx = this->acs->current_x + this->acs->padding.Horizontal();
 				if (this->editable) {
-					dx = std::max(dx, this->avs->current_x + this->avs->padding_left + this->avs->padding_right);
+					dx = std::max(dx, this->avs->current_x + this->avs->padding.Horizontal());
 				}
-				x += dx + INTER_COLUMN_SPACING + this->inf->padding_left;
-				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding_top, inf_width, inf_height, rtl);
+				x += dx + INTER_COLUMN_SPACING + this->inf->padding.left;
+				this->inf->AssignSizePosition(sizing, x, y + this->inf->padding.top, inf_width, inf_height, rtl);
 			}
 		}
 	}
@@ -1777,14 +1778,14 @@ public:
 
 	void Draw(const Window *w) override
 	{
-		this->avs->Draw(w);
+		if (this->editable) this->avs->Draw(w);
 		this->acs->Draw(w);
 		this->inf->Draw(w);
 	}
 };
 
-const uint NWidgetNewGRFDisplay::INTER_LIST_SPACING      = WD_RESIZEBOX_WIDTH + 1;
-const uint NWidgetNewGRFDisplay::INTER_COLUMN_SPACING    = WD_RESIZEBOX_WIDTH;
+const uint NWidgetNewGRFDisplay::INTER_COLUMN_SPACING    = 12;
+const uint NWidgetNewGRFDisplay::INTER_LIST_SPACING      = NWidgetNewGRFDisplay::INTER_COLUMN_SPACING + 1;
 const uint NWidgetNewGRFDisplay::MAX_EXTRA_INFO_WIDTH    = 150;
 const uint NWidgetNewGRFDisplay::MIN_EXTRA_FOR_3_COLUMNS = 50;
 
@@ -1792,7 +1793,7 @@ static const NWidgetPart _nested_newgrf_actives_widgets[] = {
 	/* Left side, presets. */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_TEXT, COLOUR_MAUVE), SetDataTip(STR_NEWGRF_SETTINGS_SELECT_PRESET, STR_NULL),
-				SetPadding(0, WD_FRAMETEXT_RIGHT, 0, 0),
+				SetPadding(0, WidgetDimensions::unscaled.frametext.right, 0, 0),
 		NWidget(WWT_DROPDOWN, COLOUR_YELLOW, WID_NS_PRESET_LIST), SetFill(1, 0), SetResize(1, 0),
 				SetDataTip(STR_JUST_STRING, STR_NEWGRF_SETTINGS_PRESET_LIST_TOOLTIP),
 	EndContainer(),
@@ -1803,10 +1804,10 @@ static const NWidgetPart _nested_newgrf_actives_widgets[] = {
 				SetDataTip(STR_NEWGRF_SETTINGS_PRESET_DELETE, STR_NEWGRF_SETTINGS_PRESET_DELETE_TOOLTIP),
 	EndContainer(),
 
-	NWidget(NWID_SPACER), SetMinimalSize(0, WD_RESIZEBOX_WIDTH), SetResize(1, 0), SetFill(1, 0),
+	NWidget(NWID_SPACER), SetMinimalSize(0, NWidgetNewGRFDisplay::INTER_COLUMN_SPACING), SetResize(1, 0), SetFill(1, 0),
 	NWidget(WWT_PANEL, COLOUR_MAUVE),
 		NWidget(WWT_LABEL, COLOUR_MAUVE), SetDataTip(STR_NEWGRF_SETTINGS_ACTIVE_LIST, STR_NULL),
-				SetFill(1, 0), SetResize(1, 0), SetPadding(3, WD_FRAMETEXT_RIGHT, 0, WD_FRAMETEXT_LEFT),
+				SetFill(1, 0), SetResize(1, 0), SetPadding(3, WidgetDimensions::unscaled.frametext.right, 0, WidgetDimensions::unscaled.frametext.left),
 		/* Left side, active grfs. */
 		NWidget(NWID_HORIZONTAL), SetPadding(0, 2, 0, 2),
 			NWidget(WWT_PANEL, COLOUR_MAUVE),
@@ -1818,7 +1819,7 @@ static const NWidgetPart _nested_newgrf_actives_widgets[] = {
 		EndContainer(),
 		/* Buttons. */
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_NS_SHOW_REMOVE),
-			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(2, 2, 2, 2), SetPIP(0, WD_RESIZEBOX_WIDTH, 0),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(2, 2, 2, 2), SetPIP(0, NWidgetNewGRFDisplay::INTER_COLUMN_SPACING, 0),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_REMOVE), SetFill(1, 0), SetResize(1, 0),
 						SetDataTip(STR_NEWGRF_SETTINGS_REMOVE, STR_NEWGRF_SETTINGS_REMOVE_TOOLTIP),
 				NWidget(NWID_VERTICAL),
@@ -1844,10 +1845,10 @@ static const NWidgetPart _nested_newgrf_actives_widgets[] = {
 static const NWidgetPart _nested_newgrf_availables_widgets[] = {
 	NWidget(WWT_PANEL, COLOUR_MAUVE),
 		NWidget(WWT_LABEL, COLOUR_MAUVE), SetDataTip(STR_NEWGRF_SETTINGS_INACTIVE_LIST, STR_NULL),
-				SetFill(1, 0), SetResize(1, 0), SetPadding(3, WD_FRAMETEXT_RIGHT, 0, WD_FRAMETEXT_LEFT),
+				SetFill(1, 0), SetResize(1, 0), SetPadding(3, WidgetDimensions::unscaled.frametext.right, 0, WidgetDimensions::unscaled.frametext.left),
 		/* Left side, available grfs, filter edit box. */
-		NWidget(NWID_HORIZONTAL), SetPadding(WD_TEXTPANEL_TOP, 0, WD_TEXTPANEL_BOTTOM, 0),
-				SetPIP(WD_FRAMETEXT_LEFT, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_RIGHT),
+		NWidget(NWID_HORIZONTAL), SetPadding(WidgetDimensions::unscaled.frametext.top, 0, WidgetDimensions::unscaled.frametext.bottom, 0),
+				SetPIP(WidgetDimensions::unscaled.frametext.left, WidgetDimensions::unscaled.frametext.right, WidgetDimensions::unscaled.frametext.right),
 			NWidget(WWT_TEXT, COLOUR_MAUVE), SetFill(0, 1), SetDataTip(STR_NEWGRF_FILTER_TITLE, STR_NULL),
 			NWidget(WWT_EDITBOX, COLOUR_MAUVE, WID_NS_FILTER), SetFill(1, 0), SetMinimalSize(50, 12), SetResize(1, 0),
 					SetDataTip(STR_LIST_FILTER_OSKTITLE, STR_LIST_FILTER_TOOLTIP),
@@ -1862,7 +1863,7 @@ static const NWidgetPart _nested_newgrf_availables_widgets[] = {
 			NWidget(NWID_VSCROLLBAR, COLOUR_MAUVE, WID_NS_SCROLL2BAR),
 		EndContainer(),
 		/* Left side, available grfs, buttons. */
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(2, 2, 2, 2), SetPIP(0, WD_RESIZEBOX_WIDTH, 0),
+		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPadding(2, 2, 2, 2), SetPIP(0, NWidgetNewGRFDisplay::INTER_COLUMN_SPACING, 0),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_ADD), SetFill(1, 0), SetResize(1, 0),
 					SetDataTip(STR_NEWGRF_SETTINGS_ADD, STR_NEWGRF_SETTINGS_ADD_FILE_TOOLTIP),
 			NWidget(NWID_VERTICAL),
@@ -1893,23 +1894,20 @@ static const NWidgetPart _nested_newgrf_infopanel_widgets[] = {
 					SetDataTip(STR_TEXTFILE_VIEW_LICENCE, STR_NULL),
 		EndContainer(),
 	EndContainer(),
-	/* Right side, buttons. */
-	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, WD_RESIZEBOX_WIDTH, 0),
-		NWidget(NWID_VERTICAL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_SET_PARAMETERS), SetFill(1, 0), SetResize(1, 0),
-					SetDataTip(STR_NEWGRF_SETTINGS_SET_PARAMETERS, STR_NULL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_TOGGLE_PALETTE), SetFill(1, 0), SetResize(1, 0),
-					SetDataTip(STR_NEWGRF_SETTINGS_TOGGLE_PALETTE, STR_NEWGRF_SETTINGS_TOGGLE_PALETTE_TOOLTIP),
-		EndContainer(),
-		NWidget(NWID_VERTICAL),
+	NWidget(NWID_SELECTION, INVALID_COLOUR, WID_NS_SHOW_APPLY),
+		/* Right side, buttons. */
+		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(0, NWidgetNewGRFDisplay::INTER_COLUMN_SPACING, 0),
+			NWidget(NWID_VERTICAL),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_SET_PARAMETERS), SetFill(1, 0), SetResize(1, 0),
+						SetDataTip(STR_NEWGRF_SETTINGS_SET_PARAMETERS, STR_NULL),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_TOGGLE_PALETTE), SetFill(1, 0), SetResize(1, 0),
+						SetDataTip(STR_NEWGRF_SETTINGS_TOGGLE_PALETTE, STR_NEWGRF_SETTINGS_TOGGLE_PALETTE_TOOLTIP),
+			EndContainer(),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_APPLY_CHANGES), SetFill(1, 0), SetResize(1, 0),
 					SetDataTip(STR_NEWGRF_SETTINGS_APPLY_CHANGES, STR_NULL),
-			/* Resize button. */
-			NWidget(NWID_HORIZONTAL),
-				NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
-				NWidget(WWT_RESIZEBOX, COLOUR_MAUVE),
-			EndContainer(),
 		EndContainer(),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_YELLOW, WID_NS_VIEW_PARAMETERS), SetFill(1, 0), SetResize(1, 0),
+			SetDataTip(STR_NEWGRF_SETTINGS_SHOW_PARAMETERS, STR_NULL),
 	EndContainer(),
 };
 
@@ -1936,7 +1934,12 @@ static const NWidgetPart _nested_newgrf_widgets[] = {
 		NWidget(WWT_DEFSIZEBOX, COLOUR_MAUVE),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_MAUVE),
-		NWidgetFunction(NewGRFDisplay), SetPadding(WD_RESIZEBOX_WIDTH, WD_RESIZEBOX_WIDTH, 2, WD_RESIZEBOX_WIDTH),
+		NWidgetFunction(NewGRFDisplay), SetPadding(NWidgetNewGRFDisplay::INTER_COLUMN_SPACING, NWidgetNewGRFDisplay::INTER_COLUMN_SPACING, 2, NWidgetNewGRFDisplay::INTER_COLUMN_SPACING),
+		/* Resize button. */
+		NWidget(NWID_HORIZONTAL),
+			NWidget(NWID_SPACER), SetFill(1, 0), SetResize(1, 0),
+			NWidget(WWT_RESIZEBOX, COLOUR_MAUVE),
+		EndContainer(),
 	EndContainer(),
 };
 
@@ -2008,11 +2011,13 @@ static const NWidgetPart _nested_save_preset_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_INSET, COLOUR_GREY, WID_SVP_PRESET_LIST), SetPadding(2, 1, 0, 2),
+			NWidget(WWT_INSET, COLOUR_GREY, WID_SVP_PRESET_LIST), SetPadding(2, 1, 2, 2),
 					SetDataTip(0x0, STR_SAVE_PRESET_LIST_TOOLTIP), SetResize(1, 10), SetScrollbar(WID_SVP_SCROLLBAR), EndContainer(),
 			NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_SVP_SCROLLBAR),
 		EndContainer(),
-		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_SVP_EDITBOX), SetPadding(3, 2, 2, 2), SetFill(1, 0), SetResize(1, 0),
+	EndContainer(),
+	NWidget(WWT_PANEL, COLOUR_GREY),
+		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_SVP_EDITBOX), SetPadding(2, 2, 2, 2), SetFill(1, 0), SetResize(1, 0),
 				SetDataTip(STR_SAVE_PRESET_TITLE, STR_SAVE_PRESET_EDITBOX_TOOLTIP),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
@@ -2075,14 +2080,14 @@ struct SavePresetWindow : public Window {
 	{
 		switch (widget) {
 			case WID_SVP_PRESET_LIST: {
-				resize->height = FONT_HEIGHT_NORMAL + 2U;
+				resize->height = FONT_HEIGHT_NORMAL;
 				size->height = 0;
 				for (uint i = 0; i < this->presets.size(); i++) {
 					Dimension d = GetStringBoundingBox(this->presets[i].c_str());
-					size->width = std::max(size->width, d.width + WD_FRAMETEXT_LEFT + WD_FRAMETEXT_RIGHT);
+					size->width = std::max(size->width, d.width + padding.width);
 					resize->height = std::max(resize->height, d.height);
 				}
-				size->height = ClampU((uint)this->presets.size(), 5, 20) * resize->height + 1;
+				size->height = ClampU((uint)this->presets.size(), 5, 20) * resize->height + padding.height;
 				break;
 			}
 		}
@@ -2092,20 +2097,21 @@ struct SavePresetWindow : public Window {
 	{
 		switch (widget) {
 			case WID_SVP_PRESET_LIST: {
-				GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, PC_BLACK);
+				const Rect br = r.Shrink(WidgetDimensions::scaled.bevel);
+				GfxFillRect(br, PC_BLACK);
 
 				uint step_height = this->GetWidget<NWidgetBase>(WID_SVP_PRESET_LIST)->resize_y;
 				int offset_y = (step_height - FONT_HEIGHT_NORMAL) / 2;
-				uint y = r.top + WD_FRAMERECT_TOP;
+				Rect tr = r.Shrink(WidgetDimensions::scaled.framerect);
 				uint min_index = this->vscroll->GetPosition();
 				uint max_index = std::min(min_index + this->vscroll->GetCapacity(), (uint)this->presets.size());
 
 				for (uint i = min_index; i < max_index; i++) {
-					if ((int)i == this->selected) GfxFillRect(r.left + 1, y, r.right - 1, y + step_height - 2, PC_DARK_BLUE);
+					if ((int)i == this->selected) GfxFillRect(br.left, tr.top, br.right, tr.top + step_height - 1, PC_DARK_BLUE);
 
 					const char *text = this->presets[i].c_str();
-					DrawString(r.left + WD_FRAMERECT_LEFT, r.right, y + offset_y, text, ((int)i == this->selected) ? TC_WHITE : TC_SILVER);
-					y += step_height;
+					DrawString(tr.left, tr.right, tr.top + offset_y, text, ((int)i == this->selected) ? TC_WHITE : TC_SILVER);
+					tr.top += step_height;
 				}
 				break;
 			}
@@ -2158,14 +2164,11 @@ static void ShowSavePresetWindow(const char *initial_text)
 /** Widgets for the progress window. */
 static const NWidgetPart _nested_scan_progress_widgets[] = {
 	NWidget(WWT_CAPTION, COLOUR_GREY), SetDataTip(STR_NEWGRF_SCAN_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
-			SetSizingType(NWST_BUTTON),
 	NWidget(WWT_PANEL, COLOUR_GREY),
-		NWidget(NWID_HORIZONTAL), SetPIP(20, 0, 20),
-			NWidget(NWID_VERTICAL), SetPIP(11, 8, 11),
-				NWidget(WWT_LABEL, INVALID_COLOUR), SetDataTip(STR_NEWGRF_SCAN_MESSAGE, STR_NULL), SetFill(1, 0),
-				NWidget(WWT_EMPTY, INVALID_COLOUR, WID_SP_PROGRESS_BAR), SetFill(1, 0),
-				NWidget(WWT_EMPTY, INVALID_COLOUR, WID_SP_PROGRESS_TEXT), SetFill(1, 0),
-			EndContainer(),
+		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0), SetPadding(WidgetDimensions::unscaled.modalpopup),
+			NWidget(WWT_LABEL, INVALID_COLOUR), SetDataTip(STR_NEWGRF_SCAN_MESSAGE, STR_NULL), SetFill(1, 0),
+			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_SP_PROGRESS_BAR), SetFill(1, 0),
+			NWidget(WWT_EMPTY, INVALID_COLOUR, WID_SP_PROGRESS_TEXT), SetFill(1, 0), SetMinimalSize(400, 0),
 		EndContainer(),
 	EndContainer(),
 };
@@ -2202,8 +2205,8 @@ struct ScanProgressWindow : public Window {
 				SetDParamMaxValue(0, 100);
 				*size = GetStringBoundingBox(STR_GENERATION_PROGRESS);
 				/* We need some spacing for the 'border' */
-				size->height += 8;
-				size->width += 8;
+				size->height += WidgetDimensions::scaled.frametext.Horizontal();
+				size->width  += WidgetDimensions::scaled.frametext.Vertical();
 				break;
 			}
 
@@ -2212,8 +2215,8 @@ struct ScanProgressWindow : public Window {
 				SetDParamMaxDigits(1, 4);
 				/* We really don't know the width. We could determine it by scanning the NewGRFs,
 				 * but this is the status window for scanning them... */
-				size->width = std::max(400U, GetStringBoundingBox(STR_NEWGRF_SCAN_STATUS).width);
-				size->height = FONT_HEIGHT_NORMAL * 2 + WD_PAR_VSEP_NORMAL;
+				size->width = std::max<uint>(size->width, GetStringBoundingBox(STR_NEWGRF_SCAN_STATUS).width);
+				size->height = FONT_HEIGHT_NORMAL * 2 + WidgetDimensions::scaled.vsep_normal;
 				break;
 		}
 	}
@@ -2223,11 +2226,12 @@ struct ScanProgressWindow : public Window {
 		switch (widget) {
 			case WID_SP_PROGRESS_BAR: {
 				/* Draw the % complete with a bar and a text */
-				DrawFrameRect(r.left, r.top, r.right, r.bottom, COLOUR_GREY, FR_BORDERONLY);
+				DrawFrameRect(r, COLOUR_GREY, FR_BORDERONLY | FR_LOWERED);
+				Rect ir = r.Shrink(WidgetDimensions::scaled.bevel);
 				uint percent = scanned * 100 / std::max(1U, _settings_client.gui.last_newgrf_count);
-				DrawFrameRect(r.left + 1, r.top + 1, (int)((r.right - r.left - 2) * percent / 100) + r.left + 1, r.bottom - 1, COLOUR_MAUVE, FR_NONE);
+				DrawFrameRect(ir.WithWidth(ir.Width() * percent / 100, false), COLOUR_MAUVE, FR_NONE);
 				SetDParam(0, percent);
-				DrawString(r.left, r.right, r.top + 5, STR_GENERATION_PROGRESS, TC_FROMSTRING, SA_HOR_CENTER);
+				DrawString(ir.left, ir.right, CenterBounds(ir.top, ir.bottom, FONT_HEIGHT_NORMAL), STR_GENERATION_PROGRESS, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}
 
@@ -2236,7 +2240,7 @@ struct ScanProgressWindow : public Window {
 				SetDParam(1, _settings_client.gui.last_newgrf_count);
 				DrawString(r.left, r.right, r.top, STR_NEWGRF_SCAN_STATUS, TC_FROMSTRING, SA_HOR_CENTER);
 
-				DrawString(r.left, r.right, r.top + FONT_HEIGHT_NORMAL + WD_PAR_VSEP_NORMAL, this->last_name == nullptr ? "" : this->last_name, TC_BLACK, SA_HOR_CENTER);
+				DrawString(r.left, r.right, r.top + FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal, this->last_name == nullptr ? "" : this->last_name, TC_BLACK, SA_HOR_CENTER);
 				break;
 		}
 	}

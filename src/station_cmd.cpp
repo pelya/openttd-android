@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "aircraft.h"
 #include "bridge_map.h"
-#include "cmd_helper.h"
 #include "viewport_func.h"
 #include "viewport_kdtree.h"
 #include "command_func.h"
@@ -56,6 +55,10 @@
 #include "linkgraph/refresh.h"
 #include "widgets/station_widget.h"
 #include "tunnelbridge_map.h"
+#include "station_cmd.h"
+#include "waypoint_cmd.h"
+#include "landscape_cmd.h"
+#include "rail_cmd.h"
 
 #include "table/strings.h"
 
@@ -421,7 +424,7 @@ void Station::UpdateVirtCoord()
 
 	SetDParam(0, this->index);
 	SetDParam(1, this->facilities);
-	this->sign.UpdatePosition(pt.x, pt.y, STR_VIEWPORT_STATION);
+	this->sign.UpdatePosition(pt.x, pt.y, STR_VIEWPORT_STATION, STR_VIEWPORT_STATION_TINY);
 
 	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeStation(this->index));
 
@@ -749,7 +752,6 @@ void Station::AfterStationTileSetChange(bool adding, StationType type)
 		InvalidateWindowData(WC_STATION_LIST, this->owner, 0);
 	} else {
 		MarkCatchmentTilesDirty();
-		this->RecomputeCatchment();
 	}
 
 	switch (type) {
@@ -773,6 +775,7 @@ void Station::AfterStationTileSetChange(bool adding, StationType type)
 		InvalidateWindowData(WC_SELECT_STATION, 0, 0);
 	} else {
 		DeleteStationIfEmpty(this);
+		this->RecomputeCatchment();
 	}
 
 }
@@ -848,7 +851,7 @@ static CommandCost CheckFlatLandAirport(AirportTileTableIterator tile_iter, DoCo
 		if (ret.Failed()) return ret;
 		cost.AddCost(ret);
 
-		ret = DoCommand(tile_iter, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+		ret = Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile_iter);
 		if (ret.Failed()) return ret;
 		cost.AddCost(ret);
 	}
@@ -928,14 +931,14 @@ static CommandCost CheckFlatLandRailStation(TileArea tile_area, DoCommandFlag fl
 							affected_vehicles.push_back(v);
 						}
 					}
-					CommandCost ret = DoCommand(tile_cur, 0, track, flags, CMD_REMOVE_SINGLE_RAIL);
+					CommandCost ret = Command<CMD_REMOVE_SINGLE_RAIL>::Do(flags, tile_cur, track);
 					if (ret.Failed()) return ret;
 					cost.AddCost(ret);
 					/* With flags & ~DC_EXEC CmdLandscapeClear would fail since the rail still exists */
 					continue;
 				}
 			}
-			ret = DoCommand(tile_cur, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+			ret = Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile_cur);
 			if (ret.Failed()) return ret;
 			cost.AddCost(ret);
 		}
@@ -1053,7 +1056,7 @@ static CommandCost CheckFlatLandRoadStop(TileArea tile_area, DoCommandFlag flags
 					cost.AddCost(RoadBuildCost(rt) * 2);
 				}
 			} else {
-				ret = DoCommand(cur_tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+				ret = Command<CMD_LANDSCAPE_CLEAR>::Do(flags, cur_tile);
 				if (ret.Failed()) return ret;
 				cost.AddCost(ret);
 				cost.AddCost(RoadBuildCost(rt) * 2);
@@ -1242,39 +1245,25 @@ static void RestoreTrainReservation(Train *v)
 
 /**
  * Build rail station
- * @param tile_org northern most position of station dragging/placement
  * @param flags operation to perform
- * @param p1 various bitstuffed elements
- * - p1 = (bit  0- 5) - railtype
- * - p1 = (bit  6)    - orientation (Axis)
- * - p1 = (bit  8-15) - number of tracks
- * - p1 = (bit 16-23) - platform length
- * - p1 = (bit 24)    - allow stations directly adjacent to other stations.
- * @param p2 various bitstuffed elements
- * - p2 = (bit  0- 7) - custom station class
- * - p2 = (bit  8-15) - custom station id
- * - p2 = (bit 16-31) - station ID to join (NEW_STATION if build new one)
- * @param text unused
+ * @param tile_org northern most position of station dragging/placement
+ * @param rt railtype
+ * @param axis orientation (Axis)
+ * @param numtracks number of tracks
+ * @param plat_len platform length
+ * @param spec_class custom station class
+ * @param spec_index custom station id
+ * @param station_to_join station ID to join (NEW_STATION if build new one)
+ * @param adjacent allow stations directly adjacent to other stations.
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildRailStation(TileIndex tile_org, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdBuildRailStation(DoCommandFlag flags, TileIndex tile_org, RailType rt, Axis axis, byte numtracks, byte plat_len, StationClassID spec_class, byte spec_index, StationID station_to_join, bool adjacent)
 {
-	/* Unpack parameters */
-	RailType rt    = Extract<RailType, 0, 6>(p1);
-	Axis axis      = Extract<Axis, 6, 1>(p1);
-	byte numtracks = GB(p1,  8, 8);
-	byte plat_len  = GB(p1, 16, 8);
-	bool adjacent  = HasBit(p1, 24);
-
-	StationClassID spec_class = Extract<StationClassID, 0, 8>(p2);
-	byte spec_index           = GB(p2, 8, 8);
-	StationID station_to_join = GB(p2, 16, 16);
-
 	/* Does the authority allow this? */
 	CommandCost ret = CheckIfAuthorityAllowsNewStation(tile_org, flags);
 	if (ret.Failed()) return ret;
 
-	if (!ValParamRailtype(rt)) return CMD_ERROR;
+	if (!ValParamRailtype(rt) || !IsValidAxis(axis)) return CMD_ERROR;
 
 	/* Check if the given station class is valid */
 	if ((uint)spec_class >= StationClass::GetClassCount() || spec_class == STAT_CLASS_WAYP) return CMD_ERROR;
@@ -1659,23 +1648,21 @@ CommandCost RemoveFromRailBaseStation(TileArea ta, std::vector<T *> &affected_st
 /**
  * Remove a single tile from a rail station.
  * This allows for custom-built station with holes and weird layouts
- * @param start tile of station piece to remove
  * @param flags operation to perform
- * @param p1 start_tile
- * @param p2 various bitstuffed elements
- * - p2 = bit 0 - if set keep the rail
- * @param text unused
+ * @param start tile of station piece to remove
+ * @param end other edge of the rect to remove
+ * @param keep_rail if set keep the rail
  * @return the cost of this operation or an error
  */
-CommandCost CmdRemoveFromRailStation(TileIndex start, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdRemoveFromRailStation(DoCommandFlag flags, TileIndex start, TileIndex end, bool keep_rail)
 {
-	TileIndex end = p1 == 0 ? start : p1;
+	if (end == 0) end = start;
 	if (start >= MapSize() || end >= MapSize()) return CMD_ERROR;
 
 	TileArea ta(start, end);
 	std::vector<Station *> affected_stations;
 
-	CommandCost ret = RemoveFromRailBaseStation(ta, affected_stations, flags, _price[PR_CLEAR_STATION_RAIL], HasBit(p2, 0));
+	CommandCost ret = RemoveFromRailBaseStation(ta, affected_stations, flags, _price[PR_CLEAR_STATION_RAIL], keep_rail);
 	if (ret.Failed()) return ret;
 
 	/* Do all station specific functions here. */
@@ -1694,23 +1681,21 @@ CommandCost CmdRemoveFromRailStation(TileIndex start, DoCommandFlag flags, uint3
 /**
  * Remove a single tile from a waypoint.
  * This allows for custom-built waypoint with holes and weird layouts
- * @param start tile of waypoint piece to remove
  * @param flags operation to perform
- * @param p1 start_tile
- * @param p2 various bitstuffed elements
- * - p2 = bit 0 - if set keep the rail
- * @param text unused
+ * @param start tile of waypoint piece to remove
+ * @param end other edge of the rect to remove
+ * @param keep_rail if set keep the rail
  * @return the cost of this operation or an error
  */
-CommandCost CmdRemoveFromRailWaypoint(TileIndex start, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdRemoveFromRailWaypoint(DoCommandFlag flags, TileIndex start, TileIndex end, bool keep_rail)
 {
-	TileIndex end = p1 == 0 ? start : p1;
+	if (end == 0) end = start;
 	if (start >= MapSize() || end >= MapSize()) return CMD_ERROR;
 
 	TileArea ta(start, end);
 	std::vector<Waypoint *> affected_stations;
 
-	return RemoveFromRailBaseStation(ta, affected_stations, flags, _price[PR_CLEAR_WAYPOINT_RAIL], HasBit(p2, 0));
+	return RemoveFromRailBaseStation(ta, affected_stations, flags, _price[PR_CLEAR_WAYPOINT_RAIL], keep_rail);
 }
 
 
@@ -1761,7 +1746,7 @@ static CommandCost RemoveRailStation(TileIndex tile, DoCommandFlag flags)
 {
 	/* if there is flooding, remove platforms tile by tile */
 	if (_current_company == OWNER_WATER) {
-		return DoCommand(tile, 0, 0, DC_EXEC, CMD_REMOVE_FROM_RAIL_STATION);
+		return Command<CMD_REMOVE_FROM_RAIL_STATION>::Do(DC_EXEC, tile, 0, false);
 	}
 
 	Station *st = Station::GetByTile(tile);
@@ -1782,7 +1767,7 @@ static CommandCost RemoveRailWaypoint(TileIndex tile, DoCommandFlag flags)
 {
 	/* if there is flooding, remove waypoints tile by tile */
 	if (_current_company == OWNER_WATER) {
-		return DoCommand(tile, 0, 0, DC_EXEC, CMD_REMOVE_FROM_RAIL_WAYPOINT);
+		return Command<CMD_REMOVE_FROM_RAIL_WAYPOINT>::Do(DC_EXEC, tile, 0, false);
 	}
 
 	return RemoveRailStation(Waypoint::GetByTile(tile), flags, _price[PR_CLEAR_WAYPOINT_RAIL]);
@@ -1827,33 +1812,24 @@ static CommandCost FindJoiningRoadStop(StationID existing_stop, StationID statio
 
 /**
  * Build a bus or truck stop.
- * @param tile Northernmost tile of the stop.
  * @param flags Operation to perform.
- * @param p1 bit 0..7: Width of the road stop.
- *           bit 8..15: Length of the road stop.
- * @param p2 bit 0: 0 For bus stops, 1 for truck stops.
- *           bit 1: 0 For normal stops, 1 for drive-through.
- *           bit 2: Allow stations directly adjacent to other stations.
- *           bit 3..4: Entrance direction (#DiagDirection) for normal stops.
- *           bit 3: #Axis of the road for drive-through stops.
- *           bit 5..10: The roadtype.
- *           bit 16..31: Station ID to join (NEW_STATION if build new one).
- * @param text Unused.
+ * @param tile Northernmost tile of the stop.
+ * @param width Width of the road stop.
+ * @param length Length of the road stop.
+ * @param stop_type Type of road stop (bus/truck).
+ * @param is_drive_through False for normal stops, true for drive-through.
+ * @param ddir Entrance direction (#DiagDirection) for normal stops. Converted to the axis for drive-through stops.
+ * @param rt The roadtype.
+ * @param station_to_join Station ID to join (NEW_STATION if build new one).
+ * @param adjacent Allow stations directly adjacent to other stations.
  * @return The cost of this operation or an error.
  */
-CommandCost CmdBuildRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdBuildRoadStop(DoCommandFlag flags, TileIndex tile, uint8 width, uint8 length, RoadStopType stop_type, bool is_drive_through, DiagDirection ddir, RoadType rt, StationID station_to_join, bool adjacent)
 {
-	bool type = HasBit(p2, 0);
-	bool is_drive_through = HasBit(p2, 1);
-	RoadType rt = Extract<RoadType, 5, 6>(p2);
-	if (!ValParamRoadType(rt)) return CMD_ERROR;
-	StationID station_to_join = GB(p2, 16, 16);
+	if (!ValParamRoadType(rt) || !IsValidDiagDirection(ddir) || stop_type >= ROADSTOP_END) return CMD_ERROR;
 	bool reuse = (station_to_join != NEW_STATION);
 	if (!reuse) station_to_join = INVALID_STATION;
 	bool distant_join = (station_to_join != INVALID_STATION);
-
-	uint8 width = (uint8)GB(p1, 0, 8);
-	uint8 length = (uint8)GB(p1, 8, 8);
 
 	/* Check if the requested road stop is too big */
 	if (width > _settings_game.station.station_spread || length > _settings_game.station.station_spread) return_cmd_error(STR_ERROR_STATION_TOO_SPREAD_OUT);
@@ -1869,34 +1845,26 @@ CommandCost CmdBuildRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	/* Trams only have drive through stops */
 	if (!is_drive_through && RoadTypeIsTram(rt)) return CMD_ERROR;
 
-	DiagDirection ddir;
-	Axis axis;
-	if (is_drive_through) {
-		/* By definition axis is valid, due to there being 2 axes and reading 1 bit. */
-		axis = Extract<Axis, 3, 1>(p2);
-		ddir = AxisToDiagDir(axis);
-	} else {
-		/* By definition ddir is valid, due to there being 4 diagonal directions and reading 2 bits. */
-		ddir = Extract<DiagDirection, 3, 2>(p2);
-		axis = DiagDirToAxis(ddir);
-	}
+	Axis axis = DiagDirToAxis(ddir);
 
 	CommandCost ret = CheckIfAuthorityAllowsNewStation(tile, flags);
 	if (ret.Failed()) return ret;
 
+	bool is_truck_stop = stop_type != ROADSTOP_BUS;
+
 	/* Total road stop cost. */
-	CommandCost cost(EXPENSES_CONSTRUCTION, roadstop_area.w * roadstop_area.h * _price[type ? PR_BUILD_STATION_TRUCK : PR_BUILD_STATION_BUS]);
+	CommandCost cost(EXPENSES_CONSTRUCTION, roadstop_area.w * roadstop_area.h * _price[is_truck_stop ? PR_BUILD_STATION_TRUCK : PR_BUILD_STATION_BUS]);
 	StationID est = INVALID_STATION;
-	ret = CheckFlatLandRoadStop(roadstop_area, flags, is_drive_through ? 5 << axis : 1 << ddir, is_drive_through, type, axis, &est, rt);
+	ret = CheckFlatLandRoadStop(roadstop_area, flags, is_drive_through ? 5 << axis : 1 << ddir, is_drive_through, is_truck_stop, axis, &est, rt);
 	if (ret.Failed()) return ret;
 	cost.AddCost(ret);
 
 	Station *st = nullptr;
-	ret = FindJoiningRoadStop(est, station_to_join, HasBit(p2, 2), roadstop_area, &st);
+	ret = FindJoiningRoadStop(est, station_to_join, adjacent, roadstop_area, &st);
 	if (ret.Failed()) return ret;
 
 	/* Check if this number of road stops can be allocated. */
-	if (!RoadStop::CanAllocateItem(roadstop_area.w * roadstop_area.h)) return_cmd_error(type ? STR_ERROR_TOO_MANY_TRUCK_STOPS : STR_ERROR_TOO_MANY_BUS_STOPS);
+	if (!RoadStop::CanAllocateItem(roadstop_area.w * roadstop_area.h)) return_cmd_error(is_truck_stop ? STR_ERROR_TOO_MANY_TRUCK_STOPS : STR_ERROR_TOO_MANY_BUS_STOPS);
 
 	ret = BuildStationPart(&st, flags, reuse, roadstop_area, STATIONNAMING_ROAD);
 	if (ret.Failed()) return ret;
@@ -1916,21 +1884,21 @@ CommandCost CmdBuildRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 
 			RoadStop *road_stop = new RoadStop(cur_tile);
 			/* Insert into linked list of RoadStops. */
-			RoadStop **currstop = FindRoadStopSpot(type, st);
+			RoadStop **currstop = FindRoadStopSpot(is_truck_stop, st);
 			*currstop = road_stop;
 
-			if (type) {
+			if (is_truck_stop) {
 				st->truck_station.Add(cur_tile);
 			} else {
 				st->bus_station.Add(cur_tile);
 			}
 
 			/* Initialize an empty station. */
-			st->AddFacility((type) ? FACIL_TRUCK_STOP : FACIL_BUS_STOP, cur_tile);
+			st->AddFacility(is_truck_stop ? FACIL_TRUCK_STOP : FACIL_BUS_STOP, cur_tile);
 
 			st->rect.BeforeAddTile(cur_tile, StationRect::ADD_TRY);
 
-			RoadStopType rs_type = type ? ROADSTOP_TRUCK : ROADSTOP_BUS;
+			RoadStopType rs_type = is_truck_stop ? ROADSTOP_TRUCK : ROADSTOP_BUS;
 			if (is_drive_through) {
 				/* Update company infrastructure counts. If the current tile is a normal road tile, remove the old
 				 * bits first. */
@@ -1942,25 +1910,22 @@ CommandCost CmdBuildRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 				if (road_rt == INVALID_ROADTYPE && RoadTypeIsRoad(rt)) road_rt = rt;
 				if (tram_rt == INVALID_ROADTYPE && RoadTypeIsTram(rt)) tram_rt = rt;
 
-				UpdateCompanyRoadInfrastructure(road_rt, road_owner, ROAD_STOP_TRACKBIT_FACTOR);
-				UpdateCompanyRoadInfrastructure(tram_rt, tram_owner, ROAD_STOP_TRACKBIT_FACTOR);
-
 				MakeDriveThroughRoadStop(cur_tile, st->owner, road_owner, tram_owner, st->index, rs_type, road_rt, tram_rt, axis);
 				road_stop->MakeDriveThrough();
 			} else {
 				if (road_rt == INVALID_ROADTYPE && RoadTypeIsRoad(rt)) road_rt = rt;
 				if (tram_rt == INVALID_ROADTYPE && RoadTypeIsTram(rt)) tram_rt = rt;
-				/* Non-drive-through stop never overbuild and always count as two road bits. */
-				Company::Get(st->owner)->infrastructure.road[rt] += ROAD_STOP_TRACKBIT_FACTOR;
 				MakeRoadStop(cur_tile, st->owner, st->index, rs_type, road_rt, tram_rt, ddir);
 			}
+			UpdateCompanyRoadInfrastructure(road_rt, road_owner, ROAD_STOP_TRACKBIT_FACTOR);
+			UpdateCompanyRoadInfrastructure(tram_rt, tram_owner, ROAD_STOP_TRACKBIT_FACTOR);
 			Company::Get(st->owner)->infrastructure.station++;
 
 			MarkTileDirtyByTile(cur_tile);
 		}
 
 		if (st != nullptr) {
-			st->AfterStationTileSetChange(true, type ? STATION_TRUCK: STATION_BUS);
+			st->AfterStationTileSetChange(true, is_truck_stop ? STATION_TRUCK: STATION_BUS);
 		}
 	}
 	return cost;
@@ -2082,27 +2047,23 @@ static CommandCost RemoveRoadStop(TileIndex tile, DoCommandFlag flags)
 
 /**
  * Remove bus or truck stops.
- * @param tile Northernmost tile of the removal area.
  * @param flags Operation to perform.
- * @param p1 bit 0..7: Width of the removal area.
- *           bit 8..15: Height of the removal area.
- * @param p2 bit 0: 0 For bus stops, 1 for truck stops.
- * @param p2 bit 1: 0 to keep roads of all drive-through stops, 1 to remove them.
- * @param text Unused.
+ * @param tile Northernmost tile of the removal area.
+ * @param width Width of the removal area.
+ * @param height Height of the removal area.
+ * @param stop_type Type of stop (bus/truck).
+ * @param remove_road Remove roads of drive-through stops?
  * @return The cost of this operation or an error.
  */
-CommandCost CmdRemoveRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdRemoveRoadStop(DoCommandFlag flags, TileIndex tile, uint8 width, uint8 height, RoadStopType stop_type, bool remove_road)
 {
-	uint8 width = (uint8)GB(p1, 0, 8);
-	uint8 height = (uint8)GB(p1, 8, 8);
-	bool keep_drive_through_roads = !HasBit(p2, 1);
-
+	if (stop_type >= ROADSTOP_END) return CMD_ERROR;
 	/* Check for incorrect width / height. */
 	if (width == 0 || height == 0) return CMD_ERROR;
 	/* Check if the first tile and the last tile are valid */
 	if (!IsValidTile(tile) || TileAddWrap(tile, width - 1, height - 1) == INVALID_TILE) return CMD_ERROR;
 	/* Bankrupting company is not supposed to remove roads, there may be road vehicles. */
-	if (!keep_drive_through_roads && (flags & DC_BANKRUPT)) return CMD_ERROR;
+	if (remove_road && (flags & DC_BANKRUPT)) return CMD_ERROR;
 
 	TileArea roadstop_area(tile, width, height);
 
@@ -2112,7 +2073,7 @@ CommandCost CmdRemoveRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 
 	for (TileIndex cur_tile : roadstop_area) {
 		/* Make sure the specified tile is a road stop of the correct type */
-		if (!IsTileType(cur_tile, MP_STATION) || !IsRoadStop(cur_tile) || (uint32)GetRoadStopType(cur_tile) != GB(p2, 0, 1)) continue;
+		if (!IsTileType(cur_tile, MP_STATION) || !IsRoadStop(cur_tile) || GetRoadStopType(cur_tile) != stop_type) continue;
 
 		/* Save information on to-be-restored roads before the stop is removed. */
 		RoadBits road_bits = ROAD_NONE;
@@ -2124,7 +2085,7 @@ CommandCost CmdRemoveRoadStop(TileIndex tile, DoCommandFlag flags, uint32 p1, ui
 				if (road_type[rtt] == INVALID_ROADTYPE) continue;
 				road_owner[rtt] = GetRoadOwner(cur_tile, rtt);
 				/* If we don't want to preserve our roads then restore only roads of others. */
-				if (!keep_drive_through_roads && road_owner[rtt] == _current_company) road_type[rtt] = INVALID_ROADTYPE;
+				if (remove_road && road_owner[rtt] == _current_company) road_type[rtt] = INVALID_ROADTYPE;
 			}
 			road_bits = AxisToRoadBits(DiagDirToAxis(GetRoadStopDir(cur_tile)));
 		}
@@ -2239,25 +2200,19 @@ void UpdateAirportsNoise()
 
 /**
  * Place an Airport.
- * @param tile tile where airport will be built
  * @param flags operation to perform
- * @param p1
- * - p1 = (bit  0- 7) - airport type, @see airport.h
- * - p1 = (bit  8-15) - airport layout
- * @param p2 various bitstuffed elements
- * - p2 = (bit     0) - allow airports directly adjacent to other airports.
- * - p2 = (bit 16-31) - station ID to join (NEW_STATION if build new one)
- * @param text unused
+ * @param tile tile where airport will be built
+ * @param airport_type airport type, @see airport.h
+ * @param layout airport layout
+ * @param station_to_join station ID to join (NEW_STATION if build new one)
+ * @param allow_adjacent allow airports directly adjacent to other airports.
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildAirport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdBuildAirport(DoCommandFlag flags, TileIndex tile, byte airport_type, byte layout, StationID station_to_join, bool allow_adjacent)
 {
-	StationID station_to_join = GB(p2, 16, 16);
 	bool reuse = (station_to_join != NEW_STATION);
 	if (!reuse) station_to_join = INVALID_STATION;
 	bool distant_join = (station_to_join != INVALID_STATION);
-	byte airport_type = GB(p1, 0, 8);
-	byte layout = GB(p1, 8, 8);
 
 	if (distant_join && (!_settings_game.station.distant_join_stations || !Station::IsValidID(station_to_join))) return CMD_ERROR;
 
@@ -2300,7 +2255,7 @@ CommandCost CmdBuildAirport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 			authority_refuse_message = STR_ERROR_LOCAL_AUTHORITY_REFUSES_NOISE;
 			authority_refuse_town = nearest;
 		}
-	} else {
+	} else if (_settings_game.difficulty.town_council_tolerance != TOWN_COUNCIL_PERMISSIVE) {
 		Town *t = ClosestTownFromTile(tile, UINT_MAX);
 		uint num = 0;
 		for (const Station *st : Station::Iterate()) {
@@ -2318,7 +2273,7 @@ CommandCost CmdBuildAirport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 	}
 
 	Station *st = nullptr;
-	ret = FindJoiningStation(INVALID_STATION, station_to_join, HasBit(p2, 0), airport_area, &st);
+	ret = FindJoiningStation(INVALID_STATION, station_to_join, allow_adjacent, airport_area, &st);
 	if (ret.Failed()) return ret;
 
 	/* Distant join */
@@ -2460,17 +2415,14 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlag flags)
 
 /**
  * Open/close an airport to incoming aircraft.
- * @param tile Unused.
  * @param flags Operation to perform.
- * @param p1 Station ID of the airport.
- * @param p2 Unused.
- * @param text unused
+ * @param station_id Station ID of the airport.
  * @return the cost of this operation or an error
  */
-CommandCost CmdOpenCloseAirport(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdOpenCloseAirport(DoCommandFlag flags, StationID station_id)
 {
-	if (!Station::IsValidID(p1)) return CMD_ERROR;
-	Station *st = Station::Get(p1);
+	if (!Station::IsValidID(station_id)) return CMD_ERROR;
+	Station *st = Station::Get(station_id);
 
 	if (!(st->facilities & FACIL_AIRPORT) || st->owner == OWNER_NONE) return CMD_ERROR;
 
@@ -2515,16 +2467,14 @@ static const byte _dock_h_chk[4] = { 1, 2, 1, 2 };
 
 /**
  * Build a dock/haven.
- * @param tile tile where dock will be built
  * @param flags operation to perform
- * @param p1 (bit 0) - allow docks directly adjacent to other docks.
- * @param p2 bit 16-31: station ID to join (NEW_STATION if build new one)
- * @param text unused
+ * @param tile tile where dock will be built
+ * @param station_to_join station ID to join (NEW_STATION if build new one)
+ * @param adjacent allow docks directly adjacent to other docks.
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdBuildDock(DoCommandFlag flags, TileIndex tile, StationID station_to_join, bool adjacent)
 {
-	StationID station_to_join = GB(p2, 16, 16);
 	bool reuse = (station_to_join != NEW_STATION);
 	if (!reuse) station_to_join = INVALID_STATION;
 	bool distant_join = (station_to_join != INVALID_STATION);
@@ -2544,13 +2494,13 @@ CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 	if (IsBridgeAbove(tile)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST);
 
 	CommandCost cost(EXPENSES_CONSTRUCTION, _price[PR_BUILD_STATION_DOCK]);
-	ret = DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+	ret = Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile);
 	if (ret.Failed()) return ret;
 	cost.AddCost(ret);
 
 	TileIndex tile_cur = tile + TileOffsByDiagDir(direction);
 
-	if (!IsTileType(tile_cur, MP_WATER) || !IsTileFlat(tile_cur)) {
+	if (!HasTileWaterGround(tile_cur) || !IsTileFlat(tile_cur)) {
 		return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
 	}
 
@@ -2559,8 +2509,10 @@ CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 	/* Get the water class of the water tile before it is cleared.*/
 	WaterClass wc = GetWaterClass(tile_cur);
 
-	ret = DoCommand(tile_cur, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+	bool add_cost = !IsWaterTile(tile_cur);
+	ret = Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile_cur);
 	if (ret.Failed()) return ret;
+	if (add_cost) cost.AddCost(ret);
 
 	tile_cur += TileOffsByDiagDir(direction);
 	if (!IsTileType(tile_cur, MP_WATER) || !IsTileFlat(tile_cur)) {
@@ -2572,7 +2524,7 @@ CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 
 	/* middle */
 	Station *st = nullptr;
-	ret = FindJoiningStation(INVALID_STATION, station_to_join, HasBit(p1, 0), dock_area, &st);
+	ret = FindJoiningStation(INVALID_STATION, station_to_join, adjacent, dock_area, &st);
 	if (ret.Failed()) return ret;
 
 	/* Distant join */
@@ -2969,7 +2921,7 @@ static void DrawTile_Station(TileInfo *ti)
 				EndSpriteCombine();
 			}
 
-			OffsetGroundSprite(31, 1);
+			OffsetGroundSprite(0, -8);
 			ti->z += ApplyPixelFoundationToSlope(FOUNDATION_LEVELED, &ti->tileh);
 		} else {
 draw_default_foundation:
@@ -3934,16 +3886,14 @@ static bool IsUniqueStationName(const std::string &name)
 
 /**
  * Rename a station
- * @param tile unused
  * @param flags operation to perform
- * @param p1 station ID that is to be renamed
- * @param p2 unused
+ * @param station_id station ID that is to be renamed
  * @param text the new name or an empty string when resetting to the default
  * @return the cost of this operation or an error
  */
-CommandCost CmdRenameStation(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdRenameStation(DoCommandFlag flags, StationID station_id, const std::string &text)
 {
-	Station *st = Station::GetIfValid(p1);
+	Station *st = Station::GetIfValid(station_id);
 	if (st == nullptr) return CMD_ERROR;
 
 	CommandCost ret = CheckOwnership(st->owner);
@@ -4249,12 +4199,12 @@ static void ChangeTileOwner_Station(TileIndex tile, Owner old_owner, Owner new_o
 	} else {
 		if (IsDriveThroughStopTile(tile)) {
 			/* Remove the drive-through road stop */
-			DoCommand(tile, 1 | 1 << 8, (GetStationType(tile) == STATION_TRUCK) ? ROADSTOP_TRUCK : ROADSTOP_BUS, DC_EXEC | DC_BANKRUPT, CMD_REMOVE_ROAD_STOP);
+			Command<CMD_REMOVE_ROAD_STOP>::Do(DC_EXEC | DC_BANKRUPT, tile, 1, 1, (GetStationType(tile) == STATION_TRUCK) ? ROADSTOP_TRUCK : ROADSTOP_BUS, false);
 			assert(IsTileType(tile, MP_ROAD));
 			/* Change owner of tile and all roadtypes */
 			ChangeTileOwner(tile, old_owner, new_owner);
 		} else {
-			DoCommand(tile, 0, 0, DC_EXEC | DC_BANKRUPT, CMD_LANDSCAPE_CLEAR);
+			Command<CMD_LANDSCAPE_CLEAR>::Do(DC_EXEC | DC_BANKRUPT, tile);
 			/* Set tile owner of water under (now removed) buoy and dock to OWNER_NONE.
 			 * Update owner of buoy if it was not removed (was in orders).
 			 * Do not update when owned by OWNER_WATER (sea and rivers). */
@@ -4371,7 +4321,7 @@ static CommandCost TerraformTile_Station(TileIndex tile, DoCommandFlag flags, in
 			}
 		}
 	}
-	return DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+	return Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile);
 }
 
 /**

@@ -126,6 +126,15 @@ struct RoadVehicleInfo {
 	RoadType roadtype;       ///< Road type
 };
 
+enum class ExtraEngineFlags : uint32 {
+	None = 0,
+	NoNews          = (1U << 0), ///< No 'new vehicle' news will be generated.
+	NoPreview       = (1U << 1), ///< No exclusive preview will be offered.
+	JoinPreview     = (1U << 2), ///< Engine will join exclusive preview with variant parent.
+	SyncReliability = (1U << 3), ///< Engine reliability will be synced with variant parent.
+};
+DECLARE_ENUM_AS_BIT_SET(ExtraEngineFlags);
+
 /**
  * Information about a vehicle
  *  @see table/engines.h
@@ -145,6 +154,8 @@ struct EngineInfo {
 	int8 retire_early;  ///< Number of years early to retire vehicle
 	StringID string_id; ///< Default name of engine
 	uint16 cargo_age_period; ///< Number of ticks before carried cargo is aged.
+	EngineID variant_id;     ///< Engine variant ID. If set, will be treated specially in purchase lists.
+	ExtraEngineFlags extra_flags;
 };
 
 /**
@@ -155,7 +166,7 @@ enum EngineMiscFlags {
 	EF_ROAD_TRAM  = 0, ///< Road vehicle is a tram/light rail vehicle
 	EF_USES_2CC   = 1, ///< Vehicle uses two company colours
 	EF_RAIL_IS_MU = 2, ///< Rail vehicle is a multiple-unit (DMU/EMU)
-	EF_RAIL_FLIPS = 3, ///< Rail vehicle can be flipped in the depot
+	EF_RAIL_FLIPS = 3, ///< Rail vehicle has old depot-flip handling
 	EF_AUTO_REFIT = 4, ///< Automatic refitting is allowed
 	EF_NO_DEFAULT_CARGO_MULTIPLIER = 5, ///< Use the new capacity algorithm. The default cargotype of the vehicle does not affect capacity multipliers. CB 15 is also called in purchase list.
 	EF_NO_BREAKDOWN_SMOKE          = 6, ///< Do not show black smoke during a breakdown.

@@ -27,6 +27,15 @@ void ShowSmallMap();
 void BuildLandLegend();
 void BuildOwnerLegend();
 
+/** Enum for how to include the heightmap pixels/colours in small map related functions */
+enum class IncludeHeightmap {
+	Never,      ///< Never include the heightmap
+	IfEnabled,  ///< Only include the heightmap if its enabled in the gui by the player
+	Always      ///< Always include the heightmap
+};
+
+uint32 GetSmallMapOwnerPixels(TileIndex tile, TileType t, IncludeHeightmap include_heightmap);
+
 /** Structure for holding relevant data for legends in small map */
 struct LegendAndColour {
 	uint8 colour;              ///< Colour of the item on the map.
@@ -112,6 +121,15 @@ protected:
 	}
 
 	/**
+	 * Compute minimal required width of the legends.
+	 * @return Minimally needed width for displaying the smallmap legends in pixels.
+	 */
+	inline uint GetMinLegendWidth() const
+	{
+		return WidgetDimensions::scaled.framerect.left + this->min_number_of_columns * this->column_width;
+	}
+
+	/**
 	 * Return number of columns that can be displayed in \a width pixels.
 	 * @return Number of columns to display.
 	 */
@@ -128,7 +146,7 @@ protected:
 	inline uint GetLegendHeight(uint num_columns) const
 	{
 		if (!this->show_legend) return 0;
-		return WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM +
+		return WidgetDimensions::scaled.framerect.Vertical() +
 				this->min_number_of_fixed_rows * this->row_height;
 	}
 
@@ -173,15 +191,6 @@ public:
 	void SmallMapCenterOnCurrentPos();
 	Point GetStationMiddle(const Station *st) const;
 
-	/**
-	 * Compute minimal required width of the legends.
-	 * @return Minimally needed width for displaying the smallmap legends in pixels.
-	 */
-	inline uint GetMinLegendWidth() const
-	{
-		if (!this->show_legend) return 0;
-		return WD_FRAMERECT_LEFT + this->min_number_of_columns * this->column_width;
-	}
 
 	void ShowLegend(bool show);
 

@@ -32,6 +32,9 @@
 #include "strings_func.h"
 #include "core/geometry_func.hpp"
 #include "date_func.h"
+#include "station_cmd.h"
+#include "road_cmd.h"
+#include "tunnelbridge_cmd.h"
 
 #include "widgets/road_widget.h"
 
@@ -45,29 +48,17 @@ static void ShowRoadDepotPicker(Window *parent);
 static bool _remove_button_clicked;
 static bool _one_way_button_clicked;
 
-/**
- * Define the values of the RoadFlags
- * @see CmdBuildLongRoad
- */
-enum RoadFlags {
-	RF_NONE             = 0x00,
-	RF_START_HALFROAD_Y = 0x01,    // The start tile in Y-dir should have only a half road
-	RF_END_HALFROAD_Y   = 0x02,    // The end tile in Y-dir should have only a half road
-	RF_DIR_Y            = 0x04,    // The direction is Y-dir
-	RF_DIR_X            = RF_NONE, // Dummy; Dir X is set when RF_DIR_Y is not set
-	RF_START_HALFROAD_X = 0x08,    // The start tile in X-dir should have only a half road
-	RF_END_HALFROAD_X   = 0x10,    // The end tile in X-dir should have only a half road
-};
-DECLARE_ENUM_AS_BIT_SET(RoadFlags)
-
-static RoadFlags _place_road_flag;
+static Axis _place_road_dir;
+static bool _place_road_start_half_x;
+static bool _place_road_start_half_y;
+static bool _place_road_end_half;
 
 static RoadType _cur_roadtype;
 
 static DiagDirection _road_depot_orientation;
 static DiagDirection _road_station_picker_orientation;
 
-void CcPlaySound_CONSTRUCTION_OTHER(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcPlaySound_CONSTRUCTION_OTHER(Commands cmd, const CommandCost &result, TileIndex tile)
 {
 	if (result.Succeeded() && _settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 }
@@ -75,14 +66,11 @@ void CcPlaySound_CONSTRUCTION_OTHER(const CommandCost &result, TileIndex tile, u
 /**
  * Callback executed after a build road tunnel command has been called.
  *
+ * @param cmd unused
  * @param result Whether the build succeeded.
  * @param start_tile Starting tile of the tunnel.
- * @param p1 bit 0-3 railtype or roadtypes
- *           bit 8-9 transport type
- * @param p2 unused
- * @param cmd unused
  */
-void CcBuildRoadTunnel(const CommandCost &result, TileIndex start_tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcBuildRoadTunnel(Commands cmd, const CommandCost &result, TileIndex start_tile)
 {
 	if (result.Succeeded()) {
 		if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, start_tile);
@@ -110,16 +98,15 @@ void ConnectRoadToStructure(TileIndex tile, DiagDirection direction)
 	/* if there is a roadpiece just outside of the station entrance, build a connecting route */
 	if (IsNormalRoadTile(tile)) {
 		if (GetRoadBits(tile, GetRoadTramType(_cur_roadtype)) != ROAD_NONE) {
-			DoCommandP(tile, _cur_roadtype << 4 | DiagDirToRoadBits(ReverseDiagDir(direction)), 0, CMD_BUILD_ROAD);
+			Command<CMD_BUILD_ROAD>::Post(tile, DiagDirToRoadBits(ReverseDiagDir(direction)), _cur_roadtype, DRD_NONE, 0);
 		}
 	}
 }
 
-void CcRoadDepot(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcRoadDepot(Commands cmd, const CommandCost &result, TileIndex tile, RoadType rt, DiagDirection dir)
 {
 	if (result.Failed()) return;
 
-	DiagDirection dir = (DiagDirection)GB(p1, 0, 2);
 	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 	ConnectRoadToStructure(tile, dir);
@@ -127,32 +114,26 @@ void CcRoadDepot(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2
 
 /**
  * Command callback for building road stops.
+ * @param cmd Unused.
  * @param result Result of the build road stop command.
  * @param tile Start tile.
- * @param p1 bit 0..7: Width of the road stop.
- *           bit 8..15: Length of the road stop.
- * @param p2 bit 0: 0 For bus stops, 1 for truck stops.
- *           bit 1: 0 For normal stops, 1 for drive-through.
- *           bit 2: Allow stations directly adjacent to other stations.
- *           bit 3..4: Entrance direction (#DiagDirection) for normal stops.
- *           bit 3: #Axis of the road for drive-through stops.
- *           bit 5..9: The roadtype.
- *           bit 16..31: Station ID to join (NEW_STATION if build new one).
- * @param cmd Unused.
+ * @param width Width of the road stop.
+ * @param length Length of the road stop.
+ * @param is_drive_through False for normal stops, true for drive-through.
+ * @param dir Entrance direction (#DiagDirection) for normal stops. Converted to the axis for drive-through stops.
  * @see CmdBuildRoadStop
  */
-void CcRoadStop(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2, uint32 cmd)
+void CcRoadStop(Commands cmd, const CommandCost &result, TileIndex tile, uint8 width, uint8 length, RoadStopType, bool is_drive_through, DiagDirection dir, RoadType, StationID, bool)
 {
 	if (result.Failed()) return;
 
-	DiagDirection dir = (DiagDirection)GB(p2, 3, 2);
 	if (_settings_client.sound.confirm) SndPlayTileFx(SND_1F_CONSTRUCTION_OTHER, tile);
 	if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
-	TileArea roadstop_area(tile, GB(p1, 0, 8), GB(p1, 8, 8));
+	TileArea roadstop_area(tile, width, length);
 	for (TileIndex cur_tile : roadstop_area) {
 		ConnectRoadToStructure(cur_tile, dir);
 		/* For a drive-through road stop build connecting road for other entrance. */
-		if (HasBit(p2, 1)) ConnectRoadToStructure(cur_tile, ReverseDiagDir(dir));
+		if (is_drive_through) ConnectRoadToStructure(cur_tile, ReverseDiagDir(dir));
 	}
 }
 
@@ -160,26 +141,28 @@ void CcRoadStop(const CommandCost &result, TileIndex tile, uint32 p1, uint32 p2,
  * Place a new road stop.
  * @param start_tile First tile of the area.
  * @param end_tile Last tile of the area.
- * @param p2 bit 0: 0 For bus stops, 1 for truck stops.
- *           bit 2: Allow stations directly adjacent to other stations.
- *           bit 5..10: The roadtypes.
- * @param cmd Command to use.
+ * @param stop_type Type of stop (bus/truck).
+ * @param adjacent Allow stations directly adjacent to other stations.
+ * @param rt The roadtypes.
+ * @param err_msg Error message to show.
  * @see CcRoadStop()
  */
-static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, uint32 p2, uint32 cmd)
+static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType stop_type, bool adjacent, RoadType rt, StringID err_msg)
 {
-	uint8 ddir = _road_station_picker_orientation;
-	SB(p2, 16, 16, INVALID_STATION); // no station to join
-
-	if (ddir >= DIAGDIR_END) {
-		SetBit(p2, 1); // It's a drive-through stop.
-		ddir -= DIAGDIR_END; // Adjust picker result to actual direction.
-	}
-	p2 |= ddir << 3; // Set the DiagDirecion into p2 bits 3 and 4.
-
 	TileArea ta(start_tile, end_tile);
-	CommandContainer cmdcont = { ta.tile, (uint32)(ta.w | ta.h << 8), p2, cmd, CcRoadStop, "" };
-	ShowSelectStationIfNeeded(cmdcont, ta);
+	DiagDirection ddir = _road_station_picker_orientation;
+	bool drive_through = ddir >= DIAGDIR_END;
+	if (drive_through) ddir = static_cast<DiagDirection>(ddir - DIAGDIR_END); // Adjust picker result to actual direction.
+
+	auto proc = [=](bool test, StationID to_join) -> bool {
+		if (test) {
+			return Command<CMD_BUILD_ROAD_STOP>::Do(CommandFlagsToDCFlags(GetCommandFlags<CMD_BUILD_ROAD_STOP>()), ta.tile, ta.w, ta.h, stop_type, drive_through, ddir, rt, INVALID_STATION, adjacent).Succeeded();
+		} else {
+			return Command<CMD_BUILD_ROAD_STOP>::Post(err_msg, CcRoadStop, ta.tile, ta.w, ta.h, stop_type, drive_through, ddir, rt, to_join, adjacent);
+		}
+	};
+
+	ShowSelectStationIfNeeded(ta, proc);
 }
 
 /**
@@ -521,21 +504,21 @@ struct BuildRoadToolbarWindow : Window {
 		_one_way_button_clicked = RoadTypeIsRoad(this->roadtype) ? this->IsWidgetLowered(WID_ROT_ONE_WAY) : false;
 		switch (this->last_started_action) {
 			case WID_ROT_ROAD_X:
-				_place_road_flag = RF_DIR_X;
-				if (_tile_fract_coords.x >= 8) _place_road_flag |= RF_START_HALFROAD_X;
+				_place_road_dir = AXIS_X;
+				_place_road_start_half_x = _tile_fract_coords.x >= 8;
 				VpStartPlaceSizing(tile, VPM_FIX_Y, DDSP_PLACE_ROAD_X_DIR);
 				break;
 
 			case WID_ROT_ROAD_Y:
-				_place_road_flag = RF_DIR_Y;
-				if (_tile_fract_coords.y >= 8) _place_road_flag |= RF_START_HALFROAD_Y;
+				_place_road_dir = AXIS_Y;
+				_place_road_start_half_y = _tile_fract_coords.y >= 8;
 				VpStartPlaceSizing(tile, VPM_FIX_X, DDSP_PLACE_ROAD_Y_DIR);
 				break;
 
 			case WID_ROT_AUTOROAD:
-				_place_road_flag = RF_NONE;
-				if (_tile_fract_coords.x >= 8) _place_road_flag |= RF_START_HALFROAD_X;
-				if (_tile_fract_coords.y >= 8) _place_road_flag |= RF_START_HALFROAD_Y;
+				_place_road_dir = INVALID_AXIS;
+				_place_road_start_half_x = _tile_fract_coords.x >= 8;
+				_place_road_start_half_y = _tile_fract_coords.y >= 8;
 				VpStartPlaceSizing(tile, VPM_X_OR_Y, DDSP_PLACE_AUTOROAD);
 				break;
 
@@ -620,30 +603,26 @@ struct BuildRoadToolbarWindow : Window {
 		 * bits and if needed we set them again. */
 		switch (select_proc) {
 			case DDSP_PLACE_ROAD_X_DIR:
-				_place_road_flag &= ~RF_END_HALFROAD_X;
-				if (pt.x & 8) _place_road_flag |= RF_END_HALFROAD_X;
+				_place_road_end_half = pt.x & 8;
 				break;
 
 			case DDSP_PLACE_ROAD_Y_DIR:
-				_place_road_flag &= ~RF_END_HALFROAD_Y;
-				if (pt.y & 8) _place_road_flag |= RF_END_HALFROAD_Y;
+				_place_road_end_half = pt.y & 8;
 				break;
 
 			case DDSP_PLACE_AUTOROAD:
-				_place_road_flag &= ~(RF_END_HALFROAD_Y | RF_END_HALFROAD_X);
-				if (pt.y & 8) _place_road_flag |= RF_END_HALFROAD_Y;
-				if (pt.x & 8) _place_road_flag |= RF_END_HALFROAD_X;
-
 				/* For autoroad we need to update the
 				 * direction of the road */
 				if (_thd.size.x > _thd.size.y || (_thd.size.x == _thd.size.y &&
 						( (_tile_fract_coords.x < _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) < 16) ||
 						(_tile_fract_coords.x > _tile_fract_coords.y && (_tile_fract_coords.x + _tile_fract_coords.y) > 16) ))) {
 					/* Set dir = X */
-					_place_road_flag &= ~RF_DIR_Y;
+					_place_road_dir = AXIS_X;
+					_place_road_end_half = pt.x & 8;
 				} else {
 					/* Set dir = Y */
-					_place_road_flag |= RF_DIR_Y;
+					_place_road_dir = AXIS_Y;
+					_place_road_end_half = pt.y & 8;
 				}
 				break;
 
@@ -664,11 +643,13 @@ struct BuildRoadToolbarWindow : Window {
 				case DDSP_BUILD_BRIDGE:
 					switch (last_started_action) {
 						case WID_ROT_BUILD_TUNNEL:
-							if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
-							else VpStartPreSizing();
-							DoCommandP(end_tile, _cur_roadtype | (TRANSPORT_ROAD << 8), 0,
-									CMD_BUILD_TUNNEL | CMD_MSG(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE), CcBuildRoadTunnel);
-
+							if (!_settings_client.gui.persistent_buildingtools) {
+                                ResetObjectToPlace();
+							} else {
+                                VpStartPreSizing();
+                            }
+				            Command<CMD_BUILD_TUNNEL>::Post(STR_ERROR_CAN_T_BUILD_TUNNEL_HERE, CcBuildRoadTunnel,
+						        end_tile, TRANSPORT_ROAD, _cur_roadtype);
 							break;
 						case WID_ROT_BUILD_BRIDGE:
 							if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
@@ -684,31 +665,27 @@ struct BuildRoadToolbarWindow : Window {
 
 				case DDSP_PLACE_ROAD_X_DIR:
 				case DDSP_PLACE_ROAD_Y_DIR:
-				case DDSP_PLACE_AUTOROAD:
-					/* Flag description:
-					 * Use the first three bits (0x07) if dir == Y
-					 * else use the last 2 bits (X dir has
-					 * not the 3rd bit set) */
+				case DDSP_PLACE_AUTOROAD: {
+					bool start_half = _place_road_dir == AXIS_Y ? _place_road_start_half_y : _place_road_start_half_x;
 
-					/* Even if _cur_roadtype_id is a uint8 we only use 5 bits so
-					 * we could ignore the last 3 bits and reuse them for other
-					 * flags */
-					_place_road_flag = (RoadFlags)((_place_road_flag & RF_DIR_Y) ? (_place_road_flag & 0x07) : (_place_road_flag >> 3));
-
-					DoCommandP(start_tile, end_tile, _place_road_flag | (_cur_roadtype << 3) | (_one_way_button_clicked << 10),
-							_remove_button_clicked ?
-							CMD_REMOVE_LONG_ROAD | CMD_MSG(this->rti->strings.err_remove_road) :
-							CMD_BUILD_LONG_ROAD | CMD_MSG(this->rti->strings.err_build_road), CcPlaySound_CONSTRUCTION_OTHER);
+					if (_remove_button_clicked) {
+						Command<CMD_REMOVE_LONG_ROAD>::Post(this->rti->strings.err_remove_road, CcPlaySound_CONSTRUCTION_OTHER,
+								end_tile, start_tile, _cur_roadtype, _place_road_dir, start_half, _place_road_end_half);
+					} else {
+						Command<CMD_BUILD_LONG_ROAD>::Post(this->rti->strings.err_build_road, CcPlaySound_CONSTRUCTION_OTHER,
+								end_tile, start_tile, _cur_roadtype, _place_road_dir, _one_way_button_clicked ? DRD_NORTHBOUND : DRD_NONE, start_half, _place_road_end_half, false);
+					}
 					break;
+				}
 
 				case DDSP_BUILD_BUSSTOP:
 				case DDSP_REMOVE_BUSSTOP:
 					if (this->IsWidgetLowered(WID_ROT_BUS_STATION)) {
 						if (_remove_button_clicked) {
 							TileArea ta(start_tile, end_tile);
-							DoCommandP(ta.tile, ta.w | ta.h << 8, (_ctrl_pressed << 1) | ROADSTOP_BUS, CMD_REMOVE_ROAD_STOP | CMD_MSG(this->rti->strings.err_remove_station[ROADSTOP_BUS]), CcPlaySound_CONSTRUCTION_OTHER);
+							Command<CMD_REMOVE_ROAD_STOP>::Post(this->rti->strings.err_remove_station[ROADSTOP_BUS], CcPlaySound_CONSTRUCTION_OTHER, ta.tile, ta.w, ta.h, ROADSTOP_BUS, _ctrl_pressed);
 						} else {
-							PlaceRoadStop(start_tile, end_tile, _cur_roadtype << 5 | (_ctrl_pressed << 2) | ROADSTOP_BUS, CMD_BUILD_ROAD_STOP | CMD_MSG(this->rti->strings.err_build_station[ROADSTOP_BUS]));
+							PlaceRoadStop(start_tile, end_tile, ROADSTOP_BUS, _ctrl_pressed, _cur_roadtype, this->rti->strings.err_build_station[ROADSTOP_BUS]);
 						}
 					}
 					break;
@@ -718,9 +695,9 @@ struct BuildRoadToolbarWindow : Window {
 					if (this->IsWidgetLowered(WID_ROT_TRUCK_STATION)) {
 						if (_remove_button_clicked) {
 							TileArea ta(start_tile, end_tile);
-							DoCommandP(ta.tile, ta.w | ta.h << 8, (_ctrl_pressed << 1) | ROADSTOP_TRUCK, CMD_REMOVE_ROAD_STOP | CMD_MSG(this->rti->strings.err_remove_station[ROADSTOP_TRUCK]), CcPlaySound_CONSTRUCTION_OTHER);
+							Command<CMD_REMOVE_ROAD_STOP>::Post(this->rti->strings.err_remove_station[ROADSTOP_TRUCK], CcPlaySound_CONSTRUCTION_OTHER, ta.tile, ta.w, ta.h, ROADSTOP_TRUCK, _ctrl_pressed);
 						} else {
-							PlaceRoadStop(start_tile, end_tile, _cur_roadtype << 5 | (_ctrl_pressed << 2) | ROADSTOP_TRUCK, CMD_BUILD_ROAD_STOP | CMD_MSG(this->rti->strings.err_build_station[ROADSTOP_TRUCK]));
+							PlaceRoadStop(start_tile, end_tile, ROADSTOP_TRUCK, _ctrl_pressed, _cur_roadtype, this->rti->strings.err_build_station[ROADSTOP_TRUCK]);
 						}
 					}
 					break;
@@ -729,13 +706,11 @@ struct BuildRoadToolbarWindow : Window {
 					/* Build depot. */
 					assert(start_tile == end_tile);
 					assert(last_started_action == WID_ROT_DEPOT);
-					DoCommandP(start_tile, _cur_roadtype << 2 | _road_depot_orientation, 0,
-						CMD_BUILD_ROAD_DEPOT | CMD_MSG(this->rti->strings.err_depot), CcRoadDepot);
-
+					Command<CMD_BUILD_ROAD_DEPOT>::Post(this->rti->strings.err_depot, CcRoadDepot, end_tile, _cur_roadtype, _road_depot_orientation);
 					break;
 
 				case DDSP_CONVERT_ROAD:
-					DoCommandP(end_tile, start_tile, _cur_roadtype, CMD_CONVERT_ROAD | CMD_MSG(rti->strings.err_convert_road), CcPlaySound_CONSTRUCTION_OTHER);
+					Command<CMD_CONVERT_ROAD>::Post(rti->strings.err_convert_road, CcPlaySound_CONSTRUCTION_OTHER, end_tile, start_tile, _cur_roadtype);
 					break;
 			}
 			MoveAllHiddenWindowsBackToScreen();
@@ -744,7 +719,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	void OnPlacePresize(Point pt, TileIndex tile) override
 	{
-		DoCommand(tile, _cur_roadtype | (TRANSPORT_ROAD << 8), 0, DC_AUTO, CMD_BUILD_TUNNEL);
+		Command<CMD_BUILD_TUNNEL>::Do(DC_AUTO, tile, TRANSPORT_ROAD, _cur_roadtype);
 		VpSetPresizeRange(tile, _build_tunnel_endtile == 0 ? tile : _build_tunnel_endtile);
 	}
 
@@ -929,6 +904,7 @@ Window *ShowBuildRoadToolbar(RoadType roadtype)
 
 	CloseToolbarLinkedWindows();
 	_cur_roadtype = roadtype;
+
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(RoadTypeIsRoad(_cur_roadtype) ? &_build_road_desc : &_build_tramway_desc, TRANSPORT_ROAD);
 }
 
@@ -1035,15 +1011,23 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 	{
 		if (!IsInsideMM(widget, WID_BROD_DEPOT_NE, WID_BROD_DEPOT_NW + 1)) return;
 
-		size->width  = ScaleGUITrad(64) + 2;
-		size->height = ScaleGUITrad(48) + 2;
+		size->width  = ScaleGUITrad(64) + WidgetDimensions::scaled.fullbevel.Horizontal();
+		size->height = ScaleGUITrad(48) + WidgetDimensions::scaled.fullbevel.Vertical();
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
 	{
 		if (!IsInsideMM(widget, WID_BROD_DEPOT_NE, WID_BROD_DEPOT_NW + 1)) return;
 
-		DrawRoadDepotSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), (DiagDirection)(widget - WID_BROD_DEPOT_NE + DIAGDIR_NE), _cur_roadtype);
+		DrawPixelInfo tmp_dpi;
+		if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.Width(), r.Height())) {
+			DrawPixelInfo *old_dpi = _cur_dpi;
+			_cur_dpi = &tmp_dpi;
+			int x = (r.Width()  - ScaleSpriteTrad(64)) / 2 + ScaleSpriteTrad(31);
+			int y = (r.Height() + ScaleSpriteTrad(48)) / 2 - ScaleSpriteTrad(31);
+			DrawRoadDepotSprite(x, y, (DiagDirection)(widget - WID_BROD_DEPOT_NE + DIAGDIR_NE), _cur_roadtype);
+			_cur_dpi = old_dpi;
+		}
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override
@@ -1072,27 +1056,20 @@ static const NWidgetPart _nested_build_road_depot_widgets[] = {
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_BROD_CAPTION), SetDataTip(STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
-		NWidget(NWID_HORIZONTAL_LTR),
-			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
-			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+		NWidget(NWID_HORIZONTAL), SetPadding(3),
+			NWidget(NWID_SPACER), SetFill(1, 0),
+			NWidget(NWID_VERTICAL), SetPIP(0, 2, 0),
+				NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, 2, 0),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NW), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP), EndContainer(),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NE), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP), EndContainer(),
 				EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
-				EndContainer(),
-			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(2, 0),
-			NWidget(NWID_VERTICAL),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_NE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
-				EndContainer(),
-				NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-				NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
+				NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, 2, 0),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SW), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP), EndContainer(),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROD_DEPOT_SE), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP), EndContainer(),
 				EndContainer(),
 			EndContainer(),
-			NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
 	EndContainer(),
 };
 
@@ -1151,17 +1128,15 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 
 		/* 'Accepts' and 'Supplies' texts. */
 		StationCoverageType sct = (this->window_class == WC_BUS_STATION) ? SCT_PASSENGERS_ONLY : SCT_NON_PASSENGERS_ONLY;
-		int top = this->GetWidget<NWidgetBase>(WID_BROS_LT_ON)->pos_y + this->GetWidget<NWidgetBase>(WID_BROS_LT_ON)->current_y + WD_PAR_VSEP_NORMAL;
-		NWidgetBase *back_nwi = this->GetWidget<NWidgetBase>(WID_BROS_BACKGROUND);
-		int right = back_nwi->pos_x +  back_nwi->current_x;
-		int bottom = back_nwi->pos_y +  back_nwi->current_y;
-		top = DrawStationCoverageAreaText(back_nwi->pos_x + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top, sct, rad, false) + WD_PAR_VSEP_NORMAL;
-		top = DrawStationCoverageAreaText(back_nwi->pos_x + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top, sct, rad, true) + WD_PAR_VSEP_NORMAL;
+		Rect r = this->GetWidget<NWidgetBase>(WID_BROS_ACCEPTANCE)->GetCurrentRect();
+		int top = r.top + WidgetDimensions::scaled.vsep_normal;
+		top = DrawStationCoverageAreaText(r.left, r.right, top, sct, rad, false) + WidgetDimensions::scaled.vsep_normal;
+		top = DrawStationCoverageAreaText(r.left, r.right, top, sct, rad, true) + WidgetDimensions::scaled.vsep_normal;
 		/* Resize background if the window is too small.
 		 * Never make the window smaller to avoid oscillating if the size change affects the acceptance.
 		 * (This is the case, if making the window bigger moves the mouse into the window.) */
-		if (top > bottom) {
-			ResizeWindow(this, 0, top - bottom, false);
+		if (top > r.bottom) {
+			ResizeWindow(this, 0, top - r.bottom, false);
 		}
 	}
 
@@ -1169,8 +1144,8 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 	{
 		if (!IsInsideMM(widget, WID_BROS_STATION_NE, WID_BROS_STATION_Y + 1)) return;
 
-		size->width  = ScaleGUITrad(64) + 2;
-		size->height = ScaleGUITrad(48) + 2;
+		size->width  = ScaleGUITrad(64) + WidgetDimensions::scaled.fullbevel.Horizontal();
+		size->height = ScaleGUITrad(48) + WidgetDimensions::scaled.fullbevel.Vertical();
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
@@ -1178,7 +1153,16 @@ struct BuildRoadStationWindow : public PickerWindowBase {
 		if (!IsInsideMM(widget, WID_BROS_STATION_NE, WID_BROS_STATION_Y + 1)) return;
 
 		StationType st = (this->window_class == WC_BUS_STATION) ? STATION_BUS : STATION_TRUCK;
-		StationPickerDrawSprite(r.left + 1 + ScaleGUITrad(31), r.bottom - ScaleGUITrad(31), st, INVALID_RAILTYPE, _cur_roadtype, widget - WID_BROS_STATION_NE);
+
+		DrawPixelInfo tmp_dpi;
+		if (FillDrawPixelInfo(&tmp_dpi, r.left, r.top, r.Width(), r.Height())) {
+			DrawPixelInfo *old_dpi = _cur_dpi;
+			_cur_dpi = &tmp_dpi;
+			int x = (r.Width()  - ScaleSpriteTrad(64)) / 2 + ScaleSpriteTrad(31);
+			int y = (r.Height() + ScaleSpriteTrad(48)) / 2 - ScaleSpriteTrad(31);
+			StationPickerDrawSprite(x, y, st, INVALID_RAILTYPE, _cur_roadtype, widget - WID_BROS_STATION_NE);
+			_cur_dpi = old_dpi;
+		}
 	}
 
 	void OnClick(Point pt, int widget, int click_count) override
@@ -1226,28 +1210,24 @@ static const NWidgetPart _nested_road_station_picker_widgets[] = {
 		NWidget(WWT_CAPTION,  COLOUR_DARK_GREEN, WID_BROS_CAPTION),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BROS_BACKGROUND),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
-		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+		NWidget(NWID_HORIZONTAL), SetPadding(3),
 			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
-		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SW), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SE), SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 1),
-		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
-			NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetMinimalSize(140, 14), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL),
+			NWidget(NWID_VERTICAL), SetPIP(0, 2, 0),
+				NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NW), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_NE), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+				EndContainer(),
+				NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SW), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_SE), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+				EndContainer(),
+			EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
+		NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetPadding(WidgetDimensions::unscaled.framerect), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL), SetFill(1, 0),
+		NWidget(NWID_HORIZONTAL), SetPadding(3),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_LT_OFF), SetMinimalSize(60, 12),
 											SetDataTip(STR_STATION_BUILD_COVERAGE_OFF, STR_STATION_BUILD_COVERAGE_AREA_OFF_TOOLTIP),
@@ -1255,7 +1235,7 @@ static const NWidgetPart _nested_road_station_picker_widgets[] = {
 											SetDataTip(STR_STATION_BUILD_COVERAGE_ON, STR_STATION_BUILD_COVERAGE_AREA_ON_TOOLTIP),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetResize(0, 1),
+		NWidget(WWT_EMPTY, COLOUR_DARK_GREEN, WID_BROS_ACCEPTANCE), SetPadding(WidgetDimensions::unscaled.framerect), SetResize(0, 1),
 	EndContainer(),
 };
 
@@ -1273,19 +1253,18 @@ static const NWidgetPart _nested_tram_station_picker_widgets[] = {
 		NWidget(WWT_CAPTION,  COLOUR_DARK_GREEN, WID_BROS_CAPTION),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_BROS_BACKGROUND),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 3),
-		NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+		NWidget(NWID_HORIZONTAL), SetPadding(3),
 			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetSizingType(NWST_BUTTON), SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 1),
-		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
-			NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetMinimalSize(140, 14), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL),
+			NWidget(NWID_VERTICAL), SetPIP(0, 2, 0),
+				NWidget(NWID_HORIZONTAL), SetPIP(0, 2, 0),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+					NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
+				EndContainer(),
+			EndContainer(),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
+		NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_INFO), SetPadding(WidgetDimensions::unscaled.framerect), SetMinimalSize(140, 14), SetDataTip(STR_STATION_BUILD_COVERAGE_AREA_TITLE, STR_NULL), SetFill(1, 0),
+		NWidget(NWID_HORIZONTAL), SetPadding(3),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROS_LT_OFF), SetMinimalSize(60, 12),
 											SetDataTip(STR_STATION_BUILD_COVERAGE_OFF, STR_STATION_BUILD_COVERAGE_AREA_OFF_TOOLTIP),
@@ -1293,7 +1272,7 @@ static const NWidgetPart _nested_tram_station_picker_widgets[] = {
 											SetDataTip(STR_STATION_BUILD_COVERAGE_ON, STR_STATION_BUILD_COVERAGE_AREA_ON_TOOLTIP),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 10), SetResize(0, 1),
+		NWidget(WWT_EMPTY, COLOUR_DARK_GREEN, WID_BROS_ACCEPTANCE), SetPadding(WidgetDimensions::unscaled.framerect), SetResize(0, 1),
 	EndContainer(),
 };
 

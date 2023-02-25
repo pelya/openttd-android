@@ -51,8 +51,6 @@ void RebuildStationKdtree()
 
 BaseStation::~BaseStation()
 {
-	free(this->speclist);
-
 	if (CleaningPool()) return;
 
 	CloseWindowById(WC_TRAINS_LIST,   VehicleListIdentifier(VL_STATION_LIST, VEH_TRAIN,    this->owner, this->index).Pack());
@@ -227,7 +225,7 @@ void Station::MarkTilesDirty(bool cargo_change) const
 		/* Don't waste time updating if there are no custom station graphics
 		 * that might change. Even if there are custom graphics, they might
 		 * not change. Unfortunately we have no way of telling. */
-		if (this->num_specs == 0) return;
+		if (this->speclist.size() == 0) return;
 	}
 
 	for (h = 0; h < train_station.h; h++) {
@@ -357,12 +355,25 @@ Rect Station::GetCatchmentRect() const
 
 /**
  * Add nearby industry to station's industries_near list if it accepts cargo.
- * @param ind Industry
+ * For industries that are already on the list update distance if it's closer.
+ * @param ind  Industry
+ * @param tile Tile of the industry to measure distance to.
  */
-void Station::AddIndustryToDeliver(Industry *ind)
+void Station::AddIndustryToDeliver(Industry *ind, TileIndex tile)
 {
-	/* Don't check further if this industry is already in the list */
-	if (this->industries_near.find(ind) != this->industries_near.end()) return;
+	/* Using DistanceMax to get about the same order as with previously used CircularTileSearch. */
+	uint distance = DistanceMax(this->xy, tile);
+
+	/* Don't check further if this industry is already in the list but update the distance if it's closer */
+	auto pos = std::find_if(this->industries_near.begin(), this->industries_near.end(), [&](const IndustryListEntry &e) { return e.industry->index == ind->index; });
+	if (pos != this->industries_near.end()) {
+		if (pos->distance > distance) {
+			auto node = this->industries_near.extract(pos);
+			node.value().distance = distance;
+			this->industries_near.insert(std::move(node));
+		}
+		return;
+	}
 
 	/* Include only industries that can accept cargo */
 	uint cargo_index;
@@ -371,8 +382,20 @@ void Station::AddIndustryToDeliver(Industry *ind)
 	}
 	if (cargo_index >= lengthof(ind->accepts_cargo)) return;
 
-	this->industries_near.insert(ind);
+	this->industries_near.insert(IndustryListEntry{distance, ind});
 }
+
+/**
+ * Remove nearby industry from station's industries_near list.
+ * @param ind  Industry
+ */
+void Station::RemoveIndustryToDeliver(Industry *ind) {
+	auto pos = std::find_if(this->industries_near.begin(), this->industries_near.end(), [&](const IndustryListEntry &e) { return e.industry->index == ind->index; });
+	if (pos != this->industries_near.end()) {
+		this->industries_near.erase(pos);
+	}
+}
+
 
 /**
  * Remove this station from the nearby stations lists of all towns and industries.
@@ -423,11 +446,11 @@ void Station::RecomputeCatchment()
 		}
 		/* The industry's stations_near may have been computed before its neutral station was built so clear and re-add here. */
 		for (Station *st : this->industry->stations_near) {
-			st->industries_near.erase(this->industry);
+			st->RemoveIndustryToDeliver(this->industry);
 		}
 		this->industry->stations_near.clear();
 		this->industry->stations_near.insert(this);
-		this->industries_near.insert(this->industry);
+		this->industries_near.insert(IndustryListEntry{0, this->industry});
 		return;
 	}
 
@@ -462,7 +485,7 @@ void Station::RecomputeCatchment()
 			i->stations_near.insert(this);
 
 			/* Add if we can deliver to this industry as well */
-			this->AddIndustryToDeliver(i);
+			this->AddIndustryToDeliver(i, tile);
 		}
 	}
 }
@@ -526,8 +549,8 @@ CommandCost StationRect::BeforeAddTile(TileIndex tile, StationRectMode mode)
 		Rect new_rect = {std::min(x, this->left), std::min(y, this->top), std::max(x, this->right), std::max(y, this->bottom)};
 
 		/* check new rect dimensions against preset max */
-		int w = new_rect.right - new_rect.left + 1;
-		int h = new_rect.bottom - new_rect.top + 1;
+		int w = new_rect.Width();
+		int h = new_rect.Height();
 		if (mode != ADD_FORCE && (w > _settings_game.station.station_spread || h > _settings_game.station.station_spread)) {
 			assert(mode != ADD_TRY);
 			return_cmd_error(STR_ERROR_STATION_TOO_SPREAD_OUT);

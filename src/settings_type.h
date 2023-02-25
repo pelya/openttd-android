@@ -123,6 +123,7 @@ struct GUISettings {
 	uint16 hover_delay_ms;                   ///< time required to activate a hover event, in milliseconds
 	bool   link_terraform_toolbar;           ///< display terraform toolbar when displaying rail, road, water and airport toolbars
 	uint8  smallmap_land_colour;             ///< colour used for land and heightmap at the smallmap
+	uint8  linkgraph_colours;                ///< linkgraph overlay colours
 	uint8  scroll_mode;                      ///< viewport scroll mode
 	bool   smooth_scroll;                    ///< smooth scroll viewports
 	bool   measure_tooltip;                  ///< show a permanent tooltip when dragging tools
@@ -177,6 +178,7 @@ struct GUISettings {
 	uint8  osk_activation;                   ///< Mouse gesture to trigger the OSK.
 	byte   starting_colour;                  ///< default color scheme for the company to start a new game with
 	bool   show_newgrf_name;                 ///< Show the name of the NewGRF in the build vehicle window
+	bool   show_cargo_in_vehicle_lists;      ///< Show the cargoes the vehicles can carry in the list windows
 	bool   auto_remove_signals;              ///< automatically remove signals when in the way during rail construction
 	uint16 refresh_rate;                     ///< How often we refresh the screen (time between draw-ticks).
 	uint16 fast_forward_speed_limit;         ///< Game speed to use when fast-forward is enabled.
@@ -194,11 +196,13 @@ struct GUISettings {
 	uint8  developer;                        ///< print non-fatal warnings in console (>= 1), copy debug output to console (== 2)
 	bool   show_date_in_logs;                ///< whether to show dates in console logs
 	bool   newgrf_developer_tools;           ///< activate NewGRF developer tools and allow modifying NewGRFs in an existing game
-	bool   ai_developer_tools;               ///< activate AI developer tools
+	bool   ai_developer_tools;               ///< activate AI/GS developer tools
 	bool   scenario_developer;               ///< activate scenario developer: allow modifying NewGRFs in an existing game
 	uint8  settings_restriction_mode;        ///< selected restriction mode in adv. settings GUI. @see RestrictionMode
 	bool   newgrf_show_old_versions;         ///< whether to show old versions in the NewGRF list
 	uint8  newgrf_default_palette;           ///< default palette to use for NewGRFs without action 14 palette information
+
+	bool   scale_bevels;                     ///< bevels are scaled with GUI scale.
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
@@ -252,6 +256,7 @@ struct NewsSettings {
 	uint8 arrival_player;                                 ///< NewsDisplay of vehicles arriving at new stations of current player
 	uint8 arrival_other;                                  ///< NewsDisplay of vehicles arriving at new stations of other players
 	uint8 accident;                                       ///< NewsDisplay of accidents that occur
+	uint8 accident_other;                                 ///< NewsDisplay if a vehicle from another company is involved in an accident
 	uint8 company_info;                                   ///< NewsDisplay of general company information
 	uint8 open;                                           ///< NewsDisplay on new industry constructions
 	uint8 close;                                          ///< NewsDisplay about closing industries
@@ -361,6 +366,8 @@ struct ConstructionSettings {
 	uint16 clear_frame_burst;                ///< how many tiles may, over a short period, be cleared?
 	uint32 tree_per_64k_frames;              ///< how many trees may, over a long period, be planted per 65536 frames?
 	uint16 tree_frame_burst;                 ///< how many trees may, over a short period, be planted?
+	uint32 build_object_per_64k_frames;      ///< how many tiles may, over a long period, be purchased or have objects built on them per 65536 frames?
+	uint16 build_object_frame_burst;         ///< how many tiles may, over a short period, be purchased or have objects built on them?
 };
 
 /** Settings related to the AI. */
@@ -526,7 +533,7 @@ struct EconomySettings {
 	bool   allow_town_roads;                 ///< towns are allowed to build roads (always allowed when generating world / in SE)
 	TownFounding found_town;                 ///< town founding.
 	bool   station_noise_level;              ///< build new airports when the town noise level is still within accepted limits
-	uint16 town_noise_population[3];         ///< population to base decision on noise evaluation (@see town_council_tolerance)
+	uint16 town_noise_population[4];         ///< population to base decision on noise evaluation (@see town_council_tolerance)
 	bool   allow_town_level_crossings;       ///< towns are allowed to build level crossings
 	bool   infrastructure_maintenance;       ///< enable monthly maintenance fee for owner infrastructure
 };

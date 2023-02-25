@@ -5,7 +5,7 @@ if(NOT BINARY_NAME)
 endif()
 
 project(${BINARY_NAME}
-    VERSION 12.2
+    VERSION 13.0
 )
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -22,7 +22,7 @@ if (EMSCRIPTEN)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.14)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
 
 # Use GNUInstallDirs to allow customisation
 # but set our own default data and bin dir
@@ -141,7 +141,7 @@ if(NOT OPTION_DEDICATED)
             find_package(Fluidsynth)
             find_package(Timidity)
             find_package(Fontconfig)
-            find_package(ICU OPTIONAL_COMPONENTS i18n lx)
+            find_package(ICU REQUIRED uc OPTIONAL_COMPONENTS i18n lx)
         endif()
     endif()
 endif()
@@ -281,6 +281,7 @@ if(NOT OPTION_DEDICATED)
     link_package(FREETYPE TARGET Freetype::Freetype)
     link_package(Fontconfig TARGET Fontconfig::Fontconfig)
     link_package(ICU_lx)
+    link_package(ICU_uc)
     link_package(ICU_i18n)
 
     if(SDL2_FOUND AND OPENGL_FOUND AND UNIX)
@@ -337,8 +338,7 @@ if(EMSCRIPTEN)
     add_definitions(-s DISABLE_EXCEPTION_CATCHING=0)
 
     # Export functions to Javascript.
-    target_link_libraries(WASM::WASM INTERFACE "-s EXPORTED_FUNCTIONS='[\"_main\",\"_em_openttd_add_server\",\"_em_openttd_cloud_save_from_js\"]'")
-    target_link_libraries(WASM::WASM INTERFACE "-s EXPORTED_RUNTIME_METHODS='[\"cwrap\",\"ccall\"]'")
+    target_link_libraries(WASM::WASM INTERFACE "-s EXPORTED_FUNCTIONS='[\"_main\", \"_em_openttd_add_server\"]' -s EXPORTED_RUNTIME_METHODS='[\"cwrap\"]'")
 
     # Preload all the files we generate during build.
     # As we do not compile with FreeType / FontConfig, we also have no way to

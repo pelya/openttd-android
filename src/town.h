@@ -152,6 +152,13 @@ void ExpandTown(Town *t);
 
 void RebuildTownKdtree();
 
+/** Settings for town council attitudes. */
+enum TownCouncilAttitudes {
+	TOWN_COUNCIL_LENIENT    = 0,
+	TOWN_COUNCIL_TOLERANT   = 1,
+	TOWN_COUNCIL_HOSTILE    = 2,
+	TOWN_COUNCIL_PERMISSIVE = 3,
+};
 
 /**
  * Action types that a company must ask permission for to a town authority.
@@ -193,18 +200,6 @@ Town *CalcClosestTownFromTile(TileIndex tile, uint threshold = UINT_MAX);
 
 void ResetHouses();
 
-void ClearTownHouse(Town *t, TileIndex tile);
-void UpdateTownMaxPass(Town *t);
-void UpdateTownRadius(Town *t);
-CommandCost CheckIfAuthorityAllowsNewStation(TileIndex tile, DoCommandFlag flags);
-Town *ClosestTownFromTile(TileIndex tile, uint threshold);
-void ChangeTownRating(Town *t, int add, int max, DoCommandFlag flags);
-HouseZonesBits GetTownRadiusGroup(const Town *t, TileIndex tile);
-void SetTownRatingTestMode(bool mode);
-uint GetMaskOfTownActions(int *nump, CompanyID cid, const Town *t);
-bool GenerateTowns(TownLayout layout);
-const CargoSpec *FindFirstCargoWithTownEffect(TownEffect effect);
-
 /** Town actions of a company. */
 enum TownActions {
 	TACT_NONE             = 0x00, ///< Empty action set.
@@ -227,8 +222,19 @@ enum TownActions {
 };
 DECLARE_ENUM_AS_BIT_SET(TownActions)
 
+void ClearTownHouse(Town *t, TileIndex tile);
+void UpdateTownMaxPass(Town *t);
+void UpdateTownRadius(Town *t);
+CommandCost CheckIfAuthorityAllowsNewStation(TileIndex tile, DoCommandFlag flags);
+Town *ClosestTownFromTile(TileIndex tile, uint threshold);
+void ChangeTownRating(Town *t, int add, int max, DoCommandFlag flags);
+HouseZonesBits GetTownRadiusGroup(const Town *t, TileIndex tile);
+void SetTownRatingTestMode(bool mode);
+TownActions GetMaskOfTownActions(CompanyID cid, const Town *t);
+bool GenerateTowns(TownLayout layout);
+const CargoSpec *FindFirstCargoWithTownEffect(TownEffect effect);
+
 extern const byte _town_action_costs[TACT_COUNT];
-extern TownID _new_town_id;
 
 /**
  * Set the default name for a depot/waypoint

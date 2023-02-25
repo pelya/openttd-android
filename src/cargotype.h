@@ -23,7 +23,7 @@
 typedef uint32 CargoLabel;
 
 /** Town growth effect when delivering cargo. */
-enum TownEffect {
+enum TownEffect : byte {
 	TE_BEGIN = 0,
 	TE_NONE = TE_BEGIN, ///< Cargo has no effect.
 	TE_PASSENGERS,      ///< Cargo behaves passenger-like.
@@ -66,7 +66,6 @@ struct CargoSpec {
 
 	bool is_freight;                 ///< Cargo type is considered to be freight (affects train freight multiplier).
 	TownEffect town_effect;          ///< The effect that delivering this cargo type has on towns. Also affects destination of subsidies.
-	uint16 multipliertowngrowth;     ///< Size of the effect.
 	uint8 callback_mask;             ///< Bitmask of cargo callbacks that have to be called
 
 	StringID name;                   ///< Name of this type of cargo.
@@ -123,6 +122,13 @@ struct CargoSpec {
 	}
 
 	SpriteID GetCargoIcon() const;
+
+	inline uint64 WeightOfNUnits(uint32 n) const
+	{
+		return n * this->weight / 16u;
+	}
+
+	uint64 WeightOfNUnitsInTrain(uint32 n) const;
 
 	/**
 	 * Iterator to iterate all valid CargoSpec

@@ -94,7 +94,7 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 #endif /* WITH_FREETYPE */
 
 
-bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, int winlangid, MissingGlyphSearcher *callback)
+bool SetFallbackFont(FontCacheSettings *settings, const char *language_isocode, int winlangid, MissingGlyphSearcher *callback)
 {
 	if (!FcInit()) return false;
 
@@ -109,8 +109,7 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 	if (split != nullptr) *split = '\0';
 
 	/* First create a pattern to match the wanted language. */
-	//FcPattern *pat = FcNameParse((FcChar8*)lang);
-	FcPattern *pat = FcPatternCreate();
+	FcPattern *pat = FcNameParse((FcChar8 *)lang);
 	/* We only want to know the filename. */
 	FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_SPACING, FC_SLANT, FC_WEIGHT, nullptr);
 	/* Get the list of filenames matching the wanted language. */
@@ -123,7 +122,6 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 	if (fs != nullptr) {
 		int best_weight = -1;
 		const char *best_font = nullptr;
-		int best_missing_glypths = 65536;
 
 		for (int i = 0; i < fs->nfont; i++) {
 			FcPattern *font = fs->fonts[i];
@@ -133,39 +131,35 @@ bool SetFallbackFont(FreeTypeSettings *settings, const char *language_isocode, i
 			if (res != FcResultMatch || file == nullptr) {
 				continue;
 			}
-			int missing = 0;
 
 			/* Get a font with the right spacing .*/
 			int value = 0;
 			FcPatternGetInteger(font, FC_SPACING, 0, &value);
-			if (callback->Monospace() != (value == FC_MONO) && value != FC_DUAL) missing += 1;
+			if (callback->Monospace() != (value == FC_MONO) && value != FC_DUAL) continue;
 
 			/* Do not use those that explicitly say they're slanted. */
 			FcPatternGetInteger(font, FC_SLANT, 0, &value);
-			if (value != 0) missing += 1;
+			if (value != 0) continue;
 
 			/* We want the fatter font as they look better at small sizes. */
 			FcPatternGetInteger(font, FC_WEIGHT, 0, &value);
-			if (value <= best_weight) missing += 1;
+			if (value <= best_weight) continue;
 
 			callback->SetFontNames(settings, (const char *)file);
 
-			missing += callback->FindMissingGlyphs();
-			Debug(freetype, 1, "Font \"{}\" misses{} glyphs for lang {}", file, missing, lang);
+			bool missing = callback->FindMissingGlyphs();
+			Debug(fontcache, 1, "Font \"{}\" misses{} glyphs", file, missing ? "" : " no");
 
-			if (missing < best_missing_glypths) {
+			if (!missing) {
 				best_weight = value;
 				best_font = (const char *)file;
-				best_missing_glypths = missing;
-				if (missing == 0) break;
 			}
 		}
 
 		if (best_font != nullptr) {
 			ret = true;
 			callback->SetFontNames(settings, best_font);
-			InitFreeType(callback->Monospace());
-			Debug(freetype, 1, "Selected font {} for lang {}", best_font, lang);
+			InitFontCache(callback->Monospace());
 		}
 
 		/* Clean up the list of filenames. */

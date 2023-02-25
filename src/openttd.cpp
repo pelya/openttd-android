@@ -13,6 +13,7 @@
 #include "sound/sound_driver.hpp"
 #include "music/music_driver.hpp"
 #include "video/video_driver.hpp"
+#include "mixer.h"
 
 #include "fontcache.h"
 #include "error.h"
@@ -66,6 +67,7 @@
 #include "framerate_type.h"
 #include "industry.h"
 #include "network/network_gui.h"
+#include "misc_cmd.h"
 
 #include "linkgraph/linkgraphschedule.h"
 
@@ -181,7 +183,7 @@ static void ShowHelp()
 		"\n"
 		"Command line options:\n"
 		"  -v drv              = Set video driver (see below)\n"
-		"  -s drv              = Set sound driver (see below) (param bufsize,hz)\n"
+		"  -s drv              = Set sound driver (see below)\n"
 		"  -m drv              = Set music driver (see below)\n"
 		"  -b drv              = Set the blitter to use (see below)\n"
 		"  -r res              = Set resolution (for instance 800x600)\n"
@@ -206,6 +208,8 @@ static void ShowHelp()
 		"  -x                  = Never save configuration changes to disk\n"
 		"  -X                  = Don't use global folders to search for files\n"
 		"  -q savegame         = Write some information about the savegame and exit\n"
+		"  -Q                  = Don't scan for/load NewGRF files on startup\n"
+		"  -QQ                 = Disable NewGRF scanning/loading entirely\n"
 		"\n",
 		lastof(buf)
 	);
@@ -230,12 +234,14 @@ static void ShowHelp()
 
 	/* We need to initialize the AI, so it finds the AIs */
 	AI::Initialize();
-	p = AI::GetConsoleList(p, lastof(buf), true);
+	const std::string ai_list = AI::GetConsoleList(true);
+	p = strecpy(p, ai_list.c_str(), lastof(buf));
 	AI::Uninitialize(true);
 
 	/* We need to initialize the GameScript, so it finds the GSs */
 	Game::Initialize();
-	p = Game::GetConsoleList(p, lastof(buf), true);
+	const std::string game_list = Game::GetConsoleList(true);
+	p = strecpy(p, game_list.c_str(), lastof(buf));
 	Game::Uninitialize(true);
 
 	/* ShowInfo put output to stderr, but version information should go
@@ -332,7 +338,7 @@ static void ShutdownGame()
 	/* No NewGRFs were loaded when it was still bootstrapping. */
 	if (_game_mode != GM_BOOTSTRAP) ResetNewGRFData();
 
-	UninitFreeType();
+	UninitFontCache();
 }
 
 /**
@@ -453,8 +459,9 @@ struct AfterNewGRFScan : NewGRFScanCallback {
 		/* We have loaded the config, so we may possibly save it. */
 		_save_config = save_config;
 
-		/* restore saved music volume */
+		/* restore saved music and effects volumes */
 		MusicDriver::GetInstance()->SetVolume(_settings_client.music.music_vol);
+		SetEffectVolume(_settings_client.music.effect_vol);
 
 		if (startyear != INVALID_YEAR) IConsoleSetSetting("game_creation.starting_year", startyear);
 		if (generation_seed != GENERATE_NEW_SEED) _settings_newgame.game_creation.generation_seed = generation_seed;
@@ -517,6 +524,7 @@ static const OptionData _options[] = {
 	 GETOPT_SHORT_NOVAL('X'),
 	 GETOPT_SHORT_VALUE('q'),
 	 GETOPT_SHORT_NOVAL('h'),
+	 GETOPT_SHORT_NOVAL('Q'),
 	GETOPT_END()
 };
 
@@ -566,7 +574,7 @@ int openttd_main(int argc, char *argv[])
 			videodriver = "dedicated";
 			blitter = "null";
 			dedicated = true;
-			SetDebugString("net=4");
+			SetDebugString("net=4", ShowInfo);
 			if (mgo.opt != nullptr) {
 				scanner->dedicated_host = ParseFullConnectionString(mgo.opt, scanner->dedicated_port);
 			}
@@ -590,7 +598,7 @@ int openttd_main(int argc, char *argv[])
 #if defined(_WIN32)
 				CreateConsole();
 #endif
-				if (mgo.opt != nullptr) SetDebugString(mgo.opt);
+				if (mgo.opt != nullptr) SetDebugString(mgo.opt, ShowInfo);
 				break;
 			}
 		case 'e': _switch_mode = (_switch_mode == SM_LOAD_GAME || _switch_mode == SM_LOAD_SCENARIO ? SM_LOAD_SCENARIO : SM_EDITOR); break;
@@ -644,6 +652,11 @@ int openttd_main(int argc, char *argv[])
 
 			WriteSavegameInfo(title);
 			return ret;
+		}
+		case 'Q': {
+			extern int _skip_all_newgrf_scanning;
+			_skip_all_newgrf_scanning += 1;
+			break;
 		}
 		case 'G': scanner->generation_seed = strtoul(mgo.opt, nullptr, 10); break;
 		case 'c': _config_file = mgo.opt; break;
@@ -712,8 +725,8 @@ int openttd_main(int argc, char *argv[])
 	/* enumerate language files */
 	InitializeLanguagePacks();
 
-	/* Initialize the regular font for FreeType */
-	InitFreeType(false);
+	/* Initialize the font cache */
+	InitFontCache(false);
 
 	/* This must be done early, since functions use the SetWindowDirty* calls */
 	InitWindowSystem();
@@ -760,7 +773,9 @@ int openttd_main(int argc, char *argv[])
 
 	/* Initialize the zoom level of the screen to normal */
 	_screen.zoom = ZOOM_LVL_NORMAL;
-	UpdateGUIZoom();
+
+	/* The video driver is now selected, now initialise GUI zoom */
+	AdjustGUIZoom(false);
 
 	NetworkStartUp(); // initialize network-core
 
@@ -846,14 +861,28 @@ void HandleExitGameRequest()
 }
 
 /**
+ * Triggers everything required to set up a saved scenario for a new game.
+ */
+static void OnStartScenario()
+{
+	/* Reset engine pool to simplify changing engine NewGRFs in scenario editor. */
+	EngineOverrideManager::ResetToCurrentNewGRFConfig();
+
+	/* Make sure all industries were built "this year", to avoid too early closures. (#9918) */
+	for (Industry *i : Industry::Iterate()) {
+		i->last_prod_year = _cur_year;
+	}
+}
+
+/**
  * Triggers everything that should be triggered when starting a game.
  * @param dedicated_server Whether this is a dedicated server or not.
  */
 static void OnStartGame(bool dedicated_server)
 {
-	/* Update the local company for a loaded game. It is either always
-	 * company #1 (eg 0) or in the case of a dedicated server a spectator */
-	SetLocalCompany(dedicated_server ? COMPANY_SPECTATOR : COMPANY_FIRST);
+	/* Update the local company for a loaded game. It is either the first available company
+	 * or in the case of a dedicated server, a spectator */
+	SetLocalCompany(dedicated_server ? COMPANY_SPECTATOR : GetFirstPlayableCompanyID());
 
 	/* Update the static game info to set the values from the new game. */
 	NetworkServerUpdateGameInfo();
@@ -868,7 +897,7 @@ static void MakeNewGameDone()
 	/* In a dedicated server, the server does not play */
 	if (!VideoDriver::GetInstance()->HasGUI()) {
 		OnStartGame(true);
-		if (_settings_client.gui.pause_on_newgame) DoCommandP(0, PM_PAUSED_NORMAL, 1, CMD_PAUSE);
+		if (_settings_client.gui.pause_on_newgame) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, true);
 		return;
 	}
 
@@ -897,7 +926,7 @@ static void MakeNewGameDone()
 		NetworkChangeCompanyPassword(_local_company, _settings_client.network.default_company_pass);
 	}
 
-	if (_settings_client.gui.pause_on_newgame) DoCommandP(0, PM_PAUSED_NORMAL, 1, CMD_PAUSE);
+	if (_settings_client.gui.pause_on_newgame) Command<CMD_PAUSE>::Post(PM_PAUSED_NORMAL, true);
 
 	CheckEngines();
 	CheckIndustries();
@@ -1057,12 +1086,11 @@ void SwitchToMode(SwitchMode new_mode)
 				ShowErrorMessage(STR_JUST_RAW_STRING, INVALID_STRING_ID, WL_ERROR);
 			} else {
 				if (_file_to_saveload.abstract_ftype == FT_SCENARIO) {
-					/* Reset engine pool to simplify changing engine NewGRFs in scenario editor. */
-					EngineOverrideManager::ResetToCurrentNewGRFConfig();
+					OnStartScenario();
 				}
 				OnStartGame(_network_dedicated);
 				/* Decrease pause counter (was increased from opening load dialog) */
-				DoCommandP(0, PM_PAUSED_SAVELOAD, 0, CMD_PAUSE);
+				Command<CMD_PAUSE>::Post(PM_PAUSED_SAVELOAD, false);
 			}
 			break;
 		}
@@ -1084,7 +1112,7 @@ void SwitchToMode(SwitchMode new_mode)
 				SetLocalCompany(OWNER_NONE);
 				_settings_newgame.game_creation.starting_year = _cur_year;
 				/* Cancel the saveload pausing */
-				DoCommandP(0, PM_PAUSED_SAVELOAD, 0, CMD_PAUSE);
+				Command<CMD_PAUSE>::Post(PM_PAUSED_SAVELOAD, false);
 			} else {
 				SetDParamStr(0, GetSaveLoadErrorString());
 				ShowErrorMessage(STR_JUST_RAW_STRING, INVALID_STRING_ID, WL_ERROR);

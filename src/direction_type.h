@@ -102,10 +102,12 @@ template <> struct EnumPropsT<DiagDirection> : MakeEnumPropsT<DiagDirection, byt
  * @see DirDiff
  */
 enum DiagDirDiff {
+	DIAGDIRDIFF_BEGIN   = 0,        ///< Used for iterations
 	DIAGDIRDIFF_SAME    = 0,        ///< Same directions
 	DIAGDIRDIFF_90RIGHT = 1,        ///< 90 degrees right
 	DIAGDIRDIFF_REVERSE = 2,        ///< Reverse directions
 	DIAGDIRDIFF_90LEFT  = 3,        ///< 90 degrees left
+	DIAGDIRDIFF_END,                ///< Used for iterations
 };
 
 /** Allow incrementing of DiagDirDiff variables */
@@ -120,7 +122,7 @@ DECLARE_POSTFIX_INCREMENT(DiagDirDiff)
  * (and south-east edge). The Y axis must be so the one which goes
  * align the north-east edge (and south-west) edge.
  */
-enum Axis {
+enum Axis : byte {
 	AXIS_X = 0,          ///< The X axis
 	AXIS_Y = 1,          ///< The y axis
 	AXIS_END,            ///< Used for iterations

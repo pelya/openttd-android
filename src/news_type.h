@@ -18,10 +18,11 @@
 /**
  * Type of news.
  */
-enum NewsType {
+enum NewsType : byte {
 	NT_ARRIVAL_COMPANY, ///< First vehicle arrived for company
 	NT_ARRIVAL_OTHER,   ///< First vehicle arrived for competitor
 	NT_ACCIDENT,        ///< An accident or disaster has occurred
+	NT_ACCIDENT_OTHER,  ///< An accident or disaster has occurred
 	NT_COMPANY_INFO,    ///< Company info (new companies, bankruptcy messages)
 	NT_INDUSTRY_OPEN,   ///< Opening of industries
 	NT_INDUSTRY_CLOSE,  ///< Closing of industries
@@ -46,7 +47,7 @@ enum NewsType {
  * You have to make sure, #ChangeVehicleNews catches the DParams of your message.
  * This is NOT ensured by the references.
  */
-enum NewsReferenceType {
+enum NewsReferenceType : byte {
 	NR_NONE,      ///< Empty reference
 	NR_TILE,      ///< Reference tile.     Scroll to tile when clicking on the news.
 	NR_VEHICLE,   ///< Reference vehicle.  Scroll to vehicle when clicking on the news. Delete news when vehicle is deleted.

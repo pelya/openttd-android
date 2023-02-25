@@ -51,6 +51,10 @@
 #include "linkgraph/linkgraph.h"
 #include "linkgraph/refresh.h"
 #include "framerate_type.h"
+#include "autoreplace_cmd.h"
+#include "misc_cmd.h"
+#include "train_cmd.h"
+#include "vehicle_cmd.h"
 
 #include "table/strings.h"
 
@@ -80,10 +84,6 @@ static const int GEN_HASHY_INC = 1 << GEN_HASHX_BITS;
 /* Mask to wrap-around buckets */
 static const uint GEN_HASHX_MASK =  (1 << GEN_HASHX_BITS) - 1;
 static const uint GEN_HASHY_MASK = ((1 << GEN_HASHY_BITS) - 1) << GEN_HASHX_BITS;
-
-VehicleID _new_vehicle_id;
-uint _returned_refit_capacity;        ///< Stores the capacity after a refit operation.
-uint16 _returned_mail_refit_capacity; ///< Stores the mail capacity after a refit operation (Aircraft only).
 
 
 /** The pool with all our precious vehicles. */
@@ -307,7 +307,7 @@ void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRF
 		SetDParamStr(0, grfconfig->GetName());
 		SetDParam(1, engine);
 		ShowErrorMessage(part1, part2, WL_CRITICAL);
-		if (!_networking) DoCommand(0, critical ? PM_PAUSED_ERROR : PM_PAUSED_NORMAL, 1, DC_EXEC, CMD_PAUSE);
+		if (!_networking) Command<CMD_PAUSE>::Do(DC_EXEC, critical ? PM_PAUSED_ERROR : PM_PAUSED_NORMAL, true);
 	}
 
 	/* debug output */
@@ -1055,12 +1055,12 @@ void CallVehicleTicks()
 
 		const Company *c = Company::Get(_current_company);
 		SubtractMoneyFromCompany(CommandCost(EXPENSES_NEW_VEHICLES, (Money)c->settings.engine_renew_money));
-		CommandCost res = DoCommand(0, v->index, 0, DC_EXEC, CMD_AUTOREPLACE_VEHICLE);
+		CommandCost res = Command<CMD_AUTOREPLACE_VEHICLE>::Do(DC_EXEC, v->index);
 		SubtractMoneyFromCompany(CommandCost(EXPENSES_NEW_VEHICLES, -(Money)c->settings.engine_renew_money));
 
 		if (!IsLocalCompany()) continue;
 
-		if (res.Succeeded() && res.GetCost() != 0) {
+		if (res.Succeeded()) {
 			ShowCostOrIncomeAnimation(x, y, z, res.GetCost());
 			continue;
 		}
@@ -1392,8 +1392,8 @@ void AgeVehicle(Vehicle *v)
 
 	SetWindowDirty(WC_VEHICLE_DETAILS, v->index);
 
-	/* Don't warn about non-primary or not ours vehicles or vehicles that are crashed */
-	if (v->Previous() != nullptr || v->owner != _local_company || (v->vehstatus & VS_CRASHED) != 0) return;
+	/* Don't warn about vehicles which are non-primary (e.g., part of an articulated vehicle), don't belong to us, are crashed, or are stopped */
+	if (v->Previous() != nullptr || v->owner != _local_company || (v->vehstatus & VS_CRASHED) != 0 || (v->vehstatus & VS_STOPPED) != 0) return;
 
 	const Company *c = Company::Get(v->owner);
 	/* Don't warn if a renew is active */
@@ -1561,7 +1561,7 @@ void VehicleEnterDepot(Vehicle *v)
 
 		if (v->current_order.IsRefit()) {
 			Backup<CompanyID> cur_company(_current_company, v->owner, FILE_LINE);
-			CommandCost cost = DoCommand(v->tile, v->index, v->current_order.GetRefitCargo() | 0xFF << 8, DC_EXEC, GetCmdRefitVeh(v));
+			CommandCost cost = std::get<0>(Command<CMD_REFIT_VEHICLE>::Do(DC_EXEC, v->index, v->current_order.GetRefitCargo(), 0xFF, false, false, 0));
 			cur_company.Restore();
 
 			if (cost.Failed()) {
@@ -2114,7 +2114,7 @@ void Vehicle::BeginLoading()
 {
 	assert(IsTileType(this->tile, MP_STATION) || this->type == VEH_SHIP);
 
-	uint32 travel_time = this->current_order_time;
+	Ticks travel_time = _tick_counter - this->last_loading_tick;
 	if (this->current_order.IsType(OT_GOTO_STATION) &&
 			this->current_order.GetDestination() == this->last_station_visited) {
 		this->DeleteUnreachedImplicitOrders();
@@ -2161,7 +2161,7 @@ void Vehicle::BeginLoading()
 						break;
 					}
 					target_index++;
-					if (target_index >= this->orders.list->GetNumOrders()) {
+					if (target_index >= this->orders->GetNumOrders()) {
 						if (this->GetNumManualOrders() == 0 &&
 								this->GetNumOrders() < IMPLICIT_ORDER_ONLY_CAP) {
 							break;
@@ -2199,7 +2199,7 @@ void Vehicle::BeginLoading()
 						}
 					}
 				} else if (!suppress_implicit_orders &&
-						((this->orders.list == nullptr ? OrderList::CanAllocateItem() : this->orders.list->GetNumOrders() < MAX_VEH_ORDER_ID)) &&
+						((this->orders == nullptr ? OrderList::CanAllocateItem() : this->orders->GetNumOrders() < MAX_VEH_ORDER_ID)) &&
 						Order::CanAllocateItem()) {
 					/* Insert new implicit order */
 					Order *implicit_order = new Order();
@@ -2279,6 +2279,7 @@ void Vehicle::LeaveStation()
 
 			/* if the vehicle could load here or could stop with cargo loaded set the last loading station */
 			this->last_loading_station = this->last_station_visited;
+			this->last_loading_tick = _tick_counter;
 		} else {
 			/* if the vehicle couldn't load and had to unload or transfer everything
 			 * set the last loading station to invalid as it will leave empty. */
@@ -2393,7 +2394,7 @@ CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
 
 	if (this->current_order.IsType(OT_GOTO_DEPOT)) {
 		bool halt_in_depot = (this->current_order.GetDepotActionType() & ODATFB_HALT) != 0;
-		if (!!(command & DEPOT_SERVICE) == halt_in_depot) {
+		if (((command & DepotCommand::Service) != DepotCommand::None) == halt_in_depot) {
 			/* We called with a different DEPOT_SERVICE setting.
 			 * Now we change the setting to apply the new one and let the vehicle head for the same depot.
 			 * Note: the if is (true for requesting service == true for ordered to stop in depot)          */
@@ -2405,7 +2406,7 @@ CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
 			return CommandCost();
 		}
 
-		if (command & DEPOT_DONT_CANCEL) return CMD_ERROR; // Requested no cancellation of depot orders
+		if ((command & DepotCommand::DontCancel) != DepotCommand::None) return CMD_ERROR; // Requested no cancellation of depot orders
 		if (flags & DC_EXEC) {
 			/* If the orders to 'goto depot' are in the orders list (forced servicing),
 			 * then skip to the next order; effectively cancelling this forced service */
@@ -2438,12 +2439,12 @@ CommandCost Vehicle::SendToDepot(DoCommandFlag flags, DepotCommand command)
 
 		this->SetDestTile(location);
 		this->current_order.MakeGoToDepot(destination, ODTF_MANUAL);
-		if (!(command & DEPOT_SERVICE)) this->current_order.SetDepotActionType(ODATFB_HALT);
+		if ((command & DepotCommand::Service) == DepotCommand::None) this->current_order.SetDepotActionType(ODATFB_HALT);
 		SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
 
 		/* If there is no depot in front and the train is not already reversing, reverse automatically (trains only) */
 		if (this->type == VEH_TRAIN && (reverse ^ HasBit(Train::From(this)->flags, VRF_REVERSING))) {
-			DoCommand(this->tile, this->index, 0, DC_EXEC, CMD_REVERSE_TRAIN_DIRECTION);
+			Command<CMD_REVERSE_TRAIN_DIRECTION>::Do(DC_EXEC, this->index, false);
 		}
 
 		if (this->type == VEH_AIRCRAFT) {
@@ -2770,10 +2771,10 @@ void Vehicle::AddToShared(Vehicle *shared_chain)
 {
 	assert(this->previous_shared == nullptr && this->next_shared == nullptr);
 
-	if (shared_chain->orders.list == nullptr) {
+	if (shared_chain->orders == nullptr) {
 		assert(shared_chain->previous_shared == nullptr);
 		assert(shared_chain->next_shared == nullptr);
-		this->orders.list = shared_chain->orders.list = new OrderList(nullptr, shared_chain);
+		this->orders = shared_chain->orders = new OrderList(nullptr, shared_chain);
 	}
 
 	this->next_shared     = shared_chain->next_shared;
@@ -2783,7 +2784,7 @@ void Vehicle::AddToShared(Vehicle *shared_chain)
 
 	if (this->next_shared != nullptr) this->next_shared->previous_shared = this;
 
-	shared_chain->orders.list->AddVehicle(this);
+	shared_chain->orders->AddVehicle(this);
 }
 
 /**
@@ -2796,7 +2797,7 @@ void Vehicle::RemoveFromShared()
 	bool were_first = (this->FirstShared() == this);
 	VehicleListIdentifier vli(VL_SHARED_ORDERS, this->type, this->owner, this->FirstShared()->index);
 
-	this->orders.list->RemoveVehicle(this);
+	this->orders->RemoveVehicle(this);
 
 	if (!were_first) {
 		/* We are not the first shared one, so only relink our previous one. */
@@ -2806,7 +2807,7 @@ void Vehicle::RemoveFromShared()
 	if (this->next_shared != nullptr) this->next_shared->previous_shared = this->previous_shared;
 
 
-	if (this->orders.list->GetNumVehicles() == 1) {
+	if (this->orders->GetNumVehicles() == 1) {
 		/* When there is only one vehicle, remove the shared order list window. */
 		CloseWindowById(GetWindowClassForVehicleType(this->type), vli.Pack());
 		InvalidateVehicleOrder(this->FirstShared(), VIWD_MODIFY_ORDERS);
@@ -2984,5 +2985,67 @@ void GetVehicleSet(VehicleSet &set, Vehicle *v, uint8 num_vehicles)
 				u = u->Next();
 			} while (u != nullptr && u->IsArticulatedPart());
 		}
+	}
+}
+
+/**
+ * Calculates the maximum weight of the ground vehicle when loaded.
+ * @return Weight in tonnes
+ */
+uint32 Vehicle::GetDisplayMaxWeight() const
+{
+	uint32 max_weight = 0;
+
+	for (const Vehicle* u = this; u != nullptr; u = u->Next()) {
+		max_weight += u->GetMaxWeight();
+	}
+
+	return max_weight;
+}
+
+/**
+ * Calculates the minimum power-to-weight ratio using the maximum weight of the ground vehicle
+ * @return power-to-weight ratio in 10ths of hp(I) per tonne
+ */
+uint32 Vehicle::GetDisplayMinPowerToWeight() const
+{
+	uint32 max_weight = GetDisplayMaxWeight();
+	if (max_weight == 0) return 0;
+	return GetGroundVehicleCache()->cached_power * 10u / max_weight;
+}
+
+/**
+ * Checks if two vehicle chains have the same list of engines.
+ * @param v1 First vehicle chain.
+ * @param v1 Second vehicle chain.
+ * @return True if same, false if different.
+ */
+bool VehiclesHaveSameEngineList(const Vehicle *v1, const Vehicle *v2)
+{
+	while (true) {
+		if (v1 == nullptr && v2 == nullptr) return true;
+		if (v1 == nullptr || v2 == nullptr) return false;
+		if (v1->GetEngine() != v2->GetEngine()) return false;
+		v1 = v1->GetNextVehicle();
+		v2 = v2->GetNextVehicle();
+	}
+}
+
+/**
+ * Checks if two vehicles have the same list of orders.
+ * @param v1 First vehicles.
+ * @param v1 Second vehicles.
+ * @return True if same, false if different.
+ */
+bool VehiclesHaveSameOrderList(const Vehicle *v1, const Vehicle *v2)
+{
+	const Order *o1 = v1->GetFirstOrder();
+	const Order *o2 = v2->GetFirstOrder();
+	while (true) {
+		if (o1 == nullptr && o2 == nullptr) return true;
+		if (o1 == nullptr || o2 == nullptr) return false;
+		if (!o1->Equals(*o2)) return false;
+		o1 = o1->next;
+		o2 = o2->next;
 	}
 }

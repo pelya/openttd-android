@@ -129,19 +129,14 @@ public:
 	static void Save(CompanyID company);
 
 	/**
-	 * Load data for an AI from a savegame.
-	 */
-	static void Load(CompanyID company, int version);
-
-	/**
 	 * Get the number of days before the next AI should start.
 	 */
 	static int GetStartNextTime();
 
 	/** Wrapper function for AIScanner::GetAIConsoleList */
-	static char *GetConsoleList(char *p, const char *last, bool newest_only = false);
+	static std::string GetConsoleList(bool newest_only = false);
 	/** Wrapper function for AIScanner::GetAIConsoleLibraryList */
-	static char *GetConsoleLibraryList(char *p, const char *last);
+	static std::string GetConsoleLibraryList();
 	/** Wrapper function for AIScanner::GetAIInfoList */
 	static const ScriptInfoList *GetInfoList();
 	/** Wrapper function for AIScanner::GetUniqueAIInfoList */

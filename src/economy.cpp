@@ -48,6 +48,9 @@
 #include "goal_base.h"
 #include "story_base.h"
 #include "linkgraph/refresh.h"
+#include "company_cmd.h"
+#include "economy_cmd.h"
+#include "vehicle_cmd.h"
 
 #include "table/strings.h"
 #include "table/pricebase.h"
@@ -96,19 +99,33 @@ const ScoreInfo _score_info[] = {
 int64 _score_part[MAX_COMPANIES][SCORE_END];
 Economy _economy;
 Prices _price;
-Money _additional_cash_required;
 static PriceMultipliers _price_base_multiplier;
+
+extern int GetAmountOwnedBy(const Company *c, Owner owner);
 
 /**
  * Calculate the value of the company. That is the value of all
- * assets (vehicles, stations, etc) and money minus the loan,
+ * assets (vehicles, stations, shares) and money minus the loan,
  * except when including_loan is \c false which is useful when
  * we want to calculate the value for bankruptcy.
- * @param c              the company to get the value of.
+ * @param c the company to get the value of.
  * @param including_loan include the loan in the company value.
  * @return the value of the company.
  */
 Money CalculateCompanyValue(const Company *c, bool including_loan)
+{
+	Money owned_shares_value = 0;
+
+	for (const Company *co : Company::Iterate()) {
+		int shares_owned = GetAmountOwnedBy(co, c->index);
+
+		if (shares_owned > 0) owned_shares_value += (CalculateCompanyValueExcludingShares(co) / 4) * shares_owned;
+	}
+
+	return owned_shares_value + CalculateCompanyValueExcludingShares(c);
+}
+
+Money CalculateCompanyValueExcludingShares(const Company *c, bool including_loan)
 {
 	Owner owner = c->index;
 
@@ -304,42 +321,38 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 
 	assert(old_owner != new_owner);
 
-	{
-		uint i;
-
-		/* See if the old_owner had shares in other companies */
-		for (const Company *c : Company::Iterate()) {
-			for (i = 0; i < 4; i++) {
-				if (c->share_owners[i] == old_owner) {
-					/* Sell its shares */
-					CommandCost res = DoCommand(0, c->index, 0, DC_EXEC | DC_BANKRUPT, CMD_SELL_SHARE_IN_COMPANY);
-					/* Because we are in a DoCommand, we can't just execute another one and
-					 *  expect the money to be removed. We need to do it ourself! */
-					SubtractMoneyFromCompany(res);
-				}
-			}
-		}
-
-		/* Sell all the shares that people have on this company */
-		Backup<CompanyID> cur_company2(_current_company, FILE_LINE);
-		Company *c = Company::Get(old_owner);
-		for (i = 0; i < 4; i++) {
-			if (c->share_owners[i] == INVALID_OWNER) continue;
-
-			if (c->bankrupt_value == 0 && c->share_owners[i] == new_owner) {
-				/* You are the one buying the company; so don't sell the shares back to you. */
-				c->share_owners[i] = INVALID_OWNER;
-			} else {
-				cur_company2.Change(c->share_owners[i]);
-				/* Sell the shares */
-				CommandCost res = DoCommand(0, old_owner, 0, DC_EXEC | DC_BANKRUPT, CMD_SELL_SHARE_IN_COMPANY);
+	/* See if the old_owner had shares in other companies */
+	for (const Company *c : Company::Iterate()) {
+		for (auto share_owner : c->share_owners) {
+			if (share_owner == old_owner) {
+				/* Sell its shares */
+				CommandCost res = Command<CMD_SELL_SHARE_IN_COMPANY>::Do(DC_EXEC | DC_BANKRUPT, c->index);
 				/* Because we are in a DoCommand, we can't just execute another one and
 				 *  expect the money to be removed. We need to do it ourself! */
 				SubtractMoneyFromCompany(res);
 			}
 		}
-		cur_company2.Restore();
 	}
+
+	/* Sell all the shares that people have on this company */
+	Backup<CompanyID> cur_company2(_current_company, FILE_LINE);
+	Company *c = Company::Get(old_owner);
+	for (auto &share_owner : c->share_owners) {
+		if (share_owner == INVALID_OWNER) continue;
+
+		if (c->bankrupt_value == 0 && share_owner == new_owner) {
+			/* You are the one buying the company; so don't sell the shares back to you. */
+			share_owner = INVALID_OWNER;
+		} else {
+			cur_company2.Change(share_owner);
+			/* Sell the shares */
+			CommandCost res = Command<CMD_SELL_SHARE_IN_COMPANY>::Do(DC_EXEC | DC_BANKRUPT, old_owner);
+			/* Because we are in a DoCommand, we can't just execute another one and
+			 *  expect the money to be removed. We need to do it ourself! */
+			SubtractMoneyFromCompany(res);
+		}
+	}
+	cur_company2.Restore();
 
 	/* Temporarily increase the company's money, to be sure that
 	 * removing their property doesn't fail because of lack of money.
@@ -448,7 +461,7 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 					 * However, do not rely on that behaviour.
 					 */
 					int interval = CompanyServiceInterval(new_company, v->type);
-					DoCommand(v->tile, v->index, interval | (new_company->settings.vehicle.servint_ispercent << 17), DC_EXEC | DC_BANKRUPT, CMD_CHANGE_SERVICE_INT);
+					Command<CMD_CHANGE_SERVICE_INT>::Do(DC_EXEC | DC_BANKRUPT, v->index, interval, false, new_company->settings.vehicle.servint_ispercent);
 				}
 
 				v->owner = new_owner;
@@ -627,7 +640,7 @@ static void CompanyCheckBankrupt(Company *c)
 			 * player we are sure (the above check) that we are not the local
 			 * company and thus we won't be moved. */
 			if (!_networking || _network_server) {
-				DoCommandP(0, CCA_DELETE | (c->index << 16) | (CRR_BANKRUPT << 24), 0, CMD_COMPANY_CTRL);
+				Command<CMD_COMPANY_CTRL>::Post(CCA_DELETE, c->index, CRR_BANKRUPT, INVALID_CLIENT_ID);
 				return;
 			}
 			break;
@@ -650,13 +663,8 @@ static void CompaniesGenStatistics()
 
 	Backup<CompanyID> cur_company(_current_company, FILE_LINE);
 
-	if (!_settings_game.economy.infrastructure_maintenance) {
-		for (const Station *st : Station::Iterate()) {
-			cur_company.Change(st->owner);
-			CommandCost cost(EXPENSES_PROPERTY, _price[PR_STATION_VALUE] >> 1);
-			SubtractMoneyFromCompany(cost);
-		}
-	} else {
+	/* Pay Infrastructure Maintenance, if enabled */
+	if (_settings_game.economy.infrastructure_maintenance) {
 		/* Improved monthly infrastructure costs. */
 		for (const Company *c : Company::Iterate()) {
 			cur_company.Change(c->index);
@@ -838,7 +846,7 @@ static void CompaniesPayInterest()
 		Money up_to_previous_month = yearly_fee * _cur_month / 12;
 		Money up_to_this_month = yearly_fee * (_cur_month + 1) / 12;
 
-		SubtractMoneyFromCompany(CommandCost(EXPENSES_LOAN_INT, up_to_this_month - up_to_previous_month));
+		SubtractMoneyFromCompany(CommandCost(EXPENSES_LOAN_INTEREST, up_to_this_month - up_to_previous_month));
 
 		SubtractMoneyFromCompany(CommandCost(EXPENSES_OTHER, _price[PR_STATION_VALUE] >> 2));
 	}
@@ -1038,9 +1046,10 @@ static uint DeliverGoodsToIndustry(const Station *st, CargoID cargo_type, uint n
 
 	uint accepted = 0;
 
-	for (Industry *ind : st->industries_near) {
+	for (const auto &i : st->industries_near) {
 		if (num_pieces == 0) break;
 
+		Industry *ind = i.industry;
 		if (ind->index == source) continue;
 
 		uint cargo_index;
@@ -1194,7 +1203,7 @@ CargoPayment::~CargoPayment()
 	if (this->visual_transfer != 0) {
 		ShowFeederIncomeAnimation(this->front->x_pos, this->front->y_pos,
 				this->front->z_pos, this->visual_transfer, -this->visual_profit);
-	} else if (this->visual_profit != 0) {
+	} else {
 		ShowCostOrIncomeAnimation(this->front->x_pos, this->front->y_pos,
 				this->front->z_pos, -this->visual_profit);
 	}
@@ -1266,7 +1275,7 @@ void PrepareUnload(Vehicle *front_v)
 	front_v->cargo_payment = new CargoPayment(front_v);
 
 	StationIDStack next_station = front_v->GetNextStoppingStation();
-	if (front_v->orders.list == nullptr || (front_v->current_order.GetUnloadType() & OUFB_NO_UNLOAD) == 0) {
+	if (front_v->orders == nullptr || (front_v->current_order.GetUnloadType() & OUFB_NO_UNLOAD) == 0) {
 		Station *st = Station::Get(front_v->last_station_visited);
 		for (Vehicle *v = front_v; v != nullptr; v = v->Next()) {
 			const GoodsEntry *ge = &st->goods[v->cargo_type];
@@ -1485,14 +1494,14 @@ static void HandleStationRefit(Vehicle *v, CargoArray &consist_capleft, Station 
 			if (st->goods[cid].cargo.HasCargoFor(next_station)) {
 				/* Try to find out if auto-refitting would succeed. In case the refit is allowed,
 				 * the returned refit capacity will be greater than zero. */
-				DoCommand(v_start->tile, v_start->index, cid | 1U << 24 | 0xFF << 8 | 1U << 16, DC_QUERY_COST, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
+				auto [cc, refit_capacity, mail_capacity] = Command<CMD_REFIT_VEHICLE>::Do(DC_QUERY_COST, v_start->index, cid, 0xFF, true, false, 1); // Auto-refit and only this vehicle including artic parts.
 				/* Try to balance different loadable cargoes between parts of the consist, so that
 				 * all of them can be loaded. Avoid a situation where all vehicles suddenly switch
 				 * to the first loadable cargo for which there is only one packet. If the capacities
 				 * are equal refit to the cargo of which most is available. This is important for
 				 * consists of only a single vehicle as those will generally have a consist_capleft
 				 * of 0 for all cargoes. */
-				if (_returned_refit_capacity > 0 && (consist_capleft[cid] < consist_capleft[new_cid] ||
+				if (refit_capacity > 0 && (consist_capleft[cid] < consist_capleft[new_cid] ||
 						(consist_capleft[cid] == consist_capleft[new_cid] &&
 						st->goods[cid].cargo.AvailableCount() > st->goods[new_cid].cargo.AvailableCount()))) {
 					new_cid = cid;
@@ -1508,7 +1517,7 @@ static void HandleStationRefit(Vehicle *v, CargoArray &consist_capleft, Station 
 		 * "via any station" before reserving. We rather produce some more "any station" cargo than
 		 * misrouting it. */
 		IterateVehicleParts(v_start, ReturnCargoAction(st, INVALID_STATION));
-		CommandCost cost = DoCommand(v_start->tile, v_start->index, new_cid | 1U << 24 | 0xFF << 8 | 1U << 16, DC_EXEC, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
+		CommandCost cost = std::get<0>(Command<CMD_REFIT_VEHICLE>::Do(DC_EXEC, v_start->index, new_cid, 0xFF, true, false, 1)); // Auto-refit and only this vehicle including artic parts.
 		if (cost.Succeeded()) v->First()->profit_this_year -= cost.GetCost() << 8;
 	}
 
@@ -2005,21 +2014,15 @@ static void DoAcquireCompany(Company *c)
 	delete c;
 }
 
-extern int GetAmountOwnedBy(const Company *c, Owner owner);
-
 /**
  * Acquire shares in an opposing company.
- * @param tile unused
  * @param flags type of operation
- * @param p1 company to buy the shares from
- * @param p2 unused
- * @param text unused
+ * @param target_company company to buy the shares from
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuyShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdBuyShareInCompany(DoCommandFlag flags, CompanyID target_company)
 {
 	CommandCost cost(EXPENSES_OTHER);
-	CompanyID target_company = (CompanyID)p1;
 	Company *c = Company::GetIfValid(target_company);
 
 	/* Check if buying shares is allowed (protection against modified clients)
@@ -2030,9 +2033,9 @@ CommandCost CmdBuyShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1,
 	if (_cur_year - c->inaugurated_year < _settings_game.economy.min_years_for_shares) return_cmd_error(STR_ERROR_PROTECTED);
 
 	/* Those lines are here for network-protection (clients can be slow) */
-	if (GetAmountOwnedBy(c, COMPANY_SPECTATOR) == 0) return cost;
+	if (GetAmountOwnedBy(c, INVALID_OWNER) == 0) return cost;
 
-	if (GetAmountOwnedBy(c, COMPANY_SPECTATOR) == 1) {
+	if (GetAmountOwnedBy(c, INVALID_OWNER) == 1) {
 		if (!c->is_ai) return cost; //  We can not buy out a real company (temporarily). TODO: well, enable it obviously.
 
 		if (GetAmountOwnedBy(c, _current_company) == 3 && !MayCompanyTakeOver(_current_company, target_company)) return_cmd_error(STR_ERROR_TOO_MANY_VEHICLES_IN_GAME);
@@ -2041,17 +2044,14 @@ CommandCost CmdBuyShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1,
 
 	cost.AddCost(CalculateCompanyValue(c) >> 2);
 	if (flags & DC_EXEC) {
-		Owner *b = c->share_owners;
+		auto unowned_share = std::find(c->share_owners.begin(), c->share_owners.end(), INVALID_OWNER);
+		assert(unowned_share != c->share_owners.end()); // share owners is guaranteed to contain at least one INVALID_OWNER, i.e. unowned share
+		*unowned_share = _current_company;
 
-		while (*b != COMPANY_SPECTATOR) b++; // share owners is guaranteed to contain at least one COMPANY_SPECTATOR
-		*b = _current_company;
-
-		for (int i = 0; c->share_owners[i] == _current_company;) {
-			if (++i == 4) {
-				c->bankrupt_value = 0;
-				DoAcquireCompany(c);
-				break;
-			}
+		auto current_company_owns_share = [](auto share_owner) { return share_owner == _current_company; };
+		if (std::all_of(c->share_owners.begin(), c->share_owners.end(), current_company_owns_share)) {
+			c->bankrupt_value = 0;
+			DoAcquireCompany(c);
 		}
 		InvalidateWindowData(WC_COMPANY, target_company);
 		CompanyAdminUpdate(c);
@@ -2061,16 +2061,12 @@ CommandCost CmdBuyShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1,
 
 /**
  * Sell shares in an opposing company.
- * @param tile unused
  * @param flags type of operation
- * @param p1 company to sell the shares from
- * @param p2 unused
- * @param text unused
+ * @param target_company company to sell the shares from
  * @return the cost of this operation or an error
  */
-CommandCost CmdSellShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdSellShareInCompany(DoCommandFlag flags, CompanyID target_company)
 {
-	CompanyID target_company = (CompanyID)p1;
 	Company *c = Company::GetIfValid(target_company);
 
 	/* Cannot sell own shares */
@@ -2088,9 +2084,9 @@ CommandCost CmdSellShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1
 	cost = -(cost - (cost >> 7));
 
 	if (flags & DC_EXEC) {
-		Owner *b = c->share_owners;
-		while (*b != _current_company) b++; // share owners is guaranteed to contain company
-		*b = COMPANY_SPECTATOR;
+		auto our_owner = std::find(c->share_owners.begin(), c->share_owners.end(), _current_company);
+		assert(our_owner != c->share_owners.end()); // share owners is guaranteed to contain at least one INVALID_OWNER
+		*our_owner = INVALID_OWNER;
 		InvalidateWindowData(WC_COMPANY, target_company);
 		CompanyAdminUpdate(c);
 	}
@@ -2102,16 +2098,12 @@ CommandCost CmdSellShareInCompany(TileIndex tile, DoCommandFlag flags, uint32 p1
  * When a competing company is gone bankrupt you get the chance to purchase
  * that company.
  * @todo currently this only works for AI companies
- * @param tile unused
  * @param flags type of operation
- * @param p1 company to buy up
- * @param p2 unused
- * @param text unused
+ * @param target_company company to buy up
  * @return the cost of this operation or an error
  */
-CommandCost CmdBuyCompany(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdBuyCompany(DoCommandFlag flags, CompanyID target_company)
 {
-	CompanyID target_company = (CompanyID)p1;
 	Company *c = Company::GetIfValid(target_company);
 	if (c == nullptr) return CMD_ERROR;
 

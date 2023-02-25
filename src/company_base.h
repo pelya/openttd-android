@@ -17,6 +17,7 @@
 #include "settings_type.h"
 #include "group.h"
 #include <string>
+#include <array>
 
 /** Statistics about the economy. */
 struct CompanyEconomyEntry {
@@ -74,7 +75,7 @@ struct CompanyProperties {
 	TileIndex location_of_HQ;        ///< Northern tile of HQ; #INVALID_TILE when there is none.
 	TileIndex last_build_coordinate; ///< Coordinate of the last build thing by this company.
 
-	Owner share_owners[4];           ///< Owners of the 4 shares of the company. #INVALID_OWNER if nobody has bought them yet.
+	std::array<Owner, MAX_COMPANY_SHARE_OWNERS> share_owners; ///< Owners of the shares of the company. #INVALID_OWNER if nobody has bought them yet.
 
 	Year inaugurated_year;           ///< Year of starting the company.
 
@@ -86,6 +87,7 @@ struct CompanyProperties {
 	uint32 terraform_limit;          ///< Amount of tileheights we can (still) terraform (times 65536).
 	uint32 clear_limit;              ///< Amount of tiles we can (still) clear (times 65536).
 	uint32 tree_limit;               ///< Amount of trees we can (still) plant (times 65536).
+	uint32 build_object_limit;       ///< Amount of tiles we can (still) build objects on (times 65536). Also applies to buying land.
 
 	/**
 	 * If \c true, the company is (also) controlled by the computer (a NoAI program).
@@ -109,7 +111,7 @@ struct CompanyProperties {
 		  face(0), money(0), money_fraction(0), current_loan(0), colour(0), block_preview(0),
 		  location_of_HQ(0), last_build_coordinate(0), share_owners(), inaugurated_year(0),
 		  months_of_bankruptcy(0), bankrupt_asked(0), bankrupt_timeout(0), bankrupt_value(0),
-		  terraform_limit(0), clear_limit(0), tree_limit(0), is_ai(false), engine_renew_list(nullptr) {}
+		  terraform_limit(0), clear_limit(0), tree_limit(0), build_object_limit(0), is_ai(false), engine_renew_list(nullptr) {}
 };
 
 struct Company : CompanyProperties, CompanyPool::PoolItem<&_company_pool> {
@@ -166,6 +168,7 @@ struct Company : CompanyProperties, CompanyPool::PoolItem<&_company_pool> {
 };
 
 Money CalculateCompanyValue(const Company *c, bool including_loan = true);
+Money CalculateCompanyValueExcludingShares(const Company *c, bool including_loan = true);
 
 extern uint _next_competitor_start;
 extern uint _cur_company_tick_index;

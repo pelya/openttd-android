@@ -27,6 +27,7 @@
 #include "tile_map.h"
 #include "landscape.h"
 #include "video/video_driver.hpp"
+#include "smallmap_gui.h"
 
 #include "table/strings.h"
 
@@ -681,8 +682,16 @@ static const char *MakeScreenshotName(const char *default_fn, const char *ext, b
 		}
 	}
 
-	/* Add extension to screenshot file */
 	size_t len = strlen(_screenshot_name);
+
+	/* Handle user-specified filenames ending in # with automatic numbering */
+	if (StrEndsWith(_screenshot_name, "#")) {
+		generate = true;
+		len -= 1;
+		_screenshot_name[len] = '\0';
+	}
+
+	/* Add extension to screenshot file */
 	seprintf(&_screenshot_name[len], lastof(_screenshot_name), ".%s", ext);
 
 	const char *screenshot_dir = crashlog ? _personal_dir.c_str() : FiosGetScreenshotDir();
@@ -996,48 +1005,8 @@ bool MakeScreenshot(ScreenshotType t, std::string name, uint32 width, uint32 hei
 }
 
 
-/**
- * Return the owner of a tile to display it with in the small map in mode "Owner".
- *
- * @param tile The tile of which we would like to get the colour.
- * @return The owner of tile in the small map in mode "Owner"
- */
-static Owner GetMinimapOwner(TileIndex tile)
-{
-	Owner o;
-
-	if (IsTileType(tile, MP_VOID)) {
-		return OWNER_END;
-	} else {
-		switch (GetTileType(tile)) {
-		case MP_INDUSTRY: o = OWNER_DEITY;        break;
-		case MP_HOUSE:    o = OWNER_TOWN;         break;
-		default:          o = GetTileOwner(tile); break;
-			/* FIXME: For MP_ROAD there are multiple owners.
-			 * GetTileOwner returns the rail owner (level crossing) resp. the owner of ROADTYPE_ROAD (normal road),
-			 * even if there are no ROADTYPE_ROAD bits on the tile.
-			 */
-		}
-
-		return o;
-	}
-}
-
 static void MinimapScreenCallback(void *userdata, void *buf, uint y, uint pitch, uint n)
 {
-	/* Fill with the company colours */
-	byte owner_colours[OWNER_END + 1];
-	for (const Company *c : Company::Iterate()) {
-		owner_colours[c->index] = MKCOLOUR(_colour_gradient[c->colour][5]);
-	}
-
-	/* Fill with some special colours */
-	owner_colours[OWNER_TOWN]    = PC_DARK_RED;
-	owner_colours[OWNER_NONE]    = PC_GRASS_LAND;
-	owner_colours[OWNER_WATER]   = PC_WATER;
-	owner_colours[OWNER_DEITY]   = PC_DARK_GREY; // industry
-	owner_colours[OWNER_END]     = PC_BLACK;
-
 	uint32 *ubuf = (uint32 *)buf;
 	uint num = (pitch * n);
 	for (uint i = 0; i < num; i++) {
@@ -1045,8 +1014,7 @@ static void MinimapScreenCallback(void *userdata, void *buf, uint y, uint pitch,
 		uint col = (MapSizeX() - 1) - (i % pitch);
 
 		TileIndex tile = TileXY(col, row);
-		Owner o = GetMinimapOwner(tile);
-		byte val = owner_colours[o];
+		byte val = GetSmallMapOwnerPixels(tile, GetTileType(tile), IncludeHeightmap::Never) & 0xFF;
 
 		uint32 colour_buf = 0;
 		colour_buf  = (_cur_palette.palette[val].b << 0);

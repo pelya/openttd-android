@@ -82,16 +82,16 @@ struct BuildInfoWindow : public Window
 		size->height = GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, size->width) * (this->station ? 3 : 1);
 
 		/* Increase slightly to have some space around the box. */
-		size->width  += 2 + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-		size->height += 6 + WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+		size->width  += 2 + WidgetDimensions::scaled.framerect.Horizontal();
+		size->height += 6 + WidgetDimensions::scaled.framerect.Vertical();
 	}
 
 	void DrawWidget(const Rect &r, int widget) const override
 	{
 		/* There is only one widget. */
 		DrawFrameRect(r.left, r.top, r.right, r.bottom, COLOUR_GREY, FR_NONE);
+    Rect tr = r.Shrink(WidgetDimensions::scaled.frametext);
 
-		int top = r.top + WD_FRAMERECT_TOP + 4;
 		Money cost = BuildInfoWindow::cost;
 		StringID msg = STR_MESSAGE_ESTIMATED_COST;
 		SetDParam(0, cost);
@@ -99,13 +99,13 @@ struct BuildInfoWindow : public Window
 			msg = STR_MESSAGE_ESTIMATED_INCOME;
 			SetDParam(0, -cost);
 		}
-		top = DrawStringMultiLine(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, INT32_MAX, msg);
+		tr.top = DrawStringMultiLine(tr, msg);
 
 		if (!this->station) return;
 
-		top = DrawStationCoverageAreaText(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, sct, _thd.outersize.x / TILE_SIZE / 2, false);
+		tr.top = DrawStationCoverageAreaText(tr.left, tr.right, tr.top, sct, _thd.outersize.x / TILE_SIZE / 2, false);
 		if (top - r.top <= GetStringHeight(STR_STATION_BUILD_COVERAGE_AREA_TITLE, r.right - r.left) * 1.5) {
-			DrawStationCoverageAreaText(r.left + WD_FRAMERECT_LEFT, r.right - WD_FRAMERECT_RIGHT, top, sct, _thd.outersize.x / TILE_SIZE / 2, true);
+			DrawStationCoverageAreaText(tr.left, tr.right, tr.top, sct, _thd.outersize.x / TILE_SIZE / 2, true);
 		}
 	}
 };

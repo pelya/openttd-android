@@ -23,6 +23,8 @@
 #include "core/random_func.hpp"
 #include "newgrf_generic.h"
 #include "date_func.h"
+#include "tree_cmd.h"
+#include "landscape_cmd.h"
 
 #include "table/strings.h"
 #include "table/tree_land.h"
@@ -378,27 +380,25 @@ void GenerateTrees()
 
 /**
  * Plant a tree.
- * @param tile end tile of area-drag
  * @param flags type of operation
- * @param p1 tree type, TREE_INVALID means random.
- * @param p2 start tile of area-drag of tree plantation
- * @param text unused
+ * @param tile end tile of area-drag
+ * @param start_tile start tile of area-drag of tree plantation
+ * @param tree_to_plant tree type, TREE_INVALID means random.
  * @return the cost of this operation or an error
  */
-CommandCost CmdPlantTree(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdPlantTree(DoCommandFlag flags, TileIndex tile, TileIndex start_tile, byte tree_to_plant)
 {
 	StringID msg = INVALID_STRING_ID;
 	CommandCost cost(EXPENSES_OTHER);
-	const byte tree_to_plant = GB(p1, 0, 8); // We cannot use Extract as min and max are climate specific.
 
-	if (p2 >= MapSize()) return CMD_ERROR;
+	if (start_tile >= MapSize()) return CMD_ERROR;
 	/* Check the tree type within the current climate */
 	if (tree_to_plant != TREE_INVALID && !IsInsideBS(tree_to_plant, _tree_base_by_landscape[_settings_game.game_creation.landscape], _tree_count_by_landscape[_settings_game.game_creation.landscape])) return CMD_ERROR;
 
 	Company *c = (_game_mode != GM_EDITOR) ? Company::GetIfValid(_current_company) : nullptr;
 	int limit = (c == nullptr ? INT32_MAX : GB(c->tree_limit, 16, 16));
 
-	TileArea ta(tile, p2);
+	TileArea ta(tile, start_tile);
 	for (TileIndex current_tile : ta) {
 		switch (GetTileType(current_tile)) {
 			case MP_TREES:
@@ -460,7 +460,7 @@ CommandCost CmdPlantTree(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 					switch (GetRawClearGround(current_tile)) {
 						case CLEAR_FIELDS:
 						case CLEAR_ROCKS: {
-							CommandCost ret = DoCommand(current_tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+							CommandCost ret = Command<CMD_LANDSCAPE_CLEAR>::Do(flags, current_tile);
 							if (ret.Failed()) return ret;
 							cost.AddCost(ret);
 							break;
@@ -527,7 +527,7 @@ static void DrawTile_Trees(TileInfo *ti)
 	/* Do not draw trees when the invisible trees setting is set */
 	if (IsInvisibilitySet(TO_TREES)) return;
 
-	uint tmp = CountBits(ti->tile + ti->x + ti->y);
+	uint tmp = CountBits(static_cast<uint32>(ti->tile + ti->x + ti->y));
 	uint index = GB(tmp, 0, 2) + (GetTreeType(ti->tile) << 2);
 
 	/* different tree styles above one of the grounds */
@@ -881,7 +881,7 @@ void InitializeTrees()
 
 static CommandCost TerraformTile_Trees(TileIndex tile, DoCommandFlag flags, int z_new, Slope tileh_new)
 {
-	return DoCommand(tile, 0, 0, flags, CMD_LANDSCAPE_CLEAR);
+	return Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile);
 }
 
 

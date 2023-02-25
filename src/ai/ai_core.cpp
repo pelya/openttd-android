@@ -57,6 +57,8 @@
 	assert(c->ai_instance == nullptr);
 	c->ai_instance = new AIInstance();
 	c->ai_instance->Initialize(info);
+	c->ai_instance->LoadOnStack(config->GetToLoadData());
+	config->SetToLoadData(nullptr);
 
 	cur_company.Restore();
 
@@ -289,21 +291,6 @@
 	}
 }
 
-/* static */ void AI::Load(CompanyID company, int version)
-{
-	if (!_networking || _network_server) {
-		Company *c = Company::GetIfValid(company);
-		assert(c != nullptr && c->ai_instance != nullptr);
-
-		Backup<CompanyID> cur_company(_current_company, company, FILE_LINE);
-		c->ai_instance->Load(version);
-		cur_company.Restore();
-	} else {
-		/* Read, but ignore, the load data */
-		AIInstance::LoadEmpty();
-	}
-}
-
 /* static */ int AI::GetStartNextTime()
 {
 	/* Find the first company which doesn't exist yet */
@@ -315,14 +302,14 @@
 	return DAYS_IN_YEAR;
 }
 
-/* static */ char *AI::GetConsoleList(char *p, const char *last, bool newest_only)
+/* static */ std::string AI::GetConsoleList(bool newest_only)
 {
-	return AI::scanner_info->GetConsoleList(p, last, newest_only);
+	return AI::scanner_info->GetConsoleList(newest_only);
 }
 
-/* static */ char *AI::GetConsoleLibraryList(char *p, const char *last)
+/* static */ std::string AI::GetConsoleLibraryList()
 {
-	 return AI::scanner_library->GetConsoleList(p, last, true);
+	 return AI::scanner_library->GetConsoleList(true);
 }
 
 /* static */ const ScriptInfoList *AI::GetInfoList()

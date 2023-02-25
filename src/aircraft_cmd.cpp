@@ -37,6 +37,8 @@
 #include "disaster_vehicle.h"
 #include "newgrf_airporttiles.h"
 #include "framerate_type.h"
+#include "aircraft_cmd.h"
+#include "vehicle_cmd.h"
 
 #include "table/strings.h"
 
@@ -188,7 +190,7 @@ void GetRotorImage(const Aircraft *v, EngineImageType image_type, VehicleSpriteS
 
 	const Aircraft *w = v->Next()->Next();
 	if (is_custom_sprite(v->spritenum)) {
-		GetCustomRotorSprite(v, false, image_type, result);
+		GetCustomRotorSprite(v, image_type, result);
 		if (result->IsValid()) return;
 	}
 
@@ -229,7 +231,7 @@ void DrawAircraftEngine(int left, int right, int preferred_x, int y, EngineID en
 		VehicleSpriteSeq rotor_seq;
 		GetCustomRotorIcon(engine, image_type, &rotor_seq);
 		if (!rotor_seq.IsValid()) rotor_seq.Set(SPR_ROTOR_STOPPED);
-		rotor_seq.Draw(preferred_x, y - ScaleGUITrad(5), PAL_NONE, false);
+		rotor_seq.Draw(preferred_x, y - ScaleSpriteTrad(5), PAL_NONE, false);
 	}
 }
 
@@ -250,22 +252,21 @@ void GetAircraftSpriteSize(EngineID engine, uint &width, uint &height, int &xoff
 	Rect rect;
 	seq.GetBounds(&rect);
 
-	width  = UnScaleGUI(rect.right - rect.left + 1);
-	height = UnScaleGUI(rect.bottom - rect.top + 1);
+	width  = UnScaleGUI(rect.Width());
+	height = UnScaleGUI(rect.Height());
 	xoffs  = UnScaleGUI(rect.left);
 	yoffs  = UnScaleGUI(rect.top);
 }
 
 /**
  * Build an aircraft.
- * @param tile     tile of the depot where aircraft is built.
  * @param flags    type of operation.
+ * @param tile     tile of the depot where aircraft is built.
  * @param e        the engine to build.
- * @param data     unused.
  * @param[out] ret the vehicle that has been built.
  * @return the cost of this operation or an error.
  */
-CommandCost CmdBuildAircraft(TileIndex tile, DoCommandFlag flags, const Engine *e, uint16 data, Vehicle **ret)
+CommandCost CmdBuildAircraft(DoCommandFlag flags, TileIndex tile, const Engine *e, Vehicle **ret)
 {
 	const AircraftVehicleInfo *avi = &e->u.air;
 	const Station *st = Station::GetByTile(tile);
@@ -326,8 +327,6 @@ CommandCost CmdBuildAircraft(TileIndex tile, DoCommandFlag flags, const Engine *
 		v->reliability = e->reliability;
 		v->reliability_spd_dec = e->reliability_spd_dec;
 		v->max_age = e->GetLifeLengthInDays();
-
-		_new_vehicle_id = v->index;
 
 		v->pos = GetVehiclePosOnBuild(tile);
 
@@ -1274,7 +1273,7 @@ void HandleMissingAircraftOrders(Aircraft *v)
 	const Station *st = GetTargetAirportIfValid(v);
 	if (st == nullptr) {
 		Backup<CompanyID> cur_company(_current_company, v->owner, FILE_LINE);
-		CommandCost ret = DoCommand(v->tile, v->index, 0, DC_EXEC, CMD_SEND_VEHICLE_TO_DEPOT);
+		CommandCost ret = Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(DC_EXEC, v->index, DepotCommand::None, {});
 		cur_company.Restore();
 
 		if (ret.Failed()) CrashAirplane(v);
@@ -1341,7 +1340,12 @@ static void CrashAirplane(Aircraft *v)
 	AI::NewEvent(v->owner, new ScriptEventVehicleCrashed(v->index, vt, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
 	Game::NewEvent(new ScriptEventVehicleCrashed(v->index, vt, st == nullptr ? ScriptEventVehicleCrashed::CRASH_AIRCRAFT_NO_AIRPORT : ScriptEventVehicleCrashed::CRASH_PLANE_LANDING));
 
-	AddTileNewsItem(newsitem, NT_ACCIDENT, vt, nullptr, st != nullptr ? st->index : INVALID_STATION);
+	NewsType newstype = NT_ACCIDENT;
+	if (v->owner != _local_company) {
+		newstype = NT_ACCIDENT_OTHER;
+	}
+
+	AddTileNewsItem(newsitem, newstype, vt, nullptr, st != nullptr ? st->index : INVALID_STATION);
 
 	ModifyStationRatingAround(vt, v->owner, -160, 30);
 	if (_settings_client.sound.disaster) SndPlayVehicleFx(SND_12_EXPLOSION, v);
@@ -1632,7 +1636,7 @@ static void AircraftEventHandler_HeliTakeOff(Aircraft *v, const AirportFTAClass 
 	/* Send the helicopter to a hangar if needed for replacement */
 	if (v->NeedsAutomaticServicing()) {
 		Backup<CompanyID> cur_company(_current_company, v->owner, FILE_LINE);
-		DoCommand(v->tile, v->index | DEPOT_SERVICE | DEPOT_LOCATE_HANGAR, 0, DC_EXEC, CMD_SEND_VEHICLE_TO_DEPOT);
+		Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(DC_EXEC, v->index, DepotCommand::Service | DepotCommand::LocateHangar, {});
 		cur_company.Restore();
 	}
 }
@@ -1683,7 +1687,7 @@ static void AircraftEventHandler_Landing(Aircraft *v, const AirportFTAClass *apc
 	/* check if the aircraft needs to be replaced or renewed and send it to a hangar if needed */
 	if (v->NeedsAutomaticServicing()) {
 		Backup<CompanyID> cur_company(_current_company, v->owner, FILE_LINE);
-		DoCommand(v->tile, v->index | DEPOT_SERVICE, 0, DC_EXEC, CMD_SEND_VEHICLE_TO_DEPOT);
+		Command<CMD_SEND_VEHICLE_TO_DEPOT>::Do(DC_EXEC, v->index, DepotCommand::Service, {});
 		cur_company.Restore();
 	}
 }

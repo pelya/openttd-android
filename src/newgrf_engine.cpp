@@ -790,7 +790,7 @@ static uint32 VehicleGetVariable(Vehicle *v, const VehicleScopeResolver *object,
 		case 0x1C: return v->y_pos;
 		case 0x1D: return GB(v->y_pos, 8, 8);
 		case 0x1E: return v->z_pos;
-		case 0x1F: return object->info_view ? DIR_W : v->direction;
+		case 0x1F: return object->rotor_in_gui ? DIR_W : v->direction; // for rotors the spriteset contains animation frames, so NewGRF need a different way to tell the helicopter orientation.
 		case 0x20: break; // not implemented
 		case 0x21: break; // not implemented
 		case 0x22: break; // not implemented
@@ -975,6 +975,8 @@ static uint32 VehicleGetVariable(Vehicle *v, const VehicleScopeResolver *object,
 			case 0x92: return Clamp(_date - DAYS_TILL_ORIGINAL_BASE_YEAR, 0, 0xFFFF); // Date of last service
 			case 0x93: return GB(Clamp(_date - DAYS_TILL_ORIGINAL_BASE_YEAR, 0, 0xFFFF), 8, 8);
 			case 0xC4: return Clamp(_cur_year, ORIGINAL_BASE_YEAR, ORIGINAL_MAX_YEAR) - ORIGINAL_BASE_YEAR; // Build year
+			case 0xC6: return Engine::Get(this->self_type)->grf_prop.local_id;
+			case 0xC7: return GB(Engine::Get(this->self_type)->grf_prop.local_id, 8, 8);
 			case 0xDA: return INVALID_VEHICLE; // Next vehicle
 			case 0xF2: return 0; // Cargo subtype
 		}
@@ -1041,17 +1043,17 @@ static const GRFFile *GetEngineGrfFile(EngineID engine_type)
  * @param engine_type Engine type
  * @param v %Vehicle being resolved.
  * @param wagon_override Application of wagon overrides.
- * @param info_view Indicates if the item is being drawn in an info window.
+ * @param rotor_in_gui Helicopter rotor is drawn in GUI.
  * @param callback Callback ID.
  * @param callback_param1 First parameter (var 10) of the callback.
  * @param callback_param2 Second parameter (var 18) of the callback.
  */
-VehicleResolverObject::VehicleResolverObject(EngineID engine_type, const Vehicle *v, WagonOverride wagon_override, bool info_view,
+VehicleResolverObject::VehicleResolverObject(EngineID engine_type, const Vehicle *v, WagonOverride wagon_override, bool rotor_in_gui,
 		CallbackID callback, uint32 callback_param1, uint32 callback_param2)
 	: ResolverObject(GetEngineGrfFile(engine_type), callback, callback_param1, callback_param2),
-	self_scope(*this, engine_type, v, info_view),
-	parent_scope(*this, engine_type, ((v != nullptr) ? v->First() : v), info_view),
-	relative_scope(*this, engine_type, v, info_view),
+	self_scope(*this, engine_type, v, rotor_in_gui),
+	parent_scope(*this, engine_type, ((v != nullptr) ? v->First() : v), rotor_in_gui),
+	relative_scope(*this, engine_type, v, rotor_in_gui),
 	cached_relative_count(0)
 {
 	if (wagon_override == WO_SELF) {
@@ -1103,7 +1105,7 @@ void GetCustomEngineSprite(EngineID engine, const Vehicle *v, Direction directio
 }
 
 
-void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, bool info_view, EngineImageType image_type, VehicleSpriteSeq *result)
+void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, EngineImageType image_type, VehicleSpriteSeq *result)
 {
 	const Engine *e = Engine::Get(engine);
 
@@ -1111,9 +1113,14 @@ void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, bool info
 	assert(e->type == VEH_AIRCRAFT);
 	assert(!(e->u.air.subtype & AIR_CTOL));
 
-	VehicleResolverObject object(engine, v, VehicleResolverObject::WO_SELF, info_view, CBID_NO_CALLBACK);
+	/* We differ from TTDPatch by resolving the sprite using the primary vehicle 'v', and not using the rotor vehicle 'v->Next()->Next()'.
+	 * TTDPatch copies some variables between the vehicles each time, to somehow synchronize the rotor vehicle with the primary vehicle.
+	 * We use 'rotor_in_gui' to replicate when the variables differ.
+	 * But some other variables like 'rotor state' and 'rotor speed' are not available in OpenTTD, while they are in TTDPatch. */
+	bool rotor_in_gui = image_type != EIT_ON_MAP;
+	VehicleResolverObject object(engine, v, VehicleResolverObject::WO_SELF, rotor_in_gui, CBID_NO_CALLBACK);
 	result->Clear();
-	uint rotor_pos = v == nullptr || info_view ? 0 : v->Next()->Next()->state;
+	uint rotor_pos = v == nullptr || rotor_in_gui ? 0 : v->Next()->Next()->state;
 
 	bool sprite_stack = HasBit(e->info.misc_flags, EF_SPRITE_STACK);
 	uint max_stack = sprite_stack ? lengthof(result->seq) : 1;

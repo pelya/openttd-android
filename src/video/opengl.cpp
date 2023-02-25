@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
@@ -743,6 +741,16 @@ void OpenGLBackend::PrepareContext()
 	/* Enable alpha blending using the src alpha factor. */
 	_glEnable(GL_BLEND);
 	_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+std::string OpenGLBackend::GetDriverName()
+{
+	std::string res{};
+	/* Skipping GL_VENDOR as it tends to be "obvious" from the renderer and version data, and just makes the string pointlessly longer */
+	res += reinterpret_cast<const char *>(_glGetString(GL_RENDERER));
+	res += ", ";
+	res += reinterpret_cast<const char *>(_glGetString(GL_VERSION));
+	return res;
 }
 
 /**

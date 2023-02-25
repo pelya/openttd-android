@@ -14,6 +14,7 @@
 #include "../company_gui.h"
 #include "../date_func.h"
 #include "../viewport_func.h"
+#include "../zoom_func.h"
 #include "../smallmap_gui.h"
 #include "../core/geometry_func.hpp"
 #include "../widgets/link_graph_legend_widget.h"
@@ -26,10 +27,27 @@
  * Colours for the various "load" states of links. Ordered from "unused" to
  * "overloaded".
  */
-const uint8 LinkGraphOverlay::LINK_COLOURS[] = {
+const uint8 LinkGraphOverlay::LINK_COLOURS[][12] = {
+{
 	0x0f, 0xd1, 0xd0, 0x57,
 	0x55, 0x53, 0xbf, 0xbd,
 	0xba, 0xb9, 0xb7, 0xb5
+},
+{
+	0x0f, 0xd1, 0xd0, 0x57,
+	0x55, 0x53, 0x96, 0x95,
+	0x94, 0x93, 0x92, 0x91
+},
+{
+	0x0f, 0x0b, 0x09, 0x07,
+	0x05, 0x03, 0xbf, 0xbd,
+	0xba, 0xb9, 0xb7, 0xb5
+},
+{
+	0x0f, 0x0b, 0x0a, 0x09,
+	0x08, 0x07, 0x06, 0x05,
+	0x04, 0x03, 0x02, 0x01
+}
 };
 
 /**
@@ -201,8 +219,10 @@ void LinkGraphOverlay::AddLinks(const Station *from, const Station *to)
 		const LinkGraph &lg = *LinkGraph::Get(ge.link_graph);
 		ConstEdge edge = lg[ge.node][to->goods[c].node];
 		if (edge.Capacity() > 0) {
-			this->AddStats(lg.Monthly(edge.Capacity()), lg.Monthly(edge.Usage()),
-					ge.flows.GetFlowVia(to->index), from->owner == OWNER_NONE || to->owner == OWNER_NONE,
+			this->AddStats(c, lg.Monthly(edge.Capacity()), lg.Monthly(edge.Usage()),
+					ge.flows.GetFlowVia(to->index),
+					edge.TravelTime() / DAY_TICKS,
+					from->owner == OWNER_NONE || to->owner == OWNER_NONE,
 					this->cached_links[from->index][to->index]);
 		}
 	}
@@ -218,14 +238,16 @@ void LinkGraphOverlay::AddLinks(const Station *from, const Station *to)
  * @param new_shared If the new link is shared.
  * @param cargo LinkProperties to write the information to.
  */
-/* static */ void LinkGraphOverlay::AddStats(uint new_cap, uint new_usg, uint new_plan, bool new_shared, LinkProperties &cargo)
+/* static */ void LinkGraphOverlay::AddStats(CargoID new_cargo, uint new_cap, uint new_usg, uint new_plan, uint32 time, bool new_shared, LinkProperties &cargo)
 {
 	/* multiply the numbers by 32 in order to avoid comparing to 0 too often. */
 	if (cargo.capacity == 0 ||
-			std::max(cargo.usage, cargo.planned) * 32 / (cargo.capacity + 1) < std::max(new_usg, new_plan) * 32 / (new_cap + 1)) {
+			cargo.Usage() * 32 / (cargo.capacity + 1) < std::max(new_usg, new_plan) * 32 / (new_cap + 1)) {
+		cargo.cargo = new_cargo;
 		cargo.capacity = new_cap;
 		cargo.usage = new_usg;
 		cargo.planned = new_plan;
+		cargo.time = time;
 	}
 	if (new_shared) cargo.shared = true;
 }
@@ -250,13 +272,14 @@ void LinkGraphOverlay::Draw(const DrawPixelInfo *dpi)
  */
 void LinkGraphOverlay::DrawLinks(const DrawPixelInfo *dpi) const
 {
+	int width = ScaleGUITrad(this->scale);
 	for (LinkMap::const_iterator i(this->cached_links.begin()); i != this->cached_links.end(); ++i) {
 		if (!Station::IsValidID(i->first)) continue;
 		Point pta = this->GetStationMiddle(Station::Get(i->first));
 		for (StationLinkMap::const_iterator j(i->second.begin()); j != i->second.end(); ++j) {
 			if (!Station::IsValidID(j->first)) continue;
 			Point ptb = this->GetStationMiddle(Station::Get(j->first));
-			if (!this->IsLinkVisible(pta, ptb, dpi, this->scale + 2)) continue;
+			if (!this->IsLinkVisible(pta, ptb, dpi, width + 2)) continue;
 			this->DrawContent(pta, ptb, j->second);
 		}
 	}
@@ -270,22 +293,23 @@ void LinkGraphOverlay::DrawLinks(const DrawPixelInfo *dpi) const
  */
 void LinkGraphOverlay::DrawContent(Point pta, Point ptb, const LinkProperties &cargo) const
 {
-	uint usage_or_plan = std::min(cargo.capacity * 2 + 1, std::max(cargo.usage, cargo.planned));
-	int colour = LinkGraphOverlay::LINK_COLOURS[usage_or_plan * lengthof(LinkGraphOverlay::LINK_COLOURS) / (cargo.capacity * 2 + 2)];
-	int dash = cargo.shared ? this->scale * 4 : 0;
+	uint usage_or_plan = std::min(cargo.capacity * 2 + 1, cargo.Usage());
+	int colour = LinkGraphOverlay::LINK_COLOURS[_settings_client.gui.linkgraph_colours][usage_or_plan * lengthof(LinkGraphOverlay::LINK_COLOURS[0]) / (cargo.capacity * 2 + 2)];
+	int width = ScaleGUITrad(this->scale);
+	int dash = cargo.shared ? width * 4 : 0;
 
 	/* Move line a bit 90° against its dominant direction to prevent it from
 	 * being hidden below the grey line. */
 	int side = _settings_game.vehicle.road_side ? 1 : -1;
 	if (abs(pta.x - ptb.x) < abs(pta.y - ptb.y)) {
-		int offset_x = (pta.y > ptb.y ? 1 : -1) * side * this->scale;
-		GfxDrawLine(pta.x + offset_x, pta.y, ptb.x + offset_x, ptb.y, colour, this->scale, dash);
+		int offset_x = (pta.y > ptb.y ? 1 : -1) * side * width;
+		GfxDrawLine(pta.x + offset_x, pta.y, ptb.x + offset_x, ptb.y, colour, width, dash);
 	} else {
-		int offset_y = (pta.x < ptb.x ? 1 : -1) * side * this->scale;
-		GfxDrawLine(pta.x, pta.y + offset_y, ptb.x, ptb.y + offset_y, colour, this->scale, dash);
+		int offset_y = (pta.x < ptb.x ? 1 : -1) * side * width;
+		GfxDrawLine(pta.x, pta.y + offset_y, ptb.x, ptb.y + offset_y, colour, width, dash);
 	}
 
-	GfxDrawLine(pta.x, pta.y, ptb.x, ptb.y, _colour_gradient[COLOUR_GREY][1], this->scale);
+	GfxDrawLine(pta.x, pta.y, ptb.x, ptb.y, _colour_gradient[COLOUR_GREY][1], width);
 }
 
 /**
@@ -294,13 +318,14 @@ void LinkGraphOverlay::DrawContent(Point pta, Point ptb, const LinkProperties &c
  */
 void LinkGraphOverlay::DrawStationDots(const DrawPixelInfo *dpi) const
 {
+	int width = ScaleGUITrad(this->scale);
 	for (StationSupplyList::const_iterator i(this->cached_stations.begin()); i != this->cached_stations.end(); ++i) {
 		const Station *st = Station::GetIfValid(i->first);
 		if (st == nullptr) continue;
 		Point pt = this->GetStationMiddle(st);
-		if (!this->IsPointVisible(pt, dpi, 3 * this->scale)) continue;
+		if (!this->IsPointVisible(pt, dpi, 3 * width)) continue;
 
-		uint r = this->scale * 2 + this->scale * 2 * std::min(200U, i->second) / 200;
+		uint r = width * 2 + width * 2 * std::min(200U, i->second) / 200;
 
 		LinkGraphOverlay::DrawVertex(pt.x, pt.y, r,
 				_colour_gradient[st->owner != OWNER_NONE ?
@@ -331,6 +356,60 @@ void LinkGraphOverlay::DrawStationDots(const DrawPixelInfo *dpi) const
 	GfxDrawLine(x - w1, y + w2, x + w2, y + w2, border_colour);
 	GfxDrawLine(x - w1, y - w1, x - w1, y + w2, border_colour);
 	GfxDrawLine(x + w2, y - w1, x + w2, y + w2, border_colour);
+}
+
+bool LinkGraphOverlay::ShowTooltip(Point pt, TooltipCloseCondition close_cond)
+{
+	for (auto i(this->cached_links.crbegin()); i != this->cached_links.crend(); ++i) {
+		if (!Station::IsValidID(i->first)) continue;
+		Point pta = this->GetStationMiddle(Station::Get(i->first));
+		for (auto j(i->second.crbegin()); j != i->second.crend(); ++j) {
+			if (!Station::IsValidID(j->first)) continue;
+			if (i->first == j->first) continue;
+
+			/* Check the distance from the cursor to the line defined by the two stations. */
+			Point ptb = this->GetStationMiddle(Station::Get(j->first));
+			float dist = std::abs((ptb.x - pta.x) * (pta.y - pt.y) - (pta.x - pt.x) * (ptb.y - pta.y)) /
+				std::sqrt((ptb.x - pta.x) * (ptb.x - pta.x) + (ptb.y - pta.y) * (ptb.y - pta.y));
+			const auto &link = j->second;
+			if (dist <= 4 && link.Usage() > 0 &&
+					pt.x >= std::min(pta.x, ptb.x) &&
+					pt.x <= std::max(pta.x, ptb.x)) {
+				static char buf[1024];
+				char *buf_end = buf;
+				buf[0] = 0;
+				/* Fill buf with more information if this is a bidirectional link. */
+				uint32 back_time = 0;
+				auto k = this->cached_links[j->first].find(i->first);
+				if (k != this->cached_links[j->first].end()) {
+					const auto &back = k->second;
+					back_time = back.time;
+					if (back.Usage() > 0) {
+						SetDParam(0, back.cargo);
+						SetDParam(1, back.Usage());
+						SetDParam(2, back.Usage() * 100 / (back.capacity + 1));
+						buf_end = GetString(buf, STR_LINKGRAPH_STATS_TOOLTIP_RETURN_EXTENSION, lastof(buf));
+					}
+				}
+				/* Add information about the travel time if known. */
+				const auto time = link.time ? back_time ? ((link.time + back_time) / 2) : link.time : back_time;
+				if (time > 0) {
+					SetDParam(0, time);
+					buf_end = GetString(buf_end, STR_LINKGRAPH_STATS_TOOLTIP_TIME_EXTENSION, lastof(buf));
+				}
+				SetDParam(0, link.cargo);
+				SetDParam(1, link.Usage());
+				SetDParam(2, i->first);
+				SetDParam(3, j->first);
+				SetDParam(4, link.Usage() * 100 / (link.capacity + 1));
+				SetDParamStr(5, buf);
+				GuiShowTooltips(this->window, STR_LINKGRAPH_STATS_TOOLTIP, 7, nullptr, close_cond);
+				return true;
+			}
+		}
+	}
+	GuiShowTooltips(this->window, STR_NULL, 0, nullptr, close_cond);
+	return false;
 }
 
 /**
@@ -379,7 +458,7 @@ NWidgetBase *MakeCompanyButtonRowsLinkGraphGUI(int *biggest_index)
 NWidgetBase *MakeSaturationLegendLinkGraphGUI(int *biggest_index)
 {
 	NWidgetVertical *panel = new NWidgetVertical(NC_EQUALSIZE);
-	for (uint i = 0; i < lengthof(LinkGraphOverlay::LINK_COLOURS); ++i) {
+	for (uint i = 0; i < lengthof(LinkGraphOverlay::LINK_COLOURS[0]); ++i) {
 		NWidgetBackground * wid = new NWidgetBackground(WWT_PANEL, COLOUR_DARK_GREEN, i + WID_LGL_SATURATION_FIRST);
 		wid->SetMinimalSize(50, 0);
 		wid->SetMinimalTextLines(1, 0, FS_SMALL);
@@ -431,13 +510,11 @@ static const NWidgetPart _nested_linkgraph_legend_widgets[] = {
 		NWidget(WWT_STICKYBOX, COLOUR_DARK_GREEN),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
-		NWidget(NWID_HORIZONTAL),
+		NWidget(NWID_HORIZONTAL), SetPadding(WidgetDimensions::unscaled.framerect), SetPIP(0, WidgetDimensions::unscaled.framerect.Horizontal(), 0),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_LGL_SATURATION),
-				SetPadding(WD_FRAMERECT_TOP, 0, WD_FRAMERECT_BOTTOM, WD_CAPTIONTEXT_LEFT),
 				NWidgetFunction(MakeSaturationLegendLinkGraphGUI),
 			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_LGL_COMPANIES),
-				SetPadding(WD_FRAMERECT_TOP, 0, WD_FRAMERECT_BOTTOM, WD_CAPTIONTEXT_LEFT),
 				NWidget(NWID_VERTICAL, NC_EQUALSIZE),
 					NWidgetFunction(MakeCompanyButtonRowsLinkGraphGUI),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_LGL_COMPANIES_ALL), SetDataTip(STR_LINKGRAPH_LEGEND_ALL, STR_NULL),
@@ -445,7 +522,6 @@ static const NWidgetPart _nested_linkgraph_legend_widgets[] = {
 				EndContainer(),
 			EndContainer(),
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN, WID_LGL_CARGOES),
-				SetPadding(WD_FRAMERECT_TOP, WD_FRAMERECT_RIGHT, WD_FRAMERECT_BOTTOM, WD_CAPTIONTEXT_LEFT),
 				NWidget(NWID_VERTICAL, NC_EQUALSIZE),
 					NWidgetFunction(MakeCargoesLegendLinkGraphGUI),
 					NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_LGL_CARGOES_ALL), SetDataTip(STR_LINKGRAPH_LEGEND_ALL, STR_NULL),
@@ -457,7 +533,7 @@ static const NWidgetPart _nested_linkgraph_legend_widgets[] = {
 };
 
 static_assert(WID_LGL_SATURATION_LAST - WID_LGL_SATURATION_FIRST ==
-		lengthof(LinkGraphOverlay::LINK_COLOURS) - 1);
+		lengthof(LinkGraphOverlay::LINK_COLOURS[0]) - 1);
 
 static WindowDesc _linkgraph_legend_desc(
 	WDP_AUTO, "toolbar_linkgraph", 0, 0,
@@ -514,8 +590,8 @@ void LinkGraphLegendWindow::UpdateWidgetSize(int widget, Dimension *size, const 
 		}
 		if (str != STR_NULL) {
 			Dimension dim = GetStringBoundingBox(str);
-			dim.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-			dim.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+			dim.width += padding.width;
+			dim.height += padding.height;
 			*size = maxdim(*size, dim);
 		}
 	}
@@ -523,8 +599,8 @@ void LinkGraphLegendWindow::UpdateWidgetSize(int widget, Dimension *size, const 
 		CargoSpec *cargo = CargoSpec::Get(widget - WID_LGL_CARGO_FIRST);
 		if (cargo->IsValid()) {
 			Dimension dim = GetStringBoundingBox(cargo->abbrev);
-			dim.width += WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-			dim.height += WD_FRAMERECT_TOP + WD_FRAMERECT_BOTTOM;
+			dim.width += padding.width;
+			dim.height += padding.height;
 			*size = maxdim(*size, dim);
 		}
 	}
@@ -532,14 +608,17 @@ void LinkGraphLegendWindow::UpdateWidgetSize(int widget, Dimension *size, const 
 
 void LinkGraphLegendWindow::DrawWidget(const Rect &r, int widget) const
 {
+	Rect br = r.Shrink(WidgetDimensions::scaled.bevel);
+	if (this->IsWidgetLowered(widget)) br = br.Translate(WidgetDimensions::scaled.pressed, WidgetDimensions::scaled.pressed);
 	if (IsInsideMM(widget, WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST + 1)) {
 		if (this->IsWidgetDisabled(widget)) return;
 		CompanyID cid = (CompanyID)(widget - WID_LGL_COMPANY_FIRST);
 		Dimension sprite_size = GetSpriteSize(SPR_COMPANY_ICON);
-		DrawCompanyIcon(cid, (r.left + r.right + 1 - sprite_size.width) / 2, (r.top + r.bottom + 1 - sprite_size.height) / 2);
+		DrawCompanyIcon(cid, CenterBounds(br.left, br.right, sprite_size.width), CenterBounds(br.top, br.bottom, sprite_size.height));
 	}
 	if (IsInsideMM(widget, WID_LGL_SATURATION_FIRST, WID_LGL_SATURATION_LAST + 1)) {
-		GfxFillRect(r.left + 1, r.top + 1, r.right - 1, r.bottom - 1, LinkGraphOverlay::LINK_COLOURS[widget - WID_LGL_SATURATION_FIRST]);
+		uint8 colour = LinkGraphOverlay::LINK_COLOURS[_settings_client.gui.linkgraph_colours][widget - WID_LGL_SATURATION_FIRST];
+		GfxFillRect(br, colour);
 		StringID str = STR_NULL;
 		if (widget == WID_LGL_SATURATION_FIRST) {
 			str = STR_LINKGRAPH_LEGEND_UNUSED;
@@ -548,13 +627,15 @@ void LinkGraphLegendWindow::DrawWidget(const Rect &r, int widget) const
 		} else if (widget == (WID_LGL_SATURATION_LAST + WID_LGL_SATURATION_FIRST) / 2) {
 			str = STR_LINKGRAPH_LEGEND_SATURATED;
 		}
-		if (str != STR_NULL) DrawString(r.left, r.right, (r.top + r.bottom + 1 - FONT_HEIGHT_SMALL) / 2, str, TC_FROMSTRING, SA_HOR_CENTER);
+		if (str != STR_NULL) {
+			DrawString(br.left, br.right, CenterBounds(br.top, br.bottom, FONT_HEIGHT_SMALL), str, GetContrastColour(colour) | TC_FORCED, SA_HOR_CENTER);
+		}
 	}
 	if (IsInsideMM(widget, WID_LGL_CARGO_FIRST, WID_LGL_CARGO_LAST + 1)) {
 		if (this->IsWidgetDisabled(widget)) return;
 		CargoSpec *cargo = CargoSpec::Get(widget - WID_LGL_CARGO_FIRST);
-		GfxFillRect(r.left + 2, r.top + 2, r.right - 2, r.bottom - 2, cargo->legend_colour);
-		DrawString(r.left, r.right, (r.top + r.bottom + 1 - FONT_HEIGHT_SMALL) / 2, cargo->abbrev, GetContrastColour(cargo->legend_colour, 73), SA_HOR_CENTER);
+		GfxFillRect(br, cargo->legend_colour);
+		DrawString(br.left, br.right, CenterBounds(br.top, br.bottom, FONT_HEIGHT_SMALL), cargo->abbrev, GetContrastColour(cargo->legend_colour, 73), SA_HOR_CENTER);
 	}
 }
 

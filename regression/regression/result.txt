@@ -788,6 +788,13 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetQuarterlyPerformanceRating(): 0
     GetQuarterlyCompanyValue():      0
 
+--Commands--
+ -Command accounting-
+  Command cost:              7500
+  New inner cost scope:      0
+  Further command cost:      30
+  Saved cost of outer scope: 7500
+
 --AIAirport--
   IsHangarTile():       false
   IsAirportTile():      false
@@ -1118,6 +1125,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  -1
     GetCargoIncome(100, 10): -1
     GetCargoIncome(10, 100): -1
+    GetWeight(100):          -1
     GetRoadVehicleTypeForCargo(): 1
   Cargo 0
     IsValidCargo():          true
@@ -1130,6 +1138,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  3
     GetCargoIncome(100, 10): 38
     GetCargoIncome(10, 100): 3
+    GetWeight(100):          6
     GetRoadVehicleTypeForCargo(): 0
   Cargo 1
     IsValidCargo():          true
@@ -1142,6 +1151,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  7
     GetCargoIncome(100, 10): 71
     GetCargoIncome(10, 100): 6
+    GetWeight(100):          100
     GetRoadVehicleTypeForCargo(): 1
   Cargo 2
     IsValidCargo():          true
@@ -1154,6 +1164,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  5
     GetCargoIncome(100, 10): 55
     GetCargoIncome(10, 100): 5
+    GetWeight(100):          25
     GetRoadVehicleTypeForCargo(): 1
   Cargo 3
     IsValidCargo():          true
@@ -1166,6 +1177,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  5
     GetCargoIncome(100, 10): 53
     GetCargoIncome(10, 100): 5
+    GetWeight(100):          100
     GetRoadVehicleTypeForCargo(): 1
   Cargo 4
     IsValidCargo():          true
@@ -1178,6 +1190,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  5
     GetCargoIncome(100, 10): 52
     GetCargoIncome(10, 100): 4
+    GetWeight(100):          18
     GetRoadVehicleTypeForCargo(): 1
   Cargo 5
     IsValidCargo():          true
@@ -1190,6 +1203,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  7
     GetCargoIncome(100, 10): 74
     GetCargoIncome(10, 100): 6
+    GetWeight(100):          50
     GetRoadVehicleTypeForCargo(): 1
   Cargo 6
     IsValidCargo():          true
@@ -1202,6 +1216,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  5
     GetCargoIncome(100, 10): 58
     GetCargoIncome(10, 100): 4
+    GetWeight(100):          100
     GetRoadVehicleTypeForCargo(): 1
   Cargo 7
     IsValidCargo():          true
@@ -1214,6 +1229,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  6
     GetCargoIncome(100, 10): 60
     GetCargoIncome(10, 100): 5
+    GetWeight(100):          100
     GetRoadVehicleTypeForCargo(): 1
   Cargo 8
     IsValidCargo():          true
@@ -1226,6 +1242,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  6
     GetCargoIncome(100, 10): 62
     GetCargoIncome(10, 100): 5
+    GetWeight(100):          100
     GetRoadVehicleTypeForCargo(): 1
   Cargo 9
     IsValidCargo():          true
@@ -1238,6 +1255,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  6
     GetCargoIncome(100, 10): 69
     GetCargoIncome(10, 100): 6
+    GetWeight(100):          100
     GetRoadVehicleTypeForCargo(): 1
   Cargo 10
     IsValidCargo():          true
@@ -1250,6 +1268,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  9
     GetCargoIncome(100, 10): 90
     GetCargoIncome(10, 100): 7
+    GetWeight(100):          12
     GetRoadVehicleTypeForCargo(): 1
   Cargo 11
     IsValidCargo():          false
@@ -1262,6 +1281,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  -1
     GetCargoIncome(100, 10): -1
     GetCargoIncome(10, 100): -1
+    GetWeight(100):          -1
     GetRoadVehicleTypeForCargo(): 1
   Cargo 12
     IsValidCargo():          false
@@ -1274,6 +1294,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  -1
     GetCargoIncome(100, 10): -1
     GetCargoIncome(10, 100): -1
+    GetWeight(100):          -1
     GetRoadVehicleTypeForCargo(): 1
   Cargo 13
     IsValidCargo():          false
@@ -1286,6 +1307,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  -1
     GetCargoIncome(100, 10): -1
     GetCargoIncome(10, 100): -1
+    GetWeight(100):          -1
     GetRoadVehicleTypeForCargo(): 1
   Cargo 14
     IsValidCargo():          false
@@ -1298,6 +1320,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetCargoIncome(10, 10):  -1
     GetCargoIncome(100, 10): -1
     GetCargoIncome(10, 100): -1
+    GetWeight(100):          -1
     GetRoadVehicleTypeForCargo(): 1
 
 --CargoList--
@@ -7411,8 +7434,32 @@ ERROR: IsEnd() is invalid as Begin() is never called
     IsRailTile():                  false
     BuildRailTrack():              true
     BuildSignal():                 true
+    GetSignalType():               4
+    GetSignalType():               255
+    RemoveSignal():                true
+    BuildSignal():                 true
+    GetSignalType():               255
+    GetSignalType():               1
+    RemoveSignal():                true
+    BuildSignal():                 true
+    GetSignalType():               10
+    GetSignalType():               10
     RemoveRailTrack():             false
     RemoveRailTrack():             true
+    BuildRailTrack():              true
+    BuildSignal():                 false
+    GetSignalType():               255
+    GetSignalType():               255
+    RemoveSignal():                false
+    BuildSignal():                 true
+    GetSignalType():               255
+    GetSignalType():               1
+    RemoveSignal():                true
+    BuildSignal():                 true
+    GetSignalType():               255
+    GetSignalType():               10
+    RemoveRailTrack():             true
+    RemoveRailTrack():             false
     BuildRail():                   true
     HasTransportType():            true
     HasTransportType():            false
@@ -9248,6 +9295,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
   BuildVehicle():       12
   IsValidVehicle(12):   true
   CloneVehicle():       13
+  BuildVehicle():       1048575
   --Accounting--
     GetCosts():         11894
     Should be:          11894
@@ -9272,12 +9320,12 @@ ERROR: IsEnd() is invalid as Begin() is never called
     GetLocation():       33417
     GetEngineType():     153
     GetUnitNumber():     1
-    GetAge():            1
+    GetAge():            0
     GetMaxAge():         5490
-    GetAgeLeft():        5489
+    GetAgeLeft():        5490
     GetCurrentSpeed():   7
     GetRunningCost():    421
-    GetProfitThisYear(): -1
+    GetProfitThisYear(): 0
     GetProfitLastYear(): 0
     GetCurrentValue():   5947
     GetVehicleType():    1
@@ -9287,7 +9335,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
     IsInDepot():         false
     GetNumWagons():      1
     GetWagonEngineType(): 153
-    GetWagonAge():       1
+    GetWagonAge():       0
     GetLength():         8
   GetOwner():           1
   BuildVehicle():       14
@@ -9360,11 +9408,11 @@ ERROR: IsEnd() is invalid as Begin() is never called
     14 => 1
     12 => 1
   Age ListDump:
+    17 => 1
+    16 => 1
+    14 => 1
     13 => 1
     12 => 1
-    17 => 0
-    16 => 0
-    14 => 0
   MaxAge ListDump:
     16 => 10980
     14 => 10980
@@ -9372,9 +9420,9 @@ ERROR: IsEnd() is invalid as Begin() is never called
     13 => 5490
     12 => 5490
   AgeLeft ListDump:
-    16 => 10980
-    14 => 10980
-    17 => 7320
+    16 => 10979
+    14 => 10979
+    17 => 7319
     13 => 5489
     12 => 5489
   CurrentSpeed ListDump:

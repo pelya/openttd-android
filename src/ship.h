@@ -37,8 +37,8 @@ struct Ship FINAL : public SpecializedVehicle<Ship, VEH_SHIP> {
 
 	void MarkDirty();
 	void UpdateDeltaXY();
-	ExpensesType GetExpenseType(bool income) const { return income ? EXPENSES_SHIP_INC : EXPENSES_SHIP_RUN; }
-	void PlayLeaveStationSound() const;
+	ExpensesType GetExpenseType(bool income) const { return income ? EXPENSES_SHIP_REVENUE : EXPENSES_SHIP_RUN; }
+	void PlayLeaveStationSound(bool force = false) const;
 	bool IsPrimaryVehicle() const { return true; }
 	void GetImage(Direction direction, EngineImageType image_type, VehicleSpriteSeq *result) const;
 	int GetDisplaySpeed() const { return this->cur_speed / 2; }

@@ -38,6 +38,10 @@
 #define PM_QS_INPUT 0x20000
 #endif
 
+#ifndef WM_DPICHANGED
+#define WM_DPICHANGED 0x02E0
+#endif
+
 bool _window_maximize;
 static Dimension _bck_resolution;
 DWORD _imm_props;
@@ -668,6 +672,24 @@ LRESULT CALLBACK WndProcGdi(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					break;
 			}
 			return TRUE;
+		}
+
+		case WM_DPICHANGED: {
+			auto did_adjust = AdjustGUIZoom(true);
+
+			/* Resize the window to match the new DPI setting. */
+			RECT *prcNewWindow = (RECT *)lParam;
+			SetWindowPos(hwnd,
+				NULL,
+				prcNewWindow->left,
+				prcNewWindow->top,
+				prcNewWindow->right - prcNewWindow->left,
+				prcNewWindow->bottom - prcNewWindow->top,
+				SWP_NOZORDER | SWP_NOACTIVATE);
+
+			if (did_adjust) ReInitAllWindows(true);
+
+			return 0;
 		}
 
 /* needed for wheel */
@@ -1309,6 +1331,11 @@ const char *VideoDriver_Win32OpenGL::Start(const StringList &param)
 		_cur_resolution = old_res;
 		return err;
 	}
+
+	this->driver_info = GetName();
+	this->driver_info += " (";
+	this->driver_info += OpenGLBackend::Get()->GetDriverName();
+	this->driver_info += ")";
 
 	this->ClientSizeChanged(this->width, this->height, true);
 	/* We should have a valid screen buffer now. If not, something went wrong and we should abort. */

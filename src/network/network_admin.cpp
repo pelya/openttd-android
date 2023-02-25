@@ -332,8 +332,8 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::SendCompanyInfo(const Company
 	p->Send_bool  (c->is_ai);
 	p->Send_uint8 (CeilDiv(c->months_of_bankruptcy, 3)); // send as quarters_of_bankruptcy
 
-	for (size_t i = 0; i < lengthof(c->share_owners); i++) {
-		p->Send_uint8(c->share_owners[i]);
+	for (auto owner : c->share_owners) {
+		p->Send_uint8(owner);
 	}
 
 	this->SendPacket(p);
@@ -359,8 +359,8 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::SendCompanyUpdate(const Compa
 	p->Send_bool  (NetworkCompanyIsPassworded(c->index));
 	p->Send_uint8 (CeilDiv(c->months_of_bankruptcy, 3)); // send as quarters_of_bankruptcy
 
-	for (size_t i = 0; i < lengthof(c->share_owners); i++) {
-		p->Send_uint8(c->share_owners[i]);
+	for (auto owner : c->share_owners) {
+		p->Send_uint8(owner);
 	}
 
 	this->SendPacket(p);
@@ -593,8 +593,8 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::SendCmdNames()
 {
 	Packet *p = new Packet(ADMIN_PACKET_SERVER_CMD_NAMES);
 
-	for (uint i = 0; i < CMD_END; i++) {
-		const char *cmdname = GetCommandName(i);
+	for (uint16 i = 0; i < CMD_END; i++) {
+		const char *cmdname = GetCommandName(static_cast<Commands>(i));
 
 		/* Should COMPAT_MTU be exceeded, start a new packet
 		 * (magic 5: 1 bool "more data" and one uint16 "command id", one
@@ -629,11 +629,8 @@ NetworkRecvStatus ServerNetworkAdminSocketHandler::SendCmdLogging(ClientID clien
 
 	p->Send_uint32(client_id);
 	p->Send_uint8 (cp->company);
-	p->Send_uint16(cp->cmd & CMD_ID_MASK);
-	p->Send_uint32(cp->p1);
-	p->Send_uint32(cp->p2);
-	p->Send_uint32(cp->tile);
-	p->Send_string(cp->text);
+	p->Send_uint16(cp->cmd);
+	p->Send_buffer(cp->data);
 	p->Send_uint32(cp->frame);
 
 	this->SendPacket(p);

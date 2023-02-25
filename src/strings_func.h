@@ -203,6 +203,7 @@ void SetDParamMaxDigits(uint n, uint count, FontSize size = FS_NORMAL);
 
 void SetDParamStr(uint n, const char *str);
 void SetDParamStr(uint n, const std::string &str);
+void SetDParamStr(uint n, std::string &&str) = delete; // block passing temporaries to SetDParamStr
 
 void CopyInDParam(int offs, const uint64 *src, int num);
 void CopyOutDParam(uint64 *dst, int offs, int num);
@@ -273,9 +274,9 @@ public:
 	 * @param font_name The new font name.
 	 * @param os_data Opaque pointer to OS-specific data.
 	 */
-	virtual void SetFontNames(struct FreeTypeSettings *settings, const char *font_name, const void *os_data = nullptr) = 0;
+	virtual void SetFontNames(struct FontCacheSettings *settings, const char *font_name, const void *os_data = nullptr) = 0;
 
-	int FindMissingGlyphs();
+	bool FindMissingGlyphs();
 };
 
 void CheckForMissingGlyphs(bool base_font = true, MissingGlyphSearcher *search = nullptr);

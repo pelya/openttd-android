@@ -401,7 +401,8 @@ static bool FixTTOEngines()
 		if (oi == 255) {
 			/* Default engine is used */
 			_date += DAYS_TILL_ORIGINAL_BASE_YEAR;
-			StartupOneEngine(e, aging_date);
+			StartupOneEngine(e, aging_date, 0);
+			CalcEngineReliability(e, false);
 			e->intro_date -= DAYS_TILL_ORIGINAL_BASE_YEAR;
 			_date -= DAYS_TILL_ORIGINAL_BASE_YEAR;
 
@@ -1335,7 +1336,7 @@ bool LoadOldVehicle(LoadgameState *ls, int num)
 		if (_old_order_ptr != 0 && _old_order_ptr != 0xFFFFFFFF) {
 			uint max = _savegame_type == SGT_TTO ? 3000 : 5000;
 			uint old_id = RemapOrderIndex(_old_order_ptr);
-			if (old_id < max) v->orders.old = Order::Get(old_id); // don't accept orders > max number of orders
+			if (old_id < max) v->old_orders = Order::Get(old_id); // don't accept orders > max number of orders
 		}
 		v->current_order.AssignOrder(UnpackOldOrder(_old_order));
 
@@ -1343,7 +1344,7 @@ bool LoadOldVehicle(LoadgameState *ls, int num)
 
 		if (_cargo_count != 0 && CargoPacket::CanAllocateItem()) {
 			StationID source =    (_cargo_source == 0xFF) ? INVALID_STATION : _cargo_source;
-			TileIndex source_xy = (source != INVALID_STATION) ? Station::Get(source)->xy : 0;
+			TileIndex source_xy = (source != INVALID_STATION) ? Station::Get(source)->xy : (TileIndex)0;
 			v->cargo.Append(new CargoPacket(_cargo_count, _cargo_days, source, source_xy, source_xy));
 		}
 	}
@@ -1609,7 +1610,7 @@ static const OldChunks main_chunk[] = {
 	OCL_NULL( 2 ),              ///< land_code,     no longer in use
 
 	OCL_VAR ( OC_FILE_U16 | OC_VAR_U8, 1, &_age_cargo_skip_counter ),
-	OCL_VAR ( OC_UINT16,   1, &_tick_counter ),
+	OCL_VAR ( OC_FILE_U16 | OC_VAR_U64, 1, &_tick_counter ),
 	OCL_VAR (   OC_TILE,   1, &_cur_tileloop_tile ),
 
 	OCL_ASSERT( OC_TTO, 0x3A2E ),

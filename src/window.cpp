@@ -361,6 +361,17 @@ QueryString *Window::GetQueryString(uint widnum)
 }
 
 /**
+ * Update size of all QueryStrings of this window.
+ */
+void Window::UpdateQueryStringSize()
+{
+	for (auto &qs : this->querystrings)
+	{
+		qs.second->text.UpdateSize();
+	}
+}
+
+/**
  * Get the current input text if an edit box has the focus.
  * @return The currently focused input text or nullptr if no input focused.
  */
@@ -1727,7 +1738,7 @@ static Point GetAutoPlacePosition(int width, int height)
 		top = 0;
 	}
 	int offset_x = rtl ? -(int)NWidgetLeaf::closebox_dimension.width : (int)NWidgetLeaf::closebox_dimension.width;
-	int offset_y = std::max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM);
+	int offset_y = std::max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.captiontext.Vertical());
 
 restart:
 	for (const Window *w : Window::Iterate()) {
@@ -1807,7 +1818,7 @@ static Point LocalGetWindowPlacement(const WindowDesc *desc, int16 sm_width, int
 			 *  - Y position: closebox of parent + closebox of child + statusbar
 			 *  - X position: closebox on left/right, resizebox on right/left (depending on ltr/rtl)
 			 */
-			int indent_y = std::max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WD_CAPTIONTEXT_TOP + WD_CAPTIONTEXT_BOTTOM);
+			int indent_y = std::max<int>(NWidgetLeaf::closebox_dimension.height, FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.captiontext.Vertical());
 			if (w->top + 3 * indent_y < _screen.height && _settings_client.gui.windows_titlebars) {
 				pt.y = w->top + indent_y;
 				int indent_close = NWidgetLeaf::closebox_dimension.width;
@@ -2156,28 +2167,30 @@ static void PreventHiding(int *nx, int *ny, const Rect &rect, const Window *v, i
 {
 	if (v == nullptr) return;
 
+	const int min_visible = ScaleGUITrad(MIN_VISIBLE_TITLE_BAR);
+
 	int v_bottom = v->top + v->height;
 	int v_right = v->left + v->width;
-	int safe_y = (dir == PHD_UP) ? (v->top - MIN_VISIBLE_TITLE_BAR - rect.top) : (v_bottom + MIN_VISIBLE_TITLE_BAR - rect.bottom); // Compute safe vertical position.
+	int safe_y = (dir == PHD_UP) ? (v->top - min_visible - rect.top) : (v_bottom + min_visible - rect.bottom); // Compute safe vertical position.
 
-	if (*ny + rect.top <= v->top - MIN_VISIBLE_TITLE_BAR) return; // Above v is enough space
-	if (*ny + rect.bottom >= v_bottom + MIN_VISIBLE_TITLE_BAR) return; // Below v is enough space
+	if (*ny + rect.top <= v->top - min_visible) return; // Above v is enough space
+	if (*ny + rect.bottom >= v_bottom + min_visible) return; // Below v is enough space
 
 	/* Vertically, the rectangle is hidden behind v. */
-	if (*nx + rect.left + MIN_VISIBLE_TITLE_BAR < v->left) { // At left of v.
-		if (v->left < MIN_VISIBLE_TITLE_BAR) *ny = safe_y; // But enough room, force it to a safe position.
+	if (*nx + rect.left + min_visible < v->left) { // At left of v.
+		if (v->left < min_visible) *ny = safe_y; // But enough room, force it to a safe position.
 		return;
 	}
-	if (*nx + rect.right - MIN_VISIBLE_TITLE_BAR > v_right) { // At right of v.
-		if (v_right > _screen.width - MIN_VISIBLE_TITLE_BAR) *ny = safe_y; // Not enough room, force it to a safe position.
+	if (*nx + rect.right - min_visible > v_right) { // At right of v.
+		if (v_right > _screen.width - min_visible) *ny = safe_y; // Not enough room, force it to a safe position.
 		return;
 	}
 
 	/* Horizontally also hidden, force movement to a safe area. */
-	if (px + rect.left < v->left && v->left >= MIN_VISIBLE_TITLE_BAR) { // Coming from the left, and enough room there.
-		*nx = v->left - MIN_VISIBLE_TITLE_BAR - rect.left;
-	} else if (px + rect.right > v_right && v_right <= _screen.width - MIN_VISIBLE_TITLE_BAR) { // Coming from the right, and enough room there.
-		*nx = v_right + MIN_VISIBLE_TITLE_BAR - rect.right;
+	if (px + rect.left < v->left && v->left >= min_visible) { // Coming from the left, and enough room there.
+		*nx = v->left - min_visible - rect.left;
+	} else if (px + rect.right > v_right && v_right <= _screen.width - min_visible) { // Coming from the right, and enough room there.
+		*nx = v_right + min_visible - rect.right;
 	} else {
 		*ny = safe_y;
 	}
@@ -2198,9 +2211,11 @@ static void EnsureVisibleCaption(Window *w, int nx, int ny)
 	if (caption != nullptr && _settings_client.gui.windows_titlebars) {
 		caption_rect = caption->GetCurrentRect();
 
+		const int min_visible = ScaleGUITrad(MIN_VISIBLE_TITLE_BAR);
+
 		/* Make sure the window doesn't leave the screen */
-		nx = Clamp(nx, MIN_VISIBLE_TITLE_BAR - caption_rect.right, _screen.width - MIN_VISIBLE_TITLE_BAR - caption_rect.left);
-		ny = Clamp(ny, 0, _screen.height - MIN_VISIBLE_TITLE_BAR);
+		nx = Clamp(nx, min_visible - caption_rect.right, _screen.width - min_visible - caption_rect.left);
+		ny = Clamp(ny, 0, _screen.height - min_visible);
 		/* Make sure the title bar isn't hidden behind the main tool bar or the status bar. */
 		if (!_settings_client.gui.vertical_toolbar || _game_mode == GM_EDITOR) {
 			// This call hides the window totally with vertical toolbar if you move it slightly off-screen to the left
@@ -3137,6 +3152,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 					_scrolling_viewport = true;
 					_cursor.fix_at = (_settings_client.gui.scroll_mode == VSM_VIEWPORT_RMB_FIXED ||
 							_settings_client.gui.scroll_mode == VSM_MAP_RMB_FIXED);
+					DispatchRightClickEvent(w, x - w->left, y - w->top);
 					return;
 				}
 				break;
@@ -3145,7 +3161,6 @@ static void MouseLoop(MouseClick click, int mousewheel)
 				break;
 		}
 	}
-
 	if (vp == nullptr || (w->flags & WF_DISABLE_VP_SCROLL)) {
 		switch (click) {
 			case MC_LEFT_UP:
@@ -3157,17 +3172,14 @@ static void MouseLoop(MouseClick click, int mousewheel)
 			case MC_DOUBLE_LEFT:
 				DispatchLeftButtonDownEvent(w, x - w->left, y - w->top, click == MC_DOUBLE_LEFT ? 2 : 1);
 				return;
-
 			default:
 				if (!scrollwheel_scrolling || w == nullptr || w->window_class != WC_SMALLMAP) break;
 				/* We try to use the scrollwheel to scroll since we didn't touch any of the buttons.
 				 * Simulate a right button click so we can get started. */
 				FALLTHROUGH;
-
 			case MC_RIGHT:
 				DispatchRightClickEvent(w, x - w->left, y - w->top);
 				return;
-
 			case MC_HOVER:
 				DispatchHoverEvent(w, x - w->left, y - w->top);
 				break;
@@ -3247,11 +3259,12 @@ void HandleMouseEvents()
 			hover_pos = _cursor.pos;
 			hover_time = std::chrono::steady_clock::now();
 			_mouse_hovering = false;
-		} else {
+		} else if (!_mouse_hovering) {
 			if (std::chrono::steady_clock::now() > hover_time + std::chrono::milliseconds(_settings_client.gui.hover_delay_ms)) {
 				click = MC_HOVER;
 				_input_events_this_tick++;
 				_mouse_hovering = true;
+				hover_time = std::chrono::steady_clock::now();
 			}
 		}
 	}
@@ -3349,6 +3362,9 @@ void UpdateWindows()
 
 	PerformanceMeasurer framerate(PFE_DRAWING);
 	PerformanceAccumulator::Reset(PFE_DRAWWORLD);
+
+	extern void ProcessPendingPerformanceMeasurements();
+	ProcessPendingPerformanceMeasurements();
 
 	CallWindowRealtimeTickEvent(delta_ms);
 
@@ -3647,18 +3663,33 @@ void HideVitalWindows()
 	CloseWindowById(WC_STATUS_BAR, 0);
 }
 
+void ReInitWindow(Window *w, bool zoom_changed)
+{
+	if (w == nullptr) return;
+	if (zoom_changed) {
+		w->nested_root->AdjustPaddingForZoom();
+		w->UpdateQueryStringSize();
+	}
+	w->ReInit();
+}
+
 /** Re-initialize all windows. */
 void ReInitAllWindows(bool zoom_changed)
 {
+	SetupWidgetDimensions();
 	NWidgetLeaf::InvalidateDimensionCache(); // Reset cached sizes of several widgets.
 	NWidgetScrollbar::InvalidateDimensionCache();
 
 	extern void InitDepotWindowBlockSizes();
 	InitDepotWindowBlockSizes();
 
+	/* When _gui_zoom has changed, we need to resize toolbar and statusbar first,
+	 * so EnsureVisibleCaption uses the updated size information. */
+	ReInitWindow(FindWindowById(WC_MAIN_TOOLBAR, 0), zoom_changed);
+	ReInitWindow(FindWindowById(WC_STATUS_BAR, 0), zoom_changed);
 	for (Window *w : Window::Iterate()) {
-		if (zoom_changed) w->nested_root->AdjustPaddingForZoom();
-		w->ReInit();
+		if (w->window_class == WC_MAIN_TOOLBAR || w->window_class == WC_STATUS_BAR) continue;
+		ReInitWindow(w, zoom_changed);
 	}
 
 	void NetworkReInitChatBoxSize();

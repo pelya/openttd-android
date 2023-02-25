@@ -46,6 +46,7 @@
 #include "newgrf_config.h"
 #include "fios.h"
 #include "fileio_func.h"
+#include "settings_cmd.h"
 
 #include "table/strings.h"
 
@@ -1017,7 +1018,7 @@ static GRFConfig *GRFLoadConfig(IniFile &ini, const char *grpname, bool is_stati
 				SetDParam(1, STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN);
 			}
 
-			SetDParamStr(0, StrEmpty(filename) ? item->name : filename);
+			SetDParamStr(0, StrEmpty(filename) ? item->name.c_str() : filename);
 			ShowErrorMessage(STR_CONFIG_ERROR, STR_CONFIG_ERROR_INVALID_GRF, WL_CRITICAL);
 			delete c;
 			continue;
@@ -1491,19 +1492,17 @@ const SettingDesc *GetSettingFromName(const std::string_view name)
 
 /**
  * Network-safe changing of settings (server-only).
- * @param tile unused
  * @param flags operation to perform
- * @param p1 unused
- * @param p2 the new value for the setting
+ * @param name the name of the setting to change
+ * @param value the new value for the setting
  * The new value is properly clamped to its minimum/maximum when setting
- * @param text the name of the setting to change
  * @return the cost of this operation or an error
  * @see _settings
  */
-CommandCost CmdChangeSetting(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdChangeSetting(DoCommandFlag flags, const std::string &name, int32 value)
 {
-	if (text.empty()) return CMD_ERROR;
-	const SettingDesc *sd = GetSettingFromName(text);
+	if (name.empty()) return CMD_ERROR;
+	const SettingDesc *sd = GetSettingFromName(name);
 
 	if (sd == nullptr) return CMD_ERROR;
 	if (!SlIsObjectCurrentlyValid(sd->save.version_from, sd->save.version_to)) return CMD_ERROR;
@@ -1512,7 +1511,7 @@ CommandCost CmdChangeSetting(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	if (!sd->IsEditable(true)) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
-		sd->AsIntSetting()->ChangeValue(&GetGameSettings(), p2);
+		sd->AsIntSetting()->ChangeValue(&GetGameSettings(), value);
 	}
 
 	return CommandCost();
@@ -1520,24 +1519,22 @@ CommandCost CmdChangeSetting(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 
 /**
  * Change one of the per-company settings.
- * @param tile unused
  * @param flags operation to perform
- * @param p1 unused
- * @param p2 the new value for the setting
+ * @param name the name of the company setting to change
+ * @param value the new value for the setting
  * The new value is properly clamped to its minimum/maximum when setting
- * @param text the name of the company setting to change
  * @return the cost of this operation or an error
  */
-CommandCost CmdChangeCompanySetting(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const std::string &text)
+CommandCost CmdChangeCompanySetting(DoCommandFlag flags, const std::string &name, int32 value)
 {
-	if (text.empty()) return CMD_ERROR;
-	const SettingDesc *sd = GetCompanySettingFromName(text.c_str());
+	if (name.empty()) return CMD_ERROR;
+	const SettingDesc *sd = GetCompanySettingFromName(name);
 
 	if (sd == nullptr) return CMD_ERROR;
 	if (!sd->IsIntSetting()) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
-		sd->AsIntSetting()->ChangeValue(&Company::Get(_current_company)->settings, p2);
+		sd->AsIntSetting()->ChangeValue(&Company::Get(_current_company)->settings, value);
 	}
 
 	return CommandCost();
@@ -1555,7 +1552,7 @@ bool SetSettingValue(const IntSettingDesc *sd, int32 value, bool force_newgame)
 	const IntSettingDesc *setting = sd->AsIntSetting();
 	if ((setting->flags & SF_PER_COMPANY) != 0) {
 		if (Company::IsValidID(_local_company) && _game_mode != GM_MENU) {
-			return DoCommandP(0, 0, value, CMD_CHANGE_COMPANY_SETTING, nullptr, setting->GetName());
+			return Command<CMD_CHANGE_COMPANY_SETTING>::Post(setting->GetName(), value);
 		}
 
 		setting->ChangeValue(&_settings_client.company, value);
@@ -1581,7 +1578,7 @@ bool SetSettingValue(const IntSettingDesc *sd, int32 value, bool force_newgame)
 
 	/* send non-company-based settings over the network */
 	if (!_networking || (_networking && _network_server)) {
-		return DoCommandP(0, 0, value, CMD_CHANGE_SETTING, nullptr, setting->GetName());
+		return Command<CMD_CHANGE_SETTING>::Post(setting->GetName(), value);
 	}
 	return false;
 }
@@ -1607,9 +1604,9 @@ void SyncCompanySettings()
 	const void *new_object = &_settings_client.company;
 	for (auto &desc : _company_settings) {
 		const SettingDesc *sd = GetSettingDesc(desc);
-		uint32 old_value = (uint32)sd->AsIntSetting()->Read(new_object);
-		uint32 new_value = (uint32)sd->AsIntSetting()->Read(old_object);
-		if (old_value != new_value) NetworkSendCommand(0, 0, new_value, CMD_CHANGE_COMPANY_SETTING, nullptr, sd->GetName(), _local_company);
+		uint32 old_value = (uint32)sd->AsIntSetting()->Read(old_object);
+		uint32 new_value = (uint32)sd->AsIntSetting()->Read(new_object);
+		if (old_value != new_value) Command<CMD_CHANGE_COMPANY_SETTING>::SendNet(STR_NULL, _local_company, sd->GetName(), new_value);
 	}
 }
 

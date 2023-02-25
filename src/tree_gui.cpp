@@ -19,7 +19,7 @@
 #include "strings_func.h"
 #include "zoom_func.h"
 #include "tree_map.h"
-#include "window_func.h"
+#include "tree_cmd.h"
 
 #include "widgets/tree_widget.h"
 
@@ -58,8 +58,8 @@ static Dimension GetMaxTreeSpriteSize()
 	Dimension size, this_size;
 	Point offset;
 	/* Avoid to use it uninitialized */
-	size.width = 32; // default width - WD_FRAMERECT_LEFT
-	size.height = 39; // default height - BUTTON_BOTTOM_OFFSET
+	size.width = ScaleGUITrad(32); // default width - WD_FRAMERECT_LEFT
+	size.height = ScaleGUITrad(39); // default height - BUTTON_BOTTOM_OFFSET
 	offset.x = 0;
 	offset.y = 0;
 
@@ -164,8 +164,8 @@ public:
 		if (widget >= WID_BT_TYPE_BUTTON_FIRST) {
 			/* Ensure tree type buttons are sized after the largest tree type */
 			Dimension d = GetMaxTreeSpriteSize();
-			size->width = d.width + WD_FRAMERECT_LEFT + WD_FRAMERECT_RIGHT;
-			size->height = d.height + WD_FRAMERECT_RIGHT + WD_FRAMERECT_BOTTOM + ScaleGUITrad(BUTTON_BOTTOM_OFFSET); // we need some more space
+			size->width = d.width + padding.width;
+			size->height = d.height + padding.height + ScaleGUITrad(BUTTON_BOTTOM_OFFSET); // we need some more space
 		}
 	}
 
@@ -174,7 +174,7 @@ public:
 		if (widget >= WID_BT_TYPE_BUTTON_FIRST) {
 			const int index = widget - WID_BT_TYPE_BUTTON_FIRST;
 			/* Trees "grow" in the centre on the bottom line of the buttons */
-			DrawSprite(tree_sprites[index].sprite, tree_sprites[index].pal, (r.left + r.right) / 2 + WD_FRAMERECT_LEFT, r.bottom - ScaleGUITrad(BUTTON_BOTTOM_OFFSET));
+			DrawSprite(tree_sprites[index].sprite, tree_sprites[index].pal, CenterBounds(r.left, r.right, 0), r.bottom - ScaleGUITrad(BUTTON_BOTTOM_OFFSET));
 		}
 	}
 
@@ -237,7 +237,7 @@ public:
 			TileIndex tile = TileVirtXY(pt.x, pt.y);
 
 			if (this->mode == PM_NORMAL) {
-				DoCommandP(tile, this->tree_to_plant, tile, CMD_PLANT_TREE);
+				Command<CMD_PLANT_TREE>::Post(tile, tile, this->tree_to_plant);
 			} else {
 				this->DoPlantForest(tile);
 			}
@@ -247,7 +247,7 @@ public:
 	void OnPlaceMouseUp(ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (_game_mode != GM_EDITOR && this->mode == PM_NORMAL && pt.x != -1 && select_proc == DDSP_PLANT_TREES) {
-			DoCommandP(end_tile, this->tree_to_plant, start_tile, CMD_PLANT_TREE | CMD_MSG(STR_ERROR_CAN_T_PLANT_TREE_HERE));
+			Command<CMD_PLANT_TREE>::Post(STR_ERROR_CAN_T_PLANT_TREE_HERE, end_tile, start_tile, this->tree_to_plant);
 		}
 		MoveAllHiddenWindowsBackToScreen();
 	}

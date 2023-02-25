@@ -34,6 +34,7 @@
 #include "framerate_type.h"
 #include "industry.h"
 #include "industry_map.h"
+#include "ship_cmd.h"
 
 #include "table/strings.h"
 
@@ -118,8 +119,8 @@ void GetShipSpriteSize(EngineID engine, uint &width, uint &height, int &xoffs, i
 	Rect rect;
 	seq.GetBounds(&rect);
 
-	width  = UnScaleGUI(rect.right - rect.left + 1);
-	height = UnScaleGUI(rect.bottom - rect.top + 1);
+	width  = UnScaleGUI(rect.Width());
+	height = UnScaleGUI(rect.Height());
 	xoffs  = UnScaleGUI(rect.left);
 	yoffs  = UnScaleGUI(rect.top);
 }
@@ -271,16 +272,10 @@ void Ship::MarkDirty()
 	this->UpdateCache();
 }
 
-static void PlayShipSound(const Vehicle *v)
+void Ship::PlayLeaveStationSound(bool force) const
 {
-	if (!PlayVehicleSound(v, VSE_START)) {
-		SndPlayVehicleFx(ShipVehInfo(v->engine_type)->sfx, v);
-	}
-}
-
-void Ship::PlayLeaveStationSound() const
-{
-	PlayShipSound(this);
+	if (PlayVehicleSound(this, VSE_START, force)) return;
+	SndPlayVehicleFx(ShipVehInfo(this->engine_type)->sfx, this);
 }
 
 TileIndex Ship::GetOrderStationLocation(StationID station)
@@ -397,7 +392,7 @@ static bool CheckShipLeaveDepot(Ship *v)
 	v->UpdateViewport(true, true);
 	SetWindowDirty(WC_VEHICLE_DEPOT, v->tile);
 
-	PlayShipSound(v);
+	v->PlayLeaveStationSound();
 	VehicleServiceInDepot(v);
 	InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
 	SetWindowClassesDirty(WC_SHIPS_LIST);
@@ -515,38 +510,53 @@ static inline TrackBits GetAvailShipTracks(TileIndex tile, DiagDirection dir)
 	return tracks;
 }
 
-static const byte _ship_subcoord[4][6][3] = {
+/** Structure for ship sub-coordinate data for moving into a new tile via a Diagdir onto a Track. */
+struct ShipSubcoordData {
+	byte x_subcoord; ///< New X sub-coordinate on the new tile
+	byte y_subcoord; ///< New Y sub-coordinate on the new tile
+	Direction dir;   ///< New Direction to move in on the new track
+};
+/** Ship sub-coordinate data for moving into a new tile via a Diagdir onto a Track.
+ * Array indexes are Diagdir, Track.
+ * There will always be three possible tracks going into an adjacent tile via a Diagdir,
+ * so each Diagdir sub-array will have three valid and three invalid structures per Track.
+ */
+static const ShipSubcoordData _ship_subcoord[DIAGDIR_END][TRACK_END] = {
+	// DIAGDIR_NE
 	{
-		{15, 8, 1},
-		{ 0, 0, 0},
-		{ 0, 0, 0},
-		{15, 8, 2},
-		{15, 7, 0},
-		{ 0, 0, 0},
+		{15,  8, DIR_NE},      // TRACK_X
+		{ 0,  0, INVALID_DIR}, // TRACK_Y
+		{ 0,  0, INVALID_DIR}, // TRACK_UPPER
+		{15,  8, DIR_E},       // TRACK_LOWER
+		{15,  7, DIR_N},       // TRACK_LEFT
+		{ 0,  0, INVALID_DIR}, // TRACK_RIGHT
 	},
+	// DIAGDIR_SE
 	{
-		{ 0, 0, 0},
-		{ 8, 0, 3},
-		{ 7, 0, 2},
-		{ 0, 0, 0},
-		{ 8, 0, 4},
-		{ 0, 0, 0},
+		{ 0,  0, INVALID_DIR}, // TRACK_X
+		{ 8,  0, DIR_SE},      // TRACK_Y
+		{ 7,  0, DIR_E},       // TRACK_UPPER
+		{ 0,  0, INVALID_DIR}, // TRACK_LOWER
+		{ 8,  0, DIR_S},       // TRACK_LEFT
+		{ 0,  0, INVALID_DIR}, // TRACK_RIGHT
 	},
+	// DIAGDIR_SW
 	{
-		{ 0, 8, 5},
-		{ 0, 0, 0},
-		{ 0, 7, 6},
-		{ 0, 0, 0},
-		{ 0, 0, 0},
-		{ 0, 8, 4},
+		{ 0,  8, DIR_SW},      // TRACK_X
+		{ 0,  0, INVALID_DIR}, // TRACK_Y
+		{ 0,  7, DIR_W},       // TRACK_UPPER
+		{ 0,  0, INVALID_DIR}, // TRACK_LOWER
+		{ 0,  0, INVALID_DIR}, // TRACK_LEFT
+		{ 0,  8, DIR_S},       // TRACK_RIGHT
 	},
+	// DIAGDIR_NW
 	{
-		{ 0, 0, 0},
-		{ 8, 15, 7},
-		{ 0, 0, 0},
-		{ 8, 15, 6},
-		{ 0, 0, 0},
-		{ 7, 15, 0},
+		{ 0,  0, INVALID_DIR}, // TRACK_X
+		{ 8, 15, DIR_NW},      // TRACK_Y
+		{ 0,  0, INVALID_DIR}, // TRACK_UPPER
+		{ 8, 15, DIR_W},       // TRACK_LOWER
+		{ 0,  0, INVALID_DIR}, // TRACK_LEFT
+		{ 7, 15, DIR_N},       // TRACK_RIGHT
 	}
 };
 
@@ -626,7 +636,6 @@ bool IsShipDestinationTile(TileIndex tile, StationID station)
 static void ShipController(Ship *v)
 {
 	uint32 r;
-	const byte *b;
 	Track track;
 	TrackBits tracks;
 	GetNewVehiclePosResult gp;
@@ -743,10 +752,10 @@ static void ShipController(Ship *v)
 			track = ChooseShipTrack(v, gp.new_tile, diagdir, tracks);
 			if (track == INVALID_TRACK) goto reverse_direction;
 
-			b = _ship_subcoord[diagdir][track];
+			const ShipSubcoordData &b = _ship_subcoord[diagdir][track];
 
-			gp.x = (gp.x & ~0xF) | b[0];
-			gp.y = (gp.y & ~0xF) | b[1];
+			gp.x = (gp.x & ~0xF) | b.x_subcoord;
+			gp.y = (gp.y & ~0xF) | b.y_subcoord;
 
 			/* Call the landscape function and tell it that the vehicle entered the tile */
 			r = VehicleEnterTile(v, gp.new_tile, gp.x, gp.y);
@@ -762,7 +771,7 @@ static void ShipController(Ship *v)
 				if (old_wc != new_wc) v->UpdateCache();
 			}
 
-			Direction new_direction = (Direction)b[2];
+			Direction new_direction = b.dir;
 			DirDiff diff = DirDifference(new_direction, v->direction);
 			switch (diff) {
 				case DIRDIFF_SAME:
@@ -837,14 +846,13 @@ void Ship::SetDestTile(TileIndex tile)
 
 /**
  * Build a ship.
- * @param tile     tile of the depot where ship is built.
  * @param flags    type of operation.
+ * @param tile     tile of the depot where ship is built.
  * @param e        the engine to build.
- * @param data     unused.
  * @param[out] ret the vehicle that has been built.
  * @return the cost of this operation or an error.
  */
-CommandCost CmdBuildShip(TileIndex tile, DoCommandFlag flags, const Engine *e, uint16 data, Vehicle **ret)
+CommandCost CmdBuildShip(DoCommandFlag flags, TileIndex tile, const Engine *e, Vehicle **ret)
 {
 	tile = GetShipDepotNorthTile(tile);
 	if (flags & DC_EXEC) {
@@ -879,7 +887,6 @@ CommandCost CmdBuildShip(TileIndex tile, DoCommandFlag flags, const Engine *e, u
 		v->reliability = e->reliability;
 		v->reliability_spd_dec = e->reliability_spd_dec;
 		v->max_age = e->GetLifeLengthInDays();
-		_new_vehicle_id = v->index;
 
 		v->state = TRACK_BIT_DEPOT;
 
