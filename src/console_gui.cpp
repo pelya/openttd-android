@@ -453,9 +453,11 @@ void IConsoleSwitch()
 #ifdef __ANDROID__
 			{
 				char buf[1024] = "";
-				for (const IConsoleLine *print = IConsoleLine::Get(0); print != NULL; print = print->previous) {
-					if (print->buffer && print->buffer[0]) {
-						strecat(buf, print->buffer, lastof(buf));
+
+				//for (const IConsoleLine *print = IConsoleLine::Get(0); print != NULL; print = print->previous) {
+				for (IConsoleLine &line : _iconsole_buffer) {
+					if (!line.buffer.empty()) {
+						strecat(buf, line.buffer.c_str(), lastof(buf));
 						strecat(buf, "\n", lastof(buf));
 					}
 				}
