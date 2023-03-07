@@ -77,21 +77,21 @@ static const NWidgetPart _nested_generate_landscape_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_BROWN),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 10),
-		/* Landscape selection. */
-		NWidget(NWID_HORIZONTAL), SetPIP(10, 0, 10),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 11),
-		/* Generation options. */
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 5, 10),
+			/* Landscape selection. */
+			NWidget(NWID_VERTICAL), SetPIP(10, 0, 10),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+			EndContainer(),
+			/* Generation options. */
+			NWidget(NWID_SPACER), SetMinimalSize(0, 11),
 			/* Left half (land generation options) */
 			NWidget(NWID_VERTICAL),
 				NWidget(NWID_HORIZONTAL), SetPIP(0, 3, 0),
@@ -176,28 +176,10 @@ static const NWidgetPart _nested_generate_landscape_widgets[] = {
 		NWidget(NWID_SPACER), SetMinimalSize(0, 4),
 		/* Map borders buttons for each edge. */
 		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(10, 0, 10),
-			NWidget(NWID_HORIZONTAL), SetPIP(0, 0, 3),
-				NWidget(NWID_SPACER), SetFill(1, 1),
-				NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_NORTHWEST, STR_NULL), SetPadding(1, 0, 0, 0), SetFill(0, 1),
-			EndContainer(),
 			NWidget(WWT_TEXTBTN, COLOUR_ORANGE, WID_GL_WATER_NW), SetDataTip(STR_JUST_STRING, STR_MAPGEN_NORTHWEST), SetFill(1, 1),
 			NWidget(WWT_TEXTBTN, COLOUR_ORANGE, WID_GL_WATER_NE), SetDataTip(STR_JUST_STRING, STR_MAPGEN_NORTHEAST), SetFill(1, 1),
-			NWidget(NWID_HORIZONTAL), SetPIP(3, 0, 0),
-				NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_NORTHEAST, STR_NULL), SetPadding(1, 0, 0, 0), SetFill(0, 1),
-				NWidget(NWID_SPACER), SetFill(1, 1),
-			EndContainer(),
-		EndContainer(),
-		NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetPIP(10, 0, 10),
-			NWidget(NWID_HORIZONTAL), SetPIP(0, 0, 3),
-				NWidget(NWID_SPACER), SetFill(1, 1),
-				NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_SOUTHWEST, STR_NULL), SetPadding(1, 0, 0, 0), SetFill(0, 1),
-			EndContainer(),
 			NWidget(WWT_TEXTBTN, COLOUR_ORANGE, WID_GL_WATER_SW), SetDataTip(STR_JUST_STRING, STR_MAPGEN_SOUTHWEST), SetFill(1, 1),
 			NWidget(WWT_TEXTBTN, COLOUR_ORANGE, WID_GL_WATER_SE), SetDataTip(STR_JUST_STRING, STR_MAPGEN_SOUTHEAST), SetFill(1, 1),
-			NWidget(NWID_HORIZONTAL), SetPIP(3, 0, 0),
-				NWidget(WWT_TEXT, COLOUR_ORANGE), SetDataTip(STR_MAPGEN_SOUTHEAST, STR_NULL), SetPadding(1, 0, 0, 0), SetFill(0, 1),
-				NWidget(NWID_SPACER), SetFill(1, 1),
-			EndContainer(),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 6), SetFill(1, 1),
 		/* AI, GS, and NewGRF settings */
@@ -205,11 +187,9 @@ static const NWidgetPart _nested_generate_landscape_widgets[] = {
 			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_GL_AI_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_AI_SETTINGS, STR_MAPGEN_AI_SETTINGS_TOOLTIP), SetFill(1, 0),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_GL_GS_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_GS_SETTINGS, STR_MAPGEN_GS_SETTINGS_TOOLTIP), SetFill(1, 0),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_GL_NEWGRF_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_NEWGRF_SETTINGS, STR_MAPGEN_NEWGRF_SETTINGS_TOOLTIP), SetFill(1, 0),
+			/* Generate */
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREEN, WID_GL_GENERATE_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_GENERATE, STR_NULL), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 7), SetFill(1, 1),
-		/* Generate */
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREEN, WID_GL_GENERATE_BUTTON), SetMinimalSize(84, 36), SetDataTip(STR_MAPGEN_GENERATE, STR_NULL), SetPadding(0, 10, 0, 10), SetFill(1, 1),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 9), SetFill(1, 1),
 	EndContainer(),
 };
 
@@ -222,21 +202,21 @@ static const NWidgetPart _nested_heightmap_load_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_BROWN),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 10),
-		/* Landscape selection. */
-		NWidget(NWID_HORIZONTAL), SetPIP(10, 0, 10),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-			NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
-			NWidget(NWID_SPACER), SetFill(1, 0),
-		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 11), SetFill(0, 1),
 		/* Generation options. */
 		NWidget(NWID_HORIZONTAL), SetPIP(10, 3, 10),
+			/* Landscape selection. */
+			NWidget(NWID_VERTICAL), SetPIP(10, 0, 10),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TEMPERATE), SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_ARCTIC), SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TROPICAL), SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+				NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_GL_TOYLAND), SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
+				NWidget(NWID_SPACER), SetFill(1, 1),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 11), SetFill(0, 1),
 			/* Left half labels (global column 1) and heightmap name label */
 			NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetPIP(0, 4, 0),
 			    /* Heightmap name label. */
@@ -324,11 +304,9 @@ static const NWidgetPart _nested_heightmap_load_widgets[] = {
 			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_GL_AI_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_AI_SETTINGS, STR_MAPGEN_AI_SETTINGS_TOOLTIP), SetFill(1, 0),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_GL_GS_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_GS_SETTINGS, STR_MAPGEN_GS_SETTINGS_TOOLTIP),  SetFill(1, 0),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_GL_NEWGRF_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_NEWGRF_SETTINGS, STR_MAPGEN_NEWGRF_SETTINGS_TOOLTIP), SetFill(1, 0),
+			/* Generate */
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREEN, WID_GL_GENERATE_BUTTON), SetMinimalSize(0, 24), SetDataTip(STR_MAPGEN_GENERATE, STR_NULL), SetFill(1, 0),
 		EndContainer(),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 7), SetFill(1, 1),
-		/* Generate */
-		NWidget(WWT_PUSHTXTBTN, COLOUR_GREEN, WID_GL_GENERATE_BUTTON), SetMinimalSize(84, 36), SetDataTip(STR_MAPGEN_GENERATE, STR_NULL), SetPadding(0, 10, 0, 10), SetFill(1, 1),
-		NWidget(NWID_SPACER), SetMinimalSize(0, 9), SetFill(1, 1),
 	EndContainer(),
 };
 
@@ -1563,8 +1541,7 @@ static void _SetGeneratingWorldProgress(GenWorldProgress cls, uint progress, uin
 /**
  * Set the total of a stage of the world generation.
  * @param cls the current class we are in.
- * @param total Set the total expected items for th
-is class.
+ * @param total Set the total expected items for this class.
  *
  * Warning: this function isn't clever. Don't go from class 4 to 3. Go upwards, always.
  *  Also, progress works if total is zero, total works if progress is zero.
