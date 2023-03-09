@@ -854,7 +854,6 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 	bool rtl = _current_text_dir == TD_RTL;
 	Dimension sprite_size = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
 	int clearbtn_width = sprite_size.width + WidgetDimensions::scaled.imgbtn.Horizontal();
-	clearbtn_width = 0; // Touch interface has it's own keyboard input, and it won't leave space for edit field
 
 	Rect r = wi->GetCurrentRect();
 	Rect cr = r.WithWidth(clearbtn_width, !rtl);
@@ -864,10 +863,8 @@ void QueryString::DrawEditBox(const Window *w, int wid) const
 	DrawSprite(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT, PAL_NONE, cr.left + WidgetDimensions::scaled.imgbtn.left + (wi->IsLowered() ? 1 : 0), CenterBounds(r.top, r.bottom, sprite_size.height) + (wi->IsLowered() ? 1 : 0));
 	if (this->text.bytes == 1) GfxFillRect(cr.Shrink(WidgetDimensions::scaled.bevel), _colour_gradient[wi->colour & 0xF][2], FILLRECT_CHECKER);
 
-	if (clearbtn_width > 0) {
-	    DrawFrameRect(fr, wi->colour, FR_LOWERED | FR_DARKENED);
-	    GfxFillRect(fr.Shrink(WidgetDimensions::scaled.bevel), PC_BLACK);
-	}
+	DrawFrameRect(fr, wi->colour, FR_LOWERED | FR_DARKENED);
+	GfxFillRect(fr.Shrink(WidgetDimensions::scaled.bevel), PC_BLACK);
 
 	fr = fr.Shrink(WidgetDimensions::scaled.framerect);
 	/* Limit the drawing of the string inside the widget boundaries */
