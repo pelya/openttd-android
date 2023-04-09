@@ -461,10 +461,8 @@ struct GameOptionsWindow : Window {
 				this->SetWidgetDirty(WID_GO_FULLSCREEN_BUTTON);
 				break;
 
-				case WID_GO_WINDOWS_TITLEBARS:
-				_settings_client.gui.windows_titlebars = !_settings_client.gui.windows_titlebars;
-				this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
-				this->SetDirty();
+			case WID_GO_WINDOWS_TITLEBARS:
+				_settings_client.gui.windows_titlebars ^= _settings_client.gui.windows_titlebars;
 				if (_settings_client.gui.min_button == 48 && _settings_client.gui.windows_titlebars) {
 					_settings_client.gui.min_button = 40;
 				}
@@ -687,6 +685,7 @@ struct GameOptionsWindow : Window {
 
 		this->SetWidgetLoweredState(WID_GO_GUI_SCALE_AUTO, _gui_scale_cfg == -1);
 		this->SetWidgetLoweredState(WID_GO_GUI_SCALE_BEVEL_BUTTON, _settings_client.gui.scale_bevels);
+		this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
 
 		bool missing_files = BaseGraphics::GetUsedSet()->GetNumMissing() == 0;
 		this->GetWidget<NWidgetCore>(WID_GO_BASE_GRF_STATUS)->SetDataTip(missing_files ? STR_EMPTY : STR_GAME_OPTIONS_BASE_GRF_STATUS, STR_NULL);
