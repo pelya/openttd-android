@@ -232,6 +232,7 @@ struct BuildDocksToolbarWindow : Window {
 	{
 		switch (last_clicked_widget) {
 			case WID_DT_BUILD_AQUEDUCT:
+			case WID_DT_LOCK:
 			case WID_DT_STATION:
 				this->OnPlacePresize(pt, TileVirtXY(pt.x, pt.y));
 				break;
@@ -267,6 +268,7 @@ struct BuildDocksToolbarWindow : Window {
 						    return Command<CMD_BUILD_DOCK>::Post(STR_ERROR_CAN_T_BUILD_DOCK_HERE, CcBuildDocks, end_tile, to_join, adjacent);
 					    }
 				    };
+					ShowSelectStationIfNeeded(TileArea(start_tile, end_tile), proc);
 					VpStartPreSizing();
 					break;
 				}
