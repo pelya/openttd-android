@@ -268,7 +268,7 @@ struct BuildDocksToolbarWindow : Window {
 						    return Command<CMD_BUILD_DOCK>::Post(STR_ERROR_CAN_T_BUILD_DOCK_HERE, CcBuildDocks, end_tile, to_join, adjacent);
 					    }
 				    };
-					ShowSelectStationIfNeeded(TileArea(start_tile, end_tile), proc);
+					ShowSelectStationIfNeeded(TileArea(start_tile, tile_to), proc);
 					VpStartPreSizing();
 					break;
 				}
