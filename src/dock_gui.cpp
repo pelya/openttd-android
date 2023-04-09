@@ -257,15 +257,15 @@ struct BuildDocksToolbarWindow : Window {
 					break;
 				case DDSP_BUILD_STATION: {
 				    /* Determine the watery part of the dock. */
-				    DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(end_tile));
-				    TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(end_tile, ReverseDiagDir(dir)) : end_tile);
+				    DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(start_tile));
+				    TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(start_tile, ReverseDiagDir(dir)) : start_tile);
 
 				    bool adjacent = _ctrl_pressed;
 				    auto proc = [=](bool test, StationID to_join) -> bool {
 					    if (test) {
-						    return Command<CMD_BUILD_DOCK>::Do(CommandFlagsToDCFlags(GetCommandFlags<CMD_BUILD_DOCK>()), end_tile, INVALID_STATION, adjacent).Succeeded();
+						    return Command<CMD_BUILD_DOCK>::Do(CommandFlagsToDCFlags(GetCommandFlags<CMD_BUILD_DOCK>()), start_tile, INVALID_STATION, adjacent).Succeeded();
 					    } else {
-						    return Command<CMD_BUILD_DOCK>::Post(STR_ERROR_CAN_T_BUILD_DOCK_HERE, CcBuildDocks, end_tile, to_join, adjacent);
+						    return Command<CMD_BUILD_DOCK>::Post(STR_ERROR_CAN_T_BUILD_DOCK_HERE, CcBuildDocks, start_tile, to_join, adjacent);
 					    }
 				    };
 					ShowSelectStationIfNeeded(TileArea(start_tile, tile_to), proc);
