@@ -485,6 +485,7 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 
 	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
 
+#if 0
 	/* 'Exit' button */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_SPACER), SetFill(1, 0),
@@ -494,6 +495,7 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 	EndContainer(),
 
 	NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+#endif
 
 	EndContainer(),
 };
