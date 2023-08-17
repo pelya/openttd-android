@@ -39,6 +39,7 @@
 #include "guitimer_func.h"
 #include "news_func.h"
 #include "build_confirmation_func.h"
+#include "widgets/settings_widget.h"
 
 #include "safeguards.h"
 
@@ -818,6 +819,12 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 		Game::NewEvent(new ScriptEventWindowWidgetClick((ScriptWindow::WindowClass)w->window_class, w->window_number, widget_index));
 	}
 
+	// Note: Workaround to avoid immediate toggle when titlebars are enabled.
+	if (_settings_client.gui.windows_titlebars &&
+		w->window_class == WC_GAME_OPTIONS  && widget_index == WID_GO_WINDOWS_TITLEBARS && mouse_down){
+		return;
+	}
+
 	w->OnClick(pt, widget_index, click_count);
 }
 
@@ -844,7 +851,7 @@ static void DispatchLeftButtonDownEvent(Window *w, int x, int y, int click_count
 static void DispatchLeftButtonUpEvent(Window *w, int x, int y)
 {
 	_dragging_widget = false;
-	if (_settings_client.gui.windows_titlebars || _dragging_window) return;
+	if (_dragging_window) return;
 	DispatchLeftClickEvent(w, x, y, _left_button_click_count, false);
 }
 

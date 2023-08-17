@@ -462,13 +462,19 @@ struct GameOptionsWindow : Window {
 				break;
 
 			case WID_GO_WINDOWS_TITLEBARS:
-				_settings_client.gui.windows_titlebars ^= _settings_client.gui.windows_titlebars;
+				_settings_client.gui.windows_titlebars = !_settings_client.gui.windows_titlebars;
+				this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
+				this->SetDirty();
+
 				if (_settings_client.gui.min_button == 48 && _settings_client.gui.windows_titlebars) {
 					_settings_client.gui.min_button = 40;
 				}
 				if (_settings_client.gui.min_button == 40 && !_settings_client.gui.windows_titlebars) {
 					_settings_client.gui.min_button = 48;
 				}
+
+				ReInitAllWindows(false);
+
 				break;
 
 			case WID_GO_MOUSE_CURSOR:

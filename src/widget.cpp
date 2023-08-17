@@ -2961,159 +2961,174 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 	Dimension size = {this->min_x, this->min_y};
 	Dimension fill = {this->fill_x, this->fill_y};
 	Dimension resize = {this->resize_x, this->resize_y};
-  switch (this->type) {
-		case WWT_EMPTY: {
-			break;
+
+	// Note: Disabled titlebars by reducing its elements size to zero
+	if (!_settings_client.gui.windows_titlebars && w->window_class != WC_NEWS_WINDOW &&
+		(this->type == WWT_CAPTION || this->type == WWT_STICKYBOX || this->type == WWT_SHADEBOX ||
+		this->type == WWT_DEFSIZEBOX || this->type == WWT_CLOSEBOX || this->type == WWT_DEBUGBOX)) {
+		this->sizing_type = NWST_NONE;
+		size = {0, 0};
+		fill = {0, 0};
+		resize = {0, 0};
+		if (this->type == WWT_CAPTION) {
+			fill.width = 1;
+			resize.width = 1;
 		}
-		case WWT_MATRIX: {
-			padding = {WidgetDimensions::scaled.matrix.Horizontal(), WidgetDimensions::scaled.matrix.Vertical()};
-			break;
-		}
-		case WWT_SHADEBOX: {
-			padding = {WidgetDimensions::scaled.shadebox.Horizontal(), WidgetDimensions::scaled.shadebox.Vertical()};
-			if (NWidgetLeaf::shadebox_dimension.width == 0) {
-				NWidgetLeaf::shadebox_dimension = maxdim(GetScaledSpriteSize(SPR_WINDOW_SHADE), GetScaledSpriteSize(SPR_WINDOW_UNSHADE));
-				NWidgetLeaf::shadebox_dimension.width += padding.width;
-				NWidgetLeaf::shadebox_dimension.height += padding.height;
+	} else {
+		switch (this->type) {
+			case WWT_EMPTY: {
+				break;
 			}
-			size = maxdim(size, NWidgetLeaf::shadebox_dimension);
-			break;
-		}
-		case WWT_DEBUGBOX:
-			if (_settings_client.gui.newgrf_developer_tools && w->IsNewGRFInspectable()) {
-				padding = {WidgetDimensions::scaled.debugbox.Horizontal(), WidgetDimensions::scaled.debugbox.Vertical()};
-				if (NWidgetLeaf::debugbox_dimension.width == 0) {
-					NWidgetLeaf::debugbox_dimension = GetScaledSpriteSize(SPR_WINDOW_DEBUG);
-					NWidgetLeaf::debugbox_dimension.width += padding.width;
-					NWidgetLeaf::debugbox_dimension.height += padding.height;
+			case WWT_MATRIX: {
+				padding = {WidgetDimensions::scaled.matrix.Horizontal(), WidgetDimensions::scaled.matrix.Vertical()};
+				break;
+			}
+			case WWT_SHADEBOX: {
+				padding = {WidgetDimensions::scaled.shadebox.Horizontal(), WidgetDimensions::scaled.shadebox.Vertical()};
+				if (NWidgetLeaf::shadebox_dimension.width == 0) {
+					NWidgetLeaf::shadebox_dimension = maxdim(GetScaledSpriteSize(SPR_WINDOW_SHADE), GetScaledSpriteSize(SPR_WINDOW_UNSHADE));
+					NWidgetLeaf::shadebox_dimension.width += padding.width;
+					NWidgetLeaf::shadebox_dimension.height += padding.height;
 				}
-				size = maxdim(size, NWidgetLeaf::debugbox_dimension);
-			} else {
-				/* If the setting is disabled we don't want to see it! */
-				size.width = 0;
-				fill.width = 0;
-				resize.width = 0;
+				size = maxdim(size, NWidgetLeaf::shadebox_dimension);
+				break;
 			}
-			break;
+			case WWT_DEBUGBOX:
+				if (_settings_client.gui.newgrf_developer_tools && w->IsNewGRFInspectable()) {
+					padding = {WidgetDimensions::scaled.debugbox.Horizontal(), WidgetDimensions::scaled.debugbox.Vertical()};
+					if (NWidgetLeaf::debugbox_dimension.width == 0) {
+						NWidgetLeaf::debugbox_dimension = GetScaledSpriteSize(SPR_WINDOW_DEBUG);
+						NWidgetLeaf::debugbox_dimension.width += padding.width;
+						NWidgetLeaf::debugbox_dimension.height += padding.height;
+					}
+					size = maxdim(size, NWidgetLeaf::debugbox_dimension);
+				} else {
+					/* If the setting is disabled we don't want to see it! */
+					size.width = 0;
+					fill.width = 0;
+					resize.width = 0;
+				}
+				break;
 
-		case WWT_STICKYBOX: {
-			padding = {WidgetDimensions::scaled.stickybox.Horizontal(), WidgetDimensions::scaled.stickybox.Vertical()};
-			if (NWidgetLeaf::stickybox_dimension.width == 0) {
-				NWidgetLeaf::stickybox_dimension = maxdim(GetScaledSpriteSize(SPR_PIN_UP), GetScaledSpriteSize(SPR_PIN_DOWN));
-				NWidgetLeaf::stickybox_dimension.width += padding.width;
-				NWidgetLeaf::stickybox_dimension.height += padding.height;
+			case WWT_STICKYBOX: {
+				padding = {WidgetDimensions::scaled.stickybox.Horizontal(), WidgetDimensions::scaled.stickybox.Vertical()};
+				if (NWidgetLeaf::stickybox_dimension.width == 0) {
+					NWidgetLeaf::stickybox_dimension = maxdim(GetScaledSpriteSize(SPR_PIN_UP), GetScaledSpriteSize(SPR_PIN_DOWN));
+					NWidgetLeaf::stickybox_dimension.width += padding.width;
+					NWidgetLeaf::stickybox_dimension.height += padding.height;
+				}
+				size = maxdim(size, NWidgetLeaf::stickybox_dimension);
+				break;
 			}
-			size = maxdim(size, NWidgetLeaf::stickybox_dimension);
-			break;
-		}
 
-		case WWT_DEFSIZEBOX: {
-			padding = {WidgetDimensions::scaled.defsizebox.Horizontal(), WidgetDimensions::scaled.defsizebox.Vertical()};
-			if (NWidgetLeaf::defsizebox_dimension.width == 0) {
-				NWidgetLeaf::defsizebox_dimension = GetScaledSpriteSize(SPR_WINDOW_DEFSIZE);
-				NWidgetLeaf::defsizebox_dimension.width += padding.width;
-				NWidgetLeaf::defsizebox_dimension.height += padding.height;
+			case WWT_DEFSIZEBOX: {
+				padding = {WidgetDimensions::scaled.defsizebox.Horizontal(), WidgetDimensions::scaled.defsizebox.Vertical()};
+				if (NWidgetLeaf::defsizebox_dimension.width == 0) {
+					NWidgetLeaf::defsizebox_dimension = GetScaledSpriteSize(SPR_WINDOW_DEFSIZE);
+					NWidgetLeaf::defsizebox_dimension.width += padding.width;
+					NWidgetLeaf::defsizebox_dimension.height += padding.height;
+				}
+				size = maxdim(size, NWidgetLeaf::defsizebox_dimension);
+				break;
 			}
-			size = maxdim(size, NWidgetLeaf::defsizebox_dimension);
-			break;
-		}
 
-		case WWT_RESIZEBOX: {
-			padding = {WidgetDimensions::scaled.resizebox.Horizontal(), WidgetDimensions::scaled.resizebox.Vertical()};
-			if (NWidgetLeaf::resizebox_dimension.width == 0) {
-				NWidgetLeaf::resizebox_dimension = maxdim(GetScaledSpriteSize(SPR_WINDOW_RESIZE_LEFT), GetScaledSpriteSize(SPR_WINDOW_RESIZE_RIGHT));
-				NWidgetLeaf::resizebox_dimension.width += padding.width;
-				NWidgetLeaf::resizebox_dimension.height += padding.height;
+			case WWT_RESIZEBOX: {
+				padding = {WidgetDimensions::scaled.resizebox.Horizontal(), WidgetDimensions::scaled.resizebox.Vertical()};
+				if (NWidgetLeaf::resizebox_dimension.width == 0) {
+					NWidgetLeaf::resizebox_dimension = maxdim(GetScaledSpriteSize(SPR_WINDOW_RESIZE_LEFT), GetScaledSpriteSize(SPR_WINDOW_RESIZE_RIGHT));
+					NWidgetLeaf::resizebox_dimension.width += padding.width;
+					NWidgetLeaf::resizebox_dimension.height += padding.height;
+				}
+				size = maxdim(size, NWidgetLeaf::resizebox_dimension);
+				break;
 			}
-			size = maxdim(size, NWidgetLeaf::resizebox_dimension);
-			break;
-		}
-		case WWT_EDITBOX: {
-			Dimension sprite_size = GetScaledSpriteSize(_current_text_dir == TD_RTL ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
-			size.width = std::max(size.width, ScaleGUITrad(30) + sprite_size.width);
-			size.height = std::max(sprite_size.height, GetStringBoundingBox("_").height + WidgetDimensions::scaled.framerect.Vertical());
-			size.height = GetMinButtonSize(size.height);
-		}
-		FALLTHROUGH;
-		case WWT_PUSHBTN: {
-			padding = {WidgetDimensions::scaled.frametext.Horizontal(), WidgetDimensions::scaled.framerect.Vertical()};
-			break;
-		}
-		case WWT_IMGBTN:
-		case WWT_IMGBTN_2:
-		case WWT_PUSHIMGBTN: {
-			padding = {WidgetDimensions::scaled.imgbtn.Horizontal(), WidgetDimensions::scaled.imgbtn.Vertical()};
-			Dimension d2 = GetScaledSpriteSize(this->widget_data);
-			if (this->type == WWT_IMGBTN_2) d2 = maxdim(d2, GetScaledSpriteSize(this->widget_data + 1));
-			d2.width += padding.width;
-			d2.height += padding.height;
-			size = maxdim(size, d2);
-			break;
-		}
-		case WWT_ARROWBTN:
-		case WWT_PUSHARROWBTN: {
-			padding = {WidgetDimensions::scaled.imgbtn.Horizontal(), WidgetDimensions::scaled.imgbtn.Vertical()};
-			Dimension d2 = maxdim(GetScaledSpriteSize(SPR_ARROW_LEFT), GetScaledSpriteSize(SPR_ARROW_RIGHT));
-			d2.width += padding.width;
-			d2.height += padding.height;
-			size = maxdim(size, d2);
-			break;
-		}
+			case WWT_EDITBOX: {
+				Dimension sprite_size = GetScaledSpriteSize(_current_text_dir == TD_RTL ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
+				size.width = std::max(size.width, ScaleGUITrad(30) + sprite_size.width);
+				size.height = std::max(sprite_size.height, GetStringBoundingBox("_").height + WidgetDimensions::scaled.framerect.Vertical());
+				size.height = GetMinButtonSize(size.height);
+			}
+			FALLTHROUGH;
+			case WWT_PUSHBTN: {
+				padding = {WidgetDimensions::scaled.frametext.Horizontal(), WidgetDimensions::scaled.framerect.Vertical()};
+				break;
+			}
+			case WWT_IMGBTN:
+			case WWT_IMGBTN_2:
+			case WWT_PUSHIMGBTN: {
+				padding = {WidgetDimensions::scaled.imgbtn.Horizontal(), WidgetDimensions::scaled.imgbtn.Vertical()};
+				Dimension d2 = GetScaledSpriteSize(this->widget_data);
+				if (this->type == WWT_IMGBTN_2) d2 = maxdim(d2, GetScaledSpriteSize(this->widget_data + 1));
+				d2.width += padding.width;
+				d2.height += padding.height;
+				size = maxdim(size, d2);
+				break;
+			}
+			case WWT_ARROWBTN:
+			case WWT_PUSHARROWBTN: {
+				padding = {WidgetDimensions::scaled.imgbtn.Horizontal(), WidgetDimensions::scaled.imgbtn.Vertical()};
+				Dimension d2 = maxdim(GetScaledSpriteSize(SPR_ARROW_LEFT), GetScaledSpriteSize(SPR_ARROW_RIGHT));
+				d2.width += padding.width;
+				d2.height += padding.height;
+				size = maxdim(size, d2);
+				break;
+			}
 
-		case WWT_CLOSEBOX: {
-			padding = {WidgetDimensions::scaled.closebox.Horizontal(), WidgetDimensions::scaled.closebox.Vertical()};
-			if (NWidgetLeaf::closebox_dimension.width == 0) {
-				NWidgetLeaf::closebox_dimension = GetScaledSpriteSize(SPR_CLOSEBOX);
-				NWidgetLeaf::closebox_dimension.width += padding.width;
-				NWidgetLeaf::closebox_dimension.height += padding.height;
+			case WWT_CLOSEBOX: {
+				padding = {WidgetDimensions::scaled.closebox.Horizontal(), WidgetDimensions::scaled.closebox.Vertical()};
+				if (NWidgetLeaf::closebox_dimension.width == 0) {
+					NWidgetLeaf::closebox_dimension = GetScaledSpriteSize(SPR_CLOSEBOX);
+					NWidgetLeaf::closebox_dimension.width += padding.width;
+					NWidgetLeaf::closebox_dimension.height += padding.height;
+				}
+				size = maxdim(size, NWidgetLeaf::closebox_dimension);
+				break;
 			}
-			size = maxdim(size, NWidgetLeaf::closebox_dimension);
-			break;
-		}
-		case WWT_TEXTBTN:
-		case WWT_PUSHTXTBTN:
-		case WWT_TEXTBTN_2: {
-			padding = {WidgetDimensions::scaled.framerect.Horizontal(), WidgetDimensions::scaled.framerect.Vertical()};
-			if (this->index >= 0) w->SetStringParameters(this->index);
-			Dimension d2 = GetStringBoundingBox(this->widget_data);
-			d2.width += padding.width;
-			d2.height += padding.height;
-			size = maxdim(size, d2);
-			break;
-		}
-		case WWT_LABEL:
-		case WWT_TEXT: {
-			if (this->index >= 0) w->SetStringParameters(this->index);
-			size = maxdim(size, GetStringBoundingBox(this->widget_data));
-			break;
-		}
-		case WWT_CAPTION: {
-			padding = {WidgetDimensions::scaled.captiontext.Horizontal(), WidgetDimensions::scaled.captiontext.Vertical()};
-			if (this->index >= 0) w->SetStringParameters(this->index);
-			Dimension d2 = GetStringBoundingBox(this->widget_data);
-			d2.width += padding.width;
-			d2.height += padding.height;
-			size = maxdim(size, d2);
-			break;
-		}
-		case WWT_DROPDOWN:
-		case NWID_BUTTON_DROPDOWN:
-		case NWID_PUSHBUTTON_DROPDOWN: {
-			if (NWidgetLeaf::dropdown_dimension.width == 0) {
-				NWidgetLeaf::dropdown_dimension = GetScaledSpriteSize(SPR_ARROW_DOWN);
-				NWidgetLeaf::dropdown_dimension.width += WidgetDimensions::scaled.vscrollbar.Horizontal();
-				NWidgetLeaf::dropdown_dimension.height += WidgetDimensions::scaled.vscrollbar.Vertical();
+			case WWT_TEXTBTN:
+			case WWT_PUSHTXTBTN:
+			case WWT_TEXTBTN_2: {
+				padding = {WidgetDimensions::scaled.framerect.Horizontal(), WidgetDimensions::scaled.framerect.Vertical()};
+				if (this->index >= 0) w->SetStringParameters(this->index);
+				Dimension d2 = GetStringBoundingBox(this->widget_data);
+				d2.width += padding.width;
+				d2.height += padding.height;
+				size = maxdim(size, d2);
+				break;
 			}
-			padding = {WidgetDimensions::scaled.dropdowntext.Horizontal() + NWidgetLeaf::dropdown_dimension.width, WidgetDimensions::scaled.dropdowntext.Vertical()};
-			if (this->index >= 0) w->SetStringParameters(this->index);
-			Dimension d2 = GetStringBoundingBox(this->widget_data);
-			d2.width += padding.width;
-			d2.height = std::max(d2.height + padding.height, NWidgetLeaf::dropdown_dimension.height);
-			size = maxdim(size, d2);
-			break;
+			case WWT_LABEL:
+			case WWT_TEXT: {
+				if (this->index >= 0) w->SetStringParameters(this->index);
+				size = maxdim(size, GetStringBoundingBox(this->widget_data));
+				break;
+			}
+			case WWT_CAPTION: {
+				padding = {WidgetDimensions::scaled.captiontext.Horizontal(), WidgetDimensions::scaled.captiontext.Vertical()};
+				if (this->index >= 0) w->SetStringParameters(this->index);
+				Dimension d2 = GetStringBoundingBox(this->widget_data);
+				d2.width += padding.width;
+				d2.height += padding.height;
+				size = maxdim(size, d2);
+				break;
+			}
+			case WWT_DROPDOWN:
+			case NWID_BUTTON_DROPDOWN:
+			case NWID_PUSHBUTTON_DROPDOWN: {
+				if (NWidgetLeaf::dropdown_dimension.width == 0) {
+					NWidgetLeaf::dropdown_dimension = GetScaledSpriteSize(SPR_ARROW_DOWN);
+					NWidgetLeaf::dropdown_dimension.width += WidgetDimensions::scaled.vscrollbar.Horizontal();
+					NWidgetLeaf::dropdown_dimension.height += WidgetDimensions::scaled.vscrollbar.Vertical();
+				}
+				padding = {WidgetDimensions::scaled.dropdowntext.Horizontal() + NWidgetLeaf::dropdown_dimension.width, WidgetDimensions::scaled.dropdowntext.Vertical()};
+				if (this->index >= 0) w->SetStringParameters(this->index);
+				Dimension d2 = GetStringBoundingBox(this->widget_data);
+				d2.width += padding.width;
+				d2.height = std::max(d2.height + padding.height, NWidgetLeaf::dropdown_dimension.height);
+				size = maxdim(size, d2);
+				break;
+			}
+			default:
+				NOT_REACHED();
 		}
-		default:
-			NOT_REACHED();
 	}
 
 	if (this->index >= 0) w->UpdateWidgetSize(this->index, &size, padding, &fill, &resize);
