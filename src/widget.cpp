@@ -27,6 +27,8 @@
 
 #include "safeguards.h"
 
+extern int _gui_scale;
+
 /** Distances used in drawing widgets. */
 enum WidgetDrawDistances {
 	/* WWT_IMGBTN(_2) */
@@ -1152,14 +1154,13 @@ void NWidgetResizeBase::SetMinimalSizeForSizingType()
 			min_size = 0;
 			break;
 		case NWST_BUTTON:
-			min_size = _settings_client.gui.min_button;
+			min_size = GetMinButtonSize();
 			break;
 		case NWST_VIEWPORT:
-			min_size = 3 * _settings_client.gui.min_button;
+			min_size = (5 * _gui_scale) / 2;
 			break;
 		default: NOT_REACHED();
 	}
-	min_size = RescaleFrom854x480(min_size);
 
 	this->min_x = std::max(this->min_x, min_size);
 	this->min_y = std::max(this->min_y, min_size);
@@ -3693,8 +3694,7 @@ NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int wid
  */
 uint GetMinButtonSize(uint min_1)
 {
-	uint min_sizing = _settings_client.gui.min_button;
-	min_sizing = RescaleFrom854x480(min_sizing);
+	uint min_sizing = _gui_scale / 4;
 
 	return std::max(min_sizing, min_1);
 }

@@ -2959,7 +2959,7 @@ static void HandleAutoscroll()
 
 	int x = _cursor.pos.x;
 	int y = _cursor.pos.y;
-	int border = RescaleFrom854x480(_settings_client.gui.min_button);
+	int border = GetMinButtonSize();
 	Window *w = FindWindowFromPt(x, y);
 	if (w == nullptr || w->flags & WF_DISABLE_VP_SCROLL) return;
 	if (_settings_client.gui.auto_scrolling != VA_EVERY_VIEWPORT && w->window_class != WC_MAIN_WINDOW) return;

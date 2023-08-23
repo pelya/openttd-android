@@ -53,8 +53,6 @@
 #include <SDL_android.h>
 #endif
 
-enum { MIN_BUTTON_SIZE = 10, MAX_BUTTON_SIZE = 100 };
-
 static const StringID _autosave_dropdown[] = {
 	STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF,
 	STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_1_MONTH,
@@ -278,16 +276,6 @@ struct GameOptionsWindow : Window {
 				}
 				break;
 
-			case WID_GO_BUTTON_SIZE_DROPDOWN: // Dropdowns for size of all GUI elements and fonts
-				list = DropDownList();
-				*selected_index = _settings_client.gui.min_button;
-				for (uint i = MIN_BUTTON_SIZE; i <= MAX_BUTTON_SIZE; i++) {
-					DropDownListParamStringItem *item = new DropDownListParamStringItem(STR_JUST_INT, i, false);
-					item->SetParam(0, i);
-					list.emplace_back(item);
-				}
-				break;
-
 			case WID_GO_BASE_GRF_DROPDOWN:
 				list = BuildSetDropDownList<BaseGraphics>(selected_index, (_game_mode == GM_MENU));
 				break;
@@ -310,7 +298,6 @@ struct GameOptionsWindow : Window {
 			case WID_GO_CURRENCY_DROPDOWN:     SetDParam(0, _currency_specs[this->opt->locale.currency].name); break;
 			case WID_GO_AUTOSAVE_DROPDOWN:     SetDParam(0, _autosave_dropdown[_settings_client.gui.autosave]); break;
 			case WID_GO_LANG_DROPDOWN:         SetDParamStr(0, _current_language->own_name); break;
-			case WID_GO_BUTTON_SIZE_DROPDOWN:  SetDParam(0, _settings_client.gui.min_button); break;
 			case WID_GO_BASE_GRF_DROPDOWN:     SetDParamStr(0, BaseGraphics::GetUsedSet()->name); break;
 			case WID_GO_BASE_GRF_STATUS:       SetDParam(0, BaseGraphics::GetUsedSet()->GetNumInvalid()); break;
 			case WID_GO_BASE_SFX_DROPDOWN:     SetDParamStr(0, BaseSounds::GetUsedSet()->name); break;
@@ -465,13 +452,6 @@ struct GameOptionsWindow : Window {
 				_settings_client.gui.windows_titlebars = !_settings_client.gui.windows_titlebars;
 				this->SetWidgetLoweredState(WID_GO_WINDOWS_TITLEBARS, _settings_client.gui.windows_titlebars);
 				this->SetDirty();
-
-				if (_settings_client.gui.min_button == 48 && _settings_client.gui.windows_titlebars) {
-					_settings_client.gui.min_button = 40;
-				}
-				if (_settings_client.gui.min_button == 40 && !_settings_client.gui.windows_titlebars) {
-					_settings_client.gui.min_button = 48;
-				}
 
 				ReInitAllWindows(false);
 
@@ -642,10 +622,6 @@ struct GameOptionsWindow : Window {
 				}
 				break;
 
-			case WID_GO_BUTTON_SIZE_DROPDOWN: // Setup screenshot format dropdown
-				_settings_client.gui.min_button = index;
-				break;
-
 			case WID_GO_REFRESH_RATE_DROPDOWN: {
 				_settings_client.gui.refresh_rate = *std::next(_refresh_rates.begin(), index);
 				if (_settings_client.gui.refresh_rate > 60) {
@@ -732,7 +708,6 @@ static const NWidgetPart _nested_game_options_widgets[] = {
 							NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
 							NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_GO_GUI_SCALE_AUTO), SetMinimalSize(21, 9), SetDataTip(STR_EMPTY, STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP),
 						EndContainer(),
-						NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_GO_BUTTON_SIZE_DROPDOWN), SetMinimalSize(150, 12), SetDataTip(STR_JUST_INT, STR_CONFIG_SETTING_BUTTON_SIZE_TOOLTIP), SetFill(1, 0),
 						NWidget(NWID_HORIZONTAL),
 							NWidget(WWT_TEXT, COLOUR_GREY), SetMinimalSize(0, 12), SetDataTip(STR_GAME_OPTIONS_GUI_SCALE_BEVELS, STR_NULL),
 							NWidget(NWID_SPACER), SetMinimalSize(1, 0), SetFill(1, 0),
