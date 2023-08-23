@@ -181,7 +181,7 @@ STR_COLOUR_LIGHT_BLUE                                           :Vaaleansininen
 STR_COLOUR_GREEN                                                :Vihreä
 STR_COLOUR_DARK_GREEN                                           :Tummanvihreä
 STR_COLOUR_BLUE                                                 :Sininen
-STR_COLOUR_CREAM                                                :Kerma
+STR_COLOUR_CREAM                                                :Kermankeltainen
 STR_COLOUR_MAUVE                                                :Malvanvärinen
 STR_COLOUR_PURPLE                                               :Violetti
 STR_COLOUR_ORANGE                                               :Oranssi
@@ -343,9 +343,9 @@ STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}Avaa kä
 ###length 31
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Tauko
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}Nopeuta peliä
-STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Asetukset
-STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Tallenna peli, hylkää peli, sulje
-STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Näytä kartta, lisänäkymä ja kylttilista
+STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Valinnat ja asetukset
+STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Tallenna, lataa tai hylkää peli, lopeta ohjelma
+STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Näytä kartta, lisänäkymä, rahtivirrat tai kylttilista
 STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Näytä kuntahakemisto
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Näytä tukitarjoukset
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Näytä luettelo yhtiön asemista
@@ -353,9 +353,9 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Näytä 
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Näytä yhtiön yleiset tiedot
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Näytä yhtiöhistoria
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Näytä tavoitteet
-STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Näytä kuvaajat
+STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Näytä yhtiökuvaajat ja rahtitaksat
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Näytä yhtiökilpataulukko
-STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Rahoita uuden teollisuuden rakentamista ja näytä teollisuushakemisto
+STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Tutki teollisuuslaitoksia tai rahoita uuden teollisuuden rakentamista
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Näytä luettelo yhtiön junista. Ctrl+napsautus näyttää luettelon ilman ryhmäluetteloa.
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}Näytä luettelo yhtiön ajoneuvoista. Ctrl+napsautus näyttää luettelon ilman ryhmäluetteloa.
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}Näytä luettelo yhtiön laivoista. Ctrl+napsautus näyttää luettelon ilman ryhmäluetteloa.
@@ -369,8 +369,8 @@ STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Rakenna 
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Rakenna lentokenttiä
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Avaa maastonmuokkaustyökalupalkki maan kohottamiseen/madaltamiseen, puiden istuttamiseen, jne.
 STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}Näytä ääni- ja musiikkiasetukset
-STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Näytä viimeisin viesti/uutisraportti, näytä viestiasetukset
-STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Maa-aluetiedot, konsoli, skriptin virheenjäljitys, kuvankaappaukset, tietoja OpenTTD:stä
+STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Näytä viimeisin viesti/uutisraportti, näytä viestihistoria tai poista kaikki viestit
+STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Maa-aluetiedot, kuvakaappaus, tietoja OpenTTD:stä, kehittäjätyökalut
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}Vaihda työkalupalkkeja
 
 # Extra tooltips for the scenario editor toolbar
@@ -1530,7 +1530,7 @@ STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREY_TO_RED                :Harmaasta punai
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREYSCALE                  :Harmaasävy
 
 STR_CONFIG_SETTING_SCROLLMODE                                   :Näkymän vieritystapa: {STRING}
-STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :Toiminta karttaa vieritettäessä
+STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :Toiminta karttaa vieritettäessä. Hiiren sijainnin lukitus ei toimi kaikissa järjestelmissä, kuten selainpohjaisissa versioissa, kosketusnäytöillä, Linuxissa Waylandilla ym.
 ###length 4
 STR_CONFIG_SETTING_SCROLLMODE_DEFAULT                           :Siirrä näkymää hiiren oikealla painikkeella, hiiren sijainti lukiten
 STR_CONFIG_SETTING_SCROLLMODE_RMB_LOCKED                        :Siirrä karttaa hiiren oikealla painikkeella, hiiren sijainti lukiten
@@ -1711,7 +1711,7 @@ STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Kuinka paljon m
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Huoltovälit ovat prosentteina: {STRING}
-STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Määritä, aiheuttaako edellisestä huollosta kulunut aika vai luotettavuuden laskeminen kulkuneuvon huoltamisen
+STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Kun tämä on valittuna, kulkuneuvot yrittävät mennä huoltoon niiden luotettavuuden laskettua annetun prosenttiosuuden verran enimmäisluotettavuudesta.{}{}Jos esimerkiksi kulkuneuvon enimmäisluotettavuus on 90 % ja huoltoväli 20 %, kulkuneuvo pyrkii huoltoon luotettavuuden laskettua 72 %:iin.
 
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Junien oletushuoltoväli: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Määritä oletushuoltoväli uusille junille, mikäli kulkuneuvolle ei ole määritelty erillistä huoltoväliä
@@ -2056,6 +2056,7 @@ STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}{BYTES} 
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Virhe näyttöasetuksissa…
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}… yhteensopivaa grafiikkasuoritinta ei löytynyt. Laitteistokiihdytystä ei käytetä.
+STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}… Näytönohjaimen ajuri kaatoi pelin. Laitteistokiihdytys on poistettu käytöstä
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -4405,7 +4406,7 @@ STR_ORDERS_STOP_SHARING_TOOLTIP                                 :{BLACK}Lopeta k
 
 STR_ORDERS_GO_TO_BUTTON                                         :{BLACK}Mene
 STR_ORDER_GO_TO_NEAREST_DEPOT                                   :Mene lähimmälle varikolle
-STR_ORDER_GO_TO_NEAREST_HANGAR                                  :Mene lähimmälle varikolle
+STR_ORDER_GO_TO_NEAREST_HANGAR                                  :Mene lähimpään lentokonehalliin
 STR_ORDER_CONDITIONAL                                           :Ehdollinen hyppykäsky
 STR_ORDER_SHARE                                                 :Jaa käskyt
 STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Lisää uuden käskyn ennen valittua, tai lisää listan viimeiseksi. Ctrl:n painalluksella asemakäskyistä tulee ”lastaa täyteen mikä tahansa rahti”, reittipistekäskyistä ”pysähtymättä” ja varikkokäskyistä ”huolto”. ”Jaa käskyt” tai Ctrl jakaa käskyt valitun kulkuneuvon kanssa. Kulkuneuvon napsauttaminen kopioi käskyt kyseisestä kulkuneuvosta. Varikkokäsky estää kulkuneuvon automaattiset huollot
@@ -4420,7 +4421,7 @@ STR_ORDER_SERVICE_AT                                            :Huolto
 STR_ORDER_SERVICE_NON_STOP_AT                                   :Huolto pysäytyksettä
 
 STR_ORDER_NEAREST_DEPOT                                         :lähin
-STR_ORDER_NEAREST_HANGAR                                        :lähin varikko
+STR_ORDER_NEAREST_HANGAR                                        :lähin lentokonehalli
 ###length 3
 STR_ORDER_TRAIN_DEPOT                                           :Veturitalli
 STR_ORDER_ROAD_VEHICLE_DEPOT                                    :Varikko
@@ -4602,9 +4603,9 @@ STR_AI_CONFIG_CONFIGURE                                         :{BLACK}Määrit
 STR_AI_CONFIG_CONFIGURE_TOOLTIP                                 :{BLACK}Määritä skriptin parametrit
 
 # Available AIs window
-STR_AI_LIST_CAPTION                                             :{WHITE}Saatavilla {STRING}
-STR_AI_LIST_CAPTION_AI                                          :Tekoälyt
-STR_AI_LIST_CAPTION_GAMESCRIPT                                  :Peliskriptit
+STR_AI_LIST_CAPTION                                             :{WHITE}Saatavilla olevat {STRING}
+STR_AI_LIST_CAPTION_AI                                          :tekoälyt
+STR_AI_LIST_CAPTION_GAMESCRIPT                                  :peliskriptit
 STR_AI_LIST_TOOLTIP                                             :{BLACK}Napsauta valitaksesi skriptin
 
 STR_AI_LIST_AUTHOR                                              :{LTBLUE}Tekijä: {ORANGE}{STRING}
@@ -5087,6 +5088,7 @@ STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... ilma
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Ei voi asettaa aikataulua.
 STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS                       :{WHITE}Kulkuneuvo voi odottaa vain asemalla
 STR_ERROR_TIMETABLE_NOT_STOPPING_HERE                           :{WHITE}Tämä kulkuneuvo ei pysähdy tällä asemalla
+STR_ERROR_TIMETABLE_INCOMPLETE                                  :{WHITE}… aikataulu on puutteellinen
 
 # Sign related errors
 STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}... liian monta kylttiä.

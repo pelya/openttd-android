@@ -112,7 +112,7 @@ public:
 
 		if (!this->cargo_acceptance.empty()) {
 			uint width = GetStringBoundingBox(this->cargo_acceptance).width + WidgetDimensions::scaled.frametext.Horizontal();
-			size->width = std::max(size->width, std::min(300u, width));
+			size->width = std::max(size->width, std::min(static_cast<uint>(ScaleGUITrad(300)), width));
 			SetDParamStr(0, cargo_acceptance);
 			size->height += GetStringHeight(STR_JUST_RAW_STRING, size->width - WidgetDimensions::scaled.frametext.Horizontal());
 		}
@@ -465,7 +465,6 @@ static const char * const _credits[] = {
 	u8"  Mike Ragsdale - OpenTTD installer",
 	u8"  Christian Rosentreter (tokai) - MorphOS / AmigaOS port",
 	u8"  Richard Kempton (richK) - additional airports, initial TGP implementation",
-	u8"  Plus C - title game",
 	u8"  Alberto Demichelis - Squirrel scripting language \u00a9 2003-2008",
 	u8"  L. Peter Deutsch - MD5 implementation \u00a9 1999, 2000, 2002",
 	u8"  Michael Blunck - Pre-signals and semaphores \u00a9 2003",
@@ -722,9 +721,9 @@ struct TooltipsWindow : public Window
 		/* Correctly position the tooltip position, watch out for window and cursor size
 		 * Clamp value to below main toolbar and above statusbar. If tooltip would
 		 * go below window, flip it so it is shown above the cursor */
-		pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height - GetMinButtonSize();
-		if (pt.y < scr_top) pt.y = Clamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot) + GetMinButtonSize();
-		pt.x = sm_width >= _screen.width ? 0 : Clamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
+		pt.y = SoftClamp(_cursor.pos.y + _cursor.total_size.y + _cursor.total_offs.y + 5, scr_top, scr_bot);
+		if (pt.y + sm_height > scr_bot) pt.y = std::min(_cursor.pos.y + _cursor.total_offs.y - 5, scr_bot) - sm_height;
+		pt.x = sm_width >= _screen.width ? 0 : SoftClamp(_cursor.pos.x - (sm_width >> 1), 0, _screen.width - sm_width);
 
 		if (_settings_client.gui.windows_titlebars) {
 			// Move it to the top of the screen, away from mouse cursor, so it won't steal screen taps on Android
@@ -989,7 +988,8 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 	assert((wi->type & WWT_MASK) == WWT_EDITBOX);
 
 	bool rtl = _current_text_dir == TD_RTL;
-	int clearbtn_width = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT).width;
+	Dimension sprite_size = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
+	int clearbtn_width = sprite_size.width + WidgetDimensions::scaled.imgbtn.Horizontal();
 
 	Rect cr = wi->GetCurrentRect().WithWidth(clearbtn_width, !rtl);
 
@@ -1213,8 +1213,8 @@ struct QueryWindow : public Window {
 	void FindWindowPlacementAndResize(int def_width, int def_height) override
 	{
 		/* Position query window over the calling window, ensuring it's within screen bounds. */
-		this->left = Clamp(parent->left + (parent->width / 2) - (this->width / 2), 0, _screen.width - this->width);
-		this->top = Clamp(parent->top + (parent->height / 2) - (this->height / 2), 0, _screen.height - this->height);
+		this->left = SoftClamp(parent->left + (parent->width / 2) - (this->width / 2), 0, _screen.width - this->width);
+		this->top = SoftClamp(parent->top + (parent->height / 2) - (this->height / 2), 0, _screen.height - this->height);
 		this->SetDirty();
 	}
 

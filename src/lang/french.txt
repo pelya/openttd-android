@@ -344,9 +344,9 @@ STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}Ouvrir l
 ###length 31
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Mettre le jeu en pause
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}Avance rapide du jeu
-STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Options
-STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Sauvegarder, abandonner, quitter
-STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Afficher la mini-carte, vue supplémentaire ou liste des panneaux
+STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Options et paramètres
+STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Sauvegarder, charger ou abandonner une partie, quitter le programme
+STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Afficher la mini-carte, vue supplémentaire, le flux des marchandises ou la liste des panneaux
 STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Afficher l'annuaire des villes
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Afficher les subventions
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Afficher la liste des stations de la compagnie
@@ -354,9 +354,9 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Afficher
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Afficher les informations générales
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Afficher le livre d'histoire
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Afficher la liste des objectifs
-STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Afficher les graphiques
+STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Afficher les graphiques de compagnie et les valeurs des marchandises
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Afficher le tableau de classement des compagnies
-STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Financer la construction de nouvelles industries ou lister toutes les industries
+STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Examiner les industries ou financer la construction de nouvelles industries
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Afficher la liste des trains de la compagnie. Ctrl-clic pour ouvrir dans l'autre mode (avancé/normal)
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}Afficher la liste des véhicules routiers de la compagnie. Ctrl-clic pour ouvrir dans l'autre mode (avancé/normal)
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}Afficher la liste des navires de la compagnie. Ctrl-clic pour ouvrir dans l'autre mode (avancé/normal)
@@ -370,8 +370,8 @@ STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Construc
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Construction aéronautique
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Ouvrir la barre d'outils de terraformation pour relever/abaisser du terrain, planter des arbres, etc.
 STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}Options son et musique
-STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Afficher le dernier message/bulletin, afficher les options des messages
-STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Outils d'inspection du paysage, console, débogage de script, copies d'écran, à propos d'OpenTTD
+STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Afficher le dernier message/bulletin, l'historique des messages ou supprimer tous les messages
+STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Outils d'inspection du paysage, copies d'écran, à propos d'OpenTTD et outils pour développeurs
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}Changer de barre d'outils
 
 # Extra tooltips for the scenario editor toolbar
@@ -997,21 +997,21 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Cocher c
 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Résolution
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Sélectionner la résolution d'écran à utiliser
-STR_GAME_OPTIONS_RESOLUTION_OTHER                               :autre
+STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Autre
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK} Accélération matérielle
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Accélération matérielle
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Cochez cette case permet à OpenTTD d'utiliser l'accélération matérielle, si possible. Un paramètre modifié ne sera pris en compte qu'au redémarrage du jeu
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Les paramètres ne prendront effet qu'après le redémarrage du jeu
 
 STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Cochez cette case pour activer la synchronisation verticale de l'écran. La modification de ce paramètres ne sera effective qu'après le redémarrage du jeu. Fonctionne uniquement si l’accélération matérielle est active
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Cochez cette case pour activer la synchronisation verticale de l'écran. La modification de ce paramètre ne sera effective qu'après le redémarrage du jeu. Fonctionne uniquement si l’accélération matérielle est active.
 
 STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Pilote actif{NBSP}: {STRING}
 
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Taille de l'interface
 STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Faites glisser la souris pour définir la taille de l'interface. Maintenir Ctrl pour un réglage en continu
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :détection automatique de la taille
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Détection automatique de la taille
 STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Cochez cette case pour détecter automatiquement la taille de l'interface
 
 STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Mettre à l’échelle les bordures
@@ -1025,7 +1025,7 @@ STR_GAME_OPTIONS_GUI_SCALE_5X                                   :x5
 
 STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK} Graphiques
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK} Taux de rafraîchissement de l'affichage
+STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Taux de rafraîchissement de l'affichage
 STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK} Sélectionnez la fréquence de rafraîchissement à utiliser
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}Hz
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE} Les taux de rafraîchissement supérieurs à 60Hz peuvent avoir un impact sur les performances.
@@ -1207,7 +1207,9 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :À droite
 
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN                         :Emprunt initial maximum{NBSP}: {STRING}
 STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_HELPTEXT                :Montant maximum qu'une compagnie peut emprunter (sans tenir compte de l'inflation)
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_VALUE                   :{CURRENCY_LONG}
 ###setting-zero-is-special
+STR_CONFIG_SETTING_MAXIMUM_INITIAL_LOAN_DISABLED                :Pas d'emprunt {RED}Nécessite un script de jeu qui fournit les fonds initiaux
 
 STR_CONFIG_SETTING_INTEREST_RATE                                :Taux d'intérêt{NBSP}: {STRING}
 STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Taux d’intérêt de l'emprunt{NBSP}; contrôle également l'inflation si activé
@@ -1529,7 +1531,7 @@ STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREY_TO_RED                :Gris à rouge
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREYSCALE                  :Niveaux de gris
 
 STR_CONFIG_SETTING_SCROLLMODE                                   :Défilement de la vue{NBSP}: {STRING}
-STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :Comportement lors du défilement de la carte
+STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :Comportement lors du défilement de la carte. L'option "position de la souris verrouillée" ne fonctionne pas sur certains systèmes, comme les versions pour navigateurs, les écrans tactiles, Linux avec Wayland, et autres
 ###length 4
 STR_CONFIG_SETTING_SCROLLMODE_DEFAULT                           :Défilement de la vue par clic droit, position de la souris verrouillée
 STR_CONFIG_SETTING_SCROLLMODE_RMB_LOCKED                        :Défilement de la carte par clic droit, position de la souris verrouillée
@@ -1710,7 +1712,7 @@ STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :Quantité de m�
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} Mio
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Les intervalles de service sont en pourcentage{NBSP}: {STRING}
-STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Choisir si l'entretien des véhicule est activé par le temps passé depuis le dernier entretien ou par la fiabilité passant sous un pourcentage de la fiabilité maximum
+STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Lorsqu'il est activé, les véhicules essaient d'être entretenus quand leur fiabilité passe sous le pourcentage donné de la fiabilité maximum.{}{}Par exemple, si la fiabilité maximum d'un véhicule est 90% et l'intervalle d'entretien 20%, le véhicule essayera d'être entretenu quand sa fiabilité atteindra 72%.
 
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Intervalle d'entretien par défaut pour les trains{NBSP}: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Définit l'intervalle d'entretien par défaut des nouveaux véhicules ferroviaires, si aucun intervalle d'entretien n'est défini pour le véhicule
@@ -2055,22 +2057,23 @@ STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}L'alloca
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE} Erreur avec les paramètres vidéo...
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE} ... aucun GPU compatible trouvé. l'accélération matérielle est désactivée
+STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... le pilote du GPU a fait planter le jeu. L'accélération matérielle est désactivée
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
-STR_INTRO_NEW_GAME                                              :{BLACK}Nouvelle partie
+STR_INTRO_NEW_GAME                                              :{BLACK}Jouer une nouvelle partie
 STR_INTRO_LOAD_GAME                                             :{BLACK}Charger une partie
 STR_INTRO_PLAY_SCENARIO                                         :{BLACK}Jouer un scénario
 STR_INTRO_PLAY_HEIGHTMAP                                        :{BLACK}Jouer une carte d'altitude
 STR_INTRO_SCENARIO_EDITOR                                       :{BLACK}Éditeur de scénario
-STR_INTRO_MULTIPLAYER                                           :{BLACK}Mode multijoueurs
+STR_INTRO_MULTIPLAYER                                           :{BLACK}Jouer en multijoueur
 
-STR_INTRO_GAME_OPTIONS                                          :{BLACK}Options
+STR_INTRO_GAME_OPTIONS                                          :{BLACK}Options globales
 STR_INTRO_HIGHSCORE                                             :{BLACK}Meilleurs scores
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Paramètres
+STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Paramètres de jeu
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Paramètres NewGRF
-STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Vérifier le contenu en ligne
+STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Contenu additionnel en ligne
 STR_INTRO_AI_SETTINGS                                           :{BLACK}Configuration des IAs
 STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}Configuration du script de jeu
 STR_INTRO_QUIT                                                  :{BLACK}Quitter
@@ -2228,18 +2231,18 @@ STR_NETWORK_SERVER_VISIBILITY_INVITE_ONLY                       :Invitation uniq
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Multijoueurs
-STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Nom du joueur{NBSP}:
+STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Votre nom de joueur :
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Ceci est le nom sous lequel vous serez connu des autres joueurs
 
-STR_NETWORK_SERVER_LIST_GAME_NAME                               :{BLACK}Nom
+STR_NETWORK_SERVER_LIST_GAME_NAME                               :{BLACK}Nom de la partie
 STR_NETWORK_SERVER_LIST_GAME_NAME_TOOLTIP                       :{BLACK}Nom de la partie
 STR_NETWORK_SERVER_LIST_GENERAL_ONLINE                          :{BLACK}{COMMA}/{COMMA} - {COMMA}/{COMMA}
-STR_NETWORK_SERVER_LIST_CLIENTS_CAPTION                         :{BLACK}Clients
+STR_NETWORK_SERVER_LIST_CLIENTS_CAPTION                         :{BLACK}Clients - Compagnies
 STR_NETWORK_SERVER_LIST_CLIENTS_CAPTION_TOOLTIP                 :{BLACK}Clients en ligne / clients max.{}Compagnies en ligne / compagnies max.
 STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}{NBSP}×{NBSP}{COMMA}
 STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION                        :{BLACK}Taille
 STR_NETWORK_SERVER_LIST_MAP_SIZE_CAPTION_TOOLTIP                :{BLACK}Taille de la carte{}Cliquer pour trier par surface
-STR_NETWORK_SERVER_LIST_DATE_CAPTION                            :{BLACK}Date
+STR_NETWORK_SERVER_LIST_DATE_CAPTION                            :{BLACK}Année en jeu
 STR_NETWORK_SERVER_LIST_DATE_CAPTION_TOOLTIP                    :{BLACK}Date courante
 STR_NETWORK_SERVER_LIST_YEARS_CAPTION                           :{BLACK}Années
 STR_NETWORK_SERVER_LIST_YEARS_CAPTION_TOOLTIP                   :{BLACK}Nombre d'années{}écoulées dans le jeu
@@ -2273,11 +2276,11 @@ STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP                         :{BLACK}Actualis
 
 STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET                  :{BLACK}Recherche internet
 STR_NETWORK_SERVER_LIST_SEARCH_SERVER_INTERNET_TOOLTIP          :{BLACK}Rechercher des serveurs publiés sur internet
-STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN                       :{BLACK}Recherche LAN
+STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN                       :{BLACK}Recherche sur le réseau local
 STR_NETWORK_SERVER_LIST_SEARCH_SERVER_LAN_TOOLTIP               :{BLACK}Rechercher des serveurs sur le réseau local
 STR_NETWORK_SERVER_LIST_ADD_SERVER                              :{BLACK}Ajouter un serveur
 STR_NETWORK_SERVER_LIST_ADD_SERVER_TOOLTIP                      :{BLACK}Ajouter un serveur à la liste. Ce peut être soit une adresse de serveur, soit un code d'invitation
-STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Héberger/créer un serveur de jeu
+STR_NETWORK_SERVER_LIST_START_SERVER                            :{BLACK}Créer un serveur de jeu
 STR_NETWORK_SERVER_LIST_START_SERVER_TOOLTIP                    :{BLACK}Démarrer son propre serveur, sur cet ordinateur-ci
 
 STR_NETWORK_SERVER_LIST_PLAYER_NAME_OSKTITLE                    :{BLACK}Entrer votre nom
@@ -5086,6 +5089,7 @@ STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... l'a�
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Impossible d'affecter un horaire au véhicule...
 STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS                       :{WHITE}Les véhicules ne peuvent attendre qu'aux stations
 STR_ERROR_TIMETABLE_NOT_STOPPING_HERE                           :{WHITE}Ce véhicule ne s'arrête pas à cette station
+STR_ERROR_TIMETABLE_INCOMPLETE                                  :{WHITE}... l'horaire est incomplet
 
 # Sign related errors
 STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}... trop de panneaux

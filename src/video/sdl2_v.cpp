@@ -421,30 +421,25 @@ bool VideoDriver_SDL_Base::PollEvent()
 	if (!SDL_PollEvent(&ev)) return false;
 
 	switch (ev.type) {
-		case SDL_MOUSEMOTION:
-			if (_multitouch_second_point.x >= 0) {
-				Point mouse;
-				SDL_GetMouseState(&mouse.x, &mouse.y);
-				_cursor.UpdateCursorPosition((mouse.x + _multitouch_second_point.x) / 2, (mouse.y + _multitouch_second_point.y) / 2, false);
-				int pinch_zoom_threshold = std::min(_screen.width, _screen.height) / PINCH_ZOOM_SENSITIVITY;
-				int new_distance = sqrtf(powf(mouse.x - _multitouch_second_point.x, 2) + powf(mouse.y - _multitouch_second_point.y, 2));
-				if (new_distance - _multitouch_finger_distance >= pinch_zoom_threshold) {
-					_multitouch_finger_distance += pinch_zoom_threshold;
-					_cursor.wheel--;
-					_right_button_down = false;
+		case SDL_MOUSEMOTION: {
+			int32_t x = ev.motion.x;
+			int32_t y = ev.motion.y;
+
+			if (_cursor.fix_at) {
+				/* Get all queued mouse events now in case we have to warp the cursor. In the
+				 * end, we only care about the current mouse position and not bygone events. */
+				while (SDL_PeepEvents(&ev, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION)) {
+					x = ev.motion.x;
+					y = ev.motion.y;
 				}
-				if (_multitouch_finger_distance - new_distance >= pinch_zoom_threshold) {
-					_multitouch_finger_distance -= pinch_zoom_threshold;
-					_cursor.wheel++;
-					_right_button_down = false;
-				}
-			} else {
-				if (_cursor.UpdateCursorPosition(ev.motion.x, ev.motion.y, true)) {
-					SDL_WarpMouseInWindow(this->sdl_window, _cursor.pos.x, _cursor.pos.y);
-				}
+			}
+
+			if (_cursor.UpdateCursorPosition(x, y)) {
+				SDL_WarpMouseInWindow(this->sdl_window, _cursor.pos.x, _cursor.pos.y);
 			}
 			HandleMouseEvents();
 			break;
+		}
 
 		case SDL_MOUSEWHEEL:
 			if (ev.wheel.y > 0) {
@@ -637,10 +632,8 @@ bool VideoDriver_SDL_Base::PollEvent()
 			} else if (ev.window.event == SDL_WINDOWEVENT_ENTER) {
 				// mouse entered the window, enable cursor
 				_cursor.in_window = true;
-#ifdef __EMSCRIPTEN__
 				/* Ensure pointer lock will not occur. */
 				SDL_SetRelativeMouseMode(SDL_FALSE);
-#endif
 			} else if (ev.window.event == SDL_WINDOWEVENT_LEAVE) {
 				// mouse left the window, undraw cursor
 				UndrawMouseCursor();
@@ -659,9 +652,6 @@ static const char *InitializeSDL()
 	 * UpdateWindowSurface() to update the window's texture instead of
 	 * its surface. */
 	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, "0");
-#ifndef __EMSCRIPTEN__
-	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
-#endif
 
 	/* Check if the video-driver is already initialized. */
 	if (SDL_WasInit(SDL_INIT_VIDEO) != 0) return nullptr;

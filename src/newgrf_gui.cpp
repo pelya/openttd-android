@@ -342,7 +342,7 @@ struct NewGRFParametersWindow : public Window {
 				if (num >= this->vscroll->GetCount()) break;
 				if (this->clicked_row != num) {
 					this->CloseChildWindows(WC_QUERY_STRING);
-					HideDropDownMenu(this);
+					this->CloseChildWindows(WC_DROPDOWN_MENU);
 					this->clicked_row = num;
 					this->clicked_dropdown = false;
 				}
@@ -359,7 +359,7 @@ struct NewGRFParametersWindow : public Window {
 				if (par_info->type != PTYPE_BOOL && IsInsideMM(x, 0, SETTING_BUTTON_WIDTH) && par_info->complete_labels) {
 					if (this->clicked_dropdown) {
 						/* unclick the dropdown */
-						HideDropDownMenu(this);
+						this->CloseChildWindows(WC_DROPDOWN_MENU);
 						this->clicked_dropdown = false;
 						this->closing_dropdown = false;
 					} else {
@@ -2215,7 +2215,7 @@ struct ScanProgressWindow : public Window {
 				SetDParamMaxDigits(1, 4);
 				/* We really don't know the width. We could determine it by scanning the NewGRFs,
 				 * but this is the status window for scanning them... */
-				size->width = std::max<uint>(size->width, GetStringBoundingBox(STR_NEWGRF_SCAN_STATUS).width);
+				size->width = std::max<uint>(size->width, GetStringBoundingBox(STR_NEWGRF_SCAN_STATUS).width + padding.width);
 				size->height = FONT_HEIGHT_NORMAL * 2 + WidgetDimensions::scaled.vsep_normal;
 				break;
 		}

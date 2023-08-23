@@ -461,7 +461,7 @@ public:
 
 		if (!(IsAllGroupID(this->vli.index) || IsDefaultGroupID(this->vli.index) || Group::IsValidID(this->vli.index))) {
 			this->vli.index = ALL_GROUP;
-			HideDropDownMenu(this);
+			this->CloseChildWindows(WC_DROPDOWN_MENU);
 		}
 		this->SetDirty();
 	}
@@ -512,7 +512,7 @@ public:
 		/* The drop down menu is out, *but* it may not be used, retract it. */
 		if (this->vehicles.size() == 0 && this->IsWidgetLowered(WID_GL_MANAGE_VEHICLES_DROPDOWN)) {
 			this->RaiseWidget(WID_GL_MANAGE_VEHICLES_DROPDOWN);
-			HideDropDownMenu(this);
+			this->CloseChildWindows(WC_DROPDOWN_MENU);
 		}
 
 		/* Disable all lists management button when the list is empty */
@@ -881,7 +881,7 @@ public:
 				uint id_g = this->group_sb->GetScrolledRowFromWidget(pt.y, this, WID_GL_LIST_GROUP);
 				GroupID new_g = id_g >= this->groups.size() ? NEW_GROUP : this->groups[id_g]->index;
 
-				Command<CMD_ADD_VEHICLE_GROUP>::Post(STR_ERROR_GROUP_CAN_T_ADD_VEHICLE, new_g == NEW_GROUP ? CcAddVehicleNewGroup : nullptr, 0, new_g, vindex, _ctrl_pressed || this->grouping == GB_SHARED_ORDERS);
+				Command<CMD_ADD_VEHICLE_GROUP>::Post(STR_ERROR_GROUP_CAN_T_ADD_VEHICLE, new_g == NEW_GROUP ? CcAddVehicleNewGroup : nullptr, new_g, vindex, _ctrl_pressed || this->grouping == GB_SHARED_ORDERS);
 				break;
 			}
 

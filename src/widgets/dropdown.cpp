@@ -119,8 +119,6 @@ static WindowDesc _dropdown_desc(
 
 /** Drop-down menu window */
 struct DropdownWindow : Window {
-	WindowClass parent_wnd_class; ///< Parent window class.
-	WindowNumber parent_wnd_num;  ///< Parent window number.
 	int parent_button;            ///< Parent widget number where the window is dropped from.
 	const DropDownList list;      ///< List with dropdown menu items.
 	int selected_index;           ///< Index of the selected item in the list.
@@ -187,8 +185,7 @@ struct DropdownWindow : Window {
 		this->vscroll->SetPosition(scroll_pos);
 		this->vscroll->UpdatePosition(0);
 
-		this->parent_wnd_class = parent->window_class;
-		this->parent_wnd_num   = parent->window_number;
+		this->parent           = parent;
 		this->parent_button    = button;
 		this->selected_index   = selected;
 		this->click_delay      = 0;
@@ -207,12 +204,21 @@ struct DropdownWindow : Window {
 		 * Also mark it dirty in case the callback deals with the screen. (e.g. screenshots). */
 		this->Window::Close();
 
-		Window *w2 = FindWindowById(this->parent_wnd_class, this->parent_wnd_num);
-		if (w2 != nullptr) {
-			Point pt = _cursor.pos;
-			pt.x -= w2->left;
-			pt.y -= w2->top;
-			w2->OnDropdownClose(pt, this->parent_button, this->selected_index, this->instant_close);
+		Point pt = _cursor.pos;
+		pt.x -= this->parent->left;
+		pt.y -= this->parent->top;
+		this->parent->OnDropdownClose(pt, this->parent_button, this->selected_index, this->instant_close);
+
+		/* Set flag on parent widget to indicate that we have just closed. */
+		NWidgetCore *nwc = this->parent->GetWidget<NWidgetCore>(this->parent_button);
+		if (nwc != nullptr) SetBit(nwc->disp_flags, NDB_DROPDOWN_CLOSED);
+	}
+
+	void OnFocusLost(bool closing) override
+	{
+		if (!closing) {
+			this->instant_close = false;
+			this->Close();
 		}
 	}
 
@@ -313,17 +319,11 @@ struct DropdownWindow : Window {
 
 	void OnMouseLoop() override
 	{
-		Window *w2 = FindWindowById(this->parent_wnd_class, this->parent_wnd_num);
-		if (w2 == nullptr) {
-			this->Close();
-			return;
-		}
-
 		if (this->click_delay != 0 && --this->click_delay == 0) {
 			/* Close the dropdown, so it doesn't affect new window placement.
 			 * Also mark it dirty in case the callback deals with the screen. (e.g. screenshots). */
 			this->Close();
-			w2->OnDropdownSelect(this->parent_button, this->selected_index);
+			this->parent->OnDropdownSelect(this->parent_button, this->selected_index);
 			return;
 		}
 
@@ -413,7 +413,7 @@ struct DropdownWindow : Window {
  */
 void ShowDropDownListAt(Window *w, DropDownList &&list, int selected, int button, Rect wi_rect, Colours wi_colour, bool auto_width, bool instant_close)
 {
-	CloseWindowById(WC_DROPDOWN_MENU, 0);
+	CloseWindowByClass(WC_DROPDOWN_MENU);
 
 	/* The preferred position is just below the dropdown calling widget */
 	int top = w->top + wi_rect.bottom + 1;
@@ -459,11 +459,8 @@ void ShowDropDownListAt(Window *w, DropDownList &&list, int selected, int button
 			scroll = true;
 			uint avg_height = height / (uint)list.size();
 
-			/* Check at least there is space for one item. */
-			assert(available_height >= avg_height);
-
-			/* Fit the list. */
-			uint rows = available_height / avg_height;
+			/* Fit the list; create at least one row, even if there is no height available. */
+			uint rows = std::max<uint>(available_height / avg_height, 1);
 			height = rows * avg_height;
 
 			/* Add space for the scrollbar. */
@@ -550,27 +547,3 @@ void ShowDropDownMenu(Window *w, const StringID *strings, int selected, int butt
 
 	if (!list.empty()) ShowDropDownList(w, std::move(list), selected, button, width);
 }
-
-/**
- * Delete the drop-down menu from window \a pw
- * @param pw Parent window of the drop-down menu window
- * @return Parent widget number if the drop-down was found and closed, \c -1 if the window was not found.
- */
-int HideDropDownMenu(Window *pw)
-{
-	for (Window *w : Window::Iterate()) {
-		if (w->window_class != WC_DROPDOWN_MENU) continue;
-
-		DropdownWindow *dw = dynamic_cast<DropdownWindow*>(w);
-		assert(dw != nullptr);
-		if (pw->window_class == dw->parent_wnd_class &&
-				pw->window_number == dw->parent_wnd_num) {
-			int parent_button = dw->parent_button;
-			dw->Close();
-			return parent_button;
-		}
-	}
-
-	return -1;
-}
-

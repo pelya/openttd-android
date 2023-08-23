@@ -1068,7 +1068,7 @@ uint BaseSettingEntry::Draw(GameSettings *settings_ptr, int left, int right, int
 	if (cur_row >= max_row) return cur_row;
 
 	bool rtl = _current_text_dir == TD_RTL;
-	int offset = (rtl ? -(int)_circle_size.width : _circle_size.width) / 2;
+	int offset = (rtl ? -(int)_circle_size.width : (int)_circle_size.width) / 2;
 	int level_width = rtl ? -WidgetDimensions::scaled.hsep_indent : WidgetDimensions::scaled.hsep_indent;
 
 	int x = rtl ? right : left;
@@ -1086,7 +1086,7 @@ uint BaseSettingEntry::Draw(GameSettings *settings_ptr, int left, int right, int
 		int bottom_y = (flags & SEF_LAST_FIELD) ? halfway_y : y + SETTING_HEIGHT - 1;
 		GfxDrawLine(x + offset, y, x + offset, bottom_y, colour);
 		/* Small horizontal line from the last vertical line */
-		GfxDrawLine(x + offset, halfway_y, x + level_width - WidgetDimensions::scaled.hsep_normal, halfway_y, colour);
+		GfxDrawLine(x + offset, halfway_y, x + level_width - (rtl ? -WidgetDimensions::scaled.hsep_normal : WidgetDimensions::scaled.hsep_normal), halfway_y, colour);
 		x += level_width;
 
 		this->DrawSetting(settings_ptr, rtl ? left : x, rtl ? x : right, y, this == selected);
@@ -2055,7 +2055,7 @@ struct GameSettingsWindow : Window {
 				};
 				for (uint i = 0; i < lengthof(setting_types); i++) {
 					SetDParam(0, setting_types[i]);
-					size->width = std::max(size->width, GetStringBoundingBox(STR_CONFIG_SETTING_TYPE).width);
+					size->width = std::max(size->width, GetStringBoundingBox(STR_CONFIG_SETTING_TYPE).width + padding.width);
 				}
 				size->height = 2 * FONT_HEIGHT_NORMAL + WidgetDimensions::scaled.vsep_normal +
 						std::max(size->height, GetSettingsTree().GetMaxHelpHeight(size->width));
@@ -2281,7 +2281,7 @@ struct GameSettingsWindow : Window {
 
 			if (this->valuedropdown_entry == pe) {
 				/* unclick the dropdown */
-				HideDropDownMenu(this);
+				this->CloseChildWindows(WC_DROPDOWN_MENU);
 				this->closing_dropdown = false;
 				this->valuedropdown_entry->SetButtons(0);
 				this->valuedropdown_entry = nullptr;

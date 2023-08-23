@@ -396,6 +396,7 @@ struct BuildRailToolbarWindow : Window {
 		if (_thd.GetCallbackWnd() == this) this->OnPlaceObjectAbort();
 		if (this->IsWidgetLowered(WID_RAT_BUILD_STATION)) SetViewportCatchmentStation(nullptr, true);
 		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
+		CloseWindowById(WC_SELECT_STATION, 0);
 		this->Window::Close();
 	}
 
@@ -2093,6 +2094,12 @@ struct BuildRailWaypointWindow : PickerWindowBase {
 		matrix->SetCount(_waypoint_count);
 		if (_cur_waypoint_type >= _waypoint_count) _cur_waypoint_type = 0;
 		matrix->SetClicked(_cur_waypoint_type);
+	}
+
+	void Close() override
+	{
+		CloseWindowById(WC_SELECT_STATION, 0);
+		this->PickerWindowBase::Close();
 	}
 
 	void UpdateWidgetSize(int widget, Dimension *size, const Dimension &padding, Dimension *fill, Dimension *resize) override

@@ -135,7 +135,7 @@ std::tuple<CommandCost, VehicleID, uint, uint16, CargoArray> CmdBuildVehicle(DoC
 
 	Vehicle *v = nullptr;
 	switch (type) {
-		case VEH_TRAIN:    value.AddCost(CmdBuildRailVehicle(subflags, tile, e, use_free_vehicles, &v)); break;
+		case VEH_TRAIN:    value.AddCost(CmdBuildRailVehicle(subflags, tile, e, &v)); break;
 		case VEH_ROAD:     value.AddCost(CmdBuildRoadVehicle(subflags, tile, e, &v)); break;
 		case VEH_SHIP:     value.AddCost(CmdBuildShip       (subflags, tile, e, &v)); break;
 		case VEH_AIRCRAFT: value.AddCost(CmdBuildAircraft   (subflags, tile, e, &v)); break;
@@ -173,6 +173,11 @@ std::tuple<CommandCost, VehicleID, uint, uint16, CargoArray> CmdBuildVehicle(DoC
 		}
 
 		if (flags & DC_EXEC) {
+			if (type == VEH_TRAIN && use_free_vehicles && !(flags & DC_AUTOREPLACE)) {
+				/* Move any free wagons to the new vehicle. */
+				NormalizeTrainVehInDepot(Train::From(v));
+			}
+
 			InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
 			InvalidateWindowClassesData(GetWindowClassForVehicleType(type), 0);
 			SetWindowDirty(WC_COMPANY, _current_company);
@@ -741,7 +746,7 @@ CommandCost CmdDepotMassAutoReplace(DoCommandFlag flags, TileIndex tile, Vehicle
  * @param name Name to test.
  * @return True ifffffff the name is unique.
  */
-static bool IsUniqueVehicleName(const std::string &name)
+bool IsUniqueVehicleName(const std::string &name)
 {
 	for (const Vehicle *v : Vehicle::Iterate()) {
 		if (!v->name.empty() && v->name == name) return false;

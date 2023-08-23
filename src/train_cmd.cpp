@@ -684,7 +684,7 @@ static CommandCost CmdBuildRailWagon(DoCommandFlag flags, TileIndex tile, const 
 }
 
 /** Move all free vehicles in the depot to the train */
-static void NormalizeTrainVehInDepot(const Train *u)
+void NormalizeTrainVehInDepot(const Train *u)
 {
 	for (const Train *v : Train::Iterate()) {
 		if (v->IsFreeWagon() && v->tile == u->tile &&
@@ -735,11 +735,10 @@ static void AddRearEngineToMultiheadedTrain(Train *v)
  * @param flags    type of operation.
  * @param tile     tile of the depot where rail-vehicle is built.
  * @param e        the engine to build.
- * @param free_cars add any free cars to the train.
  * @param[out] ret the vehicle that has been built.
  * @return the cost of this operation or an error.
  */
-CommandCost CmdBuildRailVehicle(DoCommandFlag flags, TileIndex tile, const Engine *e, bool free_cars, Vehicle **ret)
+CommandCost CmdBuildRailVehicle(DoCommandFlag flags, TileIndex tile, const Engine *e, Vehicle **ret)
 {
 	const RailVehicleInfo *rvi = &e->u.rail;
 
@@ -804,10 +803,6 @@ CommandCost CmdBuildRailVehicle(DoCommandFlag flags, TileIndex tile, const Engin
 
 		v->ConsistChanged(CCF_ARRANGE);
 		UpdateTrainGroupID(v);
-
-		if (free_cars && !(flags & DC_AUTOREPLACE)) { // check if the cars should be added to the new vehicle
-			NormalizeTrainVehInDepot(v);
-		}
 
 		CheckConsistencyOfArticulatedVehicle(v);
 	}
@@ -1325,6 +1320,7 @@ CommandCost CmdMoveRailVehicle(DoCommandFlag flags, VehicleID src_veh, VehicleID
 			DeleteVehicleOrders(src);
 			RemoveVehicleFromGroup(src);
 			src->unitnumber = 0;
+			src->name.clear();
 		}
 
 		/* We weren't a front engine but are becoming one. So
@@ -1658,6 +1654,19 @@ static Vehicle *TrainOnTileEnum(Vehicle *v, void *)
 	return (v->type == VEH_TRAIN) ? v : nullptr;
 }
 
+/**
+ * Check if a level crossing tile has a train on it
+ * @param tile tile to test
+ * @return true if a train is on the crossing
+ * @pre tile is a level crossing
+ */
+bool TrainOnCrossing(TileIndex tile)
+{
+	assert(IsLevelCrossingTile(tile));
+
+	return HasVehicleOnPos(tile, nullptr, &TrainOnTileEnum);
+}
+
 
 /**
  * Checks if a train is approaching a rail-road crossing
@@ -1709,7 +1718,7 @@ static bool TrainApproachingCrossing(TileIndex tile)
 static inline bool CheckLevelCrossing(TileIndex tile)
 {
 	/* reserved || train on crossing || train approaching crossing */
-	return HasCrossingReservation(tile) || HasVehicleOnPos(tile, NULL, &TrainOnTileEnum) || TrainApproachingCrossing(tile);
+	return HasCrossingReservation(tile) || TrainOnCrossing(tile) || TrainApproachingCrossing(tile);
 }
 
 /**
@@ -1770,7 +1779,8 @@ void UpdateLevelCrossing(TileIndex tile, bool sound, bool force_bar)
 
 /**
  * Find adjacent level crossing tiles in this multi-track crossing and mark them dirty.
- * @param The tile which causes the update.
+ * @param tile The tile which causes the update.
+ * @param road_axis The road axis.
  */
 void MarkDirtyAdjacentLevelCrossingTiles(TileIndex tile, Axis road_axis)
 {
@@ -1780,6 +1790,44 @@ void MarkDirtyAdjacentLevelCrossingTiles(TileIndex tile, Axis road_axis)
 		const TileIndex t = TileAddByDiagDir(tile, dir);
 		if (t < MapSize() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == road_axis) {
 			MarkTileDirtyByTile(t);
+		}
+	}
+}
+
+/**
+ * Update adjacent level crossing tiles in this multi-track crossing, due to removal of a level crossing tile.
+ * @param tile The crossing tile which has been or is about to be removed, and which caused the update.
+ * @param road_axis The road axis.
+ */
+void UpdateAdjacentLevelCrossingTilesOnLevelCrossingRemoval(TileIndex tile, Axis road_axis)
+{
+	const DiagDirection dir1 = AxisToDiagDir(road_axis);
+	const DiagDirection dir2 = ReverseDiagDir(dir1);
+	for (DiagDirection dir : { dir1, dir2 }) {
+		const TileIndexDiff diff = TileOffsByDiagDir(dir);
+		bool occupied = false;
+		for (TileIndex t = tile + diff; t < MapSize() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == road_axis; t += diff) {
+			occupied |= CheckLevelCrossing(t);
+		}
+		if (occupied) {
+			/* Mark the immediately adjacent tile dirty */
+			const TileIndex t = tile + diff;
+			if (t < MapSize() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == road_axis) {
+				MarkTileDirtyByTile(t);
+			}
+		} else {
+			/* Unbar the crossing tiles in this direction as necessary */
+			for (TileIndex t = tile + diff; t < MapSize() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == road_axis; t += diff) {
+				if (IsCrossingBarred(t)) {
+					/* The crossing tile is barred, unbar it and continue to check the next tile */
+					SetCrossingBarred(t, false);
+					MarkTileDirtyByTile(t);
+				} else {
+					/* The crossing tile is already unbarred, mark the tile dirty and stop checking */
+					MarkTileDirtyByTile(t);
+					break;
+				}
+			}
 		}
 	}
 }
@@ -3546,6 +3594,20 @@ static Vehicle *CollectTrackbitsFromCrashedVehiclesEnum(Vehicle *v, void *data)
 	return nullptr;
 }
 
+static bool IsRailStationPlatformOccupied(TileIndex tile)
+{
+	TileIndexDiff delta = (GetRailStationAxis(tile) == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
+
+	for (TileIndex t = tile; IsCompatibleTrainStationTile(t, tile); t -= delta) {
+		if (HasVehicleOnPos(t, nullptr, &TrainOnTileEnum)) return true;
+	}
+	for (TileIndex t = tile + delta; IsCompatibleTrainStationTile(t, tile); t += delta) {
+		if (HasVehicleOnPos(t, nullptr, &TrainOnTileEnum)) return true;
+	}
+
+	return false;
+}
+
 /**
  * Deletes/Clears the last wagon of a crashed train. It takes the engine of the
  * train, then goes to the last wagon and deletes that. Each call to this function
@@ -3603,6 +3665,13 @@ static void DeleteLastWagon(Train *v)
 
 	/* check if the wagon was on a road/rail-crossing */
 	if (IsLevelCrossingTile(tile)) UpdateLevelCrossing(tile);
+
+	if (IsRailStationTile(tile)) {
+		bool occupied = IsRailStationPlatformOccupied(tile);
+		DiagDirection dir = AxisToDiagDir(GetRailStationAxis(tile));
+		SetRailStationPlatformReservation(tile, dir, occupied);
+		SetRailStationPlatformReservation(tile, ReverseDiagDir(dir), occupied);
+	}
 
 	/* Update signals */
 	if (IsTileType(tile, MP_TUNNELBRIDGE) || IsRailDepotTile(tile)) {

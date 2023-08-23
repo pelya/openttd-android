@@ -230,7 +230,7 @@ public:
 			case WID_TA_ACTION_INFO:
 				if (this->sel_index != -1) {
 					Money action_cost = _price[PR_TOWN_ACTION] * _town_action_costs[this->sel_index] >> 8;
-					bool affordable = action_cost < Company::GetIfValid(_local_company)->money;
+					bool affordable = Company::IsValidID(_local_company) && action_cost < Company::Get(_local_company)->money;
 
 					SetDParam(0, action_cost);
 					DrawStringMultiLine(r.Shrink(WidgetDimensions::scaled.framerect),
@@ -261,7 +261,7 @@ public:
 				size->height = (TACT_COUNT + 1) * FONT_HEIGHT_NORMAL + padding.height;
 				size->width = GetStringBoundingBox(STR_LOCAL_AUTHORITY_ACTIONS_TITLE).width;
 				for (uint i = 0; i < TACT_COUNT; i++ ) {
-					size->width = std::max(size->width, GetStringBoundingBox(STR_LOCAL_AUTHORITY_ACTION_SMALL_ADVERTISING_CAMPAIGN + i).width);
+					size->width = std::max(size->width, GetStringBoundingBox(STR_LOCAL_AUTHORITY_ACTION_SMALL_ADVERTISING_CAMPAIGN + i).width + padding.width);
 				}
 				size->width += padding.width;
 				break;
@@ -298,7 +298,7 @@ public:
 				}
 
 				/* When double-clicking, continue */
-				if (click_count == 1 || y < 0) break;
+				if (click_count == 1 || y < 0 || !HasBit(this->available_actions, y)) break;
 				FALLTHROUGH;
 			}
 

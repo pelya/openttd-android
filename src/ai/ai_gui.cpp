@@ -438,7 +438,7 @@ struct AISettingsWindow : public Window {
 
 				if (this->clicked_row != num) {
 					this->CloseChildWindows(WC_QUERY_STRING);
-					HideDropDownMenu(this);
+					this->CloseChildWindows(WC_DROPDOWN_MENU);
 					this->clicked_row = num;
 					this->clicked_dropdown = false;
 				}
@@ -453,7 +453,7 @@ struct AISettingsWindow : public Window {
 				if (!bool_item && IsInsideMM(x, 0, SETTING_BUTTON_WIDTH) && config_item.complete_labels) {
 					if (this->clicked_dropdown) {
 						/* unclick the dropdown */
-						HideDropDownMenu(this);
+						this->CloseChildWindows(WC_DROPDOWN_MENU);
 						this->clicked_dropdown = false;
 						this->closing_dropdown = false;
 					} else {
@@ -502,7 +502,7 @@ struct AISettingsWindow : public Window {
 				} else if (!bool_item && !config_item.complete_labels) {
 					/* Display a query box so users can enter a custom value. */
 					SetDParam(0, old_val);
-					ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, 10, this, CS_NUMERAL, QSF_NONE);
+					ShowQueryString(STR_JUST_INT, STR_CONFIG_SETTING_QUERY_CAPTION, INT32_DIGITS_WITH_SIGN_AND_TERMINATION, this, CS_NUMERAL_SIGNED, QSF_NONE);
 				}
 				this->SetDirty();
 				break;
@@ -565,7 +565,7 @@ struct AISettingsWindow : public Window {
 	void OnInvalidateData(int data = 0, bool gui_scope = true) override
 	{
 		this->RebuildVisibleSettings();
-		HideDropDownMenu(this);
+		this->CloseChildWindows(WC_DROPDOWN_MENU);
 		this->CloseChildWindows(WC_QUERY_STRING);
 	}
 
@@ -1113,9 +1113,7 @@ struct AIDebugWindow : public Window {
 		}
 		if (this->autoscroll) {
 			int scroll_pos = std::max(0, log->used - this->vscroll->GetCapacity());
-			if (scroll_pos != this->vscroll->GetPosition()) {
-				this->vscroll->SetPosition(scroll_pos);
-
+			if (this->vscroll->SetPosition(scroll_pos)) {
 				/* We need a repaint */
 				this->SetWidgetDirty(WID_AID_SCROLLBAR);
 				this->SetWidgetDirty(WID_AID_LOG_PANEL);

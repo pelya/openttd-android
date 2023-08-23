@@ -150,10 +150,10 @@ struct EngineInfo {
 	CargoID cargo_type;
 	CargoTypes refit_mask;
 	byte refit_cost;
-	byte misc_flags;    ///< Miscellaneous flags. @see EngineMiscFlags
-	byte callback_mask; ///< Bitmask of vehicle callbacks that have to be called
-	int8 retire_early;  ///< Number of years early to retire vehicle
-	StringID string_id; ///< Default name of engine
+	byte misc_flags;         ///< Miscellaneous flags. @see EngineMiscFlags
+	uint16 callback_mask;    ///< Bitmask of vehicle callbacks that have to be called
+	int8 retire_early;       ///< Number of years early to retire vehicle
+	StringID string_id;      ///< Default name of engine
 	uint16 cargo_age_period; ///< Number of ticks before carried cargo is aged.
 	EngineID variant_id;     ///< Engine variant ID. If set, will be treated specially in purchase lists.
 	ExtraEngineFlags extra_flags;
@@ -181,6 +181,22 @@ enum EngineFlags {
 	ENGINE_AVAILABLE         = 1, ///< This vehicle is available to everyone.
 	ENGINE_EXCLUSIVE_PREVIEW = 2, ///< This vehicle is in the exclusive preview stage, either being used or being offered to a company.
 };
+
+/**
+ * Contexts an engine name can be shown in.
+ */
+enum EngineNameContext : uint8 {
+	Generic        = 0x00, ///< No specific context available.
+	VehicleDetails = 0x11, ///< Name is shown in the vehicle details GUI.
+	PurchaseList   = 0x20, ///< Name is shown in the purchase list (including autoreplace window).
+	PreviewNews    = 0x21, ///< Name is shown in exclusive preview or newspaper.
+};
+
+/** Combine an engine ID and a name context to an engine name dparam. */
+inline uint64 PackEngineNameDParam(EngineID engine_id, EngineNameContext context, uint32 extra_data = 0)
+{
+	return engine_id | (static_cast<uint64>(context) << 32) | (static_cast<uint64>(extra_data) << 40);
+}
 
 static const uint MAX_LENGTH_ENGINE_NAME_CHARS = 32; ///< The maximum length of an engine name in characters including '\0'
 
