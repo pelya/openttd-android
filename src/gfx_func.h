@@ -229,16 +229,6 @@ static inline int Center(int top, int height, uint size = FONT_HEIGHT_NORMAL)
 	return top + (height - size) / 2;
 }
 
-/**
- * Returns fint/button size, rescaled to current screen resolution from the base Android resolution, which is 854x480
- * @param value The value to rescale
- * @return Rescaled value, using lesser of the curret screen coordinates
- */
-static inline int RescaleFrom854x480(int value)
-{
-	return std::min(value * _cur_resolution.width / 854, value * _cur_resolution.height / 480);
-}
-
 extern DrawPixelInfo *_cur_dpi;
 
 /**

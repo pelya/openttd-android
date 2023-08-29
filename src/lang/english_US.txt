@@ -37,7 +37,7 @@ STR_CARGO_PLURAL_IRON_ORE                                       :Iron Ore
 STR_CARGO_PLURAL_STEEL                                          :Steel
 STR_CARGO_PLURAL_VALUABLES                                      :Valuables
 STR_CARGO_PLURAL_COPPER_ORE                                     :Copper Ore
-STR_CARGO_PLURAL_MAIZE                                          :Maize
+STR_CARGO_PLURAL_MAIZE                                          :Corn
 STR_CARGO_PLURAL_FRUIT                                          :Fruit
 STR_CARGO_PLURAL_DIAMONDS                                       :Diamonds
 STR_CARGO_PLURAL_FOOD                                           :Food
@@ -71,7 +71,7 @@ STR_CARGO_SINGULAR_IRON_ORE                                     :Iron Ore
 STR_CARGO_SINGULAR_STEEL                                        :Steel
 STR_CARGO_SINGULAR_VALUABLES                                    :Valuables
 STR_CARGO_SINGULAR_COPPER_ORE                                   :Copper Ore
-STR_CARGO_SINGULAR_MAIZE                                        :Maize
+STR_CARGO_SINGULAR_MAIZE                                        :Corn
 STR_CARGO_SINGULAR_FRUIT                                        :Fruit
 STR_CARGO_SINGULAR_DIAMOND                                      :Diamond
 STR_CARGO_SINGULAR_FOOD                                         :Food
@@ -105,7 +105,7 @@ STR_QUANTITY_IRON_ORE                                           :{WEIGHT_LONG} o
 STR_QUANTITY_STEEL                                              :{WEIGHT_LONG} of steel
 STR_QUANTITY_VALUABLES                                          :{COMMA}{NBSP}bag{P "" s} of valuables
 STR_QUANTITY_COPPER_ORE                                         :{WEIGHT_LONG} of copper ore
-STR_QUANTITY_MAIZE                                              :{WEIGHT_LONG} of maize
+STR_QUANTITY_MAIZE                                              :{WEIGHT_LONG} of corn
 STR_QUANTITY_FRUIT                                              :{WEIGHT_LONG} of fruit
 STR_QUANTITY_DIAMONDS                                           :{COMMA}{NBSP}bag{P "" s} of diamonds
 STR_QUANTITY_FOOD                                               :{WEIGHT_LONG} of food
@@ -343,9 +343,9 @@ STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}Open the
 ###length 31
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}Pause game
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}Fast forward the game
-STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Options
-STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Save game, abandon game, quit
-STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Display map, extra viewport, or list of signs
+STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}Options and settings
+STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}Save, load or abandon game, exit program
+STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}Display map, extra viewport, cargo flow or list of signs
 STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}Display town directory
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}Display subsidies
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}Display list of company's stations
@@ -353,9 +353,9 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}Display 
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}Display general company information
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}Display story book
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}Display goal list
-STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Display graphs
+STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}Display company graphs and cargo payment rates
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}Display company league table
-STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Fund construction of new industry or list all industries
+STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}Examine industries or fund construction of a new industry
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}Display list of company's trains. Ctrl+Click toggles opening the group/vehicle list
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}Display list of company's road vehicles. Ctrl+Click toggles opening the group/vehicle list
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}Display list of company's ships. Ctrl+Click toggles opening the group/vehicle list
@@ -369,8 +369,8 @@ STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}Build sh
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}Build airports
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}Open the landscaping toolbar to raise/lower land, plant trees, etc.
 STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}Show sound/music window
-STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Show last message/news report, show message options
-STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Land area information, console, script debug, screenshots, about OpenTTD
+STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}Show last message/news report, messages history or delete all messages
+STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}Land area information, screenshot, about OpenTTD and developer tools
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}Switch toolbars
 
 # Extra tooltips for the scenario editor toolbar
@@ -1530,7 +1530,7 @@ STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREY_TO_RED                :Gray to red
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREYSCALE                  :Grayscale
 
 STR_CONFIG_SETTING_SCROLLMODE                                   :Viewport scroll behavior: {STRING}
-STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :Behavior when scrolling the map
+STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :Behavior when scrolling the map. The "mouse position locked" options don't work on all systems, like web-based versions, touchscreens, Linux with Wayland, and others
 ###length 4
 STR_CONFIG_SETTING_SCROLLMODE_DEFAULT                           :Move viewport with RMB, mouse position locked
 STR_CONFIG_SETTING_SCROLLMODE_RMB_LOCKED                        :Move map with RMB, mouse position locked
@@ -1711,7 +1711,7 @@ STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :How much memory
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :Maintenance intervals are in percents: {STRING}
-STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :Choose whether maintenance of vehicles is triggered by the time passed since last maintenance or by reliability dropping by a certain percentage of the maximum reliability
+STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :When enabled, vehicles try to service when their reliability drops by a given percentage of the maximum reliability.{}{}For example, if a vehicle's maximum reliability is 90% and the service interval is 20%, the vehicle will try to service when it reaches 72% reliability.
 
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :Default maintenance interval for trains: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :Set the default maintenance interval for new rail vehicles, if no explicit maintenance interval is set for the vehicle
@@ -2056,6 +2056,7 @@ STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Allocati
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Error with video settings...
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}... no compatible GPU found. Hardware acceleration disabled
+STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... GPU driver crashed the game. Hardware acceleration disabled
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -4363,7 +4364,7 @@ STR_ORDER_DROP_REFIT_AUTO_ANY                                   :Available cargo
 
 STR_ORDER_SERVICE                                               :{BLACK}Maintenance
 STR_ORDER_DROP_GO_ALWAYS_DEPOT                                  :Always go
-STR_ORDER_DROP_SERVICE_DEPOT                                    :Maintain if needed
+STR_ORDER_DROP_SERVICE_DEPOT                                    :Repair if needed
 STR_ORDER_DROP_HALT_DEPOT                                       :Stop
 STR_ORDER_SERVICE_TOOLTIP                                       :{BLACK}Skip this order unless maintenance is needed
 
@@ -5087,6 +5088,7 @@ STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... airc
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}Can't timetable vehicle...
 STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS                       :{WHITE}Vehicles can only wait at stations
 STR_ERROR_TIMETABLE_NOT_STOPPING_HERE                           :{WHITE}This vehicle is not stopping at this station
+STR_ERROR_TIMETABLE_INCOMPLETE                                  :{WHITE}... timetable is incomplete
 
 # Sign related errors
 STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}... too many signs

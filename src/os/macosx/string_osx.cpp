@@ -15,6 +15,7 @@
 #include "../../fontcache.h"
 #include "../../zoom_func.h"
 #include "macos.h"
+#include <cmath>
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -179,7 +180,7 @@ static CTRunDelegateCallbacks _sprite_font_callback = {
 		if (font == nullptr) {
 			if (!_font_cache[i.second->fc->GetSize()]) {
 				/* Cache font information. */
-				CFAutoRelease<CFStringRef> font_name(CFStringCreateWithCString(kCFAllocatorDefault, i.second->fc->GetFontName(), kCFStringEncodingUTF8));
+				CFAutoRelease<CFStringRef> font_name(CFStringCreateWithCString(kCFAllocatorDefault, i.second->fc->GetFontName().c_str(), kCFStringEncodingUTF8));
 				_font_cache[i.second->fc->GetSize()].reset(CTFontCreateWithName(font_name.get(), i.second->fc->GetFontSize(), nullptr));
 			}
 			font = _font_cache[i.second->fc->GetSize()].get();
@@ -253,7 +254,7 @@ CoreTextParagraphLayout::CoreTextVisualRun::CoreTextVisualRun(CTRunRef run, Font
 			this->positions[i * 2 + 1] = pts[i].y;
 		}
 	}
-	this->total_advance = (int)CTRunGetTypographicBounds(run, CFRangeMake(0, 0), nullptr, nullptr, nullptr);
+	this->total_advance = (int)std::ceil(CTRunGetTypographicBounds(run, CFRangeMake(0, 0), nullptr, nullptr, nullptr));
 	this->positions[this->glyphs.size() * 2] = this->positions[0] + this->total_advance;
 }
 

@@ -1,3 +1,73 @@
+13.4 (2023-07-29)
+------------------------------------------------------------------------
+Fix: Setting tree lines drawn incorrectly for RTL languages (#11070)
+Fix #11043: Don't choose toolbar dropdown option if focus is lost (#11044)
+Fix #10917: Pay loan interest before generating statistics (#11040)
+Fix #11016: Use after free in network invalid packet error path (#11022)
+Fix #10987: Double-close of dropdown stopped land-info tool working as default (#11000)
+
+
+13.3 (2023-06-11)
+------------------------------------------------------------------------
+Fix: [Win32] use full monitor resolution for fullscreen (#10985)
+
+
+13.2 (2023-06-10)
+------------------------------------------------------------------------
+Change: [Win32] position window in center of workspace of primary display (#10942)
+Change: Automatically disable hardware acceleration when GPU driver crashed the game last attempt (#10928)
+Change: [Linux] Default scroll mode to non-mouse-lock (#10920)
+Change: Include font style in font name for Freetype (#10879)
+Fix: Don't restore backed up vehicle name if it's no longer unique (#10979)
+Fix #10975: Train name wrongly marked as unique when joining trains (#10976)
+Fix: Crash when not even a single row fits for dropdowns on low resolution screens (#10934)
+Fix: Crash with tooltip on low resolution screens (#10933)
+Fix: Crash when window can't be placed on low resolution screens (#10932)
+Fix #10502: Apply engine refit before attaching free wagons (#10926)
+Fix: Wayland crash on startup due to Pango also using FontConfig (#10916)
+Fix: When syncing width of GUI items, take padding into account (#10915)
+Fix: Make dropdowns self-close when losing focus (#10912)
+Fix: Land info window maximum width was not scaled (#10894)
+Fix: Check max member count in squirrel classes (#10883)
+Fix: Ask FontConfig for the face index when opening fonts (#10878)
+Fix #10831: Level crossing parts left barred after crossing tile removal (#10874)
+Fix: Rail waypoint selection window not closed when parent windows closed (#10873)
+Fix #10846: [Script] Crash on trying to allocate an excessively large array (#10848)
+Fix: [Win32] Text line breaking did not properly handle punctuation characters (#10775)
+Fix: [Emscripten] Crash when saving games (#10758)
+Fix: [Win32] Wrong multi-line text layout due to incorrect whitespace handling (#10752)
+Fix #10741: Rail platforms left partially reserved after train crash (#10751)
+Fix: Shaded engines in purchase list incorrectly shaded (#10736)
+Fix #10735: [NewGRF] {POP_COLOUR} fails if string is drawn with extra flags (#10736)
+Fix #8177: Ships with max speed overflow to near-zero speed (#10695)
+Fix #10289: Don't silently fail when setting timetable start dates (#10690)
+Fix #8302: Improve "Maintenance intervals are in percents" helptext (#10686)
+Fix #10665: "No vehicles are available yet" message did not appear correctly on non-temperate climates (#10673)
+Fix #10630: Don't allow shifting service date earlier than year 0 (#10643)
+Fix #10637, #10638: Incorrect water infrastructure totals when building certain object types (#10639, #10640)
+Fix: Abort loading savegame if road vehicle is on invalid road type (#10622)
+
+
+13.1 (2023-04-10)
+------------------------------------------------------------------------
+Add: [NewGRF] Engine name callback for nested variants. (#10399)
+Fix: Improve main toolbar tooltips (#10616)
+Fix: [NewGRF] Additional validation for Action3 (+others) (#10601)
+Fix: Clear button for editbox didn't take account of padding (#10583)
+Fix: [Script] Access to enum/consts defined outside of main.nut (#10573)
+Fix #10568: Bogus warning when loading a save with a NewGRFs on dedicated servers (#10572)
+Fix #10554: Crash when scrolling in the autoreplace window with collapsed variants (#10555)
+Fix: Network server highlight invisible with RTL languages. (#10551)
+Fix: Client name was not being used as company manager name (#10535)
+Fix: Prevent road vehicles on crossing from crashing into the side of a train (#10496)
+Fix #10477: [macOS] Calculation for window sizes when using custom fonts was being rounded incorrectly (#10489)
+Fix #10486: Crash in debug window when GS started before AIs (#10487)
+Fix #10469: [Script] Negative numbers in League Table window were sorted incorrectly (#10471)
+Fix #10465: Crash on timeout if user never enters a password for server (#10466)
+Fix #10280, #10461: Crash on opening town windows as a spectator (#10462)
+Fix #10059: Script config values stored in the config file could cause crashes (#10444)
+
+
 13.0 (2023-02-05)
 ------------------------------------------------------------------------
 Change #10077: Make maximum loan a positive multiple of the loan interval (#10355)

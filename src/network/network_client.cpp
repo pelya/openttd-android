@@ -160,6 +160,8 @@ ClientNetworkGameSocketHandler::~ClientNetworkGameSocketHandler()
 NetworkRecvStatus ClientNetworkGameSocketHandler::CloseConnection(NetworkRecvStatus status)
 {
 	assert(status != NETWORK_RECV_STATUS_OKAY);
+	if (this->IsPendingDeletion()) return status;
+
 	assert(this->sock != INVALID_SOCKET);
 
 	if (!this->HasClientQuit()) {
@@ -174,7 +176,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
 		CSleep(3 * MILLISECONDS_PER_TICK);
 	}
 
-	delete this;
+	this->DeferDeletion();
 
 	return status;
 }
@@ -185,6 +187,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::CloseConnection(NetworkRecvSta
  */
 void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 {
+	if (this->IsPendingDeletion()) return;
+
 	/* First, send a CLIENT_ERROR to the server, so it knows we are
 	 *  disconnected (and why!) */
 	NetworkErrorCode errorno;
@@ -223,7 +227,9 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 		ClientNetworkEmergencySave();
 	}
 
-	_switch_mode = SM_MENU;
+	CloseWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
+
+	if (_game_mode != GM_MENU) _switch_mode = SM_MENU;
 	_networking = false;
 }
 
@@ -532,7 +538,6 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_FULL(Packet *p)
 {
 	/* We try to join a server which is full */
 	ShowErrorMessage(STR_NETWORK_ERROR_SERVER_FULL, INVALID_STRING_ID, WL_CRITICAL);
-	CloseWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 
 	return NETWORK_RECV_STATUS_SERVER_FULL;
 }
@@ -541,7 +546,6 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_BANNED(Packet *
 {
 	/* We try to join a server where we are banned */
 	ShowErrorMessage(STR_NETWORK_ERROR_SERVER_BANNED, INVALID_STRING_ID, WL_CRITICAL);
-	CloseWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 
 	return NETWORK_RECV_STATUS_SERVER_BANNED;
 }
@@ -647,8 +651,6 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_ERROR(Packet *p
 
 	/* Perform an emergency save if we had already entered the game */
 	if (this->status == STATUS_ACTIVE) ClientNetworkEmergencySave();
-
-	CloseWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 
 	return NETWORK_RECV_STATUS_SERVER_ERROR;
 }
@@ -818,7 +820,6 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 	this->last_packet = std::chrono::steady_clock::now();
 
 	if (!load_success) {
-		CloseWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 		ShowErrorMessage(STR_NETWORK_ERROR_SAVEGAMEERROR, INVALID_STRING_ID, WL_CRITICAL);
 		return NETWORK_RECV_STATUS_SAVEGAME;
 	}

@@ -22,7 +22,6 @@
 #include "tilehighlight_func.h"
 #include "network/network.h"
 #include "querystring_gui.h"
-#include "widgets/dropdown_func.h"
 #include "strings_func.h"
 #include "settings_type.h"
 #include "settings_func.h"
@@ -39,6 +38,7 @@
 #include "guitimer_func.h"
 #include "news_func.h"
 #include "build_confirmation_func.h"
+#include "widgets/settings_widget.h"
 
 #include "safeguards.h"
 
@@ -463,6 +463,9 @@ void SetFocusedWindow(Window *w)
 {
 	if (_focused_window == w) return;
 
+	/* Don't focus a tooltip */
+	if (w != nullptr && w->window_class == WC_TOOLTIPS) return;
+
 	/* Invalidate focused widget */
 	if (_focused_window != nullptr) {
 		if (_focused_window->nested_focus != nullptr) _focused_window->nested_focus->SetDirty(_focused_window);
@@ -473,7 +476,7 @@ void SetFocusedWindow(Window *w)
 	_focused_window = w;
 
 	/* So we can inform it that it lost focus */
-	if (old_focused != nullptr) old_focused->OnFocusLost();
+	if (old_focused != nullptr) old_focused->OnFocusLost(false);
 	if (_focused_window != nullptr) _focused_window->OnFocus();
 }
 
@@ -549,7 +552,7 @@ void Window::OnFocus()
 /**
  * Called when window loses focus
  */
-void Window::OnFocusLost()
+void Window::OnFocusLost(bool closing)
 {
 	if (this->nested_focus != nullptr && this->nested_focus->type == WWT_EDITBOX) VideoDriver::GetInstance()->EditBoxLostFocus();
 }
@@ -683,6 +686,9 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 	NWidgetCore *nw = w->nested_root->GetWidgetFromPos(x, y);
 	WidgetType widget_type = (nw != nullptr) ? nw->type : WWT_EMPTY;
 
+	/* Allow dropdown close flag detection to work. */
+	if (nw != nullptr) ClrBit(nw->disp_flags, NDB_DROPDOWN_CLOSED);
+
 	bool focused_widget_changed = false;
 	/* If clicked on a window that previously did not have focus */
 	if (_focused_window != w &&                 // We already have focus, right?
@@ -734,9 +740,8 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 		return;
 	}
 
-	/* Close any child drop down menus. If the button pressed was the drop down
-	 * list's own button, then we should not process the click any further. */
-	if (HideDropDownMenu(w) == widget_index && widget_index >= 0) return;
+	/* Dropdown window of this widget was closed so don't process click this time. */
+	if (HasBit(nw->disp_flags, NDB_DROPDOWN_CLOSED)) return;
 
 	if ((widget_type & ~WWB_PUSHBUTTON) < WWT_LAST && (widget_type & WWB_PUSHBUTTON)) w->HandleButtonClick(widget_index);
 
@@ -818,6 +823,12 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count, boo
 		Game::NewEvent(new ScriptEventWindowWidgetClick((ScriptWindow::WindowClass)w->window_class, w->window_number, widget_index));
 	}
 
+	// Note: Workaround to avoid immediate toggle when titlebars are enabled.
+	if (_settings_client.gui.windows_titlebars &&
+		w->window_class == WC_GAME_OPTIONS  && widget_index == WID_GO_WINDOWS_TITLEBARS && mouse_down){
+		return;
+	}
+
 	w->OnClick(pt, widget_index, click_count);
 }
 
@@ -844,7 +855,7 @@ static void DispatchLeftButtonDownEvent(Window *w, int x, int y, int click_count
 static void DispatchLeftButtonUpEvent(Window *w, int x, int y)
 {
 	_dragging_widget = false;
-	if (_settings_client.gui.windows_titlebars || _dragging_window) return;
+	if (_dragging_window) return;
 	DispatchLeftClickEvent(w, x, y, _left_button_click_count, false);
 }
 
@@ -1174,7 +1185,7 @@ void Window::Close()
 
 	/* Make sure we don't try to access this window as the focused window when it doesn't exist anymore. */
 	if (_focused_window == this) {
-		this->OnFocusLost();
+		this->OnFocusLost(true);
 		_focused_window = nullptr;
 	}
 
@@ -2518,7 +2529,6 @@ static void StartWindowDrag(Window *w)
 	_drag_delta.y = w->top  - _cursor.pos.y;
 
 	BringWindowToFront(w);
-	CloseWindowById(WC_DROPDOWN_MENU, 0);
 }
 
 /**
@@ -2536,7 +2546,6 @@ static void StartWindowSizing(Window *w, bool to_left)
 	_drag_delta.y = _cursor.pos.y;
 
 	BringWindowToFront(w);
-	CloseWindowById(WC_DROPDOWN_MENU, 0);
 }
 
 /**
@@ -2952,7 +2961,7 @@ static void HandleAutoscroll()
 
 	int x = _cursor.pos.x;
 	int y = _cursor.pos.y;
-	int border = RescaleFrom854x480(_settings_client.gui.min_button);
+	int border = GetMinButtonSize();
 	Window *w = FindWindowFromPt(x, y);
 	if (w == nullptr || w->flags & WF_DISABLE_VP_SCROLL) return;
 	if (_settings_client.gui.auto_scrolling != VA_EVERY_VIEWPORT && w->window_class != WC_MAIN_WINDOW) return;
@@ -3794,7 +3803,7 @@ void ChangeVehicleViewports(VehicleID from_index, VehicleID to_index)
  */
 void RelocateAllWindows(int neww, int newh)
 {
-	CloseWindowById(WC_DROPDOWN_MENU, 0);
+	CloseWindowByClass(WC_DROPDOWN_MENU);
 
 	for (Window *w : Window::Iterate()) {
 		int left, top;

@@ -344,9 +344,9 @@ STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}경로 �
 ###length 31
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}게임을 일시 정지합니다.
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}게임 시간을 빠르게 가도록 합니다.
-STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}게임 기본 설정을 엽니다.
-STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}게임을 저장하거나, 그만두거나, 게임을 종료합니다
-STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}지도, 외부 화면, 팻말 목록을 보여줍니다.
+STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}게임 기본 설정을 엽니다
+STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}게임을 저장하거나, 불러오거나, 그만두거나, 게임을 종료합니다
+STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}지도, 외부 화면, 화물 흐름, 팻말 목록을 보여줍니다.
 STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}도시 메뉴를 표시합니다.
 STR_TOOLBAR_TOOLTIP_DISPLAY_SUBSIDIES                           :{BLACK}보조금 메뉴를 표시합니다.
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_STATIONS            :{BLACK}각 회사의 정거장 목록을 표시합니다.
@@ -354,9 +354,9 @@ STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_FINANCES                    :{BLACK}각 회�
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_GENERAL                     :{BLACK}각 회사의 기본 정보를 표시합니다.
 STR_TOOLBAR_TOOLTIP_DISPLAY_STORY_BOOK                          :{BLACK}스토리 북을 엽니다.
 STR_TOOLBAR_TOOLTIP_DISPLAY_GOALS_LIST                          :{BLACK}목표 목록을 보여줍니다.
-STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}그래프 메뉴를 표시합니다.
+STR_TOOLBAR_TOOLTIP_DISPLAY_GRAPHS                              :{BLACK}회사 그래프와 화물 운송단가 비율 창을 보여줍니다
 STR_TOOLBAR_TOOLTIP_DISPLAY_COMPANY_LEAGUE                      :{BLACK}회사의 성취도 순위를 표시합니다.
-STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}새 산업시설에 투자하거나 산업시설의 목록을 표시합니다.
+STR_TOOLBAR_TOOLTIP_FUND_CONSTRUCTION_OF_NEW                    :{BLACK}새 산업시설의 위치를 무작위로 찾거나 원하는 위치에 새로운 산업시설을 건설합니다
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_TRAINS              :{BLACK}각 회사의 열차 목록을 표시합니다. CTRL+클릭하면 그룹화된 창은 일반 창으로, 일반 창은 그룹화된 창으로 표시됩니다.
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_ROAD_VEHICLES       :{BLACK}각 회사의 차량 목록을 표시합니다. CTRL+클릭하면 그룹화된 창은 일반 창으로, 일반 창은 그룹화된 창으로 표시됩니다.
 STR_TOOLBAR_TOOLTIP_DISPLAY_LIST_OF_COMPANY_SHIPS               :{BLACK}각 회사의 선박 목록을 표시합니다. CTRL+클릭하면 그룹화된 창은 일반 창으로, 일반 창은 그룹화된 창으로 표시됩니다.
@@ -370,8 +370,8 @@ STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}항만 �
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}항공 시설을 건설합니다.
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}땅 올리기/내리기, 나무 심기 등의 일를 하기 위한 지형편집창을 엽니다.
 STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}효과음/배경 음악 창을 엽니다.
-STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}최근 메시지/뉴스 기록이나 메시지 설정을 엽니다.
-STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}지역 정보, 콘솔, 스크립트 디버그, 스크린샷, OpenTTD에 대한 정보를 보여줍니다.
+STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}최근 메시지/뉴스 기록을 보거나, 모든 메시지를 삭제합니다
+STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}지역 정보, 스크린샷, OpenTTD에 대한 정보, 개발자 도구 등을 보여줍니다
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}툴바를 변경합니다.
 
 # Extra tooltips for the scenario editor toolbar
@@ -929,7 +929,7 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}이 장�
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TT                             :{BLACK}외부 화면에 저장된 장소로 이동합니다.
 
 # Game options window
-STR_GAME_OPTIONS_CAPTION                                        :{WHITE}게임 기본 설정
+STR_GAME_OPTIONS_CAPTION                                        :{WHITE}게임 설정
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}화폐 단위
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}화폐 단위 선택
 
@@ -1531,7 +1531,7 @@ STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREY_TO_RED                :회색 & 적색
 STR_CONFIG_SETTING_LINKGRAPH_COLOURS_GREYSCALE                  :흑백
 
 STR_CONFIG_SETTING_SCROLLMODE                                   :외부 화면 스크롤 행동: {STRING}
-STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :지도를 스크롤 할 때의 행동을 선택합니다.
+STR_CONFIG_SETTING_SCROLLMODE_HELPTEXT                          :지도를 스크롤 할 때의 행동을 선택합니다. "마우스 위치는 고정" 설정은 웹 기반 버전, 터치 스크린 환경, Wayland가 설치된 Linux 등의 환경에서는 모두 동작하지 않습니다
 ###length 4
 STR_CONFIG_SETTING_SCROLLMODE_DEFAULT                           :마우스 오른쪽 클릭으로 외부 화면 이동 (마우스 위치는 고정)
 STR_CONFIG_SETTING_SCROLLMODE_RMB_LOCKED                        :마우스 오른쪽 클릭으로 지도 이동 (마우스 위치는 고정)
@@ -1712,7 +1712,7 @@ STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_HELPTEXT                   :스크립트 �
 STR_CONFIG_SETTING_SCRIPT_MAX_MEMORY_VALUE                      :{COMMA} MiB
 
 STR_CONFIG_SETTING_SERVINT_ISPERCENT                            :신뢰도에 따른 점검 설정: {STRING}
-STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :차량 점검 방식을 "마지막 점검 이후 지난 시간 (또는) 최대 신뢰도에 대한 차량 신뢰도의 일정 퍼센트 하락 여부" 중에 하나로 선택합니다.
+STR_CONFIG_SETTING_SERVINT_ISPERCENT_HELPTEXT                   :이 설정을 켜면, 차량의 신뢰도가 최대 신뢰도에 비해 일정 비율만큼 하락했을 때 점검을 하러 가려고 합니다.{}{}예를 들어, 차량의 최대 신뢰도가 90%이고 점검 주기를 20%로 설정하면, 그 차량은 신뢰도가 72%가 되었을 때 점검을 하러 가게 됩니다.
 
 STR_CONFIG_SETTING_SERVINT_TRAINS                               :열차에 대한 기본 점검 기준: {STRING}
 STR_CONFIG_SETTING_SERVINT_TRAINS_HELPTEXT                      :열차에 따로 점검 기간이 설정되어있지 않은 경우에 사용할 기본 점검 기간을 설정합니다.
@@ -2057,6 +2057,7 @@ STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}{BYTES}�
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}비디오 설정 오류 발생...
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}... 호환되는 GPU를 찾지 못했습니다. 하드웨어 가속이 비활성화됩니다
+STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... GPU 드라이버가 게임을 종료시켰습니다. 하드웨어 가속이 비활성화됩니다
 
 # Intro window
 STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
@@ -3914,7 +3915,7 @@ STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}항공�
 
 ###length 3
 STR_CARGO_TYPE_FILTER_ALL                                       :모든 화물 종류
-STR_CARGO_TYPE_FILTER_FREIGHT                                   :무게
+STR_CARGO_TYPE_FILTER_FREIGHT                                   :화물
 STR_CARGO_TYPE_FILTER_NONE                                      :없음
 
 ###length VEHICLE_TYPES
@@ -4244,7 +4245,7 @@ STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}무게: 
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}무게: {LTBLUE}{WEIGHT_SHORT} {BLACK}힘: {LTBLUE}{POWER}{BLACK} 최고 속력: {LTBLUE}{VELOCITY} {BLACK}최고 견인력: {LTBLUE}{FORCE}
 
 STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR                     :{BLACK}올해 이익: {LTBLUE}{CURRENCY_LONG} (작년: {CURRENCY_LONG})
-STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR_MIN_PERFORMANCE     :{BLACK}올해 이익: {LTBLUE}{CURRENCY_LONG} (작년: {CURRENCY_LONG}) {BLACK}최소 성취도: {LTBLUE}{POWER_TO_WEIGHT}
+STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR_MIN_PERFORMANCE     :{BLACK}올해 이익: {LTBLUE}{CURRENCY_LONG} (작년: {CURRENCY_LONG}) {BLACK}최소 성능: {LTBLUE}{POWER_TO_WEIGHT}
 STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}신뢰도: {LTBLUE}{COMMA}%  {BLACK}최근 점검 이후 고장 횟수: {LTBLUE}{COMMA}
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}생산: {LTBLUE}{NUM}{BLACK} 가격: {LTBLUE}{CURRENCY_LONG}
@@ -4735,7 +4736,7 @@ STR_ERROR_TERRAFORM_LIMIT_REACHED                               :{WHITE}... 지�
 STR_ERROR_CLEARING_LIMIT_REACHED                                :{WHITE}... 칸 제거 제한에 다다랐습니다
 STR_ERROR_TREE_PLANT_LIMIT_REACHED                              :{WHITE}... 나무 심기 제한에 다다랐습니다
 STR_ERROR_NAME_MUST_BE_UNIQUE                                   :{WHITE}이름은 유일해야 합니다
-STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}중간에 {1:STRING}{G 1 "이" "가"} 있습니다.
+STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :{WHITE}중간에 {1:STRING}{G 1 "이" "가"} 있습니다
 STR_ERROR_NOT_ALLOWED_WHILE_PAUSED                              :{WHITE}일시 정지 중에는 할 수 없습니다
 
 # Local authority errors
@@ -4903,7 +4904,7 @@ STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}신호�
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}적합한 철도 선로가 없습니다
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}선로를 먼저 제거하십시오
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :{WHITE}도로가 일방통행이거나 막혔습니다
-STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}이 선로에는 건널목을 만들 수 없습니다.
+STR_ERROR_CROSSING_DISALLOWED_RAIL                              :{WHITE}이 선로에는 건널목을 만들 수 없습니다
 STR_ERROR_CROSSING_DISALLOWED_ROAD                              :{WHITE}이 도로에는 건널목을 만들 수 없습니다
 STR_ERROR_CAN_T_BUILD_SIGNALS_HERE                              :{WHITE}여기에 신호기를 건설할 수 없습니다...
 STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK                            :{WHITE}여기에 선로를 건설할 수 없습니다...
@@ -5088,6 +5089,7 @@ STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :{WHITE}... 항�
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :{WHITE}차량의 시간표를 정할 수 없습니다...
 STR_ERROR_TIMETABLE_ONLY_WAIT_AT_STATIONS                       :{WHITE}차량은 정거장에서만 기다릴 수 있습니다
 STR_ERROR_TIMETABLE_NOT_STOPPING_HERE                           :{WHITE}이 차량은 이 정거장에 서지 않습니다
+STR_ERROR_TIMETABLE_INCOMPLETE                                  :{WHITE}... 시간표가 모두 작성되지 않았습니다
 
 # Sign related errors
 STR_ERROR_TOO_MANY_SIGNS                                        :{WHITE}... 팻말 수가 너무 많습니다

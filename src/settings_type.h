@@ -115,7 +115,6 @@ struct GUISettings {
 	bool   windows_titlebars;                ///< show or hide titlebars for all windows to increase scrren space
 	bool   draw_mouse_cursor;                ///< draw mouse cursor, touchscreen does not generally need a mouse cursor, but mouse cursor shows currently selected build tool
 	bool   windows_decorations;              ///< draw ornament on all window edges
-	uint   min_button;                       ///< min size of most button widgets
 	bool   show_finances;                    ///< show finances at end of year
 	bool   sg_new_nonstop;                   ///< ttdpatch compatible nonstop handling read from pre v93 savegames
 	bool   new_nonstop;                      ///< ttdpatch compatible nonstop handling
